@@ -40,3 +40,5 @@ Available translation vendors:
 * [Google](http://translate.google.com/)
 * [Yandex](http://translate.yandex.com/)
 * [Bing](http://bing.com/translator/)
+
+Powered by typescript, react, redux, webpack, sass, lodash and some others. Made with ♥
