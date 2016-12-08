@@ -1,0 +1,84 @@
+@import "../vars";
+
+.Checkbox {
+  $tickSize: 17px;
+  $tickColor: currentColor;
+  $tickColorChecked: $bgc-primary;
+
+  + .Checkbox {
+    &.inline {
+      margin-left: $margin;
+    }
+    &:not(.inline) {
+      margin-top: $margin / 2;
+    }
+  }
+
+  &:hover {
+    input:not(:checked):not(:disabled) {
+      ~ .tick:after {
+        opacity: 1;
+      }
+    }
+  }
+
+  input[type="checkbox"] {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+
+    &:focus ~ .tick {
+      border-style: solid;
+    }
+
+    &:checked {
+      ~ .tick {
+        //border-style: solid;
+        //border-color: $tickColorChecked;
+        color: $tickColorChecked;
+        &:after {
+          opacity: 1;
+        }
+      }
+    }
+    &:disabled {
+      ~ .tick {
+        color: $tickColor;
+      }
+      ~ * {
+        opacity: .5;
+        pointer-events: none;
+      }
+    }
+    &:not(:disabled) ~ * {
+      cursor: pointer;
+    }
+  }
+
+  > .tick {
+    position: relative;
+    min-width: $tickSize;
+    min-height: $tickSize;
+    border-radius: $radius;
+    color: $tickColor;
+    border: 2px outset currentColor;
+
+    &:after {
+      content: "";
+      position: absolute;
+      left: 1px;
+      top: -1px;
+      width: 120%;
+      height: 60%;
+      border: 3px solid currentColor;
+      border-top: 0;
+      border-right: 0;
+      transform: rotate(-45deg);
+      opacity: 0;
+    }
+
+    + * {
+      margin-left: .5em;
+    }
+  }
+}

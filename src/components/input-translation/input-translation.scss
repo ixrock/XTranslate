@@ -1,0 +1,102 @@
+
+.InputTranslation {
+  --flex-gap: 5px;
+
+  > :not(:last-child):not(.TextField) {
+    margin-bottom: $margin;
+  }
+
+  .favorites {
+    padding-top: $padding;
+
+    .fav-vendor-icon {
+      $size: 25px;
+      width: $size;
+      height: $size;
+      color: white;
+      margin: auto;
+      border-radius: 50%;
+
+      &.google {
+        background: #3169f5;
+      }
+      &.yandex {
+        background: #ff0000;
+      }
+      &.bing {
+        background: #535353;
+      }
+    }
+
+    .favorite-lang {
+      margin-bottom: var(--flex-gap);
+      opacity: .5;
+      cursor: pointer;
+      transition: 250ms opacity;
+      user-select: none;
+      padding: 0 $padding/2;
+
+      &:hover {
+        background: rgba(0, 0, 0, .025);
+        opacity: 1;
+      }
+
+      .fav-remove-icon {
+        padding-left: var(--flex-gap);
+        margin-left: auto;
+        opacity: .5;
+      }
+    }
+  }
+
+  .translation-results {
+    .translation {
+      margin-left: var(--flex-gap);
+      margin-bottom: var(--flex-gap);
+      white-space: pre-line;
+
+      .transcription {
+        opacity: .75;
+        margin-left: var(--flex-gap);
+      }
+    }
+    .lang {
+      padding-left: $padding;
+      white-space: nowrap;
+      line-height: 2;
+      opacity: .5;
+    }
+    .dictionary {
+      margin-top: $margin;
+      * {
+        vertical-align: top;
+      }
+      .word-type {
+        font-weight: bold;
+        padding: $padding / 2;
+      }
+      .word {
+        padding: 0 $padding * 2;
+      }
+      .word-meanings {
+      }
+      .link {
+        border-bottom: 1px dotted;
+        cursor: pointer;
+        opacity: .75;
+        &:hover {
+          opacity: 1;
+        }
+      }
+      .examples {
+        cursor: help;
+        margin-left: 5px;
+        font-weight: bold;
+      }
+    }
+  }
+
+  .translation-error {
+    color: $red-300;
+  }
+}

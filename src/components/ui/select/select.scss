@@ -1,0 +1,44 @@
+@import "../vars";
+
+.Select {
+  $activeColor: $bgc-primary;
+  $bottomOffset: $padding / 2;
+  $lineColor: $border-color;
+
+  position: relative;
+
+  select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    width: 100%;
+    border-bottom: 1px solid $lineColor;
+    text-overflow: ellipsis;
+    background: none;
+    border-radius: 0;
+    padding-right: 25px;
+    padding-bottom: $bottomOffset;
+    font: inherit;
+
+    &:focus {
+      padding-bottom: calc(#{$bottomOffset} - 1px);
+      border-bottom: 2px solid $activeColor;
+      ~ .icon {
+        color: $activeColor;
+      }
+    }
+
+    &:disabled {
+      &, ~ .icon {
+        opacity: .7;
+      }
+    }
+  }
+
+  .icon {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+  }
+}

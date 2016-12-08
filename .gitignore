@@ -1,0 +1,8 @@
+.idea
+node_modules
+dist
+backup
+context-ads.ts
+screenshots
+*-mock.json
+npm-debug.log

@@ -1,0 +1,98 @@
+@import "../vars";
+
+.Button {
+  position: relative;
+  overflow: hidden;
+  color: white;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  border-radius: $radius;
+  background: #414448;
+  padding: $padding * .8 $padding * 1.5;
+  font: inherit;
+
+  &[href] {
+    display: inline-block;
+  }
+
+  &.primary {
+    background: $bgc-primary;
+  }
+  &.accent {
+    background: $bgc-accent;
+  }
+
+  &.plain {
+    background: transparent;
+    color: inherit;
+    box-shadow: none !important;
+    &:focus:not(:active) {
+      background: $bgc-dark;
+      &, * {
+        color: white;
+      }
+    }
+  }
+
+  form:not([novalidate]):invalid &[type=submit],
+  &:disabled {
+    color: silver;
+    background: gray;
+    pointer-events: none;
+  }
+
+  &.waiting {
+    pointer-events: none;
+    &:after {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 0;
+      height: 100%;
+      background: transparentize(white, .85);
+      animation: waiting 1.5s infinite linear;
+    }
+  }
+
+  &:focus:not(:active) {
+    transition: box-shadow 350ms;
+    box-shadow: inset 0 0 0 2px rgba(255, 255, 255, .5);
+  }
+
+  &:active:before {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: inherit;
+    background: transparentize(white, .85);
+    transform-origin: left top;
+    transition: transform 150ms;
+    transform: rotate(0deg);
+    // hackfix: safari prevents clicks on button when click-target is a child element nor button itself
+    pointer-events: none;
+  }
+
+  &:before {
+    content: "";
+    transform: rotate(-90deg);
+  }
+}
+
+@keyframes waiting {
+  0% {
+    left: 0;
+    width: 0;
+  }
+  50% {
+    left: 25%;
+    width: 75%;
+  }
+  75% {
+    left: 100%;
+    width: 0;
+  }
+}

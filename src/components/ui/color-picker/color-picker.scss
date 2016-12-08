@@ -1,0 +1,71 @@
+@import "../vars";
+
+.ColorPicker {
+  $size: 22px;
+  position: relative;
+  display: inline-block;
+
+  .chrome-picker {
+    position: absolute;
+    margin: 5px 0;
+    z-index: 100;
+    * {
+      font-size: inherit !important;
+    }
+  }
+
+  &.bottom .chrome-picker {
+    top: 100%;
+  }
+  &.top .chrome-picker {
+    bottom: 100%;
+  }
+  &.left .chrome-picker {
+    left: 0;
+  }
+  &.right .chrome-picker {
+    right: 0;
+  }
+
+  input[type="color"] {
+    position: absolute;
+    visibility: hidden;
+    &:not(:disabled) {
+      ~ .value {
+        cursor: pointer;
+        &:hover:after {
+          border-style: dotted;
+        }
+      }
+    }
+    &:disabled ~ .value {
+      pointer-events: none;
+      opacity: .5;
+      &:after {
+        filter: grayscale(100%);
+        background-image: repeating-linear-gradient(-45deg, #999, transparent 1px, transparent 5px);
+      }
+    }
+  }
+
+  .value {
+    position: relative;
+    display: block;
+    width: $size;
+    height: $size;
+    border-radius: 50%;
+
+    &:after {
+      content: "";
+      position: absolute;
+      width: inherit;
+      height: inherit;
+      border-radius: inherit;
+    }
+
+    &:after {
+      border: 3px solid #ccc;
+      background: currentColor;
+    }
+  }
+}

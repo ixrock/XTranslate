@@ -1,0 +1,19 @@
+body.theme-dark {
+  background: $bgc-dark;
+  color: silver;
+  @include custom-scrollbar(light);
+
+  .page-title {
+    color: #cccccc;
+  }
+
+  .Slider {
+    --slider-track-color: gray;
+    --slider-thumb-color: #444;
+    --slider-thumb-color-active: white;
+  }
+
+  .material-icons.button:hover {
+    color: white;
+  }
+}

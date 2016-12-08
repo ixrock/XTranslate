@@ -1,0 +1,61 @@
+@import "../vars";
+
+.Menu {
+  $itemColor: #87909c;
+  position: absolute;
+  z-index: 10;
+
+  > .menu-container {
+    padding: $padding/2 0;
+
+    &.theme {
+      &-dark {
+        background: #2e3136;
+        border: 1px solid $itemColor;
+
+        .MenuItem:hover {
+          color: white;
+          background: $itemColor;
+        }
+      }
+      &-light {
+        background: white;
+        box-shadow: 0 2px 5px -1px rgba(0, 0, 0, 0.75);
+
+        .MenuItem:hover {
+          color: inherit;
+          background: #eeeeee;
+        }
+      }
+    }
+  }
+
+  &.left {
+    left: 0;
+  }
+  &.right {
+    right: 0;
+  }
+  &.top {
+    bottom: 100%;
+  }
+
+  .MenuItem {
+    color: $itemColor;
+    padding: $padding;
+    white-space: nowrap;
+
+    &:not(.disabled) {
+      cursor: pointer;
+    }
+
+    &.disabled {
+      pointer-events: none;
+      opacity: .5;
+    }
+
+    &.hidden {
+      display: none;
+    }
+  }
+}

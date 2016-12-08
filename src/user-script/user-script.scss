@@ -1,0 +1,23 @@
+$flexbox-grids-count: 0;
+@import "~flex.box";
+
+:host {
+  all: initial !important;
+
+  .Popup {
+    position: absolute;
+    display: block;
+    z-index: 10000000;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    margin: 7px 0;
+  }
+
+  *, *:after, *:before {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+    border: 0;
+    outline: none;
+  }
+}

@@ -1,0 +1,25 @@
+
+.ThemeManager {
+  .theme {
+    margin-top: $margin;
+    padding: $padding;
+    border: 1px solid $border-color;
+    border-radius: $padding / 2;
+
+    > .flex {
+      padding: $padding;
+      padding-top: 0;
+      &.auto {
+        padding-left: 0;
+      }
+    }
+    .ColorPicker + .ColorPicker {
+      margin-left: $padding / 2;
+    }
+    .TextField {
+      .errors {
+        display: none;
+      }
+    }
+  }
+}

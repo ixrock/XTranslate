@@ -1,0 +1,56 @@
+@import "../vars";
+
+.Tabs {
+  --tabs-color-active: $bgc-primary;
+  --tabs-line-color: $border-color;
+  --tabs-line-color-active: currentColor;
+
+  .tabs-header {
+    border-bottom: 1px solid var(--tabs-line-color);
+
+    > .tab {
+      position: relative;
+      cursor: pointer;
+      text-decoration: none;
+      padding: $padding;
+      color: inherit;
+      white-space: nowrap;
+      text-transform: uppercase;
+      font-weight: bold;
+
+      &:after {
+        content: "";
+        position: absolute;
+        right: 0;
+        bottom: -1px;
+        width: 0;
+        height: .5 * $unit;
+        background: currentColor;
+        transition: width 250ms;
+      }
+
+      &.active,
+      &:hover:not(.active) {
+        &:after {
+          left: 0;
+          right: auto;
+          width: 100%;
+        }
+      }
+
+      &.active {
+        pointer-events: none;
+        color: var(--tabs-color-active);
+        &:after {
+          background: var(--tabs-line-color-active);
+        }
+      }
+    }
+  }
+
+  .tabs-content {
+    &:empty {
+      display: none;
+    }
+  }
+}

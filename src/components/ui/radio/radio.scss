@@ -1,0 +1,80 @@
+@import "../vars";
+
+.Radio {
+  $tickSize: 18px;
+  $tickColor: currentColor;
+  $tickColorChecked: $bgc-primary;
+
+  + .Radio {
+    &.inline {
+      margin-left: $margin;
+    }
+    &:not(.inline) {
+      margin-top: $margin / 2;
+    }
+  }
+
+  &:hover {
+    input:not(:checked):not(:disabled) {
+      ~ .tick:after {
+        opacity: 1;
+      }
+    }
+  }
+
+  input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+
+    &:focus ~ .tick {
+      border-style: solid;
+    }
+
+    &:checked {
+      ~ .tick {
+        //border-style: solid;
+        //border-color: $tickColorChecked;
+        color: $tickColorChecked;
+        &:after {
+          opacity: 1;
+        }
+      }
+    }
+    &:disabled {
+      ~ .tick {
+        color: $tickColor;
+      }
+      ~ * {
+        opacity: .5;
+        pointer-events: none;
+      }
+    }
+    &:not(:disabled) ~ * {
+      cursor: pointer;
+    }
+  }
+
+  > .tick {
+    position: relative;
+    min-width: $tickSize;
+    min-height: $tickSize;
+    border-radius: 50%;
+    color: $tickColor;
+    border: 2px outset currentColor;
+
+    &:after {
+      content: "";
+      min-width: 100%;
+      min-height: 100%;
+      transform: scale(.7);
+      border-radius: inherit;
+      background: currentColor;
+      opacity: 0;
+    }
+
+    + * {
+      margin-left: .5em;
+    }
+  }
+}

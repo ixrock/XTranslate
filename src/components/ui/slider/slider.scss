@@ -1,0 +1,93 @@
+@import "../vars";
+
+.Slider {
+  position: relative;
+
+  --slider-track-color: #ddd;
+  --slider-thumb-color: white;
+  --slider-thumb-color-active: rgb(33, 150, 243);
+  --slider-thumb-size: 15px;
+  --slider-track-height: 3px;
+
+  .value {
+    position: absolute;
+    border-radius: $radius;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: black;
+    padding: 1px 4px;
+    font-size: small;
+    opacity: 0;
+    pointer-events: none;
+    transition: 250ms opacity;
+  }
+
+  input[type="range"] {
+    -webkit-appearance: none; /* Hides the slider so that custom slider can be made */
+    width: 100%; /* Specific width is required for Firefox. */
+    height: calc(var(--slider-thumb-size) * 2);
+    background: none;
+    outline: none;
+
+    &:hover ~ .value {
+      opacity: 1;
+    }
+  }
+
+  /**
+   * You can't comma-separate the browser specific selectors, therefore we use a mixin.
+   */
+  @mixin getTrackStyles($browser) {
+    &::#{$browser} {
+      height: var(--slider-track-height);
+      background: var(--slider-track-color);
+      border: none;
+      @content;
+    }
+  }
+
+  @mixin getThumbStyles($browser) {
+    &::#{$browser} {
+      height: var(--slider-thumb-size);
+      width: var(--slider-thumb-size);
+      border: var(--slider-track-height) solid var(--slider-track-color);
+      border-radius: 50%;
+      background: var(--slider-thumb-color);
+      cursor: pointer;
+      transition: all 250ms;
+      box-sizing: border-box;
+      @content;
+    }
+
+    &:active::#{$browser},
+    &:focus::#{$browser} {
+      background: var(--slider-thumb-color-active);
+      box-shadow: 0 0 0 5px rgba(33, 150, 243, .5);
+    }
+  }
+
+  input[type="range"] {
+    @include getTrackStyles('-webkit-slider-runnable-track');
+    @include getTrackStyles('-moz-range-track');
+    @include getTrackStyles('-ms-track') {
+      width: 100%;
+      cursor: pointer;
+      background: transparent; /* Hides the slider so custom styles can be added */
+      border-color: transparent;
+      color: transparent;
+    }
+
+    @include getThumbStyles('-webkit-slider-thumb') {
+      position: relative;
+      top: 50%;
+      transform: translateY(-50%);
+      -webkit-appearance: none;
+    }
+
+    @include getThumbStyles('-moz-range-thumb');
+    @include getThumbStyles('-ms-thumb') {
+      transform: translateY(calc(.5rem - 50%));
+    }
+  }
+}

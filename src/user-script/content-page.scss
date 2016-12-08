@@ -1,0 +1,41 @@
+$md-icons-font-path: "chrome-extension://__MSG_@@extension_id__/fonts/";
+@import "../components/ui/icons/material-icon.font";
+
+.XTranslate {
+  all: initial !important;
+
+  &:empty {
+    display: none;
+  }
+
+  &-icon {
+    all: initial;
+    $md-icons-parent-selector: '&';
+    @import "../components/ui/icons/material-icon";
+
+    position: absolute;
+    font-style: normal;
+    cursor: pointer;
+    border-radius: 50%;
+    z-index: 100000;
+    border: 1px dotted;
+    color: black;
+    background: white;
+
+    &.isLeftTop {
+      transform: translate(-100%, -100%);
+    }
+
+    &:hover {
+      background: black;
+      color: white;
+    }
+
+    &:after {
+      @extend .material-icons;
+      all: unset;
+      content: "translate";
+      pointer-events: none;
+    }
+  }
+}

@@ -1,0 +1,26 @@
+//-- Mixins
+
+@mixin custom-scrollbar($theme: light, $size: 8px) {
+  $themes: (
+    light: rgba(255, 255, 255, .25),
+    dark: rgba(0, 0, 0, .25)
+  );
+  $scrollBarColor: if(map_has_key($themes, $theme), map_get($themes, $theme), none);
+  $innerBorderSpace: 5px;
+  $scrollBarSize: $size + $innerBorderSpace * 2;
+
+  &::-webkit-scrollbar {
+    width: $scrollBarSize;
+    height: $scrollBarSize;
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: $scrollBarColor;
+    background-clip: padding-box;
+    border: $innerBorderSpace solid transparent;
+    border-radius: $scrollBarSize;
+  }
+  &::-webkit-scrollbar-corner {
+    background-color: transparent;
+  }
+}

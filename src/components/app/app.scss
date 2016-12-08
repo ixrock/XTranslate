@@ -1,0 +1,83 @@
+@import "../ui/ui";
+@import "modifiers";
+@import "theme-dark";
+
+*, *:before, *:after {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  outline: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+html {
+  font-size: 62.5%; // 1 rem == 10px
+  color: $color-primary;
+  height: 100%;
+  min-height: 599px; // max-width for chrome extensions
+}
+
+body {
+  font: $font-size $font-main;
+  height: inherit;
+  @include custom-scrollbar(dark);
+}
+
+code {
+  font-family: $font-monospace;
+}
+
+input, select, textarea {
+  color: inherit;
+  &:invalid {
+    box-shadow: none;
+  }
+}
+
+a {
+  color: inherit;
+  opacity: .5;
+  &:hover {
+    opacity: 1;
+  }
+}
+
+hr {
+  height: 1px;
+  background: $border-color;
+}
+
+#app {
+  padding: $padding * 2;
+  min-height: 100%;
+  min-width: 550px;
+  max-width: 700px;
+  margin: auto;
+}
+
+#loading {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  margin: -15px;
+}
+
+.sub-title {
+  text-transform: uppercase;
+  font-weight: bold;
+  padding-bottom: $padding;
+  display: block;
+}
+
+.page-title {
+  text-transform: uppercase;
+  font-weight: bold;
+  text-align: left;
+  color: #666;
+  margin-bottom: $margin;
+}
+
+.tabs-content {
+  padding: $padding * 2 $padding;
+}

@@ -1,0 +1,25 @@
+.Settings {
+  > .display-options {
+    .Checkbox {
+      flex-basis: 50%;
+      &:nth-child(odd){
+        padding-right: $padding;
+      }
+    }
+
+    .hotkey {
+      min-width: 75px;
+      text-align: center;
+      .errors {
+        display: none;
+      }
+    }
+  }
+
+  > .vendors {
+    margin-top: $margin * 2;
+    .label {
+      margin-right: $margin / 2;
+    }
+  }
+}

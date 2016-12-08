@@ -1,0 +1,49 @@
+.Popup {
+  position: relative;
+  padding: .6em;
+
+  &:empty {
+    display: none;
+  }
+
+  > * {
+    $scrollSize: 10px;
+    overflow: auto;
+    &::-webkit-scrollbar {
+      width: $scrollSize;
+      height: $scrollSize;
+    }
+    &::-webkit-scrollbar-thumb {
+      border: 1px solid;
+      border-radius: $scrollSize / 2;
+    }
+  }
+
+  .play-icon {
+    font-size: 1.6em;
+    margin-right: 5px;
+    opacity: .75;
+    &:hover {
+      opacity: 1;
+      color: inherit !important;
+    }
+  }
+
+  .translation-result {
+    padding-right: $padding;
+    .translation {
+      padding: 2px 0;
+    }
+    .dictionary {
+      .word-type {
+        font-weight: bold;
+      }
+      .word-meanings {
+        padding-left: $padding;
+        .word[title] {
+          cursor: help;
+        }
+      }
+    }
+  }
+}
