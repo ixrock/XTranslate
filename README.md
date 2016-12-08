@@ -5,7 +5,7 @@ Translate from 100+ foreign languages to your native directly on web-site you're
 put text in the extension's drop-down window.
 
 <img src="https://dl.dropboxusercontent.com/u/61405773/xtranslate/Untitled-1.jpg">
-<img src="https://dl.dropboxusercontent.com/u/61405773/xtranslate/Untitled-4.jpg">
+<img src="https://dl.dropboxusercontent.com/u/61405773/xtranslate/Untitled-2.jpg">
 
 Features:
 -----------
@@ -34,8 +34,11 @@ press hotkey (title or alt attributes will be used, if applicable).
 
 7) History of translation (*coming soon*)
 
-Supported translation vendors:
+Available translation vendors:
 -----------
 * [Google](http://translate.google.com/)
 * [Yandex](http://translate.yandex.com/)
 * [Bing](http://bing.com/translator/)
+
+<img src="https://dl.dropboxusercontent.com/u/61405773/xtranslate/Untitled-4.jpg">
+
