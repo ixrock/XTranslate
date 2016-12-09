@@ -33,7 +33,7 @@ interface Position {
 class App extends React.Component<AppState, State> {
   public state: State = {};
   private style = getURL('injector.css');
-  private underMouseElem: Element;
+  private pointerElem: Element;
   private icon: HTMLElement;
   private iconShown: boolean;
   private selection = window.getSelection();
@@ -133,7 +133,7 @@ class App extends React.Component<AppState, State> {
 
   @autobind()
   onMouseOver(e: MouseEvent) {
-    this.underMouseElem = e.toElement;
+    this.pointerElem = e.toElement;
   }
 
   @autobind()
@@ -153,20 +153,27 @@ class App extends React.Component<AppState, State> {
     if (!this.settings.showPopupOnHotkey) return;
     var hotkey = getHotkey(e);
     if (isEqual(this.settings.hotkey, hotkey)) {
-      var range: Range;
       var text = this.text;
-      var elem = this.underMouseElem;
+      var elem = this.pointerElem;
       var notRoot = elem !== document.documentElement && elem !== document.body;
       var canAllocateText = elem && notRoot && this.isOutsideOfPopup(elem);
 
-      // detect text from element under mouse cursor if no selected text on the page
       if (!text && canAllocateText) {
-        range = document.createRange();
-        range.selectNode(elem);
-        this.restoreSelectionFromRange(range);
-        text = this.text;
+        this.selection.collapse(elem, 0);
 
-        // if still no text try to grab some info from input placeholders or images
+        // detect and select text nodes from element under mouse cursor
+        var textNode: Node, textNodes: Node[] = [];
+        var searchTextNodes = document.evaluate('.//text()', elem, null, XPathResult.ANY_TYPE, null);
+        while (textNode = searchTextNodes.iterateNext()) {
+          textNodes.push(textNode);
+        }
+        if (textNodes.length) {
+          var lastNode = textNodes.slice(-1)[0];
+          this.selection.extend(lastNode, lastNode.textContent.length);
+          text = this.text;
+        }
+
+        // if still no text try to get some information from input fields or images
         if (!text) {
           if (elem instanceof HTMLInputElement || elem instanceof HTMLTextAreaElement) {
             text = elem.value || elem.placeholder;
@@ -176,7 +183,7 @@ class App extends React.Component<AppState, State> {
           }
         }
       }
-      this.translate(text, range);
+      this.translate(text);
     }
   }
 
@@ -217,12 +224,12 @@ class App extends React.Component<AppState, State> {
     return !this.popupHost.contains(elem);
   }
 
-  translate(text = this.text, range = this.range) {
+  translate(text = this.text) {
     if (!text) return;
     var { vendor, langFrom, langTo } = this.settings;
     var vendorApi = vendors[vendor];
     var translation = vendorApi.getTranslation(langFrom, langTo, text);
-    this.handleTranslation(translation, range);
+    this.handleTranslation(translation);
   }
 
   translateWithVendor(vendor: string, from = this.settings.langFrom, to = this.settings.langTo) {
@@ -239,12 +246,17 @@ class App extends React.Component<AppState, State> {
     var { langFrom, langTo } = this.settings;
     var vendorApi = getNextVendor(vendor, langFrom, langTo, reverse);
     if (vendorApi) {
-      this.restoreSelectionFromRange(this.state.range);
+      var lastRange = this.state.range;
+      if (lastRange) {
+        this.selection.removeAllRanges();
+        this.selection.addRange(lastRange);
+      }
       this.translateWithVendor(vendorApi.name, langFrom, langTo);
     }
   }
 
-  handleTranslation(translation: Promise<Translation>, range = this.range) {
+  handleTranslation(translation: Promise<Translation>) {
+    var range = this.range;
     var promise = this.translation = translation.then(result => {
       this.hideIcon();
       if (this.translation !== promise) return;
@@ -308,12 +320,6 @@ class App extends React.Component<AppState, State> {
     if (changePosition) {
       this.setState({ position: position });
     }
-  }
-
-  restoreSelectionFromRange(range = this.range) {
-    if (!range) return;
-    this.selection.removeAllRanges();
-    this.selection.addRange(range);
   }
 
   @debounce(250)
