@@ -59,7 +59,7 @@ export class InputTranslation extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    setTimeout(this.textField.focus, 0);
+    setTimeout(this.textField.focus, 150);
   }
 
   @autobind()

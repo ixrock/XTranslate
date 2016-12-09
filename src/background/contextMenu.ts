@@ -4,10 +4,10 @@ import { vendors, vendorsList } from "../vendors";
 import { AppState } from '../store'
 import { Favorite } from "../components/favorites/favorites.types";
 import orderBy = require("lodash/orderBy");
-import { tabs, MessageType, MenuTranslateFavoritePayload, MenuTranslateVendorPayload } from "../extension";
+import { tabs, MessageType, MenuTranslateFavoritePayload, MenuTranslateVendorPayload, getManifest } from "../extension";
 
 export function updateContextMenu(state: AppState) {
-  var menuName = "XTranslate";
+  var menuName = getManifest().name;
   const contexts = ['selection'];
   chrome.contextMenus.removeAll();
 

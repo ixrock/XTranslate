@@ -114,13 +114,14 @@ export class Settings extends React.Component<Props, {}> {
             </div>
           </div>
 
-          <div className="support">
-            <p className="sub-title pv2">{__i18n("sub_header_support_developers")}</p>
-            <p className="pb1">{__i18n("support_developers_info_text")}</p>
-            <Checkbox label={__i18n("support_developers_checkbox")}
-                      checked={settings.allowAds}
-                      onChange={v => this.save({allowAds: v})}/>
-          </div>
+          {settings.allowAds ? (
+              <div className="support">
+                <p className="sub-title pv2">{__i18n("sub_header_support_developers")}</p>
+                <Checkbox label={__i18n("support_developers_checkbox")}
+                          checked={settings.allowAds}
+                          onChange={v => this.save({allowAds: v})}/>
+              </div>
+          ) : null}
         </div>
     );
   }

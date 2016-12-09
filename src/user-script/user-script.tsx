@@ -163,8 +163,7 @@ class App extends React.Component<AppState, State> {
       if (!text && canAllocateText) {
         range = document.createRange();
         range.selectNode(elem);
-        this.selection.removeAllRanges();
-        this.selection.addRange(range);
+        this.restoreSelectionFromRange(range);
         text = this.text;
 
         // if still no text try to grab some info from input placeholders or images
@@ -202,15 +201,15 @@ class App extends React.Component<AppState, State> {
 
   @autobind()
   onMouseUp(e: MouseEvent) {
+    var target = e.toElement as HTMLElement;
     if (this.settings.showPopupAfterSelection && this.text) {
-      var target = e.toElement as HTMLElement;
       if (target instanceof HTMLInputElement) return;
       if (target instanceof HTMLTextAreaElement) return;
       if (target.isContentEditable) return;
       return this.translateLazy();
     }
     if (this.settings.showIconNearSelection) {
-      if (this.isOutsideOfPopup(e.toElement)) this.showIcon();
+      if (this.isOutsideOfPopup(target)) this.showIcon();
     }
   }
 
@@ -236,10 +235,13 @@ class App extends React.Component<AppState, State> {
   }
 
   translateWithNextVendor(reverse = false) {
-    var currentVendor = this.state.translation.vendor;
+    var vendor = this.state.translation.vendor;
     var { langFrom, langTo } = this.settings;
-    var vendor = getNextVendor(currentVendor, langFrom, langTo, reverse);
-    if (vendor) this.translateWithVendor(vendor.name, langFrom, langTo);
+    var vendorApi = getNextVendor(vendor, langFrom, langTo, reverse);
+    if (vendorApi) {
+      this.restoreSelectionFromRange(this.state.range);
+      this.translateWithVendor(vendorApi.name, langFrom, langTo);
+    }
   }
 
   handleTranslation(translation: Promise<Translation>, range = this.range) {
@@ -308,6 +310,12 @@ class App extends React.Component<AppState, State> {
     }
   }
 
+  restoreSelectionFromRange(range = this.range) {
+    if (!range) return;
+    this.selection.removeAllRanges();
+    this.selection.addRange(range);
+  }
+
   @debounce(250)
   translateLazy() {
     this.translate();
@@ -341,7 +349,9 @@ class App extends React.Component<AppState, State> {
 
   hidePopup() {
     if (this.isHidden) return;
-    this.setState({ translation: null, error: null });
+    var range = this.state.range;
+    if (range) range.detach();
+    this.setState({ translation: null, error: null, range: null });
     if (this.text) this.selection.removeAllRanges();
   }
 

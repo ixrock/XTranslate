@@ -3,7 +3,7 @@ import orderBy = require("lodash/orderBy");
 
 export const defaultTheme: IThemeManagerState = {
   bgcMain: "#000",
-  bgcSecondary: { r: 98, g: 101, b: 101, a: .85 },
+  bgcSecondary: { r: 98, g: 101, b: 101, a: .95 },
   bgcLinear: true,
   fontSize: 15,
   fontFamily: "Lato",

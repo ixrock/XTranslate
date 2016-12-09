@@ -9,7 +9,7 @@ export const defaultSettings: ISettingsState = {
   showPopupAfterSelection: false,
   showPopupOnDoubleClick: true,
   showPopupOnHotkey: true,
-  allowAds: true,
+  allowAds: false,
   vendor: "google",
   langFrom: "auto",
   langTo: navigator.language.split('-')[0],

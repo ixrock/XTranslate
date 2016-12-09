@@ -2,7 +2,7 @@ require('./footer.scss');
 import * as React from 'react';
 import { autobind } from "core-decorators";
 import { prevDefault } from '../../utils'
-import { getManifest } from '../../extension'
+import { getManifest, __i18n } from '../../extension'
 import { LocaleMessage } from "../locale-message";
 
 interface ShareIcon {
@@ -12,12 +12,10 @@ interface ShareIcon {
 }
 
 export class Footer extends React.Component<any, any> {
-  public manifest = getManifest();
-  public shareText = this.manifest.name + " - " + this.manifest.description;
-
+  private manifest = getManifest();
   private readonly storeUrl = 'https://chrome.google.com/webstore/detail/gfgpkepllngchpmcippidfhmbhlljhoo';
-  private readonly donateLink = 'https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=NDM8RZ6PG5G6S&lc=US&item_name=XTranslate%20%28browser%20extension%29&item_number=2014&currency_code=EUR&bn=PP%2dDonationsBF%3abtn_donate_LG%2egif%3aNonHosted';
-  public shareTags = ["chrome", "extension", "translate", "languages", "education", "productivity"];
+  private readonly donateLink = `https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=NDM8RZ6PG5G6S&lc=US&item_name=${this.manifest.name}%20%28browser%20extension%29&item_number=2014&currency_code=EUR&bn=PP%2dDonationsBF%3abtn_donate_LG%2egif%3aNonHosted`;
+  public shareTags = ["chrome", "extension", "translator"];
   public shareIcons: ShareIcon[] = [
     {
       title: "VK.com",
@@ -37,7 +35,12 @@ export class Footer extends React.Component<any, any> {
     {
       title: "Twitter",
       icon: require('../icons/twitter.svg'),
-      url: `https://twitter.com/intent/tweet?source=webclient&url=${this.storeUrl}&text=${this.shareText}&hashtags=${this.shareTags.join(',')}`
+      url: [
+        `https://twitter.com/intent/tweet?source=webclient`,
+        `url=${this.storeUrl}`,
+        `text=${[this.manifest.name, __i18n("short_description")].join(' - ')}`,
+        `hashtags=${this.shareTags.join(',')}`
+      ].join("&")
     },
   ];
 

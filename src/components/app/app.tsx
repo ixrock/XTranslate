@@ -54,7 +54,7 @@ export class App extends React.Component<Props, {}> {
     return (
         <div className="App">
           <h4 className="page-title flex">
-            <span className="box grow">XTranslate <sup>{this.manifest.version}</sup></span>
+            <span className="box grow">{this.manifest.name} <sup>{this.manifest.version}</sup></span>
             <MaterialIcon name="open_in_new" title={__i18n("open_in_window")} onClick={this.openInWindow}/>
           </h4>
           <Tabs>

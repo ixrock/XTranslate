@@ -18,20 +18,22 @@ export class Support extends React.Component<Props, {}> {
   private button: Button;
 
   componentWillMount() {
-    var allowAds = this.props.settings.allowAds;
-    if (!allowAds && (!+adsDisabledTime() || adsDisabledTime() > Date.now())) {
-      adsDisabledTime(Date.now());
-    }
+    this.updateTimer();
   }
 
   componentWillReceiveProps(nextProps: Props) {
-    var allowAds = nextProps.settings.allowAds;
-    adsDisabledTime(!allowAds ? Date.now() : null);
+    this.updateTimer(nextProps.settings.allowAds);
   }
 
   componentDidMount() {
     if (this.dialog.state.open) {
       setTimeout(this.button.focus, 100);
+    }
+  }
+
+  updateTimer(allowAds = this.props.settings.allowAds, timer = Date.now(), forceUpdate = false) {
+    if (!allowAds && (!+adsDisabledTime() || forceUpdate)) {
+      adsDisabledTime(timer);
     }
   }
 
@@ -43,13 +45,15 @@ export class Support extends React.Component<Props, {}> {
 
   @autobind()
   close() {
-    adsDisabledTime(Date.now());
+    var timeOffset = 1000 * 60 * 60 * 24 * 14; // forget about notification for 2 weeks
+    this.updateTimer(false, Date.now() + timeOffset, true);
     this.dialog.close();
   }
 
   render() {
     var allowAds = this.props.settings.allowAds;
-    var show = !allowAds && adsDisabledTime() + (1000 * 60 * 60 * 24 * 14) < Date.now(); // every 2 weeks
+    var timeOffset = 1000 * 60 * 60 * 24 * 7; // first time check after one week
+    var show = !allowAds && adsDisabledTime() + timeOffset < Date.now();
     return (
         <Dialog className="Support" open={show} pinned ref={e => this.dialog = e}>
           <p className="mb1">{__i18n("support_dialog_greeting")}</p>
@@ -57,7 +61,8 @@ export class Support extends React.Component<Props, {}> {
           <p className="mv1">
             {__i18n("support_dialog_line_2")}{" "}
             {__i18n("support_dialog_line_3")}{" "}
-            {__i18n("support_dialog_line_4")}
+            {__i18n("support_dialog_line_4")}{" "}
+            {__i18n("support_dialog_line_5")}{" "}
           </p>
           <p className="mb2">
             <b>{__i18n("support_dialog_thanks")}</b>
