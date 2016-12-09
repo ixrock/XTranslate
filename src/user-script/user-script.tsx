@@ -6,7 +6,7 @@ import { autobind, debounce } from "core-decorators";
 import { render } from 'react-dom'
 import { isProduction } from '../env'
 import { connect, onMessage, MessageType, Message, getURL } from '../extension'
-import { MenuTranslateFavoritePayload, MenuTranslateVendorPayload } from '../extension'
+import { MenuTranslateFavoritePayload, MenuTranslateVendorPayload, getManifest } from '../extension'
 import { AppState } from '../store/store.types'
 import { Popup } from "../components/popup/popup";
 import { vendors, Translation, TranslationError, getNextVendor } from "../vendors";
@@ -31,6 +31,7 @@ interface Position {
 }
 
 class App extends React.Component<AppState, State> {
+  public appName = getManifest().name;
   public state: State = {};
   private style = getURL('injector.css');
   private pointerElem: Element;
@@ -99,11 +100,13 @@ class App extends React.Component<AppState, State> {
 
     var clientRects = Array.from(this.range.getClientRects());
     if (clientRects.length) {
+      var { langFrom, langTo } = this.settings;
       var rect = this.normalizeRect(anchorOffset < focusOffset ? clientRects.pop() : clientRects.shift());
       var isLeftTop = anchorOffset > focusOffset;
       this.icon.classList.toggle('isLeftTop', isLeftTop);
       this.icon.style.left = (isLeftTop ? rect.left : rect.right) + "px";
       this.icon.style.top = (isLeftTop ? rect.top : rect.bottom) + "px";
+      this.icon.title = `${this.appName} (${[langFrom, langTo].join(' → ').toUpperCase()})`;
       document.body.appendChild(this.icon);
       this.iconShown = true;
     }
@@ -129,7 +132,7 @@ class App extends React.Component<AppState, State> {
 
   @autobind()
   @debounce(50)
-  onWindowResize(e){
+  onWindowResize(e) {
     if (this.isHidden) return;
     this.setState({ position: this.getPosition() }, this.refinePosition);
   }
