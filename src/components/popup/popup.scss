@@ -17,6 +17,9 @@
       border: 1px solid;
       border-radius: $scrollSize / 2;
     }
+    &::-webkit-scrollbar-corner {
+      background: none;
+    }
   }
 
   .play-icon {

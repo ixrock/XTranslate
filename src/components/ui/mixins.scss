@@ -21,6 +21,6 @@
     border-radius: $scrollBarSize;
   }
   &::-webkit-scrollbar-corner {
-    background-color: transparent;
+    background: none;
   }
 }
