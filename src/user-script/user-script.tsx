@@ -71,6 +71,7 @@ class App extends React.Component<AppState, State> {
     document.addEventListener("dblclick", this.onDoubleClick);
     document.addEventListener("keydown", this.onKeyDown);
     document.addEventListener("selectionchange", this.onSelectionChange);
+    window.addEventListener("resize", this.onWindowResize);
   }
 
   initIcon() {
@@ -124,6 +125,13 @@ class App extends React.Component<AppState, State> {
       right: left + width,
       bottom: top + height,
     };
+  }
+
+  @autobind()
+  @debounce(50)
+  onWindowResize(e){
+    if (this.isHidden) return;
+    this.setState({ position: this.getPosition() }, this.refinePosition);
   }
 
   @autobind()
@@ -302,6 +310,7 @@ class App extends React.Component<AppState, State> {
     };
   }
 
+  @autobind()
   refinePosition() {
     var viewPort = {
       width: document.documentElement.clientWidth,
