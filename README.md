@@ -33,7 +33,10 @@ press hotkey (title or alt attributes will be used, if applicable).
 
 7) History of translation (*coming soon*)
 
-<img src="https://camo.githubusercontent.com/998315e0a47dc0ede541e23916ad902f2f6889e9/68747470733a2f2f646c2e64726f70626f7875736572636f6e74656e742e636f6d2f752f36313430353737332f787472616e736c6174652f556e7469746c65642d342e6a7067">
+Installation from extensions web store:
+-----------
+* [Chrome](chrome.google.com/webstore/detail/xtranslate/gfgpkepllngchpmcippidfhmbhlljhoo)
+* [Opera](http://addons.opera.com/en/extensions/details/xtranslate/)
 
 Available translation vendors:
 -----------
