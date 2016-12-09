@@ -35,8 +35,8 @@ press hotkey (title or alt attributes will be used, if applicable).
 
 Installation from extensions web store:
 -----------
-* [Chrome](chrome.google.com/webstore/detail/xtranslate/gfgpkepllngchpmcippidfhmbhlljhoo)
-* [Opera](http://addons.opera.com/en/extensions/details/xtranslate/)
+* [Chrome](https://chrome.google.com/webstore/detail/xtranslate/gfgpkepllngchpmcippidfhmbhlljhoo)
+* [Opera](https://addons.opera.com/en/extensions/details/xtranslate/)
 
 Available translation vendors:
 -----------
