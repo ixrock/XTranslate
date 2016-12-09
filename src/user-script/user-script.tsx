@@ -189,6 +189,7 @@ class App extends React.Component<AppState, State> {
 
   @autobind()
   onDoubleClick(e: MouseEvent) {
+    if (this.isEditable(e.toElement as HTMLElement)) return;
     this.hideIcon();
     if (this.settings.showPopupAfterSelection) return;
     if (!this.settings.showPopupOnDoubleClick || !this.text) return;
@@ -210,14 +211,18 @@ class App extends React.Component<AppState, State> {
   onMouseUp(e: MouseEvent) {
     var target = e.toElement as HTMLElement;
     if (this.settings.showPopupAfterSelection && this.text) {
-      if (target instanceof HTMLInputElement) return;
-      if (target instanceof HTMLTextAreaElement) return;
-      if (target.isContentEditable) return;
+      if (this.isEditable(target)) return;
       return this.translateLazy();
     }
     if (this.settings.showIconNearSelection) {
       if (this.isOutsideOfPopup(target)) this.showIcon();
     }
+  }
+
+  isEditable(elem: HTMLElement) {
+    return elem instanceof HTMLInputElement
+        || elem instanceof HTMLTextAreaElement
+        || elem.isContentEditable;
   }
 
   isOutsideOfPopup(elem) {
