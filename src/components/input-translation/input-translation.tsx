@@ -308,7 +308,7 @@ export class InputTranslation extends React.Component<Props, State> {
           {this.renderFavorites()}
           <TextField
               placeholder={__i18n("text_field_placeholder")}
-              autoFocus multiLine rows={2} maxLength={10000}
+              autoFocus multiLine rows={2} maxLength={this.vendor.maxTextInputLength}
               onChange={v => this.onTextChange(v)}
               ref={e => this.textField = e}/>
           {loading ? <Spinner center/> : (error ? this.renderError() : this.renderResult())}

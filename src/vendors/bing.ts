@@ -6,6 +6,7 @@ class Bing extends Vendor {
   public title = 'Bing';
   public url = 'https://www.bing.com/translator';
   public publicUrl = this.url;
+  public maxTextInputLength = 5000;
 
   refreshCookie() {
     console.log('refreshing cookies..');

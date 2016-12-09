@@ -6,6 +6,7 @@ export abstract class Vendor {
   public abstract title: string;
   public abstract url: string;
   public abstract publicUrl: string;
+  public maxTextInputLength = Number.MAX_SAFE_INTEGER;
   protected autoSwap = false;
   public lastResult: Translation;
   public lastError: {message?: string};

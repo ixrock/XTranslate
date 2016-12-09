@@ -241,17 +241,13 @@ class App extends React.Component<AppState, State> {
   }
 
   translate(text = this.text) {
-    if (!text) return;
     var { vendor, langFrom, langTo } = this.settings;
-    var vendorApi = vendors[vendor];
-    var translation = vendorApi.getTranslation(langFrom, langTo, text);
-    this.handleTranslation(translation);
+    this.translateWith(vendor, langFrom, langTo, text);
   }
 
-  translateWithVendor(vendor: string, from = this.settings.langFrom, to = this.settings.langTo) {
-    var text = this.text;
-    var vendorApi = vendors[vendor];
-    if (text && vendorApi) {
+  translateWith(vendorName: string, from = this.settings.langFrom, to = this.settings.langTo, text = this.text) {
+    var vendorApi = vendors[vendorName];
+    if (text && text.length <= vendorApi.maxTextInputLength) {
       var translation = vendorApi.getTranslation(from, to, text);
       this.handleTranslation(translation);
     }
@@ -267,7 +263,7 @@ class App extends React.Component<AppState, State> {
         this.selection.removeAllRanges();
         this.selection.addRange(lastRange);
       }
-      this.translateWithVendor(vendorApi.name, langFrom, langTo);
+      this.translateWith(vendorApi.name, langFrom, langTo);
     }
   }
 
@@ -423,10 +419,10 @@ onMessage(function (message) {
   }
   if (type === MessageType.MENU_TRANSLATE_VENDOR) {
     let payload = message.payload as MenuTranslateVendorPayload;
-    app.translateWithVendor(payload.vendor);
+    app.translateWith(payload.vendor);
   }
   if (type === MessageType.MENU_TRANSLATE_FAVORITE) {
     let payload = message.payload as MenuTranslateFavoritePayload;
-    app.translateWithVendor(payload.vendor, payload.from, payload.to);
+    app.translateWith(payload.vendor, payload.from, payload.to);
   }
 });
