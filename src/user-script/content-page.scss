@@ -10,6 +10,8 @@ $md-icons-font-path: "chrome-extension://__MSG_@@extension_id__/fonts/";
 
   &-icon {
     all: initial;
+
+    $iconSize: 24px;
     $md-icons-parent-selector: '&';
     @import "../components/ui/icons/material-icon";
 
@@ -21,6 +23,8 @@ $md-icons-font-path: "chrome-extension://__MSG_@@extension_id__/fonts/";
     border: 1px dotted;
     color: black;
     background: white;
+    width: $iconSize;
+    height: $iconSize;
 
     &.isLeftTop {
       transform: translate(-100%, -100%);
