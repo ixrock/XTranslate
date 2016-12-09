@@ -8,10 +8,10 @@ put text in the extension's drop-down window.
 
 Features:
 -----------
-1) Many ways to get translation of text from the page:
+1) There are many ways of getting translation from texts the page:
 - double-click on the word
 
-select text and get immediate translation after one of:
+select some text and get immediate translation and do:
 - press hotkey defined in extension settings (**alt+x** by default)
 - click on the translate icon appeared near selected text
 - just release mouse button (turned off by default)
@@ -20,20 +20,22 @@ select text and get immediate translation after one of:
 
 You can get even some information from images by putting mouse cursor over the image element and 
 press hotkey (title or alt attributes will be used, if applicable).
+Even more, with this feature is possible to get auto-selection of text from element under mouse cursor.
+Just move the pointer to element on the page and press hotkey!
 
 2) Listen text-to-speech for all supported translation vendors
 
-3) Adjust your unique design of the popup with translated text
+3) Create your unique design (theme) for the popup with translation
 
-4) Customize the ways of getting translations and other options in the settings
+4) Customize ways of getting translation and other options in the settings
 
-5) Type any text in extension's window and get translation of sentences or words with dictionary support
+5) Insert any text in the extension's drop-down window and get translation of sentences or words with dictionary support
 
-6) Save favorite translation directions with specific translation service as bookmarks for quick access
+6) Save your favorite language directions with specific vendor as bookmarks for quick access
 
-7) History of translation (*coming soon*)
+7) View and edit history of translations (*coming soon*)
 
-Installation from extensions web store:
+Install extension from web store:
 -----------
 * [Chrome](https://chrome.google.com/webstore/detail/xtranslate/gfgpkepllngchpmcippidfhmbhlljhoo)
 * [Opera](https://addons.opera.com/en/extensions/details/xtranslate/)
