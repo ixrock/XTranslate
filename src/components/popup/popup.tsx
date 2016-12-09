@@ -2,6 +2,7 @@ require('./popup.scss');
 import * as React from 'react';
 import * as WebFont from 'webfontloader'
 import { autobind } from "core-decorators";
+import { cssNames } from "../../utils/cssNames";
 import { __i18n } from "../../extension/i18n";
 import { cssColor } from "../ui/color-picker/cssColor";
 import { MaterialIcon } from '../ui/icons/material-icon'
@@ -169,11 +170,12 @@ export class Popup extends React.Component<Props, State> {
   }
 
   render() {
-    var { error, position } = this.props;
+    var { translation, error, position } = this.props;
     var { cssThemeStyle } = this.state;
     var style = Object.assign({}, cssThemeStyle, position);
+    var className = cssNames('Popup', { visible: translation || error });
     return (
-        <div className='Popup' style={style} tabIndex={-1} ref={e => this.elem = e}>
+        <div className={className} style={style} tabIndex={-1} ref={e => this.elem = e}>
           {error ? this.renderError() : this.renderResult()}
         </div>
     );

@@ -1,9 +1,14 @@
 .Popup {
   position: relative;
   padding: .6em;
+  visibility: hidden;
+  transition: opacity 100ms ease-out;
+  opacity: 0;
 
-  &:empty {
-    display: none;
+  &.visible {
+    opacity: 1;
+    visibility: visible;
+    transition-delay: 100ms;
   }
 
   > * {
