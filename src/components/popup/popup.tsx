@@ -134,7 +134,7 @@ export class Popup extends React.Component<Props, State> {
             ) : null}
             <div className="translation" title={title}>
               <span>{translation}</span>
-              {transcription ? <i className="transcription">[{transcription}]</i> : null}
+              {transcription ? <i className="transcription">{" "}[{transcription}]</i> : null}
             </div>
           </div>
           {dictionary.map((dict, i) =>

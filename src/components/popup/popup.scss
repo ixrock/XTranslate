@@ -1,6 +1,8 @@
 .Popup {
+  $spacing: .6em;
+
   position: relative;
-  padding: .6em;
+  padding: $spacing;
   visibility: hidden;
   opacity: 0;
   transition: opacity 100ms ease-out;
@@ -42,7 +44,12 @@
     .translation {
       padding: 2px 0;
     }
+    .transcription {
+      opacity: .75;
+      font-style: normal;
+    }
     .dictionary {
+      margin-top: $spacing /2;
       .word-type {
         font-weight: bold;
       }
