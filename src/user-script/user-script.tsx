@@ -88,7 +88,9 @@ class App extends React.Component<AppState, State> {
 
   showIcon() {
     var s = this.selection;
-    if (!s.rangeCount || !this.text) return;
+    var text = this.text;
+    var vendor = vendors[this.props.settings.vendor];
+    if (!s.rangeCount || !text || text.length > vendor.maxTextInputLength) return;
     var focusOffset = s.focusOffset;
     var anchorOffset = s.anchorOffset;
 
@@ -155,10 +157,16 @@ class App extends React.Component<AppState, State> {
         this.hidePopup();
         break;
       case 37: // ArrowLeft
-        if (canRotateVendor) this.translateWithNextVendor(true);
+        if (canRotateVendor) {
+          this.translateWithNextVendor(true);
+          e.preventDefault();
+        }
         break;
       case 39: // ArrowRight
-        if (canRotateVendor) this.translateWithNextVendor();
+        if (canRotateVendor) {
+          this.translateWithNextVendor();
+          e.preventDefault();
+        }
         break;
     }
     if (!this.settings.showPopupOnHotkey) return;

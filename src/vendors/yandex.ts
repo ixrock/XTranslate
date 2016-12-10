@@ -7,7 +7,7 @@ class Yandex extends Vendor {
   public title = 'Yandex';
   public url = 'https://translate.yandex.net';
   public publicUrl = 'https://translate.yandex.com';
-  public maxTextInputLength = 10000;
+  public maxTextInputLength = 5000;
   public ttsFormat = 'audio/wav';
   private apiKey = '';
 
