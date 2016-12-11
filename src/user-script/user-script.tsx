@@ -60,7 +60,7 @@ class App extends React.Component<{}, State> {
   }
 
   get popupHost() {
-    return placeholder.querySelector('.popup-content') as HTMLElement;
+    return appContainer.querySelector('.popup-content') as HTMLElement;
   }
 
   get isFocused() {
@@ -134,7 +134,7 @@ class App extends React.Component<{}, State> {
       this.icon.style.left = (isLeftTop ? rect.left : rect.right) + "px";
       this.icon.style.top = (isLeftTop ? rect.top : rect.bottom) + "px";
       this.icon.title = `${this.appName} (${[langFrom, langTo].join(' → ').toUpperCase()})`;
-      document.body.appendChild(this.icon);
+      appContainer.appendChild(this.icon);
       this.iconShown = true;
     }
   }
@@ -161,7 +161,7 @@ class App extends React.Component<{}, State> {
   @debounce(50)
   onWindowResize(e) {
     if (this.isHidden) return;
-    this.setState({ position: this.getPosition() }, this.refinePosition);
+    this.refreshPosition();
   }
 
   @autobind()
@@ -343,6 +343,12 @@ class App extends React.Component<{}, State> {
   }
 
   @autobind()
+  refreshPosition() {
+    var position = this.getPosition();
+    this.setState({ position }, this.refinePosition);
+  }
+
+  @autobind()
   refinePosition() {
     var viewPort = {
       width: document.documentElement.clientWidth,
@@ -420,7 +426,6 @@ class App extends React.Component<{}, State> {
 }
 
 // init app
-var placeholder = document.createElement('div');
-placeholder.className = "XTranslate";
-document.body.appendChild(placeholder);
-render(<App/>, placeholder);
+var appContainer = document.createElement('XTranslate');
+document.body.insertBefore(appContainer, document.body.firstChild);
+render(<App/>, appContainer);
