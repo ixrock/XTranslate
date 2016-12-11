@@ -233,9 +233,9 @@ class App extends React.Component<{}, State> {
   @autobind()
   onDoubleClick(e: MouseEvent) {
     if (this.isEditable(e.toElement as HTMLElement)) return;
-    this.hideIcon();
     if (this.settings.showPopupAfterSelection) return;
     if (!this.settings.showPopupOnDoubleClick || !this.text) return;
+    this.hideIcon();
     this.translate();
   }
 
