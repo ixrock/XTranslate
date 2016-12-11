@@ -428,5 +428,5 @@ class App extends React.Component<{}, State> {
 // init app
 const appContainer = document.createElement("div");
 appContainer.className = "XTranslate";
-document.body.appendChild(appContainer);
+document.body.insertBefore(appContainer, document.body.firstChild);
 render(<App/>, appContainer);
