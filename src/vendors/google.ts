@@ -6,7 +6,7 @@ class Google extends Vendor {
   public title = 'Google';
   public url = 'https://translate.googleapis.com';
   public publicUrl = 'https://translate.google.com';
-  public maxTextInputLength = 1450;
+  public maxTextInputLength = 1250;
 
   getAudioUrl(lang, text) {
     return this.url + `/translate_tts?client=gtx&ie=UTF-8&tl=${lang}&q=${text}`;

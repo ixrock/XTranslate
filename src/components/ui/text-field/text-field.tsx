@@ -78,14 +78,20 @@ export class TextField extends React.Component<Props, State> {
   }
 
   setValue(value, silent = false) {
-    if (this.maxLengthReached || this.value === value) return;
+    if (this.value === value) return;
     if ("number" === this.props.type) {
       value = (this.input as HTMLInputElement).valueAsNumber || 0;
       if (!(value >= this.props.min && value <= this.props.max)) return;
     }
-    this.autoFitHeight();
-    this.setState({ value }, this.validate);
-    if (!silent) this.props.onChange(value);
+    var maxLength = this.props.maxLength;
+    if (maxLength && typeof value === 'string') value = value.substr(0, maxLength);
+    this.setState({ value }, () => {
+      this.autoFitHeight();
+      this.validate();
+    });
+    if (!silent) {
+      this.props.onChange(value);
+    }
   }
 
   get valid() {
@@ -191,12 +197,6 @@ export class TextField extends React.Component<Props, State> {
 
   setPristine() {
     this.setState({ dirty: false }, this.validate);
-  }
-
-  get maxLengthReached() {
-    var maxLength = this.props.maxLength;
-    if (!maxLength) return false;
-    return this.input.value.length > maxLength;
   }
 
   private autoFitHeight() {
