@@ -32,7 +32,6 @@ interface Position {
 }
 
 class App extends React.Component<{}, State> {
-  public appName = getManifest().name;
   public state: State = {};
   private port = connect();
   private style = getURL('injector.css');
@@ -133,7 +132,7 @@ class App extends React.Component<{}, State> {
       this.icon.classList.toggle('isLeftTop', isLeftTop);
       this.icon.style.left = (isLeftTop ? rect.left : rect.right) + "px";
       this.icon.style.top = (isLeftTop ? rect.top : rect.bottom) + "px";
-      this.icon.title = `${this.appName} (${[langFrom, langTo].join(' → ').toUpperCase()})`;
+      this.icon.title = `${appName} (${[langFrom, langTo].join(' → ').toUpperCase()})`;
       appContainer.appendChild(this.icon);
       this.iconShown = true;
     }
@@ -426,6 +425,7 @@ class App extends React.Component<{}, State> {
 }
 
 // init app
-var appContainer = document.createElement('XTranslate');
+const appName = getManifest().name;
+const appContainer = document.createElement(appName);
 document.body.insertBefore(appContainer, document.body.firstChild);
 render(<App/>, appContainer);

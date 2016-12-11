@@ -1,6 +1,6 @@
 {
   "name": "xtranslate",
-  "version": "2.0.2",
+  "version": "2.0.0",
   "scripts": {
     "dev": "webpack -w",
     "build": "webpack -p --progress --env.prod"
