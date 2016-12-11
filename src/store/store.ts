@@ -27,7 +27,7 @@ function syncState() {
   if (!isEqual(appState, state)) {
     appState = cloneDeep(state);
     broadcastMessage({
-      type: MessageType.APP_STATE_SYNC,
+      type: MessageType.APP_STATE,
       payload: appState
     });
   }

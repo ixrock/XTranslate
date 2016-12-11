@@ -12,7 +12,7 @@ getStore().then(store => {
   updateContextMenu(appState);
 });
 
-// send current app state to content page on request
+// send current app state to content page on connect
 onConnect(port => {
   port.postMessage({
     type: MessageType.APP_STATE,
@@ -22,7 +22,7 @@ onConnect(port => {
 
 // update app state from options page event
 onMessage(function (message) {
-  if (message.type === MessageType.APP_STATE_SYNC) {
+  if (message.type === MessageType.APP_STATE) {
     var state: AppState = message.payload;
     var showMenuChange = appState.settings.showContextMenu !== state.settings.showContextMenu;
     var favoritesChange = !isEqual(appState.favorites, state.favorites);

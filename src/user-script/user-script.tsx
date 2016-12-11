@@ -16,12 +16,12 @@ const ReactShadow = require("react-shadow").default;
 import isEqual = require("lodash/isEqual");
 
 interface State {
+  appState?: AppState
   translation?: Translation
   error?: TranslationError
   range?: Range
   position?: Position
   customFont?: string
-  adsInjected?: boolean
 }
 
 interface Position {
@@ -31,9 +31,10 @@ interface Position {
   bottom?: number
 }
 
-class App extends React.Component<AppState, State> {
+class App extends React.Component<{}, State> {
   public appName = getManifest().name;
   public state: State = {};
+  private port = connect();
   private style = getURL('injector.css');
   private pointerElem: Element;
   private icon: HTMLElement;
@@ -43,11 +44,11 @@ class App extends React.Component<AppState, State> {
   private popup: Popup;
 
   get settings() {
-    return this.props.settings;
+    return this.state.appState.settings;
   }
 
   get theme() {
-    return this.props.theme;
+    return this.state.appState.theme;
   }
 
   get text() {
@@ -67,6 +68,9 @@ class App extends React.Component<AppState, State> {
   }
 
   bindEvents() {
+    this.port.onMessage.addListener(this.onAppState);
+    onMessage(this.onAppState);
+    onMessage(this.onMenuClick);
     document.addEventListener("mouseover", this.onMouseOver);
     document.addEventListener("mouseup", this.onMouseUp);
     document.addEventListener("mousedown", this.onMouseDown);
@@ -74,6 +78,26 @@ class App extends React.Component<AppState, State> {
     document.addEventListener("keydown", this.onKeyDown);
     document.addEventListener("selectionchange", this.onSelectionChange);
     window.addEventListener("resize", this.onWindowResize);
+  }
+
+  @autobind()
+  onAppState(message: Message) {
+    if (message.type === MessageType.APP_STATE) {
+      this.setState({ appState: message.payload });
+    }
+  }
+
+  @autobind()
+  onMenuClick(message: Message) {
+    var { type } = message;
+    if (type === MessageType.MENU_TRANSLATE_VENDOR) {
+      let payload = message.payload as MenuTranslateVendorPayload;
+      this.translateWith(payload.vendor);
+    }
+    if (type === MessageType.MENU_TRANSLATE_FAVORITE) {
+      let payload = message.payload as MenuTranslateFavoritePayload;
+      this.translateWith(payload.vendor, payload.from, payload.to);
+    }
   }
 
   initIcon() {
@@ -90,7 +114,7 @@ class App extends React.Component<AppState, State> {
   showIcon() {
     var s = this.selection;
     var text = this.text;
-    var vendor = vendors[this.props.settings.vendor];
+    var vendor = vendors[this.settings.vendor];
     if (!s.rangeCount || !text || text.length > vendor.maxTextInputLength) return;
     var focusOffset = s.focusOffset;
     var anchorOffset = s.anchorOffset;
@@ -349,30 +373,22 @@ class App extends React.Component<AppState, State> {
     this.translate();
   }
 
-  loadWebFont(fontFamily: string) {
+  componentWillMount() {
+    this.initIcon();
+    this.bindEvents();
+  }
+
+  componentWillUpdate(nextProps, { appState }: State) {
+    if (!appState || this.state.appState === appState) return;
+    var fontFamily = appState.theme.fontFamily;
     if (this.state.customFont !== fontFamily) {
       loadFonts(fontFamily);
       this.setState({ customFont: fontFamily });
     }
-  }
-
-  injectAds(allowed: boolean) {
-    if (allowed && isProduction && !this.state.adsInjected) {
-      this.setState({ adsInjected: true });
+    var allowAds = appState.settings.allowAds;
+    if (allowAds && isProduction) {
       require('./context-ads');
     }
-  }
-
-  componentWillMount() {
-    this.initIcon();
-    this.bindEvents();
-    this.loadWebFont(this.theme.fontFamily);
-    this.injectAds(this.settings.allowAds);
-  }
-
-  componentWillReceiveProps(nextProps: AppState) {
-    this.loadWebFont(nextProps.theme.fontFamily);
-    this.injectAds(nextProps.settings.allowAds);
   }
 
   hidePopup() {
@@ -390,6 +406,7 @@ class App extends React.Component<AppState, State> {
 
   render() {
     var { translation, error, position } = this.state;
+    if (!this.state.appState) return null;
     return (
         <ReactShadow include={[this.style]}>
           <div className="popup-content">
@@ -402,36 +419,8 @@ class App extends React.Component<AppState, State> {
   }
 }
 
-var app: App;
-const renderApp = (state: AppState) => render(<App {...state} ref={e => app = e}/>, placeholder);
-
-// create placeholder to render app
+// init app
 var placeholder = document.createElement('div');
 placeholder.className = "XTranslate";
 document.body.appendChild(placeholder);
-
-// connect to background process and get current app state
-const port = connect();
-port.onMessage.addListener(function (message: Message) {
-  switch (message.type) {
-    case MessageType.APP_STATE:
-      renderApp(message.payload);
-      break;
-  }
-});
-
-// update app state and handle menu clicks from options page messages
-onMessage(function (message) {
-  var { type } = message;
-  if (type === MessageType.APP_STATE_SYNC) {
-    renderApp(message.payload);
-  }
-  if (type === MessageType.MENU_TRANSLATE_VENDOR) {
-    let payload = message.payload as MenuTranslateVendorPayload;
-    app.translateWith(payload.vendor);
-  }
-  if (type === MessageType.MENU_TRANSLATE_FAVORITE) {
-    let payload = message.payload as MenuTranslateFavoritePayload;
-    app.translateWith(payload.vendor, payload.from, payload.to);
-  }
-});
+render(<App/>, placeholder);
