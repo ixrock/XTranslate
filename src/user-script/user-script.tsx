@@ -7,6 +7,7 @@ import { render } from 'react-dom'
 import { isProduction } from '../env'
 import { connect, onMessage, MessageType, Message, getURL } from '../extension'
 import { MenuTranslateFavoritePayload, MenuTranslateVendorPayload, getManifest } from '../extension'
+import { loadFonts } from "../components/theme-manager/fonts-loader";
 import { AppState } from '../store/store.types'
 import { Popup } from "../components/popup/popup";
 import { vendors, Translation, TranslationError, getNextVendor } from "../vendors";
@@ -350,8 +351,8 @@ class App extends React.Component<AppState, State> {
 
   loadWebFont(fontFamily: string) {
     if (this.state.customFont !== fontFamily) {
+      loadFonts(fontFamily);
       this.setState({ customFont: fontFamily });
-      Popup.loadWebFont(fontFamily);
     }
   }
 

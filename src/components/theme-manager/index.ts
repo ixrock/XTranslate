@@ -1,3 +1,4 @@
+export * from './fonts-loader'
 export * from './theme-manager.types'
 export * from './theme-manager.default'
 export * from './theme-manager.reducer'

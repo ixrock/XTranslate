@@ -25,9 +25,3 @@ export interface Theme {
   boxShadowColor?: ColorValue,
   boxShadowInner?: boolean,
 }
-
-export interface Font {
-  font: string
-  family?: string
-  loadParams?: string[]
-}

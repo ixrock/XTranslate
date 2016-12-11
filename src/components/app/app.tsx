@@ -8,7 +8,7 @@ import { connect } from "../../store/connect";
 import { Spinner, Tabs, Tab, MaterialIcon } from '../ui'
 import { getURL, getManifest, __i18n } from "../../extension";
 import { Settings, ISettingsState } from '../settings'
-import { ThemeManager } from '../theme-manager'
+import { ThemeManager, loadFonts } from '../theme-manager'
 import { InputTranslation } from '../input-translation'
 import { UserHistory } from '../user-history'
 import { Support } from './support'
@@ -79,14 +79,17 @@ export class App extends React.Component<Props, {}> {
   }
 }
 
-// show loading indicator
+// load base fonts for the page
+loadFonts(['Lato', 'Roboto']);
+
+// show loading indicator while getting app state from the storage
 var loading: Spinner;
 render(
     <Spinner singleColor={false} ref={e => loading = e}/>,
     document.getElementById('loading')
 );
 
-// initialize app
+// init app when everything ready to start
 var appContainer = document.getElementById('app');
 getStore().then(store => {
   render(<Provider store={store}><App/></Provider>, appContainer);

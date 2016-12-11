@@ -1,12 +1,11 @@
 require('./popup.scss');
 import * as React from 'react';
-import * as WebFont from 'webfontloader'
 import { autobind } from "core-decorators";
 import { __i18n } from "../../extension/i18n";
 import { cssColor } from "../ui/color-picker/cssColor";
 import { MaterialIcon } from '../ui/icons/material-icon'
 import { Theme } from '../theme-manager/theme-manager.types'
-import { fontsList } from '../theme-manager/theme-manager.default'
+import { fontsList, loadFonts } from '../theme-manager/fonts-loader'
 import { vendors, Translation, TranslationError } from "../../vendors";
 import omit = require("lodash/omit");
 import find = require("lodash/find");
@@ -44,22 +43,9 @@ export class Popup extends React.Component<Props, State> {
     this.elem.focus();
   }
 
-  static loadWebFont(fontFamily: string) {
-    var font = fontsList.filter(font => font.font === fontFamily)[0];
-    if (!font) return;
-    var { loadParams } = font;
-    if (loadParams) {
-      WebFont.load({
-        google: {
-          families: [[fontFamily].concat(loadParams).join(':')]
-        }
-      });
-    }
-  }
-
   applyTheme(theme = this.props.theme) {
     if (!theme) return;
-    Popup.loadWebFont(theme.fontFamily);
+    loadFonts(theme.fontFamily);
     var font = fontsList.filter(font => font.font === theme.fontFamily)[0];
     var cssTheme = {
       background: cssColor(theme.bgcMain),

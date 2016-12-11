@@ -1,4 +1,4 @@
-import { IThemeManagerState, Font } from './theme-manager.types'
+import { IThemeManagerState } from './theme-manager.types'
 import orderBy = require("lodash/orderBy");
 
 export const defaultTheme: IThemeManagerState = {
@@ -24,20 +24,3 @@ export const defaultTheme: IThemeManagerState = {
   boxShadowColor: { r: 102, g: 102, b: 102, a: .5 },
   boxShadowInner: false,
 };
-
-var fonts: Font[] = [
-  { font: "Arial" },
-  { font: "Tahoma" },
-  { font: "Verdana" },
-  { font: "Helvetica Neue" },
-  { font: "Times New Roman" },
-  { font: "Roboto", family: "sans-serif", loadParams: ["400,700:cyrillic,cyrillic-ext,latin-ext"] },
-  { font: "Lato", family: "sans-serif", loadParams: ["400,700:latin-ext"] },
-  { font: "Open Sans", family: "sans-serif", loadParams: ["400,700:cyrillic,cyrillic-ext,latin-ext"] },
-  { font: "Noto Sans", family: "sans-serif", loadParams: ["400,700:cyrillic,cyrillic-ext,latin-ext"] },
-  { font: "Raleway", family: "sans-serif", loadParams: ["400,700:latin-ext"] },
-  { font: "Lobster", family: "cursive", loadParams: ["cyrillic,latin-ext"] },
-  { font: "Poiret One", family: "cursive", loadParams: ["cyrillic,latin-ext"] },
-];
-
-export const fontsList = orderBy(fonts, 'family') as Font[];
