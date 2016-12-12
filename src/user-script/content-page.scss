@@ -2,7 +2,7 @@ $md-icons-font-path: "chrome-extension://__MSG_@@extension_id__/fonts/";
 @import "../components/ui/icons/material-icon.font";
 
 .XTranslate {
-  all: initial !important;
+  all: initial;
   position: absolute;
   width: 100%;
   left: 0;
@@ -20,7 +20,7 @@ $md-icons-font-path: "chrome-extension://__MSG_@@extension_id__/fonts/";
     cursor: pointer;
     border-radius: 50%;
     z-index: 100000;
-    border: 1px dotted;
+    border: 1px solid;
     color: black;
     background: white;
     width: $iconSize;
