@@ -1,30 +1,50 @@
-// Add context menu on text selection
+// Context menu item
 
 import { vendors, vendorsList } from "../vendors";
 import { AppState } from '../store'
 import { Favorite } from "../components/favorites/favorites.types";
 import orderBy = require("lodash/orderBy");
-import { tabs, MessageType, MenuTranslateFavoritePayload, MenuTranslateVendorPayload, getManifest } from "../extension";
+import { tabs, getManifest, __i18n } from "../extension";
+import { MessageType, MenuTranslateFavoritePayload, MenuTranslateVendorPayload } from "../extension";
 
+// create, update or hide context menu regarding to app's settings
 export function updateContextMenu(state: AppState) {
   var menuName = getManifest().name;
-  const contexts = ['selection'];
+  const selectionContext = ['selection'];
+  const pageContext = selectionContext.concat('page');
   chrome.contextMenus.removeAll();
 
   if (state.settings.showContextMenu) {
     var topMenu = chrome.contextMenus.create({
       id: menuName,
       title: menuName,
-      contexts: contexts,
+      contexts: pageContext,
+    });
+
+    // translate active page in new tab
+    vendorsList.forEach(vendor => {
+      chrome.contextMenus.create({
+        id: [MessageType.MENU_TRANSLATE_FULL_PAGE, vendor.name].join("-"),
+        title: __i18n("context_menu_translate_full_page", [vendor.title]).join(""),
+        parentId: topMenu,
+        contexts: pageContext,
+      });
+    });
+
+    chrome.contextMenus.create({
+      id: Math.random().toString(),
+      parentId: topMenu,
+      type: "separator",
+      contexts: selectionContext,
     });
 
     // translate with current language set from settings
     vendorsList.forEach(vendor => {
       chrome.contextMenus.create({
-        id: [MessageType.MENU_TRANSLATE_VENDOR, vendor.name].join("-"),
-        title: `Translate with ${vendor.title}`,
+        id: [MessageType.MENU_TRANSLATE_WITH_VENDOR, vendor.name].join("-"),
+        title: __i18n("context_menu_translate_selection", ['"%s"', vendor.title]).join(""),
         parentId: topMenu,
-        contexts: contexts,
+        contexts: selectionContext,
       });
     });
 
@@ -32,12 +52,11 @@ export function updateContextMenu(state: AppState) {
     var favorites = state.favorites;
     var favCount = Object.keys(favorites).reduce((count, vendor) => count + favorites[vendor].length, 0);
     if (favCount) {
-      const { langFrom, langTo } = state.settings;
-      var favMenu = chrome.contextMenus.create({
-        id: "favorites",
-        title: "Favorites",
+      chrome.contextMenus.create({
+        id: Math.random().toString(),
         parentId: topMenu,
-        contexts: contexts,
+        type: "separator",
+        contexts: selectionContext,
       });
       Object.keys(favorites).forEach(vendorName => {
         var vendor = vendors[vendorName];
@@ -51,8 +70,8 @@ export function updateContextMenu(state: AppState) {
           chrome.contextMenus.create({
             id: id,
             title: title,
-            parentId: favMenu,
-            contexts: contexts,
+            parentId: topMenu,
+            contexts: selectionContext,
           });
         });
       });
@@ -60,23 +79,44 @@ export function updateContextMenu(state: AppState) {
   }
 }
 
-// listen menu clicks and send payload to window
-chrome.contextMenus.onClicked.addListener(
-    (info: chrome.contextMenus.OnClickData,
-     tab: chrome.tabs.Tab) => {
-      var [type, vendor, from, to] = String(info.menuItemId).split("-");
-      if (+type === MessageType.MENU_TRANSLATE_VENDOR) {
-        let payload: MenuTranslateVendorPayload = { vendor };
-        tabs.sendMessage(tab.id, {
-          type: MessageType.MENU_TRANSLATE_VENDOR,
-          payload: payload
-        });
-      }
-      if (+type === MessageType.MENU_TRANSLATE_FAVORITE) {
-        let payload: MenuTranslateFavoritePayload = { vendor, from, to };
-        tabs.sendMessage(tab.id, {
-          type: MessageType.MENU_TRANSLATE_FAVORITE,
-          payload: payload
-        });
-      }
-    });
+// context menu clicks handler
+export function bindContextMenu(getState: () => AppState) {
+  const onContextMenu = (info: chrome.contextMenus.OnClickData, tab: chrome.tabs.Tab) => {
+    var [type, vendor, from, to] = String(info.menuItemId).split("-");
+    var enumType = Number(type);
+    if (enumType === MessageType.MENU_TRANSLATE_WITH_VENDOR) {
+      let payload: MenuTranslateVendorPayload = { vendor };
+      tabs.sendMessage(tab.id, {
+        type: MessageType.MENU_TRANSLATE_WITH_VENDOR,
+        payload: payload
+      });
+    }
+    if (enumType === MessageType.MENU_TRANSLATE_FAVORITE) {
+      let payload: MenuTranslateFavoritePayload = { vendor, from, to };
+      tabs.sendMessage(tab.id, {
+        type: MessageType.MENU_TRANSLATE_FAVORITE,
+        payload: payload
+      });
+    }
+    if (enumType === MessageType.MENU_TRANSLATE_FULL_PAGE) {
+      var { langTo } = getState().settings;
+      tabs.getActiveTab().then(tab => {
+        var pageUrl = tab.url;
+        var url = "";
+        switch (vendor) {
+          case "google":
+            url = `https://translate.google.com/translate?tl=${langTo}&u=${pageUrl}`;
+            break;
+          case "yandex":
+            url = `https://translate.yandex.com/translate?lang=${langTo}&url=${pageUrl}`;
+            break;
+          case "bing":
+            url = `http://www.microsofttranslator.com/bv.aspx?to=${langTo}&a=${pageUrl}`;
+            break;
+        }
+        tabs.openTab(url);
+      });
+    }
+  };
+  chrome.contextMenus.onClicked.addListener(onContextMenu);
+}

@@ -1,5 +1,4 @@
 {
-  "____________manifest_____________": {"message": "----------------------------------------------"},
   "short_description"                : {"message": "Easy translate text on web-pages"},
   "description"                      : {"message": "Translate texts within web-page context, customize your own style of popup block, add languages to favorites, and more."},
   "____________header_______________": {"message": "----------------------------------------------"},
@@ -61,6 +60,9 @@
   "translated_with"                  : {"message": "Translated with %translator% (%lang%)"},
   "___________history_______________": {"message": "----------------------------------------------"},
   "history_is_coming_soon"           : {"message": "coming soon"},
+  "________context_menu_____________": {"message": "----------------------------------------------"},
+  "context_menu_translate_full_page" : {"message": "Translate full page with %translator%"},
+  "context_menu_translate_selection" : {"message": "Translate %selection% with %translator%"},
   "___________support_dialog________": {"message": "----------------------------------------------"},
   "support_dialog_greeting"          : {"message": "Hello friend!"},
   "support_dialog_line_1"            : {"message": "Please read the following:"},

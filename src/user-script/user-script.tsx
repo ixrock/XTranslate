@@ -90,7 +90,7 @@ class App extends React.Component<{}, State> {
   @autobind()
   onMenuClick(message: Message) {
     var { type } = message;
-    if (type === MessageType.MENU_TRANSLATE_VENDOR) {
+    if (type === MessageType.MENU_TRANSLATE_WITH_VENDOR) {
       let payload = message.payload as MenuTranslateVendorPayload;
       this.translateWith(payload.vendor);
     }
