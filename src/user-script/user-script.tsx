@@ -175,11 +175,12 @@ class App extends React.Component<{}, State> {
   }
 
   @autobind()
-  onKeyDown(e: KeyboardEvent) {
+  onKeydownWithinPopup(e: React.KeyboardEvent<any>) {
     var canRotateVendor = this.isFocused && !e.shiftKey;
     switch (e.keyCode) {
       case 27: // Escape
         this.hidePopup();
+        e.stopPropagation();
         break;
       case 37: // ArrowLeft
         if (canRotateVendor) {
@@ -194,6 +195,10 @@ class App extends React.Component<{}, State> {
         }
         break;
     }
+  }
+
+  @autobind()
+  onKeyDown(e: KeyboardEvent) {
     if (!this.settings.showPopupOnHotkey) return;
     var hotkey = getHotkey(e);
     if (isEqual(this.settings.hotkey, hotkey)) {
@@ -415,7 +420,7 @@ class App extends React.Component<{}, State> {
     if (!this.state.appState) return null;
     return (
         <ReactShadow include={[this.style]}>
-          <div className="popup-content">
+          <div className="popup-content" onKeyDown={this.onKeydownWithinPopup}>
             <Popup translation={translation} error={error} position={position}
                    theme={this.theme} showPlayIcon={this.settings.showPlayIcon}
                    ref={e => this.popup = e}/>

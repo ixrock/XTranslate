@@ -2,6 +2,7 @@ require('./popup.scss');
 import * as React from 'react';
 import { autobind } from "core-decorators";
 import { __i18n } from "../../extension/i18n";
+import { cssNames } from "../../utils/cssNames";
 import { cssColor } from "../ui/color-picker/cssColor";
 import { MaterialIcon } from '../ui/icons/material-icon'
 import { Theme } from '../theme-manager/theme-manager.types'
@@ -158,9 +159,12 @@ export class Popup extends React.Component<Props, State> {
     var { translation, error, position } = this.props;
     var { cssThemeStyle } = this.state;
     var style = Object.assign({}, cssThemeStyle, position);
+    var className = cssNames("Popup", { visible: translation || error });
     return (
-        <div className="Popup" style={style} tabIndex={-1} ref={e => this.elem = e}>
-          {error ? this.renderError() : this.renderResult()}
+        <div className={className} style={style} tabIndex={-1} ref={e => this.elem = e}>
+          <div className="content">
+            {error ? this.renderError() : this.renderResult()}
+          </div>
         </div>
     );
   }
