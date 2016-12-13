@@ -1,0 +1,34 @@
+.DonationDialog {
+  .material-icons {
+    font-size: 19px;
+    margin-left: $margin / 2;
+  }
+  .icon-copy {
+    color: gray;
+    vertical-align: middle;
+    &.copied + .icon-done {
+      opacity: 1;
+    }
+  }
+  .icon-done {
+    color: $green-400;
+    vertical-align: middle;
+    opacity: 0;
+    transition: opacity 250ms;
+  }
+
+  .donation-addr {
+    &:not(:first-child) {
+      margin-top: $margin;
+    }
+  }
+  .title {
+    font-weight: bold;
+  }
+  .wallet {
+    white-space: pre-line;
+    font-family: $font-monospace;
+    line-height: 1.5;
+    padding-left: $margin * 2;
+  }
+}

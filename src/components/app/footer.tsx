@@ -4,6 +4,7 @@ import { autobind } from "core-decorators";
 import { prevDefault } from '../../utils'
 import { getManifest, __i18n } from '../../extension'
 import { LocaleMessage } from "../locale-message";
+import { DonationDialog } from "./donation-dialog";
 
 interface ShareIcon {
   title: string
@@ -13,10 +14,11 @@ interface ShareIcon {
 
 export class Footer extends React.Component<any, any> {
   private manifest = getManifest();
-  private readonly storeUrl = 'https://chrome.google.com/webstore/detail/gfgpkepllngchpmcippidfhmbhlljhoo';
-  private readonly donateLink = `https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=NDM8RZ6PG5G6S&lc=US&item_name=${this.manifest.name}%20%28browser%20extension%29&item_number=2014&currency_code=EUR&bn=PP%2dDonationsBF%3abtn_donate_LG%2egif%3aNonHosted`;
-  public shareTags = ["chrome", "extension", "translator"];
-  public shareIcons: ShareIcon[] = [
+  private donationDialog: DonationDialog;
+  private storeUrl = 'https://chrome.google.com/webstore/detail/gfgpkepllngchpmcippidfhmbhlljhoo';
+  private shareTags = ["chrome", "extension", "translator"];
+
+  private shareIcons: ShareIcon[] = [
     {
       title: "VK.com",
       icon: require('../icons/vk.svg'),
@@ -52,8 +54,9 @@ export class Footer extends React.Component<any, any> {
   render() {
     return (
         <div className="Footer">
+          <DonationDialog ref={e => this.donationDialog = e}/>
           <LocaleMessage message="footer" replacers={[
-              donate => <a href={this.donateLink} target="_blank">{donate}</a>,
+              donate => <a href="#" onClick={() => this.donationDialog.open()}>{donate}</a>,
               review => <a href={this.storeUrl + "/reviews"} target="_blank">{review}</a>,
           ]}/>
           <div className="social-icons">

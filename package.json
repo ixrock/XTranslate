@@ -19,6 +19,7 @@
   "license": "ISC",
   "dependencies": {
     "@types/chrome": "0.0.35",
+    "@types/clipboard": "^1.5.30",
     "@types/core-decorators": "^0.10.30",
     "@types/isomorphic-fetch": "0.0.31",
     "@types/lodash": "^4.14.38",
@@ -29,6 +30,7 @@
     "@types/redux-thunk": "^2.1.31",
     "@types/webfontloader": "^1.6.27",
     "awesome-typescript-loader": "^2.2.4",
+    "clipboard": "^1.5.16",
     "copy-webpack-plugin": "^4.0.0",
     "core-decorators": "^0.14.0",
     "css-loader": "^0.25.0",
