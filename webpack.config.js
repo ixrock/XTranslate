@@ -33,15 +33,15 @@ module.exports = function (env = {dev: true, prod: false}) {
       loaders: [
         {
           test: /\.tsx?$/,
-          use: 'ts',
+          use: 'ts-loader',
         },
         {
           test: /\.s?css$/,
           loader: ExtractTextPlugin.extract({
             loader: [
-              "css",
+              "css-loader",
               {
-                loader: "sass",
+                loader: "sass-loader",
                 query: {
                   data: '@import "' + path.resolve(componentsDir, "vars.scss") + '";',
                   includePaths: [srcPath]
@@ -52,15 +52,15 @@ module.exports = function (env = {dev: true, prod: false}) {
         },
         {
           test: /\.(jpg|png|svg)$/,
-          loader: "file?name=assets/[name]-[hash:6].[ext]"
+          loader: "file-loader?name=assets/[name]-[hash:6].[ext]"
         },
         {
           test: /\.(ttf|eot|woff2?)$/,
-          loader: 'file?name=fonts/[name].[ext]'
+          loader: 'file-loader?name=fonts/[name].[ext]'
         },
         {
           test: /\.json$/,
-          loader: "json"
+          loader: "json-loader"
         },
       ]
     },
