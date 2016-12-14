@@ -10,7 +10,7 @@ if (env.isDevelopment) {
   style.href = getURL('page.css');
   document.head.appendChild(style);
   // js
-  window.fetch(getURL('content.js')).then(res => res.text()).then(eval);
+  fetch(getURL('content.js')).then(res => res.text()).then(eval);
 }
 
 // attach full source code in build

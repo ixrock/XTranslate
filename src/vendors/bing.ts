@@ -10,7 +10,7 @@ class Bing extends Vendor {
 
   refreshCookie() {
     console.log('refreshing cookies..');
-    return window.fetch(this.url, { credentials: 'include' });
+    return fetch(this.url, { credentials: 'include' });
   }
 
   getAudioUrl(lang, text) {
@@ -25,7 +25,7 @@ class Bing extends Vendor {
             from: langFrom === 'auto' ? '-' : langFrom,
             to: langTo
           });
-      return window.fetch(url, {
+      return fetch(url, {
         method: 'post',
         credentials: 'include',
         headers: { 'content-type': 'application/json' },
@@ -35,7 +35,7 @@ class Bing extends Vendor {
 
     var dictReq = (from = langFrom, to = langTo): Promise<BingDictionary> => {
       var url = this.url + '/api/Dictionary/Lookup?' + encodeQuery({ from, to, text });
-      return window.fetch(url, { credentials: 'include' }).then(parseJson);
+      return fetch(url, { credentials: 'include' }).then(parseJson);
     };
 
     var refreshCookie = false;
@@ -79,7 +79,7 @@ class Bing extends Vendor {
 interface BingTranslation {
   from: string
   to: string
-  items: {text: string}[]
+  items: { text: string }[]
 }
 
 interface BingDictionary {

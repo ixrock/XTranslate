@@ -15,7 +15,7 @@ class FavoritesActions extends ActionsDispatcher {
     return Promise.resolve({
       type: actionTypes.FAVORITES_SYNC,
       promise: storage.sync.set({ favorites: favorites }).then(() => favorites)
-    }) as Promise<IFavoritesState>;
+    }) as any as Promise<IFavoritesState>;
   }
 }
 

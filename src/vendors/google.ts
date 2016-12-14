@@ -21,7 +21,7 @@ class Google extends Vendor {
           hl: langTo, // word type header for dictionary
         });
 
-    return window.fetch(url).then(parseJson).then((res: GoogleTranslation) => {
+    return fetch(url).then(parseJson).then((res: GoogleTranslation) => {
       var translation: Translation = {
         langDetected: res.src,
         translation: res.sentences.map(sentence => sentence.trans).join(''),

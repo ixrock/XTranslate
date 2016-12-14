@@ -33,7 +33,7 @@ module.exports = function (env = {dev: true, prod: false}) {
       loaders: [
         {
           test: /\.tsx?$/,
-          use: 'awesome-typescript-loader',
+          use: 'ts',
         },
         {
           test: /\.s?css$/,

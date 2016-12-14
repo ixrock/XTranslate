@@ -9,7 +9,7 @@ export abstract class Vendor {
   public maxTextInputLength = Number.MAX_SAFE_INTEGER;
   protected autoSwap = false;
   public lastResult: Translation;
-  public lastError: {message?: string};
+  public lastError: { message?: string };
   public ttsAudio: HTMLAudioElement;
   public ttsFormat = 'audio/mp3';
   public langFrom = {};
@@ -73,7 +73,7 @@ export abstract class Vendor {
   }
 
   getAudioSource(url: string): Promise<string> {
-    return window.fetch(url, { credentials: 'include', referrerPolicy: "no-referrer" }).then(res => {
+    return fetch(url, { credentials: 'include', referrerPolicy: "no-referrer" }).then(res => {
       var error = !(res.status >= 200 && res.status < 300);
       if (error) throw res;
       return res.blob().then(blob => URL.createObjectURL(blob));
@@ -109,7 +109,7 @@ export abstract class Vendor {
   }
 }
 
-export function parseJson<D>(res: IResponse): Promise<D> {
+export function parseJson(res: Response): any {
   var { status, statusText } = res;
   return res.text().then(text => {
     var data, error: TranslationError = {
@@ -131,11 +131,11 @@ export function parseJson<D>(res: IResponse): Promise<D> {
 
 export interface VendorParams {
   apiKeys?: string[]
-  tts?: {[lang: string]: string}
+  tts?: { [lang: string]: string }
   dictionary?: string[]
   languages: {
-    from: {[lang: string]: string}
-    to?: {[lang: string]: string}
+    from: { [lang: string]: string }
+    to?: { [lang: string]: string }
   }
 }
 

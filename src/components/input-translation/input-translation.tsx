@@ -241,6 +241,7 @@ export class InputTranslation extends React.Component<Props, State> {
         var autoPlay = this.settings.autoPlayText;
         if (autoPlay) this.playText();
       });
+      return result;
     }).catch(error => {
       if (this.translation !== promise) return;
       this.setState({ translation: null, error: error });

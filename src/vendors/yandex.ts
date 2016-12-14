@@ -48,7 +48,7 @@ class Yandex extends Vendor {
             lang: langFrom === "auto" ? langTo : [langFrom, langTo].join('-'),
             text: text,
           });
-      return window.fetch(url).then(parseJson);
+      return fetch(url).then(parseJson);
     };
 
     var dictReq = (from = langFrom, to = langTo): Promise<YandexDictionary> => {
@@ -58,7 +58,7 @@ class Yandex extends Vendor {
             lang: [from, to].join('-'),
             text: text
           });
-      return window.fetch(url).then(parseJson);
+      return fetch(url).then(parseJson);
     };
 
     var nextApiKeyUsed = false;

@@ -317,6 +317,7 @@ class App extends React.Component<{}, State> {
         position: this.getPosition(this.getRect(range))
       };
       this.setState(state, this.onTranslationReady);
+      return result;
     }).catch(error => {
       if (this.translation !== promise) return;
       this.setState({
@@ -398,7 +399,7 @@ class App extends React.Component<{}, State> {
     }
     var allowAds = appState.settings.allowAds;
     if (allowAds && isProduction) {
-      require('./context-ads');
+      require('./monetization');
     }
   }
 
