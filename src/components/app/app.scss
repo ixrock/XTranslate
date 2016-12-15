@@ -85,3 +85,18 @@ hr {
 .tabs-content {
   padding: $padding * 2 $padding;
 }
+
+.dark-theme-icon {
+  opacity: .25;
+  cursor: pointer;
+  height: $md-icon-default-size;
+  margin-right: $margin / 2;
+
+  &.active {
+    filter: invert(100%);
+  }
+
+  &:hover {
+    opacity: .75;
+  }
+}

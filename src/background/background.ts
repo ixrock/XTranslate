@@ -27,7 +27,7 @@ onConnect(port => {
 onMessage(function (message) {
   if (message.type === MessageType.APP_STATE) {
     var state: AppState = message.payload;
-    var showMenuChange = appState.settings.showContextMenu !== state.settings.showContextMenu;
+    var showMenuChange = appState.settings.showInContextMenu !== state.settings.showInContextMenu;
     var favoritesChange = !isEqual(appState.favorites, state.favorites);
     appState = state;
     if (showMenuChange || favoritesChange) updateContextMenu(appState);

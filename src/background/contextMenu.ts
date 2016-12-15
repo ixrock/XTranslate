@@ -14,7 +14,7 @@ export function updateContextMenu(state: AppState) {
   const pageContext = selectionContext.concat('page');
   chrome.contextMenus.removeAll();
 
-  if (state.settings.showContextMenu) {
+  if (state.settings.showInContextMenu) {
     var topMenu = chrome.contextMenus.create({
       id: menuName,
       title: menuName,

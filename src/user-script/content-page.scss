@@ -8,10 +8,11 @@ $md-icons-font-path: "chrome-extension://__MSG_@@extension_id__/fonts/";
 }
 
 .XTranslate {
-  position: absolute;
-  width: 100%;
-  left: 0;
-  top: 0;
+  position: absolute !important;
+  width: 100% !important;
+  left: 0 !important;
+  top: 0 !important;
+  z-index: 1000000000 !important; // bigger than in lingualeo :P
 
   &-icon {
     $iconSize: 24px;
@@ -22,7 +23,6 @@ $md-icons-font-path: "chrome-extension://__MSG_@@extension_id__/fonts/";
     font-style: normal;
     cursor: pointer;
     border-radius: 50%;
-    z-index: 100000;
     border: 1px solid;
     color: black;
     background: white;

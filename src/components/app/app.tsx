@@ -5,9 +5,10 @@ import { Provider } from 'react-redux'
 import { autobind } from 'core-decorators';
 import { getStore } from '../../store'
 import { connect } from "../../store/connect";
+import { cssNames } from "../../utils/cssNames";
 import { Spinner, Tabs, Tab, MaterialIcon } from '../ui'
 import { getURL, getManifest, __i18n } from "../../extension";
-import { Settings, ISettingsState } from '../settings'
+import { Settings, ISettingsState, settingsActions } from '../settings'
 import { ThemeManager, loadFonts } from '../theme-manager'
 import { InputTranslation } from '../input-translation'
 import { UserHistory } from '../user-history'
@@ -40,6 +41,12 @@ export class App extends React.Component<Props, {}> {
   }
 
   @autobind()
+  toggleDarkTheme() {
+    var useDarkTheme = this.props.settings.useDarkTheme;
+    settingsActions.sync({ useDarkTheme: !useDarkTheme });
+  }
+
+  @autobind()
   openInWindow() {
     chrome.windows.create({
       url: getURL(this.manifest.options_page),
@@ -51,11 +58,19 @@ export class App extends React.Component<Props, {}> {
   }
 
   render() {
+    var useDarkTheme = this.props.settings.useDarkTheme;
     return (
         <div className="App">
           <h4 className="page-title flex">
             <span className="box grow">{this.manifest.name} <sup>{this.manifest.version}</sup></span>
-            <MaterialIcon name="open_in_new" title={__i18n("open_in_window")} onClick={this.openInWindow}/>
+            <img src={require('../icons/moon.svg')}
+                 className={cssNames("dark-theme-icon", {active: useDarkTheme})}
+                 title={__i18n("use_dark_theme")}
+                 onClick={this.toggleDarkTheme}/>
+            <MaterialIcon
+                name="open_in_new"
+                title={__i18n("open_in_window")}
+                onClick={this.openInWindow}/>
           </h4>
           <Tabs>
             <Tab title={__i18n("tab_settings")}>

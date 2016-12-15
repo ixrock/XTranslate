@@ -29,10 +29,19 @@
     }
   }
 
-  .play-icon {
+  .material-icons {
     font-size: 1.6em;
-    margin-right: 5px;
     opacity: .75;
+    cursor: pointer;
+
+    &:first-child {
+      margin-right: 5px;
+    }
+
+    &:last-child {
+      margin-left: 5px;
+    }
+
     &:hover {
       opacity: 1;
       color: inherit !important;
@@ -40,7 +49,6 @@
   }
 
   .translation-result {
-    padding-right: $padding;
     .translation {
       padding: 2px 0;
     }

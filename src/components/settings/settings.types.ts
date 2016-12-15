@@ -3,8 +3,9 @@ import { Hotkey } from "../../utils/parseHotkey";
 export interface ISettingsState {
   autoPlayText?: boolean
   showPlayIcon?: boolean
+  showNextVendorIcon?: boolean
   useDarkTheme?: boolean
-  showContextMenu?: boolean
+  showInContextMenu?: boolean
   showIconNearSelection?: boolean
   showPopupAfterSelection?: boolean
   showPopupOnDoubleClick?: boolean

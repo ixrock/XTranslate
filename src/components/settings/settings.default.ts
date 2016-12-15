@@ -4,8 +4,9 @@ import { Hotkey } from "../../utils/parseHotkey";
 export const defaultSettings: ISettingsState = {
   autoPlayText: false,
   showPlayIcon: true,
+  showNextVendorIcon: false,
   useDarkTheme: false,
-  showContextMenu: true,
+  showInContextMenu: true,
   showIconNearSelection: true,
   showPopupAfterSelection: false,
   showPopupOnDoubleClick: true,

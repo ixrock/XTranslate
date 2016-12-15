@@ -61,9 +61,7 @@ export class ThemeManager extends React.Component<Props, {}> {
     return (
         <div className="ThemeManager">
           <div className="preview flex center pb1">
-            <Popup translation={this.translation}
-                   showPlayIcon={settings.showPlayIcon}
-                   theme={theme}/>
+            <Popup translation={this.translation} settings={settings} theme={theme}/>
           </div>
           <div className="theme">
             <div className="flex auto">

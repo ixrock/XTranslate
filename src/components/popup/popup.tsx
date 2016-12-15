@@ -5,18 +5,20 @@ import { __i18n } from "../../extension/i18n";
 import { cssNames } from "../../utils/cssNames";
 import { cssColor } from "../ui/color-picker/cssColor";
 import { MaterialIcon } from '../ui/icons/material-icon'
-import { Theme } from '../theme-manager/theme-manager.types'
+import { IThemeManagerState } from '../theme-manager/theme-manager.types'
+import { ISettingsState } from "../settings/settings.types";
 import { fontsList, loadFonts } from '../theme-manager/fonts-loader'
-import { vendors, Translation, TranslationError } from "../../vendors";
+import { vendors, Translation, TranslationError, getNextVendor } from "../../vendors";
 import omit = require("lodash/omit");
 import find = require("lodash/find");
 
 interface Props extends React.HTMLProps<any> {
-  theme?: Theme
-  showPlayIcon?: boolean
+  settings?: ISettingsState
+  theme?: IThemeManagerState
   translation?: Translation
   error?: TranslationError
   position?: React.CSSProperties
+  next?(): void;
 }
 
 interface State {
@@ -55,21 +57,21 @@ export class Popup extends React.Component<Props, State> {
       fontSize: theme.fontSize,
       color: cssColor(theme.textColor),
       border: theme.borderWidth ? [
-        theme.borderWidth + "px",
-        theme.borderStyle,
-        cssColor(theme.borderColor)
-      ].join(" ") : "",
+            theme.borderWidth + "px",
+            theme.borderStyle,
+            cssColor(theme.borderColor)
+          ].join(" ") : "",
       textShadow: (theme.textShadowRadius || theme.textShadowOffsetX || theme.textShadowOffsetY) ? [
-        theme.textShadowOffsetX + "px",
-        theme.textShadowOffsetY + "px",
-        theme.textShadowRadius + "px",
-        cssColor(theme.textShadowColor)
-      ].join(" ") : "",
+            theme.textShadowOffsetX + "px",
+            theme.textShadowOffsetY + "px",
+            theme.textShadowRadius + "px",
+            cssColor(theme.textShadowColor)
+          ].join(" ") : "",
       boxShadow: theme.boxShadowBlur ? [
-        theme.boxShadowInner ? "inset" : "",
-        0, 0, theme.boxShadowBlur + "px",
-        cssColor(theme.boxShadowColor)
-      ].join(" ") : ""
+            theme.boxShadowInner ? "inset" : "",
+            0, 0, theme.boxShadowBlur + "px",
+            cssColor(theme.boxShadowColor)
+          ].join(" ") : ""
     };
     if (theme.bgcLinear) {
       cssTheme.background = `linear-gradient(180deg, ${cssTheme.background}, ${cssColor(theme.bgcSecondary)})`;
@@ -100,29 +102,43 @@ export class Popup extends React.Component<Props, State> {
     if (translation) vendors[translation.vendor].stopPlaying();
   }
 
+  @autobind()
+  translateNextVendor() {
+    if (this.props.next) {
+      this.props.next();
+    }
+  }
+
   renderResult() {
     const result = this.props.translation;
     if (!result) return null;
     const { translation, transcription, dictionary, vendor, langFrom, langTo } = result;
-    const showPlayIcon = this.props.showPlayIcon;
+    const { showPlayIcon, showNextVendorIcon } = this.props.settings;
     const boxSizeStyle = this.state.boxSizeStyle;
     const vendorApi = vendors[vendor];
-    var title = __i18n("translated_with", [
-      vendorApi.title,
-      [langFrom, langTo].join(" → ").toUpperCase()
-    ]).join("");
+    var title = __i18n("translated_with", [vendorApi.title, [langFrom, langTo].join(" → ").toUpperCase()]).join("");
+    var nextVendorIcon = null;
+    var playTextIcon = null;
+    if (showPlayIcon) {
+      playTextIcon =
+          <MaterialIcon
+              name="play_circle_outline" title={__i18n("popup_play_icon_title")}
+              onClick={this.playText}/>
+    }
+    if (showNextVendorIcon) {
+      let nextVendor = getNextVendor(vendor, langFrom, langTo);
+      let iconTitle = __i18n("popup_next_vendor_icon_title", [nextVendor.title]).join("");
+      nextVendorIcon = <MaterialIcon name="arrow_forward" onClick={this.translateNextVendor} title={iconTitle}/>
+    }
     return (
         <div className="translation-result" style={boxSizeStyle}>
           <div className="flex">
-            {showPlayIcon ? (
-                <MaterialIcon
-                    name="play_circle_outline" className="play-icon"
-                    title={__i18n("popup_play_icon_title")} onClick={this.playText}/>
-            ) : null}
-            <div className="translation" title={title}>
+            {playTextIcon}
+            <div className="translation box grow" title={title}>
               <span>{translation}</span>
               {transcription ? <i className="transcription">{" "}[{transcription}]</i> : null}
             </div>
+            {nextVendorIcon}
           </div>
           {dictionary.map((dict, i) =>
               <div key={i} className="dictionary">

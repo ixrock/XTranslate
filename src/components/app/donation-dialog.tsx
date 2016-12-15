@@ -13,9 +13,6 @@ export class DonationDialog extends React.Component<{}, {}> {
       "R136684468106",
       "X660329307361",
     ],
-    BTC: [
-      "1GtHaXXjg81e2kHCWs38jFQ3YRtqaU8Q1y"
-    ],
     PayPal: [
       "ixrock@gmail.com"
     ]

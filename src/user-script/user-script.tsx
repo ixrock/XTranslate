@@ -83,7 +83,6 @@ class App extends React.Component<{}, State> {
     document.addEventListener("dblclick", this.onDoubleClick);
     document.addEventListener("keydown", this.onKeyDown);
     document.addEventListener("selectionchange", this.onSelectionChange);
-    window.addEventListener("resize", this.onWindowResize);
   }
 
   @autobind()
@@ -181,13 +180,6 @@ class App extends React.Component<{}, State> {
       right: left + width,
       bottom: top + height,
     };
-  }
-
-  @autobind()
-  @debounce(50)
-  onWindowResize(e) {
-    if (this.isHidden) return;
-    this.refreshPosition();
   }
 
   @autobind()
@@ -331,6 +323,7 @@ class App extends React.Component<{}, State> {
     }
   }
 
+  @autobind()
   translateWithNextVendor(reverse = false) {
     var { langFrom, langTo } = this.settings;
     var { rect, translation } = this.state;
@@ -406,12 +399,6 @@ class App extends React.Component<{}, State> {
   }
 
   @autobind()
-  refreshPosition() {
-    var position = this.getPosition();
-    this.setState({ position }, this.refinePosition);
-  }
-
-  @autobind()
   refinePosition() {
     var { rect, position } = this.state;
     if (!rect) return;
@@ -473,7 +460,8 @@ class App extends React.Component<{}, State> {
         <ReactShadow include={[this.style]}>
           <div className="popup-content" onKeyDown={this.onKeydownWithinPopup}>
             <Popup translation={translation} error={error} position={position}
-                   theme={this.theme} showPlayIcon={this.settings.showPlayIcon}
+                   theme={this.theme} settings={this.settings}
+                   next={this.translateWithNextVendor}
                    ref={e => this.popup = e}/>
           </div>
         </ReactShadow>

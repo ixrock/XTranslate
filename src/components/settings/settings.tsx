@@ -56,15 +56,15 @@ export class Settings extends React.Component<Props, {}> {
             <Checkbox label={__i18n("auto_play_tts")}
                       checked={settings.autoPlayText}
                       onChange={v => this.save({autoPlayText: v})}/>
-            <Checkbox label={__i18n("use_dark_theme")}
-                      checked={settings.useDarkTheme}
-                      onChange={v => this.save({useDarkTheme: v})}/>
             <Checkbox label={__i18n("show_tts_icon_inside_popup")}
                       checked={settings.showPlayIcon}
                       onChange={v => this.save({showPlayIcon: v})}/>
             <Checkbox label={__i18n("show_context_menu")}
-                      checked={settings.showContextMenu}
-                      onChange={v => this.save({showContextMenu: v})}/>
+                      checked={settings.showInContextMenu}
+                      onChange={v => this.save({showInContextMenu: v})}/>
+            <Checkbox label={__i18n("show_next_vendor_icon_in_popup")}
+                      checked={settings.showNextVendorIcon}
+                      onChange={v => this.save({showNextVendorIcon: v})}/>
             <Checkbox label={__i18n("display_icon_near_selection")}
                       checked={settings.showIconNearSelection}
                       onChange={v => this.save({showIconNearSelection: v})}/>
