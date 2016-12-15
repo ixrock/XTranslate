@@ -4,12 +4,11 @@ import { onConnect, onMessage, MessageType } from '../extension'
 import { getStore, AppState } from '../store'
 import { updateContextMenu, bindContextMenu } from './contextMenu'
 import isEqual = require("lodash/isEqual");
-import merge = require("lodash/merge");
 
 // get current app state from storage
 var appState: AppState = {};
 getStore().then(store => {
-  merge(appState, store.getState());
+  appState = store.getState();
   updateContextMenu(appState);
 });
 
@@ -30,7 +29,7 @@ onMessage(function (message) {
     var state: AppState = message.payload;
     var showMenuChange = appState.settings.showContextMenu !== state.settings.showContextMenu;
     var favoritesChange = !isEqual(appState.favorites, state.favorites);
-    merge(appState, state);
+    appState = state;
     if (showMenuChange || favoritesChange) updateContextMenu(appState);
   }
 });

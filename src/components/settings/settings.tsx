@@ -28,11 +28,12 @@ export class Settings extends React.Component<Props, {}> {
   }
 
   @autobind()
-  defineHotkey(e) {
-    var hotkey = parseHotkey(e);
-    if (hotkey.key.match(/[a-z0-9]/i) && hotkey.metaKeys.length) {
+  defineHotkey(e: React.KeyboardEvent<any>) {
+    var nativeEvent = e.nativeEvent as KeyboardEvent;
+    var hotkey = parseHotkey(nativeEvent);
+    if (hotkey.code) {
       this.hotkey.value = hotkey.value;
-      this.save({ hotkey: getHotkey(e) });
+      this.save({ hotkey: getHotkey(nativeEvent) });
     }
   }
 

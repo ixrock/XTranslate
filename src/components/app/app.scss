@@ -38,6 +38,10 @@ input, select, textarea {
 a {
   color: inherit;
   opacity: .5;
+  &:focus {
+    color: $bgc-primary;
+    opacity: 1;
+  }
   &:hover {
     opacity: 1;
   }

@@ -11,13 +11,13 @@ function broadcastMessage(message: Message) {
   });
 }
 
-function openTab(url: string, active = true): Promise<chrome.tabs.Tab> {
+function open(url: string, active = true): Promise<chrome.tabs.Tab> {
   return new Promise((resolve) => {
     chrome.tabs.create({ url, active }, resolve);
   });
 }
 
-function getActiveTab(): Promise<chrome.tabs.Tab> {
+function getActive(): Promise<chrome.tabs.Tab> {
   return new Promise((resolve) => {
     chrome.tabs.query({ active: true }, function (tabs) {
       resolve(tabs[0]);
@@ -28,6 +28,6 @@ function getActiveTab(): Promise<chrome.tabs.Tab> {
 export const tabs = {
   broadcastMessage,
   sendMessage,
-  openTab,
-  getActiveTab,
+  open,
+  getActive,
 };

@@ -1,4 +1,5 @@
 import { ISettingsState } from './settings.types'
+import { Hotkey } from "../../utils/parseHotkey";
 
 export const defaultSettings: ISettingsState = {
   autoPlayText: false,
@@ -15,6 +16,7 @@ export const defaultSettings: ISettingsState = {
   langTo: navigator.language.split('-')[0],
   hotkey: {
     altKey: true,
-    keyCode: "X".codePointAt(0)
-  }
+    code: "X",
+    keyCode: "X".codePointAt(0),
+  } as Hotkey
 };

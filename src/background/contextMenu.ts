@@ -100,7 +100,7 @@ export function bindContextMenu(getState: () => AppState) {
     }
     if (enumType === MessageType.MENU_TRANSLATE_FULL_PAGE) {
       var { langTo } = getState().settings;
-      tabs.getActiveTab().then(tab => {
+      tabs.getActive().then(tab => {
         var pageUrl = tab.url;
         var url = "";
         switch (vendor) {
@@ -114,7 +114,7 @@ export function bindContextMenu(getState: () => AppState) {
             url = `http://www.microsofttranslator.com/bv.aspx?to=${langTo}&a=${pageUrl}`;
             break;
         }
-        tabs.openTab(url);
+        tabs.open(url);
       });
     }
   };

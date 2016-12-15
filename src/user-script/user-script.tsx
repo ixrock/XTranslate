@@ -4,9 +4,8 @@ require('./user-script.scss');
 import * as React from 'react';
 import { autobind, debounce } from "core-decorators";
 import { render } from 'react-dom'
-import { isProduction } from '../env'
-import { connect, onMessage, MessageType, Message, getURL } from '../extension'
-import { MenuTranslateFavoritePayload, MenuTranslateVendorPayload, getManifest } from '../extension'
+import { connect, onMessage, MessageType, Message, getURL, getManifest, postMessage, onPostMessage } from '../extension'
+import { MenuTranslateFavoritePayload, MenuTranslateVendorPayload, TranslateFromFramePayload } from '../extension'
 import { loadFonts } from "../components/theme-manager/fonts-loader";
 import { AppState } from '../store/store.types'
 import { Popup } from "../components/popup/popup";
@@ -14,12 +13,15 @@ import { vendors, Translation, TranslationError, getNextVendor } from "../vendor
 import { getHotkey } from "../utils/parseHotkey";
 const ReactShadow = require("react-shadow").default;
 import isEqual = require("lodash/isEqual");
+const logo = require("../components/app/logo.gif");
+const topWindow = window.top;
+const isFrameWindow = window !== topWindow;
 
 interface State {
   appState?: AppState
   translation?: Translation
   error?: TranslationError
-  range?: Range
+  rect?: ClientRect
   position?: Position
   customFont?: string
 }
@@ -67,10 +69,14 @@ class App extends React.Component<{}, State> {
     return document.activeElement === this.popupHost;
   }
 
-  bindEvents() {
+  componentWillMount() {
     this.port.onMessage.addListener(this.onAppState);
+  }
+
+  bindEvents() {
     onMessage(this.onAppState);
     onMessage(this.onMenuClick);
+    onPostMessage(this.onPostMessage);
     document.addEventListener("mouseover", this.onMouseOver);
     document.addEventListener("mouseup", this.onMouseUp);
     document.addEventListener("mousedown", this.onMouseDown);
@@ -83,7 +89,13 @@ class App extends React.Component<{}, State> {
   @autobind()
   onAppState(message: Message) {
     if (message.type === MessageType.APP_STATE) {
-      this.setState({ appState: message.payload });
+      var init = !this.state.appState;
+      this.setState({ appState: message.payload }, () => {
+        if (init) {
+          this.initIcon();
+          this.bindEvents();
+        }
+      });
     }
   }
 
@@ -97,6 +109,20 @@ class App extends React.Component<{}, State> {
     if (type === MessageType.MENU_TRANSLATE_FAVORITE) {
       let payload = message.payload as MenuTranslateFavoritePayload;
       this.translateWith(payload.vendor, payload.from, payload.to);
+    }
+  }
+
+  @autobind()
+  onPostMessage(message: Message) {
+    if (isFrameWindow) return;
+    if (message.type === MessageType.TRANSLATE_FROM_FRAME) {
+      var { rect, translate } = message.payload as TranslateFromFramePayload;
+      var [vendor, from, to, text] = translate;
+      rect = this.normalizeRect(rect);
+      this.translateWith(vendor, from, to, text, rect);
+    }
+    if (message.type === MessageType.HIDE_POPUP_FROM_FRAME) {
+      this.hidePopup();
     }
   }
 
@@ -145,9 +171,9 @@ class App extends React.Component<{}, State> {
     this.icon.parentNode.removeChild(this.icon);
   }
 
-  normalizeRect(rect: ClientRect): ClientRect {
-    var left = rect.left + window.pageXOffset;
-    var top = rect.top + window.pageYOffset;
+  normalizeRect(rect: ClientRect, withScroll = true) {
+    var left = rect.left + (withScroll ? window.pageXOffset : 0);
+    var top = rect.top + (withScroll ? window.pageYOffset : 0);
     var width = rect.width;
     var height = rect.height;
     return {
@@ -232,7 +258,10 @@ class App extends React.Component<{}, State> {
           }
         }
       }
-      this.translate(text);
+      if (text) {
+        this.translate(text);
+        e.preventDefault();
+      }
     }
   }
 
@@ -248,6 +277,7 @@ class App extends React.Component<{}, State> {
   @autobind()
   onMouseDown(e: MouseEvent) {
     this.hideIcon();
+    if (isFrameWindow) this.hidePopupFromFrame();
     if (!this.isHidden) {
       var target = e.toElement;
       if (!this.icon.contains(target) && this.isOutsideOfPopup(target)) {
@@ -283,38 +313,43 @@ class App extends React.Component<{}, State> {
     this.translateWith(vendor, langFrom, langTo, text);
   }
 
-  translateWith(vendorName: string, from = this.settings.langFrom, to = this.settings.langTo, text = this.text) {
+  translateWith(vendorName: string, from = this.settings.langFrom, to = this.settings.langTo, text = this.text, rect?: ClientRect) {
     var vendorApi = vendors[vendorName];
     if (text && text.length <= vendorApi.maxTextInputLength) {
-      var translation = vendorApi.getTranslation(from, to, text);
-      this.handleTranslation(translation);
+      if (isFrameWindow) {
+        postMessage({
+          type: MessageType.TRANSLATE_FROM_FRAME,
+          payload: {
+            translate: [vendorName, from, to, text],
+            rect: this.getFrameRect()
+          } as TranslateFromFramePayload
+        });
+      } else {
+        var translation = vendorApi.getTranslation(from, to, text);
+        this.handleTranslation(translation, rect);
+      }
     }
   }
 
   translateWithNextVendor(reverse = false) {
-    var vendor = this.state.translation.vendor;
     var { langFrom, langTo } = this.settings;
+    var { rect, translation } = this.state;
+    var { vendor, originalText } = translation;
     var vendorApi = getNextVendor(vendor, langFrom, langTo, reverse);
     if (vendorApi) {
-      var lastRange = this.state.range;
-      if (lastRange) {
-        this.selection.removeAllRanges();
-        this.selection.addRange(lastRange);
-      }
-      this.translateWith(vendorApi.name, langFrom, langTo);
+      this.translateWith(vendorApi.name, langFrom, langTo, originalText, rect);
     }
   }
 
-  handleTranslation(translation: Promise<Translation>) {
-    var range = this.range;
+  handleTranslation(translation: Promise<Translation>, rect = this.getRect()) {
     var promise = this.translation = translation.then(result => {
       this.hideIcon();
       if (this.translation !== promise) return;
       var state: State = {
         translation: result,
         error: null,
-        range: range,
-        position: this.getPosition(this.getRect(range))
+        rect: rect,
+        position: this.getPosition(rect)
       };
       this.setState(state, this.onTranslationReady);
       return result;
@@ -335,17 +370,39 @@ class App extends React.Component<{}, State> {
     this.popup.focus();
   }
 
-  getRect(range = this.state.range) {
+  getRect(range = this.range) {
     var endContainer = range.endContainer as Element;
     if (!range.getClientRects().length) return this.normalizeRect(endContainer.getBoundingClientRect());
     return this.normalizeRect(range.getBoundingClientRect());
   }
 
-  getPosition(rect = this.getRect()): Position {
+  getPosition(rect = this.state.rect): Position {
     return {
       left: rect.left,
       top: rect.bottom,
     };
+  }
+
+  getFrameRect() {
+    var frameRects = [];
+    var win = window;
+    while (win !== win.parent) {
+      var parentWindow = win.parent;
+      var frameElem = win.frameElement;
+      if (frameElem) frameRects.unshift(frameElem.getBoundingClientRect());
+      win = parentWindow;
+    }
+
+    var rect = this.normalizeRect(this.range.getBoundingClientRect(), false);
+    rect.left = Math.max(0, rect.left);
+    rect.top = Math.max(0, rect.top);
+    rect.width = Math.min(window.innerWidth, rect.width);
+    rect.height = Math.min(window.innerHeight, rect.height);
+    frameRects.forEach(r => {
+      rect.left += r.left;
+      rect.top += r.top;
+    });
+    return rect;
   }
 
   @autobind()
@@ -356,24 +413,24 @@ class App extends React.Component<{}, State> {
 
   @autobind()
   refinePosition() {
+    var { rect, position } = this.state;
+    if (!rect) return;
+    var changePosition = false;
+    var popupRect = this.popup.elem.getBoundingClientRect();
     var viewPort = {
       width: document.documentElement.clientWidth,
       height: document.documentElement.clientHeight,
     };
-    var changePosition = false;
-    var selectionRect = this.getRect();
-    var popupRect = this.popup.elem.getBoundingClientRect();
-    var position = this.getPosition(selectionRect);
 
     if (popupRect.right > viewPort.width) {
       changePosition = true;
       delete position.left;
-      position.right = viewPort.width - selectionRect.right;
+      position.right = viewPort.width - rect.right;
     }
     if (popupRect.bottom > viewPort.height) {
       var margin = parseInt(window.getComputedStyle(this.popup.elem).marginTop) * 2;
       changePosition = true;
-      position.top = selectionRect.top - popupRect.height - margin;
+      position.top = rect.top - popupRect.height - margin;
     }
     if (changePosition) {
       this.setState({ position: position });
@@ -385,11 +442,6 @@ class App extends React.Component<{}, State> {
     this.translate();
   }
 
-  componentWillMount() {
-    this.initIcon();
-    this.bindEvents();
-  }
-
   componentWillUpdate(nextProps, { appState }: State) {
     if (!appState || this.state.appState === appState) return;
     var fontFamily = appState.theme.fontFamily;
@@ -397,18 +449,16 @@ class App extends React.Component<{}, State> {
       loadFonts(fontFamily);
       this.setState({ customFont: fontFamily });
     }
-    var allowAds = appState.settings.allowAds;
-    if (allowAds && isProduction) {
-      require('./monetization');
-    }
   }
 
   hidePopup() {
     if (this.isHidden) return;
-    var range = this.state.range;
-    if (range) range.detach();
-    this.setState({ translation: null, error: null, range: null });
+    this.setState({ translation: null, error: null, rect: null });
     if (this.text) this.selection.removeAllRanges();
+  }
+
+  hidePopupFromFrame() {
+    postMessage({ type: MessageType.HIDE_POPUP_FROM_FRAME });
   }
 
   get isHidden() {
