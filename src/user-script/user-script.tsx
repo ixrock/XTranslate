@@ -2,7 +2,7 @@
 
 require('./user-script.scss');
 import * as React from 'react';
-import { autobind, debounce } from "core-decorators";
+import { autobind } from "core-decorators";
 import { render } from 'react-dom'
 import { connect, onMessage, MessageType, Message, getURL, getManifest, postMessage, onPostMessage } from '../extension'
 import { MenuTranslateFavoritePayload, MenuTranslateVendorPayload, TranslateFromFramePayload } from '../extension'
@@ -283,7 +283,7 @@ class App extends React.Component<{}, State> {
     var target = e.toElement as HTMLElement;
     if (this.settings.showPopupAfterSelection && this.text) {
       if (this.isEditable(target)) return;
-      return this.translateLazy();
+      return this.translate();
     }
     if (this.settings.showIconNearSelection) {
       if (this.isOutsideOfPopup(target)) this.showIcon();
@@ -422,11 +422,6 @@ class App extends React.Component<{}, State> {
     if (changePosition) {
       this.setState({ position: position });
     }
-  }
-
-  @debounce(250)
-  translateLazy() {
-    this.translate();
   }
 
   componentWillUpdate(nextProps, { appState }: State) {
