@@ -7,6 +7,8 @@ import { connect } from "../../store/connect";
 import { Dialog, Button } from '../ui'
 import { ISettingsState, settingsActions } from "../settings";
 export const adsDisabledTime = createStorage<number>('adsDisabledTime');
+export const installTime = createStorage<number>('installTime', Date.now(), true);
+const trialPeriodTime = 1000 * 60 * 60 * 24 * 14;
 
 interface Props {
   settings?: ISettingsState
@@ -17,43 +19,40 @@ export class Support extends React.Component<Props, {}> {
   private dialog: Dialog;
   private button: Button;
 
-  componentWillMount() {
-    this.updateTimer();
-  }
-
-  componentWillReceiveProps(nextProps: Props) {
-    this.updateTimer(nextProps.settings.allowAds);
-  }
-
   componentDidMount() {
     if (this.dialog.state.open) {
       setTimeout(this.button.focus, 100);
     }
   }
 
-  updateTimer(allowAds = this.props.settings.allowAds, timer = Date.now(), forceUpdate = false) {
-    if (!allowAds && (!+adsDisabledTime() || forceUpdate)) {
-      adsDisabledTime(timer);
-    }
+  componentWillReceiveProps(nextProps: Props) {
+    var oldVal = this.props.settings.allowAds;
+    var allow = nextProps.settings.allowAds;
+    if (oldVal !== allow) this.updateTimer(allow);
+  }
+
+  updateTimer(allow: boolean) {
+    adsDisabledTime(allow ? Number.MAX_SAFE_INTEGER : Date.now());
   }
 
   @autobind()
   support() {
     settingsActions.sync({ allowAds: true });
-    this.close();
+    this.updateTimer(true);
+    this.dialog.close();
   }
 
   @autobind()
   close() {
-    var timeOffset = 1000 * 60 * 60 * 24 * 14; // forget about notification for 2 weeks
-    this.updateTimer(false, Date.now() + timeOffset, true);
+    this.updateTimer(false);
     this.dialog.close();
   }
 
   render() {
     var allowAds = this.props.settings.allowAds;
-    var timeOffset = 1000 * 60 * 60 * 24 * 7; // first time check after one week
-    var show = !allowAds && adsDisabledTime() + timeOffset < Date.now();
+    var disabledTime = adsDisabledTime();
+    var timeOffset = 1000 * 60 * 60 * 24 * 7;
+    var show = !allowAds && (disabledTime ? disabledTime + trialPeriodTime : installTime() + timeOffset) < Date.now();
     return (
         <Dialog className="Support" open={show} pinned ref={e => this.dialog = e}>
           <p className="mb1">{__i18n("support_dialog_greeting")}</p>
@@ -63,9 +62,6 @@ export class Support extends React.Component<Props, {}> {
             {__i18n("support_dialog_line_3")}{" "}
             {__i18n("support_dialog_line_4")}{" "}
             {__i18n("support_dialog_line_5")}{" "}
-          </p>
-          <p className="mb2">
-            <b>{__i18n("support_dialog_thanks")}</b>
           </p>
           <div className="flex auto gaps">
             <Button label={__i18n("support_dialog_button_support")} primary onClick={this.support} ref={e => this.button = e}/>

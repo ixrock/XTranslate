@@ -6,22 +6,33 @@ class Google extends Vendor {
   public title = 'Google';
   public url = 'https://translate.googleapis.com';
   public publicUrl = 'https://translate.google.com';
-  public maxTextInputLength = 1250;
+  public maxTextInputLength = 5000;
 
   getAudioUrl(lang, text) {
     return this.url + `/translate_tts?client=gtx&ie=UTF-8&tl=${lang}&q=${text}`;
   }
 
   protected translate(langFrom, langTo, text): Promise<Translation> {
+    var reqParams: RequestInit = {};
+
+    var useHttpPost = encodeURIComponent(text).length >= 1000;
+    if (useHttpPost) {
+      reqParams.method = 'post';
+      reqParams.body = 'q=' + encodeURIComponent(text);
+      reqParams.headers = {
+        'Content-type': 'application/x-www-form-urlencoded;charset=UTF-8'
+      };
+    }
+
     var url = this.url + '/translate_a/single?' +
-        encodeQuery('client=gtx&dt=t&dt=bd&dj=1&source=icon', {
-          q: text,
+        encodeQuery('client=gtx&dt=t&dt=bd&dj=1&source=input', {
+          q: !useHttpPost ? text : null,
           sl: langFrom,
           tl: langTo,
           hl: langTo, // word type header for dictionary
         });
 
-    return fetch(url).then(parseJson).then((res: GoogleTranslation) => {
+    return fetch(url, reqParams).then(parseJson).then((res: GoogleTranslation) => {
       var translation: Translation = {
         langDetected: res.src,
         translation: res.sentences.map(sentence => sentence.trans).join(''),

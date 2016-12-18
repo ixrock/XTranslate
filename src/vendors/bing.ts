@@ -29,7 +29,7 @@ class Bing extends Vendor {
         method: 'post',
         credentials: 'include',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify([{ text: text }]) as any,
+        body: JSON.stringify([{ text: text }]),
       }).then(parseJson);
     };
 

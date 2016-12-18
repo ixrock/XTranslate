@@ -3,6 +3,7 @@
 import { onConnect, onMessage, MessageType } from '../extension'
 import { getStore, AppState } from '../store'
 import { updateContextMenu, bindContextMenu } from './contextMenu'
+import { createStorage } from "../utils/createStorage";
 import isEqual = require("lodash/isEqual");
 
 // get current app state from storage
@@ -32,4 +33,9 @@ onMessage(function (message) {
     appState = state;
     if (showMenuChange || favoritesChange) updateContextMenu(appState);
   }
+});
+
+// first installation
+chrome.runtime.onInstalled.addListener(function (evt) {
+  createStorage('installTime', Date.now());
 });

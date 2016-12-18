@@ -4,6 +4,7 @@ import { __i18n } from "../../extension/i18n";
 import { autobind, debounce } from "core-decorators";
 import { vendors, vendorsList } from '../../vendors';
 import { connect } from "../../store/connect";
+import { adsDisabledTime } from '../app/support'
 import { parseHotkey, getHotkey } from '../../utils'
 import { Checkbox, TextField, Radio, RadioGroup, MaterialIcon } from '../ui'
 import { SelectLanguage } from '../select-language'
@@ -115,7 +116,7 @@ export class Settings extends React.Component<Props, {}> {
             </div>
           </div>
 
-          {settings.allowAds ? (
+          {adsDisabledTime() ? (
               <div className="support">
                 <p className="sub-title pv2">{__i18n("sub_header_support_developers")}</p>
                 <Checkbox label={__i18n("support_developers_checkbox")}

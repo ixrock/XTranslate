@@ -9,12 +9,12 @@ export class DonationDialog extends React.Component<{}, {}> {
   private clipboard: Clipboard;
   private wallets = {
     WebMoney: [
-      "Z912122863754",
       "R136684468106",
-      "X660329307361",
+      "Z912122863754",
+      "E412661427637",
     ],
-    PayPal: [
-      "ixrock@gmail.com"
+    Bitcoin: [
+      "1JZqVvwcMpTLF86TDAhX3nfZfEFACWceNu"
     ]
   };
 

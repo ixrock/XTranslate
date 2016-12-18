@@ -52,7 +52,7 @@ export class App extends React.Component<Props, {}> {
       url: getURL(this.manifest.options_page),
       focused: true,
       width: 570,
-      height: 635,
+      height: 650,
       type: "popup"
     });
   }

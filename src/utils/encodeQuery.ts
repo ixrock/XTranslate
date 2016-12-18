@@ -13,6 +13,7 @@ export function encodeQuery(...params: Param[]): string {
     else {
       Object.keys(param).map(key => {
         var value = param[key];
+        if (value == null) return;
         if (Array.isArray(value)) query.push(...value.map(value => encodeParam(key, value)));
         else query.push(encodeParam(key, value));
       })
