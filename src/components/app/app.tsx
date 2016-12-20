@@ -58,6 +58,7 @@ export class App extends React.Component<Props, {}> {
   }
 
   render() {
+    var tab = window.location.hash.replace('#', "");
     var useDarkTheme = this.props.settings.useDarkTheme;
     return (
         <div className="App">
@@ -73,16 +74,16 @@ export class App extends React.Component<Props, {}> {
                 onClick={this.openInWindow}/>
           </h4>
           <Tabs>
-            <Tab title={__i18n("tab_settings")}>
+            <Tab title={__i18n("tab_settings")} active={tab === "settings"}>
               <Settings/>
             </Tab>
-            <Tab title={__i18n("tab_theme")}>
+            <Tab title={__i18n("tab_theme")} active={tab === "theme"}>
               <ThemeManager/>
             </Tab>
-            <Tab title={__i18n("tab_text_input")} active>
+            <Tab title={__i18n("tab_text_input")} active={!tab}>
               <InputTranslation/>
             </Tab>
-            <Tab title={__i18n("tab_history")}>
+            <Tab title={__i18n("tab_history")} active={tab === "history"}>
               <UserHistory/>
             </Tab>
           </Tabs>
@@ -106,6 +107,8 @@ render(
 
 // init app when everything ready to start
 var appContainer = document.getElementById('app');
-getStore().then(store => {
-  render(<Provider store={store}><App/></Provider>, appContainer);
+window.addEventListener("load", function () {
+  getStore().then(store => {
+    render(<Provider store={store}><App/></Provider>, appContainer);
+  });
 });

@@ -1,6 +1,6 @@
 // Background page
 
-import { onConnect, onMessage, MessageType } from '../extension'
+import { onConnect, onMessage, MessageType, tabs, getManifest, getURL } from '../extension'
 import { getStore, AppState } from '../store'
 import { updateContextMenu, bindContextMenu } from './contextMenu'
 import { createStorage } from "../utils/createStorage";
@@ -35,7 +35,11 @@ onMessage(function (message) {
   }
 });
 
-// first installation
+// manage install and update events
 chrome.runtime.onInstalled.addListener(function (evt) {
-  createStorage('installTime', Date.now());
+  if (evt.reason === "install") {
+    createStorage('installTime', Date.now());
+    var optionsPage = getURL(getManifest().options_page + "#settings");
+    tabs.open(optionsPage);
+  }
 });

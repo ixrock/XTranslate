@@ -1,11 +1,12 @@
 require('./settings.scss');
 import * as React from 'react';
 import { __i18n } from "../../extension/i18n";
+import { tabs } from "../../extension/tabs";
 import { autobind, debounce } from "core-decorators";
 import { vendors, vendorsList } from '../../vendors';
 import { connect } from "../../store/connect";
 import { adsDisabledTime } from '../app/support'
-import { parseHotkey, getHotkey } from '../../utils'
+import { parseHotkey, getHotkey, prevDefault } from '../../utils'
 import { Checkbox, TextField, Radio, RadioGroup, MaterialIcon } from '../ui'
 import { SelectLanguage } from '../select-language'
 import { ISettingsState, settingsActions } from './index'
@@ -88,6 +89,14 @@ export class Settings extends React.Component<Props, {}> {
                            onKeyDown={this.defineHotkey} ref={e => this.hotkey = e}/>
               </div>
             </Checkbox>
+          </div>
+
+          <div className="text-input-hotkey mt2">
+            <p className="sub-title">{__i18n("sub_header_quick_access")}</p>
+            <a href="#" onClick={prevDefault(() => tabs.open("chrome://extensions/configureCommands"))}>
+              {__i18n("quick_access_configure_link")}
+            </a>
+            <p>{__i18n("quick_access_explanation")}</p>
           </div>
 
           <div className="vendors flex gaps">
