@@ -4,6 +4,7 @@ import { getId } from './runtime'
 
 export enum MessageType {
   APP_STATE,
+  LICENSE_STATE,
   MENU_TRANSLATE_WITH_VENDOR,
   MENU_TRANSLATE_FAVORITE,
   MENU_TRANSLATE_FULL_PAGE,

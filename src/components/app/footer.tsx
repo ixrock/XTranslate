@@ -3,8 +3,6 @@ import * as React from 'react';
 import { autobind } from "core-decorators";
 import { prevDefault } from '../../utils'
 import { getManifest, __i18n } from '../../extension'
-import { LocaleMessage } from "../locale-message";
-import { DonationDialog } from "./donation-dialog";
 
 interface ShareIcon {
   title: string
@@ -14,9 +12,8 @@ interface ShareIcon {
 
 export class Footer extends React.Component<any, any> {
   private manifest = getManifest();
-  private donationDialog: DonationDialog;
   private storeUrl = 'https://chrome.google.com/webstore/detail/gfgpkepllngchpmcippidfhmbhlljhoo';
-  private shareTags = ["chrome", "extension", "translator"];
+  private shareTags = ["chrome", "extension", "xtranslate"];
 
   private shareIcons: ShareIcon[] = [
     {
@@ -54,11 +51,7 @@ export class Footer extends React.Component<any, any> {
   render() {
     return (
         <div className="Footer">
-          <DonationDialog ref={e => this.donationDialog = e}/>
-          <LocaleMessage message="footer" replacers={[
-              donate => <a href="#" onClick={() => this.donationDialog.open()}>{donate}</a>,
-              review => <a href={this.storeUrl + "/reviews"} target="_blank">{review}</a>,
-          ]}/>
+          {__i18n("footer")}
           <div className="social-icons">
             {this.shareIcons.map((share, i) =>
                 <a key={i} href={share.url} onClick={prevDefault(() => this.share(share.url))}>

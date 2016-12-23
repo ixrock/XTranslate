@@ -14,6 +14,15 @@ export function getURL(path: string) {
   return chrome.runtime.getURL(path);
 }
 
+export function getOptionsPageUrl(hash = "") {
+  if (hash && !hash.startsWith('#')) hash = "#" + hash;
+  return getURL(getManifest().options_page) + hash;
+}
+
+export function openOptionsPage(hash?: string) {
+  tabs.open(getOptionsPageUrl(hash));
+}
+
 export function getBgcPage(): Promise<Window> {
   return new Promise((resolve) => {
     chrome.runtime.getBackgroundPage(resolve)

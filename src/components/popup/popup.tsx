@@ -2,6 +2,7 @@ require('./popup.scss');
 import * as React from 'react';
 import { autobind } from "core-decorators";
 import { __i18n } from "../../extension/i18n";
+import { getOptionsPageUrl } from "../../extension/runtime";
 import { cssNames } from "../../utils/cssNames";
 import { cssColor } from "../ui/color-picker/cssColor";
 import { MaterialIcon } from '../ui/icons/material-icon'
@@ -18,6 +19,7 @@ interface Props extends React.HTMLProps<any> {
   translation?: Translation
   error?: TranslationError
   position?: React.CSSProperties
+  disabled?: boolean
   next?(): void;
 }
 
@@ -171,15 +173,32 @@ export class Popup extends React.Component<Props, State> {
     )
   }
 
+  renderTrial() {
+    var boxSizeStyle = this.state.boxSizeStyle;
+    return (
+        <div className="license-required flex align-center" style={boxSizeStyle}>
+          <MaterialIcon name="info_outline"/>
+          <div className="info">
+            <span>{__i18n("trial_is_over")}. </span>
+            <a href={getOptionsPageUrl("#settings")} target="_blank">
+              {__i18n("trial_popup_learn_more")}
+            </a>
+          </div>
+        </div>
+    )
+  }
+
   render() {
-    var { translation, error, position } = this.props;
+    var { translation, error, position, disabled } = this.props;
     var { cssThemeStyle } = this.state;
     var style = Object.assign({}, cssThemeStyle, position);
-    var className = cssNames("Popup", { visible: translation || error });
+    var visible = translation || error;
+    var className = cssNames("Popup", { visible });
     return (
         <div className={className} style={style} tabIndex={-1} ref={e => this.elem = e}>
           <div className="content">
-            {error ? this.renderError() : this.renderResult()}
+            {disabled && visible ? this.renderTrial() : null}
+            {!disabled ? (error ? this.renderError() : this.renderResult()) : null}
           </div>
         </div>
     );

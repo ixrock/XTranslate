@@ -80,7 +80,7 @@ export class App extends React.Component<Props, {}> {
             <Tab title={__i18n("tab_theme")} active={tab === "theme"}>
               <ThemeManager/>
             </Tab>
-            <Tab title={__i18n("tab_text_input")} active={!tab}>
+            <Tab title={__i18n("tab_text_input")} active={!tab || tab === "popup"}>
               <InputTranslation/>
             </Tab>
             <Tab title={__i18n("tab_history")} active={tab === "history"}>

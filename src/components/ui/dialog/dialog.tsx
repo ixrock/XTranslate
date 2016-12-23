@@ -28,6 +28,10 @@ export class Dialog extends React.Component<Props, {}> {
     onOpen: noop
   };
 
+  get isOpen() {
+    return this.state.open;
+  }
+
   private events = {
     closeOnEscape: e => {
       var target: HTMLElement = e.target;
@@ -55,6 +59,11 @@ export class Dialog extends React.Component<Props, {}> {
     this.elem.removeEventListener('click', this.events.closeOnClickOutside);
   }
 
+  componentWillReceiveProps(nextProps: Props) {
+    var { open } = nextProps;
+    if (this.isOpen !== open) this.toggle(open);
+  }
+
   componentDidMount() {
     if (this.props.open) {
       this.props.onOpen();
@@ -63,34 +72,35 @@ export class Dialog extends React.Component<Props, {}> {
   }
 
   componentWillUnmount() {
-    if (this.state.open) this.unbindEvents();
+    if (this.isOpen) this.unbindEvents();
   }
 
   open() {
-    if (this.state.open) return;
+    if (this.isOpen) return;
     this.toggle(true, () => this.bindEvents());
   }
 
   close() {
-    if (!this.state.open) return;
+    if (!this.isOpen) return;
     this.unbindEvents();
     this.toggle(false);
   }
 
   toggle(isOpen?: boolean, callback?) {
-    var open = arguments.length ? isOpen : !this.state.open;
+    var open = arguments.length ? isOpen : !this.isOpen;
     if (open) this.props.onOpen();
     else this.props.onClose();
     this.setState({ open }, callback);
   }
 
   render() {
+    if (!this.isOpen) return null;
     var modal = this.props.modal;
     var props = omit(this.props, ['className', 'open', 'modal', 'pinned', 'onClose', 'onOpen']);
     var componentClass = cssNames("Dialog", 'flex center', this.props.className, {
       modal: modal
     });
-    return this.state.open ? (
+    return (
         <Portal>
           <div className={componentClass} {...props} ref={e => this.elem = e}>
             <div className="box" ref={e => this.contentElem = e}>
@@ -98,7 +108,7 @@ export class Dialog extends React.Component<Props, {}> {
             </div>
           </div>
         </Portal>
-    ) : null;
+    );
   }
 }
 

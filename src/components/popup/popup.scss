@@ -69,4 +69,14 @@
       }
     }
   }
+
+  a {
+    color: inherit;
+  }
+
+  .license-required {
+    .material-icons {
+      pointer-events: none;
+    }
+  }
 }

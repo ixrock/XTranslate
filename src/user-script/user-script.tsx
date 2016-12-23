@@ -18,6 +18,7 @@ const topWindow = window.top;
 const isFrameWindow = window !== topWindow;
 
 interface State {
+  enabled?: boolean
   appState?: AppState
   translation?: Translation
   error?: TranslationError
@@ -87,7 +88,8 @@ class App extends React.Component<{}, State> {
 
   @autobind()
   onAppState(message: Message) {
-    if (message.type === MessageType.APP_STATE) {
+    var type = message.type;
+    if (type === MessageType.APP_STATE) {
       var init = !this.state.appState;
       this.setState({ appState: message.payload }, () => {
         if (init) {
@@ -95,6 +97,9 @@ class App extends React.Component<{}, State> {
           this.bindEvents();
         }
       });
+    }
+    if (type === MessageType.LICENSE_STATE) {
+      this.setState({ enabled: message.payload });
     }
   }
 
@@ -449,14 +454,14 @@ class App extends React.Component<{}, State> {
   }
 
   render() {
-    var { translation, error, position } = this.state;
+    var { translation, error, position, enabled } = this.state;
     if (!this.state.appState) return null;
     return (
         <ReactShadow include={[this.style]}>
           <div className="popup-content" onKeyDown={this.onKeydownWithinPopup}>
             <Popup translation={translation} error={error} position={position}
                    theme={this.theme} settings={this.settings}
-                   next={this.translateWithNextVendor}
+                   disabled={!enabled} next={this.translateWithNextVendor}
                    ref={e => this.popup = e}/>
           </div>
         </ReactShadow>
@@ -467,5 +472,5 @@ class App extends React.Component<{}, State> {
 // init app
 const appContainer = document.createElement("div");
 appContainer.className = "XTranslate";
-document.body.appendChild(appContainer);
+document.documentElement.appendChild(appContainer);
 render(<App/>, appContainer);

@@ -1,11 +1,10 @@
 require('./settings.scss');
 import * as React from 'react';
-import { __i18n } from "../../extension/i18n";
-import { tabs } from "../../extension/tabs";
-import { autobind, debounce } from "core-decorators";
+import { autobind } from "core-decorators";
 import { vendors, vendorsList } from '../../vendors';
+import { tabs, __i18n } from "../../extension";
+import { trialIsOver } from "../../extension/license";
 import { connect } from "../../store/connect";
-import { adsDisabledTime } from '../app/support'
 import { parseHotkey, getHotkey, prevDefault } from '../../utils'
 import { Checkbox, TextField, Radio, RadioGroup, MaterialIcon } from '../ui'
 import { SelectLanguage } from '../select-language'
@@ -19,14 +18,8 @@ interface Props {
 export class Settings extends React.Component<Props, {}> {
   private hotkey: TextField;
 
-  save(state: ISettingsState) {
-    this.setState(state);
-    this.sync();
-  }
-
-  @debounce(250)
-  sync() {
-    settingsActions.sync(this.state);
+  save(settings: ISettingsState) {
+    settingsActions.sync(settings);
   }
 
   @autobind()
@@ -42,15 +35,15 @@ export class Settings extends React.Component<Props, {}> {
   @autobind()
   onVendorChange(vendorName: string) {
     var vendor = vendors[vendorName];
-    var state: ISettingsState = { vendor: vendorName };
+    var settings: ISettingsState = { vendor: vendorName };
     var { langFrom, langTo } = this.props.settings;
-    if (!vendor.langFrom[langFrom]) state.langFrom = Object.keys(vendor.langFrom)[0];
-    if (!vendor.langTo[langTo]) state.langTo = Object.keys(vendor.langTo)[0];
-    this.save(state);
+    if (!vendor.langFrom[langFrom]) settings.langFrom = Object.keys(vendor.langFrom)[0];
+    if (!vendor.langTo[langTo]) settings.langTo = Object.keys(vendor.langTo)[0];
+    this.save(settings);
   }
 
   render() {
-    var settings = Object.assign({}, this.props.settings, this.state);
+    var settings = this.props.settings;
     var hotkey = parseHotkey(settings.hotkey);
     return (
         <div className="Settings">
@@ -91,14 +84,6 @@ export class Settings extends React.Component<Props, {}> {
             </Checkbox>
           </div>
 
-          <div className="text-input-hotkey mt2">
-            <p className="sub-title">{__i18n("sub_header_quick_access")}</p>
-            <a href="#" onClick={prevDefault(() => tabs.open("chrome://extensions/configureCommands"))}>
-              {__i18n("quick_access_configure_link")}
-            </a>
-            <p>{__i18n("quick_access_explanation")}</p>
-          </div>
-
           <div className="vendors flex gaps">
             <div className="vendor">
               <p className="sub-title mb1">{__i18n("sub_header_translator")}</p>
@@ -125,7 +110,14 @@ export class Settings extends React.Component<Props, {}> {
             </div>
           </div>
 
-          {adsDisabledTime() ? (
+          <div className="text-input-hotkey mt2">
+            <p className="sub-title">{__i18n("sub_header_quick_access")}</p>
+            <a href="#" onClick={prevDefault(() => tabs.open("chrome://extensions/configureCommands"))}>
+              {__i18n("quick_access_configure_link")}
+            </a>
+          </div>
+
+          {trialIsOver() ? (
               <div className="support">
                 <p className="sub-title pv2">{__i18n("sub_header_support_developers")}</p>
                 <Checkbox label={__i18n("support_developers_checkbox")}
