@@ -11,6 +11,13 @@
   }
 
   .is-number {
+    input[type="number"] {
+      -moz-appearance: textfield;
+      &::-webkit-outer-spin-button,
+      &::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+      }
+    }
     .icon {
       opacity: .25;
       &:hover {
@@ -21,10 +28,6 @@
       .input {
         text-align: center;
         min-width: 40px;
-        &::-webkit-inner-spin-button,
-        &::-webkit-outer-spin-button {
-          -webkit-appearance: none;
-        }
       }
     }
   }
