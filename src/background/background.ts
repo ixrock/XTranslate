@@ -1,9 +1,10 @@
 // Background page
 
-import { onConnect, onMessage, MessageType, openOptionsPage } from '../extension'
+import { onConnect, onMessage, MessageType, openOptionsPage, PlayTextToSpeechPayload } from '../extension'
 import { checkLicense } from "../extension/license";
 import { getStore, AppState } from '../store'
 import { updateContextMenu, bindContextMenu } from './contextMenu'
+import { vendors } from "../vendors";
 import isEqual = require("lodash/isEqual");
 
 var appState: AppState = {};
@@ -32,7 +33,7 @@ onConnect(port => {
       .catch(() => hasLicense(false));
 });
 
-// update app state from options page event
+// update app state from options page and handle play/stop tts from popup
 onMessage(function (message) {
   var type = message.type;
   if (type === MessageType.APP_STATE) {
@@ -41,6 +42,14 @@ onMessage(function (message) {
     var favoritesChange = !isEqual(appState.favorites, state.favorites);
     appState = state;
     if (showMenuChange || favoritesChange) updateContextMenu(appState);
+  }
+  if (type === MessageType.PLAY_TEXT_TO_SPEECH) {
+    let { vendor, text, lang } = message.payload as PlayTextToSpeechPayload;
+    vendors[vendor].playText(lang, text);
+  }
+  if (type === MessageType.STOP_TTS_PLAYING) {
+    let vendor = message.payload;
+    vendors[vendor].stopPlaying();
   }
 });
 

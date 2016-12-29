@@ -2,7 +2,8 @@ require('./popup.scss');
 import * as React from 'react';
 import { autobind } from "core-decorators";
 import { __i18n } from "../../extension/i18n";
-import { getOptionsPageUrl } from "../../extension/runtime";
+import { MessageType } from "../../extension/message";
+import { getOptionsPageUrl, sendMessage } from "../../extension/runtime";
 import { cssNames } from "../../utils/cssNames";
 import { cssColor } from "../ui/color-picker/cssColor";
 import { MaterialIcon } from '../ui/icons/material-icon'
@@ -10,8 +11,6 @@ import { IThemeManagerState } from '../theme-manager/theme-manager.types'
 import { ISettingsState } from "../settings/settings.types";
 import { fontsList, loadFonts } from '../theme-manager/fonts-loader'
 import { vendors, Translation, TranslationError, getNextVendor } from "../../vendors";
-import omit = require("lodash/omit");
-import find = require("lodash/find");
 
 interface Props extends React.HTMLProps<any> {
   settings?: ISettingsState
@@ -94,14 +93,25 @@ export class Popup extends React.Component<Props, State> {
   @autobind()
   playText() {
     var { langDetected, langFrom, originalText, vendor } = this.props.translation;
-    var vendorApi = vendors[vendor];
-    if (vendorApi) vendorApi.playText(langDetected || langFrom, originalText);
+    sendMessage({
+      type: MessageType.PLAY_TEXT_TO_SPEECH,
+      payload: {
+        vendor: vendor,
+        lang: langDetected || langFrom,
+        text: originalText
+      }
+    });
   }
 
   @autobind()
   stopPlaying() {
     var translation = this.props.translation;
-    if (translation) vendors[translation.vendor].stopPlaying();
+    if (translation) {
+      sendMessage({
+        type: MessageType.STOP_TTS_PLAYING,
+        payload: translation.vendor
+      });
+    }
   }
 
   @autobind()

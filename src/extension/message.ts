@@ -10,6 +10,8 @@ export enum MessageType {
   MENU_TRANSLATE_FULL_PAGE,
   TRANSLATE_FROM_FRAME,
   HIDE_POPUP_FROM_FRAME,
+  PLAY_TEXT_TO_SPEECH,
+  STOP_TTS_PLAYING,
 }
 
 export interface Message {
@@ -41,4 +43,10 @@ export interface MenuTranslateFavoritePayload extends MenuTranslateVendorPayload
 export interface TranslateFromFramePayload {
   translate: string[]
   rect: ClientRect
+}
+
+export interface PlayTextToSpeechPayload {
+  vendor: string
+  lang: string
+  text: string
 }
