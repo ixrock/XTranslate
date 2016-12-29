@@ -77,5 +77,6 @@
   "trial_button_buy_app"             : {"message": "Buy"},
   "trial_popup_learn_more"           : {"message": "Learn more"},
   "___________footer________________": {"message": "----------------------------------------------"},
-  "footer"                           : {"message": "Dear friend! If you like the app share it with your friends:"}
+  "footer"                           : {"message": "Dear friend! If you like the app share it with your friends:"},
+  "footer_leave_review_and_donate"   : {"message": "Also you can %leave a review% or %make a donation% for extension's support."}
 }
