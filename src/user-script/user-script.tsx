@@ -274,8 +274,9 @@ class App extends React.Component<{}, State> {
   @autobind()
   onMouseDown(e: MouseEvent) {
     this.hideIcon();
+    var rightButton = e.button === 2;
     if (isFrameWindow) this.hidePopupFromFrame();
-    if (!this.isHidden) {
+    if (!this.isHidden && !rightButton) {
       var target = e.toElement;
       if (!this.icon.contains(target) && this.isOutsideOfPopup(target)) {
         this.hidePopup();
@@ -285,20 +286,19 @@ class App extends React.Component<{}, State> {
 
   @autobind()
   onMouseUp(e: MouseEvent) {
-    var target = e.toElement as HTMLElement;
+    if (this.isEditable(document.activeElement)) return;
     if (this.settings.showPopupAfterSelection && this.text) {
-      if (this.isEditable(target)) return;
       return this.translate();
     }
     if (this.settings.showIconNearSelection) {
-      if (this.isOutsideOfPopup(target)) this.showIcon();
+      if (this.isOutsideOfPopup(e.toElement)) this.showIcon();
     }
   }
 
-  isEditable(elem: HTMLElement) {
+  isEditable(elem: Element) {
     return elem instanceof HTMLInputElement
         || elem instanceof HTMLTextAreaElement
-        || elem.isContentEditable;
+        || (elem as HTMLElement).isContentEditable;
   }
 
   isOutsideOfPopup(elem) {
