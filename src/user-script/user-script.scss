@@ -5,10 +5,15 @@ $flexbox-grids-count: 0;
   all: initial !important;
 
   .Popup {
+    $offset: 7px;
     position: absolute;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
-    margin: 7px 0;
+    margin: $offset 0;
+
+    &.pdf {
+      margin: $offset;
+    }
   }
 
   *, *:after, *:before {

@@ -81,18 +81,21 @@ export function updateContextMenu(state: AppState) {
 
 // context menu clicks handler
 export function bindContextMenu(getState: () => AppState) {
-  const onContextMenu = (info: chrome.contextMenus.OnClickData, tab: chrome.tabs.Tab) => {
+  const onContextMenu = async (info: chrome.contextMenus.OnClickData) => {
     var [type, vendor, from, to] = String(info.menuItemId).split("-");
+    var selectedText = info.selectionText;
+    var tab = await tabs.getActive();
+
     var enumType = Number(type);
     if (enumType === MessageType.MENU_TRANSLATE_WITH_VENDOR) {
-      let payload: MenuTranslateVendorPayload = { vendor };
+      let payload: MenuTranslateVendorPayload = { vendor, selectedText };
       tabs.sendMessage(tab.id, {
         type: MessageType.MENU_TRANSLATE_WITH_VENDOR,
         payload: payload
       });
     }
     if (enumType === MessageType.MENU_TRANSLATE_FAVORITE) {
-      let payload: MenuTranslateFavoritePayload = { vendor, from, to };
+      let payload: MenuTranslateFavoritePayload = { vendor, from, to, selectedText };
       tabs.sendMessage(tab.id, {
         type: MessageType.MENU_TRANSLATE_FAVORITE,
         payload: payload
@@ -100,22 +103,19 @@ export function bindContextMenu(getState: () => AppState) {
     }
     if (enumType === MessageType.MENU_TRANSLATE_FULL_PAGE) {
       var { langTo } = getState().settings;
-      tabs.getActive().then(tab => {
-        var pageUrl = tab.url;
-        var url = "";
-        switch (vendor) {
-          case "google":
-            url = `https://translate.google.com/translate?tl=${langTo}&u=${pageUrl}`;
-            break;
-          case "yandex":
-            url = `https://translate.yandex.com/translate?lang=${langTo}&url=${pageUrl}`;
-            break;
-          case "bing":
-            url = `http://www.microsofttranslator.com/bv.aspx?to=${langTo}&a=${pageUrl}`;
-            break;
-        }
-        tabs.open(url);
-      });
+      var translatePageUrl = "";
+      switch (vendor) {
+        case "google":
+          translatePageUrl = `https://translate.google.com/translate?tl=${langTo}&u=${tab.url}`;
+          break;
+        case "yandex":
+          translatePageUrl = `https://translate.yandex.com/translate?lang=${langTo}&url=${tab.url}`;
+          break;
+        case "bing":
+          translatePageUrl = `http://www.microsofttranslator.com/bv.aspx?to=${langTo}&a=${tab.url}`;
+          break;
+      }
+      tabs.open(translatePageUrl);
     }
   };
   chrome.contextMenus.onClicked.addListener(onContextMenu);

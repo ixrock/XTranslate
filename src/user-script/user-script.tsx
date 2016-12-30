@@ -10,12 +10,14 @@ import { loadFonts } from "../components/theme-manager/fonts-loader";
 import { AppState } from '../store/store.types'
 import { Popup } from "../components/popup/popup";
 import { vendors, Translation, TranslationError, getNextVendor } from "../vendors";
+import { cssNames } from "../utils/cssNames";
 import { getHotkey } from "../utils/parseHotkey";
 const ReactShadow = require("react-shadow").default;
 import isEqual = require("lodash/isEqual");
 const logo = require("../components/app/logo.gif");
 const topWindow = window.top;
 const isFrameWindow = window !== topWindow;
+const isPdf = document['contentType'] === "application/pdf";
 
 interface State {
   enabled?: boolean
@@ -107,12 +109,12 @@ class App extends React.Component<{}, State> {
   onMenuClick(message: Message) {
     var { type } = message;
     if (type === MessageType.MENU_TRANSLATE_WITH_VENDOR) {
-      let payload = message.payload as MenuTranslateVendorPayload;
-      this.translateWith(payload.vendor);
+      let { vendor, selectedText } = message.payload as MenuTranslateVendorPayload;
+      this.translateWith(vendor, null, null, selectedText);
     }
     if (type === MessageType.MENU_TRANSLATE_FAVORITE) {
-      let payload = message.payload as MenuTranslateFavoritePayload;
-      this.translateWith(payload.vendor, payload.from, payload.to);
+      let { vendor, from, to, selectedText } = message.payload as MenuTranslateFavoritePayload;
+      this.translateWith(vendor, from, to, selectedText);
     }
   }
 
@@ -175,7 +177,7 @@ class App extends React.Component<{}, State> {
     this.icon.parentNode.removeChild(this.icon);
   }
 
-  normalizeRect(rect: ClientRect, withScroll = true) {
+  normalizeRect(rect = { left: 0, top: 0, width: 0, height: 0 }, withScroll = true) {
     var left = rect.left + (withScroll ? window.pageXOffset : 0);
     var top = rect.top + (withScroll ? window.pageYOffset : 0);
     var width = rect.width;
@@ -310,19 +312,21 @@ class App extends React.Component<{}, State> {
     this.translateWith(vendor, langFrom, langTo, text);
   }
 
-  translateWith(vendorName: string, from = this.settings.langFrom, to = this.settings.langTo, text = this.text, rect?: ClientRect) {
+  translateWith(vendorName: string, langFrom?, langTo?, text = this.text, rect?: ClientRect) {
+    langFrom = langFrom || this.settings.langFrom;
+    langTo = langTo || this.settings.langTo;
     var vendorApi = vendors[vendorName];
     if (text && text.length <= vendorApi.maxTextInputLength) {
       if (isFrameWindow) {
         postMessage({
           type: MessageType.TRANSLATE_FROM_FRAME,
           payload: {
-            translate: [vendorName, from, to, text],
+            translate: [vendorName, langFrom, langTo, text],
             rect: this.getFrameRect()
           } as TranslateFromFramePayload
         });
       } else {
-        var translation = vendorApi.getTranslation(from, to, text);
+        var translation = vendorApi.getTranslation(langFrom, langTo, text);
         this.handleTranslation(translation, rect);
       }
     }
@@ -368,10 +372,15 @@ class App extends React.Component<{}, State> {
     this.popup.focus();
   }
 
-  getRect(range = this.range) {
-    var endContainer = range.endContainer as Element;
-    if (!range.getClientRects().length) return this.normalizeRect(endContainer.getBoundingClientRect());
-    return this.normalizeRect(range.getBoundingClientRect());
+  getRect(range?: Range) {
+    try {
+      range = range || this.range;
+      var endContainer = range.endContainer as Element;
+      if (!range.getClientRects().length) return this.normalizeRect(endContainer.getBoundingClientRect());
+      return this.normalizeRect(range.getBoundingClientRect());
+    } catch (e) {
+      return this.normalizeRect();
+    }
   }
 
   getPosition(rect = this.state.rect): Position {
@@ -459,7 +468,8 @@ class App extends React.Component<{}, State> {
     return (
         <ReactShadow include={[this.style]}>
           <div className="popup-content" onKeyDown={this.onKeydownWithinPopup}>
-            <Popup translation={translation} error={error} position={position}
+            <Popup className={cssNames({pdf: isPdf})}
+                   translation={translation} error={error} position={position}
                    theme={this.theme} settings={this.settings}
                    disabled={!enabled} next={this.translateWithNextVendor}
                    ref={e => this.popup = e}/>

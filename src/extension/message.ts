@@ -35,6 +35,7 @@ export function onPostMessage(callback: (message: Message) => void) {
 
 export interface MenuTranslateVendorPayload {
   vendor: string
+  selectedText: string
 }
 
 export interface MenuTranslateFavoritePayload extends MenuTranslateVendorPayload, Favorite {

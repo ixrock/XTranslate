@@ -13,6 +13,7 @@ import { fontsList, loadFonts } from '../theme-manager/fonts-loader'
 import { vendors, Translation, TranslationError, getNextVendor } from "../../vendors";
 
 interface Props extends React.HTMLProps<any> {
+  className?: any
   settings?: ISettingsState
   theme?: IThemeManagerState
   translation?: Translation
@@ -199,13 +200,13 @@ export class Popup extends React.Component<Props, State> {
   }
 
   render() {
-    var { translation, error, position, disabled } = this.props;
+    var { translation, error, position, disabled, className } = this.props;
     var { cssThemeStyle } = this.state;
     var style = Object.assign({}, cssThemeStyle, position);
     var visible = translation || error;
-    var className = cssNames("Popup", { visible });
+    var popupClass = cssNames("Popup", { visible }, className);
     return (
-        <div className={className} style={style} tabIndex={-1} ref={e => this.elem = e}>
+        <div className={popupClass} style={style} tabIndex={-1} ref={e => this.elem = e}>
           <div className="content">
             {disabled && visible ? this.renderTrial() : null}
             {!disabled ? (error ? this.renderError() : this.renderResult()) : null}

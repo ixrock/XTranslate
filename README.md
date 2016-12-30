@@ -11,17 +11,20 @@ Features:
 1) There are many ways of getting translation from texts the page:
 - double-click on the word
 
-select some text and get immediate translation and do:
+select text and get immediate translation after one of the following actions:
 - press hotkey defined in extension settings (**alt+x** by default)
 - click on the translate icon appeared near selected text
-- just release mouse button (turned off by default)
-
+- just release mouse left button (turned off by default)
 - write text in input fields, mouse over it and press hotkey
 
 You can get even some information from images by putting mouse cursor over the image element and 
 press hotkey (title or alt attributes will be used, if applicable).
 Even more, with this feature is possible to get auto-selection of text from element under mouse cursor.
 Just move the pointer to element on the page and press hotkey!
+
+Translations in **PDF files** are also supported, but it works only from context menu due technical restrictions of how chrome renders pdf-files.
+Select a text in opened file (be sure it's not an image file inside pdf content),  
+then do mouse right click on selection and choose an item to get translation with specific translation vendor.
 
 2) Listen text-to-speech for all supported translation vendors
 

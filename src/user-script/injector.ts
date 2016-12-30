@@ -8,7 +8,7 @@ if (env.isDevelopment) {
   var style = document.createElement('link');
   style.rel = "stylesheet";
   style.href = getURL('page.css');
-  document.head.appendChild(style);
+  document.documentElement.appendChild(style);
   // js
   fetch(getURL('content.js')).then(res => res.text()).then(eval);
 }
