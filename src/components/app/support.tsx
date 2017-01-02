@@ -3,7 +3,7 @@ import * as React from 'react';
 import { autobind, debounce } from "core-decorators";
 import { __i18n, getId, tabs, openOptionsPage, broadcastMessage, MessageType } from "../../extension";
 import { checkLicense, checkPrice, buyApp } from "../../extension/license";
-import { prevDefault, noop } from "../../utils";
+import { noop } from "../../utils";
 import { connect } from "../../store/connect";
 import { Dialog, Button } from '../ui'
 import { ISettingsState, settingsActions } from "../settings";
@@ -103,11 +103,6 @@ export class Support extends React.Component<Props, {}> {
             <p>{__i18n("trial_option_allow_ads")}</p>
             <p>{__i18n("trial_option_buy_app", [this.state.price]).join("")}</p>
           </div>
-          <p className="mb2">
-            {React.Children.toArray(__i18n("trial_options_disagree", [
-              removeLink => <a href="#" onClick={prevDefault(this.removeApp)}>{removeLink}</a>
-            ]))}
-          </p>
           <div className="flex auto gaps">
             <Button label={__i18n("trial_button_allow_ads")} onClick={this.allowAds} accent autoFocus/>
             <Button label={__i18n("trial_button_buy_app")} onClick={this.buyApp} primary/>

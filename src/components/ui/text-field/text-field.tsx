@@ -69,6 +69,10 @@ export class TextField extends React.Component<Props, State> {
     return value || (isNumber ? 0 : "");
   }
 
+  get isFocused() {
+    return document.activeElement === this.input;
+  }
+
   get value() {
     return this.state.value;
   }

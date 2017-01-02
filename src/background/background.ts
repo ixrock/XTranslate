@@ -2,15 +2,16 @@
 
 import { onConnect, onMessage, MessageType, openOptionsPage, PlayTextToSpeechPayload } from '../extension'
 import { checkLicense } from "../extension/license";
-import { getStore, AppState } from '../store'
+import { getStore, AppState, storage } from '../store'
 import { updateContextMenu, bindContextMenu } from './contextMenu'
 import { vendors } from "../vendors";
 import isEqual = require("lodash/isEqual");
 
 var appState: AppState = {};
-getStore().then(store => {
+var storeInit = getStore().then(store => {
   appState = store.getState();
   updateContextMenu(appState);
+  return appState;
 });
 
 // add context menu event handler
@@ -57,5 +58,6 @@ onMessage(function (message) {
 chrome.runtime.onInstalled.addListener(function (evt) {
   if (evt.reason === "install") {
     openOptionsPage("#settings");
+    storeInit.then(storage.sync.set);
   }
 });

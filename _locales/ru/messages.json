@@ -72,7 +72,6 @@
   "trial_continue_options"           : {"message": "Чтобы продолжить пользоваться приложением, пожалуйста выберите один из следующих вариантов:"},
   "trial_option_allow_ads"           : {"message": "1) разрешить контекстную рекламу на посещаемых страницах"},
   "trial_option_buy_app"             : {"message": "2) купить лицензию на использование приложения за %price%"},
-  "trial_options_disagree"           : {"message": "Если вы не согласны с этим, пожалуйста %удалите расширение% и не используйте его."},
   "trial_button_allow_ads"           : {"message": "Разрешить рекламу"},
   "trial_button_buy_app"             : {"message": "Купить"},
   "trial_popup_learn_more"           : {"message": "Подробнее"},

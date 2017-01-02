@@ -13,9 +13,6 @@ export class DonationDialog extends React.Component<{}, {}> {
       "Z912122863754",
       "E412661427637",
     ],
-    Paypal: [
-      "ixrock@gmail.com"
-    ],
     Bitcoin: [
       "1JZqVvwcMpTLF86TDAhX3nfZfEFACWceNu"
     ]
@@ -63,6 +60,9 @@ export class DonationDialog extends React.Component<{}, {}> {
                 </div>
             )
           })}
+          <div className="donation-addr">
+            <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=ixrock%40gmail%2ecom&lc=US&item_name=XTranslate%20%2d%20browser%20extension&currency_code=EUR&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted" className="title" target="_blank">Paypal</a>
+          </div>
         </Dialog>
     );
   }

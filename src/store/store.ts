@@ -1,6 +1,6 @@
 import { createStore, Store } from 'redux'
-import { middlewares, rootReducer, AppState } from './index'
-import { Storage, broadcastMessage, MessageType, getBgcPage } from '../extension'
+import { middlewares, rootReducer, AppState, storage } from './index'
+import { broadcastMessage, MessageType, getBgcPage } from '../extension'
 import isEqual = require("lodash/isEqual");
 import cloneDeep = require("lodash/cloneDeep");
 
@@ -9,7 +9,7 @@ interface AppStore extends Store<AppState> {
 }
 
 export var store: AppStore;
-export const storage = new Storage<AppState>();
+export * from './storage';
 
 export function getStore(): Promise<AppStore> {
   return storage.sync.get().then(initState => {

@@ -72,7 +72,6 @@
   "trial_continue_options"           : {"message": "To continue using the app, please choose one of the following options:"},
   "trial_option_allow_ads"           : {"message": "1) allow context ads at pages you visit"},
   "trial_option_buy_app"             : {"message": "2) buy a license for using the app for %price%"},
-  "trial_options_disagree"           : {"message": "If you are not agree with this, please %remove the extension% and do not use it."},
   "trial_button_allow_ads"           : {"message": "Allow ads"},
   "trial_button_buy_app"             : {"message": "Buy"},
   "trial_popup_learn_more"           : {"message": "Learn more"},

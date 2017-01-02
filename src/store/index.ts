@@ -1,3 +1,4 @@
+export * from './storage'
 export * from './store'
 export * from './store.types'
 export * from './store.reducer'
