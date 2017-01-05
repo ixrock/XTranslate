@@ -41,7 +41,6 @@ then do mouse right click on selection and choose an item to get translation wit
 Install extension from web store:
 -----------
 * [Chrome](https://chrome.google.com/webstore/detail/xtranslate/gfgpkepllngchpmcippidfhmbhlljhoo)
-* [Opera](https://addons.opera.com/en/extensions/details/xtranslate/)
 
 Available translation vendors:
 -----------
