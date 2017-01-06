@@ -60,7 +60,6 @@ export class InputTranslation extends React.Component<Props, State> {
 
   componentDidMount() {
     this.textField.focus();
-    setTimeout(this.textField.focus, 500);
   }
 
   @autobind()
@@ -311,7 +310,7 @@ export class InputTranslation extends React.Component<Props, State> {
           <TextField
               placeholder={__i18n("text_field_placeholder")}
               autoFocus multiLine rows={2} maxLength={this.vendor.maxTextInputLength}
-              onChange={v => this.onTextChange(v)}
+              onChange={v => this.onTextChange(v)} tabIndex={1}
               ref={e => this.textField = e}/>
           {loading ? <Spinner center/> : (error ? this.renderError() : this.renderResult())}
         </div>

@@ -105,10 +105,8 @@ render(
     document.getElementById('loading')
 );
 
-// init app when everything ready to start
-var appContainer = document.getElementById('app');
-window.addEventListener("load", function () {
-  getStore().then(store => {
-    render(<Provider store={store}><App/></Provider>, appContainer);
-  });
+// init app
+getStore().then(store => {
+  var appContainer = document.getElementById('app');
+  render(<Provider store={store}><App/></Provider>, appContainer);
 });
