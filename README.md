@@ -38,9 +38,10 @@ then do mouse right click on selection and choose an item to get translation wit
 
 7) View and edit history of translations (*coming soon*)
 
-Install extension from web store:
+Install extension:
 -----------
-* [Chrome](https://chrome.google.com/webstore/detail/xtranslate/gfgpkepllngchpmcippidfhmbhlljhoo)
+* [Chrome's web store](https://chrome.google.com/webstore/detail/xtranslate/gfgpkepllngchpmcippidfhmbhlljhoo)
+* [Opera - instructions how to install](http://www.techsupportalert.com/content/how-install-chrome-extensions-opera.htm)
 
 Available translation vendors:
 -----------
