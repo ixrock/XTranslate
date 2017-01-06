@@ -41,7 +41,7 @@ then do mouse right click on selection and choose an item to get translation wit
 Install extension:
 -----------
 * [Chrome's web store](https://chrome.google.com/webstore/detail/xtranslate/gfgpkepllngchpmcippidfhmbhlljhoo)
-* [Opera - instructions how to install](http://www.techsupportalert.com/content/how-install-chrome-extensions-opera.htm)
+* [Opera's installer from chrome store](https://addons.opera.com/en/extensions/details/download-chrome-extension-9/?display=en)
 
 Available translation vendors:
 -----------
