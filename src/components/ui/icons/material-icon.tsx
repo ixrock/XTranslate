@@ -1,5 +1,6 @@
 // Material design icons
-// Available icon names here: https://material.io/icons/
+// List of icons - from https://material.io/icons/
+
 require('./material-icon.font.scss');
 require('./material-icon.scss');
 

@@ -1,7 +1,7 @@
 require('./support.scss');
 import * as React from 'react';
 import { autobind, debounce } from "core-decorators";
-import { __i18n, getId, tabs, openOptionsPage, broadcastMessage, MessageType } from "../../extension";
+import { __i18n, openOptionsPage, broadcastMessage, MessageType } from "../../extension";
 import { checkLicense, checkPrice, buyApp } from "../../extension/license";
 import { noop } from "../../utils";
 import { connect } from "../../store/connect";
@@ -86,11 +86,6 @@ export class Support extends React.Component<Props, {}> {
     } else {
       openOptionsPage("#buy");
     }
-  }
-
-  @autobind()
-  removeApp() {
-    tabs.open("chrome://extensions/?id=" + getId());
   }
 
   render() {
