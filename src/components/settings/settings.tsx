@@ -87,7 +87,10 @@ export class Settings extends React.Component<Props, {}> {
           <div className="vendors flex gaps">
             <div className="vendor">
               <p className="sub-title mb1">{__i18n("sub_header_translator")}</p>
-              <RadioGroup name="vendor" value={settings.vendor} onChange={this.onVendorChange}>
+              <RadioGroup
+                  className="flex gaps column"
+                  value={settings.vendor}
+                  onChange={this.onVendorChange}>
                 {vendorsList.map((vendor, i) => {
                   var domain = vendor.publicUrl.match(/https?:\/\/(.*?)(?:\/\w*|$)/i)[1];
                   return (
@@ -103,10 +106,7 @@ export class Settings extends React.Component<Props, {}> {
             </div>
             <div className="direction box grow pl2">
               <p className="sub-title">{__i18n("sub_header_direction")}</p>
-              <SelectLanguage
-                  vendor={settings.vendor}
-                  from={{value: settings.langFrom, onChange: v => this.save({langFrom: v})}}
-                  to={{value: settings.langTo, onChange: v => this.save({langTo: v})}}/>
+              <SelectLanguage/>
             </div>
           </div>
 
@@ -118,13 +118,13 @@ export class Settings extends React.Component<Props, {}> {
           </div>
 
           {trialIsOver() ? (
-              <div className="support">
-                <p className="sub-title pv2">{__i18n("sub_header_support_developers")}</p>
-                <Checkbox label={__i18n("support_developers_checkbox")}
-                          checked={settings.allowAds}
-                          onChange={v => this.save({allowAds: v})}/>
-              </div>
-          ) : null}
+                  <div className="support">
+                    <p className="sub-title pv2">{__i18n("sub_header_support_developers")}</p>
+                    <Checkbox label={__i18n("support_developers_checkbox")}
+                              checked={settings.allowAds}
+                              onChange={v => this.save({allowAds: v})}/>
+                  </div>
+              ) : null}
         </div>
     );
   }

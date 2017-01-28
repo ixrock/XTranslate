@@ -2,39 +2,49 @@
 
 .Tabs {
   --tabs-color-active: $bgc-primary;
-  --tabs-line-color: $border-color;
+  --tabs-line-color: transparentize($color-primary, .5);
   --tabs-line-color-active: currentColor;
 
   .tabs-header {
     border-bottom: 1px solid var(--tabs-line-color);
+    text-align: center;
+    flex-shrink: 0;
 
     > .tab {
       position: relative;
-      cursor: pointer;
       text-decoration: none;
-      padding: $padding;
+      padding: $padding $padding * 2;
       color: inherit;
       white-space: nowrap;
       text-transform: uppercase;
       font-weight: bold;
 
-      &:after {
-        content: "";
-        position: absolute;
-        right: 0;
-        bottom: -1px;
-        width: 0;
-        height: .5 * $unit;
-        background: currentColor;
-        transition: width 250ms;
+      &.disabled {
+        opacity: .5;
+        pointer-events: none;
       }
 
-      &.active,
-      &:hover:not(.active) {
+      &:not(.disabled) {
+        cursor: pointer;
         &:after {
-          left: 0;
-          right: auto;
-          width: 100%;
+          content: "";
+          position: absolute;
+          right: 0;
+          bottom: -1px;
+          width: 0;
+          height: .5 * $unit;
+          background: currentColor;
+          transition: width 250ms;
+        }
+
+        &.active,
+        &:focus:not(:active),
+        &:hover:not(.active) {
+          &:after {
+            left: 0;
+            right: auto;
+            width: 100%;
+          }
         }
       }
 

@@ -2,10 +2,10 @@
 @import "mixins";
 
 // Dimensions
-$unit: 1rem !default;
+$unit: 10px !default;
 $padding: $unit !default;
 $margin: $unit !default;
-$radius: $unit * .3 !default;
+$radius: round($unit * .3) !default;
 
 // Colors
 $bgc-primary: #3d90ce !default;

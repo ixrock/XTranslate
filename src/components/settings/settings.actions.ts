@@ -11,14 +11,14 @@ enumUniq(actionTypes);
 
 @bindActions
 class SettingsActions extends ActionsDispatcher {
-  sync(settings: ISettingsState) {
-    return function (dispatch, getState) {
+  async sync(settings: ISettingsState) {
+    return await function (dispatch, getState) {
       dispatch({
         type: actionTypes.SETTINGS_SYNC,
         data: settings
       });
       var state: AppState = getState();
-      storage.sync.set({ settings: state.settings });
+      return storage.sync.set({ settings: state.settings });
     }
   }
 }

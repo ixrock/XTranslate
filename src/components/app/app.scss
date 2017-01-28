@@ -36,8 +36,7 @@ input, select, textarea {
 }
 
 a {
-  color: inherit;
-  opacity: .75;
+  color: transparentize($color-primary, .25);
   &:focus {
     color: $bgc-primary;
     opacity: 1;

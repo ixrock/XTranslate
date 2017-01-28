@@ -1,18 +1,9 @@
 @import "../vars";
 
 .Checkbox {
-  $tickSize: 17px;
+  $tickSize: round(1.7 * $unit);
   $tickColor: currentColor;
-  $tickColorChecked: $bgc-primary;
-
-  + .Checkbox {
-    &.inline {
-      margin-left: $margin;
-    }
-    &:not(.inline) {
-      margin-top: $margin / 2;
-    }
-  }
+  $tickColorActive: $bgc-primary;
 
   &:hover {
     input:not(:checked):not(:disabled) {
@@ -33,9 +24,7 @@
 
     &:checked {
       ~ .tick {
-        //border-style: solid;
-        //border-color: $tickColorChecked;
-        color: $tickColorChecked;
+        color: $tickColorActive;
         &:after {
           opacity: 1;
         }
@@ -55,13 +44,18 @@
     }
   }
 
+  .label {
+    margin-right: $margin;
+  }
+
   > .tick {
     position: relative;
-    min-width: $tickSize;
-    min-height: $tickSize;
+    width: $tickSize;
+    height: $tickSize;
     border-radius: $radius;
     color: $tickColor;
     border: 2px outset currentColor;
+    flex-shrink: 0;
 
     &:after {
       content: "";

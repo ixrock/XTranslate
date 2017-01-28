@@ -1,62 +1,32 @@
 require('./slider.scss');
-
 import * as React from 'react'
-import { autobind } from "core-decorators";
-import { cssNames, noop } from "../../../utils";
-import omit = require('lodash/omit');
+import { cssNames } from "../../../utils";
 
 type Props = React.HTMLProps<any> & {
-  value?: number
+  value?: any
+  defaultValue?: any
   onChange?(value: number): void;
 }
 
 export class Slider extends React.Component<Props, {}> {
   private input: HTMLInputElement;
 
-  public state = {
-    value: this.props.value
+  onChange = () => {
+    var value = this.input.valueAsNumber;
+    var onChange = this.props.onChange;
+    if (onChange) onChange(value);
   };
-
-  static defaultProps: Props = {
-    min: 0,
-    max: 100,
-    value: 50,
-    onChange: noop
-  };
-
-  componentWillReceiveProps(nextProps: Props) {
-    if (this.value !== nextProps.value && nextProps.hasOwnProperty('value')) {
-      this.setValue(nextProps.value, true);
-    }
-  }
-
-  get value() {
-    return this.state.value;
-  }
-
-  set value(value: number) {
-    this.setValue(value);
-  }
-
-  setValue(value: number, silent = false) {
-    if (this.value === value) return;
-    this.setState({ value });
-    if (!silent) this.props.onChange(value);
-  }
-
-  @autobind()
-  onChange() {
-    this.value = this.input.valueAsNumber;
-  }
 
   render() {
-    var props = omit(this.props, ['className']);
+    var value = this.props.value;
+    var { className, children, ...inputProps } = this.props;
+    var componentClass = cssNames("Slider", className, {
+      disabled: this.props.disabled,
+    });
     return (
-        <div className={cssNames("Slider", this.props.className)}>
-          <input {...props}
-              type="range" ref={e => this.input = e}
-              value={this.value} onChange={this.onChange}/>
-          <span className="value">{this.value}</span>
+        <div className={componentClass}>
+          <input {...inputProps} type="range" onChange={this.onChange} ref={e => this.input = e}/>
+          <span className="value">{value}</span>
         </div>
     );
   }

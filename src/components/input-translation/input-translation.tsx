@@ -7,7 +7,7 @@ import { connect } from "../../store/connect";
 import { cssNames, prevDefault } from "../../utils";
 import { TextField, Select, Option, MaterialIcon, Spinner } from '../ui'
 import { SelectLanguage } from '../select-language'
-import { ISettingsState } from '../settings'
+import { ISettingsState, settingsActions } from '../settings'
 import { IFavoritesState, Favorite, favoritesActions } from '../favorites'
 import clone = require("lodash/clone");
 import find = require("lodash/find");
@@ -39,9 +39,9 @@ export class InputTranslation extends React.Component<Props, State> {
   private loadingTimer;
 
   public state: State = {
+    vendor: this.settings.vendor,
     langFrom: this.settings.langFrom,
     langTo: this.settings.langTo,
-    vendor: this.settings.vendor,
   };
 
   get text() {
@@ -273,12 +273,15 @@ export class InputTranslation extends React.Component<Props, State> {
     var vendor = vendors[vendorName];
     if (!vendor.langFrom[langFrom]) state.langFrom = Object.keys(vendor.langFrom)[0];
     if (!vendor.langTo[langTo]) state.langTo = Object.keys(vendor.langTo)[0];
-    this.setState(state, () => {
-      if (!state.langFrom && !state.langTo) this.translate();
-    });
+    settingsActions.sync({vendor: vendorName});
+    this.setState(state, this.translate);
   }
 
-  update(state: State) {
+  @autobind()
+  onLangChange(langFrom, langTo) {
+    var state = Object.assign({}, this.state);
+    if (langFrom) state.langFrom = langFrom;
+    if (langTo) state.langTo = langTo;
     this.setState(state, this.translate);
   }
 
@@ -287,11 +290,7 @@ export class InputTranslation extends React.Component<Props, State> {
     return (
         <div className="InputTranslation">
           <div className="language flex gaps">
-            <SelectLanguage
-                className="box grow"
-                vendor={vendor}
-                from={{value: langFrom, onChange: v => this.update({langFrom: v})}}
-                to={{value: langTo, onChange: v => this.update({langTo: v})}}/>
+            <SelectLanguage className="box grow" onChangeLang={this.onLangChange}/>
             <Select value={vendor} onChange={this.onVendorChange}>
               {vendorsList.map(v => <Option key={v.name} value={v.name} title={v.title}/>)}
             </Select>

@@ -1,64 +1,42 @@
 require('./select.scss');
 
 import * as React from 'react'
-import { autobind } from "core-decorators";
-import { cssNames, noop } from "../../../utils";
+import { cssNames } from "../../../utils";
 import { MaterialIcon } from "../icons";
-import omit = require('lodash/omit');
-import find = require('lodash/find');
 
-export type SelectProps = Props;
-
-interface Props {
-  className?: any
+interface Props extends React.HTMLProps<any> {
   value?: any
-  onChange(value): void;
+  defaultValue?: any
+  onChange?(value): void;
 }
 
 export class Select extends React.Component<Props, {}> {
-  private elem: HTMLSelectElement;
+  protected elem: HTMLSelectElement;
 
-  public state = {
-    value: this.props.value
+  onChange = (evt) => {
+    var index = this.elem.selectedIndex;
+    var value = this.options[index].props.value;
+    var onChange = this.props.onChange;
+    if (onChange) onChange(value);
   };
 
-  static defaultProps: Props = {
-    value: "",
-    onChange: noop
-  };
-
-  componentWillReceiveProps(nextProps: Props) {
-    if (this.value !== nextProps.value  && nextProps.hasOwnProperty('value')) {
-      this.setValue(nextProps.value, true);
-    }
-  }
-
-  get value() {
-    return this.state.value;
-  }
-
-  set value(value) {
-    this.setValue(value);
-  }
-
-  setValue(value, silent = false) {
-    this.setState({ value });
-    if (!silent) this.props.onChange(value);
-  }
-
-  @autobind()
-  onChange() {
-    this.value = this.elem.value;
+  get options() {
+    return React.Children.toArray(this.props.children) as React.ReactElement<OptionProps>[]
   }
 
   render() {
-    var props = omit(this.props, ['className']);
-    var className = cssNames('Select flex', this.props.className);
-    var options = React.Children.toArray(this.props.children) as OptionElem[];
+    var { className, defaultValue, children, ...selectProps } = this.props;
+    var componentClass = cssNames('Select flex', className, {
+      disabled: this.props.disabled,
+    });
+    if (defaultValue == null) {
+      var defaultOption = this.options.filter(option => option.props.default)[0];
+      if (defaultOption) defaultValue = defaultOption.props.value;
+    }
     return (
-        <div className={className}>
-          <select {...props} value={this.value} onChange={this.onChange} ref={e => this.elem = e}>
-            {options.map(option => {
+        <div className={componentClass}>
+          <select {...selectProps} defaultValue={defaultValue} onChange={this.onChange} ref={e => this.elem = e}>
+            {this.options.map(option => {
               var title = option.props.title || option.props.value;
               return <option key={option.key} {...option.props}>{title}</option>
             })}
@@ -69,12 +47,11 @@ export class Select extends React.Component<Props, {}> {
   }
 }
 
-type OptionElem = React.ReactElement<OptionProps>;
-
 interface OptionProps extends React.Attributes {
+  value: any
   title?: string
   disabled?: boolean
-  value: any
+  default?: boolean
 }
 
 export class Option extends React.Component<OptionProps, {}> {

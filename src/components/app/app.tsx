@@ -2,7 +2,7 @@ require('./app.scss');
 import * as React from 'react';
 import { render } from 'react-dom'
 import { Provider } from 'react-redux'
-import { autobind } from 'core-decorators';
+import { autobind, debounce } from 'core-decorators';
 import { getStore } from '../../store'
 import { connect } from "../../store/connect";
 import { cssNames } from "../../utils/cssNames";
@@ -14,6 +14,13 @@ import { InputTranslation } from '../input-translation'
 import { UserHistory } from '../user-history'
 import { Support } from './support'
 import { Footer } from './footer'
+
+enum TabId {
+  settings,
+  theme,
+  popup,
+  history,
+}
 
 interface Props {
   settings?: ISettingsState
@@ -57,8 +64,14 @@ export class App extends React.Component<Props, {}> {
     });
   }
 
+  @autobind()
+  @debounce(0)
+  onTabChange() {
+    this.forceUpdate();
+  }
+
   render() {
-    var tab = window.location.hash.replace('#', "");
+    var activeTab = TabId[location.hash.replace("#", "")] || 0;
     var useDarkTheme = this.props.settings.useDarkTheme;
     return (
         <div className="App">
@@ -73,17 +86,17 @@ export class App extends React.Component<Props, {}> {
                 title={__i18n("open_in_window")}
                 onClick={this.openInWindow}/>
           </h4>
-          <Tabs>
-            <Tab title={__i18n("tab_settings")} active={tab === "settings"}>
+          <Tabs activeIndex={activeTab} onChange={this.onTabChange}>
+            <Tab href={"#"+ TabId[TabId.settings]} title={__i18n("tab_settings")}>
               <Settings/>
             </Tab>
-            <Tab title={__i18n("tab_theme")} active={tab === "theme"}>
+            <Tab href={"#"+ TabId[TabId.theme]} title={__i18n("tab_theme")}>
               <ThemeManager/>
             </Tab>
-            <Tab title={__i18n("tab_text_input")} active={!tab || tab === "popup"}>
+            <Tab href={"#"+ TabId[TabId.popup]} title={__i18n("tab_text_input")}>
               <InputTranslation/>
             </Tab>
-            <Tab title={__i18n("tab_history")} active={tab === "history"}>
+            <Tab href={"#"+ TabId[TabId.history]} title={__i18n("tab_history")}>
               <UserHistory/>
             </Tab>
           </Tabs>

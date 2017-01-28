@@ -3,7 +3,8 @@
 .Select {
   $activeColor: $bgc-primary;
   $bottomOffset: $padding / 2;
-  $lineColor: $border-color;
+  $lineColor: transparentize($color-primary, .5);
+  $arrowIconSize: 2.4 * $unit;
 
   position: relative;
 
@@ -15,7 +16,7 @@
     text-overflow: ellipsis;
     background: none;
     border-radius: 0;
-    padding-right: 25px;
+    padding-right: 2.5 * $unit;
     padding-bottom: $bottomOffset;
     font: inherit;
 
@@ -40,5 +41,6 @@
     top: 50%;
     transform: translateY(-50%);
     pointer-events: none;
+    font-size: $arrowIconSize;
   }
 }

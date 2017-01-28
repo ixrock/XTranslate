@@ -1,8 +1,9 @@
 .Settings {
   > .display-options {
     .Checkbox {
-      flex-basis: 50%;
-      &:nth-child(odd){
+      flex: 1 0 50%;
+      margin-bottom: $padding / 2;
+      &:nth-child(odd) {
         padding-right: $padding;
       }
     }
@@ -17,9 +18,11 @@
   }
 
   > .vendors {
+    $gap: $margin / 2;
+    --flex-gap: $gap;
     margin-top: $margin * 2;
     .label {
-      margin-right: $margin / 2;
+      margin-right: $gap;
     }
   }
 }
