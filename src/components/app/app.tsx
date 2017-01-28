@@ -2,12 +2,12 @@ require('./app.scss');
 import * as React from 'react';
 import { render } from 'react-dom'
 import { Provider } from 'react-redux'
-import { autobind, debounce } from 'core-decorators';
+import { autobind } from 'core-decorators';
 import { getStore } from '../../store'
 import { connect } from "../../store/connect";
 import { cssNames } from "../../utils/cssNames";
 import { Spinner, Tabs, Tab, MaterialIcon } from '../ui'
-import { getURL, getManifest, __i18n } from "../../extension";
+import { getManifest, __i18n, getOptionsPageUrl } from "../../extension";
 import { Settings, ISettingsState, settingsActions } from '../settings'
 import { ThemeManager, loadFonts } from '../theme-manager'
 import { InputTranslation } from '../input-translation'
@@ -33,6 +33,7 @@ export class App extends React.Component<Props, {}> {
   componentWillMount() {
     document.title = this.manifest.name;
     this.setUpTheme();
+    window.addEventListener("hashchange", () => this.forceUpdate());
   }
 
   componentWillReceiveProps(nextProps: Props) {
@@ -56,18 +57,12 @@ export class App extends React.Component<Props, {}> {
   @autobind()
   openInWindow() {
     chrome.windows.create({
-      url: getURL(this.manifest.options_page),
+      url: getOptionsPageUrl(),
       focused: true,
       width: 570,
       height: 650,
       type: "popup"
     });
-  }
-
-  @autobind()
-  @debounce(0)
-  onTabChange() {
-    this.forceUpdate();
   }
 
   render() {
@@ -86,7 +81,7 @@ export class App extends React.Component<Props, {}> {
                 title={__i18n("open_in_window")}
                 onClick={this.openInWindow}/>
           </h4>
-          <Tabs activeIndex={activeTab} onChange={this.onTabChange}>
+          <Tabs activeIndex={activeTab}>
             <Tab href={"#"+ TabId[TabId.settings]} title={__i18n("tab_settings")}>
               <Settings/>
             </Tab>

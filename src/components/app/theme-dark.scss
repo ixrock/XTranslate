@@ -1,4 +1,7 @@
 body.theme-dark {
+  --theme-contast-color: white;
+  --theme-contast-color-invert: darken($bgc-dark, 2.5%);
+
   background: $bgc-dark;
   color: silver;
   @include custom-scrollbar(light);

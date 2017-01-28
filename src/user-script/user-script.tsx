@@ -6,6 +6,7 @@ import { autobind } from "core-decorators";
 import { render } from 'react-dom'
 import { connect, onMessage, MessageType, Message, getURL, getManifest, postMessage, onPostMessage } from '../extension'
 import { MenuTranslateFavoritePayload, MenuTranslateVendorPayload, TranslateFromFramePayload } from '../extension'
+import { saveHistory } from "../components/user-history/user-history.actions";
 import { loadFonts } from "../components/theme-manager/fonts-loader";
 import { AppState } from '../store/store.types'
 import { Popup } from "../components/popup/popup";
@@ -366,8 +367,9 @@ class App extends React.Component<{}, State> {
 
   @autobind()
   onTranslationReady() {
-    var autoPlay = this.settings.autoPlayText;
-    if (autoPlay) this.popup.playText();
+    var { autoPlayText, historyEnabled } = this.settings;
+    if (autoPlayText) this.popup.playText();
+    if (historyEnabled) saveHistory(this.state.translation);
     this.refinePosition();
     this.popup.focus();
   }

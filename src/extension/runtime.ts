@@ -14,7 +14,7 @@ export function getURL(path: string) {
   return chrome.runtime.getURL(path);
 }
 
-export function getOptionsPageUrl(hash = "") {
+export function getOptionsPageUrl(hash = location.hash) {
   if (hash && !hash.startsWith('#')) hash = "#" + hash;
   return getURL(getManifest().options_page) + hash;
 }

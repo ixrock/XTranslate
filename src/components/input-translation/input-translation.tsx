@@ -7,8 +7,9 @@ import { connect } from "../../store/connect";
 import { cssNames, prevDefault } from "../../utils";
 import { TextField, Select, Option, MaterialIcon, Spinner } from '../ui'
 import { SelectLanguage } from '../select-language'
-import { ISettingsState, settingsActions } from '../settings'
+import { ISettingsState } from '../settings'
 import { IFavoritesState, Favorite, favoritesActions } from '../favorites'
+import { saveHistory } from "../user-history/user-history.actions";
 import clone = require("lodash/clone");
 import find = require("lodash/find");
 import remove = require("lodash/remove");
@@ -237,15 +238,26 @@ export class InputTranslation extends React.Component<Props, State> {
     this.setLoading();
     var promise = this.translation = translation.then(result => {
       if (this.translation !== promise || !this.text) return; // update state only with latest request
-      this.setState({ translation: result, error: null }, () => {
-        var autoPlay = this.settings.autoPlayText;
-        if (autoPlay) this.playText();
-      });
+      this.setState({ translation: result, error: null }, this.onTranslationReady);
       return result;
     }).catch(error => {
       if (this.translation !== promise) return;
       this.setState({ translation: null, error: error });
     });
+  }
+
+  @autobind()
+  onTranslationReady() {
+    var { autoPlayText, historyEnabled } = this.settings;
+    if (autoPlayText) this.playText();
+    if (historyEnabled) this.saveHistory();
+  }
+
+  // wait some time before saving history to avoid a lot of intermediate text inputs
+  @debounce(1500)
+  saveHistory() {
+    var translation = this.state.translation;
+    if (translation) saveHistory(translation);
   }
 
   translateWord(text: string) {
@@ -273,7 +285,6 @@ export class InputTranslation extends React.Component<Props, State> {
     var vendor = vendors[vendorName];
     if (!vendor.langFrom[langFrom]) state.langFrom = Object.keys(vendor.langFrom)[0];
     if (!vendor.langTo[langTo]) state.langTo = Object.keys(vendor.langTo)[0];
-    settingsActions.sync({vendor: vendorName});
     this.setState(state, this.translate);
   }
 

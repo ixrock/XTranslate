@@ -1,5 +1,71 @@
 .UserHistory {
-  .soon {
-    margin-left: 5px;
+  $spacing: $margin * 2;
+
+  .history {
+    list-style: none;
+
+    .history-date {
+      display: flex;
+      align-items: center;
+      margin: $margin 0;
+
+      &:after, &:before {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background: $border-color;
+      }
+      &:before {
+        margin-right: $spacing;
+      }
+      &:after {
+        margin-left: $spacing;
+      }
+    }
+
+    .history-item {
+      padding: $padding / 2;
+      white-space: pre-line;
+
+      &.open {
+        border: 1px solid $color-primary;
+        border-radius: $radius;
+        padding: $padding;
+        + .open {
+          margin-top: -1px;
+        }
+      }
+
+      &:hover {
+        cursor: pointer;
+        color: var(--theme-contast-color, black);
+        border-color: currentColor;
+        &:not(.open) {
+          background: var(--theme-contast-color-invert, #eee);
+        }
+        * {
+          color: inherit;
+        }
+      }
+
+      .transcription {
+        color: silver;
+        margin-left: $margin / 2;
+      }
+
+      &.open, &:hover {
+        .remove-icon {
+          visibility: visible;
+        }
+      }
+
+      .remove-icon {
+        visibility: hidden;
+        opacity: .15;
+        &:hover {
+          opacity: .75;
+        }
+      }
+    }
   }
 }

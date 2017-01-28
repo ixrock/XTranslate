@@ -149,7 +149,6 @@ export interface Translation {
   transcription?: string
   dictionary: {
     wordType: string
-    translation?: string[]
     transcription?: string
     meanings: {
       word: string

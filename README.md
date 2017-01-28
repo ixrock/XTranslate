@@ -36,7 +36,7 @@ then do mouse right click on selection and choose an item to get translation wit
 
 6) Save your favorite language directions with specific vendor as bookmarks for quick access
 
-7) View and edit history of translations (*coming soon*)
+7) History of translations
 
 Install extension:
 -----------

@@ -63,7 +63,6 @@
   "text_field_placeholder"           : {"message": "Започните куцање да бисте добили превод"},
   "translated_with"                  : {"message": "Преведено помоћу %translator% (%lang%)"},
   "___________history_______________": {"message": "----------------------------------------------"},
-  "history_is_coming_soon"           : {"message": "долази ускоро"},
   "________context_menu_____________": {"message": "----------------------------------------------"},
   "context_menu_translate_full_page" : {"message": "Преведи целу страницу помоћу %translator%"},
   "context_menu_translate_selection" : {"message": "Преведи %selection% помоћу %translator%"},

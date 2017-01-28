@@ -1,6 +1,6 @@
 // Chrome extension's storage api helper
 
-export class Storage<S> {
+export class Storage<S,L> {
   public sync = {
     set(state: S): Promise<S> {
       return new Promise((resolve, reject) => {
@@ -12,9 +12,9 @@ export class Storage<S> {
       });
     },
 
-    get(): Promise<S>{
+    get(keys: keyof S | (keyof S)[] = null): Promise<S>{
       return new Promise((resolve, reject) => {
-        chrome.storage.sync.get(function (items: S) {
+        chrome.storage.sync.get(keys, function (items: S) {
           var error = chrome.runtime.lastError;
           if (error) reject(error);
           else resolve(items);
@@ -24,16 +24,16 @@ export class Storage<S> {
   };
 
   public local = {
-    get() {
+    get(keys: keyof L | (keyof L)[] = null): Promise<L> {
       return new Promise((resolve, reject) => {
-        chrome.storage.local.get(function (items) {
+        chrome.storage.local.get(keys, function (items) {
           var error = chrome.runtime.lastError;
           if (error) reject(error);
           else resolve(items);
         });
       });
     },
-    set(items){
+    set(items: L): Promise<L>{
       return new Promise((resolve, reject) => {
         chrome.storage.local.set(items, function () {
           var error = chrome.runtime.lastError;
@@ -42,7 +42,7 @@ export class Storage<S> {
         });
       });
     },
-    remove(keys: string[]){
+    remove(keys: keyof L){
       return new Promise((resolve, reject) => {
         chrome.storage.local.remove(keys, function () {
           var error = chrome.runtime.lastError;

@@ -51,7 +51,6 @@ class Bing extends Vendor {
               translation.dictionary = dictRes.items.map(items => {
                 return {
                   wordType: items[0].posTag.toLowerCase(),
-                  translation: items.map(item => item.displayTarget),
                   meanings: items.map(item => {
                     return {
                       word: item.displayTarget,

@@ -76,7 +76,7 @@ export class Tabs extends React.Component<Props, {}> {
 }
 
 interface TabProps extends React.HTMLProps<any> {
-  title: string
+  title: any
   index?: number
   active?: boolean
   disabled?: boolean

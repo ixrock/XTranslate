@@ -16,9 +16,12 @@ interface RadioGroupProps {
 }
 
 export class RadioGroup extends React.Component<RadioGroupProps, {}> {
+  public state = {
+    name: this.props.name || uniqueId("radioGroup"),
+  };
+
   render() {
-    var { name, value, defaultValue, buttonsView, className, disabled, onChange } = this.props;
-    var name = name || uniqueId("radioGroup");
+    var { value, defaultValue, buttonsView, className, disabled, onChange } = this.props;
     var radioGroupClassName = cssNames("RadioGroup", className, { buttonsView });
     var radios = React.Children.toArray(this.props.children) as React.ReactElement<RadioProps>[];
     return (
@@ -26,7 +29,7 @@ export class RadioGroup extends React.Component<RadioGroupProps, {}> {
           {radios.map(radio => {
             if (!radio.props) return;
             var radioProps = {
-              name: name,
+              name: this.state.name,
               disabled: disabled != null ? disabled : radio.props.disabled,
               defaultChecked: defaultValue != null ? defaultValue == radio.props.value : radio.props.defaultChecked,
               checked: value != null ? value === radio.props.value : radio.props.checked,

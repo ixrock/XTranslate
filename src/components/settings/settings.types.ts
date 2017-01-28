@@ -15,4 +15,5 @@ export interface ISettingsState {
   langFrom?: string
   langTo?: string
   hotkey?: Hotkey
+  historyEnabled?: boolean
 }

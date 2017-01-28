@@ -79,7 +79,6 @@ class Yandex extends Vendor {
                   }
                   return {
                     wordType: dict.pos,
-                    translation: dict.tr.map(item => item.text),
                     transcription: dict.ts,
                     meanings: dict.tr.map(item => {
                       var meaning = {

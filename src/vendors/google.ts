@@ -42,7 +42,6 @@ class Google extends Vendor {
         translation.dictionary = res.dict.map(dict => {
           return {
             wordType: dict.pos,
-            translation: dict.terms,
             meanings: dict.entry.map(entry => {
               return {
                 word: entry.word,

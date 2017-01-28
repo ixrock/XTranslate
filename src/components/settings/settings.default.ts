@@ -15,6 +15,7 @@ export const defaultSettings: ISettingsState = {
   vendor: "google",
   langFrom: "auto",
   langTo: navigator.language.split('-')[0],
+  historyEnabled: false,
   hotkey: {
     altKey: true,
     code: "X",

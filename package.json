@@ -36,7 +36,7 @@
     "css-loader": "^0.25.0",
     "extract-text-webpack-plugin": "^2.0.0-beta.4",
     "file-loader": "^0.9.0",
-    "flex.box": "^3.1.0",
+    "flex.box": "^3.2.2",
     "html-webpack-plugin": "^2.24.1",
     "json-loader": "^0.5.4",
     "material-design-icons": "^3.0.1",

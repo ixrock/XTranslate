@@ -1,3 +1,3 @@
-import { AppState } from './store.types'
+import { AppState, LocalState } from './store.types'
 import { Storage } from '../extension/storage'
-export const storage = new Storage<AppState>();
+export const storage = new Storage<AppState,LocalState>();

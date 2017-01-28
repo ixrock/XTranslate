@@ -49,6 +49,7 @@
     "activeTab",
     "storage",
     "contextMenus",
+    "unlimitedStorage",
     "*://translate.googleapis.com/",
     "*://api.browser.yandex.ru/",
     "*://tts.voicetech.yandex.net/",
