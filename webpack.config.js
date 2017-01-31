@@ -52,7 +52,7 @@ module.exports = function (env = {dev: true, prod: false}) {
           })
         },
         {
-          test: /\.txt|\.svg\?inline$/,
+          test: /\.(txt|svg\?inline)$/,
           use: 'raw-loader'
         },
         {
