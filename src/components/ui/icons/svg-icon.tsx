@@ -18,11 +18,12 @@ export class SvgIcon extends React.Component<Props, {}> {
       big: big
     });
     if (source.match(/\.svg$/i)) {
-      // attach svg as with image tag
+      // attach icon as plain image tag
       props.children = <img src={source} alt={altText}/>
     }
     else {
-      // attach as inline svg (plain html text)
+      // attach as inline-svg, the source must load raw xml text from svg:
+      // e.g <SvgIcon source={require("!!raw-loader!./my-file.svg")}/>
       props.dangerouslySetInnerHTML = { __html: source };
     }
     return this.props.href
