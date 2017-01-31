@@ -30,7 +30,7 @@ module.exports = function (env = {dev: true, prod: false}) {
     },
 
     module: {
-      loaders: [
+      rules: [
         {
           test: /\.tsx?$/,
           use: 'ts-loader',
@@ -38,6 +38,7 @@ module.exports = function (env = {dev: true, prod: false}) {
         {
           test: /\.s?css$/,
           loader: ExtractTextPlugin.extract({
+            fallbackLoader: 'style-loader',
             loader: [
               "css-loader",
               {
@@ -51,16 +52,16 @@ module.exports = function (env = {dev: true, prod: false}) {
           })
         },
         {
+          test: /\.txt|\.svg\?inline$/,
+          use: 'raw-loader'
+        },
+        {
           test: /\.(jpg|png|svg)$/,
-          loader: "file-loader?name=assets/[name]-[hash:6].[ext]"
+          use: "file-loader?name=assets/[name]-[hash:6].[ext]"
         },
         {
           test: /\.(ttf|eot|woff2?)$/,
-          loader: 'file-loader?name=fonts/[name].[ext]'
-        },
-        {
-          test: /\.json$/,
-          loader: "json-loader"
+          use: 'file-loader?name=fonts/[name].[ext]'
         },
       ]
     },
