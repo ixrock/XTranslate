@@ -2,7 +2,7 @@ require('./input-translation.scss');
 import * as React from 'react';
 import { vendors, vendorsList, Translation, TranslationError, Vendor } from '../../vendors'
 import { autobind, debounce } from "core-decorators";
-import { __i18n } from "../../extension/i18n";
+import { __i18n, MessageType, onMessage, tabs } from "../../extension";
 import { connect } from "../../store/connect";
 import { cssNames, prevDefault } from "../../utils";
 import { TextField, Select, Option, MaterialIcon, Spinner } from '../ui'
@@ -57,6 +57,18 @@ export class InputTranslation extends React.Component<Props, State> {
     var favorites = this.props.favorites;
     var { vendor, langFrom, langTo } = this.state;
     return !!find(favorites[vendor], { from: langFrom, to: langTo });
+  }
+
+  async componentWillMount() {
+    var activeTab = await tabs.getActive();
+    tabs.sendMessage(activeTab.id, {
+      type: MessageType.GET_SELECTED_TEXT
+    });
+    onMessage(({ payload, type }) => {
+      if (type === MessageType.SELECTED_TEXT) {
+        this.translateWord(payload);
+      }
+    });
   }
 
   componentDidMount() {

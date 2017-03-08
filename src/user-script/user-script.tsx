@@ -4,7 +4,7 @@ require('./user-script.scss');
 import * as React from 'react';
 import { autobind } from "core-decorators";
 import { render } from 'react-dom'
-import { connect, onMessage, MessageType, Message, getURL, getManifest, postMessage, onPostMessage } from '../extension'
+import { connect, sendMessage, onMessage, MessageType, Message, getURL, getManifest, postMessage, onPostMessage } from '../extension'
 import { MenuTranslateFavoritePayload, MenuTranslateVendorPayload, TranslateFromFramePayload } from '../extension'
 import { saveHistory } from "../components/user-history/user-history.actions";
 import { loadFonts } from "../components/theme-manager/fonts-loader";
@@ -80,6 +80,7 @@ class App extends React.Component<{}, State> {
   bindEvents() {
     onMessage(this.onAppState);
     onMessage(this.onMenuClick);
+    onMessage(this.onGetSelectedText);
     onPostMessage(this.onPostMessage);
     document.addEventListener("mouseover", this.onMouseOver);
     document.addEventListener("mouseup", this.onMouseUp);
@@ -116,6 +117,16 @@ class App extends React.Component<{}, State> {
     if (type === MessageType.MENU_TRANSLATE_FAVORITE) {
       let { vendor, from, to, selectedText } = message.payload as MenuTranslateFavoritePayload;
       this.translateWith(vendor, from, to, selectedText);
+    }
+  }
+
+  @autobind()
+  onGetSelectedText(message: Message) {
+    if (message.type === MessageType.GET_SELECTED_TEXT) {
+      sendMessage({
+        type: MessageType.SELECTED_TEXT,
+        payload: this.text
+      })
     }
   }
 

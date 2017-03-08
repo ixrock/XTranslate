@@ -12,6 +12,8 @@ export enum MessageType {
   HIDE_POPUP_FROM_FRAME,
   PLAY_TEXT_TO_SPEECH,
   STOP_TTS_PLAYING,
+  GET_SELECTED_TEXT,
+  SELECTED_TEXT,
 }
 
 export interface Message {
