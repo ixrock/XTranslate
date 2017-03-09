@@ -20,14 +20,14 @@ $md-icons-font-path: "chrome-extension://__MSG_@@extension_id__/fonts/";
     @import "../components/ui/icons/material-icon";
 
     position: absolute;
+    font-size: 20px;
     font-style: normal;
     cursor: pointer;
     border-radius: 50%;
-    border: 1px solid;
+    box-shadow: 0px 0px 2px 1px black;
     color: black;
     background: white;
-    width: $iconSize;
-    height: $iconSize;
+    padding: 4px;
 
     &.isLeftTop {
       transform: translate(-100%, -100%);
