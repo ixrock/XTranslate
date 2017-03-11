@@ -122,7 +122,7 @@ class App extends React.Component<{}, State> {
 
   @autobind()
   onGetSelectedText(message: Message) {
-    if (message.type === MessageType.GET_SELECTED_TEXT) {
+    if (this.text && message.type === MessageType.GET_SELECTED_TEXT) {
       sendMessage({
         type: MessageType.SELECTED_TEXT,
         payload: this.text
