@@ -4,6 +4,11 @@
   position: relative;
   text-align: left;
 
+  ::placeholder {
+    color: inherit;
+    opacity: .8;
+  }
+
   textarea {
     @include custom-scrollbar(none, 0);
     line-height: 1.2;
