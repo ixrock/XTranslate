@@ -3,7 +3,6 @@ import * as React from 'react';
 import { autobind } from "core-decorators";
 import { prevDefault } from '../../utils'
 import { getManifest, __i18n } from '../../extension'
-import { DonationDialog } from "./donation-dialog";
 
 interface ShareIcon {
   title: string
@@ -12,7 +11,6 @@ interface ShareIcon {
 }
 
 export class Footer extends React.Component<any, any> {
-  private dialog: DonationDialog;
   private manifest = getManifest();
   private storeUrl = 'https://chrome.google.com/webstore/detail/gfgpkepllngchpmcippidfhmbhlljhoo';
   private shareTags = ["chrome", "extension", "xtranslate"];
@@ -61,13 +59,6 @@ export class Footer extends React.Component<any, any> {
                 </a>
             )}
           </span>
-          <p>
-            {React.Children.toArray(__i18n("footer_leave_review_and_donate", [
-              leaveReview => <a href={this.storeUrl + "/reviews "} target="_blank">{leaveReview}</a>,
-              makeDonation => <a href="#" onClick={prevDefault(() => this.dialog.open())}>{makeDonation}</a>,
-            ]))}
-          </p>
-          <DonationDialog ref={e => this.dialog = e}/>
         </div>
     );
   }

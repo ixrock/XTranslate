@@ -47,7 +47,7 @@ export abstract class Vendor {
   protected autoSwapLang = (result: Translation) => {
     var { langTo, langFrom, originalText, translation, langDetected } = result;
     var autoDetect = langFrom === 'auto';
-    var sameText = originalText.trim() === translation.trim();
+    var sameText = originalText.trim().toLowerCase() === translation.toLowerCase().trim();
     var otherLangDetected = langDetected && langDetected !== langFrom;
     if (!autoDetect && !this.autoSwap && (sameText || otherLangDetected)) {
       [langFrom, langTo] = [langTo, langFrom];

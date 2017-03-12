@@ -1,7 +1,7 @@
 
 export interface ITranslationHistory {
   id: string
-  date: string
+  date: number
   vendor: string
   from: string
   to: string

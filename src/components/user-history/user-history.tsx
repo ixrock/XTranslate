@@ -35,7 +35,7 @@ export class UserHistory extends React.Component<Props,State> {
     history: [],
     page: 0,
     pageSize: 100,
-    clearPeriod: HistoryPeriod.HOUR,
+    clearPeriod: HistoryPeriod.DAY,
     showDetails: {},
   };
 
@@ -47,13 +47,19 @@ export class UserHistory extends React.Component<Props,State> {
 
   async loadHistory() {
     try {
-      var { page, pageSize } = this.state;
-      var history = await getHistory();
-      var visibleHistory = this.state.history.concat(history.splice(page * pageSize, pageSize));
+      var { page, pageSize, history } = this.state;
+      var allHistory = await getHistory();
+      var removedItemsOffset = page * pageSize - history.length;
+      history.push(
+          ...allHistory.slice(
+              page * pageSize - removedItemsOffset,
+              page * pageSize + pageSize
+          )
+      )
       this.setState({
         page: page + 1,
-        hasMore: history.length > visibleHistory.length,
-        history: visibleHistory,
+        hasMore: allHistory.length > history.length,
+        history
       });
     } catch (e) {
     }
@@ -65,10 +71,10 @@ export class UserHistory extends React.Component<Props,State> {
     });
   }
 
-  getPeriod(dateTime: string, period?: HistoryPeriod) {
-    var d = new Date(dateTime).toISOString().split("T");
-    var date = d[0].split('-');
-    var time = d[1].split(':');
+  getPeriod(timestamp: number, period?: HistoryPeriod) {
+    var d = new Date(timestamp);
+    var date = [d.getFullYear(), d.getMonth(), d.getDate()];
+    var time = [d.getHours(), d.getMinutes(), d.getSeconds()];
     if (period === HistoryPeriod.HOUR) date = date.concat(time[0]);
     if (period === HistoryPeriod.MONTH) date = date.slice(0, 2);
     if (period === HistoryPeriod.YEAR) date = date.slice(0, 1);

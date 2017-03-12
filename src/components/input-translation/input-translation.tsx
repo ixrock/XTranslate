@@ -308,12 +308,21 @@ export class InputTranslation extends React.Component<Props, State> {
     this.setState(state, this.translate);
   }
 
+  @autobind()
+  onSwapLang(langFrom, langTo) {
+    this.setState({ langFrom, langTo }, this.translate);
+  }
+
   render() {
     var { vendor, langFrom, langTo, loading, error } = this.state;
     return (
         <div className="InputTranslation">
           <div className="language flex gaps">
-            <SelectLanguage className="box grow" onChangeLang={this.onLangChange}/>
+            <SelectLanguage
+                className="box grow"
+                onChangeLang={this.onLangChange}
+                onSwapLang={this.onSwapLang}
+            />
             <Select value={vendor} onChange={this.onVendorChange}>
               {vendorsList.map(v => <Option key={v.name} value={v.name} title={v.title}/>)}
             </Select>
