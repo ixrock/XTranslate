@@ -4,7 +4,7 @@ This is chrome-extension for translating languages.
 Translate from 100+ foreign languages to your native directly on web-site you're reading or 
 put text in the extension's drop-down window.
 
-<img src="https://camo.githubusercontent.com/282bf65c94b4e198171440f7a43c088fe1c8324e/68747470733a2f2f646c2e64726f70626f7875736572636f6e74656e742e636f6d2f752f36313430353737332f787472616e736c6174652f556e7469746c65642d312e6a7067">
+<img src="https://lh3.googleusercontent.com/HVbHtFWIGjVFbOTwcJM0K0TOUsHyyhhYYPYTxhf5jTWIpb7tq1ovTNjSq9lwmtv3WaZsZKjIMTc=s1280-h800-e365-rw">
 
 Features:
 -----------
