@@ -15,25 +15,42 @@
     resize: none;
   }
 
-  .is-number {
-    input[type="number"] {
-      -moz-appearance: textfield;
-      &::-webkit-outer-spin-button,
-      &::-webkit-inner-spin-button {
-        -webkit-appearance: none;
-      }
+  input[type="number"] {
+    padding-right: $padding * 2;
+
+    -moz-appearance: textfield;
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
     }
-    .icon {
-      opacity: .25;
+
+    ~ .icon-arrow {
+      position: absolute;
+      user-select: none;
+      right: 0;
+      cursor: pointer;
+      line-height: 10px;
+      clip: rect(0 20px 10px 0);
+      margin: 4px -2px;
+      opacity: .5;
+
       &:hover {
-        opacity: .5;
+        opacity: 1;
+      }
+      &.up {
+        top: 0;
+      }
+      &.down {
+        bottom: 0;
       }
     }
-    .label {
-      .input {
-        text-align: center;
-        min-width: 40px;
-      }
+  }
+
+  &.dirty.invalid {
+    .label:after {
+      width: 100%;
+      background: $red-300;
     }
   }
 
@@ -48,7 +65,8 @@
       color: inherit;
       font-family: inherit;
       font-size: inherit;
-      padding: $padding / 2 0;
+      padding-top: $padding / 2;
+      padding-bottom: $padding / 2;
       text-align: inherit;
     }
     &:after {

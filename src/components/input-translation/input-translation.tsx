@@ -1,14 +1,14 @@
 require('./input-translation.scss');
-import * as React from 'react';
-import { vendors, vendorsList, Translation, TranslationError, Vendor } from '../../vendors'
+import * as React from "react";
+import { Translation, TranslationError, Vendor, vendors, vendorsList } from "../../vendors";
 import { autobind, debounce } from "core-decorators";
 import { __i18n, MessageType, onMessage, tabs } from "../../extension";
 import { connect } from "../../store/connect";
 import { cssNames, prevDefault } from "../../utils";
-import { TextField, Select, Option, MaterialIcon, Spinner } from '../ui'
-import { SelectLanguage } from '../select-language'
-import { ISettingsState } from '../settings'
-import { IFavoritesState, Favorite, favoritesActions } from '../favorites'
+import { MaterialIcon, Option, Select, Spinner, TextField } from "../ui";
+import { SelectLanguage } from "../select-language";
+import { ISettingsState } from "../settings";
+import { Favorite, favoritesActions, IFavoritesState } from "../favorites";
 import { saveHistory } from "../user-history/user-history.actions";
 import clone = require("lodash/clone");
 import find = require("lodash/find");
@@ -21,6 +21,7 @@ interface Props {
 }
 
 interface State {
+  text?: string
   langFrom?: string
   langTo?: string
   vendor?: string
@@ -40,14 +41,11 @@ export class InputTranslation extends React.Component<Props, State> {
   private loadingTimer;
 
   public state: State = {
+    text: "",
     vendor: this.settings.vendor,
     langFrom: this.settings.langFrom,
     langTo: this.settings.langTo,
   };
-
-  get text() {
-    return (this.textField.value as string).trim();
-  }
 
   get vendor() {
     return vendors[this.state.vendor];
@@ -231,8 +229,7 @@ export class InputTranslation extends React.Component<Props, State> {
 
   @autobind()
   @debounce(0)
-  translate(text = this.text) {
-    if (!text) return;
+  translate(text = this.state.text.trim()) {
     var { langFrom, langTo } = this.state;
     var translating = this.vendor.getTranslation(langFrom, langTo, text);
     this.handleTranslation(translating);
@@ -240,16 +237,19 @@ export class InputTranslation extends React.Component<Props, State> {
 
   @autobind()
   translateWithFavorite(vendor: Vendor, fav: Favorite) {
-    this.textField.focus();
-    if (!this.text) return;
-    var translation = vendor.getTranslation(fav.from, fav.to, this.text);
-    this.handleTranslation(translation);
+    var text = this.state.text;
+    if (text) {
+      this.textField.focus();
+      var translation = vendor.getTranslation(fav.from, fav.to, text);
+      this.handleTranslation(translation);
+    }
   }
 
   private handleTranslation(translation: Promise<Translation>) {
     this.setLoading();
+    var text = this.state.text;
     var promise = this.translation = translation.then(result => {
-      if (this.translation !== promise || !this.text) return; // update state only with latest request
+      if (this.translation !== promise || !text) return; // update state only with latest request
       this.setState({ translation: result, error: null }, this.onTranslationReady);
       return result;
     }).catch(error => {
@@ -273,27 +273,28 @@ export class InputTranslation extends React.Component<Props, State> {
   }
 
   translateWord(text: string) {
-    this.translate(text);
-    this.textField.value = text;
     this.textField.focus();
+    this.setState({ text });
   }
 
+  @autobind()
   @debounce(250)
-  translateLazy(text) {
-    this.translate(text);
+  translateLazy() {
+    this.translate();
   }
 
   @autobind()
   onTextChange(text: string) {
-    text = text.trim();
-    if (!text) this.setState({ translation: null });
-    else this.translateLazy(text);
+    this.setState({ text }, this.translateLazy);
+    if (!text.trim()) {
+      this.setState({ translation: null });
+    }
   }
 
   @autobind()
   onVendorChange(vendorName: string) {
     var { langFrom, langTo } = this.state;
-    var state: State = { vendor: vendorName };
+    var state = { vendor: vendorName } as State;
     var vendor = vendors[vendorName];
     if (!vendor.langFrom[langFrom]) state.langFrom = Object.keys(vendor.langFrom)[0];
     if (!vendor.langTo[langTo]) state.langTo = Object.keys(vendor.langTo)[0];
@@ -314,7 +315,7 @@ export class InputTranslation extends React.Component<Props, State> {
   }
 
   render() {
-    var { vendor, langFrom, langTo, loading, error } = this.state;
+    var { text, vendor, langFrom, langTo, loading, error } = this.state;
     return (
         <div className="InputTranslation">
           <div className="language flex gaps">
@@ -329,7 +330,7 @@ export class InputTranslation extends React.Component<Props, State> {
             {this.isFavorite ?
                 <MaterialIcon
                     name="favorite" title={__i18n("favorites_remove_item")}
-                    onClick={() => this.removeFavorite(this.vendor, {from: langFrom, to: langTo})}/>
+                    onClick={() => this.removeFavorite(this.vendor, { from: langFrom, to: langTo })}/>
                 : null}
             {!this.isFavorite ?
                 <MaterialIcon
@@ -340,9 +341,11 @@ export class InputTranslation extends React.Component<Props, State> {
           {this.renderFavorites()}
           <TextField
               placeholder={__i18n("text_field_placeholder")}
-              autoFocus multiLine rows={2} maxLength={this.vendor.maxTextInputLength}
-              onChange={v => this.onTextChange(v)} tabIndex={1}
-              ref={e => this.textField = e}/>
+              autoFocus multiLine rows={2} tabIndex={1}
+              maxLength={this.vendor.maxTextInputLength}
+              value={text} onChange={v => this.onTextChange(v)}
+              ref={e => this.textField = e}
+          />
           {loading ? <Spinner center/> : (error ? this.renderError() : this.renderResult())}
         </div>
     );

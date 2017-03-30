@@ -1,14 +1,14 @@
 require('./settings.scss');
-import * as React from 'react';
+import * as React from "react";
 import { autobind } from "core-decorators";
-import { vendors, vendorsList } from '../../vendors';
-import { tabs, __i18n } from "../../extension";
+import { vendors, vendorsList } from "../../vendors";
+import { __i18n, tabs } from "../../extension";
 import { trialIsOver } from "../../extension/license";
 import { connect } from "../../store/connect";
-import { parseHotkey, getHotkey, prevDefault } from '../../utils'
-import { Checkbox, TextField, Radio, RadioGroup, MaterialIcon } from '../ui'
-import { SelectLanguage } from '../select-language'
-import { ISettingsState, settingsActions } from './index'
+import { getHotkey, parseHotkey, prevDefault } from "../../utils";
+import { Checkbox, MaterialIcon, Radio, RadioGroup, TextField } from "../ui";
+import { SelectLanguage } from "../select-language";
+import { ISettingsState, settingsActions } from "./index";
 
 interface Props {
   settings?: ISettingsState
@@ -50,36 +50,38 @@ export class Settings extends React.Component<Props, {}> {
           <div className="display-options flex wrap">
             <Checkbox label={__i18n("auto_play_tts")}
                       checked={settings.autoPlayText}
-                      onChange={v => this.save({autoPlayText: v})}/>
+                      onChange={v => this.save({ autoPlayText: v })}/>
             <Checkbox label={__i18n("show_tts_icon_inside_popup")}
                       checked={settings.showPlayIcon}
-                      onChange={v => this.save({showPlayIcon: v})}/>
+                      onChange={v => this.save({ showPlayIcon: v })}/>
             <Checkbox label={__i18n("show_context_menu")}
                       checked={settings.showInContextMenu}
-                      onChange={v => this.save({showInContextMenu: v})}/>
+                      onChange={v => this.save({ showInContextMenu: v })}/>
             <Checkbox label={__i18n("show_next_vendor_icon_in_popup")}
                       checked={settings.showNextVendorIcon}
-                      onChange={v => this.save({showNextVendorIcon: v})}/>
+                      onChange={v => this.save({ showNextVendorIcon: v })}/>
             <Checkbox label={__i18n("display_icon_near_selection")}
                       checked={settings.showIconNearSelection}
-                      onChange={v => this.save({showIconNearSelection: v})}/>
+                      onChange={v => this.save({ showIconNearSelection: v })}/>
             <Checkbox label={__i18n("display_popup_after_text_selected")}
                       checked={settings.showPopupAfterSelection}
-                      onChange={v => this.save({showPopupAfterSelection: v})}/>
+                      onChange={v => this.save({ showPopupAfterSelection: v })}/>
             <Checkbox label={__i18n("display_popup_on_double_click")}
                       checked={settings.showPopupOnDoubleClick}
-                      onChange={v => this.save({showPopupOnDoubleClick: v})}/>
+                      onChange={v => this.save({ showPopupOnDoubleClick: v })}/>
             <Checkbox label={__i18n("display_popup_on_hotkey")}
                       checked={settings.showPopupOnHotkey}
-                      onChange={v => this.save({showPopupOnHotkey: v})}>
+                      onChange={v => this.save({ showPopupOnHotkey: v })}>
               <div className="flex center pl1">
                 <label htmlFor="hotkey">
                   <MaterialIcon name="keyboard"/>
                 </label>
-                <TextField id="hotkey"
-                           className="hotkey" readOnly={true}
-                           title={hotkey.title} value={hotkey.value}
-                           onKeyDown={this.defineHotkey} ref={e => this.hotkey = e}/>
+                <TextField
+                    id="hotkey" className="hotkey"
+                    value={hotkey.value} title={hotkey.title}
+                    readOnly onKeyDown={this.defineHotkey}
+                    ref={e => this.hotkey = e}
+                />
               </div>
             </Checkbox>
           </div>
@@ -118,13 +120,15 @@ export class Settings extends React.Component<Props, {}> {
           </div>
 
           {trialIsOver() ? (
-                  <div className="support">
-                    <p className="sub-title pv2">{__i18n("sub_header_support_developers")}</p>
-                    <Checkbox label={__i18n("support_developers_checkbox")}
-                              checked={settings.allowAds}
-                              onChange={v => this.save({allowAds: v})}/>
-                  </div>
-              ) : null}
+              <div className="support">
+                <p className="sub-title pv2">{__i18n("sub_header_support_developers")}</p>
+                <Checkbox
+                    label={__i18n("support_developers_checkbox")}
+                    checked={settings.allowAds}
+                    onChange={v => this.save({ allowAds: v })}
+                />
+              </div>
+          ) : null}
         </div>
     );
   }
