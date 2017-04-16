@@ -176,7 +176,7 @@ export class Popup extends React.Component<Props, State> {
 
   renderError() {
     if (!this.props.error) return null;
-    var { status, statusText, error } = this.props.error;
+    var { status, statusText } = this.props.error;
     return (
         <div className="translation-error">
           {status} - {statusText}

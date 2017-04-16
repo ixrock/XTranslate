@@ -1,4 +1,4 @@
-import { Vendor, Translation, parseJson } from './vendor'
+import { parseJson, Translation, TranslationError, Vendor } from "./vendor";
 import { encodeQuery } from "../utils/encodeQuery";
 
 class Google extends Vendor {
@@ -25,12 +25,12 @@ class Google extends Vendor {
     }
 
     var url = this.url + '/translate_a/single?' +
-        encodeQuery('client=gtx&dt=t&dt=bd&dj=1&source=input', {
-          q: !useHttpPost ? text : null,
-          sl: langFrom,
-          tl: langTo,
-          hl: langTo, // word type header for dictionary
-        });
+      encodeQuery('client=gtx&dt=t&dt=bd&dj=1&source=input', {
+        q: !useHttpPost ? text : null,
+        sl: langFrom,
+        tl: langTo,
+        hl: langTo, // word type header for dictionary
+      });
 
     return fetch(url, reqParams).then(parseJson).then((res: GoogleTranslation) => {
       var translation: Translation = {
@@ -52,6 +52,16 @@ class Google extends Vendor {
         });
       }
       return translation;
+    }).catch((error: TranslationError) => {
+      var { status, url, responseText } = error;
+      if (status === 503 && url.startsWith("https://ipv4.google.com/sorry")) {
+        var parser = new DOMParser();
+        var doc = parser.parseFromString(responseText, "text/html");
+        var infoDiv = doc.querySelector("#infoDiv");
+        if (infoDiv) error.statusText = infoDiv.innerHTML;
+        window.open(this.publicUrl + `/#${langFrom}/${langTo}/${text}`);
+      }
+      throw error;
     });
   }
 }

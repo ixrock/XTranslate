@@ -1,4 +1,4 @@
-import { Vendor, VendorParams, Translation, TranslationError, parseJson } from './vendor'
+import { parseJson, Translation, TranslationError, Vendor, VendorParams } from "./vendor";
 import { encodeQuery } from "../utils/encodeQuery";
 import { Storage } from "../extension/storage";
 
@@ -104,7 +104,7 @@ class Yandex extends Vendor {
             return translation;
           })
           .catch((error: TranslationError) => {
-            if (error.error.code >= 400 && !nextApiKeyUsed) {
+            if (error.status >= 400 && !nextApiKeyUsed) {
               nextApiKeyUsed = true;
               this.nextApiKey();
               return request();

@@ -1,4 +1,4 @@
-import { Vendor, Translation, TranslationError, parseJson } from './vendor'
+import { parseJson, Translation, TranslationError, Vendor } from "./vendor";
 import { encodeQuery } from "../utils/encodeQuery";
 
 class Bing extends Vendor {
@@ -21,10 +21,10 @@ class Bing extends Vendor {
   protected translate(langFrom, langTo, text): Promise<Translation> {
     var translationReq = (): Promise<BingTranslation> => {
       var url = this.url + '/api/Translate/TranslateArray?' +
-          encodeQuery({
-            from: langFrom === 'auto' ? '-' : langFrom,
-            to: langTo
-          });
+        encodeQuery({
+          from: langFrom === 'auto' ? '-' : langFrom,
+          to: langTo
+        });
       return fetch(url, {
         method: 'post',
         credentials: 'include',
@@ -41,34 +41,34 @@ class Bing extends Vendor {
     var refreshCookie = false;
     var request = () => {
       return translationReq()
-          .then(translationRes => {
-            var translation: Translation = {
-              langDetected: translationRes.from,
-              translation: translationRes.items.map(tr => tr.text).join(" "),
-              dictionary: []
-            };
-            return dictReq(translation.langDetected).then(dictRes => {
-              translation.dictionary = dictRes.items.map(items => {
-                return {
-                  wordType: items[0].posTag.toLowerCase(),
-                  meanings: items.map(item => {
-                    return {
-                      word: item.displayTarget,
-                      translation: item.backTranslations.map(item => item.displayText),
-                    }
-                  })
-                }
-              });
-              return translation;
-            }).catch(() => translation);
-          })
-          .catch((error: TranslationError) => {
-            if (error.status === 403 && !refreshCookie) {
-              refreshCookie = true;
-              return this.refreshCookie().then(request);
-            }
-            throw error;
-          });
+        .then(translationRes => {
+          var translation: Translation = {
+            langDetected: translationRes.from,
+            translation: translationRes.items.map(tr => tr.text).join(" "),
+            dictionary: []
+          };
+          return dictReq(translation.langDetected).then(dictRes => {
+            translation.dictionary = dictRes.items.map(items => {
+              return {
+                wordType: items[0].posTag.toLowerCase(),
+                meanings: items.map(item => {
+                  return {
+                    word: item.displayTarget,
+                    translation: item.backTranslations.map(item => item.displayText),
+                  }
+                })
+              }
+            });
+            return translation;
+          }).catch(() => translation);
+        })
+        .catch((error: TranslationError) => {
+          if (error.status === 403 && !refreshCookie) {
+            refreshCookie = true;
+            return this.refreshCookie().then(request);
+          }
+          throw error;
+        });
     };
 
     return request();

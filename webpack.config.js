@@ -25,6 +25,8 @@ module.exports = function (env = {dev: true, prod: false}) {
       filename: '[name].js'
     },
 
+    devtool: env.dev ? 'cheap-module-source-map' : '',
+
     resolve: {
       extensions: ['.ts', '.tsx', '.js', '.json'],
     },

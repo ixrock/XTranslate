@@ -1,5 +1,5 @@
 import omit = require("lodash/omit");
-import { vendorsList } from './index'
+import { vendorsList } from "./index";
 
 export abstract class Vendor {
   public abstract name: string;
@@ -110,21 +110,17 @@ export abstract class Vendor {
 }
 
 export function parseJson(res: Response): any {
-  var { status, statusText } = res;
+  var { status, statusText, url } = res;
+  var error: TranslationError = { status, statusText, url };
   return res.text().then(text => {
-    var data, error: TranslationError = {
-      status: status,
-      statusText: statusText,
-      error: {}
-    };
+    error.responseText = text;
+    var json = null;
     try {
-      data = JSON.parse(text);
-      if (status >= 200 && status < 300) return data;
+      json = JSON.parse(text);
+      if (status >= 200 && status < 300) return json;
+      else error.responseJson = json;
     } catch (e) {
-      error.error = e;
-      throw error;
     }
-    error.error = data;
     throw error;
   });
 }
@@ -159,10 +155,9 @@ export interface Translation {
 }
 
 export interface TranslationError {
+  url: string
   status: number
-  statusText: string
-  error: {
-    code?: number
-    message?: string
-  }
+  statusText: any
+  responseText?: string
+  responseJson?: any
 }

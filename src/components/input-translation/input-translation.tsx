@@ -203,7 +203,7 @@ export class InputTranslation extends React.Component<Props, State> {
 
   renderError() {
     if (!this.state.error) return null;
-    var { status, statusText, error } = this.state.error;
+    var { status, statusText } = this.state.error;
     return (
         <div className="translation-error">
           {status} - {statusText}
@@ -230,6 +230,7 @@ export class InputTranslation extends React.Component<Props, State> {
   @autobind()
   @debounce(0)
   translate(text = this.state.text.trim()) {
+    if (!text) return;
     var { langFrom, langTo } = this.state;
     var translating = this.vendor.getTranslation(langFrom, langTo, text);
     this.handleTranslation(translating);
