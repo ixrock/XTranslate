@@ -15,7 +15,6 @@ import { cssNames } from "../utils/cssNames";
 import { getHotkey } from "../utils/parseHotkey";
 const ReactShadow = require("react-shadow").default;
 import isEqual = require("lodash/isEqual");
-const logo = require("../components/app/logo.gif");
 const topWindow = window.top;
 const isFrameWindow = window !== topWindow;
 const isPdf = document['contentType'] === "application/pdf";
