@@ -36,15 +36,14 @@ interface State {
 }))
 export class InputTranslation extends React.Component<Props, State> {
   private textField: TextField;
-  public settings = this.props.settings;
   private translation: Promise<Translation>;
   private loadingTimer;
 
   public state: State = {
     text: "",
-    vendor: this.settings.vendor,
-    langFrom: this.settings.langFrom,
-    langTo: this.settings.langTo,
+    vendor: this.props.settings.vendor,
+    langFrom: this.props.settings.langFrom,
+    langTo: this.props.settings.langTo,
   };
 
   get vendor() {
@@ -261,16 +260,16 @@ export class InputTranslation extends React.Component<Props, State> {
 
   @autobind()
   onTranslationReady() {
-    var { autoPlayText, historyEnabled } = this.settings;
+    var { autoPlayText, historyEnabled } = this.props.settings;
     if (autoPlayText) this.playText();
     if (historyEnabled) this.saveHistory();
   }
 
   // wait some time before saving history to avoid a lot of intermediate text inputs
-  @debounce(1500)
+  @debounce(1000)
   saveHistory() {
     var translation = this.state.translation;
-    if (translation) saveHistory(translation);
+    if (translation) saveHistory(translation, this.props.settings);
   }
 
   translateWord(text: string) {

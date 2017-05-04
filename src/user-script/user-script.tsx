@@ -379,7 +379,7 @@ class App extends React.Component<{}, State> {
   onTranslationReady() {
     var { autoPlayText, historyEnabled } = this.settings;
     if (autoPlayText) this.popup.playText();
-    if (historyEnabled) saveHistory(this.state.translation);
+    if (historyEnabled) saveHistory(this.state.translation, this.settings);
     this.refinePosition();
     this.popup.focus();
   }

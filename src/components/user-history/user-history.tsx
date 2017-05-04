@@ -1,12 +1,14 @@
 require('./user-history.scss');
-import * as React from 'react';
-import { connect } from "../../store/connect"
-import { __i18n } from "../../extension/i18n"
+
+import * as React from "react";
+import { connect } from "../../store/connect";
+import { __i18n } from "../../extension/i18n";
 import { cssNames, prevDefault } from "../../utils";
-import { Checkbox, Button, Spinner, Select, Option, MaterialIcon } from '../ui'
+import { Button, Checkbox, MaterialIcon, Option, Select, Spinner } from "../ui";
 import { ISettingsState, settingsActions } from "../settings";
-import { getHistory, clearHistory } from "./user-history.actions";
-import { ITranslationHistory } from "./user-history.types";
+import { clearHistory, getHistory } from "./user-history.actions";
+import { IHistoryItem } from "./user-history.types";
+import { vendors } from "../../vendors/index";
 import groupBy = require("lodash/groupBy");
 
 interface Props {
@@ -14,13 +16,14 @@ interface Props {
 }
 
 interface State {
-  history?: ITranslationHistory[]
+  history?: IHistoryItem[]
   loading?: boolean
   page?: number
   pageSize?: number
   hasMore?: boolean
   clearPeriod?: HistoryPeriod
   showDetails?: { [itemId: string]: boolean }
+  showSettings?: boolean
 }
 
 enum HistoryPeriod {
@@ -30,13 +33,14 @@ enum HistoryPeriod {
 @connect(store => ({
   settings: store.settings
 }))
-export class UserHistory extends React.Component<Props,State> {
+export class UserHistory extends React.Component<Props, State> {
   public state: State = {
     history: [],
     page: 0,
     pageSize: 100,
     clearPeriod: HistoryPeriod.DAY,
     showDetails: {},
+    showSettings: false,
   };
 
   async componentWillMount() {
@@ -51,10 +55,10 @@ export class UserHistory extends React.Component<Props,State> {
       var allHistory = await getHistory();
       var removedItemsOffset = page * pageSize - history.length;
       history.push(
-          ...allHistory.slice(
-              page * pageSize - removedItemsOffset,
-              page * pageSize + pageSize
-          )
+        ...allHistory.slice(
+          page * pageSize - removedItemsOffset,
+          page * pageSize + pageSize
+        )
       )
       this.setState({
         page: page + 1,
@@ -87,7 +91,7 @@ export class UserHistory extends React.Component<Props,State> {
     try {
       var datePeriod = this.getPeriod(history[0].date, clearPeriod);
       var clearAll = clearPeriod === HistoryPeriod.ALL;
-      var clearFilter = (item: ITranslationHistory) => {
+      var clearFilter = (item: IHistoryItem) => {
         return datePeriod === this.getPeriod(item.date, clearPeriod);
       };
       await clearHistory(clearAll ? null : clearFilter);
@@ -96,7 +100,7 @@ export class UserHistory extends React.Component<Props,State> {
     }
   }
 
-  removeItem(item: ITranslationHistory) {
+  removeItem(item: IHistoryItem) {
     var history = this.state.history;
     var index = history.indexOf(item);
     clearHistory(index).then(() => {
@@ -111,6 +115,10 @@ export class UserHistory extends React.Component<Props,State> {
     this.setState({ showDetails });
   }
 
+  playText(vendor: string, lang: string, text: string) {
+    vendors[vendor].playText(lang, text);
+  }
+
   renderHistory() {
     var { history, showDetails } = this.state;
     if (!history || !history.length) return null;
@@ -119,97 +127,125 @@ export class UserHistory extends React.Component<Props,State> {
     });
     var historyDays = Object.keys(groupedHistory);
     return (
-        <ul className="history">
-          {historyDays.map(day => {
-            return React.Children.toArray([
-              <li className="history-date">{day}</li>,
-              ...groupedHistory[day].map(item => {
-                var itemId = item.id;
-                var openDetails = showDetails[itemId];
-                var translatedWith = __i18n("translated_with", [
-                  item.vendor[0].toUpperCase() + item.vendor.substr(1),
-                  [item.from, item.to].join(" → ").toUpperCase()
-                ]).join("");
-                return (
-                    <li key={itemId} title={translatedWith}
-                        className={cssNames("history-item", {open: openDetails})}
-                        onClick={() => this.toggleDetails(itemId)}>
-                      <div className="main-info flex gaps">
-                      <span className="text box grow">
-                        {item.text}
-                        {item.ts ? <span className="transcription">({item.ts})</span> : null}
-                      </span>
-                        <span className="translation box grow">{item.tr}</span>
+      <ul className="history">
+        {historyDays.map(day => {
+          return React.Children.toArray([
+            <li className="history-date">{day}</li>,
+            ...groupedHistory[day].map(item => {
+              var { id, vendor, from, to, text, translation, transcription} = item;
+              var openDetails = showDetails[id];
+              var translatedWith = __i18n("translated_with", [
+                vendor[0].toUpperCase() + vendor.substr(1),
+                [from, to].join(" → ").toUpperCase()
+              ]).join("");
+              return (
+                <li key={id} title={translatedWith}
+                    className={cssNames("history-item", { open: openDetails })}
+                    onClick={() => this.toggleDetails(id)}>
+                  <div className="main-info flex gaps">
+                    <span className="text box grow flex align-center">
+                      {openDetails ?
                         <MaterialIcon
-                            name="remove_circle_outline" className="remove-icon"
-                            onClick={prevDefault(() => this.removeItem(item))}
-                        />
-                      </div>
-                      {openDetails ? this.renderDetails(item) : null}
-                    </li>
-                );
-              })
-            ]);
-          })}
-        </ul>
+                          name="play_circle_outline"
+                          onClick={prevDefault(() => this.playText(vendor, from, text))}
+                        /> : null}
+                      <span className="text ml1">{text}</span>
+                      {transcription ? <span className="transcription">({transcription})</span> : null}
+                    </span>
+                    <span className="translation box grow">{translation}</span>
+                    <MaterialIcon
+                      name="remove_circle_outline" className="remove-icon"
+                      onClick={prevDefault(() => this.removeItem(item))}
+                    />
+                  </div>
+                  {openDetails ? this.renderDetails(item) : null}
+                </li>
+              );
+            })
+          ]);
+        })}
+      </ul>
     );
   }
 
-  renderDetails(item: ITranslationHistory) {
-    var dict = item.dict;
+  renderDetails(item: IHistoryItem) {
+    var dict = item.dictionary;
     if (!dict.length) return null;
     return (
-        <div className="details flex gaps auto">
-          {dict.map(dict => {
-            var wordType = dict.w;
-            return (
-                <div key={wordType} className="dictionary">
-                  <b className="word-type">{wordType}</b>
-                  <div className="translations">
-                    {dict.tr.join(", ")}
-                  </div>
-                </div>
-            )
-          })}
-        </div>
+      <div className="details flex gaps auto">
+        {dict.map(dict => {
+          var wordType = dict.wordType;
+          return (
+            <div key={wordType} className="dictionary">
+              <b className="word-type">{wordType}</b>
+              <div className="translations">
+                {dict.translation.join(", ")}
+              </div>
+            </div>
+          )
+        })}
+      </div>
     );
   }
 
   render() {
-    var { history, loading, clearPeriod, hasMore } = this.state;
-    var saveHistory = this.props.settings.historyEnabled;
+    var { history, loading, clearPeriod, showSettings, hasMore } = this.state;
+    var { historyEnabled, historyAvoidDuplicates, historySaveWordsOnly } = this.props.settings;
     return (
-        <div className="UserHistory">
-          <div className="flex gaps align-center justify-center">
-            <Checkbox
-                label={__i18n("history_enabled_flag")}
-                checked={saveHistory}
-                onChange={v => settingsActions.sync({historyEnabled: v})}
-            />
-            <Select value={clearPeriod} onChange={v => this.setState({clearPeriod: v})}>
+      <div className="UserHistory">
+        <div className="flex align-center justify-center">
+          <Checkbox
+            label={__i18n("history_enabled_flag")}
+            checked={historyEnabled}
+            onChange={v => settingsActions.sync({ historyEnabled: v })}
+          />
+          <MaterialIcon
+            name="settings"
+            active={showSettings}
+            onClick={() => this.setState({ showSettings: !showSettings })}
+          />
+        </div>
+        {showSettings &&
+        <div className="settings flex column gaps">
+          <div className="flex gaps align-center">
+            <Select
+              className="box grow"
+              value={clearPeriod}
+              onChange={v => this.setState({ clearPeriod: v })}>
               <Option value={HistoryPeriod.HOUR} title={__i18n("history_clear_period_hour")}/>
               <Option value={HistoryPeriod.DAY} title={__i18n("history_clear_period_day")}/>
               <Option value={HistoryPeriod.MONTH} title={__i18n("history_clear_period_month")}/>
               <Option value={HistoryPeriod.ALL} title={__i18n("history_clear_period_all")}/>
             </Select>
             <Button
-                accent label={__i18n("history_button_clear")}
-                onClick={() => this.clearHistory()}
+              accent label={__i18n("history_button_clear")}
+              onClick={() => this.clearHistory()}
             />
           </div>
-          {loading && <div className="pt1"><Spinner center/></div>}
-          {history && this.renderHistory()}
-          {hasMore && (
-              <div className="load-more flex center mt2">
-                <Button
-                    primary label={__i18n("history_button_show_more")}
-                    onClick={() => this.loadHistory()}
-                />
-              </div>
-          )}
-        </div>
+          <div className="box flex gaps auto">
+            <Checkbox
+              label={__i18n("history_settings_save_words_only")}
+              checked={historySaveWordsOnly}
+              onChange={v => settingsActions.sync({ historySaveWordsOnly: v })}
+            />
+            <Checkbox
+              label={__i18n("history_settings_avoid_duplicates")}
+              checked={historyAvoidDuplicates}
+              onChange={v => settingsActions.sync({ historyAvoidDuplicates: v })}
+            />
+          </div>
+        </div>}
+        {loading && <div className="pt1"><Spinner center/></div>}
+        {history && this.renderHistory()}
+        {hasMore && (
+          <div className="load-more flex center mt2">
+            <Button
+              primary label={__i18n("history_button_show_more")}
+              onClick={() => this.loadHistory()}
+            />
+          </div>
+        )}
+      </div>
     );
   }
 }
-
-export default UserHistory;

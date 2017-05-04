@@ -64,6 +64,8 @@
   "translated_with"                  : {"message": "Translated with %translator% (%lang%)"},
   "___________history_______________": {"message": "----------------------------------------------"},
   "history_enabled_flag"             : {"message": "Enabled"},
+  "history_settings_save_words_only" : {"message": "Save only dictionary words"},
+  "history_settings_avoid_duplicates": {"message": "Avoid duplicates"},
   "history_clear_period_hour"        : {"message": "Last hour"},
   "history_clear_period_day"         : {"message": "Last day"},
   "history_clear_period_month"       : {"message": "Last month"},

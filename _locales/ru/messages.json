@@ -64,6 +64,8 @@
   "translated_with"                  : {"message": "Переведено с %translator% (%lang%)"},
   "___________history_______________": {"message": "----------------------------------------------"},
   "history_enabled_flag"             : {"message": "Включено"},
+  "history_settings_save_words_only" : {"message": "Сохранять слова только со словарем"},
+  "history_settings_avoid_duplicates": {"message": "Избегать дубликатов в истории"},
   "history_clear_period_hour"        : {"message": "Последний час"},
   "history_clear_period_day"         : {"message": "Последний день"},
   "history_clear_period_month"       : {"message": "Последний месяц"},

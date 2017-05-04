@@ -61,9 +61,12 @@
 
       .remove-icon {
         visibility: hidden;
-        opacity: .15;
+      }
+
+      .material-icons {
+        opacity: .5;
         &:hover {
-          opacity: .75;
+          opacity: 1;
         }
       }
     }

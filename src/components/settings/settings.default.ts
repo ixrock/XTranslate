@@ -1,5 +1,4 @@
-import { ISettingsState } from './settings.types'
-import { Hotkey } from "../../utils/parseHotkey";
+import { ISettingsState } from "./settings.types";
 
 export const defaultSettings: ISettingsState = {
   autoPlayText: false,
@@ -15,10 +14,8 @@ export const defaultSettings: ISettingsState = {
   vendor: "google",
   langFrom: "auto",
   langTo: navigator.language.split('-')[0],
+  hotkey: { altKey: true, code: "X", keyCode: "X".codePointAt(0) },
   historyEnabled: false,
-  hotkey: {
-    altKey: true,
-    code: "X",
-    keyCode: "X".codePointAt(0),
-  } as Hotkey
+  historySaveWordsOnly: true,
+  historyAvoidDuplicates: true,
 };

@@ -14,6 +14,10 @@ $md-icons-parent-selector: "*" !default;
     white-space: nowrap;
     direction: ltr;
 
+    &.active {
+      color: $bgc-primary;
+    }
+
     &.button {
       user-select: none;
       transition: 250ms all;

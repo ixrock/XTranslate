@@ -16,4 +16,6 @@ export interface ISettingsState {
   langTo?: string
   hotkey?: Hotkey
   historyEnabled?: boolean
+  historySaveWordsOnly?: boolean
+  historyAvoidDuplicates?: boolean
 }

@@ -82,15 +82,15 @@ export abstract class Vendor {
 
   playText(lang: string, text: string) {
     text = encodeURIComponent(text);
-    this.stopPlaying();
     this.ttsAudio = document.createElement('audio');
     this.ttsAudio.autoplay = true;
 
     var fetching: Promise<string>;
-    var vendors = [].concat(vendorsList);
+    var vendors = [...vendorsList];
     vendors.unshift(this); // put current vendor to the top
     vendors.splice(vendors.lastIndexOf(this), 1); // remove duplicate
     vendors.forEach(vendor => {
+      vendor.stopPlaying();
       var url = vendor.getAudioUrl(lang, text);
       if (url) {
         if (!fetching) fetching = this.getAudioSource(url);
