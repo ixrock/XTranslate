@@ -146,10 +146,11 @@ export class UserHistory extends React.Component<Props, State> {
                     <span className="text box grow flex align-center">
                       {openDetails ?
                         <MaterialIcon
+                          className="mr1"
                           name="play_circle_outline"
                           onClick={prevDefault(() => this.playText(vendor, from, text))}
                         /> : null}
-                      <span className="text ml1">{text}</span>
+                      <span className="text">{text}</span>
                       {transcription ? <span className="transcription">({transcription})</span> : null}
                     </span>
                     <span className="translation box grow">{translation}</span>
