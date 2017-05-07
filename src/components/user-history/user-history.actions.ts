@@ -2,16 +2,26 @@ import { storage } from "../../store/storage";
 import { Translation } from "../../vendors/vendor";
 import { IHistoryItem, IHistoryStorageItem, IHistoryStorageItemOld } from "./user-history.types";
 import { ISettingsState } from "../settings/settings.types";
+
+import MD5 = require("crypto-js/md5");
 import isEqual = require("lodash/isEqual");
 
 async function getHistoryRaw(): Promise<IHistoryStorageItem[]> {
-  return storage.local.get("history").then(store => {
-    return store.history || [];
-  });
+  return storage.local.get("history").then(store => store.history || []);
 }
 
-export async function getHistory(): Promise<IHistoryItem[]> {
-  return getHistoryRaw().then(history => history.map(fromHistoryItem))
+export async function getHistory(search = ""): Promise<IHistoryItem[]> {
+  return getHistoryRaw()
+    .then(history => history.map(fromHistoryItem))
+    .then(history => {
+      if (search = search.trim().toLowerCase()) {
+        return history.filter(({ text, translation }) => {
+          return text.toLowerCase().includes(search) ||
+            translation.toLowerCase().includes(search)
+        })
+      }
+      return history;
+    });
 }
 
 function toHistoryItem(translation: Translation) {
@@ -56,7 +66,7 @@ function fromHistoryItem(item: IHistoryStorageItem | IHistoryStorageItemOld): IH
       }))
     }
   }
-  historyItem.id = btoa([date, vendor, from, to, Math.random()].join("-"));
+  historyItem.id = MD5(JSON.stringify(item)).toString();
   return historyItem;
 }
 
@@ -79,16 +89,16 @@ export async function saveHistory(translation: Translation, settings: ISettingsS
   });
 }
 
-export async function clearHistory(indexOrFilter?: number | ((item: IHistoryItem) => boolean)) {
-  if (indexOrFilter == null) {
+export async function clearHistory(idOrFilterFn?: string | ((item: IHistoryItem) => boolean)) {
+  if (idOrFilterFn == null) {
     return storage.local.set({ history: [] });
   }
   return getHistoryRaw().then(history => {
-    if (typeof indexOrFilter === "number") {
-      history.splice(indexOrFilter, 1);
-    } else {
-      history = history.filter(item => !indexOrFilter(fromHistoryItem(item)));
-    }
+    history = history.filter(item => {
+      var historyItem = fromHistoryItem(item);
+      if (typeof idOrFilterFn === "function") return !idOrFilterFn(historyItem)
+      return historyItem.id !== idOrFilterFn;
+    });
     return storage.local.set({ history });
   });
 }

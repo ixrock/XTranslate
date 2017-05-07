@@ -15,7 +15,7 @@ $md-icons-parent-selector: "*" !default;
     direction: ltr;
 
     &.active {
-      color: $bgc-primary;
+      color: $bgc-primary !important;
     }
 
     &.button {

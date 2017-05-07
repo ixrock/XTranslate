@@ -29,15 +29,14 @@ export interface IHistoryStorageItemOld {
 }
 
 export type IHistoryStorageItem = [
-  number, // time
-  string, // vendor
-  string, // lang from
-  string, // lang to
-  string, // original text
-  string, // translation result
-  string, // transcription
-  [
-    // dictionary
+  number, // 0 - time
+  string, // 1 - vendor
+  string, // 2 - lang from
+  string, // 3 - lang to
+  string, // 4 - original text
+  string, // 5 - translation result
+  string, // 6 - transcription
+  [       // 7 - dictionary
     string, // word type
     string[] // translations
     ][]
