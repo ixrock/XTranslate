@@ -93,6 +93,10 @@
     }
   }
 
+  &.compact > .errors:empty {
+    display: none;
+  }
+
   .errors {
     color: $color-error;
     min-height: $margin * 2;

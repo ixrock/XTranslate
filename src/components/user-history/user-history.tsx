@@ -4,7 +4,7 @@ import * as React from "react";
 import { autobind, debounce } from "core-decorators";
 import { connect } from "../../store/connect";
 import { __i18n } from "../../extension/i18n";
-import { cssNames, prevDefault } from "../../utils";
+import { cssNames, download, prevDefault } from "../../utils";
 import { Button, Checkbox, MaterialIcon, Option, Select, Spinner, TextField } from "../ui";
 import { ISettingsState, settingsActions } from "../settings";
 import { clearHistory, getHistory } from "./user-history.actions";
@@ -25,8 +25,10 @@ interface State {
   clearPeriod?: HistoryPeriod
   showDetails?: { [itemId: string]: boolean }
   showSettings?: boolean
-  searchMode?: boolean
+  showSearch?: boolean
+  showExports?: boolean
   searchText?: string
+  exportSearchResult?: boolean
 }
 
 enum HistoryPeriod {
@@ -43,9 +45,11 @@ export class UserHistory extends React.Component<Props, State> {
     pageSize: 100,
     clearPeriod: HistoryPeriod.DAY,
     showDetails: {},
-    showSettings: false,
-    searchMode: false,
     searchText: "",
+    showSettings: false,
+    showSearch: false,
+    showExports: false,
+    exportSearchResult: false,
   };
 
   async componentWillMount() {
@@ -86,6 +90,52 @@ export class UserHistory extends React.Component<Props, State> {
     this.setState({ searchText: text }, () => {
       this.reloadHistory();
     });
+  }
+
+  async exportHistory(type: "json" | "csv") {
+    var filename = `xtranslate-history.${type}`;
+    var { searchText, exportSearchResult } = this.state;
+    var history = await getHistory(exportSearchResult ? searchText : null);
+
+    switch (type) {
+      case "json":
+        var json = history.map(item => {
+          var ts = item.transcription;
+          return {
+            date: new Date(item.date).toLocaleString(),
+            lang: `${item.from}-${item.to}`,
+            translator: item.vendor,
+            text: item.text,
+            translation: item.translation + (ts ? ` (${ts})` : ""),
+            dictionary: item.dictionary.reduce((result, dict) => {
+              result[dict.wordType] = dict.translation;
+              return result;
+            }, {})
+          }
+        });
+        download.json(filename, json)
+        break;
+
+      case "csv":
+        var csv = [
+          ["Date", "Translator", "Language", "Original text", "Translation", "Transcription", "Dictionary"]
+        ];
+        history.forEach(item => {
+          csv.push([
+            new Date(item.date).toLocaleString(),
+            vendors[item.vendor].title,
+            item.from + "-" + item.to,
+            item.text,
+            item.translation,
+            item.transcription || "",
+            item.dictionary.map(({ wordType, translation }) => {
+              return wordType + "\n" + translation.join(", ")
+            }).join("\n\n")
+          ]);
+        });
+        download.csv(filename, csv);
+        break;
+    }
   }
 
   getPeriod(timestamp: number, period?: HistoryPeriod) {
@@ -201,7 +251,8 @@ export class UserHistory extends React.Component<Props, State> {
   }
 
   render() {
-    var { history, loading, clearPeriod, showSettings, hasMore, searchMode, searchText } = this.state;
+    var { history, loading, clearPeriod, hasMore } = this.state;
+    var { showSettings, showSearch, searchText, showExports, exportSearchResult } = this.state;
     var { historyEnabled, historyAvoidDuplicates, historySaveWordsOnly } = this.props.settings;
     return (
       <div className="UserHistory">
@@ -212,25 +263,43 @@ export class UserHistory extends React.Component<Props, State> {
             onChange={v => settingsActions.sync({ historyEnabled: v })}
           />
           <MaterialIcon
+            name="find_in_page"
+            active={showSearch}
+            onClick={() => this.setState({ showSearch: !showSearch })}
+          />
+          <MaterialIcon
+            name="file_download"
+            active={showExports}
+            onClick={() => this.setState({ showExports: !showExports })}
+          />
+          <MaterialIcon
             name="settings"
             active={showSettings}
             onClick={() => this.setState({ showSettings: !showSettings })}
           />
-          <MaterialIcon
-            name="find_in_page"
-            active={searchMode}
-            onClick={() => this.setState({ searchMode: !searchMode })}
-          />
         </div>
-        {searchMode && (
+        {showSearch && (
           <TextField
-            autoFocus
+            autoFocus compact
+            className="mt1"
             placeholder={__i18n("history_search_input_placeholder")}
             value={searchText} onChange={v => this.search(v)}
           />
         )}
+        {showExports && (
+          <div className="export-history flex gaps align-center mt1">
+            <Checkbox
+              label={__i18n("history_export_search_results")}
+              className="box grow"
+              checked={exportSearchResult}
+              onChange={v => this.setState({ exportSearchResult: v })}
+            />
+            <Button label="CSV" className="w20" onClick={() => this.exportHistory("csv")}/>
+            <Button label="JSON" className="w20" onClick={() => this.exportHistory("json")}/>
+          </div>
+        )}
         {showSettings && (
-          <div className="settings flex column gaps">
+          <div className="settings flex column gaps mt1">
             <div className="flex gaps align-center">
               <Select
                 className="box grow"

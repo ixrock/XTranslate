@@ -14,7 +14,8 @@ export async function getHistory(search = ""): Promise<IHistoryItem[]> {
   return getHistoryRaw()
     .then(history => history.map(fromHistoryItem))
     .then(history => {
-      if (search = search.trim().toLowerCase()) {
+      if (search) {
+        search = search.trim().toLowerCase();
         return history.filter(({ text, translation }) => {
           return text.toLowerCase().includes(search) ||
             translation.toLowerCase().includes(search)

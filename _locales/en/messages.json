@@ -67,6 +67,7 @@
   "history_settings_save_words_only" : {"message": "Save only dictionary words"},
   "history_settings_avoid_duplicates": {"message": "Avoid duplicates"},
   "history_search_input_placeholder" : {"message": "Search in history"},
+  "history_export_search_results"    : {"message": "Export search results"},
   "history_clear_period_hour"        : {"message": "Last hour"},
   "history_clear_period_day"         : {"message": "Last day"},
   "history_clear_period_month"       : {"message": "Last month"},
