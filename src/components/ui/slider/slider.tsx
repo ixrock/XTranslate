@@ -31,5 +31,3 @@ export class Slider extends React.Component<Props, {}> {
     );
   }
 }
-
-export default Slider;

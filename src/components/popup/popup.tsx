@@ -1,16 +1,17 @@
-require('./popup.scss');
-import * as React from 'react';
+import "./popup.scss";
+
+import * as React from "react";
 import { autobind } from "core-decorators";
 import { __i18n } from "../../extension/i18n";
 import { MessageType } from "../../extension/message";
 import { getOptionsPageUrl, sendMessage } from "../../extension/runtime";
 import { cssNames } from "../../utils/cssNames";
 import { cssColor } from "../ui/color-picker/cssColor";
-import { MaterialIcon } from '../ui/icons/material-icon'
-import { IThemeManagerState } from '../theme-manager/theme-manager.types'
+import { MaterialIcon } from "../ui/icons/material-icon";
+import { IThemeManagerState } from "../theme-manager/theme-manager.types";
 import { ISettingsState } from "../settings/settings.types";
-import { fontsList, loadFonts } from '../theme-manager/fonts-loader'
-import { vendors, Translation, TranslationError, getNextVendor } from "../../vendors";
+import { fontsList, loadFonts } from "../theme-manager/fonts-loader";
+import { getNextVendor, Translation, TranslationError, vendors } from "../../vendors";
 
 interface Props extends React.HTMLProps<any> {
   className?: any
@@ -59,21 +60,21 @@ export class Popup extends React.Component<Props, State> {
       fontSize: theme.fontSize,
       color: cssColor(theme.textColor),
       border: theme.borderWidth ? [
-            theme.borderWidth + "px",
-            theme.borderStyle,
-            cssColor(theme.borderColor)
-          ].join(" ") : "",
+        theme.borderWidth + "px",
+        theme.borderStyle,
+        cssColor(theme.borderColor)
+      ].join(" ") : "",
       textShadow: (theme.textShadowRadius || theme.textShadowOffsetX || theme.textShadowOffsetY) ? [
-            theme.textShadowOffsetX + "px",
-            theme.textShadowOffsetY + "px",
-            theme.textShadowRadius + "px",
-            cssColor(theme.textShadowColor)
-          ].join(" ") : "",
+        theme.textShadowOffsetX + "px",
+        theme.textShadowOffsetY + "px",
+        theme.textShadowRadius + "px",
+        cssColor(theme.textShadowColor)
+      ].join(" ") : "",
       boxShadow: theme.boxShadowBlur ? [
-            theme.boxShadowInner ? "inset" : "",
-            0, 0, theme.boxShadowBlur + "px",
-            cssColor(theme.boxShadowColor)
-          ].join(" ") : ""
+        theme.boxShadowInner ? "inset" : "",
+        0, 0, theme.boxShadowBlur + "px",
+        cssColor(theme.boxShadowColor)
+      ].join(" ") : ""
     };
     if (theme.bgcLinear) {
       cssTheme.background = `linear-gradient(180deg, ${cssTheme.background}, ${cssColor(theme.bgcSecondary)})`;
@@ -129,48 +130,47 @@ export class Popup extends React.Component<Props, State> {
     const { showPlayIcon, showNextVendorIcon } = this.props.settings;
     const boxSizeStyle = this.state.boxSizeStyle;
     const vendorApi = vendors[vendor];
-    var title = __i18n("translated_with", [vendorApi.title, [langFrom, langTo].join(" → ").toUpperCase()]).join("");
+    const rtlClass = { rtl: vendorApi.isRightToLeft(langTo) };
+    const title = __i18n("translated_with", [
+      vendorApi.title, `${langFrom} → ${langTo}`.toUpperCase()
+    ]).join("");
     var nextVendorIcon = null;
-    var playTextIcon = null;
-    if (showPlayIcon) {
-      playTextIcon =
-          <MaterialIcon
-              name="play_circle_outline" title={__i18n("popup_play_icon_title")}
-              onClick={this.playText}/>
-    }
     if (showNextVendorIcon) {
       let nextVendor = getNextVendor(vendor, langFrom, langTo);
       let iconTitle = __i18n("popup_next_vendor_icon_title", [nextVendor.title]).join("");
       nextVendorIcon = <MaterialIcon name="arrow_forward" onClick={this.translateNextVendor} title={iconTitle}/>
     }
     return (
-        <div className="translation-result" style={boxSizeStyle}>
-          <div className="flex">
-            {playTextIcon}
-            <div className="translation box grow" title={title}>
-              <span>{translation}</span>
-              {transcription ? <i className="transcription">{" "}[{transcription}]</i> : null}
-            </div>
-            {nextVendorIcon}
+      <div className="translation-result" style={boxSizeStyle}>
+        <div className="translation flex gaps">
+          {showPlayIcon ? (
+            <MaterialIcon
+              name="play_circle_outline"
+              title={__i18n("popup_play_icon_title")}
+              onClick={this.playText}/>
+          ) : null}
+          <div className={cssNames("value box grow", rtlClass)} title={title}>
+            <span>{translation}</span>
+            {transcription ? <i className="transcription">{" "}[{transcription}]</i> : null}
           </div>
-          {dictionary.map((dict, i) =>
-              <div key={i} className="dictionary">
-                <div className="word-type">{dict.wordType}</div>
-                <div className="word-meanings">
-                  {dict.meanings.map((meaning, i, list) => {
-                    var last = i === list.length - 1;
-                    var title = meaning.translation.join(", ") || null;
-                    return [
-                      <span key={i} className="word" title={title}>
-                        {meaning.word}
-                      </span>,
-                      !last ? ", " : null
-                    ]
-                  })}
-                </div>
-              </div>
-          )}
+          {nextVendorIcon}
         </div>
+        {dictionary.map(({ wordType, meanings }, i) =>
+          <div key={wordType} className={cssNames("dictionary", rtlClass)}>
+            <div className="word-type">{wordType}</div>
+            <div className="word-meanings">
+              {meanings.map((meaning, i, list) => {
+                var last = i === list.length - 1;
+                var title = meaning.translation.join(", ") || null;
+                return [
+                  <span key={i} className="word" title={title}>{meaning.word}</span>,
+                  !last ? ", " : null
+                ]
+              })}
+            </div>
+          </div>
+        )}
+      </div>
     );
   }
 
@@ -178,24 +178,24 @@ export class Popup extends React.Component<Props, State> {
     if (!this.props.error) return null;
     var { status, statusText } = this.props.error;
     return (
-        <div className="translation-error">
-          {status} - {statusText}
-        </div>
+      <div className="translation-error">
+        {status} - {statusText}
+      </div>
     )
   }
 
   renderTrial() {
     var boxSizeStyle = this.state.boxSizeStyle;
     return (
-        <div className="license-required flex align-center" style={boxSizeStyle}>
-          <MaterialIcon name="info_outline"/>
-          <div className="info">
-            <span>{__i18n("trial_is_over")}. </span>
-            <a href={getOptionsPageUrl("#settings")} target="_blank">
-              {__i18n("trial_popup_learn_more")}
-            </a>
-          </div>
+      <div className="license-required flex align-center" style={boxSizeStyle}>
+        <MaterialIcon name="info_outline"/>
+        <div className="info">
+          <span>{__i18n("trial_is_over")}. </span>
+          <a href={getOptionsPageUrl("#settings")} target="_blank">
+            {__i18n("trial_popup_learn_more")}
+          </a>
         </div>
+      </div>
     )
   }
 
@@ -206,14 +206,12 @@ export class Popup extends React.Component<Props, State> {
     var visible = translation || error;
     var popupClass = cssNames("Popup", { visible }, className);
     return (
-        <div className={popupClass} style={style} tabIndex={-1} ref={e => this.elem = e}>
-          <div className="content">
-            {disabled && visible ? this.renderTrial() : null}
-            {!disabled ? (error ? this.renderError() : this.renderResult()) : null}
-          </div>
+      <div className={popupClass} style={style} tabIndex={-1} ref={e => this.elem = e}>
+        <div className="content">
+          {disabled && visible ? this.renderTrial() : null}
+          {!disabled ? (error ? this.renderError() : this.renderResult()) : null}
         </div>
+      </div>
     );
   }
 }
-
-export default Popup;

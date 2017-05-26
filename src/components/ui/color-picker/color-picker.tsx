@@ -93,5 +93,3 @@ export class ColorPicker extends React.Component<Props, {}> {
     );
   }
 }
-
-export default ColorPicker;

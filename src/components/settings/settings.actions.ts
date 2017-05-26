@@ -1,7 +1,7 @@
-import { bindActions, ActionsDispatcher } from '../../store/bindActions'
-import { enumUniq } from '../../utils/enumUniq'
-import { ISettingsState } from './settings.types'
-import { AppState, storage } from '../../store'
+import { bindActions } from "../../store/bindActions";
+import { enumUniq } from "../../utils/enumUniq";
+import { ISettingsState } from "./settings.types";
+import { AppState, storage } from "../../store";
 
 export enum actionTypes {
   SETTINGS_SYNC
@@ -9,8 +9,7 @@ export enum actionTypes {
 
 enumUniq(actionTypes);
 
-@bindActions
-class SettingsActions extends ActionsDispatcher {
+export const settingsActions = bindActions({
   async sync(settings: ISettingsState) {
     return await function (dispatch, getState) {
       dispatch({
@@ -21,7 +20,4 @@ class SettingsActions extends ActionsDispatcher {
       return storage.sync.set({ settings: state.settings });
     }
   }
-}
-
-export const settingsActions = new SettingsActions();
-export default settingsActions;
+});

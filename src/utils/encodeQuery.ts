@@ -21,5 +21,3 @@ export function encodeQuery(...params: Param[]): string {
   });
   return query.join('&');
 }
-
-export default encodeQuery;

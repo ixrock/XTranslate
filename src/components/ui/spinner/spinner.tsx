@@ -33,5 +33,3 @@ export class Spinner extends React.Component<Props, {}> {
     return <div {...props} className={className} ref={e => this.elem = e}></div>;
   }
 }
-
-export default Spinner;

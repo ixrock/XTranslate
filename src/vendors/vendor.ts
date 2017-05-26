@@ -107,7 +107,19 @@ export abstract class Vendor {
     this.ttsAudio.pause();
     URL.revokeObjectURL(this.ttsAudio.src);
   }
+
+  isRightToLeft(lang: string) {
+    return RTL_LANGUAGES.indexOf(lang) > -1;
+  }
 }
+
+const RTL_LANGUAGES = [
+  "ar", // arabic
+  "he", // hebrew (yandex, bing)
+  "iw", // hebrew (google)
+  "fa", // persian
+  "ur", // urdu
+];
 
 export function parseJson(res: Response): any {
   var { status, statusText, url } = res;

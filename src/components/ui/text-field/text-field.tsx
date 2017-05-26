@@ -268,5 +268,3 @@ export class TextField extends React.Component<Props, State> {
     );
   }
 }
-
-export default TextField;

@@ -50,14 +50,17 @@
   }
 
   .translation-results {
-    .translation {
-      margin-left: var(--flex-gap);
-      margin-bottom: var(--flex-gap);
-      white-space: pre-line;
+    &.rtl {
+      direction: rtl;
+    }
 
+    .translation {
+      margin-bottom: var(--flex-gap);
+      .value {
+        white-space: pre-line;
+      }
       .transcription {
         opacity: .75;
-        margin-left: var(--flex-gap);
       }
     }
     .lang {

@@ -1,19 +1,22 @@
 // Common wrapper for all reducers
-const clone = require('lodash/clone');
+const cloneDeep = require('lodash/cloneDeep');
 
-export function commonReducer<S>(initState: S, modifyStore: (state: S, action) => any) {
-  return function (state = initState, action) {
-    state = clone(state || {});
-    action = Object.create(action, {
-      waiting: {
-        get() {
-          return !action.data && !action.error;
-        }
-      }
-    });
-    var actionResult = modifyStore(state, action);
-    return actionResult || Object.assign({}, initState, state);
-  };
+interface Action {
+  type?: any
+  data?: any
+  error?: any
+  waiting?: boolean
+  [param: string]: any
 }
 
-export default commonReducer;
+export function commonReducer<S>(initState: S, modifyStore: (state: S, action: Action) => any) {
+  return function (state = initState, action) {
+    state = cloneDeep(state || {});
+    Object.defineProperty(action, "waiting", {
+      enumerable: false,
+      value: !action.data && !action.error
+    });
+    var result = modifyStore(state, action);
+    return result ? result : state;
+  };
+}

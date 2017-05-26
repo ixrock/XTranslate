@@ -60,8 +60,13 @@ export class ThemeManager extends React.Component<Props, {}> {
     var isDefault = isEqual(defaultTheme, this.props.theme);
     return (
       <div className="ThemeManager">
-        <div className="preview flex center pb1">
-          <Popup translation={this.translation} settings={settings} theme={theme}/>
+        <div className="flex center pb1">
+          <Popup
+            className="preview"
+            translation={this.translation}
+            settings={settings}
+            theme={theme}
+          />
         </div>
         <div className="theme">
           <div className="flex auto">
@@ -224,5 +229,3 @@ export class ThemeManager extends React.Component<Props, {}> {
     );
   }
 }
-
-export default ThemeManager;

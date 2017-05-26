@@ -8,5 +8,3 @@ export function connect(mapStateToProps?: (store: AppState) => any, options = { 
   // Issue: https://github.com/Microsoft/TypeScript/issues/9365
   return target => (connectRedux(mapStateToProps, null, null, options)(target) as any);
 }
-
-export default connect;

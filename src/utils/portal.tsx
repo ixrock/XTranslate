@@ -37,5 +37,3 @@ export class Portal extends React.Component<any, any> {
     return null;
   }
 }
-
-export default Portal;

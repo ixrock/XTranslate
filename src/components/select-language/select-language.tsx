@@ -68,5 +68,3 @@ export class SelectLanguage extends React.Component<Props, {}> {
     );
   }
 }
-
-export default SelectLanguage;

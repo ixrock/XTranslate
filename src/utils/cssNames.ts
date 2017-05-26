@@ -17,5 +17,3 @@ export function cssNames(...args):string {
   });
   return Object.keys(map).filter((className) => !!map[className]).join(' ');
 }
-
-export default cssNames;

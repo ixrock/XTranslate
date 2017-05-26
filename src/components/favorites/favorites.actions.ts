@@ -1,7 +1,7 @@
-import { bindActions, ActionsDispatcher } from '../../store/bindActions'
-import { enumUniq } from '../../utils/enumUniq'
-import { IFavoritesState } from './favorites.types'
-import { storage } from '../../store'
+import { bindActions } from "../../store/bindActions";
+import { enumUniq } from "../../utils/enumUniq";
+import { IFavoritesState } from "./favorites.types";
+import { storage } from "../../store";
 
 export enum actionTypes {
   FAVORITES_SYNC,
@@ -9,15 +9,11 @@ export enum actionTypes {
 
 enumUniq(actionTypes);
 
-@bindActions
-class FavoritesActions extends ActionsDispatcher {
-  sync(favorites: IFavoritesState) {
-    return Promise.resolve({
+export const favoritesActions = bindActions({
+  async sync(favorites: IFavoritesState) {
+    return {
       type: actionTypes.FAVORITES_SYNC,
       promise: storage.sync.set({ favorites: favorites }).then(() => favorites)
-    }) as any as Promise<IFavoritesState>;
+    } as any as IFavoritesState;
   }
-}
-
-export const favoritesActions = new FavoritesActions();
-export default favoritesActions;
+});

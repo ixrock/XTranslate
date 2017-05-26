@@ -10,5 +10,3 @@ export function enumUniq(obj) {
   });
   return obj;
 }
-
-export default enumUniq;

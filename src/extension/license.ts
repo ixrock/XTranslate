@@ -1,5 +1,5 @@
 import { getPurchases, getSkuDetails, buy } from "./payments";
-import { createStorage } from "../utils/createStorage";
+import { createStorage } from "../utils/localStorage";
 import find = require("lodash/find");
 const installTime = createStorage<number>('installTime', Date.now(), true);
 const trialPeriodTime = 1000 * 60 * 60 * 24 * 10;

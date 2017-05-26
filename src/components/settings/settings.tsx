@@ -133,5 +133,3 @@ export class Settings extends React.Component<Props, {}> {
     );
   }
 }
-
-export default Settings;

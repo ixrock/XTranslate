@@ -111,5 +111,3 @@ export class Dialog extends React.Component<Props, {}> {
     );
   }
 }
-
-export default Dialog;

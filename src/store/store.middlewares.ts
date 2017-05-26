@@ -60,5 +60,3 @@ export const middlewares = applyMiddleware(...[
   promisedMiddleware,
   vanillaPromise
 ]);
-
-export default middlewares;

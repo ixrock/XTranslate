@@ -4,6 +4,11 @@
   .history {
     list-style: none;
 
+    .rtl {
+      direction: rtl;
+      text-align: right;
+    }
+
     .history-date {
       display: flex;
       align-items: center;

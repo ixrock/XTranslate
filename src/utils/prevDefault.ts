@@ -8,4 +8,3 @@ export function prevDefault(callback: (evt) => void) {
   }
 }
 
-export default prevDefault;

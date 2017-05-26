@@ -199,6 +199,9 @@ export class UserHistory extends React.Component<Props, State> {
                 vendor[0].toUpperCase() + vendor.substr(1),
                 [from, to].join(" → ").toUpperCase()
               ]).join("");
+              var rtlClass = {
+                rtl: vendors[vendor].isRightToLeft(to)
+              };
               return (
                 <li key={id} title={translatedWith}
                     className={cssNames("history-item", { open: openDetails })}
@@ -214,13 +217,13 @@ export class UserHistory extends React.Component<Props, State> {
                       <span className="text">{text}</span>
                       {transcription ? <span className="transcription">({transcription})</span> : null}
                     </span>
-                    <span className="translation box grow">{translation}</span>
+                    <span className={cssNames("translation box grow", rtlClass)}>{translation}</span>
                     <MaterialIcon
                       name="remove_circle_outline" className="remove-icon"
                       onClick={prevDefault(() => this.removeItem(item))}
                     />
                   </div>
-                  {openDetails ? this.renderDetails(item) : null}
+                  {openDetails ? this.renderDetails(item, rtlClass) : null}
                 </li>
               );
             })
@@ -230,7 +233,7 @@ export class UserHistory extends React.Component<Props, State> {
     );
   }
 
-  renderDetails(item: IHistoryItem) {
+  renderDetails(item: IHistoryItem, rtlClass?: object) {
     var dict = item.dictionary;
     if (!dict.length) return null;
     return (
@@ -238,7 +241,7 @@ export class UserHistory extends React.Component<Props, State> {
         {dict.map(dict => {
           var wordType = dict.wordType;
           return (
-            <div key={wordType} className="dictionary">
+            <div key={wordType} className={cssNames("dictionary", rtlClass)}>
               <b className="word-type">{wordType}</b>
               <div className="translations">
                 {dict.translation.join(", ")}

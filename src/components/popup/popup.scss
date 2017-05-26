@@ -7,6 +7,10 @@
   opacity: 0;
   transition: opacity 100ms ease-out;
 
+  &:not(.preview) .rtl {
+    direction: rtl;
+  }
+
   &.visible {
     visibility: visible;
     opacity: 1;
@@ -49,13 +53,17 @@
   }
 
   .translation-result {
-    .translation {
+    --flex-gap: 5px;
+
+    .value {
       padding: 2px 0;
     }
+
     .transcription {
       opacity: .75;
       font-style: normal;
     }
+
     .dictionary {
       margin-top: $spacing /2;
       .word-type {

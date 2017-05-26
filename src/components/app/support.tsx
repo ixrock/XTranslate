@@ -106,5 +106,3 @@ export class Support extends React.Component<Props, {}> {
     );
   }
 }
-
-export default Support;
