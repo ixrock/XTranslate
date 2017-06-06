@@ -90,7 +90,7 @@ export class ThemeManager extends React.Component<Props, {}> {
               <div className="flex gaps align-center">
                 <TextField
                   className="box grow"
-                  type="number" min={0}
+                  type="number" min={0} max={100}
                   value={theme.boxShadowBlur}
                   onChange={v => this.save({ boxShadowBlur: v })}
                 />
@@ -119,9 +119,8 @@ export class ThemeManager extends React.Component<Props, {}> {
             <span className="heading">{__i18n("text_size")}</span>
             <TextField
               className="box grow"
-              type="number" min={0}
-              value={theme.fontSize}
-              onChange={v => this.save({ fontSize: v })}
+              type="number" min={10} max={25}
+              value={theme.fontSize} onChange={v => this.save({ fontSize: v })}
             />
             <span className="heading">{__i18n("text_font_family")}</span>
             <Select className="box grow" value={theme.fontFamily} onChange={v => this.save({ fontFamily: v })}>
@@ -131,19 +130,22 @@ export class ThemeManager extends React.Component<Props, {}> {
           <div className="flex gaps align-center">
             <span className="heading">{__i18n("text_shadow")}</span>
             <TextField
-              type="number" className="box grow"
+              type="number"
+              className="box grow"
               title={__i18n("text_shadow_size")}
               value={theme.textShadowRadius}
               onChange={v => this.save({ textShadowRadius: v })}
             />
             <TextField
-              type="number" className="box grow"
+              type="number"
+              className="box grow"
               title={__i18n("text_shadow_offset_x")}
               value={theme.textShadowOffsetX}
               onChange={v => this.save({ textShadowOffsetX: v })}
             />
             <TextField
-              type="number" className="box grow"
+              type="number"
+              className="box grow"
               title={__i18n("text_shadow_offset_y")}
               value={theme.textShadowOffsetY}
               onChange={v => this.save({ textShadowOffsetY: v })}
@@ -161,7 +163,7 @@ export class ThemeManager extends React.Component<Props, {}> {
             <span className="heading">{__i18n("border_width")}</span>
             <TextField
               className="box grow"
-              type="number" min={0}
+              type="number" min={0} max={25}
               value={theme.borderWidth}
               onChange={v => this.save({ borderWidth: v })}
             />

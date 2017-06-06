@@ -1,97 +1,106 @@
 import "./text-field.scss";
+
 import * as React from "react";
+import { ReactNode } from "react";
 import { autobind } from "core-decorators";
 import { cssNames, noop } from "../../../utils";
 import { MaterialIcon } from "../icons/material-icon";
+import { Validator, ValidatorError, ValidatorObject, Validators } from "./text-field.validators";
 
-type TextValue = string | number;
-type Validator = (value: string, props: Partial<Props>) => boolean | string | React.ReactElement<any>
+import isFunction = require("lodash/isFunction");
+import isString = require("lodash/isString");
 
-type Props = React.HTMLProps<any> & {
-  value: TextValue
-  icon?: string;
+export type Props = React.HTMLProps<any> & {
+  value?: string | number
   dirty?: boolean
-  compact?: boolean
   multiLine?: boolean;
-  showAllErrors?: boolean
+  showErrors?: boolean | "all"
+  showValidationIcon?: boolean;
   validators?: Validator | Validator[]
-  onChange?: (value: TextValue) => void;
+  iconLeft?: string | React.ReactNode;
+  iconRight?: string | React.ReactNode;
+  onChange?: (value: string | number) => void;
 }
 
 interface State {
   dirty?: boolean
   dirtyOnBlur?: boolean
-  errors?: string[]
+  errors?: ValidatorError[]
 }
 
 export class TextField extends React.Component<Props, State> {
   public elem: HTMLElement;
   public input: HTMLInputElement | HTMLTextAreaElement;
-  private validators: Validator[] = [].concat(this.props.validators || []);
-
-  public state: State = {
-    dirty: this.props.dirty,
-    errors: [],
-  };
+  private validators: ValidatorObject[] = [];
 
   static IS_FOCUSED = 'focused';
   static IS_DIRTY = 'dirty';
   static IS_INVALID = 'invalid';
+  static IS_EMPTY = 'empty';
 
-  static defaultProps: Partial<Props> = {
+  public state: State = {
+    dirty: this.props.dirty || this.getValue() != null,
+    errors: [],
+  };
+
+  static defaultProps: Props = {
+    showErrors: true,
     onChange: noop,
     onFocus: noop,
     onBlur: noop,
   };
 
-  static baseValidators: { [prop: string]: Validator } = {
-    isRequired(value, { required }) {
-      if (!required) return;
-      if (!value.trim()) {
-        return "This field is required";
+  setValue(newValue: string | number, silent = false) {
+    var { value, defaultValue, type, maxLength, min, max } = this.props;
+    var isNumber = type === "number";
+    if (isNumber) {
+      newValue = +newValue == newValue ? +newValue : "";
+    }
+    if (value !== newValue) {
+      if (defaultValue != null && newValue != null && !this.isFocused) {
+        this.input.value = newValue.toString();
       }
-    },
-    isEmail(value, { type }){
-      if (type !== "email") return;
-      if (!value.match(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)) {
-        return "Wrong email format";
+      if (!this.isFocused) this.setDirty();
+      else this.setState({ dirtyOnBlur: true });
+
+      var preventUpdate = (
+        (maxLength > 0 && newValue.toString().length > maxLength) ||
+        isNumber && (
+          (min != null && newValue < min) ||
+          (max != null && newValue > max)
+        )
+      );
+      if (!preventUpdate) {
+        this.validate(newValue);
+        if (!silent) this.props.onChange(newValue);
       }
-    },
-    minLength(value, { minLength }){
-      if (!minLength) return;
-      if (value.trim().length < minLength) {
-        return `The field is too short. Minimum length is ${minLength}`;
-      }
-    },
-    minMax(value, { min, max, type }){
-      if (type !== "number") return;
-      if (min != null && value < min) return `The minimum number value must be ${min}`
-      if (max != null && value > max) return `The maximum number value must be ${max}`
-      return "";
     }
   }
 
-  get value() {
-    var input = this.input;
-    if (input) {
-      var { type } = this.props;
-      var isNumber = type === "number";
-      if (isNumber && input instanceof HTMLInputElement) {
-        var number = input.valueAsNumber;
-        return !isNaN(number) ? number : 0;
+  getValue() {
+    var { defaultValue, value, type } = this.props;
+    if (defaultValue != null) {
+      var input = this.input;
+      if (!input) return defaultValue as string;
+      else {
+        var inputVal = input.value;
+        if (type === "number") return !isNaN(+inputVal) ? +inputVal : "";
+        else return inputVal;
       }
-      return input.value;
     }
-    return this.props.value != null ? this.props.value : ""
-  }
-
-  set value(value) {
-    this.input.value = String(value);
-    this.onChange();
+    return value;
   }
 
   get valid() {
     return !this.state.errors.length;
+  }
+
+  get dirty() {
+    return this.state.dirty;
+  }
+
+  get isFocused() {
+    return document.activeElement === this.input
   }
 
   @autobind()
@@ -100,25 +109,25 @@ export class TextField extends React.Component<Props, State> {
     this.input.focus();
   }
 
-  @autobind()
-  blur() {
-    if (!this.input) return;
-    this.input.blur();
-  }
-
-  get isFocused() {
-    return document.activeElement === this.input
-  }
-
   componentWillMount() {
     this.initValidators();
     this.validate();
   }
 
-  componentWillReceiveProps({ value, dirty }: Props) {
-    if (this.props.dirty !== dirty) this.setDirty();
-    if (this.value !== value) this.value = value;
-    this.validate();
+  componentWillReceiveProps(nextProps: Props) {
+    var { value, dirty } = this.props;
+    if (dirty !== nextProps.dirty) {
+      this.setDirty();
+    }
+    if (value !== nextProps.value) {
+      this.setValue(nextProps.value);
+    }
+  }
+
+  componentDidUpdate(oldProps: Props) {
+    if (oldProps.value !== this.props.value) {
+      this.autoFitHeight();
+    }
   }
 
   componentDidMount() {
@@ -128,17 +137,34 @@ export class TextField extends React.Component<Props, State> {
     }
   }
 
-  validate() {
-    var value = this.value.toString();
+  protected initValidators() {
+    var customValidators = [].concat(this.props.validators || []);
+
+    Object.keys(Validators).forEach(name => {
+      var validator = Validators[name];
+      if (validator.autoBind && validator.autoBind(this.props)) {
+        this.validators.push(validator);
+      }
+    });
+    customValidators.forEach(validator => {
+      var validatorObj: ValidatorObject = validator;
+      if (isFunction(validator)) validatorObj = { validate: validator };
+      this.validators.push(validatorObj);
+    });
+  }
+
+  validate(value = this.getValue()) {
+    var strVal = value != null ? value.toString() : "";
     var valid = true;
     var errors = [];
 
     for (var validator of this.validators) {
-      var error = validator(value, this.props);
-      valid = valid && !error;
-      if (error && error !== true) {
+      let { validate, message } = validator;
+      valid = valid && validate(strVal, this.props);
+      if (!valid) {
+        var error = isFunction(message) ? message(strVal, this.props) : message || "";
         errors.push(error);
-        if (!this.props.showAllErrors) break;
+        if (this.props.showErrors !== "all") break;
       }
     }
 
@@ -150,14 +176,7 @@ export class TextField extends React.Component<Props, State> {
   }
 
   setDirty(dirty = true) {
-    this.setState({ dirty, dirtyOnBlur: false }, () => {
-      this.validate();
-    });
-  }
-
-  private initValidators() {
-    var validators = TextField.baseValidators;
-    Object.keys(validators).forEach(kind => this.validators.push(validators[kind]));
+    this.setState({ dirty, dirtyOnBlur: false });
   }
 
   private autoFitHeight() {
@@ -171,100 +190,112 @@ export class TextField extends React.Component<Props, State> {
   }
 
   @autobind()
+  private onFocus(evt) {
+    this.props.onFocus(evt);
+    if (this.elem) {
+      this.elem.classList.add(TextField.IS_FOCUSED);
+    }
+  }
+
+  @autobind()
   private onBlur(evt) {
+    this.props.onBlur(evt);
     this.elem.classList.remove(TextField.IS_FOCUSED);
     if (this.state.dirtyOnBlur) this.setDirty();
-    this.props.onBlur(evt);
   }
 
   @autobind()
-  private onFocus(evt) {
-    if (this.elem) this.elem.classList.add(TextField.IS_FOCUSED);
-    this.props.onFocus(evt);
-  }
-
-  @autobind()
-  private onInvalid(e: Event) {
-    e.preventDefault();
-  }
-
-  @autobind()
-  private onChange() {
-    var value = this.input.value;
-    var { maxLength } = this.props;
-    if (maxLength) value = value.substr(0, maxLength);
-    if (value !== this.props.value) {
-      this.autoFitHeight();
-      var valid = this.validate();
-      if (!valid && this.isFocused) this.setState({ dirtyOnBlur: true });
-      this.props.onChange(this.value);
-    }
+  private onChange(evt: React.SyntheticEvent<HTMLInputElement>) {
+    this.setValue(evt.currentTarget.value);
   }
 
   @autobind()
   increment() {
-    var input = this.input;
-    if (input instanceof HTMLInputElement) {
-      input.stepUp();
-      this.onChange();
-    }
+    (this.input as HTMLInputElement).stepUp();
+    this.setValue(this.input.value);
   }
 
   @autobind()
   decrement() {
-    var input = this.input;
-    if (input instanceof HTMLInputElement) {
-      input.stepDown();
-      this.onChange();
-    }
+    (this.input as HTMLInputElement).stepDown();
+    this.setValue(this.input.value);
   }
 
   render() {
-    var { className, icon, multiLine, compact, dirty, validators, showAllErrors, children, ...props } = this.props;
-    var { maxLength, rows, type, autoFocus } = this.props;
-    var { errors, dirty } = this.state;
-    var isNumber = type === "number";
+    var {
+      className, iconLeft, iconRight, multiLine, children,
+      dirty, validators, showErrors, showValidationIcon,
+      ...props
+    } = this.props;
 
-    if (maxLength && multiLine) {
-      // handle max-length manually for textarea cause it works incorrectly with new line symbols
-      // e.g. "1\n2" value won't allow to add more text with @maxLength={4}
-      delete props.maxLength;
-    }
+    var { value, defaultValue, maxLength, rows, type } = this.props;
+    var { errors, dirty } = this.state;
+
+    if (isString(iconLeft)) iconLeft = <MaterialIcon name={iconLeft}/>
+    if (isString(iconRight)) iconRight = <MaterialIcon name={iconRight}/>
+
     var inputProps = Object.assign(props, {
-      className: cssNames("input box grow"),
-      autoFocus: autoFocus,
-      value: this.value,
+      className: "input box grow",
       onBlur: this.onBlur,
       onFocus: this.onFocus,
       onChange: this.onChange,
-      onInvalid: this.onInvalid,
       rows: multiLine ? (rows || 1) : null,
-      ref: e => this.input = e
+      ref: e => this.input = e,
     });
 
+    var currentValue = defaultValue != null ? defaultValue : value;
+    var emptyValue = currentValue == null;
+    var hasErrors = errors.length > 0;
     var componentClass = cssNames('TextField', className, {
-      withIcon: !!icon,
       readOnly: props.readOnly,
-      compact: compact && !errors.length,
-      [TextField.IS_INVALID]: errors.length,
+      [TextField.IS_INVALID]: hasErrors,
       [TextField.IS_DIRTY]: dirty,
+      [TextField.IS_FOCUSED]: this.isFocused,
+      [TextField.IS_EMPTY]: emptyValue,
     });
+
+    if (showValidationIcon && dirty) {
+      var validationIcon = (
+        <MaterialIcon
+          className={cssNames("validation-icon", { error: hasErrors })}
+          name={hasErrors ? "close" : "check"}
+          title={errors.filter(isString).join("\n")}
+        />
+      );
+    }
+    if (maxLength && multiLine) {
+      var maxLengthIndicator = (
+        <span className="maxLength">{emptyValue ? 0 : currentValue.toString().length} / {maxLength}</span>
+      );
+    }
+
+    var input: ReactNode;
+    if (multiLine) input = <textarea {...inputProps}/>;
+    else input = <input {...inputProps}/>;
+
     return (
-        <div className={componentClass} ref={e => this.elem = e}>
-          <input type="hidden" disabled={props.disabled}/>
-          <label className="label flex">
-            {multiLine ? <textarea {...inputProps}/> : <input {...inputProps}/>}
-            {icon ? <i className="icon"><MaterialIcon name={icon}/></i> : null}
-            {isNumber ? <MaterialIcon name="arrow_drop_up" className="icon-arrow up" onClick={this.increment}/> : null}
-            {isNumber ? <MaterialIcon name="arrow_drop_down" className="icon-arrow down" onClick={this.decrement}/> : null}
-          </label>
-          {maxLength ? <span className="maxLength">{this.value.toString().length || 0} / {maxLength}</span> : null}
+      <div className={componentClass} ref={e => this.elem = e}>
+        <input type="hidden" disabled={props.disabled}/>
+        <label className="label flex gaps align-center">
+          {iconLeft}
+          {input}
+          {validationIcon}
+          {iconRight}
+          {type === "number" ? (
+            <div className="arrow-icons">
+              <MaterialIcon name="arrow_drop_up" className="up" onClick={this.increment}/>
+              <MaterialIcon name="arrow_drop_down" className="down" onClick={this.decrement}/>
+            </div>
+          ) : null}
+        </label>
+        {maxLengthIndicator}
+        {children}
+        {showErrors ? (
           <div className="errors">
-            {dirty ? errors.map((error, i) => {
-              return <div key={i} className="error">{error}</div>
-            }) : null}
+            {dirty ? errors.map((error, i) => <div key={i} className="error">{error}</div>) : null}
           </div>
-        </div>
+        ) : null}
+      </div>
     );
   }
 }

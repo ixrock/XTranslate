@@ -15,46 +15,8 @@
     resize: none;
   }
 
-  input[type="number"] {
-    padding-right: $padding * 2;
-
-    -moz-appearance: textfield;
-    &::-webkit-outer-spin-button,
-    &::-webkit-inner-spin-button {
-      -webkit-appearance: none;
-      margin: 0;
-    }
-
-    ~ .icon-arrow {
-      position: absolute;
-      user-select: none;
-      right: 0;
-      cursor: pointer;
-      line-height: 10px;
-      clip: rect(0 20px 10px 0);
-      margin: 4px -2px;
-      opacity: .5;
-
-      &:hover {
-        opacity: 1;
-      }
-      &.up {
-        top: 0;
-      }
-      &.down {
-        bottom: 0;
-      }
-    }
-  }
-
-  &.dirty.invalid {
-    .label:after {
-      width: 100%;
-      background: $red-300;
-    }
-  }
-
   .label {
+    --flex-gap: $padding;
     position: relative;
     border-bottom: 1px solid $border-color;
 
@@ -65,10 +27,11 @@
       color: inherit;
       font-family: inherit;
       font-size: inherit;
-      padding-top: $padding / 2;
       padding-bottom: $padding / 2;
       text-align: inherit;
+      text-transform: inherit;
     }
+
     &:after {
       content: "";
       position: absolute;
@@ -80,11 +43,21 @@
       background: $bgc-primary;
       transition: width 250ms;
     }
+
+    .material-icons {
+      font-size: $unit * 2;
+    }
   }
 
   [type="hidden"]:disabled ~ * {
     opacity: .5;
     pointer-events: none;
+  }
+
+  &.invalid.dirty {
+    .label:after {
+      background: $color-error;
+    }
   }
 
   &.focused {
@@ -93,14 +66,10 @@
     }
   }
 
-  &.compact > .errors:empty {
-    display: none;
-  }
-
   .errors {
-    color: $color-error;
     min-height: $margin * 2;
     font-size: small;
+    color: $color-error;
   }
 
   .maxLength {
@@ -109,23 +78,34 @@
     font-size: small;
   }
 
-  &.withIcon {
-    .input {
-      &:focus ~ .icon > * {
-        opacity: 1;
-      }
+  .validation-icon {
+    color: #5bb90b;
+    &.error {
+      color: $color-error;
+      cursor: help;
     }
-    .icon {
-      position: relative;
-      width: 25px;
+  }
+
+  /* Hide HTML5 Up and Down arrows. */
+  input[type="number"] {
+    -moz-appearance: textfield;
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    & ~ .arrow-icons {
+      display: flex;
+      flex-direction: column;
       > * {
-        position: absolute;
-        left: 50%;
-        top: 50%;
-        transform: translate(-50%, -50%);
-        font-size: $unit * 2;
-        opacity: .5;
+        line-height: 10px;
+        color: currentColor;
+        &:hover {
+          color: black;
+        }
       }
     }
   }
 }
+

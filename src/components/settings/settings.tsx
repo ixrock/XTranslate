@@ -27,7 +27,6 @@ export class Settings extends React.Component<Props, {}> {
     var nativeEvent = e.nativeEvent as KeyboardEvent;
     var hotkey = parseHotkey(nativeEvent);
     if (hotkey.code) {
-      this.hotkey.value = hotkey.value;
       this.save({ hotkey: getHotkey(nativeEvent) });
     }
   }

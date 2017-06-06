@@ -58,10 +58,14 @@ export class UserHistory extends React.Component<Props, State> {
     this.setState({ loading: false });
   }
 
-  async loadHistory() {
+  async loadHistory(reset = false) {
     try {
       var { page, pageSize, history, searchText } = this.state;
       var historyResults = await getHistory(searchText);
+      if (reset) {
+        page = 0;
+        history = [];
+      }
       var removedItemsOffset = page * pageSize - history.length;
       history.push(
         ...historyResults.slice(
@@ -79,17 +83,18 @@ export class UserHistory extends React.Component<Props, State> {
   }
 
   reloadHistory() {
-    this.setState({ page: 0, history: [], hasMore: false }, () => {
-      this.loadHistory();
-    });
+    this.setState(() => this.loadHistory(true));
   }
 
   @autobind()
-  @debounce(250)
+  @debounce(500)
+  reloadHistoryOnSearch() {
+    this.reloadHistory();
+  }
+
+  @autobind()
   search(text: string) {
-    this.setState({ searchText: text }, () => {
-      this.reloadHistory();
-    });
+    this.setState({ searchText: text }, this.reloadHistoryOnSearch);
   }
 
   async exportHistory(type: "json" | "csv") {
@@ -283,7 +288,7 @@ export class UserHistory extends React.Component<Props, State> {
         </div>
         {showSearch && (
           <TextField
-            autoFocus compact
+            autoFocus showErrors={false}
             className="mt1"
             placeholder={__i18n("history_search_input_placeholder")}
             value={searchText} onChange={v => this.search(v)}
