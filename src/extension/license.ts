@@ -1,5 +1,5 @@
-import { getPurchases, getSkuDetails, buy } from "./payments";
-import { createStorage } from "../utils/localStorage";
+import { buy, getPurchases, getSkuDetails } from "./payments";
+import { createStorage, formatPrice } from "../utils";
 import find = require("lodash/find");
 const installTime = createStorage<number>('installTime', Date.now(), true);
 const trialPeriodTime = 1000 * 60 * 60 * 24 * 10;
@@ -20,8 +20,9 @@ export async function checkLicense(allowAds = false) {
 export async function checkPrice() {
   return getSkuDetails().then(result => {
     var license = find(result.response.details.inAppProducts, { sku: "license" });
-    var price = license.prices[0];
-    return (parseInt(price.valueMicros) * 1e-6) + " " + price.currencyCode;
+    var { valueMicros, currencyCode } = license.prices[0];
+    var priceValue = parseFloat((+valueMicros * 1e-6).toFixed(2));
+    return formatPrice(priceValue, currencyCode);
   });
 }
 

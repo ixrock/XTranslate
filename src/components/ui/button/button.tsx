@@ -1,8 +1,6 @@
-require('./button.scss');
-import * as React from 'react'
-import { autobind } from "core-decorators";
+import "./button.scss";
+import * as React from "react";
 import { cssNames } from "../../../utils";
-import omit = require('lodash/omit');
 
 interface Props extends React.HTMLProps<any> {
   href?: string
@@ -11,42 +9,42 @@ interface Props extends React.HTMLProps<any> {
   primary?: boolean
   accent?: boolean
   plain?: boolean
+  hidden?: boolean
 }
 
 export class Button extends React.Component<Props, {}> {
   private link: HTMLAnchorElement;
   private button: HTMLButtonElement;
 
-  @autobind()
-  focus() {
-    this.button.focus();
-  }
-
-  @autobind()
-  blur() {
-    this.button.blur();
-  }
-
   render() {
-    var label = this.props.label;
-    var waiting = this.props.waiting;
-    var props: Props = omit(this.props, ['waiting', 'label', 'primary', 'accent', 'plain']);
-    props.className = cssNames('Button', this.props.className, {
-      waiting: waiting,
-      primary: this.props.primary,
-      accent: this.props.accent,
-      plain: this.props.plain,
-    });
-    var Component = props => {
-      return this.props.href
-          ? <a {...props} ref={e => this.link = e}/>
-          : <button type="button" ref={e => this.button = e} {...props}/>;
-    };
-    return (
-        <Component {...props}>
-          {label ? <span className="label">{label}</span> : null}
-          {this.props.children}
-        </Component>
+    var { waiting, label, primary, accent, plain, hidden, children, ...props } = this.props;
+    if (hidden) return null;
+    props.className = cssNames('Button', {
+        waiting,
+        primary,
+        accent,
+        plain,
+      }, this.props.className
     );
+
+    var content = label && children
+      ? React.Children.toArray([label, children])
+      : label || children;
+
+    // render as link
+    if (this.props.href) {
+      return (
+        <a {...props} ref={e => this.link = e}>
+          {content}
+        </a>
+      )
+    }
+
+    // render as button
+    return (
+      <button type="button" {...props} ref={e => this.button = e}>
+        {content}
+      </button>
+    )
   }
 }

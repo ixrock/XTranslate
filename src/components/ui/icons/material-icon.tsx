@@ -1,8 +1,8 @@
 // Material design icons
 // List of icons - from https://material.io/icons/
 
-require('./material-icon.font.scss');
-require('./material-icon.scss');
+import "./material-icon.font.scss";
+import "./material-icon.scss";
 
 import * as React from "react";
 import { cssNames } from "../../../utils/cssNames";

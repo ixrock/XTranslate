@@ -1,4 +1,3 @@
-@import "../vars";
 
 .Tabs {
   --tabs-color-active: $bgc-primary;
@@ -10,7 +9,19 @@
     text-align: center;
     flex-shrink: 0;
 
-    > .tab {
+    &.align {
+      &-left {
+        justify-content: flex-start;
+      }
+      &-center {
+        justify-content: center;
+      }
+      &-right {
+        justify-content: flex-end;
+      }
+    }
+
+    .tab {
       position: relative;
       text-decoration: none;
       padding: $padding $padding * 2;
@@ -49,7 +60,7 @@
       }
 
       &.active {
-        pointer-events: none;
+        cursor: default;
         color: var(--tabs-color-active);
         &:after {
           background: var(--tabs-line-color-active);

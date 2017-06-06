@@ -1,4 +1,4 @@
-require('./slider.scss');
+import "./slider.scss";
 import * as React from 'react'
 import { cssNames } from "../../../utils";
 

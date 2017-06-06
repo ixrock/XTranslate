@@ -1,4 +1,4 @@
-require('./theme-manager.scss');
+import "./theme-manager.scss";
 import * as React from "react";
 import { autobind, debounce } from "core-decorators";
 import { __i18n } from "../../extension/i18n";

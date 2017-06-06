@@ -1,4 +1,4 @@
-require('./color-picker.scss');
+import "./color-picker.scss";
 
 import * as React from 'react'
 import { autobind } from "core-decorators";

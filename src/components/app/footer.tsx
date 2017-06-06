@@ -1,4 +1,4 @@
-require('./footer.scss');
+import './footer.scss'
 import * as React from 'react';
 import { autobind } from "core-decorators";
 import { prevDefault } from '../../utils'

@@ -1,20 +1,20 @@
 // User script (content page)
 
-require('./user-script.scss');
-import * as React from 'react';
+import "./user-script.scss";
+import * as React from "react";
+import * as ReactDOM from "react-dom";
 import { autobind } from "core-decorators";
-import { render } from 'react-dom'
-import { connect, sendMessage, onMessage, MessageType, Message, getURL, getManifest, postMessage, onPostMessage } from '../extension'
-import { MenuTranslateFavoritePayload, MenuTranslateVendorPayload, TranslateFromFramePayload } from '../extension'
+import { connect, getManifest, getURL, MenuTranslateFavoritePayload, MenuTranslateVendorPayload, Message, MessageType, onMessage, onPostMessage, postMessage, sendMessage, TranslateFromFramePayload } from "../extension";
 import { saveHistory } from "../components/user-history/user-history.actions";
 import { loadFonts } from "../components/theme-manager/fonts-loader";
-import { AppState } from '../store/store.types'
+import { AppState } from "../store/store.types";
 import { Popup } from "../components/popup/popup";
-import { vendors, Translation, TranslationError, getNextVendor } from "../vendors";
+import { getNextVendor, Translation, TranslationError, vendors } from "../vendors";
 import { cssNames } from "../utils/cssNames";
 import { getHotkey } from "../utils/parseHotkey";
-const ReactShadow = require("react-shadow").default;
 import isEqual = require("lodash/isEqual");
+
+const ReactShadow = require("react-shadow").default;
 const topWindow = window.top;
 const isFrameWindow = window !== topWindow;
 const isPdf = document['contentType'] === "application/pdf";
@@ -310,8 +310,8 @@ class App extends React.Component<{}, State> {
 
   isEditable(elem: Element) {
     return elem instanceof HTMLInputElement
-        || elem instanceof HTMLTextAreaElement
-        || (elem as HTMLElement).isContentEditable;
+      || elem instanceof HTMLTextAreaElement
+      || (elem as HTMLElement).isContentEditable;
   }
 
   isOutsideOfPopup(elem) {
@@ -478,15 +478,15 @@ class App extends React.Component<{}, State> {
     var { translation, error, position, enabled } = this.state;
     if (!this.state.appState) return null;
     return (
-        <ReactShadow include={[this.style]}>
-          <div className="popup-content" onKeyDown={this.onKeydownWithinPopup}>
-            <Popup className={cssNames({pdf: isPdf})}
-                   translation={translation} error={error} position={position}
-                   theme={this.theme} settings={this.settings}
-                   disabled={!enabled} next={this.translateWithNextVendor}
-                   ref={e => this.popup = e}/>
-          </div>
-        </ReactShadow>
+      <ReactShadow include={[this.style]}>
+        <div className="popup-content" onKeyDown={this.onKeydownWithinPopup}>
+          <Popup className={cssNames({ pdf: isPdf })}
+                 translation={translation} error={error} position={position}
+                 theme={this.theme} settings={this.settings}
+                 disabled={!enabled} next={this.translateWithNextVendor}
+                 ref={e => this.popup = e}/>
+        </div>
+      </ReactShadow>
     )
   }
 }
@@ -495,4 +495,4 @@ class App extends React.Component<{}, State> {
 const appContainer = document.createElement("div");
 appContainer.className = "XTranslate";
 document.documentElement.appendChild(appContainer);
-render(<App/>, appContainer);
+ReactDOM.render(<App/>, appContainer);

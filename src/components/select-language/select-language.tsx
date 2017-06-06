@@ -1,4 +1,4 @@
-require('./select-language.scss');
+import "./select-language.scss";
 import * as React from 'react';
 import { __i18n } from "../../extension/i18n";
 import { vendors } from '../../vendors';

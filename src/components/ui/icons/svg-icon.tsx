@@ -1,4 +1,4 @@
-require('./svg-icon.scss');
+import "./svg-icon.scss";
 import * as React from 'react';
 import { cssNames } from "../../../utils";
 

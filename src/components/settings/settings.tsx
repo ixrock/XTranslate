@@ -1,4 +1,4 @@
-require('./settings.scss');
+import "./settings.scss";
 import * as React from "react";
 import { autobind } from "core-decorators";
 import { vendors, vendorsList } from "../../vendors";

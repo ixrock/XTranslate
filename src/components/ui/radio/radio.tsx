@@ -1,8 +1,7 @@
-require('./radio.scss');
-import * as React from 'react'
+import "./radio.scss";
+import * as React from "react";
 import { autobind } from "core-decorators";
-import { cssNames, noop } from "../../../utils";
-import omit = require('lodash/omit');
+import { cssNames } from "../../../utils";
 import uniqueId = require('lodash/uniqueId');
 
 interface RadioGroupProps {
@@ -22,22 +21,22 @@ export class RadioGroup extends React.Component<RadioGroupProps, {}> {
 
   render() {
     var { value, defaultValue, buttonsView, className, disabled, onChange } = this.props;
-    var radioGroupClassName = cssNames("RadioGroup", className, { buttonsView });
+    var radioGroupClassName = cssNames("RadioGroup", { buttonsView }, className);
     var radios = React.Children.toArray(this.props.children) as React.ReactElement<RadioProps>[];
     return (
-        <div className={radioGroupClassName}>
-          {radios.map(radio => {
-            if (!radio.props) return;
-            var radioProps = {
-              name: this.state.name,
-              disabled: disabled != null ? disabled : radio.props.disabled,
-              defaultChecked: defaultValue != null ? defaultValue == radio.props.value : radio.props.defaultChecked,
-              checked: value != null ? value === radio.props.value : radio.props.checked,
-              onChange: onChange
-            };
-            return React.cloneElement(radio, radioProps as any)
-          })}
-        </div>
+      <div className={radioGroupClassName}>
+        {radios.map(radio => {
+          if (!radio.props) return;
+          var radioProps = {
+            name: this.state.name,
+            disabled: disabled != null ? disabled : radio.props.disabled,
+            defaultChecked: defaultValue != null ? defaultValue == radio.props.value : radio.props.defaultChecked,
+            checked: value != null ? value === radio.props.value : radio.props.checked,
+            onChange: onChange
+          };
+          return React.cloneElement(radio, radioProps as any)
+        })}
+      </div>
     );
   }
 }
@@ -50,6 +49,8 @@ type RadioProps = React.HTMLProps<any> & {
 }
 
 export class Radio extends React.Component<RadioProps, {}> {
+  private elem: HTMLElement;
+
   @autobind()
   onChange() {
     var { value, onChange, checked } = this.props;
@@ -62,7 +63,10 @@ export class Radio extends React.Component<RadioProps, {}> {
   onKeyDown(e: React.KeyboardEvent<any>) {
     var SPACE_KEY = e.keyCode === 32;
     var ENTER_KEY = e.keyCode === 13;
-    if (SPACE_KEY || ENTER_KEY) this.onChange();
+    if (SPACE_KEY || ENTER_KEY) {
+      e.preventDefault();
+      this.elem.click();
+    }
   }
 
   render() {
@@ -73,12 +77,15 @@ export class Radio extends React.Component<RadioProps, {}> {
       disabled: this.props.disabled,
     });
     return (
-        <label className={componentClass} tabIndex={!checked ? 0 : null} onKeyDown={this.onKeyDown}>
-          <input {...inputProps} type="radio" onChange={this.onChange}/>
-          <i className="tick flex center"/>
-          {label ? <span className="label">{label}</span> : null}
-          {children}
-        </label>
+      <label className={componentClass}
+             tabIndex={!checked ? 0 : null}
+             onKeyDown={this.onKeyDown}
+             ref={e => this.elem = e}>
+        <input {...inputProps} type="radio" onChange={this.onChange}/>
+        <i className="tick flex center"/>
+        {label ? <span className="label">{label}</span> : null}
+        {children}
+      </label>
     );
   }
 }

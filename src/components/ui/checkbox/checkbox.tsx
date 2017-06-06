@@ -1,5 +1,5 @@
-require('./checkbox.scss');
-import * as React from 'react'
+import "./checkbox.scss";
+import * as React from "react";
 import { cssNames } from "../../../utils";
 
 type Props = React.HTMLProps<any> & {
@@ -25,12 +25,12 @@ export class Checkbox extends React.Component<Props, {}> {
       disabled: this.props.disabled,
     });
     return (
-        <label className={componentClass}>
-          <input type="checkbox" {...inputProps} onChange={this.onChange} ref={e => this.input = e}/>
-          <i className="tick flex center"/>
-          {label ? <span className="label">{label}</span> : null}
-          {children}
-        </label>
+      <label className={componentClass}>
+        <input type="checkbox" {...inputProps} onChange={this.onChange} ref={e => this.input = e}/>
+        <i className="tick flex center"/>
+        {label ? <span className="label">{label}</span> : null}
+        {children}
+      </label>
     );
   }
 }

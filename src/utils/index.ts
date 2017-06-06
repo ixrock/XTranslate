@@ -1,5 +1,5 @@
 // Helper utilities
-export const noop = () => {};
+export const noop = () => null;
 
 export * from './cssNames'
 export * from './enumUniq'
@@ -10,4 +10,6 @@ export * from './encodeQuery'
 export * from './prevDefault'
 export * from './downloadFile'
 export * from './eventEmitter'
-export * from './clearState'
+export * from './formatPrice'
+export * from './interval'
+export * from './portal'

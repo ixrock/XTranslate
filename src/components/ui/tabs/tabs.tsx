@@ -1,14 +1,17 @@
-require('./tabs.scss');
-import * as React from 'react'
+import "./tabs.scss";
+import * as React from "react";
 import { cssNames } from "../../../utils";
 
 interface Props {
   activeIndex?: number
-  className?: any
-  headerClass?: any
-  contentClass?: any
+  className?: string | object
+  headerClass?: string | object
+  contentClass?: string | object
+  toolbarClass?: string | object
   allowUnselected?: boolean
   disabled?: boolean
+  align?: "left" | "center" | "right"
+  toolbar?: React.ReactNode
   onChange?(tab: TabProps): void
 }
 
@@ -16,12 +19,28 @@ export class Tabs extends React.Component<Props, {}> {
   public header: HTMLElement;
   public content: HTMLElement;
 
+  static defaultProps: Props = {
+    activeIndex: -1,
+    allowUnselected: false,
+    align: "center",
+  };
+
+  get tabs() {
+    return React.Children.toArray(this.props.children) as React.ReactElement<TabProps>[];
+  }
+
+  getTabByIndex(index: number) {
+    var tabs = this.tabs;
+    var tab = tabs.find(tab => tab.props.index === index) || tabs[index];
+    if (!tab && !this.props.allowUnselected) tab = tabs[0];
+    return tab ? tab.props : null;
+  }
+
   onChange = (index: number) => {
     var { onChange, activeIndex } = this.props;
     if (index !== activeIndex && onChange) {
-      var tabs = this.tabs;
-      var tab = tabs.filter(tab => tab.props.index === index)[0] || tabs[index];
-      onChange(Object.assign({ index: index }, tab.props));
+      var tab = this.getTabByIndex(index);
+      onChange(Object.assign({ index: index }, tab));
     }
   };
 
@@ -37,49 +56,63 @@ export class Tabs extends React.Component<Props, {}> {
     if (tab.onKeyDown) tab.onKeyDown(e);
   };
 
-  get tabs() {
-    return React.Children.toArray(this.props.children) as React.ReactElement<TabProps>[];
-  }
-
   render() {
-    var { className, disabled, activeIndex, headerClass, contentClass, allowUnselected, onChange, ...props } = this.props;
-    var componentClass = cssNames('Tabs', className, { disabled });
-    var activeTabIndex = this.tabs[activeIndex] ? activeIndex : (!allowUnselected ? 0 : null);
-    var activeTab = this.tabs[activeTabIndex] ? this.tabs[activeTabIndex].props : {} as TabProps;
+    var { className, align, disabled, activeIndex, headerClass, contentClass, allowUnselected, toolbar, toolbarClass } = this.props;
+    var activeTab = this.getTabByIndex(activeIndex);
+    headerClass = cssNames("tabs flex", "align-" + align, {
+      "tabs-header": !toolbar,
+      "box grow": toolbar
+    }, headerClass);
+    var header = (
+      <div className={headerClass} ref={e => this.header = e}>
+        {this.tabs.map(({ props: tabProps }, i) => {
+          var { active, disabled, title, className, index, ...tabOtherProps } = tabProps;
+          if (index == null) {
+            index = i;
+          }
+          var tabElemProps: React.HTMLProps<any> = {
+            ...tabOtherProps,
+            key: i,
+            className: cssNames("tab", className, {
+              active: active != null ? active : activeTab === tabProps,
+              disabled: disabled
+            }),
+            tabIndex: !disabled && !active ? 0 : null,
+            onKeyDown: e => this.onKeyDown(e, index, tabProps),
+            onClick: e => this.onClick(e, index, tabProps),
+            children: title
+          };
+          if (tabProps.href) {
+            return <a {...tabElemProps}/>
+          }
+          return <div {...tabElemProps}/>;
+        })}
+      </div>
+    )
+    var toolbarHeader = toolbar ? (
+      <div className={cssNames("tabs-header flex align-center", toolbarClass)}>
+        {header}
+        {toolbar}
+      </div>
+    ) : null;
     return (
-        <div {...props} className={componentClass}>
-          <div className={cssNames("tabs-header flex justify-center", headerClass)} ref={e => this.header = e}>
-            {this.tabs.map((tab, i) => {
-              var { active, disabled, title, className, index, ...tabProps } = tab.props;
-              if (index == null) index = i;
-              var tabClass = cssNames("tab", className, {
-                active: active != null ? active : activeTabIndex === index,
-                disabled: disabled
-              });
-              var Component = props => tabProps.href ? <a {...props}/> : <div {...props}/>;
-              return (
-                  <Component key={tab.key} {...tabProps} className={tabClass}
-                       tabIndex={!disabled && !active ? 0 : null}
-                       onKeyDown={e => this.onKeyDown(e, index, tab.props)}
-                       onClick={e => this.onClick(e, index, tab.props)}>
-                    {title}
-                  </Component>
-              )
-            })}
-          </div>
-          <div className={cssNames("tabs-content", contentClass)} ref={e => this.content = e}>
-            {activeTab.children}
-          </div>
+      <div className={cssNames('Tabs', className, { disabled })}>
+        {toolbar ? toolbarHeader : header}
+        <div className={cssNames("tabs-content", contentClass)} ref={e => this.content = e}>
+          {activeTab ? activeTab.children : null}
         </div>
+      </div>
     );
   }
 }
 
-interface TabProps extends React.HTMLProps<any> {
-  title: any
+interface TabProps extends React.DOMAttributes<any> {
+  title: string | React.ReactNode
   index?: number
   active?: boolean
   disabled?: boolean
+  className?: string | object
+  href?: string // render as link
 }
 
 export class Tab extends React.Component<TabProps, {}> {

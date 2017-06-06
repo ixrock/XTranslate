@@ -1,10 +1,10 @@
-require('./dialog.scss');
-import * as React from 'react'
-import { Portal } from "../../../utils/portal";
-import { cssNames, noop } from "../../../utils";
-import omit = require('lodash/omit');
+import "./dialog.scss";
+import * as React from "react";
+import { autobind } from "core-decorators";
+import { cssNames, noop, Portal } from "../../../utils";
 
-export interface Props extends React.HTMLProps<any> {
+export interface DialogProps {
+  className?: string | object
   open?: boolean
   modal?: boolean
   pinned?: boolean
@@ -12,15 +12,19 @@ export interface Props extends React.HTMLProps<any> {
   onOpen?: () => any
 }
 
-export class Dialog extends React.Component<Props, {}> {
+interface State {
+  open?: boolean
+}
+
+export class Dialog extends React.Component<DialogProps, State> {
   private elem: HTMLElement;
   private contentElem: HTMLElement;
 
-  public state = {
+  public state: State = {
     open: this.props.open
   };
 
-  static defaultProps: Props = {
+  static defaultProps: DialogProps = {
     open: false,
     modal: true,
     pinned: false,
@@ -59,15 +63,15 @@ export class Dialog extends React.Component<Props, {}> {
     this.elem.removeEventListener('click', this.events.closeOnClickOutside);
   }
 
-  componentWillReceiveProps(nextProps: Props) {
-    var { open } = nextProps;
-    if (this.isOpen !== open) this.toggle(open);
+  componentWillReceiveProps({ open }: DialogProps) {
+    if (this.state.open !== open) {
+      this.toggle(open);
+    }
   }
 
   componentDidMount() {
     if (this.props.open) {
-      this.props.onOpen();
-      this.bindEvents();
+      this.open();
     }
   }
 
@@ -75,11 +79,13 @@ export class Dialog extends React.Component<Props, {}> {
     if (this.isOpen) this.unbindEvents();
   }
 
+  @autobind()
   open() {
     if (this.isOpen) return;
     this.toggle(true, () => this.bindEvents());
   }
 
+  @autobind()
   close() {
     if (!this.isOpen) return;
     this.unbindEvents();
@@ -88,26 +94,41 @@ export class Dialog extends React.Component<Props, {}> {
 
   toggle(isOpen?: boolean, callback?) {
     var open = arguments.length ? isOpen : !this.isOpen;
-    if (open) this.props.onOpen();
-    else this.props.onClose();
-    this.setState({ open }, callback);
+    if (!open) this.onClose();
+    this.setState({ open }, () => {
+      if (open) this.onOpen();
+      if (callback) callback();
+    });
   }
 
-  render() {
-    if (!this.isOpen) return null;
-    var modal = this.props.modal;
-    var props = omit(this.props, ['className', 'open', 'modal', 'pinned', 'onClose', 'onOpen']);
-    var componentClass = cssNames("Dialog", 'flex center', this.props.className, {
-      modal: modal
+  protected onOpen() {
+    if (this.props.onOpen) {
+      this.props.onOpen();
+    }
+  }
+
+  protected onClose() {
+    if (this.props.onClose) {
+      this.props.onClose();
+    }
+  }
+
+  render(props = this.props) {
+    var { className, open, modal, pinned, onClose, onOpen, children, ...dialogProps } = this.props;
+    var dialogClass = cssNames("Dialog", 'flex center', className, {
+      modal: modal == null || modal
     });
+    if (!this.isOpen) {
+      return null;
+    }
     return (
-        <Portal>
-          <div className={componentClass} {...props} ref={e => this.elem = e}>
-            <div className="box" ref={e => this.contentElem = e}>
-              {this.props.children}
-            </div>
+      <Portal>
+        <div {...dialogProps} className={dialogClass} ref={e => this.elem = e}>
+          <div className="box" ref={e => this.contentElem = e}>
+            {children}
           </div>
-        </Portal>
+        </div>
+      </Portal>
     );
   }
 }
