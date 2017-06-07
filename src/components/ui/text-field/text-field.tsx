@@ -1,9 +1,8 @@
 import "./text-field.scss";
 
 import * as React from "react";
-import { ReactNode } from "react";
 import { autobind } from "core-decorators";
-import { cssNames, noop } from "../../../utils";
+import { cssNames } from "../../../utils";
 import { MaterialIcon } from "../icons/material-icon";
 import { Validator, ValidatorError, ValidatorObject, Validators } from "./text-field.validators";
 
@@ -13,6 +12,7 @@ import isString = require("lodash/isString");
 export type Props = React.HTMLProps<any> & {
   value?: string | number
   dirty?: boolean
+  error?: any
   multiLine?: boolean;
   showErrors?: boolean | "all"
   showValidationIcon?: boolean;
@@ -37,21 +37,19 @@ export class TextField extends React.Component<Props, State> {
   static IS_DIRTY = 'dirty';
   static IS_INVALID = 'invalid';
   static IS_EMPTY = 'empty';
+  static VALIDATORS = Validators;
 
   public state: State = {
-    dirty: this.props.dirty || this.getValue() != null,
+    dirty: !!(this.props.dirty || this.getValue()),
     errors: [],
   };
 
   static defaultProps: Props = {
     showErrors: true,
-    onChange: noop,
-    onFocus: noop,
-    onBlur: noop,
   };
 
   setValue(newValue: string | number, silent = false) {
-    var { value, defaultValue, type, maxLength, min, max } = this.props;
+    var { value, defaultValue, type, maxLength, min, max, onChange } = this.props;
     var isNumber = type === "number";
     if (isNumber) {
       newValue = +newValue == newValue ? +newValue : "";
@@ -72,7 +70,7 @@ export class TextField extends React.Component<Props, State> {
       );
       if (!preventUpdate) {
         this.validate(newValue);
-        if (!silent) this.props.onChange(newValue);
+        if (onChange && !silent) onChange(newValue);
       }
     }
   }
@@ -115,12 +113,15 @@ export class TextField extends React.Component<Props, State> {
   }
 
   componentWillReceiveProps(nextProps: Props) {
-    var { value, dirty } = this.props;
+    var { value, dirty, error } = this.props;
     if (dirty !== nextProps.dirty) {
-      this.setDirty();
+      this.setDirty(nextProps.dirty);
     }
     if (value !== nextProps.value) {
       this.setValue(nextProps.value);
+    }
+    if (error !== nextProps.error) {
+      this.validate();
     }
   }
 
@@ -164,7 +165,7 @@ export class TextField extends React.Component<Props, State> {
       if (!valid) {
         var error = isFunction(message) ? message(strVal, this.props) : message || "";
         errors.push(error);
-        if (this.props.showErrors !== "all") break;
+        if (error && this.props.showErrors !== "all") break;
       }
     }
 
@@ -191,15 +192,13 @@ export class TextField extends React.Component<Props, State> {
 
   @autobind()
   private onFocus(evt) {
-    this.props.onFocus(evt);
-    if (this.elem) {
-      this.elem.classList.add(TextField.IS_FOCUSED);
-    }
+    if (this.props.onFocus) this.props.onFocus(evt);
+    if (this.elem) this.elem.classList.add(TextField.IS_FOCUSED);
   }
 
   @autobind()
   private onBlur(evt) {
-    this.props.onBlur(evt);
+    if (this.props.onBlur) this.props.onBlur(evt);
     this.elem.classList.remove(TextField.IS_FOCUSED);
     if (this.state.dirtyOnBlur) this.setDirty();
   }
@@ -224,7 +223,7 @@ export class TextField extends React.Component<Props, State> {
   render() {
     var {
       className, iconLeft, iconRight, multiLine, children,
-      dirty, validators, showErrors, showValidationIcon,
+      dirty, error, validators, showErrors, showValidationIcon,
       ...props
     } = this.props;
 
@@ -233,6 +232,9 @@ export class TextField extends React.Component<Props, State> {
 
     if (isString(iconLeft)) iconLeft = <MaterialIcon name={iconLeft}/>
     if (isString(iconRight)) iconRight = <MaterialIcon name={iconRight}/>
+
+    var currentValue = defaultValue != null ? defaultValue : value;
+    var emptyValue = currentValue == null;
 
     var inputProps = Object.assign(props, {
       className: "input box grow",
@@ -243,8 +245,11 @@ export class TextField extends React.Component<Props, State> {
       ref: e => this.input = e,
     });
 
-    var currentValue = defaultValue != null ? defaultValue : value;
-    var emptyValue = currentValue == null;
+    // define input as controlled, if initial value not provided, but onChange handler exists
+    if (emptyValue && this.props.onChange) {
+      inputProps.value = "";
+    }
+
     var hasErrors = errors.length > 0;
     var componentClass = cssNames('TextField', className, {
       readOnly: props.readOnly,
@@ -269,16 +274,12 @@ export class TextField extends React.Component<Props, State> {
       );
     }
 
-    var input: ReactNode;
-    if (multiLine) input = <textarea {...inputProps}/>;
-    else input = <input {...inputProps}/>;
-
     return (
       <div className={componentClass} ref={e => this.elem = e}>
         <input type="hidden" disabled={props.disabled}/>
         <label className="label flex gaps align-center">
           {iconLeft}
-          {input}
+          {multiLine ? <textarea {...inputProps}/> : <input {...inputProps}/>}
           {validationIcon}
           {iconRight}
           {type === "number" ? (
