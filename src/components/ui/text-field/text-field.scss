@@ -70,6 +70,10 @@
     min-height: $margin * 2;
     font-size: small;
     color: $color-error;
+    transition: 150ms min-height ease-in;
+    &.compact:empty {
+      min-height: 0;
+    }
   }
 
   .maxLength {

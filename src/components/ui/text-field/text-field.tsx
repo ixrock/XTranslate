@@ -12,7 +12,8 @@ import isString = require("lodash/isString");
 export type Props = React.HTMLProps<any> & {
   value?: string | number
   dirty?: boolean
-  error?: any
+  invalid?: boolean
+  compactError?: boolean
   multiLine?: boolean;
   showErrors?: boolean | "all"
   showValidationIcon?: boolean;
@@ -37,7 +38,6 @@ export class TextField extends React.Component<Props, State> {
   static IS_DIRTY = 'dirty';
   static IS_INVALID = 'invalid';
   static IS_EMPTY = 'empty';
-  static VALIDATORS = Validators;
 
   public state: State = {
     dirty: !!(this.props.dirty || this.getValue()),
@@ -59,7 +59,7 @@ export class TextField extends React.Component<Props, State> {
         this.input.value = newValue.toString();
       }
       if (!this.isFocused) this.setDirty();
-      else this.setState({ dirtyOnBlur: true });
+      else if (!this.dirty) this.setState({ dirtyOnBlur: true });
 
       var preventUpdate = (
         (maxLength > 0 && newValue.toString().length > maxLength) ||
@@ -69,8 +69,9 @@ export class TextField extends React.Component<Props, State> {
         )
       );
       if (!preventUpdate) {
-        this.validate(newValue);
         if (onChange && !silent) onChange(newValue);
+        if (!this.isFocused) this.validate(newValue);
+        else setTimeout(() => this.validate(newValue));
       }
     }
   }
@@ -113,14 +114,14 @@ export class TextField extends React.Component<Props, State> {
   }
 
   componentWillReceiveProps(nextProps: Props) {
-    var { value, dirty, error } = this.props;
+    var { value, dirty, invalid } = this.props;
     if (dirty !== nextProps.dirty) {
       this.setDirty(nextProps.dirty);
     }
     if (value !== nextProps.value) {
       this.setValue(nextProps.value);
     }
-    if (error !== nextProps.error) {
+    if (invalid !== nextProps.invalid) {
       this.validate();
     }
   }
@@ -199,7 +200,7 @@ export class TextField extends React.Component<Props, State> {
   @autobind()
   private onBlur(evt) {
     if (this.props.onBlur) this.props.onBlur(evt);
-    this.elem.classList.remove(TextField.IS_FOCUSED);
+    if (this.elem) this.elem.classList.remove(TextField.IS_FOCUSED);
     if (this.state.dirtyOnBlur) this.setDirty();
   }
 
@@ -223,8 +224,8 @@ export class TextField extends React.Component<Props, State> {
   render() {
     var {
       className, iconLeft, iconRight, multiLine, children,
-      dirty, error, validators, showErrors, showValidationIcon,
-      ...props
+      dirty, invalid, validators, showErrors, showValidationIcon,
+      compactError, ...props
     } = this.props;
 
     var { value, defaultValue, maxLength, rows, type } = this.props;
@@ -232,9 +233,6 @@ export class TextField extends React.Component<Props, State> {
 
     if (isString(iconLeft)) iconLeft = <MaterialIcon name={iconLeft}/>
     if (isString(iconRight)) iconRight = <MaterialIcon name={iconRight}/>
-
-    var currentValue = defaultValue != null ? defaultValue : value;
-    var emptyValue = currentValue == null;
 
     var inputProps = Object.assign(props, {
       className: "input box grow",
@@ -246,7 +244,8 @@ export class TextField extends React.Component<Props, State> {
     });
 
     // define input as controlled, if initial value not provided, but onChange handler exists
-    if (emptyValue && this.props.onChange) {
+    var currentValue = this.getValue();
+    if (currentValue == null && this.props.onChange) {
       inputProps.value = "";
     }
 
@@ -256,7 +255,7 @@ export class TextField extends React.Component<Props, State> {
       [TextField.IS_INVALID]: hasErrors,
       [TextField.IS_DIRTY]: dirty,
       [TextField.IS_FOCUSED]: this.isFocused,
-      [TextField.IS_EMPTY]: emptyValue,
+      [TextField.IS_EMPTY]: !currentValue,
     });
 
     if (showValidationIcon && dirty) {
@@ -270,7 +269,7 @@ export class TextField extends React.Component<Props, State> {
     }
     if (maxLength && multiLine) {
       var maxLengthIndicator = (
-        <span className="maxLength">{emptyValue ? 0 : currentValue.toString().length} / {maxLength}</span>
+        <span className="maxLength">{currentValue == null ? 0 : currentValue.toString().length} / {maxLength}</span>
       );
     }
 
@@ -292,7 +291,7 @@ export class TextField extends React.Component<Props, State> {
         {maxLengthIndicator}
         {children}
         {showErrors ? (
-          <div className="errors">
+          <div className={cssNames("errors", { compact: compactError })}>
             {dirty ? errors.map((error, i) => <div key={i} className="error">{error}</div>) : null}
           </div>
         ) : null}
