@@ -76,7 +76,8 @@ export class Dialog extends React.Component<DialogProps, DialogState> {
 
   componentDidMount() {
     if (this.props.open) {
-      this.open();
+      this.props.onOpen();
+      this.bindEvents();
     }
   }
 
@@ -115,7 +116,7 @@ export class Dialog extends React.Component<DialogProps, DialogState> {
   }
 
   render() {
-    var { className, open, modal, animated, onClose, onOpen, children, ...dialogProps } = this.props;
+    var { className, open, modal, animated, pinned, onClose, onOpen, children, ...dialogProps } = this.props;
     if (!this.isOpen) return null;
 
     var dialogClass = cssNames("Dialog", 'flex center', { modal }, className);
