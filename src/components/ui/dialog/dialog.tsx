@@ -2,6 +2,7 @@ import "./dialog.scss";
 import * as React from "react";
 import { autobind } from "core-decorators";
 import { cssNames, noop } from "../../../utils";
+import { Animate } from "../animate";
 import { Portal } from "../../../utils/portal";
 
 export interface DialogProps {
@@ -9,28 +10,30 @@ export interface DialogProps {
   open?: boolean
   modal?: boolean
   pinned?: boolean
+  animated?: boolean
   onClose?: () => any
   onOpen?: () => any
 }
 
-interface State {
+interface DialogState {
   open?: boolean
 }
 
-export class Dialog extends React.Component<DialogProps, State> {
+export class Dialog extends React.Component<DialogProps, DialogState> {
+  private animate: Animate;
   private elem: HTMLElement;
   private contentElem: HTMLElement;
 
-  public state: State = {
-    open: this.props.open
+  static defaultProps: DialogProps = {
+    modal: true,
+    animated: true,
+    pinned: false,
+    onOpen: noop,
+    onClose: noop,
   };
 
-  static defaultProps: DialogProps = {
-    open: false,
-    modal: true,
-    pinned: false,
-    onClose: noop,
-    onOpen: noop
+  public state: DialogState = {
+    open: this.props.open
   };
 
   get isOpen() {
@@ -66,7 +69,8 @@ export class Dialog extends React.Component<DialogProps, State> {
 
   componentWillReceiveProps({ open }: DialogProps) {
     if (this.state.open !== open) {
-      this.toggle(open);
+      if (open) this.open();
+      else this.close();
     }
   }
 
@@ -90,46 +94,53 @@ export class Dialog extends React.Component<DialogProps, State> {
   close() {
     if (!this.isOpen) return;
     this.unbindEvents();
-    this.toggle(false);
+    if (this.animate) this.animate.leave();
+    else this.toggle(false);
   }
 
   toggle(isOpen?: boolean, callback?) {
     var open = arguments.length ? isOpen : !this.isOpen;
-    if (!open) this.onClose();
+    if (!open) this.props.onClose();
     this.setState({ open }, () => {
-      if (open) this.onOpen();
+      if (open) this.props.onOpen();
       if (callback) callback();
     });
   }
 
-  protected onOpen() {
-    if (this.props.onOpen) {
-      this.props.onOpen();
-    }
+  @autobind()
+  bindAnimate(animate: Animate) {
+    if (!animate) return;
+    this.animate = animate;
+    this.elem = animate.elem;
   }
 
-  protected onClose() {
-    if (this.props.onClose) {
-      this.props.onClose();
-    }
-  }
+  render() {
+    var { className, open, modal, animated, onClose, onOpen, children, ...dialogProps } = this.props;
+    if (!this.isOpen) return null;
 
-  render(props = this.props) {
-    var { className, open, modal, pinned, onClose, onOpen, children, ...dialogProps } = this.props;
-    var dialogClass = cssNames("Dialog", 'flex center', className, {
-      modal: modal == null || modal
-    });
-    if (!this.isOpen) {
-      return null;
-    }
-    return (
-      <Portal>
-        <div {...dialogProps} className={dialogClass} ref={e => this.elem = e}>
-          <div className="box" ref={e => this.contentElem = e}>
-            {children}
-          </div>
-        </div>
-      </Portal>
+    var dialogClass = cssNames("Dialog", 'flex center', { modal }, className);
+    var content = (
+      <div className="box" ref={e => this.contentElem = e}>
+        {children}
+      </div>
     );
+    if (animated) {
+      var dialog = (
+        <Animate
+          {...dialogProps} className={dialogClass}
+          name="opacity-scale" leaveCallback={() => this.toggle(false)}
+          ref={this.bindAnimate}>
+          {content}
+        </Animate>
+      )
+    }
+    else {
+      var dialog = (
+        <div {...dialogProps} className={dialogClass} ref={e => this.elem = e}>
+          {content}
+        </div>
+      )
+    }
+    return <Portal>{dialog}</Portal>;
   }
 }

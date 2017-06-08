@@ -7,20 +7,21 @@ import { noop } from "../../utils";
 import { connect } from "../../store/connect";
 import { Button, Dialog } from "../ui";
 import { ISettingsState, settingsActions } from "../settings";
-import find = require("lodash/find");
 
 interface Props {
   settings?: ISettingsState
 }
 
+interface State {
+  price?: string
+  showDialog?: boolean,
+  hasLicense?: boolean
+}
+
 @connect(state => ({ settings: state.settings }))
-export class Support extends React.Component<Props, {}> {
+export class Support extends React.Component<Props, State> {
   private dialog: Dialog;
-  public state = {
-    price: "",
-    showDialog: false,
-    hasLicense: false,
-  };
+  public state: State = {};
 
   componentWillMount() {
     this.checkLicense();

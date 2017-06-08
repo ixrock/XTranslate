@@ -1,4 +1,4 @@
-// Base ui-components
+// Top-level UI components
 
 export * from './text-field'
 export * from './button'
@@ -11,3 +11,4 @@ export * from './dialog'
 export * from './tabs'
 export * from './spinner'
 export * from './icons'
+export * from './animate'
