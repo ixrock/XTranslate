@@ -1,14 +1,10 @@
-import * as React from "react";
-import { Props } from "./text-field";
+import { ValidatorError, ValidatorObject } from "./text-field.types";
 
-export type Validator = ValidatorObject | ValidatorHandler;
-export type ValidatorError = string | React.ReactNode;
-export type ValidatorHandler = (value: string, props?: Props) => boolean;
-
-export interface ValidatorObject {
-  autoBind?: (props: Props) => boolean;
-  message?: ((value: string, props?: Props) => ValidatorError) | ValidatorError
-  validate: ValidatorHandler
+export function wrapValidator(getError: () => ValidatorError): ValidatorObject {
+  return {
+    message: () => getError(),
+    validate: () => !getError()
+  }
 }
 
 export const Validators = {

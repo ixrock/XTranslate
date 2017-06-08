@@ -4,35 +4,17 @@ import * as React from "react";
 import { autobind } from "core-decorators";
 import { cssNames } from "../../../utils";
 import { MaterialIcon } from "../icons/material-icon";
-import { Validator, ValidatorError, ValidatorObject, Validators } from "./text-field.validators";
+import { Props, State, ValidatorError, ValidatorObject } from "./text-field.types";
+import { Validators } from "./text-field.validators";
 
 import isFunction = require("lodash/isFunction");
 import isString = require("lodash/isString");
-
-export type Props = React.HTMLProps<any> & {
-  value?: string | number
-  dirty?: boolean
-  invalid?: boolean
-  compactError?: boolean
-  multiLine?: boolean;
-  showErrors?: boolean | "all"
-  showValidationIcon?: boolean;
-  validators?: Validator | Validator[]
-  iconLeft?: string | React.ReactNode;
-  iconRight?: string | React.ReactNode;
-  onChange?: (value: string | number) => void;
-}
-
-interface State {
-  dirty?: boolean
-  dirtyOnBlur?: boolean
-  errors?: ValidatorError[]
-}
 
 export class TextField extends React.Component<Props, State> {
   public elem: HTMLElement;
   public input: HTMLInputElement | HTMLTextAreaElement;
   private validators: ValidatorObject[] = [];
+  private asyncValidator: Promise<any>;
 
   static IS_FOCUSED = 'focused';
   static IS_DIRTY = 'dirty';
@@ -41,6 +23,7 @@ export class TextField extends React.Component<Props, State> {
 
   public state: State = {
     dirty: !!(this.props.dirty || this.getValue()),
+    valid: true,
     errors: [],
   };
 
@@ -91,7 +74,7 @@ export class TextField extends React.Component<Props, State> {
   }
 
   get valid() {
-    return !this.state.errors.length;
+    return this.state.valid;
   }
 
   get dirty() {
@@ -114,14 +97,14 @@ export class TextField extends React.Component<Props, State> {
   }
 
   componentWillReceiveProps(nextProps: Props) {
-    var { value, dirty, invalid } = this.props;
+    var { value, dirty, error } = this.props;
     if (dirty !== nextProps.dirty) {
       this.setDirty(nextProps.dirty);
     }
-    if (value !== nextProps.value) {
+    if (value !== nextProps.value && this.input.value != nextProps.value) {
       this.setValue(nextProps.value);
     }
-    if (invalid !== nextProps.invalid) {
+    if (error !== nextProps.error) {
       this.validate();
     }
   }
@@ -148,6 +131,7 @@ export class TextField extends React.Component<Props, State> {
         this.validators.push(validator);
       }
     });
+
     customValidators.forEach(validator => {
       var validatorObj: ValidatorObject = validator;
       if (isFunction(validator)) validatorObj = { validate: validator };
@@ -159,22 +143,46 @@ export class TextField extends React.Component<Props, State> {
     var strVal = value != null ? value.toString() : "";
     var valid = true;
     var errors = [];
+    var asyncValidators = [];
 
     for (var validator of this.validators) {
       let { validate, message } = validator;
-      valid = valid && validate(strVal, this.props);
-      if (!valid) {
-        var error = isFunction(message) ? message(strVal, this.props) : message || "";
-        errors.push(error);
-        if (error && this.props.showErrors !== "all") break;
+      var isValid = validate(strVal, this.props);
+      if (isValid instanceof Promise) {
+        asyncValidators.push(isValid);
+      }
+      else {
+        valid = valid && isValid;
+        if (!valid) {
+          var error = isFunction(message) ? message(strVal, this.props) : message || "";
+          errors.push(error);
+          if (error && this.props.showErrors !== "all") break;
+        }
       }
     }
 
-    this.setState({ errors }, () => {
+    // don't handle errors from async validators if it's already invalid
+    if (asyncValidators.length && valid) {
+      valid = false;
+      var asyncValidator = this.asyncValidator = Promise.all(asyncValidators);
+      var isLast = () => this.asyncValidator === asyncValidator; // handle last validation
+      asyncValidator.then(() => {
+        if (isLast()) this.setValidity(true);
+      }).catch((error: ValidatorError) => {
+        if (isLast()) {
+          this.setDirty();
+          this.setValidity(false, [error, ...this.state.errors]);
+        }
+      });
+    }
+
+    this.setValidity(valid, errors);
+  }
+
+  setValidity(valid = true, errors = this.state.errors) {
+    this.setState({ valid, errors }, () => {
       this.input.setCustomValidity(valid ? "" : " ");
     });
-
-    return valid;
   }
 
   setDirty(dirty = true) {
@@ -221,15 +229,21 @@ export class TextField extends React.Component<Props, State> {
     this.setValue(this.input.value);
   }
 
+  @autobind()
+  saveInputRef(elem) {
+    if (!elem) return;
+    this.input = elem;
+  }
+
   render() {
     var {
       className, iconLeft, iconRight, multiLine, children,
-      dirty, invalid, validators, showErrors, showValidationIcon,
-      compactError, ...props
+      dirty, error, validators, showErrors, compactError, showValidationIcon,
+      ...props
     } = this.props;
 
     var { value, defaultValue, maxLength, rows, type } = this.props;
-    var { errors, dirty } = this.state;
+    var { errors, dirty, valid } = this.state;
 
     if (isString(iconLeft)) iconLeft = <MaterialIcon name={iconLeft}/>
     if (isString(iconRight)) iconRight = <MaterialIcon name={iconRight}/>
@@ -240,7 +254,7 @@ export class TextField extends React.Component<Props, State> {
       onFocus: this.onFocus,
       onChange: this.onChange,
       rows: multiLine ? (rows || 1) : null,
-      ref: e => this.input = e,
+      ref: this.saveInputRef,
     });
 
     // define input as controlled, if initial value not provided, but onChange handler exists
@@ -249,10 +263,9 @@ export class TextField extends React.Component<Props, State> {
       inputProps.value = "";
     }
 
-    var hasErrors = errors.length > 0;
     var componentClass = cssNames('TextField', className, {
       readOnly: props.readOnly,
-      [TextField.IS_INVALID]: hasErrors,
+      [TextField.IS_INVALID]: !valid,
       [TextField.IS_DIRTY]: dirty,
       [TextField.IS_FOCUSED]: this.isFocused,
       [TextField.IS_EMPTY]: !currentValue,
@@ -261,8 +274,8 @@ export class TextField extends React.Component<Props, State> {
     if (showValidationIcon && dirty) {
       var validationIcon = (
         <MaterialIcon
-          className={cssNames("validation-icon", { error: hasErrors })}
-          name={hasErrors ? "close" : "check"}
+          className={cssNames("validation-icon", { error: !valid })}
+          name={valid ? "check" : "close"}
           title={errors.filter(isString).join("\n")}
         />
       );
@@ -273,12 +286,16 @@ export class TextField extends React.Component<Props, State> {
       );
     }
 
+    // get input element
+    if (multiLine) var input = <textarea {...inputProps}/>;
+    else input = <input {...inputProps}/>;
+
     return (
       <div className={componentClass} ref={e => this.elem = e}>
         <input type="hidden" disabled={props.disabled}/>
         <label className="label flex gaps align-center">
           {iconLeft}
-          {multiLine ? <textarea {...inputProps}/> : <input {...inputProps}/>}
+          {input}
           {validationIcon}
           {iconRight}
           {type === "number" ? (

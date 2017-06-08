@@ -1,7 +1,8 @@
 import "./dialog.scss";
 import * as React from "react";
 import { autobind } from "core-decorators";
-import { cssNames, noop, Portal } from "../../../utils";
+import { cssNames, noop } from "../../../utils";
+import { Portal } from "../../../utils/portal";
 
 export interface DialogProps {
   className?: string | object
