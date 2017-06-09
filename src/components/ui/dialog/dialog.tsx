@@ -41,14 +41,14 @@ export class Dialog extends React.Component<DialogProps, DialogState> {
   }
 
   private events = {
-    closeOnEscape: e => {
-      var target: HTMLElement = e.target;
+    closeOnEscape: (e: KeyboardEvent) => {
+      // var target: HTMLElement = e.target;
       var escapeKey = e.keyCode === 27;
-      var focusedInnerItem = this.contentElem.contains(target) && target.matches(':focus');
-      if (escapeKey && !focusedInnerItem) this.close();
+      // var focusedInnerItem = this.contentElem.contains(target) && target.matches(':focus');
+      if (escapeKey /*&& !focusedInnerItem*/) this.close();
     },
-    closeOnClickOutside: e => {
-      var target: HTMLElement = e.target;
+    closeOnClickOutside: (e: MouseEvent) => {
+      var target = e.target as HTMLElement;
       if (!this.contentElem.contains(target)) {
         this.close();
       }
@@ -68,7 +68,7 @@ export class Dialog extends React.Component<DialogProps, DialogState> {
   }
 
   componentWillReceiveProps({ open }: DialogProps) {
-    if (this.state.open !== open) {
+    if (this.props.open !== open) {
       if (open) this.open();
       else this.close();
     }
