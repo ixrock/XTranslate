@@ -7,7 +7,7 @@ interface Props {
   className?: string | object
   name?: string
   leaveTimeout?: number
-  leaveCallback?: () => any
+  leaveCallback?: () => void
 }
 
 interface State {
@@ -16,7 +16,6 @@ interface State {
 
 export class Animate extends React.Component<Props, State> {
   public elem: HTMLElement;
-  private canUpdate = true;
   public state: State = {};
 
   static ENTER = "enter";
@@ -31,50 +30,39 @@ export class Animate extends React.Component<Props, State> {
 
   @autobind()
   enter() {
-    if (this.canUpdate) {
-      this.setState({ className: Animate.ENTER });
-    }
+    this.setState({ className: Animate.ENTER });
   }
 
   @autobind()
   leave() {
-    if (this.canUpdate) {
-      this.setState({ className: Animate.LEAVE });
-    }
-    else {
-      this.props.leaveCallback();
-    }
+    this.setState({ className: Animate.LEAVE });
   }
 
   componentDidMount() {
-    setTimeout(this.enter, 50);
-    if (this.props.leaveTimeout) setTimeout(this.leave, this.props.leaveTimeout);
-    this.elem.addEventListener('transitionend', this.onTransitionEnd, false);
+    setTimeout(this.enter, 25);
+    if (this.props.leaveTimeout) {
+      setTimeout(this.leave, this.props.leaveTimeout);
+    }
   }
 
   @autobind()
-  onTransitionEnd() {
-    if (!this.elem) return;
-    var classList = this.elem.classList;
-    if (classList.contains(Animate.ENTER) && this.canUpdate) {
+  onTransitionEnd(evt: React.TransitionEvent) {
+    var classNames = this.state.className.split(" ");
+    if (classNames.find(c => c === Animate.ENTER)) {
       this.setState({
         className: cssNames(Animate.ENTER, Animate.ACTIVE)
       });
     }
-    if (classList.contains(Animate.LEAVE)) {
+    else if (classNames.find(c => c === Animate.LEAVE)) {
       this.props.leaveCallback();
     }
-  }
-
-  componentWillUnmount() {
-    this.canUpdate = false;
   }
 
   render() {
     var { className, name, children } = this.props;
     className = cssNames(className, "Animate", name, this.state.className);
     return (
-      <div className={className} ref={e => this.elem = e}>
+      <div className={className} onTransitionEnd={this.onTransitionEnd} ref={e => this.elem = e}>
         {children}
       </div>
     );
