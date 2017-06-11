@@ -168,9 +168,7 @@ export class ThemeManager extends React.Component<Props, {}> {
               onChange={v => this.save({ borderWidth: v })}
             />
             <span className="heading">{__i18n("border_style")}</span>
-            <Select className="box grow"
-                    value={theme.borderStyle}
-                    onChange={v => this.save({ borderStyle: v })}>
+            <Select className="box grow" value={theme.borderStyle} onChange={v => this.save({ borderStyle: v })}>
               <Option value="solid"/>
               <Option value="dotted"/>
               <Option value="dashed"/>

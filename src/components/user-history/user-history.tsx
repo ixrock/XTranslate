@@ -309,10 +309,7 @@ export class UserHistory extends React.Component<Props, State> {
         {showSettings && (
           <div className="settings flex column gaps mt1">
             <div className="flex gaps align-center">
-              <Select
-                className="box grow"
-                value={clearPeriod}
-                onChange={v => this.setState({ clearPeriod: v })}>
+              <Select className="box grow" value={clearPeriod} onChange={v => this.setState({ clearPeriod: v })}>
                 <Option value={HistoryPeriod.HOUR} title={__i18n("history_clear_period_hour")}/>
                 <Option value={HistoryPeriod.DAY} title={__i18n("history_clear_period_day")}/>
                 <Option value={HistoryPeriod.MONTH} title={__i18n("history_clear_period_month")}/>

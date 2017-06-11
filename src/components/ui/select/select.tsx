@@ -1,61 +1,80 @@
 import "./select.scss";
 
-import * as React from 'react'
-import { cssNames } from "../../../utils";
+import * as React from "react";
+import { autobind } from "core-decorators";
+import { cssNames, noop } from "../../../utils";
 import { MaterialIcon } from "../icons";
 
 interface Props extends React.HTMLProps<any> {
   value?: any
-  defaultValue?: any
-  onChange?(value): void;
+  inline?: boolean
+  onChange?: (value) => any;
 }
 
 export class Select extends React.Component<Props, {}> {
-  protected elem: HTMLSelectElement;
+  static defaultProps: Props = {
+    inline: false,
+    onChange: noop
+  }
 
-  onChange = (evt) => {
-    var index = this.elem.selectedIndex;
-    var value = this.options[index].props.value;
-    var onChange = this.props.onChange;
-    if (onChange) onChange(value);
-  };
+  private findValueByIndex(index: number, options = this.props.children) {
+    var items = React.Children.toArray(options) as React.ReactElement<OptionProps>[];
+    var searchIndex = 0;
+    for (var item of items) {
+      let { type, props } = item;
+      if (type === Option || type === "option") {
+        if (index === searchIndex) return props.value;
+        else searchIndex++;
+      }
+      else if (type === OptGroup || type === "optgroup") {
+        let groupOptions = React.Children.toArray(props.children);
+        let value = this.findValueByIndex(index - searchIndex, groupOptions);
+        if (value !== undefined) return value;
+        else searchIndex += groupOptions.length;
+      }
+    }
+  }
 
-  get options() {
-    return React.Children.toArray(this.props.children) as React.ReactElement<OptionProps>[]
+  @autobind()
+  onChange(evt: React.FormEvent<HTMLSelectElement>) {
+    var selectedIndex = evt.currentTarget.selectedIndex;
+    var value = this.findValueByIndex(selectedIndex);
+    this.props.onChange(value);
   }
 
   render() {
-    var { className, defaultValue, children, ...selectProps } = this.props;
-    var componentClass = cssNames('Select flex', className, {
-      disabled: this.props.disabled,
-    });
-    if (defaultValue == null) {
-      var defaultOption = this.options.filter(option => option.props.default)[0];
-      if (defaultOption) defaultValue = defaultOption.props.value;
-    }
+    var { className, inline, multiple, ...selectProps } = this.props;
+    var componentClass = cssNames('Select flex', { inline }, className);
     return (
-        <div className={componentClass}>
-          <select {...selectProps} defaultValue={defaultValue} onChange={this.onChange} ref={e => this.elem = e}>
-            {this.options.map(option => {
-              var title = option.props.title || option.props.value;
-              return <option key={option.key} {...option.props}>{title}</option>
-            })}
-          </select>
-          <MaterialIcon name="keyboard_arrow_down" className="icon"/>
-        </div>
+      <div className={componentClass}>
+        <select {...selectProps} onChange={this.onChange}/>
+        <MaterialIcon name="keyboard_arrow_down" className="icon"/>
+      </div>
     );
   }
 }
 
-interface OptionProps extends React.Attributes {
+interface OptGroupProps extends React.DOMAttributes<HTMLOptGroupElement> {
+  label?: string
+  disabled?: boolean
+}
+
+export class OptGroup extends React.Component<OptGroupProps, {}> {
+  render() {
+    return <optgroup {...this.props}/>
+  }
+}
+
+interface OptionProps extends React.DOMAttributes<HTMLOptionElement> {
   value: any
   title?: string
   disabled?: boolean
-  default?: boolean
 }
 
 export class Option extends React.Component<OptionProps, {}> {
   render() {
-    return null;
+    var { value, title, ...props } = this.props;
+    title = title != null ? title : String(value);
+    return <option {...props} value={value}>{title}</option>
   }
 }
