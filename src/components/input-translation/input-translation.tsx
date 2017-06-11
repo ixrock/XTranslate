@@ -5,7 +5,7 @@ import { Translation, TranslationError, Vendor, vendors, vendorsList } from "../
 import { autobind, debounce } from "core-decorators";
 import { __i18n, MessageType, onMessage, tabs } from "../../extension";
 import { connect } from "../../store/connect";
-import { cssNames, prevDefault } from "../../utils";
+import { createStorage, cssNames, prevDefault } from "../../utils";
 import { MaterialIcon, Option, Select, Spinner, TextField } from "../ui";
 import { SelectLanguage } from "../select-language";
 import { ISettingsState } from "../settings";
@@ -16,6 +16,8 @@ import clone = require("lodash/clone");
 import find = require("lodash/find");
 import remove = require("lodash/remove");
 import orderBy = require("lodash/orderBy");
+
+const lastText = createStorage("last_text", "");
 
 interface Props {
   settings?: ISettingsState
@@ -28,6 +30,7 @@ interface State {
   langTo?: string
   vendor?: string
   loading?: boolean
+  immediate?: boolean
   translation?: Translation
   error?: TranslationError
 }
@@ -42,7 +45,7 @@ export class InputTranslation extends React.Component<Props, State> {
   private loadingTimer;
 
   public state: State = {
-    text: "",
+    text: this.props.settings.rememberLastText ? lastText() : "",
     vendor: this.props.settings.vendor,
     langFrom: this.props.settings.langFrom,
     langTo: this.props.settings.langTo,
@@ -71,6 +74,7 @@ export class InputTranslation extends React.Component<Props, State> {
   }
 
   componentDidMount() {
+    if (this.state.text) this.translate();
     this.textField.focus();
   }
 
@@ -96,6 +100,146 @@ export class InputTranslation extends React.Component<Props, State> {
       remove(vendorFavorites, fav);
       favoritesActions.sync(favorites);
     }
+  }
+
+  @autobind()
+  playText() {
+    var { langDetected, langFrom, originalText } = this.state.translation;
+    this.vendor.playText(langDetected || langFrom, originalText);
+  }
+
+  @autobind()
+  @debounce(0)
+  translate(text = this.state.text.trim()) {
+    if (!text) return;
+    var { langFrom, langTo } = this.state;
+    var translating = this.vendor.getTranslation(langFrom, langTo, text);
+    this.handleTranslation(translating);
+  }
+
+  @autobind()
+  translateWithFavorite(vendor: Vendor, fav: Favorite) {
+    var text = this.state.text;
+    if (text) {
+      this.textField.focus();
+      var translation = vendor.getTranslation(fav.from, fav.to, text);
+      this.handleTranslation(translation);
+    }
+  }
+
+  private handleTranslation(translation: Promise<Translation>) {
+    this.setLoading();
+    var text = this.state.text;
+    var promise = this.translation = translation.then(result => {
+      if (this.translation !== promise || !text) return; // update state only with latest request
+      this.setState({ translation: result, error: null }, this.onTranslationReady);
+      return result;
+    }).catch(error => {
+      if (this.translation !== promise) return;
+      this.setState({ translation: null, error: error });
+    });
+  }
+
+  @autobind()
+  onTranslationReady() {
+    var { autoPlayText, historyEnabled } = this.props.settings;
+    if (autoPlayText) this.playText();
+    if (historyEnabled) this.saveHistory();
+  }
+
+  // show loading indicator only for long delays
+  setLoading() {
+    clearTimeout(this.loadingTimer);
+    this.loadingTimer = setTimeout(() => {
+      var ready = () => this.setState({ loading: false });
+      this.setState({ loading: true });
+      this.translation.then(ready, ready);
+    }, 1000);
+  }
+
+  saveHistory() {
+    var translation = this.state.translation;
+    if (translation) saveHistory(translation, this.props.settings);
+  }
+
+  translateWord(text: string) {
+    this.textField.focus();
+    this.setState({ text });
+  }
+
+  @autobind()
+  @debounce(500)
+  translateLazy() {
+    if (this.state.immediate) return;
+    this.translate();
+  }
+
+  @autobind()
+  onTextChange(text: string) {
+    if (this.props.settings.rememberLastText) lastText(text);
+    this.setState({ text, immediate: false }, this.translateLazy);
+    if (!text.trim()) {
+      this.setState({ translation: null });
+    }
+  }
+
+  @autobind()
+  onKeyDown(evt: React.KeyboardEvent<HTMLInputElement>) {
+    var meta = evt.metaKey || evt.ctrlKey;
+    var enter = evt.keyCode === 13;
+    if (enter && meta) {
+      this.setState({ immediate: true });
+      this.translate();
+    }
+  }
+
+  @autobind()
+  onVendorChange(vendorName: string) {
+    var { langFrom, langTo } = this.state;
+    var state = { vendor: vendorName } as State;
+    var vendor = vendors[vendorName];
+    if (!vendor.langFrom[langFrom]) state.langFrom = Object.keys(vendor.langFrom)[0];
+    if (!vendor.langTo[langTo]) state.langTo = Object.keys(vendor.langTo)[0];
+    this.setState(state, this.translate);
+  }
+
+  @autobind()
+  onLangChange(langFrom, langTo) {
+    var state = Object.assign({}, this.state);
+    if (langFrom) state.langFrom = langFrom;
+    if (langTo) state.langTo = langTo;
+    this.setState(state, this.translate);
+  }
+
+  @autobind()
+  onSwapLang(langFrom, langTo) {
+    this.setState({ langFrom, langTo }, this.translate);
+  }
+
+  renderHeader() {
+    var { vendor, langFrom, langTo } = this.state;
+    return (
+      <div className="language flex gaps">
+        <SelectLanguage
+          className="box grow"
+          onChangeLang={this.onLangChange}
+          onSwapLang={this.onSwapLang}
+        />
+        <Select value={vendor} onChange={this.onVendorChange}>
+          {vendorsList.map(v => <Option key={v.name} value={v.name} title={v.title}/>)}
+        </Select>
+        {this.isFavorite ?
+          <MaterialIcon
+            name="favorite" title={__i18n("favorites_remove_item")}
+            onClick={() => this.removeFavorite(this.vendor, { from: langFrom, to: langTo })}/>
+          : null}
+        {!this.isFavorite ?
+          <MaterialIcon
+            name="favorite_border" title={__i18n("favorites_add_item")}
+            onClick={this.addFavorites}/>
+          : null}
+      </div>
+    )
   }
 
   renderFavorites() {
@@ -213,143 +357,28 @@ export class InputTranslation extends React.Component<Props, State> {
     );
   }
 
-  @autobind()
-  playText() {
-    var { langDetected, langFrom, originalText } = this.state.translation;
-    this.vendor.playText(langDetected || langFrom, originalText);
-  }
-
-  // show loading indicator only for long delays
-  setLoading() {
-    clearTimeout(this.loadingTimer);
-    this.loadingTimer = setTimeout(() => {
-      var ready = () => this.setState({ loading: false });
-      this.setState({ loading: true });
-      this.translation.then(ready, ready);
-    }, 1000);
-  }
-
-  @autobind()
-  @debounce(0)
-  translate(text = this.state.text.trim()) {
+  renderTranslation() {
+    var { text, loading, translation, error } = this.state;
     if (!text) return;
-    var { langFrom, langTo } = this.state;
-    var translating = this.vendor.getTranslation(langFrom, langTo, text);
-    this.handleTranslation(translating);
-  }
-
-  @autobind()
-  translateWithFavorite(vendor: Vendor, fav: Favorite) {
-    var text = this.state.text;
-    if (text) {
-      this.textField.focus();
-      var translation = vendor.getTranslation(fav.from, fav.to, text);
-      this.handleTranslation(translation);
-    }
-  }
-
-  private handleTranslation(translation: Promise<Translation>) {
-    this.setLoading();
-    var text = this.state.text;
-    var promise = this.translation = translation.then(result => {
-      if (this.translation !== promise || !text) return; // update state only with latest request
-      this.setState({ translation: result, error: null }, this.onTranslationReady);
-      return result;
-    }).catch(error => {
-      if (this.translation !== promise) return;
-      this.setState({ translation: null, error: error });
-    });
-  }
-
-  @autobind()
-  onTranslationReady() {
-    var { autoPlayText, historyEnabled } = this.props.settings;
-    if (autoPlayText) this.playText();
-    if (historyEnabled) this.saveHistory();
-  }
-
-  // wait some time before saving history to avoid a lot of intermediate text inputs
-  @debounce(1000)
-  saveHistory() {
-    var translation = this.state.translation;
-    if (translation) saveHistory(translation, this.props.settings);
-  }
-
-  translateWord(text: string) {
-    this.textField.focus();
-    this.setState({ text });
-  }
-
-  @autobind()
-  @debounce(250)
-  translateLazy() {
-    this.translate();
-  }
-
-  @autobind()
-  onTextChange(text: string) {
-    this.setState({ text }, this.translateLazy);
-    if (!text.trim()) {
-      this.setState({ translation: null });
-    }
-  }
-
-  @autobind()
-  onVendorChange(vendorName: string) {
-    var { langFrom, langTo } = this.state;
-    var state = { vendor: vendorName } as State;
-    var vendor = vendors[vendorName];
-    if (!vendor.langFrom[langFrom]) state.langFrom = Object.keys(vendor.langFrom)[0];
-    if (!vendor.langTo[langTo]) state.langTo = Object.keys(vendor.langTo)[0];
-    this.setState(state, this.translate);
-  }
-
-  @autobind()
-  onLangChange(langFrom, langTo) {
-    var state = Object.assign({}, this.state);
-    if (langFrom) state.langFrom = langFrom;
-    if (langTo) state.langTo = langTo;
-    this.setState(state, this.translate);
-  }
-
-  @autobind()
-  onSwapLang(langFrom, langTo) {
-    this.setState({ langFrom, langTo }, this.translate);
+    if (loading) return <Spinner center/>;
+    if (translation) return this.renderResult();
+    if (error) return this.renderError();
   }
 
   render() {
-    var { text, vendor, langFrom, langTo, loading, error } = this.state;
     return (
       <div className="InputTranslation">
-        <div className="language flex gaps">
-          <SelectLanguage
-            className="box grow"
-            onChangeLang={this.onLangChange}
-            onSwapLang={this.onSwapLang}
-          />
-          <Select value={vendor} onChange={this.onVendorChange}>
-            {vendorsList.map(v => <Option key={v.name} value={v.name} title={v.title}/>)}
-          </Select>
-          {this.isFavorite ?
-            <MaterialIcon
-              name="favorite" title={__i18n("favorites_remove_item")}
-              onClick={() => this.removeFavorite(this.vendor, { from: langFrom, to: langTo })}/>
-            : null}
-          {!this.isFavorite ?
-            <MaterialIcon
-              name="favorite_border" title={__i18n("favorites_add_item")}
-              onClick={this.addFavorites}/>
-            : null}
-        </div>
+        {this.renderHeader()}
         {this.renderFavorites()}
         <TextField
           placeholder={__i18n("text_field_placeholder")}
           autoFocus multiLine rows={2} tabIndex={1}
           maxLength={this.vendor.maxTextInputLength}
-          value={text} onChange={v => this.onTextChange(v)}
+          value={this.state.text} onChange={v => this.onTextChange(v)}
+          onKeyDown={this.onKeyDown}
           ref={e => this.textField = e}
         />
-        {loading ? <Spinner center/> : (error ? this.renderError() : this.renderResult())}
+        {this.renderTranslation()}
       </div>
     );
   }

@@ -10,6 +10,7 @@ export interface ISettingsState {
   showPopupAfterSelection?: boolean
   showPopupOnDoubleClick?: boolean
   showPopupOnHotkey?: boolean
+  rememberLastText?: boolean
   allowAds?: boolean
   vendor?: string
   langFrom?: string

@@ -10,6 +10,7 @@ export const defaultSettings: ISettingsState = {
   showPopupAfterSelection: false,
   showPopupOnDoubleClick: true,
   showPopupOnHotkey: true,
+  rememberLastText: false,
   allowAds: false,
   vendor: "google",
   langFrom: "auto",

@@ -5,7 +5,7 @@ import { autobind, debounce } from "core-decorators";
 import { connect } from "../../store/connect";
 import { __i18n } from "../../extension/i18n";
 import { cssNames, download, prevDefault } from "../../utils";
-import { Button, Checkbox, MaterialIcon, Option, Select, Spinner, TextField } from "../ui";
+import { Button, Checkbox, MaterialIcon, Menu, MenuItem, Option, Select, Spinner, TextField } from "../ui";
 import { ISettingsState, settingsActions } from "../settings";
 import { clearHistory, getHistory } from "./user-history.actions";
 import { IHistoryItem } from "./user-history.types";
@@ -26,9 +26,7 @@ interface State {
   showDetails?: { [itemId: string]: boolean }
   showSettings?: boolean
   showSearch?: boolean
-  showExports?: boolean
   searchText?: string
-  exportSearchResult?: boolean
 }
 
 enum HistoryPeriod {
@@ -48,8 +46,6 @@ export class UserHistory extends React.Component<Props, State> {
     searchText: "",
     showSettings: false,
     showSearch: false,
-    showExports: false,
-    exportSearchResult: false,
   };
 
   async componentWillMount() {
@@ -99,9 +95,7 @@ export class UserHistory extends React.Component<Props, State> {
 
   async exportHistory(type: "json" | "csv") {
     var filename = `xtranslate-history.${type}`;
-    var { searchText, exportSearchResult } = this.state;
-    var history = await getHistory(exportSearchResult ? searchText : null);
-
+    var history = await getHistory(this.state.searchText);
     switch (type) {
       case "json":
         var json = history.map(item => {
@@ -260,7 +254,7 @@ export class UserHistory extends React.Component<Props, State> {
 
   render() {
     var { history, loading, clearPeriod, hasMore } = this.state;
-    var { showSettings, showSearch, searchText, showExports, exportSearchResult } = this.state;
+    var { showSettings, showSearch, searchText } = this.state;
     var { historyEnabled, historyAvoidDuplicates, historySaveWordsOnly } = this.props.settings;
     return (
       <div className="UserHistory">
@@ -275,11 +269,18 @@ export class UserHistory extends React.Component<Props, State> {
             active={showSearch}
             onClick={() => this.setState({ showSearch: !showSearch })}
           />
-          <MaterialIcon
-            name="file_download"
-            active={showExports}
-            onClick={() => this.setState({ showExports: !showExports })}
-          />
+          <div className="flex">
+            <MaterialIcon id="export_history" name="file_download" button/>
+            <Menu htmlFor="export_history">
+              <MenuItem onClick={() => this.exportHistory("csv")}>
+                {__i18n("history_export_entries", ["CSV"])}
+              </MenuItem>
+              <MenuItem spacer/>
+              <MenuItem onClick={() => this.exportHistory("json")}>
+                {__i18n("history_export_entries", ["JSON"])}
+              </MenuItem>
+            </Menu>
+          </div>
           <MaterialIcon
             name="settings"
             active={showSettings}
@@ -293,18 +294,6 @@ export class UserHistory extends React.Component<Props, State> {
             placeholder={__i18n("history_search_input_placeholder")}
             value={searchText} onChange={v => this.search(v)}
           />
-        )}
-        {showExports && (
-          <div className="export-history flex gaps align-center mt1">
-            <Checkbox
-              label={__i18n("history_export_search_results")}
-              className="box grow"
-              checked={exportSearchResult}
-              onChange={v => this.setState({ exportSearchResult: v })}
-            />
-            <Button label="CSV" className="w20" onClick={() => this.exportHistory("csv")}/>
-            <Button label="JSON" className="w20" onClick={() => this.exportHistory("json")}/>
-          </div>
         )}
         {showSettings && (
           <div className="settings flex column gaps mt1">
