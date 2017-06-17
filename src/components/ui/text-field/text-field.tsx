@@ -31,7 +31,7 @@ export class TextField extends React.Component<Props, State> {
     showErrors: true,
   };
 
-  setValue(newValue: string | number, silent = false) {
+  setValue(newValue: string | number = "", silent = false) {
     var { value, defaultValue, type, maxLength, min, max, onChange } = this.props;
     var isNumber = type === "number";
     if (isNumber) {
