@@ -46,7 +46,7 @@ export class Animate extends React.Component<Props, State> {
   }
 
   @autobind()
-  onTransitionEnd(evt: React.TransitionEvent) {
+  onTransitionEnd(evt: React.TransitionEvent<HTMLDivElement>) {
     var classNames = this.state.className.split(" ");
     if (classNames.find(c => c === Animate.ENTER)) {
       this.setState({

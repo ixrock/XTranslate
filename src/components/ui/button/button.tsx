@@ -17,15 +17,18 @@ export class Button extends React.Component<Props, {}> {
   private button: HTMLButtonElement;
 
   render() {
-    var { waiting, label, primary, accent, plain, hidden, children, ...props } = this.props;
+    var { className, waiting, label, primary, accent, plain, hidden, children, ...props } = this.props;
     if (hidden) return null;
-    props.className = cssNames('Button', {
-        waiting,
-        primary,
-        accent,
-        plain,
-      }, this.props.className
-    );
+
+    Object.assign(props, {
+      className: cssNames('Button', {
+          waiting,
+          primary,
+          accent,
+          plain,
+        }, className
+      )
+    })
 
     var content = label && children
       ? React.Children.toArray([label, children])

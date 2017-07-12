@@ -2,7 +2,6 @@ import "./input-translation.scss";
 
 import * as React from "react";
 import { Translation, TranslationError, Vendor, vendors, vendorsList } from "../../vendors";
-import { autobind, debounce } from "core-decorators";
 import { __i18n, MessageType, onMessage, tabs } from "../../extension";
 import { connect } from "../../store/connect";
 import { createStorage, cssNames, prevDefault } from "../../utils";
@@ -11,11 +10,11 @@ import { SelectLanguage } from "../select-language";
 import { ISettingsState } from "../settings";
 import { Favorite, favoritesActions, IFavoritesState } from "../favorites";
 import { saveHistory } from "../user-history/user-history.actions";
-
 import clone = require("lodash/clone");
 import find = require("lodash/find");
 import remove = require("lodash/remove");
 import orderBy = require("lodash/orderBy");
+import debounce = require("lodash/debounce");
 
 const lastText = createStorage("last_text", "");
 
@@ -41,7 +40,7 @@ interface State {
 }))
 export class InputTranslation extends React.Component<Props, State> {
   private textField: TextField;
-  private translation: Promise<Translation>;
+  private translation: Promise<any>;
   private loadingTimer;
 
   public state: State = {
@@ -78,7 +77,6 @@ export class InputTranslation extends React.Component<Props, State> {
     this.textField.focus();
   }
 
-  @autobind()
   addFavorites() {
     var { langFrom, langTo } = this.state;
     var vendor = vendors[this.state.vendor];
@@ -92,7 +90,6 @@ export class InputTranslation extends React.Component<Props, State> {
     }
   }
 
-  @autobind()
   removeFavorite(vendor: Vendor, fav: Favorite) {
     var favorites = clone(this.props.favorites);
     var vendorFavorites = favorites[vendor.name] || [];
@@ -102,22 +99,18 @@ export class InputTranslation extends React.Component<Props, State> {
     }
   }
 
-  @autobind()
   playText() {
     var { langDetected, langFrom, originalText } = this.state.translation;
     this.vendor.playText(langDetected || langFrom, originalText);
   }
 
-  @autobind()
-  @debounce(0)
-  translate(text = this.state.text.trim()) {
+  translate = debounce((text = this.state.text.trim()) => {
     if (!text) return;
     var { langFrom, langTo } = this.state;
     var translating = this.vendor.getTranslation(langFrom, langTo, text);
     this.handleTranslation(translating);
-  }
+  })
 
-  @autobind()
   translateWithFavorite(vendor: Vendor, fav: Favorite) {
     var text = this.state.text;
     if (text) {
@@ -140,8 +133,7 @@ export class InputTranslation extends React.Component<Props, State> {
     });
   }
 
-  @autobind()
-  onTranslationReady() {
+  onTranslationReady = () => {
     var { autoPlayText, historyEnabled } = this.props.settings;
     if (autoPlayText) this.playText();
     if (historyEnabled) this.saveHistory();
@@ -167,15 +159,12 @@ export class InputTranslation extends React.Component<Props, State> {
     this.setState({ text });
   }
 
-  @autobind()
-  @debounce(500)
-  translateLazy() {
+  translateLazy = debounce(() => {
     if (this.state.immediate) return;
     this.translate();
-  }
+  }, 500)
 
-  @autobind()
-  onTextChange(text: string) {
+  onTextChange = (text: string) => {
     if (this.props.settings.rememberLastText) lastText(text);
     this.setState({ text, immediate: false }, this.translateLazy);
     if (!text.trim()) {
@@ -183,8 +172,7 @@ export class InputTranslation extends React.Component<Props, State> {
     }
   }
 
-  @autobind()
-  onKeyDown(evt: React.KeyboardEvent<HTMLInputElement>) {
+  onKeyDown = (evt: React.KeyboardEvent<HTMLInputElement>) => {
     var meta = evt.metaKey || evt.ctrlKey;
     var enter = evt.keyCode === 13;
     if (enter && meta) {
@@ -193,8 +181,7 @@ export class InputTranslation extends React.Component<Props, State> {
     }
   }
 
-  @autobind()
-  onVendorChange(vendorName: string) {
+  onVendorChange = (vendorName: string) => {
     var { langFrom, langTo } = this.state;
     var state = { vendor: vendorName } as State;
     var vendor = vendors[vendorName];
@@ -203,16 +190,14 @@ export class InputTranslation extends React.Component<Props, State> {
     this.setState(state, this.translate);
   }
 
-  @autobind()
-  onLangChange(langFrom, langTo) {
+  onLangChange = (langFrom: string, langTo: string) => {
     var state = Object.assign({}, this.state);
     if (langFrom) state.langFrom = langFrom;
     if (langTo) state.langTo = langTo;
     this.setState(state, this.translate);
   }
 
-  @autobind()
-  onSwapLang(langFrom, langTo) {
+  onSwapLang = (langFrom: string, langTo: string) => {
     this.setState({ langFrom, langTo }, this.translate);
   }
 
@@ -236,7 +221,7 @@ export class InputTranslation extends React.Component<Props, State> {
         {!this.isFavorite ?
           <MaterialIcon
             name="favorite_border" title={__i18n("favorites_add_item")}
-            onClick={this.addFavorites}/>
+            onClick={() => this.addFavorites()}/>
           : null}
       </div>
     )
@@ -302,7 +287,10 @@ export class InputTranslation extends React.Component<Props, State> {
       <div className={cssNames("translation-results", { rtl: isRTL })}>
         {translation ?
           <div className="translation flex gaps">
-            <MaterialIcon name="play_circle_outline" title="Listen" onClick={this.playText}/>
+            <MaterialIcon
+              name="play_circle_outline" title="Listen"
+              onClick={() => this.playText()}
+            />
             <div className="value box grow">
               <span>{translation}</span>
               {transcription ? <i className="transcription">[{transcription}]</i> : null}

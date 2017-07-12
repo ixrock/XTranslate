@@ -11,20 +11,23 @@ interface Props extends React.HTMLProps<any> {
 
 export class SvgIcon extends React.Component<Props, {}> {
   render() {
-    var { source, small, big, altText, ...props } = this.props;
-    props.className = cssNames("SvgIcon", this.props.className, {
+    var { className, source, small, big, altText, ...props } = this.props;
+    var iconProps = Object.assign({}, props) as Partial<Props>;
+
+    iconProps.className = cssNames("SvgIcon", className, {
       button: this.props.href || this.props.onClick,
       small: small,
       big: big
     });
+
     if (source.match(/\.svg$/i)) {
       // attach icon as plain image tag
-      props.children = <img src={source} alt={altText}/>
+      iconProps.children = <img src={source} alt={altText}/>
     }
     else {
       // attach as inline-svg, the source must load raw xml text from svg:
       // e.g <SvgIcon source={require("!!raw-loader!./my-file.svg")}/>
-      props.dangerouslySetInnerHTML = { __html: source };
+      iconProps.dangerouslySetInnerHTML = { __html: source };
     }
     return this.props.href
         ? <a {...props}/>

@@ -1,7 +1,6 @@
 import "./user-history.scss";
 
 import * as React from "react";
-import { autobind, debounce } from "core-decorators";
 import { connect } from "../../store/connect";
 import { __i18n } from "../../extension/i18n";
 import { cssNames, download, prevDefault } from "../../utils";
@@ -10,6 +9,7 @@ import { ISettingsState, settingsActions } from "../settings";
 import { clearHistory, getHistory } from "./user-history.actions";
 import { IHistoryItem } from "./user-history.types";
 import { vendors } from "../../vendors/index";
+import debounce = require("lodash/debounce");
 import groupBy = require("lodash/groupBy");
 
 interface Props {
@@ -82,13 +82,10 @@ export class UserHistory extends React.Component<Props, State> {
     this.setState(() => this.loadHistory(true));
   }
 
-  @autobind()
-  @debounce(500)
-  reloadHistoryOnSearch() {
+  reloadHistoryOnSearch = debounce(() => {
     this.reloadHistory();
-  }
+  }, 500)
 
-  @autobind()
   search(text: string) {
     this.setState({ searchText: text }, this.reloadHistoryOnSearch);
   }

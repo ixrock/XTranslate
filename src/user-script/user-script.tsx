@@ -45,7 +45,7 @@ class App extends React.Component<{}, State> {
   private icon: HTMLElement;
   private iconShown: boolean;
   private selection = window.getSelection();
-  private translation: Promise<Translation>;
+  private translation: Promise<any>;
   private popup: Popup;
 
   get settings() {

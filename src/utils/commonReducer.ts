@@ -14,6 +14,7 @@ export function commonReducer<S>(initState: S, modifyStore: (state: S, action: A
     state = cloneDeep(state || {});
     Object.defineProperty(action, "waiting", {
       enumerable: false,
+      writable: true,
       value: !action.data && !action.error
     });
     var result = modifyStore(state, action);

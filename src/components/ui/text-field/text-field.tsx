@@ -6,6 +6,7 @@ import { cssNames } from "../../../utils";
 import { MaterialIcon } from "../icons/material-icon";
 import { Props, State, ValidatorError, ValidatorObject } from "./text-field.types";
 import { Validators } from "./text-field.validators";
+import InputMask = require("react-input-mask");
 
 import isFunction = require("lodash/isFunction");
 import isString = require("lodash/isString");
@@ -20,8 +21,10 @@ export class TextField extends React.Component<Props, State> {
   static IS_DIRTY = 'dirty';
   static IS_INVALID = 'invalid';
   static IS_EMPTY = 'empty';
+  static VALIDATORS = Validators;
 
   public state: State = {
+    initValue: this.getValue(),
     dirty: !!(this.props.dirty || this.getValue()),
     valid: true,
     errors: [],
@@ -38,12 +41,6 @@ export class TextField extends React.Component<Props, State> {
       newValue = +newValue == newValue ? +newValue : "";
     }
     if (value !== newValue) {
-      if (defaultValue != null && newValue != null && !this.isFocused) {
-        this.input.value = newValue.toString();
-      }
-      if (!this.isFocused) this.setDirty();
-      else if (!this.dirty) this.setState({ dirtyOnBlur: true });
-
       var preventUpdate = (
         (maxLength > 0 && newValue.toString().length > maxLength) ||
         isNumber && (
@@ -52,9 +49,12 @@ export class TextField extends React.Component<Props, State> {
         )
       );
       if (!preventUpdate) {
+        if (defaultValue != null && newValue != null && !this.isFocused) {
+          this.input.value = newValue.toString();
+        }
         if (onChange && !silent) onChange(newValue);
         if (!this.isFocused) this.validate(newValue);
-        else setTimeout(() => this.validate(newValue));
+        else setTimeout(() => this.validate(newValue)); // prevent jumping cursor position
       }
     }
   }
@@ -85,7 +85,6 @@ export class TextField extends React.Component<Props, State> {
     return document.activeElement === this.input
   }
 
-  @autobind()
   focus() {
     if (!this.input) return;
     this.input.focus();
@@ -161,6 +160,9 @@ export class TextField extends React.Component<Props, State> {
       }
     }
 
+    // reset last used async validator for correct work isLast() below when promise will get result later
+    this.asyncValidator = null;
+
     // don't handle errors from async validators if it's already invalid
     if (asyncValidators.length && valid) {
       valid = false;
@@ -180,12 +182,14 @@ export class TextField extends React.Component<Props, State> {
   }
 
   setValidity(valid = true, errors = this.state.errors) {
-    this.setState({ valid, errors }, () => {
+    var dirtyOnBlur = this.dirty ? false : this.state.initValue !== this.getValue();
+    this.setState({ valid, errors, dirtyOnBlur: dirtyOnBlur }, () => {
       this.input.setCustomValidity(valid ? "" : " ");
     });
   }
 
   setDirty(dirty = true) {
+    if (this.dirty === dirty) return;
     this.setState({ dirty, dirtyOnBlur: false });
   }
 
@@ -232,6 +236,7 @@ export class TextField extends React.Component<Props, State> {
   @autobind()
   saveInputRef(elem) {
     if (!elem) return;
+    if (this.props.mask) elem = elem.input; // react-input-mask
     this.input = elem;
   }
 
@@ -239,16 +244,19 @@ export class TextField extends React.Component<Props, State> {
     var {
       className, iconLeft, iconRight, multiLine, children,
       dirty, error, validators, showErrors, compactError, showValidationIcon,
+      mask, maskChar, alwaysShowMask,
       ...props
     } = this.props;
 
-    var { value, defaultValue, maxLength, rows, type } = this.props;
+    var { value, defaultValue, maxLength, rows, type, autoFocus } = this.props;
     var { errors, dirty, valid } = this.state;
 
     if (isString(iconLeft)) iconLeft = <MaterialIcon name={iconLeft}/>
     if (isString(iconRight)) iconRight = <MaterialIcon name={iconRight}/>
 
+    var currentValue = this.getValue();
     var inputProps = Object.assign(props, {
+      value: currentValue == null ? "" : value,
       className: "input box grow",
       onBlur: this.onBlur,
       onFocus: this.onFocus,
@@ -256,12 +264,6 @@ export class TextField extends React.Component<Props, State> {
       rows: multiLine ? (rows || 1) : null,
       ref: this.saveInputRef,
     });
-
-    // define input as controlled, if initial value not provided, but onChange handler exists
-    var currentValue = this.getValue();
-    if (currentValue == null && this.props.onChange) {
-      inputProps.value = "";
-    }
 
     var componentClass = cssNames('TextField', className, {
       readOnly: props.readOnly,
@@ -286,8 +288,12 @@ export class TextField extends React.Component<Props, State> {
       );
     }
 
-    // get input element
-    if (multiLine) var input = <textarea {...inputProps}/>;
+    // get proper input element
+    if (mask) {
+      var maskProps: Partial<Props> = { mask, maskChar, alwaysShowMask };
+      var input = <InputMask {...maskProps} {...inputProps}/>;
+    }
+    else if (multiLine) input = <textarea {...inputProps}/>;
     else input = <input {...inputProps}/>;
 
     return (

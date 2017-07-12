@@ -1,12 +1,13 @@
 import "./support.scss";
+
 import * as React from "react";
-import { autobind, debounce } from "core-decorators";
 import { __i18n, broadcastMessage, MessageType, openOptionsPage } from "../../extension";
 import { buyApp, checkLicense, checkPrice } from "../../extension/license";
 import { noop } from "../../utils";
 import { connect } from "../../store/connect";
 import { Button, Dialog } from "../ui";
 import { ISettingsState, settingsActions } from "../settings";
+import debounce = require("lodash/debounce");
 
 interface Props {
   settings?: ISettingsState
@@ -40,14 +41,12 @@ export class Support extends React.Component<Props, State> {
     }
   }
 
-  @autobind()
-  @debounce(100)
-  broadcastLicense(hasLicense) {
+  broadcastLicense = debounce((hasLicense) => {
     broadcastMessage({
       type: MessageType.LICENSE_STATE,
       payload: hasLicense
     });
-  }
+  }, 100)
 
   async checkLicense(allowAds = this.props.settings.allowAds) {
     var state = Object.assign({}, this.state);
@@ -69,13 +68,11 @@ export class Support extends React.Component<Props, State> {
     return state.hasLicense;
   }
 
-  @autobind()
   allowAds() {
     settingsActions.sync({ allowAds: true });
     this.dialog.close();
   }
 
-  @autobind()
   buyApp() {
     var browserAction = location.hash === "#popup";
     if (!browserAction) {
@@ -101,8 +98,8 @@ export class Support extends React.Component<Props, State> {
           <p>{__i18n("trial_option_buy_app", [this.state.price]).join("")}</p>
         </div>
         <div className="flex auto gaps">
-          <Button label={__i18n("trial_button_allow_ads")} onClick={this.allowAds} accent autoFocus/>
-          <Button label={__i18n("trial_button_buy_app")} onClick={this.buyApp} primary/>
+          <Button label={__i18n("trial_button_allow_ads")} onClick={() => this.allowAds()} accent autoFocus/>
+          <Button label={__i18n("trial_button_buy_app")} onClick={() => this.buyApp()} primary/>
         </div>
       </Dialog>
     );

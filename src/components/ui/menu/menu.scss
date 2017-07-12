@@ -1,7 +1,6 @@
 
 .Menu {
   --menu-bgc: white;
-  --menu-item-bgc-hover: gray;
 
   position: absolute;
   z-index: 10000;
@@ -39,9 +38,9 @@
 
   &:not(.disabled) {
     cursor: pointer;
+    transition: 200ms box-shadow;
     &:hover {
-      color: white;
-      background-color: var(--menu-item-bgc-hover);
+      box-shadow: 0 0 0 4px rgba(0, 0, 0, .15) inset;
     }
   }
 

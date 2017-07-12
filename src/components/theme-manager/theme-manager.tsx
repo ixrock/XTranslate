@@ -1,6 +1,6 @@
 import "./theme-manager.scss";
+
 import * as React from "react";
-import { autobind, debounce } from "core-decorators";
 import { __i18n } from "../../extension/i18n";
 import { connect } from "../../store/connect";
 import { Button, Checkbox, ColorPicker, Option, Select, Slider, TextField } from "../ui";
@@ -9,6 +9,7 @@ import { defaultTheme, Font, fontsList, IThemeManagerState, themeManagerActions 
 import { Translation } from "../../vendors";
 import { Popup } from "../popup";
 import isEqual = require("lodash/isEqual");
+import debounce = require("lodash/debounce");
 
 interface Props {
   theme?: IThemeManagerState
@@ -43,12 +44,10 @@ export class ThemeManager extends React.Component<Props, {}> {
     this.sync();
   }
 
-  @debounce(1000)
-  sync() {
+  sync = debounce(() => {
     themeManagerActions.sync(this.state);
-  }
+  }, 1000);
 
-  @autobind()
   reset() {
     this.setState(defaultTheme);
     themeManagerActions.reset();
@@ -223,7 +222,7 @@ export class ThemeManager extends React.Component<Props, {}> {
         <div className="reset flex center pt2">
           <Button label={__i18n("reset_to_default_button_text")} accent
                   disabled={isDefault}
-                  onClick={this.reset}/>
+                  onClick={() => this.reset()}/>
         </div>
       </div>
     );

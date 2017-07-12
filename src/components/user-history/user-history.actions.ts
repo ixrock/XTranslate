@@ -2,7 +2,6 @@ import { storage } from "../../store/storage";
 import { Translation } from "../../vendors/vendor";
 import { IHistoryItem, IHistoryStorageItem, IHistoryStorageItemOld } from "./user-history.types";
 import { ISettingsState } from "../settings/settings.types";
-
 import MD5 = require("crypto-js/md5");
 import isEqual = require("lodash/isEqual");
 
@@ -72,13 +71,16 @@ function fromHistoryItem(item: IHistoryStorageItem | IHistoryStorageItemOld): IH
 }
 
 export async function saveHistory(translation: Translation, settings: ISettingsState) {
+  var { vendor, langFrom, langTo, langDetected, originalText } = translation;
   var { historySaveWordsOnly, historyAvoidDuplicates } = settings;
   if (historySaveWordsOnly && !translation.dictionary.length) {
     return;
   }
+  if (langFrom === "auto") {
+    translation.langFrom = langFrom = langDetected;
+  }
   return getHistoryRaw().then(history => {
     if (historyAvoidDuplicates) {
-      var { vendor, langFrom, langTo, originalText } = translation;
       var comparableItem = [vendor, langFrom, langTo, originalText];
       history = history.filter(item => {
         var [time, vendor, fromLang, toLang, text] = item;

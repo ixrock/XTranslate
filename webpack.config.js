@@ -25,7 +25,7 @@ module.exports = function (env = {dev: true, prod: false}) {
       filename: '[name].js'
     },
 
-    devtool: env.dev ? 'cheap-module-source-map' : '',
+    devtool: env.dev ? "cheap-module-source-map" : "",
 
     resolve: {
       extensions: ['.ts', '.tsx', '.js', '.json'],
@@ -39,13 +39,24 @@ module.exports = function (env = {dev: true, prod: false}) {
         },
         {
           test: /\.s?css$/,
-          loader: ExtractTextPlugin.extract({
-            fallbackLoader: 'style-loader',
-            loader: [
-              "css-loader",
+          use: ExtractTextPlugin.extract({
+            fallback: {
+              loader: "style-loader",
+              options: {
+                convertToAbsoluteUrls: true
+              }
+            },
+            use: [
+              {
+                loader: "css-loader",
+                options: {
+                  sourceMap: true
+                }
+              },
               {
                 loader: "sass-loader",
-                query: {
+                options: {
+                  sourceMap: true,
                   data: '@import "' + path.resolve(componentsDir, "vars.scss") + '";',
                   includePaths: [srcPath]
                 }
