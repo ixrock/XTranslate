@@ -6,8 +6,7 @@ import { cssNames } from "../../../utils";
 import { MaterialIcon } from "../icons/material-icon";
 import { Props, State, ValidatorError, ValidatorObject } from "./text-field.types";
 import { Validators } from "./text-field.validators";
-import InputMask = require("react-input-mask");
-
+import InputMask from "react-input-mask";
 import isFunction = require("lodash/isFunction");
 import isString = require("lodash/isString");
 
