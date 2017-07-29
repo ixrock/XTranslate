@@ -121,7 +121,7 @@ const RTL_LANGUAGES = [
   "ur", // urdu
 ];
 
-export function parseJson(res: Response): any {
+export function parseJson(res: Response): Promise<any> {
   var { status, statusText, url } = res;
   var error: TranslationError = { status, statusText, url };
   return res.text().then(text => {
@@ -155,6 +155,7 @@ export interface Translation {
   langDetected?: string
   translation: string
   transcription?: string
+  spellCorrection?: string
   dictionary: {
     wordType: string
     transcription?: string

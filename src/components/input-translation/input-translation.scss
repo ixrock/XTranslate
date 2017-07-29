@@ -60,6 +60,7 @@
         white-space: pre-line;
       }
       .transcription {
+        margin-left: $margin / 2;
         opacity: .75;
       }
     }
@@ -68,6 +69,14 @@
       white-space: nowrap;
       line-height: 2;
       opacity: .5;
+    }
+    .link {
+      border-bottom: 1px dotted;
+      cursor: pointer;
+      opacity: .75;
+      &:hover {
+        opacity: 1;
+      }
     }
     .dictionary {
       margin-top: $margin;
@@ -82,14 +91,6 @@
         padding: 0 $padding * 2;
       }
       .word-meanings {
-      }
-      .link {
-        border-bottom: 1px dotted;
-        cursor: pointer;
-        opacity: .75;
-        &:hover {
-          opacity: 1;
-        }
       }
       .examples {
         cursor: help;

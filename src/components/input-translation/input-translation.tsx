@@ -278,7 +278,7 @@ export class InputTranslation extends React.Component<Props, State> {
   renderResult() {
     var result = this.state.translation;
     if (!result) return null;
-    var { langFrom, langTo, langDetected, translation, transcription, dictionary } = result;
+    var { langFrom, langTo, langDetected, translation, transcription, dictionary, spellCorrection } = result;
     var langPair = [langDetected || langFrom, langTo].join(' → ').toUpperCase();
     var langPairFull = [this.vendor.langFrom[langDetected || langFrom], this.vendor.langTo[langTo]].join(' → ');
     var title = __i18n("translated_with", [this.vendor.title, langPairFull]).join("");
@@ -298,6 +298,15 @@ export class InputTranslation extends React.Component<Props, State> {
             <span className="lang" title={title}>{langPair}</span>
           </div>
           : null}
+        {spellCorrection ? (
+          <div className="spell-correction">
+            {__i18n("spell_correction", React.Children.toArray([
+              <b className="link" onClick={() => this.translateWord(spellCorrection)}>
+                {spellCorrection}
+              </b>
+            ]))}
+          </div>
+        ) : null}
         <table className="dictionary">
           <tbody>
           {dictionary.map((dict, i) => {

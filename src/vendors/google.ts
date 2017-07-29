@@ -25,21 +25,37 @@ class Google extends Vendor {
     }
 
     var url = this.url + '/translate_a/single?' +
-      encodeQuery('client=gtx&dt=t&dt=bd&dj=1&source=input', {
+      encodeQuery('client=gtx&dj=1&source=input', {
         q: !useHttpPost ? text : null,
         sl: langFrom,
         tl: langTo,
-        hl: langTo, // word type header for dictionary
+        hl: langTo, // header for dictionary (part of speech)
+        dt: [
+          "t", // translation
+          "bd", // dictionary
+          "rm", // translit
+          "qca", // spelling correction
+          // "ss", // synsets
+          // "rw", // related words
+          // "md", // definitions
+          // "at", // alternative translations
+          // "ex", // examples
+        ],
       });
 
     return fetch(url, reqParams).then(parseJson).then((res: GoogleTranslation) => {
+      var { src, sentences, dict, spell } = res;
       var translation: Translation = {
-        langDetected: res.src,
-        translation: res.sentences.map(sentence => sentence.trans).join(''),
+        langDetected: src,
+        translation: sentences[0].trans,
+        transcription: sentences[1].src_translit,
         dictionary: []
       };
-      if (res.dict) {
-        translation.dictionary = res.dict.map(dict => {
+      if (spell) {
+        translation.spellCorrection = spell.spell_res;
+      }
+      if (dict) {
+        translation.dictionary = dict.map(dict => {
           return {
             wordType: dict.pos,
             meanings: dict.entry.map(entry => {
@@ -68,10 +84,16 @@ class Google extends Vendor {
 
 interface GoogleTranslation {
   src: string // lang detected
-  sentences: {
-    orig: string // text original
-    trans: string // text translated
-  }[]
+  sentences: [
+    {
+      orig: string // issue (EN-RU)
+      trans: string // вопрос
+    },
+    {
+      translit: string // "vopros"
+      src_translit: string // ˈiSHo͞o
+    }
+    ]
   dict?: {
     pos: string // word type
     base_form: string // in source lang
@@ -82,6 +104,46 @@ interface GoogleTranslation {
       reverse_translation: string[] // in source lang
     }[]
   }[]
+  spell?: {
+    spell_res: string
+    spell_html_res: string
+  }
+  alternative_translations?: {
+    src_phrase: string
+    raw_src_segment: string
+    start_pos: number
+    end_pos: number
+    alternative: {
+      word_postproc: string
+      score: number
+    }[]
+  }[]
+  definitions?: {
+    pos: string
+    base_form: string
+    entry: {
+      gloss: string
+      example: string
+      definition_id: string
+    }[]
+  }[]
+  synsets?: {
+    pos: string
+    base_form: string
+    entry: {
+      synonym: string[]
+      definition_id: string
+    }[]
+  }[]
+  examples?: {
+    example: {
+      text: string
+      definition_id: string
+    }[]
+  }
+  related_words?: {
+    word: string[]
+  }
 }
 
 const params = require('./google.json');

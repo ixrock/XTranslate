@@ -63,6 +63,7 @@
   "favorites_remove_item"            : {"message": "Remove from favorites"},
   "text_field_placeholder"           : {"message": "Start typing to get translation"},
   "translated_with"                  : {"message": "Translated with %translator% (%lang%)"},
+  "spell_correction"                 : {"message": "Maybe you mean %spell_correction%?"},
   "___________history_______________": {"message": "----------------------------------------------"},
   "history_enabled_flag"             : {"message": "Enabled"},
   "history_settings_save_words_only" : {"message": "Save only dictionary words"},
