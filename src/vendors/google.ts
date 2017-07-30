@@ -47,8 +47,8 @@ class Google extends Vendor {
       var { src, sentences, dict, spell } = res;
       var translation: Translation = {
         langDetected: src,
-        translation: sentences[0].trans,
-        transcription: sentences[1].src_translit,
+        translation: sentences.map(sentence => sentence.trans).join(''),
+        transcription: sentences[sentences.length - 1].src_translit,
         dictionary: []
       };
       if (spell) {
@@ -84,16 +84,13 @@ class Google extends Vendor {
 
 interface GoogleTranslation {
   src: string // lang detected
-  sentences: [
-    {
-      orig: string // issue (EN-RU)
-      trans: string // вопрос
-    },
-    {
-      translit: string // "vopros"
-      src_translit: string // ˈiSHo͞o
-    }
-    ]
+  sentences: {
+    orig: string // issue (EN-RU)
+    trans: string // вопрос
+  }[] & [{
+    translit: string // "vopros"
+    src_translit?: string // ˈiSHo͞o
+  }]
   dict?: {
     pos: string // word type
     base_form: string // in source lang
