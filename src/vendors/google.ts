@@ -48,13 +48,13 @@ class Google extends Vendor {
       var translation: Translation = {
         langDetected: src,
         translation: sentences.map(sentence => sentence.trans).join(''),
-        transcription: sentences[sentences.length - 1].src_translit,
         dictionary: []
       };
       if (spell) {
         translation.spellCorrection = spell.spell_res;
       }
       if (dict) {
+        translation.transcription = sentences[sentences.length - 1].src_translit;
         translation.dictionary = dict.map(dict => {
           return {
             wordType: dict.pos,

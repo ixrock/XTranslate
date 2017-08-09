@@ -64,12 +64,9 @@ class App extends React.Component<{}, State> {
     return this.selection.getRangeAt(0);
   }
 
-  get popupHost() {
-    return appContainer.querySelector('.popup-content') as HTMLElement;
-  }
-
-  get isFocused() {
-    return document.activeElement === this.popupHost;
+  get isHidden() {
+    var { translation, error } = this.state;
+    return !translation && !error;
   }
 
   componentWillMount() {
@@ -211,30 +208,25 @@ class App extends React.Component<{}, State> {
   }
 
   @autobind()
-  onKeydownWithinPopup(e: React.KeyboardEvent<any>) {
-    var canRotateVendor = this.isFocused && !e.shiftKey;
-    switch (e.keyCode) {
-      case 27: // Escape
-        this.hidePopup();
-        e.stopPropagation();
-        break;
-      case 37: // ArrowLeft
-        if (canRotateVendor) {
+  onKeyDown(e: KeyboardEvent) {
+    // hiding popup, getting prev-next vendor translation
+    if (!this.isHidden) {
+      switch (e.keyCode) {
+        case 27: // Escape
+          this.hidePopup();
+          e.stopPropagation();
+          break;
+        case 37: // ArrowLeft
           this.translateWithNextVendor(true);
           e.preventDefault();
-        }
-        break;
-      case 39: // ArrowRight
-        if (canRotateVendor) {
+          break;
+        case 39: // ArrowRight
           this.translateWithNextVendor();
           e.preventDefault();
-        }
-        break;
+          break;
+      }
     }
-  }
-
-  @autobind()
-  onKeyDown(e: KeyboardEvent) {
+    // handle text translation by hotkey
     if (!this.settings.showPopupOnHotkey) return;
     var hotkey = getHotkey(e);
     if (isEqual(this.settings.hotkey, hotkey)) {
@@ -315,7 +307,8 @@ class App extends React.Component<{}, State> {
   }
 
   isOutsideOfPopup(elem) {
-    return !this.popupHost.contains(elem);
+    var popupHost = appContainer.querySelector('.popup-content');
+    return !popupHost.contains(elem);
   }
 
   translate(text = this.text) {
@@ -381,7 +374,7 @@ class App extends React.Component<{}, State> {
     if (autoPlayText) this.popup.playText();
     if (historyEnabled) saveHistory(this.state.translation, this.settings);
     this.refinePosition();
-    this.popup.focus();
+    // this.popup.focus(); // fix: copy-paste not working when shadow-dom element or its descendants is focused
   }
 
   getRect(range?: Range) {
@@ -469,17 +462,12 @@ class App extends React.Component<{}, State> {
     postMessage({ type: MessageType.HIDE_POPUP_FROM_FRAME });
   }
 
-  get isHidden() {
-    var { translation, error } = this.state;
-    return !translation && !error;
-  }
-
   render() {
     var { translation, error, position, enabled } = this.state;
     if (!this.state.appState) return null;
     return (
       <ReactShadow include={[this.style]}>
-        <div className="popup-content" onKeyDown={this.onKeydownWithinPopup}>
+        <div className="popup-content">
           <Popup className={cssNames({ pdf: isPdf })}
                  translation={translation} error={error} position={position}
                  theme={this.theme} settings={this.settings}
