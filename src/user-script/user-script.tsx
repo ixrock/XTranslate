@@ -20,7 +20,6 @@ const isFrameWindow = window !== topWindow;
 const isPdf = document['contentType'] === "application/pdf";
 
 interface State {
-  enabled?: boolean
   appState?: AppState
   translation?: Translation
   error?: TranslationError
@@ -97,9 +96,6 @@ class App extends React.Component<{}, State> {
           this.bindEvents();
         }
       });
-    }
-    if (type === MessageType.LICENSE_STATE) {
-      this.setState({ enabled: message.payload });
     }
   }
 
@@ -463,7 +459,7 @@ class App extends React.Component<{}, State> {
   }
 
   render() {
-    var { translation, error, position, enabled } = this.state;
+    var { translation, error, position } = this.state;
     if (!this.state.appState) return null;
     return (
       <ReactShadow include={[this.style]}>
@@ -471,7 +467,7 @@ class App extends React.Component<{}, State> {
           <Popup className={cssNames({ pdf: isPdf })}
                  translation={translation} error={error} position={position}
                  theme={this.theme} settings={this.settings}
-                 disabled={!enabled} next={this.translateWithNextVendor}
+                 next={this.translateWithNextVendor}
                  ref={e => this.popup = e}/>
         </div>
       </ReactShadow>

@@ -3,7 +3,6 @@ import * as React from "react";
 import { autobind } from "core-decorators";
 import { vendors, vendorsList } from "../../vendors";
 import { __i18n, tabs } from "../../extension";
-import { trialIsOver } from "../../extension/license";
 import { connect } from "../../store/connect";
 import { getHotkey, parseHotkey, prevDefault } from "../../utils";
 import { Checkbox, MaterialIcon, Radio, RadioGroup, TextField } from "../ui";
@@ -129,17 +128,6 @@ export class Settings extends React.Component<Props, {}> {
             {__i18n("quick_access_configure_link")}
           </a>
         </div>
-
-        {trialIsOver() ? (
-          <div className="support">
-            <p className="sub-title pv2">{__i18n("sub_header_support_developers")}</p>
-            <Checkbox
-              label={__i18n("support_developers_checkbox")}
-              checked={settings.allowAds}
-              onChange={v => this.save({ allowAds: v })}
-            />
-          </div>
-        ) : null}
       </div>
     );
   }

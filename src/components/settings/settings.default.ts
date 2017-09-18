@@ -11,7 +11,6 @@ export const defaultSettings: ISettingsState = {
   showPopupOnDoubleClick: true,
   showPopupOnHotkey: true,
   rememberLastText: false,
-  allowAds: false,
   vendor: "google",
   langFrom: "auto",
   langTo: navigator.language.split('-')[0],

@@ -6,13 +6,12 @@ import { autobind } from 'core-decorators';
 import { getStore } from '../../store'
 import { connect } from "../../store/connect";
 import { cssNames } from "../../utils/cssNames";
-import { Spinner, Tabs, Tab, MaterialIcon } from '../ui'
-import { getManifest, __i18n, getOptionsPageUrl } from "../../extension";
-import { Settings, ISettingsState, settingsActions } from '../settings'
-import { ThemeManager, loadFonts } from '../theme-manager'
+import { MaterialIcon, Spinner, Tab, Tabs } from '../ui'
+import { __i18n, getManifest, getOptionsPageUrl } from "../../extension";
+import { ISettingsState, Settings, settingsActions } from '../settings'
+import { loadFonts, ThemeManager } from '../theme-manager'
 import { InputTranslation } from '../input-translation'
 import { UserHistory } from '../user-history'
-import { Support } from './support'
 import { Footer } from './footer'
 
 enum TabId {
@@ -69,36 +68,35 @@ export class App extends React.Component<Props, {}> {
     var activeTab = TabId[location.hash.replace("#", "")] || 0;
     var useDarkTheme = this.props.settings.useDarkTheme;
     return (
-        <div className="App">
-          <h4 className="page-title flex">
-            <span className="box grow">{this.manifest.name} <sup>{this.manifest.version}</sup></span>
-            <img src={require('../icons/moon.svg')}
-                 className={cssNames("dark-theme-icon", {active: useDarkTheme})}
-                 title={__i18n("use_dark_theme")}
-                 onClick={this.toggleDarkTheme}/>
-            <MaterialIcon
-                name="open_in_new"
-                title={__i18n("open_in_window")}
-                onClick={this.openInWindow}/>
-          </h4>
-          <Tabs activeIndex={activeTab}>
-            <Tab href={"#"+ TabId[TabId.settings]} title={__i18n("tab_settings")}>
-              <Settings/>
-            </Tab>
-            <Tab href={"#"+ TabId[TabId.theme]} title={__i18n("tab_theme")}>
-              <ThemeManager/>
-            </Tab>
-            <Tab href={"#"+ TabId[TabId.popup]} title={__i18n("tab_text_input")}>
-              <InputTranslation/>
-            </Tab>
-            <Tab href={"#"+ TabId[TabId.history]} title={__i18n("tab_history")}>
-              <UserHistory/>
-            </Tab>
-          </Tabs>
-          <hr className="mb1"/>
-          <Support/>
-          <Footer/>
-        </div>
+      <div className="App">
+        <h4 className="page-title flex">
+          <span className="box grow">{this.manifest.name} <sup>{this.manifest.version}</sup></span>
+          <img src={require('../icons/moon.svg')}
+               className={cssNames("dark-theme-icon", { active: useDarkTheme })}
+               title={__i18n("use_dark_theme")}
+               onClick={this.toggleDarkTheme}/>
+          <MaterialIcon
+            name="open_in_new"
+            title={__i18n("open_in_window")}
+            onClick={this.openInWindow}/>
+        </h4>
+        <Tabs activeIndex={activeTab}>
+          <Tab href={"#" + TabId[TabId.settings]} title={__i18n("tab_settings")}>
+            <Settings/>
+          </Tab>
+          <Tab href={"#" + TabId[TabId.theme]} title={__i18n("tab_theme")}>
+            <ThemeManager/>
+          </Tab>
+          <Tab href={"#" + TabId[TabId.popup]} title={__i18n("tab_text_input")}>
+            <InputTranslation/>
+          </Tab>
+          <Tab href={"#" + TabId[TabId.history]} title={__i18n("tab_history")}>
+            <UserHistory/>
+          </Tab>
+        </Tabs>
+        <hr className="mb1"/>
+        <Footer/>
+      </div>
     );
   }
 }
@@ -109,8 +107,8 @@ loadFonts(['Lato', 'Roboto']);
 // show loading indicator while getting app state from the storage
 var loading: Spinner;
 render(
-    <Spinner singleColor={false} ref={e => loading = e}/>,
-    document.getElementById('loading')
+  <Spinner singleColor={false} ref={e => loading = e}/>,
+  document.getElementById('loading')
 );
 
 // init app

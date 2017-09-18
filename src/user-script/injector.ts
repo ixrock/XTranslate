@@ -16,5 +16,4 @@ if (env.isDevelopment) {
 // attach full source code in build
 if (env.isProduction) {
   require('./user-script');
-  require('./ads');
 }

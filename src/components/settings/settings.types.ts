@@ -11,7 +11,6 @@ export interface ISettingsState {
   showPopupOnDoubleClick?: boolean
   showPopupOnHotkey?: boolean
   rememberLastText?: boolean
-  allowAds?: boolean
   vendor?: string
   langFrom?: string
   langTo?: string

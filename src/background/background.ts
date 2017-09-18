@@ -1,9 +1,8 @@
 // Background page
 
-import { onConnect, onMessage, MessageType, openOptionsPage, PlayTextToSpeechPayload } from '../extension'
-import { checkLicense } from "../extension/license";
-import { getStore, AppState, storage } from '../store'
-import { updateContextMenu, bindContextMenu } from './contextMenu'
+import { MessageType, onConnect, onMessage, openOptionsPage, PlayTextToSpeechPayload } from '../extension'
+import { AppState, getStore, storage } from '../store'
+import { bindContextMenu, updateContextMenu } from './contextMenu'
 import { vendors } from "../vendors";
 import isEqual = require("lodash/isEqual");
 
@@ -17,21 +16,12 @@ var storeInit = getStore().then(store => {
 // add context menu event handler
 bindContextMenu(() => appState);
 
-// send current app and license state to content page on connect
+// send current app state to content page on connect
 onConnect(port => {
   port.postMessage({
     type: MessageType.APP_STATE,
     payload: appState
   });
-  var hasLicense = function (hasLicense: boolean) {
-    port.postMessage({
-      type: MessageType.LICENSE_STATE,
-      payload: hasLicense
-    });
-  };
-  checkLicense(appState.settings.allowAds)
-      .then(() => hasLicense(true))
-      .catch(() => hasLicense(false));
 });
 
 // update app state from options page and handle play/stop tts from popup

@@ -4,7 +4,7 @@ import * as React from "react";
 import { autobind } from "core-decorators";
 import { __i18n } from "../../extension/i18n";
 import { MessageType } from "../../extension/message";
-import { getOptionsPageUrl, sendMessage } from "../../extension/runtime";
+import { sendMessage } from "../../extension/runtime";
 import { cssNames } from "../../utils/cssNames";
 import { cssColor } from "../ui/color-picker/cssColor";
 import { MaterialIcon } from "../ui/icons/material-icon";
@@ -20,8 +20,7 @@ interface Props extends React.HTMLProps<any> {
   translation?: Translation
   error?: TranslationError
   position?: React.CSSProperties
-  disabled?: boolean
-  next?(): void;
+  next?: () => void;
 }
 
 interface State {
@@ -184,23 +183,8 @@ export class Popup extends React.Component<Props, State> {
     )
   }
 
-  renderTrial() {
-    var boxSizeStyle = this.state.boxSizeStyle;
-    return (
-      <div className="license-required flex align-center" style={boxSizeStyle}>
-        <MaterialIcon name="info_outline"/>
-        <div className="info">
-          <span>{__i18n("trial_is_over")}. </span>
-          <a href={getOptionsPageUrl("#settings")} target="_blank">
-            {__i18n("trial_popup_learn_more")}
-          </a>
-        </div>
-      </div>
-    )
-  }
-
   render() {
-    var { translation, error, position, disabled, className } = this.props;
+    var { translation, error, position, className } = this.props;
     var { cssThemeStyle } = this.state;
     var style = Object.assign({}, cssThemeStyle, position);
     var visible = translation || error;
@@ -208,8 +192,7 @@ export class Popup extends React.Component<Props, State> {
     return (
       <div className={popupClass} style={style} tabIndex={-1} ref={e => this.elem = e}>
         <div className="content">
-          {disabled && visible ? this.renderTrial() : null}
-          {!disabled ? (error ? this.renderError() : this.renderResult()) : null}
+          {error ? this.renderError() : this.renderResult()}
         </div>
       </div>
     );
