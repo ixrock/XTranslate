@@ -1,17 +1,16 @@
-import { applyMiddleware } from 'redux'
 import thunkMiddleware from 'redux-thunk'
-import omit = require('lodash/omit');
+import { Action } from "../utils/commonReducer";
 
 /**
  * Logs all actions after they are dispatched
  */
-const loggerMiddleware = store => next => action => {
+const loggerMiddleware = store => next => (action: Action) => {
   if (action.type && !action.promise && !action.silent) {
-    var type = action.type.toString();
+    var {type, ...actionParams} = action;
     var textStyle = 'font-weight: bold;';
     if (action.data) textStyle += 'background: green; color: white';
     if (action.error) textStyle += 'background: red; color: white';
-    console.log('%c' + type, textStyle, omit(action, 'type'));
+    console.log('%c' + type.toString(), textStyle, actionParams);
   }
   return next(action);
 };
@@ -28,35 +27,29 @@ const vanillaPromise = store => next => action => {
   return next(action);
 };
 
-interface PromisedAction {
-  type: string
-  promise: Promise<any>
-}
-
 /**
  * Dispatch actions with promises
  */
-const promisedMiddleware = store => next => (action: PromisedAction|any) => {
-  var promise = action.promise;
-  if (promise) {
-    var promisedAction = omit(action, ["promise"]);
-    store.dispatch(promisedAction);
+const promisedMiddleware = store => next => (action: Action) => {
+  if (action.promise) {
+    var { promise, ...actionParams } = action;
+    store.dispatch({ ...actionParams, waiting: true });
     return promise
-        .then(data => {
-          store.dispatch(Object.assign(promisedAction, { data }));
-          return data;
-        })
-        .catch(error => {
-          store.dispatch(Object.assign(promisedAction, { error }));
-          throw error;
-        });
+      .then(data => {
+        store.dispatch({ ...actionParams, data });
+        return data;
+      })
+      .catch(error => {
+        store.dispatch({ ...actionParams, error });
+        throw error;
+      });
   }
   return next(action);
 };
 
-export const middlewares = applyMiddleware(...[
+export const middlewares = [
   thunkMiddleware,
   loggerMiddleware,
   promisedMiddleware,
   vanillaPromise
-]);
+];

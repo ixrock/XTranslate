@@ -1,12 +1,17 @@
 // Helper utilities to work with browser's local-storage
 
 const keyPrefix = '';
-type StorageHelper<T> = (value?: T) => T;
 
-export function createStorage<T>(key: string, defaultValue?: T, initDefault?: boolean): StorageHelper<T> {
+interface StorageHelper<T> {
+  (value?: T): T;
+  key?: string // local-storage key
+  reset?: () => void; // reset to default value
+}
+
+export function createStorage<T>(key: string, defaultValue?: T, initDefault?: boolean) {
   key = keyPrefix + key;
 
-  const itemManager = function (value?: T) {
+  const itemManager: StorageHelper<T> = function (value?: T) {
     var clear = value === null;
     // setter
     if (arguments.length && !clear) {
@@ -27,11 +32,17 @@ export function createStorage<T>(key: string, defaultValue?: T, initDefault?: bo
       return defaultValue;
     }
   };
+
   // save default value if empty to the storage
   if (arguments.length === 3 && initDefault) {
     var value = localStorage.getItem(key);
     if (value == null) itemManager(defaultValue);
   }
+
+  // extra helpers related to specific storage item
+  itemManager.key = key;
+  itemManager.reset = () => itemManager(defaultValue);
+
   return itemManager;
 }
 
@@ -46,5 +57,3 @@ export function clearStorage(key?: string) {
       .forEach(key => localStorage.removeItem(key));
   }
 }
-
-export default createStorage;

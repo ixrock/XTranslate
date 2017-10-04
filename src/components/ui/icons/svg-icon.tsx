@@ -1,9 +1,17 @@
-import "./svg-icon.scss";
-import * as React from 'react';
-import { cssNames } from "../../../utils";
+import './svg-icon.scss'
+
+import * as React from "react";
+import { cssNames } from "../../../utils/cssNames";
+import get = require("lodash/get");
+
+// inline svg icons
+const svgNames = {
+  spinner: () => require('!!raw-loader!./spinner.svg'),
+};
 
 interface Props extends React.HTMLProps<any> {
-  source: string
+  name?: string
+  src?: string
   small?: boolean
   big?: boolean
   altText?: string
@@ -11,26 +19,25 @@ interface Props extends React.HTMLProps<any> {
 
 export class SvgIcon extends React.Component<Props, {}> {
   render() {
-    var { className, source, small, big, altText, ...props } = this.props;
-    var iconProps = Object.assign({}, props) as Partial<Props>;
+    var { className, name, src, small, big, altText, ...props } = this.props;
+    var iconProps = props as Partial<Props>;
+    var iconLoader: any = get(svgNames, name);
+    var svgSource: string = iconLoader ? iconLoader() : src;
 
     iconProps.className = cssNames("SvgIcon", className, {
       button: this.props.href || this.props.onClick,
-      small: small,
-      big: big
+      small, big
     });
-
-    if (source.match(/\.svg$/i)) {
-      // attach icon as plain image tag
-      iconProps.children = <img src={source} alt={altText}/>
+    // attach as normal image tag
+    if (svgSource.endsWith(".svg")) {
+      iconProps.children = <img src={svgSource} alt={altText}/>;
     }
+    // must be loaded as inline svg-text
     else {
-      // attach as inline-svg, the source must load raw xml text from svg:
-      // e.g <SvgIcon source={require("!!raw-loader!./my-file.svg")}/>
-      iconProps.dangerouslySetInnerHTML = { __html: source };
+      iconProps.dangerouslySetInnerHTML = { __html: svgSource };
     }
-    return this.props.href
-        ? <a {...props}/>
-        : <i {...props}/>;
+
+    if (props.href) return <a {...props}/>;
+    return <i {...props}/>;
   }
 }

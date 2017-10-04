@@ -21,9 +21,6 @@ export type Props = React.HTMLProps<any> & {
   validators?: Validator | Validator[]
   iconLeft?: string | React.ReactNode;
   iconRight?: string | React.ReactNode;
-  mask?: string
-  maskChar?: string
-  alwaysShowMask?: boolean
   onChange?: (value: string | number) => void;
 }
 
@@ -33,4 +30,5 @@ export interface State {
   dirty?: boolean
   dirtyOnBlur?: boolean
   errors?: ValidatorError[]
+  validating?: boolean
 }

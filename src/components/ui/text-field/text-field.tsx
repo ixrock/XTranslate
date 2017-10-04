@@ -6,11 +6,15 @@ import { cssNames } from "../../../utils";
 import { MaterialIcon } from "../icons/material-icon";
 import { Props, State, ValidatorError, ValidatorObject } from "./text-field.types";
 import { Validators } from "./text-field.validators";
-import InputMask from "react-input-mask";
+import { Tooltip } from "../tooltip";
+import { SvgIcon } from "../icons/svg-icon";
 import isFunction = require("lodash/isFunction");
 import isString = require("lodash/isString");
+import uniqueId = require("lodash/uniqueId");
 
 export class TextField extends React.Component<Props, State> {
+  public id = uniqueId("text_field_");
+
   public elem: HTMLElement;
   public input: HTMLInputElement | HTMLTextAreaElement;
   private validators: ValidatorObject[] = [];
@@ -89,6 +93,10 @@ export class TextField extends React.Component<Props, State> {
     this.input.focus();
   }
 
+  select() {
+    this.input.select()
+  }
+
   componentWillMount() {
     this.initValidators();
     this.validate();
@@ -163,7 +171,8 @@ export class TextField extends React.Component<Props, State> {
     this.asyncValidator = null;
 
     // don't handle errors from async validators if it's already invalid
-    if (asyncValidators.length && valid) {
+    var validating = asyncValidators.length && valid;
+    if (validating) {
       valid = false;
       var asyncValidator = this.asyncValidator = Promise.all(asyncValidators);
       var isLast = () => this.asyncValidator === asyncValidator; // handle last validation
@@ -177,12 +186,12 @@ export class TextField extends React.Component<Props, State> {
       });
     }
 
-    this.setValidity(valid, errors);
+    this.setValidity(valid, errors, validating);
   }
 
-  setValidity(valid = true, errors = this.state.errors) {
+  setValidity(valid = true, errors = this.state.errors, validating = false) {
     var dirtyOnBlur = this.dirty ? false : this.state.initValue !== this.getValue();
-    this.setState({ valid, errors, dirtyOnBlur: dirtyOnBlur }, () => {
+    this.setState({ valid, validating, errors, dirtyOnBlur: dirtyOnBlur }, () => {
       this.input.setCustomValidity(valid ? "" : " ");
     });
   }
@@ -232,36 +241,28 @@ export class TextField extends React.Component<Props, State> {
     this.setValue(this.input.value);
   }
 
-  @autobind()
-  saveInputRef(elem) {
-    if (!elem) return;
-    if (this.props.mask) elem = elem.input; // react-input-mask
-    this.input = elem;
-  }
-
   render() {
     var {
       className, iconLeft, iconRight, multiLine, children,
       dirty, error, validators, showErrors, compactError, showValidationIcon,
-      mask, maskChar, alwaysShowMask,
       ...props
     } = this.props;
 
-    var { value, defaultValue, maxLength, rows, type, autoFocus } = this.props;
-    var { errors, dirty, valid } = this.state;
+    var { value, defaultValue, maxLength, rows, type } = this.props;
+    var { errors, dirty, valid, validating } = this.state;
+    var currentValue = this.getValue();
 
     if (isString(iconLeft)) iconLeft = <MaterialIcon name={iconLeft}/>
     if (isString(iconRight)) iconRight = <MaterialIcon name={iconRight}/>
 
-    var currentValue = this.getValue();
     var inputProps = Object.assign(props, {
-      value: currentValue == null ? "" : value,
       className: "input box grow",
+      value: currentValue == null ? "" : value,
       onBlur: this.onBlur,
       onFocus: this.onFocus,
       onChange: this.onChange,
       rows: multiLine ? (rows || 1) : null,
-      ref: this.saveInputRef,
+      ref: e => this.input = e,
     });
 
     var componentClass = cssNames('TextField', className, {
@@ -273,12 +274,14 @@ export class TextField extends React.Component<Props, State> {
     });
 
     if (showValidationIcon && dirty) {
+      var tooltipId = this.id + "_tooltip";
       var validationIcon = (
-        <MaterialIcon
-          className={cssNames("validation-icon", { error: !valid })}
-          name={valid ? "check" : "close"}
-          title={errors.filter(isString).join("\n")}
-        />
+        <div id={tooltipId} className={cssNames("validation-icon", { valid, invalid: !valid })}>
+          {validating
+            ? <SvgIcon name="spinner" small/>
+            : <MaterialIcon name={valid ? "check" : "error_outline"}/>}
+          <Tooltip htmlFor={tooltipId}>{React.Children.toArray(errors)}</Tooltip>
+        </div>
       );
     }
     if (maxLength && multiLine) {
@@ -287,12 +290,7 @@ export class TextField extends React.Component<Props, State> {
       );
     }
 
-    // get proper input element
-    if (mask) {
-      var maskProps: Partial<Props> = { mask, maskChar, alwaysShowMask };
-      var input = <InputMask {...maskProps} {...inputProps}/>;
-    }
-    else if (multiLine) input = <textarea {...inputProps}/>;
+    if (multiLine) var input = <textarea {...inputProps}/>;
     else input = <input {...inputProps}/>;
 
     return (

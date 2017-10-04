@@ -1,9 +1,10 @@
 import "./dialog.scss";
+
 import * as React from "react";
+import * as ReactDOM from "react-dom";
 import { autobind } from "core-decorators";
 import { cssNames, noop } from "../../../utils";
 import { Animate } from "../animate";
-import { Portal } from "../../../utils/portal";
 
 export interface DialogProps {
   className?: string | object
@@ -119,7 +120,7 @@ export class Dialog extends React.Component<DialogProps, DialogState> {
     var { className, open, modal, animated, pinned, onClose, onOpen, children, ...dialogProps } = this.props;
     if (!this.isOpen) return null;
 
-    var dialogClass = cssNames("Dialog", 'flex center', { modal }, className);
+    var dialogClass = cssNames("Dialog flex center", { modal }, className);
     var content = (
       <div className="box" ref={e => this.contentElem = e}>
         {children}
@@ -142,6 +143,6 @@ export class Dialog extends React.Component<DialogProps, DialogState> {
         </div>
       )
     }
-    return <Portal>{dialog}</Portal>;
+    return ReactDOM["createPortal"](dialog, document.body);
   }
 }

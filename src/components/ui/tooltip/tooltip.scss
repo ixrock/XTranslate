@@ -1,0 +1,30 @@
+
+.Tooltip {
+  position: absolute;
+  background: rgba(45, 48, 53, 0.94);
+  color: gainsboro;
+  font-size: inherit;
+  text-align: center;
+  padding: $padding;
+  border-radius: $radius;
+  margin-top: $padding;
+  margin-left: -$padding;
+  visibility: hidden;
+  opacity: 0;
+  transition: 250ms opacity 100ms;
+  z-index: 100;
+
+  &:empty {
+    display: none;
+  }
+
+  &.visible {
+    visibility: visible;
+    opacity: 1;
+  }
+
+  &.following {
+    position: fixed;
+    margin: 0;
+  }
+}

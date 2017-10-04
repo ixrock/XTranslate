@@ -1,13 +1,9 @@
-@import "../vars";
 
 .TextField {
   position: relative;
   text-align: left;
-
-  ::placeholder {
-    color: inherit;
-    opacity: .8;
-  }
+  --text-field-border-color: transparentize($color-primary, .5);
+  --text-field-focus-color: $bgc-primary;
 
   textarea {
     @include custom-scrollbar(none, 0);
@@ -16,9 +12,9 @@
   }
 
   .label {
-    --flex-gap: $padding;
+    --flex-gap: $padding / 2;
     position: relative;
-    border-bottom: 1px solid $border-color;
+    border-bottom: 1px solid var(--text-field-border-color);
 
     .input {
       width: 100%;
@@ -30,6 +26,11 @@
       padding-bottom: $padding / 2;
       text-align: inherit;
       text-transform: inherit;
+
+      &::placeholder {
+        opacity: .75;
+        color: inherit;
+      }
     }
 
     &:after {
@@ -40,7 +41,7 @@
       transform: translateX(-50%);
       width: 0;
       height: 2px;
-      background: $bgc-primary;
+      background: var(--text-field-focus-color);
       transition: width 250ms;
     }
 
@@ -67,12 +68,37 @@
   }
 
   .errors {
-    min-height: $margin * 2;
     font-size: small;
-    color: $color-error;
+    min-height: $margin * 2;
     transition: 150ms min-height ease-in;
     &.compact:empty {
       min-height: 0;
+    }
+  }
+
+  .validation-icon {
+    position: relative;
+
+    &.valid {
+      .Icon {
+        color: #5bb90b;
+      }
+    }
+    &.invalid {
+      .Icon {
+        color: $color-error;
+      }
+    }
+
+    .Tooltip {
+      background: $color-error;
+      color: white;
+      font-size: small;
+      white-space: nowrap;
+      right: 100%;
+      margin: 0 $padding/2;
+      transform: translateY(-50%);
+      top: 50%;
     }
   }
 
@@ -80,14 +106,6 @@
     position: absolute;
     right: 0;
     font-size: small;
-  }
-
-  .validation-icon {
-    color: #5bb90b;
-    &.error {
-      color: $color-error;
-      cursor: help;
-    }
   }
 
   /* Hide HTML5 Up and Down arrows. */
@@ -112,4 +130,3 @@
     }
   }
 }
-
