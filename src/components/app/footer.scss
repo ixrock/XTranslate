@@ -18,4 +18,18 @@
       }
     }
   }
+
+  .donation {
+    .donate {
+      border-bottom: 1px dotted;
+      cursor: pointer;
+
+      &:hover {
+        font-weight: bold;
+      }
+    }
+    .copied {
+      color: $green-500;
+    }
+  }
 }

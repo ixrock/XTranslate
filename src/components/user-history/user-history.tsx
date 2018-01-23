@@ -8,7 +8,7 @@ import { Button, Checkbox, MaterialIcon, Menu, MenuItem, Option, Select, Spinner
 import { ISettingsState, settingsActions } from "../settings";
 import { clearHistory, getHistory } from "./user-history.actions";
 import { IHistoryItem } from "./user-history.types";
-import { vendors } from "../../vendors/index";
+import { vendors } from "../../vendors";
 import debounce = require("lodash/debounce");
 import groupBy = require("lodash/groupBy");
 
@@ -79,7 +79,7 @@ export class UserHistory extends React.Component<Props, State> {
   }
 
   reloadHistory() {
-    this.setState(() => this.loadHistory(true));
+    this.loadHistory(true);
   }
 
   reloadHistoryOnSearch = debounce(() => {

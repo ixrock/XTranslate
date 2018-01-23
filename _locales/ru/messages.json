@@ -79,5 +79,7 @@
   "context_menu_translate_selection" : {"message": "Перевести %selection% с %translator%"},
   "___________footer________________": {"message": "----------------------------------------------"},
   "footer"                           : {"message": "Если вам нравится приложение поделитесь им со своими друзьями:"},
+  "footer_donate_title"              : {"message": "Поблагодарить:"},
+  "footer_donate_click_to_copy"      : {"message": "(кликните чтобы скопировать адрес)"},
   "footer_leave_review_and_donate"   : {"message": "Также вы можете %оставить отзыв% или %сделать пожертвование% на поддержку расширения."}
 }

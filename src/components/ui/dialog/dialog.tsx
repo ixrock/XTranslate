@@ -143,6 +143,6 @@ export class Dialog extends React.Component<DialogProps, DialogState> {
         </div>
       )
     }
-    return ReactDOM["createPortal"](dialog, document.body);
+    return ReactDOM.createPortal(dialog, document.body);
   }
 }

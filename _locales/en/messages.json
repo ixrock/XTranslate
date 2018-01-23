@@ -79,5 +79,7 @@
   "context_menu_translate_selection" : {"message": "Translate %selection% with %translator%"},
   "___________footer________________": {"message": "----------------------------------------------"},
   "footer"                           : {"message": "If you like the app share it with your friends:"},
+  "footer_donate_title"              : {"message": "Donation:"},
+  "footer_donate_click_to_copy"      : {"message": "(click to copy address)"},
   "footer_leave_review_and_donate"   : {"message": "Also you can %leave a review% or %make a donation% for extension's support."}
 }
