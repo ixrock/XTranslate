@@ -105,7 +105,10 @@ export class InputTranslation extends React.Component<Props, State> {
   }
 
   translate = debounce((text = this.state.text.trim()) => {
-    if (!text) return;
+    if (!text) {
+      if (this.vendor.isPlayingText()) this.vendor.stopPlaying();
+      return;
+    }
     var { langFrom, langTo } = this.state;
     var translating = this.vendor.getTranslation(langFrom, langTo, text);
     this.handleTranslation(translating);

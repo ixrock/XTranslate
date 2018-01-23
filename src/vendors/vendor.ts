@@ -82,6 +82,7 @@ export abstract class Vendor {
 
   playText(lang: string, text: string) {
     text = encodeURIComponent(text);
+    this.stopPlaying();
     this.ttsAudio = document.createElement('audio');
     this.ttsAudio.autoplay = true;
 
@@ -100,6 +101,11 @@ export abstract class Vendor {
     if (fetching) {
       fetching.then(src => this.ttsAudio.src = src);
     }
+  }
+
+  isPlayingText() {
+    var tts = this.ttsAudio;
+    return tts && tts.currentTime > 0 && !tts.paused && !tts.ended && tts.readyState > 2;
   }
 
   stopPlaying() {
