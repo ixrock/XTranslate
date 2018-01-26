@@ -59,6 +59,7 @@
   "sub_header_favorites"             : {"message": "Favorites"},
   "favorites_add_item"               : {"message": "Add to favorites"},
   "favorites_remove_item"            : {"message": "Remove from favorites"},
+  "favorites_translate_with"         : {"message": "Select pair to translate with"},
   "text_field_placeholder"           : {"message": "Start typing to get translation"},
   "translated_with"                  : {"message": "Translated with %translator% (%lang%)"},
   "spell_correction"                 : {"message": "Maybe you mean %spell_correction%?"},

@@ -9,7 +9,7 @@ import { cssNames } from "../../utils/cssNames";
 import { MaterialIcon, Spinner, Tab, Tabs } from '../ui'
 import { __i18n, getManifest, getOptionsPageUrl } from "../../extension";
 import { ISettingsState, Settings, settingsActions } from '../settings'
-import { loadFonts, ThemeManager } from '../theme-manager'
+import { ThemeManager } from '../theme-manager'
 import { InputTranslation } from '../input-translation'
 import { UserHistory } from '../user-history'
 import { Footer } from './footer'
@@ -100,9 +100,6 @@ export class App extends React.Component<Props, {}> {
     );
   }
 }
-
-// load base fonts for the page
-loadFonts(['Lato', 'Roboto']);
 
 // show loading indicator while getting app state from the storage
 var loading: Spinner;

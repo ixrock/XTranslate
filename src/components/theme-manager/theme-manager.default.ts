@@ -1,5 +1,4 @@
 import { IThemeManagerState } from './theme-manager.types'
-import orderBy = require("lodash/orderBy");
 
 export const defaultTheme: IThemeManagerState = {
   bgcMain: "#000",

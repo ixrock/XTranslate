@@ -4,8 +4,8 @@ import * as React from "react";
 import { Translation, TranslationError, Vendor, vendors, vendorsList } from "../../vendors";
 import { __i18n, MessageType, onMessage, tabs } from "../../extension";
 import { connect } from "../../store/connect";
-import { createStorage, cssNames, prevDefault } from "../../utils";
-import { MaterialIcon, Option, Select, Spinner, TextField } from "../ui";
+import { createStorage, cssNames } from "../../utils";
+import { MaterialIcon, OptGroup, Option, Select, Spinner, TextField } from "../ui";
 import { SelectLanguage } from "../select-language";
 import { ISettingsState } from "../settings";
 import { Favorite, favoritesActions, IFavoritesState } from "../favorites";
@@ -13,7 +13,6 @@ import { saveHistory } from "../user-history/user-history.actions";
 import clone = require("lodash/clone");
 import find = require("lodash/find");
 import remove = require("lodash/remove");
-import orderBy = require("lodash/orderBy");
 import debounce = require("lodash/debounce");
 
 const lastText = createStorage("last_text", "");
@@ -32,6 +31,7 @@ interface State {
   immediate?: boolean
   translation?: Translation
   error?: TranslationError
+  useFavorite?: { vendor: Vendor, from: string, to: string }
 }
 
 @connect(state => ({
@@ -51,6 +51,8 @@ export class InputTranslation extends React.Component<Props, State> {
   };
 
   get vendor() {
+    var useFavorite = this.state.useFavorite;
+    if (useFavorite) return useFavorite.vendor;
     return vendors[this.state.vendor];
   }
 
@@ -104,23 +106,19 @@ export class InputTranslation extends React.Component<Props, State> {
     this.vendor.playText(langDetected || langFrom, originalText);
   }
 
-  translate = debounce((text = this.state.text.trim()) => {
+  translate = (text = this.state.text.trim()) => {
+    var vendor = this.vendor;
     if (!text) {
-      if (this.vendor.isPlayingText()) this.vendor.stopPlaying();
+      if (vendor.isPlayingText()) vendor.stopPlaying();
       return;
     }
-    var { langFrom, langTo } = this.state;
-    var translating = this.vendor.getTranslation(langFrom, langTo, text);
-    this.handleTranslation(translating);
-  })
-
-  translateWithFavorite(vendor: Vendor, fav: Favorite) {
-    var text = this.state.text;
-    if (text) {
-      this.textField.focus();
-      var translation = vendor.getTranslation(fav.from, fav.to, text);
-      this.handleTranslation(translation);
+    var { useFavorite, langFrom, langTo } = this.state;
+    if (useFavorite) {
+      langFrom = useFavorite.from;
+      langTo = useFavorite.to;
     }
+    var translating = vendor.getTranslation(langFrom, langTo, text);
+    this.handleTranslation(translating);
   }
 
   private handleTranslation(translation: Promise<Translation>) {
@@ -219,7 +217,7 @@ export class InputTranslation extends React.Component<Props, State> {
         {this.isFavorite ?
           <MaterialIcon
             name="favorite" title={__i18n("favorites_remove_item")}
-            onClick={() => this.removeFavorite(this.vendor, { from: langFrom, to: langTo })}/>
+            onClick={() => this.removeFavorite(vendors[vendor], { from: langFrom, to: langTo })}/>
           : null}
         {!this.isFavorite ?
           <MaterialIcon
@@ -230,50 +228,50 @@ export class InputTranslation extends React.Component<Props, State> {
     )
   }
 
+  onFavoriteChange = (value: string) => {
+    var useFavorite = null;
+    if (value) {
+      var [vendorName, from, to] = value.split("-");
+      var vendor = vendors[vendorName];
+      if (vendor) useFavorite = { vendor, from, to };
+    }
+    this.setState({ useFavorite }, () => {
+      this.textField.focus();
+      this.translate();
+    });
+  };
+
   renderFavorites() {
     var favorites = this.props.favorites;
-    var favoriteVendors = Object.keys(favorites);
-    var favCount = favoriteVendors.reduce((count, vendor) => count + favorites[vendor].length, 0);
-    if (!favCount) return null;
+    var favoritesByVendors = vendorsList.filter(v => {
+      return favorites[v.name] && favorites[v.name].length > 0
+    }).map(v => {
+      return {
+        vendor: v,
+        favorites: favorites[v.name]
+      }
+    });
+    if (!favoritesByVendors.length) return null;
     return (
-      <div className="favorites">
+      <div className="favorites mt1 flex gaps align-flex-start">
         <p className="sub-title">{__i18n("sub_header_favorites")}</p>
-        <div className="flex auto">
-          {favoriteVendors.map(vendorName => {
-            var vendor = vendors[vendorName];
-            var vendorFavorites: Favorite[] = orderBy(favorites[vendorName], [
-              (fav: Favorite) => fav.from !== 'auto',
-              'from'
-            ]);
-            var vendorIconClass = cssNames("fav-vendor-icon flex align-center justify-center", vendorName);
-            if (!vendorFavorites.length) return null;
+        <Select className="box grow" onChange={this.onFavoriteChange}>
+          <Option value="" title={`-- ${__i18n("favorites_translate_with")} --`}/>
+          {favoritesByVendors.map(favList => {
+            var { vendor, favorites } = favList;
             return (
-              <div key={vendorName} className="favorite">
-                <span className={vendorIconClass} title={vendor.title}>{vendor.title[0]}</span>
-                {vendorFavorites.map((fav: Favorite) => {
+              <OptGroup key={vendor.name} label={vendor.title}>
+                {favorites.map(fav => {
                   var { from, to } = fav;
-                  var key = [from, to].join('-');
+                  var langPair = [from, to].join("-").toUpperCase();
                   var title = [vendor.langFrom[from], vendor.langTo[to]].join(' → ');
-                  return (
-                    <div key={key} className="favorite-lang flex align-center"
-                         onClick={() => this.translateWithFavorite(vendor, fav)}>
-                      <div className="box grow flex align-center" title={title}>
-                        <span className="fav-lang-from">{from.toUpperCase()}</span>
-                        <MaterialIcon name={"keyboard_arrow_right"}/>
-                        <span className="fav-lang-to">{to.toUpperCase()}</span>
-                      </div>
-                      <MaterialIcon
-                        name="remove_circle_outline" className="fav-remove-icon"
-                        title={__i18n("favorites_remove_item")}
-                        onClick={prevDefault(() => this.removeFavorite(vendor, fav))}/>
-                    </div>
-                  )
+                  var value = [vendor.name, from, to].join("-");
+                  return <Option key={langPair} title={title} value={value}/>
                 })}
-              </div>
+              </OptGroup>
             )
           })}
-        </div>
-        <hr className="mv1"/>
+        </Select>
       </div>
     );
   }

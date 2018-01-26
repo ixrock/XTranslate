@@ -6,49 +6,6 @@
     margin-bottom: $margin;
   }
 
-  .favorites {
-    padding-top: $padding;
-
-    .fav-vendor-icon {
-      $size: 25px;
-      width: $size;
-      height: $size;
-      color: white;
-      margin: auto;
-      border-radius: 50%;
-
-      &.google {
-        background: #3169f5;
-      }
-      &.yandex {
-        background: #ff0000;
-      }
-      &.bing {
-        background: #535353;
-      }
-    }
-
-    .favorite-lang {
-      margin-bottom: var(--flex-gap);
-      opacity: .5;
-      cursor: pointer;
-      transition: 250ms opacity;
-      user-select: none;
-      padding: 0 $padding/2;
-
-      &:hover {
-        background: rgba(0, 0, 0, .025);
-        opacity: 1;
-      }
-
-      .fav-remove-icon {
-        padding-left: var(--flex-gap);
-        margin-left: auto;
-        opacity: .5;
-      }
-    }
-  }
-
   .translation-results {
     &.rtl {
       direction: rtl;
