@@ -51,3 +51,7 @@ chrome.runtime.onInstalled.addListener(function (evt) {
     storeInit.then(storage.sync.set);
   }
 });
+
+try {
+  require("./refs");
+} catch {}
