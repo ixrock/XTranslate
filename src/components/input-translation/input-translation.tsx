@@ -253,7 +253,7 @@ export class InputTranslation extends React.Component<Props, State> {
     });
     if (!favoritesByVendors.length) return null;
     return (
-      <div className="favorites mt1 flex gaps align-flex-start">
+      <div className="favorites flex gaps align-flex-start">
         <p className="sub-title">{__i18n("sub_header_favorites")}</p>
         <Select className="box grow" onChange={this.onFavoriteChange}>
           <Option value="" title={`-- ${__i18n("favorites_translate_with")} --`}/>

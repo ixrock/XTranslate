@@ -367,10 +367,9 @@ class App extends React.Component<{}, State> {
   @autobind()
   onTranslationReady() {
     var { autoPlayText, historyEnabled } = this.settings;
-    if (autoPlayText) this.popup.playText();
+    if (autoPlayText) setTimeout(() => this.popup.playText());
     if (historyEnabled) saveHistory(this.state.translation, this.settings);
     this.refinePosition();
-    // this.popup.focus(); // fix: copy-paste not working when shadow-dom element or its descendants is focused
   }
 
   getRect(range?: Range) {

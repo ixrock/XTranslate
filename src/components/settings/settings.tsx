@@ -45,27 +45,36 @@ export class Settings extends React.Component<Props, {}> {
     var hotkey = parseHotkey(settings.hotkey);
     return (
       <div className="Settings">
+        <p className="sub-title">{__i18n("setting_title_common")}</p>
         <div className="display-options flex wrap">
           <Checkbox
             label={__i18n("auto_play_tts")}
             checked={settings.autoPlayText}
             onChange={v => this.save({ autoPlayText: v })}/>
           <Checkbox
-            label={__i18n("show_tts_icon_inside_popup")}
-            checked={settings.showPlayIcon}
-            onChange={v => this.save({ showPlayIcon: v })}/>
-          <Checkbox
             label={__i18n("show_context_menu")}
             checked={settings.showInContextMenu}
             onChange={v => this.save({ showInContextMenu: v })}/>
+          <Checkbox
+            label={__i18n("display_icon_near_selection")}
+            checked={settings.showIconNearSelection}
+            onChange={v => this.save({ showIconNearSelection: v })}/>
+        </div>
+
+        <p className="sub-title mt2">{__i18n("setting_title_popup")}</p>
+        <div className="display-options flex wrap">
+          <Checkbox
+            label={__i18n("show_tts_icon_inside_popup")}
+            checked={settings.showTextToSpeechIcon}
+            onChange={v => this.save({ showTextToSpeechIcon: v })}/>
           <Checkbox
             label={__i18n("show_next_vendor_icon_in_popup")}
             checked={settings.showNextVendorIcon}
             onChange={v => this.save({ showNextVendorIcon: v })}/>
           <Checkbox
-            label={__i18n("display_icon_near_selection")}
-            checked={settings.showIconNearSelection}
-            onChange={v => this.save({ showIconNearSelection: v })}/>
+            label={__i18n("show_copy_translation_icon")}
+            checked={settings.showCopyTranslationIcon}
+            onChange={v => this.save({ showCopyTranslationIcon: v })}/>
           <Checkbox
             label={__i18n("display_popup_after_text_selected")}
             checked={settings.showPopupAfterSelection}
@@ -90,13 +99,17 @@ export class Settings extends React.Component<Props, {}> {
               />
             </div>
           </Checkbox>
+        </div>
+
+        <p className="sub-title mt2">{__i18n("setting_title_text_input")}</p>
+        <div className="display-options flex wrap">
           <Checkbox
             label={__i18n("remember_last_typed_text")}
             checked={settings.rememberLastText}
             onChange={v => this.save({ rememberLastText: v })}/>
         </div>
 
-        <div className="vendors flex gaps">
+        <div className="vendors flex gaps mt2">
           <div className="vendor">
             <p className="sub-title mb1">{__i18n("sub_header_translator")}</p>
             <RadioGroup

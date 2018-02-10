@@ -19,7 +19,6 @@
   "display_popup_on_hotkey"          : {"message": "當我按下時顯示彈出式視窗"},
   "remember_last_typed_text"         : {"message": "記住我最後輸入的文字"},
   "sub_header_translator"            : {"message": "翻譯者"},
-  "sub_header_direction"             : {"message": "方向"},
   "sub_header_quick_access"          : {"message": "快速存取"},
   "quick_access_configure_link"      : {"message": "設定鍵盤快捷鍵來快速存取此視窗"},
   "swap_languages"                   : {"message": "交換語言"},

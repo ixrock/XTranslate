@@ -122,11 +122,17 @@ export class Popup extends React.Component<Props, State> {
     }
   }
 
+  @autobind()
+  copyTranslation() {
+    window.getSelection().selectAllChildren(this.elem);
+    document.execCommand("copy");
+  }
+
   renderResult() {
     const result = this.props.translation;
     if (!result) return null;
     const { translation, transcription, dictionary, vendor, langFrom, langTo } = result;
-    const { showPlayIcon, showNextVendorIcon } = this.props.settings;
+    const { showTextToSpeechIcon, showNextVendorIcon, showCopyTranslationIcon } = this.props.settings;
     const boxSizeStyle = this.state.boxSizeStyle;
     const vendorApi = vendors[vendor];
     const rtlClass = { rtl: vendorApi.isRightToLeft(langTo) };
@@ -142,7 +148,7 @@ export class Popup extends React.Component<Props, State> {
     return (
       <div className="translation-result" style={boxSizeStyle}>
         <div className="translation flex gaps">
-          {showPlayIcon ? (
+          {showTextToSpeechIcon ? (
             <MaterialIcon
               name="play_circle_outline"
               title={__i18n("popup_play_icon_title")}
@@ -152,7 +158,16 @@ export class Popup extends React.Component<Props, State> {
             <span>{translation}</span>
             {transcription ? <i className="transcription">{" "}[{transcription}]</i> : null}
           </div>
-          {nextVendorIcon}
+          <div className="icons">
+            {showCopyTranslationIcon && (
+              <MaterialIcon
+                name="content_copy"
+                title={__i18n("popup_copy_translation_title")}
+                onClick={this.copyTranslation}
+              />
+            )}
+            {nextVendorIcon}
+          </div>
         </div>
         {dictionary.map(({ wordType, meanings }, i) =>
           <div key={wordType} className={cssNames("dictionary", rtlClass)}>

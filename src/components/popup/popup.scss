@@ -37,14 +37,7 @@
     font-size: 1.6em;
     opacity: .75;
     cursor: pointer;
-
-    &:first-child {
-      margin-right: 5px;
-    }
-
-    &:last-child {
-      margin-left: 5px;
-    }
+    user-select: none;
 
     &:hover {
       opacity: 1;

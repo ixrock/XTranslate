@@ -2,8 +2,9 @@ import { ISettingsState } from "./settings.types";
 
 export const defaultSettings: ISettingsState = {
   autoPlayText: false,
-  showPlayIcon: true,
-  showNextVendorIcon: false,
+  showTextToSpeechIcon: true,
+  showNextVendorIcon: true,
+  showCopyTranslationIcon: true,
   useDarkTheme: false,
   showInContextMenu: true,
   showIconNearSelection: true,

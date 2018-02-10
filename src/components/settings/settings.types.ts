@@ -2,8 +2,9 @@ import { Hotkey } from "../../utils/parseHotkey";
 
 export interface ISettingsState {
   autoPlayText?: boolean
-  showPlayIcon?: boolean
+  showTextToSpeechIcon?: boolean
   showNextVendorIcon?: boolean
+  showCopyTranslationIcon?: boolean
   useDarkTheme?: boolean
   showInContextMenu?: boolean
   showIconNearSelection?: boolean
