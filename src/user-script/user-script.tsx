@@ -463,7 +463,7 @@ class App extends React.Component<{}, State> {
     return (
       <ReactShadow include={[this.style]}>
         <div className="popup-content">
-          <Popup className={cssNames({ pdf: isPdf })}
+          <Popup className={cssNames({ showInPdf: isPdf })}
                  translation={translation} error={error} position={position}
                  theme={this.theme} settings={this.settings}
                  next={this.translateWithNextVendor}

@@ -22,4 +22,5 @@ export const defaultTheme: IThemeManagerState = {
   boxShadowBlur: 10,
   boxShadowColor: { r: 102, g: 102, b: 102, a: .5 },
   boxShadowInner: false,
+  fixedPos: "", // possible values defined as css-classes in popup.scss
 };

@@ -14,6 +14,7 @@ import { fontsList, loadFonts } from "../theme-manager/fonts-loader";
 import { getNextVendor, Translation, TranslationError, vendors } from "../../vendors";
 
 interface Props extends React.HTMLProps<any> {
+  preview?: boolean;
   className?: any
   settings?: ISettingsState
   theme?: IThemeManagerState
@@ -123,7 +124,7 @@ export class Popup extends React.Component<Props, State> {
   }
 
   @autobind()
-  copyTranslation() {
+  copyToClipboard() {
     window.getSelection().selectAllChildren(this.elem);
     document.execCommand("copy");
   }
@@ -163,7 +164,7 @@ export class Popup extends React.Component<Props, State> {
               <MaterialIcon
                 name="content_copy"
                 title={__i18n("popup_copy_translation_title")}
-                onClick={this.copyTranslation}
+                onClick={this.copyToClipboard}
               />
             )}
             {nextVendorIcon}
@@ -199,11 +200,15 @@ export class Popup extends React.Component<Props, State> {
   }
 
   render() {
-    var { translation, error, position, className } = this.props;
+    var { translation, error, position, className, preview, theme } = this.props;
+    var { fixedPos } = theme;
     var { cssThemeStyle } = this.state;
-    var style = Object.assign({}, cssThemeStyle, position);
+    var style = Object.assign({}, cssThemeStyle, !fixedPos ? position : {});
     var visible = translation || error;
-    var popupClass = cssNames("Popup", { visible }, className);
+    var popupClass = cssNames("Popup", className, {
+      visible, preview,
+      ["fixedPos " + fixedPos]: fixedPos && !preview
+    });
     return (
       <div className={popupClass} style={style} tabIndex={-1} ref={e => this.elem = e}>
         <div className="content">

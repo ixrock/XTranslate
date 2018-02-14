@@ -3,18 +3,6 @@
 :host {
   all: initial !important;
 
-  .Popup {
-    $offset: 7px;
-    position: absolute;
-    text-rendering: optimizeLegibility;
-    -webkit-font-smoothing: antialiased;
-    margin: $offset 0;
-
-    &.pdf {
-      margin: $offset;
-    }
-  }
-
   *, *:after, *:before {
     box-sizing: border-box;
     padding: 0;

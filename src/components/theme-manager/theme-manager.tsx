@@ -61,7 +61,7 @@ export class ThemeManager extends React.Component<Props, {}> {
       <div className="ThemeManager">
         <div className="flex center pb1">
           <Popup
-            className="preview"
+            preview
             translation={this.translation}
             settings={settings}
             theme={theme}
@@ -193,6 +193,19 @@ export class ThemeManager extends React.Component<Props, {}> {
             />
           </div>
 
+          <span className="sub-title">{__i18n("popup_position_title")}</span>
+          <div className="flex gaps">
+            <Select className="box grow"
+                    value={theme.fixedPos}
+                    onChange={v => this.save({ fixedPos: v })}>
+              <Option value="" title={__i18n("popup_position_auto")}/>
+              <Option value="leftTop" title={__i18n("popup_position_left_top")}/>
+              <Option value="rightTop" title={__i18n("popup_position_right_top")}/>
+              <Option value="leftBottom" title={__i18n("popup_position_left_bottom")}/>
+              <Option value="rightBottom" title={__i18n("popup_position_right_bottom")}/>
+            </Select>
+          </div>
+
           <span className="sub-title">{__i18n("sub_header_box_size")}</span>
           <div className="flex gaps align-center">
             <span className="heading">{__i18n("box_size_min_width")}</span>
@@ -219,6 +232,7 @@ export class ThemeManager extends React.Component<Props, {}> {
                     className="box grow"/>
           </div>
         </div>
+
         <div className="reset flex center pt2">
           <Button label={__i18n("reset_to_default_button_text")} accent
                   disabled={isDefault}

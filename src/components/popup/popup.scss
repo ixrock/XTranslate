@@ -6,9 +6,41 @@
   visibility: hidden;
   opacity: 0;
   transition: opacity 100ms ease-out;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
 
-  &:not(.preview) .rtl {
-    direction: rtl;
+  // usage in page context (user-script area)
+  &:not(.preview) {
+    &:not(.fixedPos) {
+      position: absolute;
+      margin: $spacing 0;
+    }
+
+    &.fixedPos {
+      position: fixed;
+      margin: $spacing;
+
+      &.leftTop {
+        left: 0;
+        top: 0;
+      }
+      &.leftBottom {
+        left: 0;
+        bottom: 0;
+      }
+      &.rightTop {
+        right: 0;
+        top: 0;
+      }
+      &.rightBottom {
+        right: 0;
+        bottom: 0;
+      }
+    }
+
+    &.showInPdf {
+      margin: $spacing;
+    }
   }
 
   &.visible {
@@ -31,6 +63,10 @@
     &::-webkit-scrollbar-corner {
       background: none;
     }
+  }
+
+  .rtl {
+    direction: rtl;
   }
 
   .material-icons {
@@ -73,11 +109,5 @@
 
   a {
     color: inherit;
-  }
-
-  .license-required {
-    .material-icons {
-      pointer-events: none;
-    }
   }
 }
