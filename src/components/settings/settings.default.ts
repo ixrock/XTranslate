@@ -19,4 +19,5 @@ export const defaultSettings: ISettingsState = {
   historyEnabled: false,
   historySaveWordsOnly: true,
   historyAvoidDuplicates: true,
+  popupFixedPos: "", // possible values defined as css-classes in popup.scss
 };

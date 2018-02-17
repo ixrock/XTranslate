@@ -24,5 +24,4 @@ export interface Theme {
   boxShadowBlur?: number,
   boxShadowColor?: ColorValue,
   boxShadowInner?: boolean,
-  fixedPos?: string
 }

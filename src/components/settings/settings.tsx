@@ -5,7 +5,7 @@ import { vendors, vendorsList } from "../../vendors";
 import { __i18n, tabs } from "../../extension";
 import { connect } from "../../store/connect";
 import { getHotkey, parseHotkey, prevDefault } from "../../utils";
-import { Checkbox, MaterialIcon, Radio, RadioGroup, TextField } from "../ui";
+import { Checkbox, MaterialIcon, Option, Radio, RadioGroup, Select, TextField } from "../ui";
 import { SelectLanguage } from "../select-language";
 import { ISettingsState, settingsActions } from "./index";
 
@@ -99,6 +99,17 @@ export class Settings extends React.Component<Props, {}> {
               />
             </div>
           </Checkbox>
+        </div>
+
+        <div className="flex gaps">
+          <p>{__i18n("popup_position_title")}</p>
+          <Select className="box grow" value={settings.popupFixedPos} onChange={v => this.save({ popupFixedPos: v })}>
+            <Option value="" title={__i18n("popup_position_auto")}/>
+            <Option value="leftTop" title={__i18n("popup_position_left_top")}/>
+            <Option value="rightTop" title={__i18n("popup_position_right_top")}/>
+            <Option value="leftBottom" title={__i18n("popup_position_left_bottom")}/>
+            <Option value="rightBottom" title={__i18n("popup_position_right_bottom")}/>
+          </Select>
         </div>
 
         <p className="sub-title mt2">{__i18n("setting_title_text_input")}</p>

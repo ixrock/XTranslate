@@ -19,4 +19,5 @@ export interface ISettingsState {
   historyEnabled?: boolean
   historySaveWordsOnly?: boolean
   historyAvoidDuplicates?: boolean
+  popupFixedPos?: string
 }

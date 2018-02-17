@@ -200,14 +200,14 @@ export class Popup extends React.Component<Props, State> {
   }
 
   render() {
-    var { translation, error, position, className, preview, theme } = this.props;
-    var { fixedPos } = theme;
+    var { translation, error, position, className, preview, settings } = this.props;
+    var { popupFixedPos } = settings;
     var { cssThemeStyle } = this.state;
-    var style = Object.assign({}, cssThemeStyle, !fixedPos ? position : {});
+    var style = Object.assign({}, cssThemeStyle, !popupFixedPos ? position : {});
     var visible = translation || error;
     var popupClass = cssNames("Popup", className, {
       visible, preview,
-      ["fixedPos " + fixedPos]: fixedPos && !preview
+      ["fixedPos " + popupFixedPos]: popupFixedPos && !preview
     });
     return (
       <div className={popupClass} style={style} tabIndex={-1} ref={e => this.elem = e}>
