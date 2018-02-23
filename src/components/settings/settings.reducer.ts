@@ -1,11 +1,14 @@
-import { commonReducer } from "../../utils/commonReducer";
+import { Action } from "../../store";
 import { actionTypes } from './settings.actions'
 import { defaultSettings } from './settings.default'
+import { ISettingsState } from "./settings.types";
 
-export const settingsReducer = commonReducer(defaultSettings, (state, { data, error, type, waiting }) => {
+export function settingsReducer(state = defaultSettings, action: Action<ISettingsState>) {
+  var { data, type } = action;
+
   switch (type) {
     case actionTypes.SETTINGS_SYNC:
-      Object.assign(state, data);
-      break;
+      return { ...state, ...data }
   }
-});
+  return state;
+}

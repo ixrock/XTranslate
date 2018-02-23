@@ -1,12 +1,12 @@
 import thunkMiddleware from 'redux-thunk'
-import { Action } from "../utils/commonReducer";
+import { Action } from "./store.types";
 
 /**
  * Logs all actions after they are dispatched
  */
 const loggerMiddleware = store => next => (action: Action) => {
   if (action.type && !action.promise && !action.silent) {
-    var {type, ...actionParams} = action;
+    var { type, ...actionParams } = action;
     var textStyle = 'font-weight: bold;';
     if (action.data) textStyle += 'background: green; color: white';
     if (action.error) textStyle += 'background: red; color: white';

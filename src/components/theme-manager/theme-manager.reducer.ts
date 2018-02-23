@@ -1,12 +1,15 @@
-import { commonReducer } from "../../utils/commonReducer";
+import { Action } from "../../store";
 import { actionTypes } from './theme-manager.actions'
 import { defaultTheme } from './theme-manager.default'
+import { IThemeManagerState } from "./theme-manager.types";
 
-export const themeManagerReducer = commonReducer(defaultTheme, (state, { data, error, type, waiting }) => {
+export function themeManagerReducer(state = defaultTheme, action: Action<IThemeManagerState>) {
+  var { data, type } = action;
+
   switch (type) {
     case actionTypes.THEME_SYNC:
     case actionTypes.THEME_RESET:
-      Object.assign(state, data);
-      break;
+      return { ...state, ...data }
   }
-});
+  return state;
+}

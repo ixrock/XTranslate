@@ -2,6 +2,16 @@ import { ISettingsState } from '../components/settings/settings.types'
 import { IThemeManagerState } from '../components/theme-manager/theme-manager.types'
 import { IFavoritesState } from '../components/favorites/favorites.types'
 
+export interface Action<D = any> {
+  type?: any
+  data?: D
+  error?: any
+  waiting?: boolean
+  silent?: boolean
+  promise?: Promise<any>
+  [param: string]: any
+}
+
 // sync
 export interface AppState {
   settings?: ISettingsState
