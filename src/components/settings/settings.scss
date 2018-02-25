@@ -17,11 +17,10 @@
     }
   }
 
-  > .vendors {
-    $gap: $margin / 2;
-    --flex-gap: $gap;
+  .vendor > * {
+    --flex-gap: $margin /2;
     .label {
-      margin-right: $gap;
+      margin-right: var(--flex-gap);
     }
   }
 }

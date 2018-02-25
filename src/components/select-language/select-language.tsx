@@ -7,7 +7,6 @@ import { connect } from "../../store/connect";
 import { Select, Option, MaterialIcon } from '../ui'
 import { ISettingsState, settingsActions } from "../settings";
 import { cssNames, noop } from "../../utils";
-import omit = require("lodash/omit");
 
 type Props = React.HTMLProps<any> & {
   settings?: ISettingsState
@@ -48,7 +47,7 @@ export class SelectLanguage extends React.Component<Props, {}> {
     var { vendor, langFrom, langTo } = this.props.settings;
     var listFrom = vendors[vendor].langFrom;
     var listTo = vendors[vendor].langTo;
-    var className = cssNames('SelectLanguage flex align-center', this.props.className);
+    var className = cssNames('SelectLanguage flex align-flex-start', this.props.className);
     return (
         <div className={className}>
           <Select value={langFrom} onChange={this.onChangeLangFrom}>

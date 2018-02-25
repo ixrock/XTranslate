@@ -61,30 +61,24 @@ export class Settings extends React.Component<Props, {}> {
             onChange={v => this.save({ showIconNearSelection: v })}/>
         </div>
 
-        <div className="vendors flex gaps mt2">
-          <div className="vendor">
-            <p className="sub-title mb1">{__i18n("sub_header_translator")}</p>
-            <RadioGroup
-              className="flex gaps column"
-              value={settings.vendor}
-              onChange={this.onVendorChange}>
-              {vendorsList.map((vendor, i) => {
-                var domain = vendor.publicUrl.match(/https?:\/\/(.*?)(?:\/\w*|$)/i)[1];
-                return (
-                  <Radio key={i} value={vendor.name}>
-                    <div className="label">{vendor.title}</div>
-                    <a href={vendor.publicUrl} target="_blank">
-                      {domain.split('.').slice(-2).join('.')}
-                    </a>
-                  </Radio>
-                )
-              })};
-            </RadioGroup>
-          </div>
-          <div className="direction box grow pl2">
-            <p className="sub-title">{__i18n("sub_header_direction")}</p>
-            <SelectLanguage/>
-          </div>
+        <p className="sub-title mt2">{__i18n("sub_header_translator")}</p>
+        <div className="vendors flex gaps">
+          <RadioGroup
+            className="vendor flex gaps column"
+            value={settings.vendor} onChange={this.onVendorChange}>
+            {vendorsList.map((vendor, i) => {
+              var domain = vendor.publicUrl.match(/https?:\/\/(.*?)(?:\/\w*|$)/i)[1];
+              return (
+                <Radio key={i} value={vendor.name}>
+                  <div className="label">{vendor.title}</div>
+                  <a href={vendor.publicUrl} target="_blank">
+                    {domain.split('.').slice(-2).join('.')}
+                  </a>
+                </Radio>
+              )
+            })};
+          </RadioGroup>
+          <SelectLanguage className="box grow"/>
         </div>
 
         <p className="sub-title mt2">{__i18n("setting_title_popup")}</p>

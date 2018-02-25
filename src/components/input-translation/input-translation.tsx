@@ -10,10 +10,9 @@ import { SelectLanguage } from "../select-language";
 import { ISettingsState } from "../settings";
 import { Favorite, favoritesActions, IFavoritesState } from "../favorites";
 import { saveHistory } from "../user-history/user-history.actions";
-import clone = require("lodash/clone");
 import find = require("lodash/find");
-import remove = require("lodash/remove");
 import debounce = require("lodash/debounce");
+import remove = require("lodash/remove");
 
 const lastText = createStorage("last_text", "");
 
@@ -58,7 +57,11 @@ export class InputTranslation extends React.Component<Props, State> {
 
   get isFavorite() {
     var favorites = this.props.favorites;
-    var { vendor, langFrom, langTo } = this.state;
+    var { useFavorite, vendor, langFrom, langTo } = this.state;
+    if (useFavorite) {
+      let { vendor, from, to } = useFavorite;
+      return !!find(favorites[vendor.name], { from, to });
+    }
     return !!find(favorites[vendor], { from: langFrom, to: langTo });
   }
 
@@ -79,26 +82,31 @@ export class InputTranslation extends React.Component<Props, State> {
     this.textField.focus();
   }
 
-  addFavorites() {
-    var { langFrom, langTo } = this.state;
-    var vendor = vendors[this.state.vendor];
-    var favorites = clone(this.props.favorites);
-    if (!vendor) return;
+  addFavorite() {
+    var { langFrom, langTo, vendor } = this.state;
     var fav: Favorite = { from: langFrom, to: langTo };
-    var vendorFavorites = favorites[vendor.name] || (favorites[vendor.name] = []);
-    if (!find(vendorFavorites, fav)) {
-      vendorFavorites.push(fav);
+    var favorites = this.props.favorites;
+    var favoritesByVendor = (favorites[vendor] = favorites[vendor] || []);
+    if (!find(favoritesByVendor, fav)) {
+      favoritesByVendor.push(fav);
       favoritesActions.sync(favorites);
     }
   }
 
-  removeFavorite(vendor: Vendor, fav: Favorite) {
-    var favorites = clone(this.props.favorites);
-    var vendorFavorites = favorites[vendor.name] || [];
-    if (find(vendorFavorites, fav)) {
-      remove(vendorFavorites, fav);
-      favoritesActions.sync(favorites);
+  removeFavorite() {
+    var { favorites } = this.props;
+    var { useFavorite, vendor, langFrom, langTo } = this.state;
+    if (useFavorite) {
+      // remove actively selected favorite from the list
+      let { vendor, from, to } = useFavorite;
+      remove(favorites[vendor.name], { from, to });
+      this.useFavorite("");
     }
+    else {
+      // remove current lang-pair from favorites
+      remove(favorites[vendor], { from: langFrom, to: langTo });
+    }
+    favoritesActions.sync(favorites);
   }
 
   playText() {
@@ -203,7 +211,8 @@ export class InputTranslation extends React.Component<Props, State> {
   }
 
   renderHeader() {
-    var { vendor, langFrom, langTo } = this.state;
+    var { vendor } = this.state;
+    var isFavorite = this.isFavorite;
     return (
       <div className="language flex gaps">
         <SelectLanguage
@@ -214,21 +223,21 @@ export class InputTranslation extends React.Component<Props, State> {
         <Select value={vendor} onChange={this.onVendorChange}>
           {vendorsList.map(v => <Option key={v.name} value={v.name} title={v.title}/>)}
         </Select>
-        {this.isFavorite ?
+        {isFavorite ?
           <MaterialIcon
             name="favorite" title={__i18n("favorites_remove_item")}
-            onClick={() => this.removeFavorite(vendors[vendor], { from: langFrom, to: langTo })}/>
+            onClick={() => this.removeFavorite()}/>
           : null}
-        {!this.isFavorite ?
+        {!isFavorite ?
           <MaterialIcon
             name="favorite_border" title={__i18n("favorites_add_item")}
-            onClick={() => this.addFavorites()}/>
+            onClick={() => this.addFavorite()}/>
           : null}
       </div>
     )
   }
 
-  onFavoriteChange = (value: string) => {
+  useFavorite = (value: string) => {
     var useFavorite = null;
     if (value) {
       var [vendorName, from, to] = value.split("-");
@@ -254,9 +263,8 @@ export class InputTranslation extends React.Component<Props, State> {
     if (!favoritesByVendors.length) return null;
     return (
       <div className="favorites flex gaps align-flex-start">
-        <p className="sub-title">{__i18n("sub_header_favorites")}</p>
-        <Select className="box grow" onChange={this.onFavoriteChange}>
-          <Option value="" title={`-- ${__i18n("favorites_translate_with")} --`}/>
+        <Select className="box grow" onChange={this.useFavorite}>
+          <Option value="" title={`${__i18n("favorites_translate_with")}`}/>
           {favoritesByVendors.map(favList => {
             var { vendor, favorites } = favList;
             return (
