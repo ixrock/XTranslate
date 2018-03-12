@@ -1,12 +1,13 @@
-const path = require('path');
-const webpack = require('webpack');
-const ExtractTextPlugin = require("extract-text-webpack-plugin");
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const CopyWebpackPlugin = require('copy-webpack-plugin');
+import path = require('path');
+import webpack = require('webpack');
+import ExtractTextPlugin = require("extract-text-webpack-plugin");
+import HtmlWebpackPlugin = require('html-webpack-plugin');
+import CopyWebpackPlugin = require('copy-webpack-plugin');
 
-module.exports = function (env = {dev: true, prod: false}) {
-  var srcPath = path.resolve(__dirname, 'src/');
-  var distPath = path.resolve(__dirname, 'dist/');
+export = () => {
+  var isProduction = process.env.NODE_ENV === "production";
+  var srcPath = path.resolve(__dirname, 'src');
+  var distPath = path.resolve(__dirname, 'dist');
   var optionsPage = path.resolve(__dirname, "options.html");
   var componentsDir = path.resolve(srcPath, 'components');
 
@@ -25,7 +26,8 @@ module.exports = function (env = {dev: true, prod: false}) {
       filename: '[name].js'
     },
 
-    devtool: env.dev ? "cheap-module-source-map" : "",
+    mode: isProduction ? "production" : "development",
+    devtool: isProduction ? "" : "cheap-module-source-map",
 
     resolve: {
       extensions: ['.ts', '.tsx', '.js', '.json'],
@@ -93,13 +95,13 @@ module.exports = function (env = {dev: true, prod: false}) {
       }),
       new webpack.DefinePlugin({
         'process.env': {
-          NODE_ENV: JSON.stringify(env.prod ? "production" : "development"),
+          NODE_ENV: JSON.stringify(isProduction ? "production" : "development"),
         }
       }),
       new CopyWebpackPlugin([
-        {from: "../manifest.json"},
-        {from: "../_locales", to: "_locales"},
-        {from: path.resolve(componentsDir, "icons/*.png"), to: "icons", flatten: true},
+        { from: "../manifest.json" },
+        { from: "../_locales", to: "_locales" },
+        { from: path.resolve(componentsDir, "icons/*.png"), to: "icons", flatten: true },
       ]),
     ],
   };

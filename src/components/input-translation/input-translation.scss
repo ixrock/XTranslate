@@ -1,6 +1,6 @@
 
 .InputTranslation {
-  --flex-gap: $margin;
+  --flex-gap: #{$margin};
 
   > :not(:last-child):not(.TextField) {
     margin-bottom: $margin;

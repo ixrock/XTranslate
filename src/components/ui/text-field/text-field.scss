@@ -2,8 +2,8 @@
 .TextField {
   position: relative;
   text-align: left;
-  --text-field-border-color: transparentize($color-primary, .5);
-  --text-field-focus-color: $bgc-primary;
+  --text-field-border-color: #{transparentize($color-primary, .5)};
+  --text-field-focus-color: #{$bgc-primary};
 
   textarea {
     @include custom-scrollbar(none, 0);

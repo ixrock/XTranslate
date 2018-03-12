@@ -1,6 +1,6 @@
 body.theme-dark {
   --theme-contast-color: white;
-  --theme-contast-color-invert: darken($bgc-dark, 2.5%);
+  --theme-contast-color-invert: #{darken($bgc-dark, 2.5%)};
 
   background: $bgc-dark;
   color: silver;
@@ -23,7 +23,7 @@ body.theme-dark {
   }
 
   .Menu {
-    --menu-bgc: $bgc-dark;
+    --menu-bgc: #{$bgc-dark};
   }
 
   .material-icons.button:hover {

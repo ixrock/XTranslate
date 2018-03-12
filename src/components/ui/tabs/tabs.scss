@@ -1,7 +1,7 @@
 
 .Tabs {
-  --tabs-color-active: $bgc-primary;
-  --tabs-line-color: transparentize($color-primary, .5);
+  --tabs-color-active: #{$bgc-primary};
+  --tabs-line-color: #{transparentize($color-primary, .5)};
   --tabs-line-color-active: currentColor;
 
   .tabs-header {

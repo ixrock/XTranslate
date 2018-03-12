@@ -4,7 +4,7 @@
     "outDir": "./dist/",
     "jsx": "react",
     "target": "es5",
-    "lib": ["dom", "es6"],
+    "lib": ["dom", "esnext"],
     "module": "commonjs",
     "moduleResolution": "node",
     "allowJs"  : true,
@@ -12,7 +12,8 @@
     "noImplicitAny": false,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "traceResolution": true
+    "allowSyntheticDefaultImports": true,
+    "traceResolution": false
   },
   "include": [
     "src/**/*"

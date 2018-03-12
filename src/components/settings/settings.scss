@@ -18,7 +18,7 @@
   }
 
   .vendor > * {
-    --flex-gap: $margin /2;
+    --flex-gap: #{$margin /2};
     .label {
       margin-right: var(--flex-gap);
     }
