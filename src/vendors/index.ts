@@ -4,7 +4,7 @@ import { yandex } from './yandex'
 
 export * from './vendor'
 
-export const vendors = [google, yandex];
+export const vendors: Vendor[] = [google, yandex];
 
 export function getVendor(name: string) {
   return vendors.find(vendor => vendor.name === name) || vendors[0];

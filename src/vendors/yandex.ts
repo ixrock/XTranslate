@@ -43,6 +43,7 @@ class Yandex extends Vendor {
       var url = this.url + '/api/v1.5/tr.json/translate?' +
           encodeQuery({
             key: this.apiKey,
+            srv: "yawidget",
             format: 'plain', // or "html"
             options: 1, // add detected language to response
             lang: langFrom === "auto" ? langTo : [langFrom, langTo].join('-'),
@@ -52,7 +53,7 @@ class Yandex extends Vendor {
     };
 
     var dictReq = (from = langFrom, to = langTo): Promise<YandexDictionary> => {
-      var url = 'https://translate.yandex.net/dicservice.json/lookup?' +
+      var url = 'https://dictionary.yandex.net/dicservice.json/lookup?' +
           encodeQuery({
             ui: to,
             lang: [from, to].join('-'),

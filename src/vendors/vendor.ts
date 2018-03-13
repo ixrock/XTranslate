@@ -87,10 +87,10 @@ export abstract class Vendor {
     this.ttsAudio.autoplay = true;
 
     var fetching: Promise<string>;
-    var vendors = [...vendors];
-    vendors.unshift(this); // put current vendor to the top
-    vendors.splice(vendors.lastIndexOf(this), 1); // remove duplicate
-    vendors.forEach(vendor => {
+    var vendorsList = [...vendors];
+    vendorsList.unshift(this); // put current vendor to the top
+    vendorsList.splice(vendorsList.lastIndexOf(this), 1); // remove duplicate
+    vendorsList.forEach(vendor => {
       vendor.stopPlaying();
       var url = vendor.getAudioUrl(lang, text);
       if (url) {
