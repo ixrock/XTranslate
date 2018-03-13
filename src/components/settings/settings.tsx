@@ -1,7 +1,7 @@
 import "./settings.scss";
 import * as React from "react";
 import { autobind } from "core-decorators";
-import { vendors, vendorsList } from "../../vendors";
+import { getVendor, vendors } from "../../vendors";
 import { __i18n, tabs } from "../../extension";
 import { connect } from "../../store/connect";
 import { getHotkey, parseHotkey, prevDefault } from "../../utils";
@@ -32,7 +32,7 @@ export class Settings extends React.Component<Props, {}> {
 
   @autobind()
   onVendorChange(vendorName: string) {
-    var vendor = vendors[vendorName];
+    var vendor = getVendor(vendorName);
     var settings: ISettingsState = { vendor: vendorName };
     var { langFrom, langTo } = this.props.settings;
     if (!vendor.langFrom[langFrom]) settings.langFrom = Object.keys(vendor.langFrom)[0];
@@ -66,7 +66,7 @@ export class Settings extends React.Component<Props, {}> {
           <RadioGroup
             className="vendor flex gaps column"
             value={settings.vendor} onChange={this.onVendorChange}>
-            {vendorsList.map((vendor, i) => {
+            {vendors.map((vendor, i) => {
               var domain = vendor.publicUrl.match(/https?:\/\/(.*?)(?:\/\w*|$)/i)[1];
               return (
                 <Radio key={i} value={vendor.name}>

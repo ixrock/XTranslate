@@ -1,7 +1,7 @@
 import "./input-translation.scss";
 
 import * as React from "react";
-import { Translation, TranslationError, Vendor, vendors, vendorsList } from "../../vendors";
+import { getVendor, Translation, TranslationError, Vendor, vendors } from "../../vendors";
 import { __i18n, MessageType, onMessage, tabs } from "../../extension";
 import { connect } from "../../store/connect";
 import { createStorage, cssNames } from "../../utils";
@@ -52,7 +52,7 @@ export class InputTranslation extends React.Component<Props, State> {
   get vendor() {
     var useFavorite = this.state.useFavorite;
     if (useFavorite) return useFavorite.vendor;
-    return vendors[this.state.vendor];
+    return getVendor(this.state.vendor);
   }
 
   get isFavorite() {
@@ -193,7 +193,7 @@ export class InputTranslation extends React.Component<Props, State> {
   onVendorChange = (vendorName: string) => {
     var { langFrom, langTo } = this.state;
     var state = { vendor: vendorName } as State;
-    var vendor = vendors[vendorName];
+    var vendor = getVendor(vendorName);
     if (!vendor.langFrom[langFrom]) state.langFrom = Object.keys(vendor.langFrom)[0];
     if (!vendor.langTo[langTo]) state.langTo = Object.keys(vendor.langTo)[0];
     this.setState(state, this.translate);
@@ -221,7 +221,7 @@ export class InputTranslation extends React.Component<Props, State> {
           onSwapLang={this.onSwapLang}
         />
         <Select value={vendor} onChange={this.onVendorChange}>
-          {vendorsList.map(v => <Option key={v.name} value={v.name} title={v.title}/>)}
+          {vendors.map(v => <Option key={v.name} value={v.name} title={v.title}/>)}
         </Select>
         {isFavorite ?
           <MaterialIcon
@@ -241,7 +241,7 @@ export class InputTranslation extends React.Component<Props, State> {
     var useFavorite = null;
     if (value) {
       var [vendorName, from, to] = value.split("-");
-      var vendor = vendors[vendorName];
+      var vendor = getVendor(vendorName);
       if (vendor) useFavorite = { vendor, from, to };
     }
     this.setState({ useFavorite }, () => {
@@ -252,7 +252,7 @@ export class InputTranslation extends React.Component<Props, State> {
 
   renderFavorites() {
     var favorites = this.props.favorites;
-    var favoritesByVendors = vendorsList.filter(v => {
+    var favoritesByVendors = vendors.filter(v => {
       return favorites[v.name] && favorites[v.name].length > 0
     }).map(v => {
       return {

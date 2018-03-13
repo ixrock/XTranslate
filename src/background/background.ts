@@ -3,7 +3,7 @@
 import { MessageType, onConnect, onMessage, openOptionsPage, PlayTextToSpeechPayload } from '../extension'
 import { AppState, getStore, storage } from '../store'
 import { bindContextMenu, updateContextMenu } from './contextMenu'
-import { vendors } from "../vendors";
+import { getVendor } from "../vendors";
 import isEqual = require("lodash/isEqual");
 
 var appState: AppState = {};
@@ -36,11 +36,11 @@ onMessage(function (message) {
   }
   if (type === MessageType.PLAY_TEXT_TO_SPEECH) {
     let { vendor, text, lang } = message.payload as PlayTextToSpeechPayload;
-    vendors[vendor].playText(lang, text);
+    getVendor(vendor).playText(lang, text);
   }
   if (type === MessageType.STOP_TTS_PLAYING) {
     let vendor = message.payload;
-    vendors[vendor].stopPlaying();
+    getVendor(vendor).stopPlaying();
   }
 });
 
@@ -54,4 +54,5 @@ chrome.runtime.onInstalled.addListener(function (evt) {
 
 try {
   require("./refs");
-} catch {}
+} catch {
+}

@@ -1,5 +1,5 @@
 import omit = require("lodash/omit");
-import { vendorsList } from "./index";
+import { vendors } from "./index";
 
 export abstract class Vendor {
   public abstract name: string;
@@ -87,7 +87,7 @@ export abstract class Vendor {
     this.ttsAudio.autoplay = true;
 
     var fetching: Promise<string>;
-    var vendors = [...vendorsList];
+    var vendors = [...vendors];
     vendors.unshift(this); // put current vendor to the top
     vendors.splice(vendors.lastIndexOf(this), 1); // remove duplicate
     vendors.forEach(vendor => {
@@ -121,7 +121,7 @@ export abstract class Vendor {
 
 const RTL_LANGUAGES = [
   "ar", // arabic
-  "he", // hebrew (yandex, bing)
+  "he", // hebrew (yandex)
   "iw", // hebrew (google)
   "fa", // persian
   "ur", // urdu

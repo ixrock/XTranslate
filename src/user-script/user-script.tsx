@@ -9,7 +9,7 @@ import { saveHistory } from "../components/user-history/user-history.actions";
 import { loadFonts } from "../components/theme-manager/fonts-loader";
 import { AppState } from "../store/store.types";
 import { Popup } from "../components/popup/popup";
-import { getNextVendor, Translation, TranslationError, vendors } from "../vendors";
+import { getNextVendor, getVendor, Translation, TranslationError } from "../vendors";
 import { cssNames } from "../utils/cssNames";
 import { getHotkey } from "../utils/parseHotkey";
 import isEqual = require("lodash/isEqual");
@@ -150,7 +150,7 @@ class App extends React.Component<{}, State> {
   showIcon() {
     var s = this.selection;
     var text = this.text;
-    var vendor = vendors[this.settings.vendor];
+    var vendor = getVendor(this.settings.vendor);
     if (!s.rangeCount || !text || text.length > vendor.maxTextInputLength) return;
     var focusOffset = s.focusOffset;
     var anchorOffset = s.anchorOffset;
@@ -315,7 +315,7 @@ class App extends React.Component<{}, State> {
   translateWith(vendorName: string, langFrom?, langTo?, text = this.text, rect?: ClientRect) {
     langFrom = langFrom || this.settings.langFrom;
     langTo = langTo || this.settings.langTo;
-    var vendorApi = vendors[vendorName];
+    var vendorApi = getVendor(vendorName);
     if (text && text.length <= vendorApi.maxTextInputLength) {
       if (isFrameWindow) {
         postMessage({

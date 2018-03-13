@@ -8,7 +8,7 @@ import { Button, Checkbox, MaterialIcon, Menu, MenuItem, Option, Select, Spinner
 import { ISettingsState, settingsActions } from "../settings";
 import { clearHistory, getHistory } from "./user-history.actions";
 import { IHistoryItem } from "./user-history.types";
-import { vendors } from "../../vendors";
+import { getVendor } from "../../vendors";
 import debounce = require("lodash/debounce");
 import groupBy = require("lodash/groupBy");
 
@@ -119,7 +119,7 @@ export class UserHistory extends React.Component<Props, State> {
         history.forEach(item => {
           csv.push([
             new Date(item.date).toLocaleString(),
-            vendors[item.vendor].title,
+            getVendor(item.vendor).title,
             item.from + "-" + item.to,
             item.text,
             item.translation,
@@ -175,7 +175,7 @@ export class UserHistory extends React.Component<Props, State> {
   }
 
   playText(vendor: string, lang: string, text: string) {
-    vendors[vendor].playText(lang, text);
+    getVendor(vendor).playText(lang, text);
   }
 
   renderHistory() {
@@ -196,7 +196,7 @@ export class UserHistory extends React.Component<Props, State> {
                 [from, to].join(" → ").toUpperCase()
               ]).join("");
               var rtlClass = {
-                rtl: vendors[vendor].isRightToLeft(to)
+                rtl: getVendor(vendor).isRightToLeft(to)
               };
               return (
                 <li key={id} title={translatedWith}

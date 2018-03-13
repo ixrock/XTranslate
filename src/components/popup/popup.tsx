@@ -11,7 +11,7 @@ import { MaterialIcon } from "../ui/icons/material-icon";
 import { IThemeManagerState } from "../theme-manager/theme-manager.types";
 import { ISettingsState } from "../settings/settings.types";
 import { fontsList, loadFonts } from "../theme-manager/fonts-loader";
-import { getNextVendor, Translation, TranslationError, vendors } from "../../vendors";
+import { getNextVendor, getVendor, Translation, TranslationError } from "../../vendors";
 
 interface Props extends React.HTMLProps<any> {
   preview?: boolean;
@@ -135,7 +135,7 @@ export class Popup extends React.Component<Props, State> {
     const { translation, transcription, dictionary, vendor, langFrom, langTo } = result;
     const { showTextToSpeechIcon, showNextVendorIcon, showCopyTranslationIcon } = this.props.settings;
     const boxSizeStyle = this.state.boxSizeStyle;
-    const vendorApi = vendors[vendor];
+    const vendorApi = getVendor(vendor);
     const rtlClass = { rtl: vendorApi.isRightToLeft(langTo) };
     const title = __i18n("translated_with", [
       vendorApi.title, `${langFrom} → ${langTo}`.toUpperCase()

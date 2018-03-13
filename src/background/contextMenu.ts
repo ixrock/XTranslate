@@ -1,11 +1,10 @@
 // Context menu item
 
-import { vendors, vendorsList } from "../vendors";
+import { getVendor, vendors } from "../vendors";
 import { AppState } from '../store'
 import { Favorite } from "../components/favorites/favorites.types";
+import { __i18n, getManifest, MenuTranslateFavoritePayload, MenuTranslateVendorPayload, MessageType, tabs } from "../extension";
 import orderBy = require("lodash/orderBy");
-import { tabs, getManifest, __i18n } from "../extension";
-import { MessageType, MenuTranslateFavoritePayload, MenuTranslateVendorPayload } from "../extension";
 
 // create, update or hide context menu regarding to app's settings
 export function updateContextMenu(state: AppState) {
@@ -22,7 +21,7 @@ export function updateContextMenu(state: AppState) {
     });
 
     // translate active page in new tab
-    vendorsList.forEach(vendor => {
+    vendors.forEach(vendor => {
       chrome.contextMenus.create({
         id: [MessageType.MENU_TRANSLATE_FULL_PAGE, vendor.name].join("-"),
         title: __i18n("context_menu_translate_full_page", [vendor.title]).join(""),
@@ -39,7 +38,7 @@ export function updateContextMenu(state: AppState) {
     });
 
     // translate with current language set from settings
-    vendorsList.forEach(vendor => {
+    vendors.forEach(vendor => {
       chrome.contextMenus.create({
         id: [MessageType.MENU_TRANSLATE_WITH_VENDOR, vendor.name].join("-"),
         title: __i18n("context_menu_translate_selection", ['"%s"', vendor.title]).join(""),
@@ -59,7 +58,7 @@ export function updateContextMenu(state: AppState) {
         contexts: selectionContext,
       });
       Object.keys(favorites).forEach(vendorName => {
-        var vendor = vendors[vendorName];
+        var vendor = getVendor(vendorName);
         var favList: Favorite[] = orderBy(favorites[vendorName], [
           (fav: Favorite) => fav.from !== 'auto',
           'from'
