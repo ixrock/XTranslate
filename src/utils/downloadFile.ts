@@ -6,6 +6,7 @@ export function downloadFile(filename: string, contents: any, type: string) {
   var link = document.createElement("a");
   link.href = url;
   link.download = filename;
+  link.target = "_blank";
   link.style.visibility = "hidden";
   document.body.appendChild(link);
   link.click();

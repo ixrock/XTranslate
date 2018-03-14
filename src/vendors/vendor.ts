@@ -1,5 +1,4 @@
 import omit = require("lodash/omit");
-import { vendors } from "./index";
 
 export abstract class Vendor {
   public abstract name: string;
@@ -68,6 +67,19 @@ export abstract class Vendor {
     return Promise.resolve(result);
   };
 
+  playText(lang: string, text: string) {
+    text = encodeURIComponent(text);
+    var audioUrl = this.getAudioUrl(lang, text);
+    if (audioUrl) {
+      this.getAudioSource(audioUrl).then(src => {
+        this.stopPlaying();
+        this.ttsAudio = document.createElement('audio');
+        this.ttsAudio.autoplay = true;
+        this.ttsAudio.src = src
+      })
+    }
+  }
+
   getAudioUrl(lang: string, text: string): string {
     return;
   }
@@ -78,29 +90,6 @@ export abstract class Vendor {
       if (error) throw res;
       return res.blob().then(blob => URL.createObjectURL(blob));
     });
-  }
-
-  playText(lang: string, text: string) {
-    text = encodeURIComponent(text);
-    this.stopPlaying();
-    this.ttsAudio = document.createElement('audio');
-    this.ttsAudio.autoplay = true;
-
-    var fetching: Promise<string>;
-    var vendorsList = [...vendors];
-    vendorsList.unshift(this); // put current vendor to the top
-    vendorsList.splice(vendorsList.lastIndexOf(this), 1); // remove duplicate
-    vendorsList.forEach(vendor => {
-      vendor.stopPlaying();
-      var url = vendor.getAudioUrl(lang, text);
-      if (url) {
-        if (!fetching) fetching = this.getAudioSource(url);
-        else fetching = fetching.catch(() => this.getAudioSource(url));
-      }
-    });
-    if (fetching) {
-      fetching.then(src => this.ttsAudio.src = src);
-    }
   }
 
   isPlayingText() {
