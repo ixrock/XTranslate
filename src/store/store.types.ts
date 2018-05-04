@@ -3,7 +3,7 @@ import { IThemeManagerState } from '../components/theme-manager/theme-manager.ty
 import { IFavoritesState } from '../components/favorites/favorites.types'
 
 export interface Action<D = any> {
-  type?: any
+  type: any
   data?: D
   error?: any
   waiting?: boolean
@@ -12,14 +12,14 @@ export interface Action<D = any> {
   [param: string]: any
 }
 
-// sync
-export interface AppState {
-  settings?: ISettingsState
-  theme?: IThemeManagerState
-  favorites?: IFavoritesState
+// cloud state (chrome.storage.sync)
+export interface IAppState {
+  settings: ISettingsState
+  theme: IThemeManagerState
+  favorites: IFavoritesState
 }
 
-// local
-export interface LocalState {
+// local state (chrome.storage.local)
+export interface ILocalState {
   history: any[]
 }

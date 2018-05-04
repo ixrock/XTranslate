@@ -1,8 +1,8 @@
 import path = require('path');
 import webpack = require('webpack');
-import ExtractTextPlugin = require("extract-text-webpack-plugin");
 import HtmlWebpackPlugin = require('html-webpack-plugin');
 import CopyWebpackPlugin = require('copy-webpack-plugin');
+import MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 export = () => {
   var isProduction = process.env.NODE_ENV === "production";
@@ -41,30 +41,23 @@ export = () => {
         },
         {
           test: /\.s?css$/,
-          use: ExtractTextPlugin.extract({
-            fallback: {
-              loader: "style-loader",
+          use: [
+            MiniCssExtractPlugin.loader,
+            {
+              loader: "css-loader",
               options: {
-                convertToAbsoluteUrls: true
+                sourceMap: true
               }
             },
-            use: [
-              {
-                loader: "css-loader",
-                options: {
-                  sourceMap: true
-                }
-              },
-              {
-                loader: "sass-loader",
-                options: {
-                  sourceMap: true,
-                  data: '@import "' + path.resolve(componentsDir, "vars.scss") + '";',
-                  includePaths: [srcPath]
-                }
+            {
+              loader: "sass-loader",
+              options: {
+                sourceMap: true,
+                data: '@import "' + path.resolve(componentsDir, "vars.scss") + '";',
+                includePaths: [srcPath]
               }
-            ]
-          })
+            }
+          ]
         },
         {
           test: /\.(txt|log)$/,
@@ -89,9 +82,8 @@ export = () => {
         filename: path.basename(optionsPage),
         template: optionsPage
       }),
-      new ExtractTextPlugin({
+      new MiniCssExtractPlugin({
         filename: "[name].css",
-        allChunks: true,
       }),
       new webpack.DefinePlugin({
         'process.env': {

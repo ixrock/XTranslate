@@ -1,6 +1,7 @@
 import { bindActions } from "../../store/bindActions";
 import { enumUniq } from "../../utils/enumUniq";
-import { AppState, storage } from "../../store";
+import { storage } from "../../store/storage";
+import { IAppState } from "../../store/store.types";
 import { IThemeManagerState } from "./theme-manager.types";
 import { defaultTheme } from "./theme-manager.default";
 
@@ -18,7 +19,7 @@ export const themeManagerActions = bindActions({
         type: actionTypes.THEME_SYNC,
         data: theme
       });
-      var state: AppState = getState();
+      var state: IAppState = getState();
       storage.sync.set({ theme: state.theme });
     }
   },

@@ -1,35 +1,36 @@
 import { applyMiddleware, createStore, Store } from 'redux'
-import { AppState, middlewares, rootReducer, storage } from './index'
 import { broadcastMessage, getBgcPage, MessageType } from '../extension'
-import isEqual = require("lodash/isEqual");
-import cloneDeep = require("lodash/cloneDeep");
+import { appReducer } from "./app.reducer";
+import { IAppState } from "./store.types";
+import { middlewares } from "./middlewares";
+import { storage } from "./storage";
 
-var appState: AppState = {};
+export const store: Store<IAppState> = createStore(
+  appReducer, {}, applyMiddleware(...middlewares)
+);
 
-interface AppStore extends Store<AppState> {
+// load app state from chrome storage
+export function loadAppState() {
+  return storage.sync.get().then(initAppState);
 }
 
-export var store: AppStore;
-export * from './storage';
-
-export function getStore(): Promise<AppStore> {
-  return storage.sync.get().then(initState => {
-    store = createStore(rootReducer, initState || {}, applyMiddleware(...middlewares));
-    appState = cloneDeep(store.getState());
-    getBgcPage().then(bgcPage => {
-      if (window !== bgcPage) store.subscribe(syncState);
-    });
-    return store;
+// dispatch whole new app state
+export function initAppState(state: IAppState) {
+  var appState = store.getState();
+  store.dispatch({
+    type: "APP_STATE_INIT",
+    initState: Object.assign({}, appState, state),
   });
 }
 
-function syncState() {
-  var state = store.getState();
-  if (!isEqual(appState, state)) {
-    appState = cloneDeep(state);
-    broadcastMessage({
-      type: MessageType.APP_STATE,
-      payload: appState
+// sync app state on changes from options page with background and content pages
+getBgcPage().then(bgcPage => {
+  if (window !== bgcPage) {
+    store.subscribe(() => {
+      broadcastMessage({
+        type: MessageType.APP_STATE,
+        payload: store.getState()
+      })
     });
   }
-}
+});

@@ -1,4 +1,4 @@
-import { Action } from "../../store";
+import { Action } from "../../store/store.types";
 import { actionTypes } from './favorites.actions'
 import { defaultFavorites } from './favorites.default'
 import { IFavoritesState } from "./favorites.types";

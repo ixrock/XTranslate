@@ -1,7 +1,8 @@
 import { bindActions } from "../../store/bindActions";
 import { enumUniq } from "../../utils/enumUniq";
 import { ISettingsState } from "./settings.types";
-import { AppState, storage } from "../../store";
+import { storage } from "../../store/storage";
+import { IAppState } from "../../store/store.types";
 
 export enum actionTypes {
   SETTINGS_SYNC
@@ -16,7 +17,7 @@ export const settingsActions = bindActions({
         type: actionTypes.SETTINGS_SYNC,
         data: settings
       });
-      var state: AppState = getState();
+      var state: IAppState = getState();
       return storage.sync.set({ settings: state.settings });
     }
   }

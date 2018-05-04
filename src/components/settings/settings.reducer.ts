@@ -1,4 +1,4 @@
-import { Action } from "../../store";
+import { Action } from "../../store/store.types";
 import { actionTypes } from './settings.actions'
 import { defaultSettings } from './settings.default'
 import { ISettingsState } from "./settings.types";

@@ -47,7 +47,7 @@ const promisedMiddleware = store => next => (action: Action) => {
   return next(action);
 };
 
-export const middlewares = [
+export const middlewares: any[] = [
   thunkMiddleware,
   loggerMiddleware,
   promisedMiddleware,

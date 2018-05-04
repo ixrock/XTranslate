@@ -3,7 +3,7 @@ import * as React from 'react';
 import { render } from 'react-dom'
 import { Provider } from 'react-redux'
 import { autobind } from 'core-decorators';
-import { getStore } from '../../store'
+import { loadAppState, store } from '../../store/store'
 import { connect } from "../../store/connect";
 import { cssNames } from "../../utils/cssNames";
 import { MaterialIcon, Spinner, Tab, Tabs } from '../ui'
@@ -15,42 +15,62 @@ import { UserHistory } from '../user-history'
 import { Footer } from './footer'
 
 enum TabId {
-  settings,
-  theme,
-  popup,
-  history,
+  settings, theme, popup, history,
 }
 
 interface Props {
   settings?: ISettingsState
 }
 
-@connect(state => ({ settings: state.settings }))
-export class App extends React.Component<Props, {}> {
+@connect(state => ({
+  settings: state.settings
+}))
+export class App extends React.Component<Props> {
   public manifest = getManifest();
 
-  componentWillMount() {
-    document.title = this.manifest.name;
-    this.setUpTheme();
-    window.addEventListener("hashchange", () => this.forceUpdate());
-  }
+  static loading: Spinner;
 
-  componentWillReceiveProps(nextProps: Props) {
-    this.setUpTheme(nextProps.settings);
+  static async init() {
+    // show waiting indicator while loading app state
+    render(
+      <Spinner singleColor={false} ref={e => App.loading = e}/>,
+      document.getElementById('loading')
+    );
+    // load app state and render
+    loadAppState().then(() => {
+      render(
+        <Provider store={store}>
+          <App/>
+        </Provider>,
+        document.getElementById('app')
+      );
+    })
   }
 
   componentDidMount() {
-    loading.hide();
+    document.title = this.manifest.name;
+    window.addEventListener("hashchange", () => this.forceUpdate());
+    this.setUpTheme();
+    App.loading.hide();
   }
 
-  setUpTheme(settings = this.props.settings) {
-    document.body.classList.toggle('theme-dark', settings.useDarkTheme);
+  componentDidUpdate(prevProps: Props) {
+    var { useDarkTheme } = this.props.settings;
+    if (useDarkTheme !== prevProps.settings.useDarkTheme) {
+      this.setUpTheme();
+    }
+  }
+
+  setUpTheme() {
+    var { useDarkTheme } = this.props.settings;
+    document.body.classList.toggle('theme-dark', useDarkTheme);
   }
 
   @autobind()
   toggleDarkTheme() {
-    var useDarkTheme = this.props.settings.useDarkTheme;
-    settingsActions.sync({ useDarkTheme: !useDarkTheme });
+    settingsActions.sync({
+      useDarkTheme: !this.props.settings.useDarkTheme
+    });
   }
 
   @autobind()
@@ -65,12 +85,13 @@ export class App extends React.Component<Props, {}> {
   }
 
   render() {
+    var { name, version } = this.manifest;
     var activeTab = TabId[location.hash.replace("#", "")] || 0;
     var useDarkTheme = this.props.settings.useDarkTheme;
     return (
       <div className="App">
         <h4 className="page-title flex">
-          <span className="box grow">{this.manifest.name} <sup>{this.manifest.version}</sup></span>
+          <span className="box grow">{name} <sup>{version}</sup></span>
           <img src={require('../icons/moon.svg')}
                className={cssNames("dark-theme-icon", { active: useDarkTheme })}
                title={__i18n("use_dark_theme")}
@@ -101,15 +122,5 @@ export class App extends React.Component<Props, {}> {
   }
 }
 
-// show loading indicator while getting app state from the storage
-var loading: Spinner;
-render(
-  <Spinner singleColor={false} ref={e => loading = e}/>,
-  document.getElementById('loading')
-);
-
-// init app
-getStore().then(store => {
-  var appContainer = document.getElementById('app');
-  render(<Provider store={store}><App/></Provider>, appContainer);
-});
+// init app, delayed call cause sometimes window might collapse on open
+setTimeout(() => App.init())

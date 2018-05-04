@@ -7,7 +7,7 @@ import { autobind } from "core-decorators";
 import { connect, getManifest, getURL, MenuTranslateFavoritePayload, MenuTranslateVendorPayload, Message, MessageType, onMessage, onPostMessage, postMessage, sendMessage, TranslateFromFramePayload } from "../extension";
 import { saveHistory } from "../components/user-history/user-history.actions";
 import { loadFonts } from "../components/theme-manager/fonts-loader";
-import { AppState } from "../store/store.types";
+import { IAppState } from "../store/store.types";
 import { Popup } from "../components/popup/popup";
 import { getNextVendor, getVendor, Translation, TranslationError } from "../vendors";
 import { cssNames } from "../utils/cssNames";
@@ -20,7 +20,7 @@ const isFrameWindow = window !== topWindow;
 const isPdf = document['contentType'] === "application/pdf";
 
 interface State {
-  appState?: AppState
+  appState?: IAppState
   translation?: Translation
   error?: TranslationError
   rect?: ClientRect

@@ -1,4 +1,4 @@
-import { Action } from "../../store";
+import { Action } from "../../store/store.types";
 import { actionTypes } from './theme-manager.actions'
 import { defaultTheme } from './theme-manager.default'
 import { IThemeManagerState } from "./theme-manager.types";

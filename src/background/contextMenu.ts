@@ -1,13 +1,14 @@
 // Context menu item
 
 import { getVendor, vendors } from "../vendors";
-import { AppState } from '../store'
+import { store } from '../store/store'
 import { Favorite } from "../components/favorites/favorites.types";
 import { __i18n, getManifest, MenuTranslateFavoritePayload, MenuTranslateVendorPayload, MessageType, tabs } from "../extension";
 import orderBy = require("lodash/orderBy");
 
 // create, update or hide context menu regarding to app's settings
-export function updateContextMenu(state: AppState) {
+export function updateContextMenu() {
+  var state = store.getState();
   var menuName = getManifest().name;
   const selectionContext = ['selection'];
   const pageContext = selectionContext.concat('page');
@@ -79,7 +80,7 @@ export function updateContextMenu(state: AppState) {
 }
 
 // context menu clicks handler
-export function bindContextMenu(getState: () => AppState) {
+export function bindContextMenu() {
   const onContextMenu = async (info: chrome.contextMenus.OnClickData) => {
     var [type, vendor, from, to] = String(info.menuItemId).split("-");
     var selectedText = info.selectionText;
@@ -101,7 +102,7 @@ export function bindContextMenu(getState: () => AppState) {
       });
     }
     if (enumType === MessageType.MENU_TRANSLATE_FULL_PAGE) {
-      var { langTo } = getState().settings;
+      var { langTo } = store.getState().settings;
       var translatePageUrl = "";
       switch (vendor) {
         case "google":

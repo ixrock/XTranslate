@@ -1,7 +1,7 @@
 import { bindActions } from "../../store/bindActions";
 import { enumUniq } from "../../utils/enumUniq";
 import { IFavoritesState } from "./favorites.types";
-import { storage } from "../../store";
+import { storage } from "../../store/storage";
 
 export enum actionTypes {
   FAVORITES_SYNC,

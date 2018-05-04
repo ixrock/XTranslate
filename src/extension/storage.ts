@@ -2,7 +2,7 @@
 
 export class Storage<S, L> {
   public sync = {
-    set(state: S): Promise<S> {
+    set(state: Partial<S>) {
       return new Promise((resolve, reject) => {
         chrome.storage.sync.set(state, function () {
           var error = chrome.runtime.lastError;
@@ -12,7 +12,7 @@ export class Storage<S, L> {
       });
     },
 
-    get(keys: keyof S | (keyof S)[] = null): Promise<S> {
+    get(keys: keyof S | (keyof S)[] = null) {
       return new Promise((resolve, reject) => {
         chrome.storage.sync.get(keys, function (items: S) {
           var error = chrome.runtime.lastError;
