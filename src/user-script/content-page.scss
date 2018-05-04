@@ -42,7 +42,7 @@ $md-icons-font-path: "chrome-extension://__MSG_@@extension_id__/fonts/";
     &:after {
       @extend .material-icons;
       all: unset;
-      content: "translate";
+      content: "explore";
       pointer-events: none;
     }
   }
