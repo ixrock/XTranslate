@@ -132,13 +132,13 @@ export class Popup extends React.Component<Props, State> {
   renderResult() {
     const result = this.props.translation;
     if (!result) return null;
-    const { translation, transcription, dictionary, vendor, langFrom, langTo } = result;
+    const { translation, transcription, dictionary, vendor, langFrom, langTo, langDetected } = result;
     const { showTextToSpeechIcon, showNextVendorIcon, showCopyTranslationIcon } = this.props.settings;
     const boxSizeStyle = this.state.boxSizeStyle;
     const vendorApi = getVendor(vendor);
     const rtlClass = { rtl: vendorApi.isRightToLeft(langTo) };
     const title = __i18n("translated_with", [
-      vendorApi.title, `${langFrom} → ${langTo}`.toUpperCase()
+      vendorApi.title, `${langDetected || langFrom} → ${langTo}`.toUpperCase()
     ]).join("");
     var nextVendorIcon = null;
     if (showNextVendorIcon) {

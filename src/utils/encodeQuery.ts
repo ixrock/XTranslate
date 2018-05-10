@@ -1,9 +1,9 @@
 // Helper to encode URL query params
 
-type Param = string|{[param: string]: any};
+type Param = string | { [param: string]: any };
 
 var encodeParam = function (key, value) {
-  return key + '=' + encodeURIComponent(value)
+  return encodeURIComponent(key) + '=' + encodeURIComponent(value)
 };
 
 export function encodeQuery(...params: Param[]): string {

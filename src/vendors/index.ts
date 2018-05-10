@@ -1,10 +1,11 @@
 import { Vendor } from './vendor'
 import { google } from './google'
 import { yandex } from './yandex'
+import { bing } from './bing'
 
 export * from './vendor'
 
-export const vendors: Vendor[] = [google, yandex];
+export const vendors: Vendor[] = [google, yandex, bing];
 
 export function getVendor(name: string) {
   return vendors.find(vendor => vendor.name === name) || vendors[0];

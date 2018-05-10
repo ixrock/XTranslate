@@ -110,7 +110,7 @@ export abstract class Vendor {
 
 const RTL_LANGUAGES = [
   "ar", // arabic
-  "he", // hebrew (yandex)
+  "he", // hebrew (yandex, bing)
   "iw", // hebrew (google)
   "fa", // persian
   "ur", // urdu
