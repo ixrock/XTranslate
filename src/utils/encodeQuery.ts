@@ -3,7 +3,7 @@
 type Param = string | { [param: string]: any };
 
 var encodeParam = function (key, value) {
-  return encodeURIComponent(key) + '=' + encodeURIComponent(value)
+  return encodeURI(key + "=" + value)
 };
 
 export function encodeQuery(...params: Param[]): string {

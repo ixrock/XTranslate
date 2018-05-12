@@ -17,11 +17,10 @@ class Bing extends Vendor {
   getAudioUrl(lang, text) {
     var locale = lang;
     if (lang === "en") locale = "en-US"
-    return this.url + `/tspeak?` + encodeQuery({
+    return this.url + `/tspeak?text=${text}&` + encodeQuery({
       language: locale,
       format: this.ttsFormat,
       options: "male",
-      text: text,
     });
   }
 
@@ -62,11 +61,13 @@ class Bing extends Vendor {
     var request = async (): Promise<Translation> => {
       try {
         var langDetected = langFrom === "auto" ? await detectLangReq() : langFrom;
-        var { translationResponse } = await translationReq(langDetected);
-        var dictRes = await dictReq(langDetected).catch(() => null);
+        var [transRes, dictRes] = await Promise.all([
+          translationReq(langDetected),
+          dictReq(langDetected).catch(() => null)
+        ]);
         var response: Translation = {
           langDetected: langDetected,
-          translation: translationResponse,
+          translation: transRes.translationResponse,
           dictionary: []
         };
         if (dictRes) {
