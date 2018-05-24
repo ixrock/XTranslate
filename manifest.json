@@ -1,7 +1,7 @@
 {
   "name": "XTranslate",
   "description": "__MSG_description__",
-  "version": "2.13.2",
+  "version": "2.14",
   "manifest_version": 2,
   "default_locale": "en",
   "minimum_chrome_version": "53",
