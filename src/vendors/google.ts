@@ -7,41 +7,48 @@ class Google extends Vendor {
   public url = 'https://translate.googleapis.com';
   public publicUrl = 'https://translate.google.com';
   public maxTextInputLength = 5000;
+  public ttsMaxLength = 187;
 
+  // todo: split long texts to queue of chunks with ttsMaxLenght and play one by one
   getAudioUrl(lang, text) {
+    text = text.substr(0, this.ttsMaxLength); // limit text for tts api, otherwise server returns error
     return this.url + `/translate_tts?client=gtx&ie=UTF-8&tl=${lang}&q=${text}`;
   }
 
   protected translate(langFrom, langTo, text): Promise<Translation> {
     var reqParams: RequestInit = {};
 
-    var useHttpPost = encodeURIComponent(text).length >= 1000;
-    if (useHttpPost) {
-      reqParams.method = 'post';
-      reqParams.body = 'q=' + encodeURIComponent(text);
-      reqParams.headers = {
-        'Content-type': 'application/x-www-form-urlencoded;charset=UTF-8'
-      };
+    var getApiUrl = (withText = true) => {
+      return this.url + '/translate_a/single?' +
+        encodeQuery('client=gtx&dj=1&source=input', {
+          q: withText ? text : null,
+          sl: langFrom,
+          tl: langTo,
+          hl: langTo, // header for dictionary (part of speech)
+          dt: [
+            "t", // translation
+            "bd", // dictionary
+            "rm", // translit
+            "qca", // spelling correction
+            // "ss", // synsets
+            // "rw", // related words
+            // "md", // definitions
+            // "at", // alternative translations
+            // "ex", // examples
+          ],
+        })
     }
 
-    var url = this.url + '/translate_a/single?' +
-      encodeQuery('client=gtx&dj=1&source=input', {
-        q: !useHttpPost ? text : null,
-        sl: langFrom,
-        tl: langTo,
-        hl: langTo, // header for dictionary (part of speech)
-        dt: [
-          "t", // translation
-          "bd", // dictionary
-          "rm", // translit
-          "qca", // spelling correction
-          // "ss", // synsets
-          // "rw", // related words
-          // "md", // definitions
-          // "at", // alternative translations
-          // "ex", // examples
-        ],
-      });
+    var url = getApiUrl();
+    if (url.length >= this.maxUrlLength) {
+      url = getApiUrl(false);
+
+      reqParams.method = 'post';
+      reqParams.body = 'q=' + text;
+      reqParams.headers = {
+        'Content-type': 'application/x-www-form-urlencoded'
+      };
+    }
 
     return fetch(url, reqParams).then(parseJson).then((res: GoogleTranslation) => {
       var { src, sentences, dict, spell } = res;

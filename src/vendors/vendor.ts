@@ -13,6 +13,7 @@ export abstract class Vendor {
   public ttsFormat = 'audio/mp3';
   public langFrom = {};
   public langTo = {};
+  public maxUrlLength = 2048; // max length of the url for GET/POST requests
 
   constructor(protected params: VendorParams) {
     this.langFrom = params.languages.from;
