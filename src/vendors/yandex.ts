@@ -7,17 +7,16 @@ class Yandex extends Vendor {
   public url = 'https://translate.yandex.net';
   public publicUrl = 'https://translate.yandex.com';
   public maxTextInputLength = 10000;
-  public ttsFormat = 'audio/wav';
-  public ttsMaxLength = 100;
+  public ttsMaxLength = 300;
 
   getAudioUrl(lang, text) {
     lang = this.params.tts[lang];
-    text = text.substr(0, this.ttsMaxLength);
-    if (!lang || !text) return;
+    if (!lang || text.length > this.ttsMaxLength) return;
+    var textEncoded = encodeURIComponent(text);
     var format = this.ttsFormat.split('/')[1];
     return [
       `https://tts.voicetech.yandex.net/tts?format=${format}`,
-      `quality=hi&platform=web&lang=${lang}&text=${text}`
+      `quality=hi&platform=web&lang=${lang}&text=${textEncoded}`
     ].join('&');
   }
 

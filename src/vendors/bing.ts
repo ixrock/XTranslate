@@ -16,8 +16,9 @@ class Bing extends Vendor {
 
   getAudioUrl(lang, text) {
     var locale = lang;
+    var textEncoded = encodeURIComponent(text);
     if (lang === "en") locale = "en-US"
-    return this.url + `/tspeak?text=${text}&` + encodeQuery({
+    return this.url + `/tspeak?text=${textEncoded}&` + encodeQuery({
       language: locale,
       format: this.ttsFormat,
       options: "male",

@@ -115,9 +115,10 @@ export class InputTranslation extends React.Component<Props, State> {
   }
 
   translate = (text = this.state.text.trim()) => {
-    var vendor = this.vendor;
     if (!text) {
-      if (vendor.isPlayingText()) vendor.stopPlaying();
+      if (this.vendor.isPlayingText()) {
+        this.vendor.stopPlaying();
+      }
       return;
     }
     var { useFavorite, langFrom, langTo } = this.state;
@@ -125,7 +126,7 @@ export class InputTranslation extends React.Component<Props, State> {
       langFrom = useFavorite.from;
       langTo = useFavorite.to;
     }
-    var translating = vendor.getTranslation(langFrom, langTo, text);
+    var translating = this.vendor.getTranslation(langFrom, langTo, text);
     this.handleTranslation(translating);
   }
 
@@ -285,19 +286,23 @@ export class InputTranslation extends React.Component<Props, State> {
   }
 
   renderResult() {
-    var result = this.state.translation;
+    var { translation: result } = this.state;
     if (!result) return null;
     var { langFrom, langTo, langDetected, translation, transcription, dictionary, spellCorrection } = result;
-    var langPair = [langDetected || langFrom, langTo].join(' → ').toUpperCase();
-    var langPairFull = [this.vendor.langFrom[langDetected || langFrom], this.vendor.langTo[langTo]].join(' → ');
+    if (langDetected) langFrom = langDetected;
+    var langPair = [langFrom, langTo].join(' → ').toUpperCase();
+    var langPairFull = [this.vendor.langFrom[langFrom], this.vendor.langTo[langTo]].join(' → ');
     var title = __i18n("translated_with", [this.vendor.title, langPairFull]).join("");
     var isRTL = this.vendor.isRightToLeft(langTo);
+    var canPlayText = this.vendor.canPlayText(langFrom, translation);
     return (
       <div className={cssNames("translation-results", { rtl: isRTL })}>
         {translation ?
           <div className="translation flex gaps">
             <MaterialIcon
-              name="play_circle_outline" title="Listen"
+              name="play_circle_outline"
+              title={__i18n("popup_play_icon_title")}
+              disabled={!canPlayText}
               onClick={() => this.playText()}
             />
             <div className="value box grow">

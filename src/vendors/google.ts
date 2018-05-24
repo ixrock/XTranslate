@@ -11,8 +11,9 @@ class Google extends Vendor {
 
   // todo: split long texts to queue of chunks with ttsMaxLenght and play one by one
   getAudioUrl(lang, text) {
-    text = text.substr(0, this.ttsMaxLength); // limit text for tts api, otherwise server returns error
-    return this.url + `/translate_tts?client=gtx&ie=UTF-8&tl=${lang}&q=${text}`;
+    if (text.length > this.ttsMaxLength) return;
+    var textEncoded = encodeURIComponent(text);
+    return this.url + `/translate_tts?client=gtx&ie=UTF-8&tl=${lang}&q=${textEncoded}`;
   }
 
   protected translate(langFrom, langTo, text): Promise<Translation> {

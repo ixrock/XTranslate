@@ -1,4 +1,5 @@
 import omit = require("lodash/omit");
+import { vendors } from "./index";
 
 export abstract class Vendor {
   public abstract name: string;
@@ -9,6 +10,7 @@ export abstract class Vendor {
   protected autoSwap = false;
   public lastResult: Translation;
   public lastError: { message?: string };
+  public lastAudioUrl: string;
   public ttsAudio: HTMLAudioElement;
   public ttsFormat = 'audio/mp3';
   public langFrom = {};
@@ -68,17 +70,29 @@ export abstract class Vendor {
     return Promise.resolve(result);
   };
 
-  playText(lang: string, text: string) {
-    text = encodeURIComponent(text);
+  async playText(lang: string, text: string) {
     var audioUrl = this.getAudioUrl(lang, text);
     if (audioUrl) {
-      this.getAudioSource(audioUrl).then(src => {
+      if (audioUrl !== this.lastAudioUrl) {
+        this.lastAudioUrl = audioUrl;
+        var src = await this.getAudioSource(audioUrl);
         this.stopPlaying();
         this.ttsAudio = document.createElement('audio');
         this.ttsAudio.autoplay = true;
-        this.ttsAudio.src = src
-      })
+        this.ttsAudio.src = src;
+      }
+      else if (this.isPlayingText()) {
+        this.ttsAudio.pause();
+      }
+      else if (this.ttsAudio.paused) {
+        this.ttsAudio.play();
+      }
+      return this.isPlayingText();
     }
+  }
+
+  canPlayText(lang: string, text: string): boolean {
+    return !!this.getAudioUrl(lang, text);
   }
 
   getAudioUrl(lang: string, text: string): string {
@@ -95,13 +109,15 @@ export abstract class Vendor {
 
   isPlayingText() {
     var tts = this.ttsAudio;
-    return tts && tts.currentTime > 0 && !tts.paused && !tts.ended && tts.readyState > 2;
+    return tts && !tts.paused && !tts.ended && tts.readyState > 2;
   }
 
   stopPlaying() {
-    if (!this.ttsAudio) return;
-    this.ttsAudio.pause();
-    URL.revokeObjectURL(this.ttsAudio.src);
+    vendors.forEach(({ ttsAudio }) => {
+      if (!ttsAudio) return;
+      ttsAudio.pause();
+      URL.revokeObjectURL(ttsAudio.src);
+    })
   }
 
   isRightToLeft(lang: string) {

@@ -21,6 +21,11 @@ $md-icons-parent-selector: "*" !default;
       color: $bgc-primary !important;
     }
 
+    &.disabled {
+      opacity: .5;
+      pointer-events: none;
+    }
+
     &.button {
       user-select: none;
       transition: 250ms all;

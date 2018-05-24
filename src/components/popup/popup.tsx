@@ -137,6 +137,7 @@ export class Popup extends React.Component<Props, State> {
     const boxSizeStyle = this.state.boxSizeStyle;
     const vendorApi = getVendor(vendor);
     const rtlClass = { rtl: vendorApi.isRightToLeft(langTo) };
+    const canPlayText = vendorApi.canPlayText(langDetected || langFrom, translation);
     const title = __i18n("translated_with", [
       vendorApi.title, `${langDetected || langFrom} → ${langTo}`.toUpperCase()
     ]).join("");
@@ -153,6 +154,7 @@ export class Popup extends React.Component<Props, State> {
             <MaterialIcon
               name="play_circle_outline"
               title={__i18n("popup_play_icon_title")}
+              disabled={canPlayText}
               onClick={this.playText}/>
           ) : null}
           <div className={cssNames("value box grow", rtlClass)} title={title}>
