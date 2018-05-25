@@ -22,7 +22,7 @@ $md-icons-parent-selector: "*" !default;
     }
 
     &.disabled {
-      opacity: .5;
+      opacity: .5 !important;
       pointer-events: none;
     }
 

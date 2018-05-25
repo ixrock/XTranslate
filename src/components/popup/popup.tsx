@@ -154,7 +154,7 @@ export class Popup extends React.Component<Props, State> {
             <MaterialIcon
               name="play_circle_outline"
               title={__i18n("popup_play_icon_title")}
-              disabled={canPlayText}
+              disabled={!canPlayText}
               onClick={this.playText}/>
           ) : null}
           <div className={cssNames("value box grow", rtlClass)} title={title}>
