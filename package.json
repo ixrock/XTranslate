@@ -3,7 +3,7 @@
   "version": "2.0.0",
   "scripts": {
     "dev": "webpack -w",
-    "build": "NODE_ENV=production webpack -p --progress"
+    "build": "rm -rf ./dist && NODE_ENV=production webpack -p --progress"
   },
   "keywords": [
     "chrome",
