@@ -172,7 +172,7 @@ export class InputTranslation extends React.Component<Props, State> {
   translateLazy = debounce(() => {
     if (this.state.immediate) return;
     this.translate();
-  }, 500)
+  }, 750)
 
   onTextChange = (text: string) => {
     if (this.props.settings.rememberLastText) lastText(text);
