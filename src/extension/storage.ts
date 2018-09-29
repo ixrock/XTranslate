@@ -42,7 +42,7 @@ export class Storage<S, L> {
         });
       });
     },
-    remove(keys: keyof L) {
+    remove(keys: string | string[]) {
       return new Promise((resolve, reject) => {
         chrome.storage.local.remove(keys, function () {
           var error = chrome.runtime.lastError;
