@@ -1,6 +1,31 @@
-@import "ui/vars";
+// Common vars & mixins
+// Available to all sass-files without import from webpack.config
 
+@import "colors";
+@import "mixins";
+
+// Dimensions
+$unit: 10px !default;
+$padding: $unit !default;
+$margin: $unit !default;
+$radius: round($unit * .3) !default;
+
+// Fonts
 $font-main: Helvetica Neue, sans-serif !default;
 $font-monospace: Lucida Console, Monaco, Consolas, monospace;
 $font-size: 1rem * 1.5;
-$md-icon-default-size: 24px;
+
+// Colors
+$bgc-primary: #3d90ce !default;
+$bgc-accent: #e85555 !default;
+$bgc-dark: #36393e !default;
+$color-primary: #87909c !default;
+$color-secondary: #a0a0a0 !default;
+$color-success: $green-600 !default;
+$color-error: $red-500 !default;
+$border-color: transparentize($color-primary, .5) !default;
+
+// Animation timing functions
+$animation-curve-fast-out-slow-in: cubic-bezier(0.4, 0, 0.2, 1);
+$animation-curve-linear-out-slow-in: cubic-bezier(0, 0, 0.2, 1);
+$animation-curve-fast-out-linear-in: cubic-bezier(0.4, 0, 1, 1);

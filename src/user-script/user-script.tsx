@@ -1,12 +1,11 @@
 // User script (content page)
-
 import "./user-script.scss";
+
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { autobind } from "core-decorators";
 import { connect, getManifest, getURL, MenuTranslateFavoritePayload, MenuTranslateVendorPayload, Message, MessageType, onMessage, onPostMessage, postMessage, sendMessage, TranslateFromFramePayload } from "../extension";
 import { saveHistory } from "../components/user-history/user-history.actions";
-import { loadFonts } from "../components/theme-manager/fonts-loader";
 import { IAppState } from "../store/store.types";
 import { Popup } from "../components/popup/popup";
 import { getNextVendor, getVendor, Translation, TranslationError } from "../vendors";
@@ -25,7 +24,6 @@ interface State {
   error?: TranslationError
   rect?: ClientRect
   position?: Position
-  customFont?: string
 }
 
 interface Position {
@@ -138,7 +136,7 @@ class App extends React.Component<{}, State> {
 
   initIcon() {
     this.icon = document.createElement("i");
-    this.icon.className = "XTranslate-icon material-icons";
+    this.icon.className = "MaterialIcon";
     this.icon.onmousedown = (e) => {
       this.hideIcon();
       this.translate();
@@ -435,15 +433,6 @@ class App extends React.Component<{}, State> {
     }
     if (changePosition) {
       this.setState({ position: position });
-    }
-  }
-
-  componentWillUpdate(nextProps, { appState }: State) {
-    if (!appState || this.state.appState === appState) return;
-    var fontFamily = appState.theme.fontFamily;
-    if (this.state.customFont !== fontFamily) {
-      loadFonts(fontFamily);
-      this.setState({ customFont: fontFamily });
     }
   }
 

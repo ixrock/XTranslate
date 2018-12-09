@@ -1,7 +1,7 @@
 {
   "name": "XTranslate",
   "description": "__MSG_description__",
-  "version": "2.15.0",
+  "version": "2.15.1",
   "manifest_version": 2,
   "default_locale": "en",
   "minimum_chrome_version": "53",
@@ -24,25 +24,19 @@
       "background.js"
     ]
   },
-  "web_accessible_resources": [
-    "*"
-  ],
+  "web_accessible_resources": ["*"],
   "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
   "content_scripts": [
     {
-      "run_at":"document_end",
+      "run_at": "document_end",
       "all_frames": true,
       "matches": [
         "http://*/*",
         "https://*/*",
         "file://*/*"
       ],
-      "css": [
-        "page.css"
-      ],
-      "js": [
-        "injector.js"
-      ]
+      "css": ["page.css"],
+      "js": ["page.js"]
     }
   ],
   "permissions": [

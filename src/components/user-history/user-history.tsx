@@ -4,11 +4,17 @@ import * as React from "react";
 import { connect } from "../../store/connect";
 import { __i18n } from "../../extension/i18n";
 import { cssNames, download, prevDefault } from "../../utils";
-import { Button, Checkbox, MaterialIcon, Menu, MenuItem, Option, Select, Spinner, TextField } from "../ui";
 import { ISettingsState, settingsActions } from "../settings";
 import { clearHistory, getHistory } from "./user-history.actions";
 import { IHistoryItem } from "./user-history.types";
 import { getVendor } from "../../vendors";
+import { MaterialIcon } from "../icons";
+import { Checkbox } from "../checkbox";
+import { Menu, MenuItem } from "../menu";
+import { TextField } from "../text-field";
+import { Option, Select } from "../select";
+import { Button } from "../button";
+import { Spinner } from "../spinner";
 import debounce = require("lodash/debounce");
 import groupBy = require("lodash/groupBy");
 

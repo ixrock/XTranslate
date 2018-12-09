@@ -10,15 +10,14 @@ export = () => {
   var distPath = path.resolve(__dirname, 'dist');
   var optionsPage = path.resolve(__dirname, "options.html");
   var componentsDir = path.resolve(srcPath, 'components');
+  var commonVars = path.resolve(componentsDir, "vars.scss");
 
   return {
     context: srcPath,
     entry: {
       app: path.resolve(componentsDir, "app/app.tsx"),
       background: path.resolve(srcPath, "background/background.ts"),
-      injector: path.resolve(srcPath, "user-script/injector.ts"),
-      content: path.resolve(srcPath, "user-script/user-script.tsx"),
-      page: path.resolve(srcPath, "user-script/content-page.scss"),
+      page: path.resolve(srcPath, "user-script/user-script.tsx"),
     },
     output: {
       path: distPath,
@@ -53,7 +52,7 @@ export = () => {
               loader: "sass-loader",
               options: {
                 sourceMap: true,
-                data: '@import "' + path.resolve(componentsDir, "vars.scss") + '";',
+                data: '@import "' + commonVars + '";',
                 includePaths: [srcPath]
               }
             }
@@ -93,6 +92,7 @@ export = () => {
       new CopyWebpackPlugin([
         { from: "../manifest.json" },
         { from: "../_locales", to: "_locales" },
+        { from: "../fonts", to: "fonts" },
         { from: path.resolve(componentsDir, "icons/*.png"), to: "icons", flatten: true },
       ]),
     ],

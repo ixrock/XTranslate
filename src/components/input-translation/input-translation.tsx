@@ -5,11 +5,14 @@ import { getVendor, Translation, TranslationError, Vendor, vendors } from "../..
 import { __i18n, MessageType, onMessage, tabs } from "../../extension";
 import { connect } from "../../store/connect";
 import { createStorage, cssNames } from "../../utils";
-import { MaterialIcon, OptGroup, Option, Select, Spinner, TextField } from "../ui";
 import { SelectLanguage } from "../select-language";
 import { ISettingsState } from "../settings";
 import { Favorite, favoritesActions, IFavoritesState } from "../favorites";
 import { saveHistory } from "../user-history/user-history.actions";
+import { TextField } from "../text-field";
+import { OptGroup, Option, Select } from "../select";
+import { MaterialIcon } from "../icons";
+import { Spinner } from "../spinner";
 import find = require("lodash/find");
 import debounce = require("lodash/debounce");
 import remove = require("lodash/remove");

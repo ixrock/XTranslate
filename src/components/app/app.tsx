@@ -6,13 +6,15 @@ import { autobind } from 'core-decorators';
 import { loadAppState, store } from '../../store/store'
 import { connect } from "../../store/connect";
 import { cssNames } from "../../utils/cssNames";
-import { MaterialIcon, Spinner, Tab, Tabs } from '../ui'
 import { __i18n, getManifest, getOptionsPageUrl } from "../../extension";
 import { ISettingsState, Settings, settingsActions } from '../settings'
 import { ThemeManager } from '../theme-manager'
 import { InputTranslation } from '../input-translation'
 import { UserHistory } from '../user-history'
-import { Footer } from './footer'
+import { Footer } from '../footer'
+import { Spinner } from "../spinner";
+import { MaterialIcon } from "../icons";
+import { Tab, Tabs } from "../tabs";
 
 enum TabId {
   settings, theme, popup, history,
@@ -26,9 +28,9 @@ interface Props {
   settings: state.settings
 }))
 export class App extends React.Component<Props> {
-  public manifest = getManifest();
-
   static loading: Spinner;
+
+  public manifest = getManifest();
 
   static async init() {
     // show waiting indicator while loading app state

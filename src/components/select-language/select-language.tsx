@@ -4,9 +4,10 @@ import { __i18n } from "../../extension/i18n";
 import { getVendor } from '../../vendors';
 import { autobind } from "core-decorators";
 import { connect } from "../../store/connect";
-import { MaterialIcon, Option, Select } from '../ui'
 import { ISettingsState, settingsActions } from "../settings";
 import { cssNames, noop } from "../../utils";
+import { Option, Select } from "../select";
+import { MaterialIcon } from "../icons";
 
 type Props = React.HTMLProps<any> & {
   settings?: ISettingsState

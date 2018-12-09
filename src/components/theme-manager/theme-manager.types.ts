@@ -1,4 +1,4 @@
-import { ColorValue } from "../ui/color-picker/cssColor";
+import { ColorValue } from "../color-picker/cssColor";
 
 export type IThemeManagerState = Theme;
 

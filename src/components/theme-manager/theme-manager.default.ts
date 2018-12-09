@@ -5,7 +5,7 @@ export const defaultTheme: IThemeManagerState = {
   bgcSecondary: { r: 98, g: 101, b: 101, a: .95 },
   bgcLinear: true,
   fontSize: 15,
-  fontFamily: "Lato",
+  fontFamily: "Roboto",
   textColor: { r: 255, g: 255, b: 255, a: .85 },
   textShadowRadius: 0,
   textShadowOffsetX: 0,

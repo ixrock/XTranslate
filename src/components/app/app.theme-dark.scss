@@ -1,0 +1,34 @@
+body {
+  &.theme-dark {
+    --theme-contast-color: white;
+    --theme-contast-color-invert: #{darken($bgc-dark, 2.5%)};
+
+    background: $bgc-dark;
+    color: silver;
+    @include custom-scrollbar(light);
+
+    .page-title {
+      color: #cccccc;
+    }
+
+    .Slider {
+      --slider-track-color: gray;
+      --slider-thumb-color: #444;
+      --slider-thumb-color-active: white;
+    }
+
+    .Dialog {
+      .MaterialIcon.button:hover {
+        color: inherit;
+      }
+    }
+
+    .Menu {
+      --menu-bgc: #{$bgc-dark};
+    }
+
+    .MaterialIcon.button:hover {
+      color: white;
+    }
+  }
+}

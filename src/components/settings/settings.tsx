@@ -5,9 +5,13 @@ import { getVendor, vendors } from "../../vendors";
 import { __i18n, tabs } from "../../extension";
 import { connect } from "../../store/connect";
 import { getHotkey, parseHotkey, prevDefault } from "../../utils";
-import { Checkbox, MaterialIcon, Option, Radio, RadioGroup, Select, TextField } from "../ui";
 import { SelectLanguage } from "../select-language";
 import { ISettingsState, settingsActions } from "./index";
+import { TextField } from "../text-field";
+import { Checkbox } from "../checkbox";
+import { Radio, RadioGroup } from "../radio";
+import { MaterialIcon } from "../icons";
+import { Option, Select } from "../select";
 
 interface Props {
   settings?: ISettingsState

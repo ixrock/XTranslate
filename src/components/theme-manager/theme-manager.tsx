@@ -3,11 +3,16 @@ import "./theme-manager.scss";
 import * as React from "react";
 import { __i18n } from "../../extension/i18n";
 import { connect } from "../../store/connect";
-import { Button, Checkbox, ColorPicker, Option, Select, Slider, TextField } from "../ui";
 import { ISettingsState } from "../settings";
-import { defaultTheme, Font, fontsList, IThemeManagerState, themeManagerActions } from "./index";
+import { defaultTheme, IThemeManagerState, themeManagerActions } from "./index";
 import { Translation } from "../../vendors";
 import { Popup } from "../popup";
+import { ColorPicker } from "../color-picker";
+import { TextField } from "../text-field";
+import { Checkbox } from "../checkbox";
+import { Option, Select } from "../select";
+import { Slider } from "../slider";
+import { Button } from "../button";
 import isEqual = require("lodash/isEqual");
 import debounce = require("lodash/debounce");
 
@@ -21,6 +26,13 @@ interface Props {
   settings: state.settings,
 }))
 export class ThemeManager extends React.Component<Props, {}> {
+  private fonts = [
+    // custom fonts
+    "Roboto", "Lato", "Open Sans", "Raleway", "Lobster",
+    // system fonts
+    "Arial", "Helvetica Neue", "Times New Roman",
+  ];
+
   private translation: Translation = {
     vendor: this.props.settings.vendor,
     langFrom: this.props.settings.langFrom,
@@ -123,7 +135,7 @@ export class ThemeManager extends React.Component<Props, {}> {
             />
             <span className="heading">{__i18n("text_font_family")}</span>
             <Select className="box grow" value={theme.fontFamily} onChange={v => this.save({ fontFamily: v })}>
-              {fontsList.map((font: Font, i) => <Option key={i} value={font.font}/>)}
+              {this.fonts.map(fontFamily => <Option key={fontFamily} value={fontFamily}/>)}
             </Select>
           </div>
           <div className="flex gaps align-center">

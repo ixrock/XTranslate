@@ -6,11 +6,10 @@ import { __i18n } from "../../extension/i18n";
 import { MessageType } from "../../extension/message";
 import { sendMessage } from "../../extension/runtime";
 import { cssNames } from "../../utils/cssNames";
-import { cssColor } from "../ui/color-picker/cssColor";
-import { MaterialIcon } from "../ui/icons/material-icon";
+import { cssColor } from "../color-picker/cssColor";
+import { MaterialIcon } from "../icons/material-icon";
 import { IThemeManagerState } from "../theme-manager/theme-manager.types";
 import { ISettingsState } from "../settings/settings.types";
-import { fontsList, loadFonts } from "../theme-manager/fonts-loader";
 import { getNextVendor, getVendor, Translation, TranslationError } from "../../vendors";
 
 interface Props extends React.HTMLProps<any> {
@@ -46,17 +45,16 @@ export class Popup extends React.Component<Props, State> {
 
   @autobind()
   focus() {
+    if (!this.elem) return;
     this.elem.focus();
   }
 
   applyTheme(theme = this.props.theme) {
     if (!theme) return;
-    loadFonts(theme.fontFamily);
-    var font = fontsList.filter(font => font.font === theme.fontFamily)[0];
     var cssTheme = {
       background: cssColor(theme.bgcMain),
       borderRadius: theme.borderRadius,
-      fontFamily: [JSON.stringify(theme.fontFamily)].concat(font.family ? font.family : []).join(", "),
+      fontFamily: `${theme.fontFamily}, sans-serif`,
       fontSize: theme.fontSize,
       color: cssColor(theme.textColor),
       border: theme.borderWidth ? [

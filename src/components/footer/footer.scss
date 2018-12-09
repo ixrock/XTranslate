@@ -1,0 +1,21 @@
+.Footer {
+  .social-icons {
+    display: inline-block;
+    vertical-align: middle;
+
+    a {
+      opacity: .75;
+    }
+
+    img {
+      height: 25px;
+      margin-left: $margin / 2;
+      filter: grayscale(100%);
+      opacity: .75;
+      &:hover {
+        opacity: 1;
+        filter: grayscale(0);
+      }
+    }
+  }
+}
