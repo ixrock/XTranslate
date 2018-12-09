@@ -37,7 +37,7 @@ class App extends React.Component<{}, State> {
   public appName = getManifest().name;
   public state: State = {};
   private port = connect();
-  private style = getURL('injector.css');
+  private style = getURL('page.css');
   private pointerElem: Element;
   private icon: HTMLElement;
   private iconShown: boolean;

@@ -1,5 +1,3 @@
-import "./popup.scss";
-
 import * as React from "react";
 import { autobind } from "core-decorators";
 import { __i18n } from "../../extension/i18n";
