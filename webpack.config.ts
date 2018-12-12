@@ -3,6 +3,7 @@ import webpack = require('webpack');
 import HtmlWebpackPlugin = require('html-webpack-plugin');
 import CopyWebpackPlugin = require('copy-webpack-plugin');
 import MiniCssExtractPlugin = require("mini-css-extract-plugin");
+import UglifyJsPlugin = require("uglifyjs-webpack-plugin");
 
 export = () => {
   var isProduction = process.env.NODE_ENV === "production";
@@ -27,6 +28,19 @@ export = () => {
 
     mode: isProduction ? "production" : "development",
     devtool: isProduction ? "" : "cheap-module-source-map",
+
+    optimization: {
+      minimizer: [
+        new UglifyJsPlugin({
+          uglifyOptions: {
+            mangle: false,
+            compress: false,
+            keep_fnames: true,
+            keep_classnames: true,
+          }
+        })
+      ],
+    },
 
     resolve: {
       extensions: ['.ts', '.tsx', '.js', '.json'],
