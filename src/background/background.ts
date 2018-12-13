@@ -46,8 +46,3 @@ chrome.runtime.onInstalled.addListener(function (evt) {
     openOptionsPage("#settings");
   }
 });
-
-try {
-  require("./refs");
-} catch {
-}
