@@ -1,28 +1,24 @@
 import "./input-translation.scss";
 
 import * as React from "react";
-import { getVendor, Translation, TranslationError, Vendor, vendors } from "../../vendors";
+import { observer } from "mobx-react";
+import { getVendorByName, Translation, TranslationError, Vendor, vendors } from "../../vendors";
 import { __i18n, MessageType, onMessage, tabs } from "../../extension";
-import { connect } from "../../store/connect";
-import { createStorage, cssNames } from "../../utils";
+import { createStorage, cssNames, isMac } from "../../utils";
 import { SelectLanguage } from "../select-language";
-import { ISettingsState } from "../settings";
-import { Favorite, favoritesActions, IFavoritesState } from "../favorites";
-import { saveHistory } from "../user-history/user-history.actions";
 import { TextField } from "../text-field";
 import { OptGroup, Option, Select } from "../select";
 import { MaterialIcon } from "../icons";
 import { Spinner } from "../spinner";
+import { settingsStore } from "../settings/settings.store";
+import { Favorite, favoritesStore } from "./favorites.store";
+import { AppRoute } from "../app/app.route";
+import { userHistoryStore } from "../user-history/user-history.store";
 import find = require("lodash/find");
 import debounce = require("lodash/debounce");
 import remove = require("lodash/remove");
 
 const lastText = createStorage("last_text", "");
-
-interface Props {
-  settings?: ISettingsState
-  favorites?: IFavoritesState
-}
 
 interface State {
   text?: string
@@ -33,42 +29,44 @@ interface State {
   immediate?: boolean
   translation?: Translation
   error?: TranslationError
-  useFavorite?: { vendor: Vendor, from: string, to: string }
+  useFavorite?: {
+    vendor: Vendor,
+    from: string,
+    to: string
+  }
 }
 
-@connect(state => ({
-  settings: state.settings,
-  favorites: state.favorites,
-}))
-export class InputTranslation extends React.Component<Props, State> {
+@observer
+export class InputTranslation extends React.Component<{}, State> {
+  settings = settingsStore.data;
+
   private textField: TextField;
   private translation: Promise<any>;
   private loadingTimer;
 
   public state: State = {
-    text: this.props.settings.rememberLastText ? lastText() : "",
-    vendor: this.props.settings.vendor,
-    langFrom: this.props.settings.langFrom,
-    langTo: this.props.settings.langTo,
+    text: this.settings.rememberLastText ? lastText() : "",
+    vendor: this.settings.vendor,
+    langFrom: this.settings.langFrom,
+    langTo: this.settings.langTo,
   };
 
   get vendor() {
     var useFavorite = this.state.useFavorite;
     if (useFavorite) return useFavorite.vendor;
-    return getVendor(this.state.vendor);
+    return getVendorByName(this.state.vendor);
   }
 
   get isFavorite() {
-    var favorites = this.props.favorites;
     var { useFavorite, vendor, langFrom, langTo } = this.state;
     if (useFavorite) {
       let { vendor, from, to } = useFavorite;
-      return !!find(favorites[vendor.name], { from, to });
+      return !!find(favoritesStore.getByVendor(vendor.name), { from, to });
     }
-    return !!find(favorites[vendor], { from: langFrom, to: langTo });
+    return !!find(favoritesStore.getByVendor(vendor), { from: langFrom, to: langTo });
   }
 
-  async componentWillMount() {
+  async componentDidMount() {
     var activeTab = await tabs.getActive();
     tabs.sendMessage(activeTab.id, {
       type: MessageType.GET_SELECTED_TEXT
@@ -78,38 +76,39 @@ export class InputTranslation extends React.Component<Props, State> {
         this.translateWord(payload);
       }
     });
-  }
-
-  componentDidMount() {
     if (this.state.text) this.translate();
     this.textField.focus();
+  }
+
+  saveFavorites(vendor: string, favorites: Favorite[]) {
+    favoritesStore.data[vendor] = favorites;
   }
 
   addFavorite() {
     var { langFrom, langTo, vendor } = this.state;
     var fav: Favorite = { from: langFrom, to: langTo };
-    var favorites = this.props.favorites;
-    var favoritesByVendor = (favorites[vendor] = favorites[vendor] || []);
-    if (!find(favoritesByVendor, fav)) {
-      favoritesByVendor.push(fav);
-      favoritesActions.sync(favorites);
+    var favorites: Favorite[] = favoritesStore.getByVendor(vendor);
+    if (!find(favorites, fav)) {
+      this.saveFavorites(vendor, [...favorites, fav]);
     }
   }
 
   removeFavorite() {
-    var { favorites } = this.props;
     var { useFavorite, vendor, langFrom, langTo } = this.state;
     if (useFavorite) {
       // remove actively selected favorite from the list
       let { vendor, from, to } = useFavorite;
-      remove(favorites[vendor.name], { from, to });
+      let favorites = favoritesStore.getByVendor(vendor.name);
+      remove(favorites, { from, to });
+      this.saveFavorites(vendor.name, favorites);
       this.useFavorite("");
     }
     else {
       // remove current lang-pair from favorites
-      remove(favorites[vendor], { from: langFrom, to: langTo });
+      let favorites = favoritesStore.getByVendor(vendor);
+      remove(favorites, { from: langFrom, to: langTo });
+      this.saveFavorites(vendor, favorites);
     }
-    favoritesActions.sync(favorites);
   }
 
   playText() {
@@ -147,9 +146,10 @@ export class InputTranslation extends React.Component<Props, State> {
   }
 
   onTranslationReady = () => {
-    var { autoPlayText, historyEnabled } = this.props.settings;
+    var translation = this.state.translation;
+    var { autoPlayText, historyEnabled } = this.settings;
     if (autoPlayText) this.playText();
-    if (historyEnabled) this.saveHistory();
+    if (historyEnabled) userHistoryStore.saveTranslation(translation);
   }
 
   // show loading indicator only for long delays
@@ -162,11 +162,6 @@ export class InputTranslation extends React.Component<Props, State> {
     }, 1000);
   }
 
-  saveHistory() {
-    var translation = this.state.translation;
-    if (translation) saveHistory(translation, this.props.settings);
-  }
-
   translateWord(text: string) {
     this.textField.focus();
     this.setState({ text });
@@ -175,10 +170,10 @@ export class InputTranslation extends React.Component<Props, State> {
   translateLazy = debounce(() => {
     if (this.state.immediate) return;
     this.translate();
-  }, 750)
+  }, this.settings.textInputTranslateDelayMs)
 
   onTextChange = (text: string) => {
-    if (this.props.settings.rememberLastText) lastText(text);
+    if (this.settings.rememberLastText) lastText(text);
     this.setState({ text, immediate: false }, this.translateLazy);
     if (!text.trim()) {
       this.setState({ translation: null });
@@ -197,7 +192,7 @@ export class InputTranslation extends React.Component<Props, State> {
   onVendorChange = (vendorName: string) => {
     var { langFrom, langTo } = this.state;
     var state = { vendor: vendorName } as State;
-    var vendor = getVendor(vendorName);
+    var vendor = getVendorByName(vendorName);
     if (!vendor.langFrom[langFrom]) state.langFrom = Object.keys(vendor.langFrom)[0];
     if (!vendor.langTo[langTo]) state.langTo = Object.keys(vendor.langTo)[0];
     this.setState(state, this.translate);
@@ -245,7 +240,7 @@ export class InputTranslation extends React.Component<Props, State> {
     var useFavorite = null;
     if (value) {
       var [vendorName, from, to] = value.split("-");
-      var vendor = getVendor(vendorName);
+      var vendor = getVendorByName(vendorName);
       if (vendor) useFavorite = { vendor, from, to };
     }
     this.setState({ useFavorite }, () => {
@@ -255,7 +250,7 @@ export class InputTranslation extends React.Component<Props, State> {
   };
 
   renderFavorites() {
-    var favorites = this.props.favorites;
+    var favorites = favoritesStore.data;
     var favoritesByVendors = vendors.filter(v => {
       return favorites[v.name] && favorites[v.name].length > 0
     }).map(v => {
@@ -326,7 +321,7 @@ export class InputTranslation extends React.Component<Props, State> {
         ) : null}
         <table className="dictionary">
           <tbody>
-          {dictionary.map((dict, i) => {
+          {dictionary.map((dict) => {
             return React.Children.toArray([
               <tr>
                 <td className="word-type" colSpan={2}>{dict.wordType}</td>
@@ -380,6 +375,7 @@ export class InputTranslation extends React.Component<Props, State> {
   }
 
   render() {
+    var { textInputTranslateDelayMs } = this.settings;
     return (
       <div className="InputTranslation">
         {this.renderHeader()}
@@ -391,7 +387,14 @@ export class InputTranslation extends React.Component<Props, State> {
           value={this.state.text} onChange={v => this.onTextChange(v)}
           onKeyDown={this.onKeyDown}
           ref={e => this.textField = e}
-        />
+        >
+          <div className="info">
+            {__i18n("text_input_translation_hint", React.Children.toArray([
+              `${isMac ? "Cmd" : "Ctrl"}+Enter`,
+              <a href={AppRoute.settings}>{textInputTranslateDelayMs}ms</a>
+            ]))}
+          </div>
+        </TextField>
         {this.renderTranslation()}
       </div>
     );

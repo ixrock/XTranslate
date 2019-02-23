@@ -49,4 +49,4 @@ Available translation vendors:
 * [Yandex](http://translate.yandex.com/)
 * [Bing](http://bing.com/translator/)
 
-Powered by typescript, react, redux, webpack, sass, lodash and some others. Made with ♥
+Powered by typescript, react, mobx, webpack, sass, lodash and some others. Made with ♥

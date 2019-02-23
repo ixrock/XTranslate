@@ -1,8 +1,7 @@
 import "./menu.scss";
 
 import * as React from "react";
-import { autobind } from "core-decorators";
-import { cssNames, noop } from "../../utils";
+import { cssNames, noop, autobind } from "../../utils";
 import { Animate } from "../animate";
 
 type MenuPos = "left" | "right" | "top" | "bottom"

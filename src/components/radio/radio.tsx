@@ -1,7 +1,6 @@
 import "./radio.scss";
 import * as React from "react";
-import { autobind } from "core-decorators";
-import { cssNames } from "../../utils";
+import { autobind, cssNames } from "../../utils";
 import uniqueId = require('lodash/uniqueId');
 
 interface RadioGroupProps {

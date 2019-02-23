@@ -1,10 +1,10 @@
 import "./theme-manager.scss";
 
 import * as React from "react";
+import { observer } from "mobx-react";
 import { __i18n } from "../../extension/i18n";
-import { connect } from "../../store/connect";
-import { ISettingsState } from "../settings";
-import { defaultTheme, IThemeManagerState, themeManagerActions } from "./index";
+import { themeStore } from "./theme.store";
+import { settingsStore } from "../settings/settings.store";
 import { Translation } from "../../vendors";
 import { Popup } from "../popup";
 import { ColorPicker } from "../color-picker";
@@ -14,29 +14,16 @@ import { Option, Select } from "../select";
 import { Slider } from "../slider";
 import { Button } from "../button";
 import isEqual = require("lodash/isEqual");
-import debounce = require("lodash/debounce");
 
-interface Props {
-  theme?: IThemeManagerState
-  settings?: ISettingsState
-}
+@observer
+export class ThemeManager extends React.Component {
+  settings = settingsStore.data;
+  theme = themeStore.data;
 
-@connect(state => ({
-  theme: state.theme,
-  settings: state.settings,
-}))
-export class ThemeManager extends React.Component<Props, {}> {
-  private fonts = [
-    // custom fonts
-    "Roboto", "Lato", "Open Sans", "Raleway", "Lobster",
-    // system fonts
-    "Arial", "Helvetica Neue", "Times New Roman",
-  ];
-
-  private translation: Translation = {
-    vendor: this.props.settings.vendor,
-    langFrom: this.props.settings.langFrom,
-    langTo: this.props.settings.langTo,
+  translationExample: Translation = {
+    vendor: this.settings.vendor,
+    langFrom: this.settings.langFrom,
+    langTo: this.settings.langTo,
     translation: __i18n("popup_demo_translation"),
     dictionary: [
       {
@@ -51,33 +38,13 @@ export class ThemeManager extends React.Component<Props, {}> {
     ]
   };
 
-  save(state: IThemeManagerState) {
-    this.setState(state);
-    this.sync();
-  }
-
-  sync = debounce(() => {
-    themeManagerActions.sync(this.state);
-  }, 1000);
-
-  reset() {
-    this.setState(defaultTheme);
-    themeManagerActions.reset();
-  }
-
   render() {
-    var settings = this.props.settings;
-    var theme = Object.assign({}, this.props.theme, this.state);
-    var isDefault = isEqual(defaultTheme, this.props.theme);
+    var { theme } = this;
+    var isDefault = isEqual(theme, themeStore.defaultTheme);
     return (
       <div className="ThemeManager">
         <div className="flex center pb1">
-          <Popup
-            preview
-            translation={this.translation}
-            settings={settings}
-            theme={theme}
-          />
+          <Popup preview translation={this.translationExample}/>
         </div>
         <div className="theme">
           <div className="flex auto">
@@ -86,14 +53,21 @@ export class ThemeManager extends React.Component<Props, {}> {
               <div className="flex gaps align-center pl1">
                 <span className="heading">{__i18n("background_color")}</span>
                 <div className="flex align-center">
-                  <ColorPicker value={theme.bgcMain} onChange={v => this.save({ bgcMain: v })}/>
-                  <ColorPicker value={theme.bgcSecondary}
-                               onChange={v => this.save({ bgcSecondary: v })}
-                               disabled={!theme.bgcLinear}/>
+                  <ColorPicker
+                    value={theme.bgcMain}
+                    onChange={v => theme.bgcMain = v}
+                  />
+                  <ColorPicker
+                    value={theme.bgcSecondary}
+                    onChange={v => theme.bgcSecondary = v}
+                    disabled={!theme.bgcLinear}
+                  />
                 </div>
-                <Checkbox label={__i18n("background_linear_gradient")}
-                          checked={theme.bgcLinear}
-                          onChange={v => this.save({ bgcLinear: v })}/>
+                <Checkbox
+                  label={__i18n("background_linear_gradient")}
+                  checked={theme.bgcLinear}
+                  onChange={v => theme.bgcLinear = v}
+                />
               </div>
             </div>
             <div className="box">
@@ -103,17 +77,17 @@ export class ThemeManager extends React.Component<Props, {}> {
                   className="box grow"
                   type="number" min={0} max={100}
                   value={theme.boxShadowBlur}
-                  onChange={v => this.save({ boxShadowBlur: v })}
+                  onChange={v => theme.boxShadowBlur = v}
                 />
                 <span className="heading">{__i18n("box_shadow_color")}</span>
                 <ColorPicker
                   position="bottom right"
                   value={theme.boxShadowColor}
-                  onChange={v => this.save({ boxShadowColor: v })}
+                  onChange={v => theme.boxShadowColor = v}
                 />
                 <Checkbox
                   checked={theme.boxShadowInner}
-                  onChange={v => this.save({ boxShadowInner: v })}
+                  onChange={v => theme.boxShadowInner = v}
                   label={__i18n("box_shadow_inner")}
                 />
               </div>
@@ -125,17 +99,20 @@ export class ThemeManager extends React.Component<Props, {}> {
             <span className="heading">{__i18n("text_color")}</span>
             <ColorPicker
               value={theme.textColor}
-              onChange={v => this.save({ textColor: v })}
+              onChange={v => theme.textColor = v}
             />
             <span className="heading">{__i18n("text_size")}</span>
             <TextField
               className="box grow"
               type="number" min={10} max={25}
-              value={theme.fontSize} onChange={v => this.save({ fontSize: v })}
+              value={theme.fontSize}
+              onChange={v => theme.fontSize = v}
             />
             <span className="heading">{__i18n("text_font_family")}</span>
-            <Select className="box grow" value={theme.fontFamily} onChange={v => this.save({ fontFamily: v })}>
-              {this.fonts.map(fontFamily => <Option key={fontFamily} value={fontFamily}/>)}
+            <Select className="box grow" value={theme.fontFamily} onChange={v => theme.fontFamily = v}>
+              {themeStore.fonts.map(fontFamily => (
+                <Option key={fontFamily} value={fontFamily}/>
+              ))}
             </Select>
           </div>
           <div className="flex gaps align-center">
@@ -145,27 +122,27 @@ export class ThemeManager extends React.Component<Props, {}> {
               className="box grow"
               title={__i18n("text_shadow_size")}
               value={theme.textShadowRadius}
-              onChange={v => this.save({ textShadowRadius: v })}
+              onChange={v => theme.textShadowRadius = v}
             />
             <TextField
               type="number"
               className="box grow"
               title={__i18n("text_shadow_offset_x")}
               value={theme.textShadowOffsetX}
-              onChange={v => this.save({ textShadowOffsetX: v })}
+              onChange={v => theme.textShadowOffsetX = v}
             />
             <TextField
               type="number"
               className="box grow"
               title={__i18n("text_shadow_offset_y")}
               value={theme.textShadowOffsetY}
-              onChange={v => this.save({ textShadowOffsetY: v })}
+              onChange={v => theme.textShadowOffsetY = v}
             />
             <span className="heading">{__i18n("text_shadow_color")}</span>
             <ColorPicker
               position="bottom right"
               value={theme.textShadowColor}
-              onChange={v => this.save({ textShadowColor: v })}
+              onChange={v => theme.textShadowColor = v}
             />
           </div>
 
@@ -176,10 +153,10 @@ export class ThemeManager extends React.Component<Props, {}> {
               className="box grow"
               type="number" min={0} max={25}
               value={theme.borderWidth}
-              onChange={v => this.save({ borderWidth: v })}
+              onChange={v => theme.borderWidth = v}
             />
             <span className="heading">{__i18n("border_style")}</span>
-            <Select className="box grow" value={theme.borderStyle} onChange={v => this.save({ borderStyle: v })}>
+            <Select className="box grow" value={theme.borderStyle} onChange={v => theme.borderStyle = v}>
               <Option value="solid"/>
               <Option value="dotted"/>
               <Option value="dashed"/>
@@ -193,7 +170,7 @@ export class ThemeManager extends React.Component<Props, {}> {
             <ColorPicker
               position="bottom right"
               value={theme.borderColor}
-              onChange={v => this.save({ borderColor: v })}/>
+              onChange={v => theme.borderColor = v}/>
           </div>
           <div className="flex gaps align-center">
             <span className="heading">{__i18n("border_radius")}</span>
@@ -201,41 +178,52 @@ export class ThemeManager extends React.Component<Props, {}> {
               min={0} max={50}
               className="box grow"
               value={theme.borderRadius}
-              onChange={v => this.save({ borderRadius: v })}
+              onChange={v => theme.borderRadius = v}
             />
           </div>
 
           <span className="sub-title">{__i18n("sub_header_box_size")}</span>
           <div className="flex gaps align-center">
             <span className="heading">{__i18n("box_size_min_width")}</span>
-            <Slider min={0} max={1000}
-                    value={theme.minWidth}
-                    onChange={v => this.save({ minWidth: v })}
-                    className="box grow"/>
+            <Slider
+              min={0} max={1000}
+              value={theme.minWidth}
+              onChange={v => theme.minWidth = v}
+              className="box grow"
+            />
             <span className="heading">{__i18n("box_size_min_height")}</span>
-            <Slider min={0} max={1000}
-                    value={theme.minHeight}
-                    onChange={v => this.save({ minHeight: v })}
-                    className="box grow"/>
+            <Slider
+              min={0} max={1000}
+              value={theme.minHeight}
+              onChange={v => theme.minHeight = v}
+              className="box grow"
+            />
           </div>
           <div className="flex gaps align-center">
             <span className="heading">{__i18n("box_size_max_width")}</span>
-            <Slider min={0} max={1000}
-                    value={theme.maxWidth}
-                    onChange={v => this.save({ maxWidth: v })}
-                    className="box grow"/>
+            <Slider
+              min={0} max={1000}
+              value={theme.maxWidth}
+              onChange={v => theme.maxWidth = v}
+              className="box grow"
+            />
             <span className="heading">{__i18n("box_size_max_height")}</span>
-            <Slider min={0} max={1000}
-                    value={theme.maxHeight}
-                    onChange={v => this.save({ maxHeight: v })}
-                    className="box grow"/>
+            <Slider
+              min={0} max={1000}
+              value={theme.maxHeight}
+              onChange={v => theme.maxHeight = v}
+              className="box grow"
+            />
           </div>
         </div>
 
         <div className="reset flex center pt2">
-          <Button label={__i18n("reset_to_default_button_text")} accent
-                  disabled={isDefault}
-                  onClick={() => this.reset()}/>
+          <Button
+            accent
+            label={__i18n("reset_to_default_button_text")}
+            disabled={isDefault}
+            onClick={themeStore.reset}
+          />
         </div>
       </div>
     );

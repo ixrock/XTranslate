@@ -20,9 +20,11 @@
         height: 1px;
         background: $border-color;
       }
+
       &:before {
         margin-right: $spacing;
       }
+
       &:after {
         margin-left: $spacing;
       }
@@ -36,6 +38,7 @@
         border: 1px solid $color-primary;
         border-radius: $radius;
         padding: $padding;
+
         + .open {
           margin-top: -1px;
         }
@@ -45,9 +48,11 @@
         cursor: pointer;
         color: var(--theme-contast-color, black);
         border-color: currentColor;
+
         &:not(.open) {
           background: var(--theme-contast-color-invert, #eee);
         }
+
         * {
           color: inherit;
         }
@@ -70,6 +75,7 @@
 
       .MaterialIcon {
         opacity: .5;
+
         &:hover {
           opacity: 1;
         }

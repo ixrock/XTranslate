@@ -1,7 +1,6 @@
 import "./animate.scss";
 import * as React from "react";
-import { autobind } from "core-decorators";
-import { cssNames, noop } from "../../utils";
+import { cssNames, noop, autobind } from "../../utils";
 
 interface Props {
   className?: string | object

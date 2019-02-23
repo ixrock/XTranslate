@@ -1,91 +1,82 @@
+import "./popup.scss"
+
 import * as React from "react";
-import { autobind } from "core-decorators";
+import { observer } from "mobx-react";
 import { __i18n } from "../../extension/i18n";
 import { MessageType } from "../../extension/message";
 import { sendMessage } from "../../extension/runtime";
 import { cssNames } from "../../utils/cssNames";
 import { cssColor } from "../color-picker/cssColor";
 import { MaterialIcon } from "../icons/material-icon";
-import { IThemeManagerState } from "../theme-manager/theme-manager.types";
-import { ISettingsState } from "../settings/settings.types";
-import { getNextVendor, getVendor, Translation, TranslationError } from "../../vendors";
+import { getNextVendor, getVendorByName, Translation, TranslationError } from "../../vendors";
+import { autobind } from "../../utils/autobind";
+import { settingsStore } from "../settings/settings.store";
+import { themeStore } from "../theme-manager/theme.store";
 
 interface Props extends React.HTMLProps<any> {
   preview?: boolean;
   className?: any
-  settings?: ISettingsState
-  theme?: IThemeManagerState
   translation?: Translation
   error?: TranslationError
   position?: React.CSSProperties
   next?: () => void;
 }
 
-interface State {
-  cssThemeStyle?: React.CSSProperties
-  boxSizeStyle?: React.CSSProperties
-}
-
-export class Popup extends React.Component<Props, State> {
+@observer
+export class Popup extends React.Component<Props> {
   public elem: HTMLElement;
-  public state: State = {};
-
-  componentWillMount() {
-    this.applyTheme();
-  }
+  settings = settingsStore.data;
+  theme = themeStore.data;
 
   componentWillReceiveProps(nextProps: Props) {
-    this.stopPlaying();
-    if (this.props.theme !== nextProps.theme) {
-      this.applyTheme(nextProps.theme);
+    if (this.props.translation !== nextProps.translation) {
+      this.stopPlaying();
     }
   }
 
-  @autobind()
-  focus() {
-    if (!this.elem) return;
-    this.elem.focus();
-  }
-
-  applyTheme(theme = this.props.theme) {
-    if (!theme) return;
-    var cssTheme = {
-      background: cssColor(theme.bgcMain),
-      borderRadius: theme.borderRadius,
-      fontFamily: `${theme.fontFamily}, sans-serif`,
-      fontSize: theme.fontSize,
-      color: cssColor(theme.textColor),
-      border: theme.borderWidth ? [
-        theme.borderWidth + "px",
-        theme.borderStyle,
-        cssColor(theme.borderColor)
+  getPopupStyle(): React.CSSProperties {
+    var {
+      bgcMain, bgcLinear, bgcSecondary,
+      borderRadius, fontFamily, fontSize, textColor,
+      borderWidth, borderStyle, borderColor,
+      textShadowRadius, textShadowColor, textShadowOffsetX, textShadowOffsetY,
+      boxShadowColor, boxShadowBlur, boxShadowInner
+    } = this.theme;
+    return {
+      background: bgcLinear
+        ? `linear-gradient(180deg, ${cssColor(bgcMain)}, ${cssColor(bgcSecondary)})`
+        : cssColor(bgcMain),
+      borderRadius: borderRadius,
+      fontFamily: `${fontFamily}, sans-serif`,
+      fontSize: fontSize,
+      color: cssColor(textColor),
+      border: borderWidth ? [
+        borderWidth + "px",
+        borderStyle,
+        cssColor(borderColor)
       ].join(" ") : "",
-      textShadow: (theme.textShadowRadius || theme.textShadowOffsetX || theme.textShadowOffsetY) ? [
-        theme.textShadowOffsetX + "px",
-        theme.textShadowOffsetY + "px",
-        theme.textShadowRadius + "px",
-        cssColor(theme.textShadowColor)
+      textShadow: (textShadowRadius || textShadowOffsetX || textShadowOffsetY) ? [
+        textShadowOffsetX + "px",
+        textShadowOffsetY + "px",
+        textShadowRadius + "px",
+        cssColor(textShadowColor)
       ].join(" ") : "",
-      boxShadow: theme.boxShadowBlur ? [
-        theme.boxShadowInner ? "inset" : "",
-        0, 0, theme.boxShadowBlur + "px",
-        cssColor(theme.boxShadowColor)
+      boxShadow: boxShadowBlur ? [
+        boxShadowInner ? "inset" : "",
+        0, 0, boxShadowBlur + "px",
+        cssColor(boxShadowColor)
       ].join(" ") : ""
     };
-    if (theme.bgcLinear) {
-      cssTheme.background = `linear-gradient(180deg, ${cssTheme.background}, ${cssColor(theme.bgcSecondary)})`;
-    }
-    var { maxHeight, maxWidth, minHeight, minWidth } = theme;
-    var boxSize = {
+  }
+
+  getTranslationStyle(): React.CSSProperties {
+    var { maxHeight, maxWidth, minHeight, minWidth } = this.theme;
+    return {
       maxWidth: !maxWidth ? "" : Math.max(maxWidth, minWidth),
       maxHeight: !maxHeight ? "" : Math.max(maxHeight, minHeight),
       minWidth: minWidth,
       minHeight: minHeight,
-    };
-    this.setState({
-      cssThemeStyle: cssTheme,
-      boxSizeStyle: boxSize
-    });
+    }
   }
 
   @autobind()
@@ -129,9 +120,8 @@ export class Popup extends React.Component<Props, State> {
     const result = this.props.translation;
     if (!result) return null;
     const { translation, transcription, dictionary, vendor, langFrom, langTo, langDetected } = result;
-    const { showTextToSpeechIcon, showNextVendorIcon, showCopyTranslationIcon } = this.props.settings;
-    const boxSizeStyle = this.state.boxSizeStyle;
-    const vendorApi = getVendor(vendor);
+    const { showTextToSpeechIcon, showNextVendorIcon, showCopyTranslationIcon } = this.settings;
+    const vendorApi = getVendorByName(vendor);
     const rtlClass = { rtl: vendorApi.isRightToLeft(langTo) };
     const canPlayText = vendorApi.canPlayText(langDetected || langFrom, translation);
     const title = __i18n("translated_with", [
@@ -144,7 +134,7 @@ export class Popup extends React.Component<Props, State> {
       nextVendorIcon = <MaterialIcon name="arrow_forward" onClick={this.translateNextVendor} title={iconTitle}/>
     }
     return (
-      <div className="translation-result" style={boxSizeStyle}>
+      <div className="translation-result" style={this.getTranslationStyle()}>
         <div className="translation flex gaps">
           {showTextToSpeechIcon ? (
             <MaterialIcon
@@ -198,10 +188,9 @@ export class Popup extends React.Component<Props, State> {
   }
 
   render() {
-    var { translation, error, position, className, preview, settings } = this.props;
-    var { popupFixedPos } = settings;
-    var { cssThemeStyle } = this.state;
-    var style = Object.assign({}, cssThemeStyle, !popupFixedPos ? position : {});
+    var { translation, error, position, className, preview } = this.props;
+    var { popupFixedPos } = this.settings;
+    var style = Object.assign({}, this.getPopupStyle(), !popupFixedPos ? position : {});
     var visible = translation || error;
     var popupClass = cssNames("Popup", className, {
       visible, preview,

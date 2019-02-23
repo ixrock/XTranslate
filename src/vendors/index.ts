@@ -7,7 +7,7 @@ export * from './vendor'
 
 export const vendors: Vendor[] = [google, yandex, bing];
 
-export function getVendor(name: string) {
+export function getVendorByName(name: string) {
   return vendors.find(vendor => vendor.name === name) || vendors[0];
 }
 
@@ -19,10 +19,11 @@ export function getNextVendor(currentVendor: string, langFrom: string, langTo: s
   var afterCurrent = vendors.slice(index + 1);
   if (reverse) {
     list.push(...beforeCurrent.reverse(), ...afterCurrent.reverse());
-  } else {
+  }
+  else {
     list.push(...afterCurrent, ...beforeCurrent)
   }
-  while (vendor = list.shift()) {
+  while ((vendor = list.shift())) {
     if (vendor.canTranslate(langFrom, langTo)) return vendor;
   }
   return null;

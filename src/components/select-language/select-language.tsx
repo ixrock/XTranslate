@@ -1,52 +1,52 @@
 import "./select-language.scss";
+
 import * as React from 'react';
+import { observer } from "mobx-react";
 import { __i18n } from "../../extension/i18n";
-import { getVendor } from '../../vendors';
-import { autobind } from "core-decorators";
-import { connect } from "../../store/connect";
-import { ISettingsState, settingsActions } from "../settings";
-import { cssNames, noop } from "../../utils";
+import { getVendorByName } from '../../vendors';
+import { cssNames, noop, autobind } from "../../utils";
 import { Option, Select } from "../select";
 import { MaterialIcon } from "../icons";
+import { settingsStore } from "../settings/settings.store";
 
-type Props = React.HTMLProps<any> & {
-  settings?: ISettingsState
+interface Props extends React.HTMLProps<any> {
   onSwapLang?(langFrom: string, langTo: string): void;
   onChangeLang?(langFrom: string, langTo: string): void;
 }
 
-@connect(store => ({
-  settings: store.settings
-}))
+@observer
 export class SelectLanguage extends React.Component<Props, {}> {
-  static defaultProps = {
+  settings = settingsStore.data;
+
+  static defaultProps: Props = {
     onSwapLang: noop,
     onChangeLang: noop,
   };
 
   @autobind()
   swapLanguages() {
-    var { langFrom, langTo } = this.props.settings;
+    var { langFrom, langTo } = this.settings;
     if (langFrom === 'auto') return;
-    var sync = settingsActions.sync({ langFrom: langTo, langTo: langFrom });
-    sync.then(() => this.props.onSwapLang(langTo, langFrom)).catch(noop);
+    this.settings.langFrom = langTo;
+    this.settings.langTo = langFrom;
+    this.props.onSwapLang(langTo, langFrom);
   }
 
   @autobind()
   onChangeLangFrom(langFrom) {
-    settingsActions.sync({ langFrom });
+    this.settings.langFrom = langFrom;
     this.props.onChangeLang(langFrom, null);
   }
 
   @autobind()
   onChangeLangTo(langTo) {
-    settingsActions.sync({ langTo });
+    this.settings.langTo = langTo;
     this.props.onChangeLang(null, langTo);
   }
 
   render() {
-    var { vendor, langFrom, langTo } = this.props.settings;
-    var { langFrom: listFrom, langTo: listTo } = getVendor(vendor);
+    var { vendor, langFrom, langTo } = this.settings;
+    var { langFrom: listFrom, langTo: listTo } = getVendorByName(vendor);
     var className = cssNames('SelectLanguage flex align-flex-start', this.props.className);
     return (
       <div className={className}>

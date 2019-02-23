@@ -1,10 +1,9 @@
 import "./color-picker.scss";
 
 import * as React from 'react'
-import { autobind } from "core-decorators";
 import { cssNames, noop } from "../../utils";
-import { cssColor, Color, ColorValue } from "./cssColor";
-const ChromePicker = require('react-color/lib/components/chrome/Chrome').default;
+import { Color, ColorValue, cssColor } from "./cssColor";
+import ChromePicker from "react-color/lib/Chrome"
 
 interface Props {
   className?: any
@@ -14,9 +13,10 @@ interface Props {
   onChange?(color: ColorValue): void;
 }
 
-export class ColorPicker extends React.Component<Props, {}> {
+export class ColorPicker extends React.Component<Props> {
   private elem: HTMLElement;
   private handler: HTMLElement;
+
   public state = {
     visible: false,
     color: this.props.value,
@@ -51,30 +51,26 @@ export class ColorPicker extends React.Component<Props, {}> {
     if (!silent) this.props.onChange(color);
   }
 
-  @autobind()
-  private onClickWindow(e: MouseEvent) {
+  toggle(visible = !this.state.visible) {
+    this.setState({ visible }, this.bindEvents);
+  }
+
+  private onClickWindow = (e: MouseEvent) => {
     var target = e.target as HTMLElement;
     if (target !== this.handler && !target.closest('.chrome-picker')) {
       this.toggle(false);
     }
   }
 
-  @autobind()
-  bindEvents() {
+  bindEvents = () => {
     window.addEventListener('click', this.onClickWindow, false);
   }
 
-  @autobind()
-  unbindEvents() {
+  unbindEvents = () => {
     window.removeEventListener('click', this.onClickWindow, false);
   }
 
-  toggle(visible = !this.state.visible) {
-    this.setState({ visible }, this.bindEvents);
-  }
-
-  @autobind()
-  onChange(color: Color) {
+  onChange = (color: Color) => {
     this.value = color.rgb;
   }
 
@@ -82,14 +78,16 @@ export class ColorPicker extends React.Component<Props, {}> {
     var visible = this.state.visible;
     var className = cssNames('ColorPicker', this.props.className, this.props.position);
     return (
-        <div className={className} ref={e => this.elem = e}>
-          <input type="color" disabled={this.props.disabled} hidden/>
-          {visible ? <ChromePicker color={this.value} onChange={this.onChange}/> : null}
-          <i className="value"
-             onClick={() => this.toggle()}
-             style={{color: cssColor(this.value)}}
-             ref={e => this.handler = e}/>
-        </div>
+      <div className={className} ref={e => this.elem = e}>
+        <input type="color" disabled={this.props.disabled} hidden/>
+        {visible && (
+          <ChromePicker color={this.value} onChange={this.onChange}/>
+        )}
+        <i className="value"
+           onClick={() => this.toggle()}
+           style={{ color: cssColor(this.value) }}
+           ref={e => this.handler = e}/>
+      </div>
     );
   }
 }

@@ -1,16 +1,17 @@
 // User script (content page)
-import "./user-script.scss";
 
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import { autobind } from "core-decorators";
-import { connect, getManifest, getURL, MenuTranslateFavoritePayload, MenuTranslateVendorPayload, Message, MessageType, onMessage, onPostMessage, postMessage, sendMessage, TranslateFromFramePayload } from "../extension";
-import { saveHistory } from "../components/user-history/user-history.actions";
-import { IAppState } from "../store/store.types";
+import { toJS, when } from "mobx";
+import { getManifest, getURL, MenuTranslateFavoritePayload, MenuTranslateVendorPayload, Message, MessageType, onMessage, onPostMessage, postMessage, sendMessage, TranslateFromFramePayload } from "../extension";
+import { getNextVendor, getVendorByName, Translation, TranslationError } from "../vendors";
 import { Popup } from "../components/popup/popup";
-import { getNextVendor, getVendor, Translation, TranslationError } from "../vendors";
 import { cssNames } from "../utils/cssNames";
 import { getHotkey } from "../utils/parseHotkey";
+import { autobind } from "../utils/autobind";
+import { settingsStore } from "../components/settings/settings.store";
+import { themeStore } from "../components/theme-manager/theme.store";
+import { userHistoryStore } from "../components/user-history/user-history.store";
 import isEqual = require("lodash/isEqual");
 
 const ReactShadow = require("react-shadow").default;
@@ -19,7 +20,6 @@ const isFrameWindow = window !== topWindow;
 const isPdf = document['contentType'] === "application/pdf";
 
 interface State {
-  appState?: IAppState
   translation?: Translation
   error?: TranslationError
   rect?: ClientRect
@@ -34,24 +34,16 @@ interface Position {
 }
 
 class App extends React.Component<{}, State> {
-  public appName = getManifest().name;
   public state: State = {};
-  private port = connect();
-  private style = getURL('page.css');
+  public appName = getManifest().name;
+  private style = getURL('pageStyle.css');
   private pointerElem: Element;
   private icon: HTMLElement;
   private iconShown: boolean;
   private selection = window.getSelection();
   private translation: Promise<any>;
   private popup: Popup;
-
-  get settings() {
-    return this.state.appState.settings;
-  }
-
-  get theme() {
-    return this.state.appState.theme;
-  }
+  private settings = settingsStore.data;
 
   get text() {
     return this.selection.toString().trim();
@@ -66,12 +58,9 @@ class App extends React.Component<{}, State> {
     return !translation && !error;
   }
 
-  componentWillMount() {
-    this.port.onMessage.addListener(this.onAppState);
-  }
-
-  bindEvents() {
-    onMessage(this.onAppState);
+  async componentDidMount() {
+    await when(() => !settingsStore.loading && !themeStore.loading);
+    this.initIcon();
     onMessage(this.onMenuClick);
     onMessage(this.onGetSelectedText);
     onPostMessage(this.onPostMessage);
@@ -81,20 +70,6 @@ class App extends React.Component<{}, State> {
     document.addEventListener("dblclick", this.onDoubleClick);
     document.addEventListener("keydown", this.onKeyDown);
     document.addEventListener("selectionchange", this.onSelectionChange);
-  }
-
-  @autobind()
-  onAppState(message: Message) {
-    var type = message.type;
-    if (type === MessageType.APP_STATE) {
-      var init = !this.state.appState;
-      this.setState({ appState: message.payload }, () => {
-        if (init) {
-          this.initIcon();
-          this.bindEvents();
-        }
-      });
-    }
   }
 
   @autobind()
@@ -146,9 +121,10 @@ class App extends React.Component<{}, State> {
   }
 
   showIcon() {
+    if (!this.icon) return;
     var s = this.selection;
     var text = this.text;
-    var vendor = getVendor(this.settings.vendor);
+    var vendor = getVendorByName(this.settings.vendor);
     if (!s.rangeCount || !text || text.length > vendor.maxTextInputLength) return;
     var focusOffset = s.focusOffset;
     var anchorOffset = s.anchorOffset;
@@ -205,16 +181,16 @@ class App extends React.Component<{}, State> {
   onKeyDown(e: KeyboardEvent) {
     // hiding popup, getting prev-next vendor translation
     if (!this.isHidden) {
-      switch (e.keyCode) {
-        case 27: // Escape
+      switch (e.code) {
+        case "Escape":
           this.hidePopup();
           e.stopPropagation();
           break;
-        case 37: // ArrowLeft
+        case "ArrowLeft":
           this.translateWithNextVendor(true);
           e.preventDefault();
           break;
-        case 39: // ArrowRight
+        case "ArrowRight":
           this.translateWithNextVendor();
           e.preventDefault();
           break;
@@ -223,7 +199,8 @@ class App extends React.Component<{}, State> {
     // handle text translation by hotkey
     if (!this.settings.showPopupOnHotkey) return;
     var hotkey = getHotkey(e);
-    if (isEqual(this.settings.hotkey, hotkey)) {
+    var { keyCode, ...currentHotkey } = toJS(this.settings.hotkey);
+    if (isEqual(currentHotkey, hotkey)) {
       var text = this.text;
       var elem = this.pointerElem;
       var notRoot = elem !== document.documentElement && elem !== document.body;
@@ -235,7 +212,7 @@ class App extends React.Component<{}, State> {
         // detect and select text nodes from element under mouse cursor
         var textNode: Node, textNodes: Node[] = [];
         var searchTextNodes = document.evaluate('.//text()', elem, null, XPathResult.ANY_TYPE, null);
-        while (textNode = searchTextNodes.iterateNext()) {
+        while ((textNode = searchTextNodes.iterateNext())) {
           textNodes.push(textNode);
         }
         if (textNodes.length) {
@@ -313,7 +290,7 @@ class App extends React.Component<{}, State> {
   translateWith(vendorName: string, langFrom?, langTo?, text = this.text, rect?: ClientRect) {
     langFrom = langFrom || this.settings.langFrom;
     langTo = langTo || this.settings.langTo;
-    var vendorApi = getVendor(vendorName);
+    var vendorApi = getVendorByName(vendorName);
     if (text && text.length <= vendorApi.maxTextInputLength) {
       if (isFrameWindow) {
         postMessage({
@@ -323,7 +300,8 @@ class App extends React.Component<{}, State> {
             rect: this.getFrameRect()
           } as TranslateFromFramePayload
         });
-      } else {
+      }
+      else {
         var translation = vendorApi.getTranslation(langFrom, langTo, text);
         this.handleTranslation(translation, rect);
       }
@@ -366,7 +344,7 @@ class App extends React.Component<{}, State> {
   onTranslationReady() {
     var { autoPlayText, historyEnabled } = this.settings;
     if (autoPlayText) setTimeout(() => this.popup.playText());
-    if (historyEnabled) saveHistory(this.state.translation, this.settings);
+    if (historyEnabled) userHistoryStore.saveTranslation(this.state.translation);
     this.refinePosition();
   }
 
@@ -432,7 +410,7 @@ class App extends React.Component<{}, State> {
       position.top = rect.top - popupRect.height - margin;
     }
     if (changePosition) {
-      this.setState({ position: position });
+      this.setState({ position });
     }
   }
 
@@ -443,20 +421,23 @@ class App extends React.Component<{}, State> {
   }
 
   hidePopupFromFrame() {
-    postMessage({ type: MessageType.HIDE_POPUP_FROM_FRAME });
+    postMessage({
+      type: MessageType.HIDE_POPUP_FROM_FRAME
+    });
   }
 
   render() {
     var { translation, error, position } = this.state;
-    if (!this.state.appState) return null;
     return (
       <ReactShadow include={[this.style]}>
         <div className="popup-content">
-          <Popup className={cssNames({ showInPdf: isPdf })}
-                 translation={translation} error={error} position={position}
-                 theme={this.theme} settings={this.settings}
-                 next={this.translateWithNextVendor}
-                 ref={e => this.popup = e}/>
+          <Popup
+            className={cssNames({ showInPdf: isPdf })}
+            position={position}
+            translation={translation} error={error}
+            next={this.translateWithNextVendor}
+            ref={e => this.popup = e}
+          />
         </div>
       </ReactShadow>
     )

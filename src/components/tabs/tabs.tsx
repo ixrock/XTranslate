@@ -1,122 +1,146 @@
 import "./tabs.scss";
 import * as React from "react";
-import { cssNames } from "../../utils";
+import { autobind, cssNames } from "../../utils";
 
-interface Props {
-  activeIndex?: number
-  className?: string | object
-  headerClass?: string | object
-  contentClass?: string | object
-  toolbarClass?: string | object
-  allowUnselected?: boolean
-  disabled?: boolean
-  align?: "left" | "center" | "right"
-  toolbar?: React.ReactNode
-  onChange?(tab: TabProps): void
+interface Context<D = any> {
+  autoFocus?: boolean;
+  value?: D;
+  onChange?(value: D): void;
 }
 
-export class Tabs extends React.Component<Props, {}> {
-  public header: HTMLElement;
-  public content: HTMLElement;
+var TabsContext = React.createContext<Context>({});
 
-  static defaultProps: Props = {
-    activeIndex: -1,
-    allowUnselected: false,
-    align: "center",
-  };
+type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>
 
-  get tabs() {
-    return React.Children.toArray(this.props.children) as React.ReactElement<TabProps>[];
+export interface TabsProps<D = any> extends Context<D>, Omit<React.DOMAttributes<HTMLElement>, "onChange"> {
+  className?: string;
+  center?: boolean;
+  wrap?: boolean;
+  scrollable?: boolean;
+}
+
+export class Tabs extends React.PureComponent<TabsProps> {
+  public elem: HTMLElement;
+
+  @autobind()
+  onWheel(evt: React.WheelEvent) {
+    evt.preventDefault();
+    this.elem.scrollLeft += (evt.deltaX + evt.deltaY);
   }
 
-  getTabByIndex(index: number) {
-    var tabs = this.tabs;
-    var tab = tabs.find(tab => tab.props.index === index) || tabs[index];
-    if (!tab && !this.props.allowUnselected) tab = tabs[0];
-    return tab ? tab.props : null;
+  @autobind()
+  protected bindRef(elem: HTMLElement) {
+    this.elem = elem;
   }
-
-  onChange = (index: number) => {
-    var { onChange, activeIndex } = this.props;
-    if (index !== activeIndex && onChange) {
-      var tab = this.getTabByIndex(index);
-      onChange(Object.assign({ index: index }, tab));
-    }
-  };
-
-  onClick = (e: React.MouseEvent<any>, index: number, tab: TabProps) => {
-    this.onChange(index);
-    if (tab.onClick) tab.onClick(e);
-  };
-
-  onKeyDown = (e: React.KeyboardEvent<any>, index: number, tab: TabProps) => {
-    var SPACE_KEY = e.keyCode === 32;
-    var ENTER_KEY = e.keyCode === 13;
-    if (SPACE_KEY || ENTER_KEY) this.onChange(index);
-    if (tab.onKeyDown) tab.onKeyDown(e);
-  };
 
   render() {
-    var { className, align, disabled, activeIndex, headerClass, contentClass, allowUnselected, toolbar, toolbarClass } = this.props;
-    var activeTab = this.getTabByIndex(activeIndex);
-    headerClass = cssNames("tabs flex", "align-" + align, {
-      "tabs-header": !toolbar,
-      "box grow": toolbar
-    }, headerClass);
-    var header = (
-      <div className={headerClass} ref={e => this.header = e}>
-        {this.tabs.map(({ props: tabProps }, i) => {
-          var { active, disabled, title, className, index, ...tabOtherProps } = tabProps;
-          if (index == null) {
-            index = i;
-          }
-          var tabElemProps: React.HTMLProps<any> = {
-            ...tabOtherProps,
-            key: i,
-            className: cssNames("tab", className, {
-              active: active != null ? active : activeTab === tabProps,
-              disabled: disabled
-            }),
-            tabIndex: !disabled && !active ? 0 : null,
-            onKeyDown: e => this.onKeyDown(e, index, tabProps),
-            onClick: e => this.onClick(e, index, tabProps),
-            children: title
-          };
-          if (tabProps.href) {
-            return <a {...tabElemProps}/>
-          }
-          return <div {...tabElemProps}/>;
-        })}
+    var {
+      className, center, wrap, onChange, value, autoFocus,
+      scrollable = true,
+      ...elemProps
+    } = this.props;
+    className = cssNames("Tabs", className, {
+      "center": center,
+      "wrap": wrap,
+      "scrollable": scrollable,
+    });
+    return (
+      <TabsContext.Provider value={{ autoFocus, value, onChange }}>
+        <div
+          {...elemProps}
+          className={className}
+          onWheel={this.onWheel}
+          ref={this.bindRef}
+        />
+      </TabsContext.Provider>
+    )
+  }
+}
+
+export interface TabProps<D = any> extends React.DOMAttributes<HTMLElement> {
+  className?: string;
+  active?: boolean;
+  disabled?: boolean;
+  icon?: React.ReactNode | string; // material-ui name or custom icon
+  label?: React.ReactNode;
+  value: D;
+}
+
+export class Tab extends React.PureComponent<TabProps> {
+  static contextType = TabsContext;
+  public context: Context;
+  public elem: HTMLElement;
+
+  get isActive() {
+    var { active, value } = this.props;
+    return typeof active === "boolean" ? active : this.context.value === value;
+  }
+
+  focus() {
+    this.elem.focus();
+  }
+
+  scrollIntoView() {
+    this.elem.scrollIntoView({
+      behavior: "smooth",
+      inline: "center",
+    });
+  }
+
+  @autobind()
+  onClick(evt: React.MouseEvent<HTMLElement>) {
+    var { value, active, disabled, onClick } = this.props;
+    var { onChange } = this.context;
+    if (disabled || active) return;
+    if (onClick) onClick(evt);
+    if (onChange) onChange(value);
+  }
+
+  @autobind()
+  onFocus(evt: React.FocusEvent<HTMLElement>) {
+    var { onFocus } = this.props;
+    if (onFocus) onFocus(evt);
+    this.scrollIntoView();
+  }
+
+  @autobind()
+  onKeyDown(evt: React.KeyboardEvent<HTMLElement>) {
+    var ENTER_KEY = evt.keyCode === 13;
+    var SPACE_KEY = evt.keyCode === 32;
+    if (SPACE_KEY || ENTER_KEY) this.elem.click();
+    var { onKeyDown } = this.props;
+    if (onKeyDown) onKeyDown(evt);
+  }
+
+  componentDidMount() {
+    if (this.isActive && this.context.autoFocus) {
+      this.focus();
+    }
+  }
+
+  @autobind()
+  protected bindRef(elem: HTMLElement) {
+    this.elem = elem;
+  }
+
+  render() {
+    var { className, active, disabled, label, value, ...elemProps } = this.props;
+    className = cssNames("Tab flex gaps align-center", className, {
+      "active": this.isActive,
+      "disabled": disabled,
+    });
+    return (
+      <div
+        {...elemProps}
+        className={className}
+        tabIndex={0}
+        onClick={this.onClick}
+        onFocus={this.onFocus}
+        onKeyDown={this.onKeyDown}
+        ref={this.bindRef}
+      >
+        <div className="label">{label}</div>
       </div>
     )
-    var toolbarHeader = toolbar ? (
-      <div className={cssNames("tabs-header flex align-center", toolbarClass)}>
-        {header}
-        {toolbar}
-      </div>
-    ) : null;
-    return (
-      <div className={cssNames('Tabs', className, { disabled })}>
-        {toolbar ? toolbarHeader : header}
-        <div className={cssNames("tabs-content", contentClass)} ref={e => this.content = e}>
-          {activeTab ? activeTab.children : null}
-        </div>
-      </div>
-    );
-  }
-}
-
-interface TabProps extends React.DOMAttributes<any> {
-  title: string | React.ReactNode
-  index?: number
-  active?: boolean
-  disabled?: boolean
-  className?: string | object
-  href?: string // render as link
-}
-
-export class Tab extends React.Component<TabProps, {}> {
-  render() {
-    return null;
   }
 }

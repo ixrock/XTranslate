@@ -13,42 +13,53 @@
 
     .translation {
       margin-bottom: var(--flex-gap);
+
       .value {
         white-space: pre-line;
       }
+
       .transcription {
         margin-left: $margin / 2;
         opacity: .75;
       }
     }
+
     .lang {
       padding-left: $padding;
       white-space: nowrap;
       line-height: 2;
       opacity: .5;
     }
+
     .link {
       border-bottom: 1px dotted;
       cursor: pointer;
       opacity: .75;
+
       &:hover {
         opacity: 1;
       }
     }
+
     .dictionary {
       margin-top: $margin;
+
       * {
         vertical-align: top;
       }
+
       .word-type {
         font-weight: bold;
         padding: $padding / 2;
       }
+
       .word {
         padding: 0 $padding * 2;
       }
+
       .word-meanings {
       }
+
       .examples {
         cursor: help;
         margin-left: 5px;
@@ -63,5 +74,17 @@
 
   .favorites {
     margin: $margin * 1.5 0;
+  }
+
+  .info {
+    font-size: smaller;
+    opacity: .55;
+    padding-right: 60px; // input's max-length block
+  }
+
+  .TextField {
+    .label {
+      margin-bottom: 2px;
+    }
   }
 }

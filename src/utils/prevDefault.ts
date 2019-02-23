@@ -1,9 +1,10 @@
+import * as React from "react";
+
 // Helper for preventing default event action and performing custom callback
 // 1)
-// <form>
-//    {/* Press <Enter> will perform onClick() action at submit button without actual sending form */}
+// <form onSubmit={prevDefault(() => console.log('do some action'))}>
 //    <input name="text"/>
-//    <button type="submit" onClick={prevDefault(() => console.log('do some action'))}>Action</button>
+//    <button type="submit">Action</button>
 // </form>
 // 2)
 // <a href="/some-page-url">
@@ -11,10 +12,14 @@
 //  <Icon onClick={prevDefault(() => console.log('stay on the page and open dialog'))}/>
 // </a>
 
-export function prevDefault(callback: (evt: Event) => any) {
-  return function (evt) {
+export function prevDefault<E extends React.SyntheticEvent | Event>(callback: (evt: E) => any) {
+  return function (evt: E) {
     evt.preventDefault();
     evt.stopPropagation();
     return callback(evt);
   }
+}
+
+export function stopPropagation(evt: Event | React.SyntheticEvent) {
+  evt.stopPropagation();
 }

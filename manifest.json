@@ -1,7 +1,7 @@
 {
   "name": "XTranslate",
   "description": "__MSG_description__",
-  "version": "2.15.4",
+  "version": "2.16.0",
   "manifest_version": 2,
   "default_locale": "en",
   "minimum_chrome_version": "53",
@@ -35,8 +35,8 @@
         "https://*/*",
         "file://*/*"
       ],
-      "css": ["page.css"],
-      "js": ["page.js"]
+      "js": ["pageScript.js"],
+      "css": ["pageStyle.css"]
     }
   ],
   "permissions": [

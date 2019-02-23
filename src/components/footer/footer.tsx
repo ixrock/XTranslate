@@ -1,7 +1,6 @@
 import './footer.scss'
 import * as React from 'react';
-import { autobind } from "core-decorators";
-import { prevDefault } from '../../utils'
+import { autobind, prevDefault } from '../../utils'
 import { __i18n, getManifest } from '../../extension'
 
 interface ShareIcon {

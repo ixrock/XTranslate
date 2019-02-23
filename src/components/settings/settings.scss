@@ -16,6 +16,10 @@
       }
     }
   }
+  
+  small {
+    color: $color-secondary;
+  }
 
   .vendor > * {
     --flex-gap: #{$margin /2};

@@ -1,8 +1,7 @@
 import "./text-field.scss";
 
 import * as React from "react";
-import { autobind } from "core-decorators";
-import { cssNames } from "../../utils";
+import { cssNames, autobind } from "../../utils";
 import { MaterialIcon } from "../icons/material-icon";
 import { Props, State, ValidatorError, ValidatorObject } from "./text-field.types";
 import { Validators } from "./text-field.validators";

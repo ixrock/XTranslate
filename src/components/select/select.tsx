@@ -1,8 +1,7 @@
 import "./select.scss";
 
 import * as React from "react";
-import { autobind } from "core-decorators";
-import { cssNames, noop } from "../../utils";
+import { cssNames, noop, autobind } from "../../utils";
 import { MaterialIcon } from "../icons";
 
 interface Props extends React.HTMLProps<any> {

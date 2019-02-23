@@ -18,7 +18,8 @@ export = () => {
     entry: {
       app: path.resolve(componentsDir, "app/app.tsx"),
       background: path.resolve(srcPath, "background/background.ts"),
-      page: path.resolve(srcPath, "user-script/user-script.tsx"),
+      pageScript: path.resolve(srcPath, "user-script/user-script.tsx"),
+      pageStyle: path.resolve(srcPath, "user-script/user-script.scss"),
     },
     output: {
       path: distPath,

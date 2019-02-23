@@ -1,12 +1,15 @@
 // Helper for working with keyboard hotkeys
 
 export interface Hotkey {
+  code: string
   altKey?: boolean
   ctrlKey?: boolean
   metaKey?: boolean
   shiftKey?: boolean
-  code?: string
-  keyCode: number
+  /**
+   * @deprecated
+   */
+  keyCode?: number;
 }
 
 interface HotkeyChunk {
@@ -21,7 +24,7 @@ export function parseHotkey(hotkey: Hotkey) {
   if (hotkey.altKey) metaKeys.push({ char: '⌥', title: "Alt" });
   if (hotkey.shiftKey) metaKeys.push({ char: '⇧', title: "Shift" });
 
-  var code = normalizeKeyboardCode(hotkey.code) || String.fromCharCode(hotkey.keyCode);
+  var code = normalizeKeyboardCode(hotkey.code);
   var data = metaKeys.concat({ char: code, title: code });
   return {
     code: !code.match(/Control|Meta|Alt|Shift|Tab|Enter/) ? code : null,
@@ -33,7 +36,6 @@ export function parseHotkey(hotkey: Hotkey) {
 
 export function getHotkey(e: KeyboardEvent) {
   var hotkey: Hotkey = {
-    keyCode: e.keyCode,
     code: normalizeKeyboardCode(e.code),
   };
   if (e.altKey) hotkey.altKey = true;

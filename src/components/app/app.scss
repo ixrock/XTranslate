@@ -34,6 +34,7 @@ code {
 
 input, select, textarea {
   color: inherit;
+
   &:invalid {
     box-shadow: none;
   }
@@ -41,10 +42,12 @@ input, select, textarea {
 
 a {
   color: transparentize($color-primary, .25);
+
   &:focus {
     color: $bgc-primary;
     opacity: 1;
   }
+
   &:hover {
     opacity: 1;
   }
@@ -85,8 +88,12 @@ hr {
   margin-bottom: $margin;
 }
 
-.tabs-content {
-  padding: $padding * 2 $padding;
+.Tabs {
+  border-bottom: 1px solid $border-color;
+
+  + .tab-content {
+    padding: $padding * 2 $padding;
+  }
 }
 
 .dark-theme-icon {

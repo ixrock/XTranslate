@@ -1,51 +1,46 @@
 import "./settings.scss";
+
 import * as React from "react";
-import { autobind } from "core-decorators";
-import { getVendor, vendors } from "../../vendors";
+import { observer } from "mobx-react";
+import { getVendorByName, vendors } from "../../vendors";
 import { __i18n, tabs } from "../../extension";
-import { connect } from "../../store/connect";
-import { getHotkey, parseHotkey, prevDefault } from "../../utils";
+import { autobind, getHotkey, parseHotkey, prevDefault } from "../../utils";
 import { SelectLanguage } from "../select-language";
-import { ISettingsState, settingsActions } from "./index";
 import { TextField } from "../text-field";
 import { Checkbox } from "../checkbox";
 import { Radio, RadioGroup } from "../radio";
 import { MaterialIcon } from "../icons";
 import { Option, Select } from "../select";
+import { settingsStore } from "./settings.store";
 
-interface Props {
-  settings?: ISettingsState
-}
-
-@connect(store => ({ settings: store.settings }))
-export class Settings extends React.Component<Props, {}> {
-  private hotkey: TextField;
-
-  save(settings: ISettingsState) {
-    settingsActions.sync(settings);
-  }
+@observer
+export class Settings extends React.Component {
+  settings = settingsStore.data;
 
   @autobind()
-  defineHotkey(e: React.KeyboardEvent<any>) {
-    var nativeEvent = e.nativeEvent as KeyboardEvent;
+  saveHotkey(e: React.KeyboardEvent) {
+    var nativeEvent = e.nativeEvent;
     var hotkey = parseHotkey(nativeEvent);
     if (hotkey.code) {
-      this.save({ hotkey: getHotkey(nativeEvent) });
+      this.settings.hotkey = getHotkey(nativeEvent);
     }
   }
 
   @autobind()
   onVendorChange(vendorName: string) {
-    var vendor = getVendor(vendorName);
-    var settings: ISettingsState = { vendor: vendorName };
-    var { langFrom, langTo } = this.props.settings;
-    if (!vendor.langFrom[langFrom]) settings.langFrom = Object.keys(vendor.langFrom)[0];
-    if (!vendor.langTo[langTo]) settings.langTo = Object.keys(vendor.langTo)[0];
-    this.save(settings);
+    this.settings.vendor = vendorName;
+    var { langFrom, langTo } = this.settings;
+    var vendor = getVendorByName(vendorName);
+    if (!vendor.langFrom[langFrom]) {
+      this.settings.langFrom = Object.keys(vendor.langFrom)[0];
+    }
+    if (!vendor.langTo[langTo]) {
+      this.settings.langTo = Object.keys(vendor.langTo)[0];
+    }
   }
 
   render() {
-    var settings = this.props.settings;
+    var { settings } = this;
     var hotkey = parseHotkey(settings.hotkey);
     return (
       <div className="Settings">
@@ -54,15 +49,15 @@ export class Settings extends React.Component<Props, {}> {
           <Checkbox
             label={__i18n("auto_play_tts")}
             checked={settings.autoPlayText}
-            onChange={v => this.save({ autoPlayText: v })}/>
+            onChange={v => settings.autoPlayText = v}/>
           <Checkbox
             label={__i18n("show_context_menu")}
             checked={settings.showInContextMenu}
-            onChange={v => this.save({ showInContextMenu: v })}/>
+            onChange={v => settings.showInContextMenu = v}/>
           <Checkbox
             label={__i18n("display_icon_near_selection")}
             checked={settings.showIconNearSelection}
-            onChange={v => this.save({ showIconNearSelection: v })}/>
+            onChange={v => settings.showIconNearSelection = v}/>
         </div>
 
         <p className="sub-title mt2">{__i18n("sub_header_translator")}</p>
@@ -90,36 +85,36 @@ export class Settings extends React.Component<Props, {}> {
           <Checkbox
             label={__i18n("show_tts_icon_inside_popup")}
             checked={settings.showTextToSpeechIcon}
-            onChange={v => this.save({ showTextToSpeechIcon: v })}/>
+            onChange={v => settings.showTextToSpeechIcon = v}/>
           <Checkbox
             label={__i18n("show_next_vendor_icon_in_popup")}
             checked={settings.showNextVendorIcon}
-            onChange={v => this.save({ showNextVendorIcon: v })}/>
+            onChange={v => settings.showNextVendorIcon = v}/>
           <Checkbox
             label={__i18n("show_copy_translation_icon")}
             checked={settings.showCopyTranslationIcon}
-            onChange={v => this.save({ showCopyTranslationIcon: v })}/>
+            onChange={v => settings.showCopyTranslationIcon = v}/>
           <Checkbox
             label={__i18n("display_popup_after_text_selected")}
             checked={settings.showPopupAfterSelection}
-            onChange={v => this.save({ showPopupAfterSelection: v })}/>
+            onChange={v => settings.showPopupAfterSelection = v}/>
           <Checkbox
             label={__i18n("display_popup_on_double_click")}
             checked={settings.showPopupOnDoubleClick}
-            onChange={v => this.save({ showPopupOnDoubleClick: v })}/>
+            onChange={v => settings.showPopupOnDoubleClick = v}/>
           <Checkbox
             label={__i18n("display_popup_on_hotkey")}
             checked={settings.showPopupOnHotkey}
-            onChange={v => this.save({ showPopupOnHotkey: v })}>
+            onChange={v => settings.showPopupOnHotkey = v}>
             <div className="flex center pl1">
               <label htmlFor="hotkey">
                 <MaterialIcon name="keyboard"/>
               </label>
               <TextField
-                id="hotkey" className="hotkey"
-                value={hotkey.value} title={hotkey.title}
-                readOnly onKeyDown={this.defineHotkey}
-                ref={e => this.hotkey = e}
+                readOnly className="hotkey"
+                title={hotkey.title}
+                value={hotkey.value}
+                onKeyDown={this.saveHotkey}
               />
             </div>
           </Checkbox>
@@ -127,7 +122,9 @@ export class Settings extends React.Component<Props, {}> {
 
         <div className="flex gaps">
           <p>{__i18n("popup_position_title")}</p>
-          <Select className="box grow" value={settings.popupFixedPos} onChange={v => this.save({ popupFixedPos: v })}>
+          <Select className="box grow"
+                  value={settings.popupFixedPos}
+                  onChange={v => settings.popupFixedPos = v}>
             <Option value="" title={__i18n("popup_position_auto")}/>
             <Option value="leftTop" title={__i18n("popup_position_left_top")}/>
             <Option value="rightTop" title={__i18n("popup_position_right_top")}/>
@@ -137,11 +134,24 @@ export class Settings extends React.Component<Props, {}> {
         </div>
 
         <p className="sub-title mt2">{__i18n("setting_title_text_input")}</p>
-        <div className="display-options flex wrap">
+        <div className="display-options flex gaps align-flex-start">
           <Checkbox
             label={__i18n("remember_last_typed_text")}
             checked={settings.rememberLastText}
-            onChange={v => this.save({ rememberLastText: v })}/>
+            onChange={v => settings.rememberLastText = v}
+          />
+          <div className="translate-delay">
+            <div className="flex gaps">
+              <p>{__i18n("translation_delay")}</p>
+              <TextField
+                type="number" min={0} max={10000} step={50}
+                showErrors={false} className="box grow"
+                value={settings.textInputTranslateDelayMs}
+                onChange={v => settings.textInputTranslateDelayMs = v}
+              />
+            </div>
+            <small>{__i18n("translation_delay_info")}</small>
+          </div>
         </div>
 
         <div className="text-input-hotkey mt2">

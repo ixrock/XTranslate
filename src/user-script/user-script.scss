@@ -5,6 +5,7 @@
 
   @import "~flex.box";
   @import "../components/popup/popup";
+  @import "../components/icons/material-icon";
 
   *, *:after, *:before {
     box-sizing: border-box;
@@ -16,6 +17,8 @@
 }
 
 .XTranslate {
+  @import "../components/icons/material-icon";
+
   position: absolute !important;
   width: 100% !important;
   left: 0 !important;

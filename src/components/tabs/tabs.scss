@@ -1,77 +1,78 @@
-
 .Tabs {
-  --tabs-color-active: #{$bgc-primary};
-  --tabs-line-color: #{transparentize($color-primary, .5)};
-  --tabs-line-color-active: currentColor;
+  display: flex;
+  user-select: none;
+  -webkit-user-select: none; /* safari */
+  -moz-user-select: none; /* firefox */
 
-  .tabs-header {
-    border-bottom: 1px solid var(--tabs-line-color);
-    text-align: center;
-    flex-shrink: 0;
+  &.wrap {
+    flex-wrap: wrap;
+  }
 
-    &.align {
-      &-left {
-        justify-content: flex-start;
-      }
-      &-center {
-        justify-content: center;
-      }
-      &-right {
-        justify-content: flex-end;
-      }
+  &.center {
+    > :first-child {
+      margin-left: auto;
     }
 
-    .tab {
-      position: relative;
-      text-decoration: none;
-      padding: $padding $padding * 2;
-      color: inherit;
-      white-space: nowrap;
-      text-transform: uppercase;
-      font-weight: bold;
-
-      &.disabled {
-        opacity: .5;
-        pointer-events: none;
-      }
-
-      &:not(.disabled) {
-        cursor: pointer;
-        &:after {
-          content: "";
-          position: absolute;
-          right: 0;
-          bottom: -1px;
-          width: 0;
-          height: .5 * $unit;
-          background: currentColor;
-          transition: width 250ms;
-        }
-
-        &.active,
-        &:focus:not(:active),
-        &:hover:not(.active) {
-          &:after {
-            left: 0;
-            right: auto;
-            width: 100%;
-          }
-        }
-      }
-
-      &.active {
-        cursor: default;
-        color: var(--tabs-color-active);
-        &:after {
-          background: var(--tabs-line-color-active);
-        }
-      }
+    > :last-child {
+      margin-right: auto;
     }
   }
 
-  .tabs-content {
-    &:empty {
+  &.scrollable {
+    overflow: auto;
+    -ms-overflow-style: none;
+
+    @include firefoxOnly {
+      overflow: hidden;
+    }
+    &::-webkit-scrollbar {
       display: none;
+    }
+  }
+}
+
+.Tab {
+  position: relative;
+  padding: $padding $padding * 2;
+  white-space: nowrap;
+  text-transform: uppercase;
+  font-weight: bold;
+
+  &.disabled {
+    pointer-events: none;
+    opacity: .5;
+  }
+
+  &:not(.disabled) {
+    cursor: pointer;
+
+    &:after {
+      content: "";
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      width: 0;
+      height: $unit /2;
+      transition: width 250ms;
+      background: currentColor;
+    }
+
+    @mixin isActive {
+      width: 100%;
+      left: 0;
+      right: auto;
+    }
+
+    &:focus,
+    &:hover {
+      &:after {
+        @include isActive;
+      }
+    }
+
+    &.active:after {
+      @include isActive;
+      color: $bgc-primary;
     }
   }
 }

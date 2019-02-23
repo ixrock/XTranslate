@@ -1,9 +1,7 @@
 // Internal messages api interface
-import { Favorite } from "../components/favorites/favorites.types";
 import { getId } from './runtime'
 
 export enum MessageType {
-  APP_STATE,
   MENU_TRANSLATE_WITH_VENDOR,
   MENU_TRANSLATE_FAVORITE,
   MENU_TRANSLATE_FULL_PAGE,
@@ -15,9 +13,9 @@ export enum MessageType {
   SELECTED_TEXT,
 }
 
-export interface Message {
+export interface Message<D = any> {
   type: MessageType
-  payload?: any
+  payload?: D
 }
 
 export function postMessage(message: Message) {
@@ -39,7 +37,9 @@ export interface MenuTranslateVendorPayload {
   selectedText: string
 }
 
-export interface MenuTranslateFavoritePayload extends MenuTranslateVendorPayload, Favorite {
+export interface MenuTranslateFavoritePayload extends MenuTranslateVendorPayload {
+  from: string;
+  to: string;
 }
 
 export interface TranslateFromFramePayload {

@@ -9,7 +9,6 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
 
-  // usage in page context (user-script area)
   &:not(.preview) {
     &:not(.fixedPos) {
       position: absolute;
@@ -40,6 +39,12 @@
 
     &.showInPdf {
       margin: $spacing;
+    }
+  }
+
+  &.preview {
+    > .content {
+      overflow: initial;
     }
   }
 

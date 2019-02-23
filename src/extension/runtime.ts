@@ -1,4 +1,4 @@
-// Chrome extension's runtime api
+// Chrome extension's runtime api helpers
 import { Message } from './message'
 import { tabs } from './tabs'
 
@@ -23,32 +23,8 @@ export function openOptionsPage(hash?: string) {
   tabs.open(getOptionsPageUrl(hash));
 }
 
-export function getBgcPage(): Promise<Window> {
-  return new Promise((resolve) => {
-    chrome.runtime.getBackgroundPage(resolve)
-  });
-}
-
 export function sendMessage(message: Message) {
   chrome.runtime.sendMessage(message)
-}
-
-export function broadcastMessage(message: Message) {
-  sendMessage(message);
-  tabs.broadcastMessage(message);
-}
-
-export function connect(info?: chrome.runtime.ConnectInfo) {
-  return chrome.runtime.connect(info);
-}
-
-export function onConnect(callback: (port: chrome.runtime.Port) => void) {
-  var listener = function (port) {
-    if (getId() !== port.sender.id) return;
-    callback(port);
-  };
-  chrome.runtime.onConnect.addListener(listener);
-  return () => chrome.runtime.onConnect.removeListener(listener);
 }
 
 export function onMessage(callback: (message: Message, sender: chrome.runtime.MessageSender, sendResponse) => void) {

@@ -1,20 +1,65 @@
-// Context menu item
+// Extension's context menu
 
-import { getVendor, vendors } from "../vendors";
-import { store } from '../store/store'
-import { Favorite } from "../components/favorites/favorites.types";
+import { autorun } from "mobx";
+import { getVendorByName, vendors } from "../vendors";
 import { __i18n, getManifest, MenuTranslateFavoritePayload, MenuTranslateVendorPayload, MessageType, tabs } from "../extension";
+import { Favorite, favoritesStore } from "../components/input-translation/favorites.store";
+import { settingsStore } from "../components/settings/settings.store";
 import orderBy = require("lodash/orderBy");
 
-// create, update or hide context menu regarding to app's settings
-export function updateContextMenu() {
-  var state = store.getState();
+var settings = settingsStore.data;
+var favorites = favoritesStore.data;
+
+// handle menu clicks
+chrome.contextMenus.onClicked.addListener(
+  async (info: chrome.contextMenus.OnClickData) => {
+    var settings = settingsStore.data;
+    var [type, vendor, from, to] = String(info.menuItemId).split("-");
+    var selectedText = info.selectionText;
+    var tab = await tabs.getActive();
+
+    var enumType = Number(type);
+    if (enumType === MessageType.MENU_TRANSLATE_WITH_VENDOR) {
+      let payload: MenuTranslateVendorPayload = { vendor, selectedText };
+      tabs.sendMessage(tab.id, {
+        type: MessageType.MENU_TRANSLATE_WITH_VENDOR,
+        payload: payload
+      });
+    }
+    if (enumType === MessageType.MENU_TRANSLATE_FAVORITE) {
+      let payload: MenuTranslateFavoritePayload = { vendor, from, to, selectedText };
+      tabs.sendMessage(tab.id, {
+        type: MessageType.MENU_TRANSLATE_FAVORITE,
+        payload: payload
+      });
+    }
+    if (enumType === MessageType.MENU_TRANSLATE_FULL_PAGE) {
+      var { langTo } = settings;
+      var translatePageUrl = "";
+      switch (vendor) {
+        case "google":
+          translatePageUrl = `https://translate.google.com/translate?tl=${langTo}&u=${tab.url}`;
+          break;
+        case "yandex":
+          translatePageUrl = `https://translate.yandex.com/translate?lang=${langTo}&url=${tab.url}`;
+          break;
+        case "bing":
+          translatePageUrl = `http://www.microsofttranslator.com/bv.aspx?to=${langTo}&a=${tab.url}`;
+          break;
+      }
+      tabs.open(translatePageUrl);
+    }
+  }
+);
+
+// create, update or hide context menu regarding the settings
+autorun(() => {
   var menuName = getManifest().name;
   const selectionContext = ['selection'];
   const pageContext = selectionContext.concat('page');
   chrome.contextMenus.removeAll();
 
-  if (state.settings.showInContextMenu) {
+  if (settings.showInContextMenu) {
     var topMenu = chrome.contextMenus.create({
       id: menuName,
       title: menuName,
@@ -49,7 +94,6 @@ export function updateContextMenu() {
     });
 
     // translate from favorites
-    var favorites = state.favorites;
     var favCount = Object.keys(favorites).reduce((count, vendor) => count + favorites[vendor].length, 0);
     if (favCount) {
       chrome.contextMenus.create({
@@ -59,7 +103,7 @@ export function updateContextMenu() {
         contexts: selectionContext,
       });
       Object.keys(favorites).forEach(vendorName => {
-        var vendor = getVendor(vendorName);
+        var vendor = getVendorByName(vendorName);
         var favList: Favorite[] = orderBy(favorites[vendorName], [
           (fav: Favorite) => fav.from !== 'auto',
           'from'
@@ -77,46 +121,4 @@ export function updateContextMenu() {
       });
     }
   }
-}
-
-// context menu clicks handler
-export function bindContextMenu() {
-  const onContextMenu = async (info: chrome.contextMenus.OnClickData) => {
-    var [type, vendor, from, to] = String(info.menuItemId).split("-");
-    var selectedText = info.selectionText;
-    var tab = await tabs.getActive();
-
-    var enumType = Number(type);
-    if (enumType === MessageType.MENU_TRANSLATE_WITH_VENDOR) {
-      let payload: MenuTranslateVendorPayload = { vendor, selectedText };
-      tabs.sendMessage(tab.id, {
-        type: MessageType.MENU_TRANSLATE_WITH_VENDOR,
-        payload: payload
-      });
-    }
-    if (enumType === MessageType.MENU_TRANSLATE_FAVORITE) {
-      let payload: MenuTranslateFavoritePayload = { vendor, from, to, selectedText };
-      tabs.sendMessage(tab.id, {
-        type: MessageType.MENU_TRANSLATE_FAVORITE,
-        payload: payload
-      });
-    }
-    if (enumType === MessageType.MENU_TRANSLATE_FULL_PAGE) {
-      var { langTo } = store.getState().settings;
-      var translatePageUrl = "";
-      switch (vendor) {
-        case "google":
-          translatePageUrl = `https://translate.google.com/translate?tl=${langTo}&u=${tab.url}`;
-          break;
-        case "yandex":
-          translatePageUrl = `https://translate.yandex.com/translate?lang=${langTo}&url=${tab.url}`;
-          break;
-        case "bing":
-          translatePageUrl = `http://www.microsofttranslator.com/bv.aspx?to=${langTo}&a=${tab.url}`;
-          break;
-      }
-      tabs.open(translatePageUrl);
-    }
-  };
-  chrome.contextMenus.onClicked.addListener(onContextMenu);
-}
+}, { delay: 250 })

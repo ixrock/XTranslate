@@ -1,17 +1,13 @@
 import './tooltip.scss'
 import * as React from 'react'
-import { autobind } from "core-decorators"
-import { cssNames } from "../../utils";
+import { autobind, cssNames } from "../../utils";
 
 interface Props extends React.HTMLProps<any> {
   htmlFor: string
   following?: boolean
 }
 
-interface State {
-}
-
-export class Tooltip extends React.Component<Props, State> {
+export class Tooltip extends React.Component<Props> {
   private anchor: HTMLElement;
   private tooltip: HTMLElement;
 

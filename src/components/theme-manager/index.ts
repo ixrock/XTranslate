@@ -1,5 +1,1 @@
-export * from './theme-manager.types'
-export * from './theme-manager.default'
-export * from './theme-manager.reducer'
-export * from './theme-manager.actions'
 export * from './theme-manager'
