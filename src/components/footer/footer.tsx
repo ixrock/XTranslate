@@ -9,7 +9,7 @@ interface ShareIcon {
   url: string
 }
 
-export class Footer extends React.Component<any, any> {
+export class Footer extends React.Component {
   private manifest = getManifest();
   private storeUrl = 'https://chrome.google.com/webstore/detail/gfgpkepllngchpmcippidfhmbhlljhoo';
   private shareTags = ["chrome", "extension", "xtranslate"];
@@ -24,11 +24,6 @@ export class Footer extends React.Component<any, any> {
       title: "Facebook",
       icon: require('../icons/facebook.svg'),
       url: `https://www.facebook.com/sharer/sharer.php?u=${this.storeUrl}`,
-    },
-    {
-      title: "Google+",
-      icon: require('../icons/google-plus.svg'),
-      url: `https://plus.google.com/share?url=${this.storeUrl}`,
     },
     {
       title: "Twitter",
