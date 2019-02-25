@@ -1,4 +1,4 @@
-import { observable, reaction, when } from "mobx";
+import { observable, reaction, toJS, when } from "mobx";
 import { ColorValue } from "../color-picker/cssColor";
 
 export class ThemeStore {
@@ -41,8 +41,8 @@ export class ThemeStore {
     this.load();
     // add reactions after initial loading to prevent dummy saving
     when(() => !this.loading, () => {
-      reaction(() => JSON.stringify(this.data), this.save, {
-        delay: 1000
+      reaction(() => toJS(this.data), this.save, {
+        delay: 500
       });
     })
     // sync store changes made from options page (for background & content pages)

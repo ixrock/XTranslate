@@ -75,7 +75,7 @@
   "text_field_placeholder"           : {"message": "Начните печатать здесь чтобы получить перевод"},
   "translated_with"                  : {"message": "Переведено с %translator% (%lang%)"},
   "spell_correction"                 : {"message": "Возможно вы имели ввиду %spell_correction%?"},
-  "text_input_translation_hint"      : {"message": "%hotkey% для быстрого перевода, задержка: %delay%"},
+  "text_input_translation_hint"      : {"message": "%hotkey% для быстрого перевода, задержка: %мс%"},
   "___________history_______________": {"message": "----------------------------------------------"},
   "history_enabled_flag"             : {"message": "Включено"},
   "history_settings_save_words_only" : {"message": "Сохранять слова только со словарем"},

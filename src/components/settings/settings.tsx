@@ -45,19 +45,22 @@ export class Settings extends React.Component {
     return (
       <div className="Settings">
         <p className="sub-title">{__i18n("setting_title_common")}</p>
-        <div className="display-options flex wrap">
+        <div className="display-options flex column">
           <Checkbox
             label={__i18n("auto_play_tts")}
             checked={settings.autoPlayText}
-            onChange={v => settings.autoPlayText = v}/>
+            onChange={v => settings.autoPlayText = v}
+          />
           <Checkbox
             label={__i18n("show_context_menu")}
             checked={settings.showInContextMenu}
-            onChange={v => settings.showInContextMenu = v}/>
+            onChange={v => settings.showInContextMenu = v}
+          />
           <Checkbox
             label={__i18n("display_icon_near_selection")}
             checked={settings.showIconNearSelection}
-            onChange={v => settings.showIconNearSelection = v}/>
+            onChange={v => settings.showIconNearSelection = v}
+          />
         </div>
 
         <p className="sub-title mt2">{__i18n("sub_header_translator")}</p>
@@ -81,43 +84,47 @@ export class Settings extends React.Component {
         </div>
 
         <p className="sub-title mt2">{__i18n("setting_title_popup")}</p>
-        <div className="display-options flex wrap">
-          <Checkbox
-            label={__i18n("show_tts_icon_inside_popup")}
-            checked={settings.showTextToSpeechIcon}
-            onChange={v => settings.showTextToSpeechIcon = v}/>
-          <Checkbox
-            label={__i18n("show_next_vendor_icon_in_popup")}
-            checked={settings.showNextVendorIcon}
-            onChange={v => settings.showNextVendorIcon = v}/>
-          <Checkbox
-            label={__i18n("show_copy_translation_icon")}
-            checked={settings.showCopyTranslationIcon}
-            onChange={v => settings.showCopyTranslationIcon = v}/>
-          <Checkbox
-            label={__i18n("display_popup_after_text_selected")}
-            checked={settings.showPopupAfterSelection}
-            onChange={v => settings.showPopupAfterSelection = v}/>
-          <Checkbox
-            label={__i18n("display_popup_on_double_click")}
-            checked={settings.showPopupOnDoubleClick}
-            onChange={v => settings.showPopupOnDoubleClick = v}/>
-          <Checkbox
-            label={__i18n("display_popup_on_hotkey")}
-            checked={settings.showPopupOnHotkey}
-            onChange={v => settings.showPopupOnHotkey = v}>
-            <div className="flex center pl1">
-              <label htmlFor="hotkey">
-                <MaterialIcon name="keyboard"/>
-              </label>
-              <TextField
-                readOnly className="hotkey"
-                title={hotkey.title}
-                value={hotkey.value}
-                onKeyDown={this.saveHotkey}
-              />
-            </div>
-          </Checkbox>
+        <div className="display-options flex gaps auto">
+          <div className="box">
+            <Checkbox
+              label={__i18n("show_tts_icon_inside_popup")}
+              checked={settings.showTextToSpeechIcon}
+              onChange={v => settings.showTextToSpeechIcon = v}/>
+            <Checkbox
+              label={__i18n("show_next_vendor_icon_in_popup")}
+              checked={settings.showNextVendorIcon}
+              onChange={v => settings.showNextVendorIcon = v}/>
+            <Checkbox
+              label={__i18n("show_copy_translation_icon")}
+              checked={settings.showCopyTranslationIcon}
+              onChange={v => settings.showCopyTranslationIcon = v}/>
+          </div>
+          <div className="box">
+            <Checkbox
+              label={__i18n("display_popup_after_text_selected")}
+              checked={settings.showPopupAfterSelection}
+              onChange={v => settings.showPopupAfterSelection = v}/>
+            <Checkbox
+              label={__i18n("display_popup_on_double_click")}
+              checked={settings.showPopupOnDoubleClick}
+              onChange={v => settings.showPopupOnDoubleClick = v}/>
+            <Checkbox
+              label={__i18n("display_popup_on_hotkey")}
+              checked={settings.showPopupOnHotkey}
+              onChange={v => settings.showPopupOnHotkey = v}>
+              <div className="flex center pl1">
+                <label htmlFor="hotkey">
+                  <MaterialIcon name="keyboard"/>
+                </label>
+                <TextField
+                  readOnly className="hotkey"
+                  title={hotkey.title}
+                  value={hotkey.value}
+                  onKeyDown={this.saveHotkey}
+                />
+              </div>
+            </Checkbox>
+          </div>
         </div>
 
         <div className="flex gaps">

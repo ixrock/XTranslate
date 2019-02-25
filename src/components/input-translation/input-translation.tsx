@@ -389,10 +389,10 @@ export class InputTranslation extends React.Component<{}, State> {
           ref={e => this.textField = e}
         >
           <div className="info">
-            {__i18n("text_input_translation_hint", React.Children.toArray([
+            {__i18n("text_input_translation_hint", [
               `${isMac ? "Cmd" : "Ctrl"}+Enter`,
-              <a href={AppRoute.settings}>{textInputTranslateDelayMs}ms</a>
-            ]))}
+              ms => <a href={AppRoute.settings} key="delay">{textInputTranslateDelayMs}{ms}</a>
+            ])}
           </div>
         </TextField>
         {this.renderTranslation()}

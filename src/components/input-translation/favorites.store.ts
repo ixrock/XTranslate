@@ -18,7 +18,7 @@ export class FavoritesStore {
     this.load();
     // add reactions after initial loading to prevent dummy saving
     when(() => !this.loading, () => {
-      reaction(() => JSON.stringify(this.data), this.save);
+      reaction(() => toJS(this.data), this.save, { delay: 250 });
     })
     // sync store changes made from options page (for background & content pages)
     chrome.storage.onChanged.addListener((changes, areaName) => {

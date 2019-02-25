@@ -18,20 +18,18 @@ export class UserHistoryStore {
   constructor() {
     // start auto-saving items after first loading
     when(() => this.loaded, () => {
-      reaction(() => this.items.length, () => this.save(), {
-        delay: 500
-      });
+      reaction(() => this.items.length, this.save, { delay: 250 });
     });
     // sync store when saved new translation (e.g. from content-page)
     chrome.storage.onChanged.addListener((changes, areaName) => {
       if (this.saving) return;
-      if (areaName === "sync" && changes[this.id]) {
+      if (areaName === "local" && changes[this.id]) {
         this.items.replace(changes[this.id].newValue || []);
       }
     });
   }
 
-  load() {
+  load = () => {
     if (this.loaded) return;
     this.loading = true;
     chrome.storage.local.get(this.id, items => {
@@ -41,7 +39,7 @@ export class UserHistoryStore {
     });
   }
 
-  protected save() {
+  protected save = () => {
     this.saving = true;
     chrome.storage.local.set({ [this.id]: this.items.toJS() }, () => {
       this.saving = false;

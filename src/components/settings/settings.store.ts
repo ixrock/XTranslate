@@ -1,4 +1,4 @@
-import { observable, reaction, when } from "mobx";
+import { observable, reaction, toJS, when } from "mobx";
 import { Hotkey } from "../../utils/parseHotkey";
 
 export class SettingsStore {
@@ -36,7 +36,7 @@ export class SettingsStore {
     this.load();
     // add reactions after initial loading to prevent dummy saving
     when(() => !this.loading, () => {
-      reaction(() => JSON.stringify(this.data), this.save, {
+      reaction(() => toJS(this.data), this.save, {
         delay: 250
       });
     })
