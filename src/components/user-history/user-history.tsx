@@ -1,8 +1,8 @@
 import "./user-history.scss";
 
 import * as React from "react";
-import { computed, observable } from "mobx";
-import { observer } from "mobx-react";
+import { computed, observable, reaction } from "mobx";
+import { disposeOnUnmount, observer } from "mobx-react";
 import { __i18n } from "../../extension/i18n";
 import { cssNames, download, prevDefault } from "../../utils";
 import { getVendorByName } from "../../vendors";
@@ -26,15 +26,21 @@ export class UserHistory extends React.Component {
   @observable showSettings = false;
   @observable showSearch = false;
   @observable searchText = "";
+  @observable searchedText = "";
   @observable timeFrame = HistoryTimeFrame.DAY;
 
+  @disposeOnUnmount
+  searchChangeDisposer = reaction(() => this.searchText, text => {
+    this.searchedText = text; // update with delay to avoid freezing ui with big history data
+  }, { delay: 500 })
+
   @computed get items() {
-    if (this.searchText) return userHistoryStore.findItems(this.searchText);
+    if (this.searchedText) return userHistoryStore.findItems(this.searchedText);
     return userHistoryStore.items.slice(0, this.page * this.settings.historyPageSize);
   }
 
   @computed get hasMore() {
-    if (this.searchText) return false;
+    if (this.searchedText) return false;
     return userHistoryStore.items.length > this.items.length;
   }
 
