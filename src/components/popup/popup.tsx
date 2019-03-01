@@ -7,11 +7,11 @@ import { MessageType } from "../../extension/message";
 import { sendMessage } from "../../extension/runtime";
 import { cssNames } from "../../utils/cssNames";
 import { cssColor } from "../color-picker/cssColor";
-import { MaterialIcon } from "../icons/material-icon";
 import { getNextVendor, getVendorByName, Translation, TranslationError } from "../../vendors";
 import { autobind } from "../../utils/autobind";
 import { settingsStore } from "../settings/settings.store";
 import { themeStore } from "../theme-manager/theme.store";
+import { Icon } from "../icon";
 
 interface Props extends React.HTMLProps<any> {
   preview?: boolean;
@@ -131,14 +131,14 @@ export class Popup extends React.Component<Props> {
     if (showNextVendorIcon) {
       let nextVendor = getNextVendor(vendor, langFrom, langTo);
       let iconTitle = __i18n("popup_next_vendor_icon_title", [nextVendor.title]).join("");
-      nextVendorIcon = <MaterialIcon name="arrow_forward" onClick={this.translateNextVendor} title={iconTitle}/>
+      nextVendorIcon = <Icon material="arrow_forward" onClick={this.translateNextVendor} title={iconTitle}/>
     }
     return (
       <div className="translation-result" style={this.getTranslationStyle()}>
         <div className="translation flex gaps">
           {showTextToSpeechIcon ? (
-            <MaterialIcon
-              name="play_circle_outline"
+            <Icon
+              material="play_circle_outline"
               title={__i18n("popup_play_icon_title")}
               disabled={!canPlayText}
               onClick={this.playText}/>
@@ -149,8 +149,8 @@ export class Popup extends React.Component<Props> {
           </div>
           <div className="icons">
             {showCopyTranslationIcon && (
-              <MaterialIcon
-                name="content_copy"
+              <Icon
+                material="content_copy"
                 title={__i18n("popup_copy_translation_title")}
                 onClick={this.copyToClipboard}
               />

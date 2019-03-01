@@ -45,7 +45,7 @@
       transition: width 250ms;
     }
 
-    .MaterialIcon {
+    .Icon {
       font-size: $unit * 2;
     }
   }
@@ -71,6 +71,7 @@
     font-size: small;
     min-height: $margin * 2;
     transition: 150ms min-height ease-in;
+
     &.compact:empty {
       min-height: 0;
     }
@@ -84,6 +85,7 @@
         color: #5bb90b;
       }
     }
+
     &.invalid {
       .Icon {
         color: $color-error;
@@ -111,6 +113,7 @@
   /* Hide HTML5 Up and Down arrows. */
   input[type="number"] {
     -moz-appearance: textfield;
+
     &::-webkit-outer-spin-button,
     &::-webkit-inner-spin-button {
       -webkit-appearance: none;
@@ -118,14 +121,12 @@
     }
 
     & ~ .arrow-icons {
+      height: 20px;
       display: flex;
       flex-direction: column;
-      > * {
-        line-height: 10px;
-        color: currentColor;
-        &:hover {
-          color: black;
-        }
+
+      .Icon {
+        --bgc-focus: none;
       }
     }
   }

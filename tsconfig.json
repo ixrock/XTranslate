@@ -3,17 +3,16 @@
     "rootDir": "./",
     "outDir": "./dist/",
     "jsx": "react",
-    "target": "es5",
-    "lib": ["dom", "es6", "esnext"],
+    "target": "es6",
+    "lib": ["dom", "esnext"],
     "module": "commonjs",
     "moduleResolution": "node",
-    "allowJs"  : true,
+    "allowJs": true,
     "sourceMap": true,
     "noImplicitAny": false,
+    "esModuleInterop": true,
     "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
-    "allowSyntheticDefaultImports": true,
-    "traceResolution": false
+    "emitDecoratorMetadata": true
   },
   "include": [
     "src/**/*"

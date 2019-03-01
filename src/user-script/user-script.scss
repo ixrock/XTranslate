@@ -5,7 +5,7 @@
 
   @import "~flex.box";
   @import "../components/popup/popup";
-  @import "../components/icons/material-icon";
+  @import "../components/icon/icon";
 
   *, *:after, *:before {
     box-sizing: border-box;
@@ -17,7 +17,7 @@
 }
 
 .XTranslate {
-  @import "../components/icons/material-icon";
+  @import "../components/icon/icon";
 
   position: absolute !important;
   width: 100% !important;
@@ -25,7 +25,7 @@
   top: 0 !important;
   z-index: 1000000000 !important;
 
-  .MaterialIcon {
+  > .Icon {
     position: absolute;
     font-style: normal;
     cursor: pointer;
@@ -34,8 +34,7 @@
     box-shadow: 0 0 5px -1px;
     color: black;
     background: white;
-    width: var(--icon-size);
-    height: var(--icon-size);
+    text-indent: 1px;
 
     &.isLeftTop {
       transform: translate(-100%, -100%);
@@ -46,10 +45,8 @@
       color: white;
     }
 
-    &:after {
-      @extend .MaterialIcon;
+    > span {
       all: unset;
-      content: "explore";
       pointer-events: none;
     }
   }

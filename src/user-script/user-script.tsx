@@ -12,7 +12,7 @@ import { autobind } from "../utils/autobind";
 import { settingsStore } from "../components/settings/settings.store";
 import { themeStore } from "../components/theme-manager/theme.store";
 import { userHistoryStore } from "../components/user-history/user-history.store";
-import isEqual = require("lodash/isEqual");
+import isEqual from "lodash/isEqual";
 
 const ReactShadow = require("react-shadow").default;
 const topWindow = window.top;
@@ -110,8 +110,9 @@ class App extends React.Component<{}, State> {
   }
 
   initIcon() {
-    this.icon = document.createElement("i");
-    this.icon.className = "MaterialIcon";
+    this.icon = document.createElement("div");
+    this.icon.className = "Icon material";
+    this.icon.innerHTML = "<span>explore</span>"
     this.icon.onmousedown = (e) => {
       this.hideIcon();
       this.translate();

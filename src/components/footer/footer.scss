@@ -1,4 +1,8 @@
 .Footer {
+  margin-top: $margin;
+  padding-top: $margin;
+  border-top: 1px solid $border-color;
+
   .social-icons {
     display: inline-block;
     vertical-align: middle;
@@ -12,6 +16,7 @@
       margin-left: $margin / 2;
       filter: grayscale(100%);
       opacity: .75;
+
       &:hover {
         opacity: 1;
         filter: grayscale(0);

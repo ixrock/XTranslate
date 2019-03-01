@@ -1,8 +1,7 @@
-@import "../vars";
-
 .Spinner {
-  $boxSize: 30px;
-  $border: 4px;
+  --spinner-size: 24px;
+  --spinner-border: calc(var(--spinner-size) / 6);
+
   $duration: 1s;
   $rotateAnimation: rotate $duration linear infinite;
   $colorAnimation: colors $duration*4 ease-in-out infinite;
@@ -13,14 +12,11 @@
     border-right-color: transparent;
   }
 
-  width: $boxSize;
-  height: $boxSize;
-  border: $border solid transparent;
+  width: var(--spinner-size);
+  height: var(--spinner-size);
+  border: var(--spinner-border) solid transparent;
   border-radius: 50%;
-
-  &.center {
-    margin: auto;
-  }
+  display: inline-block;
 
   &:not(.singleColor) {
     animation: $rotateAnimation, $colorAnimation;
@@ -29,6 +25,14 @@
   &.singleColor {
     @include spinner-color($color-primary);
     animation: $rotateAnimation;
+  }
+
+  &.center {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    margin-left: calc(var(--spinner-size) / -2);
+    margin-top: calc(var(--spinner-size) / -2);
   }
 
   @keyframes rotate {

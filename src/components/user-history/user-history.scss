@@ -1,6 +1,25 @@
 .UserHistory {
   $spacing: $margin * 2;
 
+  .settings {
+    margin-bottom: $margin /2;
+
+    .Icon {
+      &.active {
+        color: $bgc-primary;
+      }
+    }
+  }
+
+  .loading {
+    padding: $padding;
+    text-align: center;
+  }
+
+  .load-more {
+    margin-top: $margin;
+  }
+
   .history {
     list-style: none;
 
@@ -60,7 +79,6 @@
 
       .transcription {
         color: silver;
-        margin-left: $margin / 2;
       }
 
       &.open, &:hover {
@@ -73,7 +91,7 @@
         visibility: hidden;
       }
 
-      .MaterialIcon {
+      .Icon {
         opacity: .5;
 
         &:hover {

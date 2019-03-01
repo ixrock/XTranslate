@@ -1,9 +1,9 @@
-import path = require('path');
-import webpack = require('webpack');
-import HtmlWebpackPlugin = require('html-webpack-plugin');
-import CopyWebpackPlugin = require('copy-webpack-plugin');
-import MiniCssExtractPlugin = require("mini-css-extract-plugin");
-import UglifyJsPlugin = require("uglifyjs-webpack-plugin");
+import path from 'path'
+import webpack from 'webpack'
+import HtmlWebpackPlugin from 'html-webpack-plugin';
+import CopyWebpackPlugin from 'copy-webpack-plugin';
+import MiniCssExtractPlugin from 'mini-css-extract-plugin';
+import UglifyJsPlugin from 'uglifyjs-webpack-plugin';
 
 export = () => {
   var isProduction = process.env.NODE_ENV === "production";
@@ -51,7 +51,18 @@ export = () => {
       rules: [
         {
           test: /\.tsx?$/,
-          use: 'ts-loader',
+          use: [
+            {
+              loader: 'ts-loader',
+              options: {
+                compilerOptions: {
+                  // allow to use dynamic import(),
+                  // https://webpack.js.org/guides/code-splitting/#dynamic-imports
+                  module: "esnext"
+                }
+              }
+            }
+          ]
         },
         {
           test: /\.s?css$/,
@@ -108,7 +119,7 @@ export = () => {
         { from: "../manifest.json" },
         { from: "../_locales", to: "_locales" },
         { from: "../fonts", to: "fonts" },
-        { from: path.resolve(componentsDir, "icons/*.png"), to: "icons", flatten: true },
+        { from: "../icons", to: "icons" }
       ]),
     ],
   };

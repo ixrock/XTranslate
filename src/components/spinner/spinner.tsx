@@ -1,6 +1,7 @@
-import "./spinner.scss";
-import * as React from "react";
-import { cssNames } from "../../utils/cssNames";
+import './spinner.scss'
+
+import * as React from 'react'
+import { cssNames } from "../../utils";
 
 interface Props extends React.HTMLProps<any> {
   singleColor?: boolean
@@ -15,17 +16,12 @@ export class Spinner extends React.Component<Props, {}> {
     center: false,
   };
 
-  show() {
-    this.elem.hidden = false;
-  }
-
-  hide() {
-    this.elem.hidden = true;
-  }
-
   render() {
-    var { className, singleColor, center, ...props } = this.props;
-    className = cssNames('Spinner', { singleColor, center }, className);
+    var { className, center, singleColor, ...props } = this.props;
+    var className = cssNames('Spinner', className, {
+      singleColor: singleColor,
+      center: center,
+    });
     return <div {...props} className={className} ref={e => this.elem = e}/>;
   }
 }

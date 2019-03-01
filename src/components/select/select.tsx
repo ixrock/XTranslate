@@ -1,8 +1,8 @@
 import "./select.scss";
 
 import * as React from "react";
-import { cssNames, noop, autobind } from "../../utils";
-import { MaterialIcon } from "../icons";
+import { autobind, cssNames, noop } from "../../utils";
+import { Icon } from "../icon";
 
 interface Props extends React.HTMLProps<any> {
   value?: any
@@ -47,7 +47,7 @@ export class Select extends React.Component<Props, {}> {
     return (
       <div className={componentClass}>
         <select {...selectProps} onChange={this.onChange}/>
-        <MaterialIcon name="keyboard_arrow_down" className="icon"/>
+        <Icon material="keyboard_arrow_down" className="icon"/>
       </div>
     );
   }

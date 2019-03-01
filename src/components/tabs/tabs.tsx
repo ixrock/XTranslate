@@ -1,18 +1,17 @@
 import "./tabs.scss";
 import * as React from "react";
 import { autobind, cssNames } from "../../utils";
+import { Icon } from "../icon";
 
-interface Context<D = any> {
+const TabsContext = React.createContext<TabsContext>({});
+
+export interface TabsContext<D = any> {
   autoFocus?: boolean;
   value?: D;
   onChange?(value: D): void;
 }
 
-var TabsContext = React.createContext<Context>({});
-
-type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>
-
-export interface TabsProps<D = any> extends Context<D>, Omit<React.DOMAttributes<HTMLElement>, "onChange"> {
+export type TabsProps<D = any> = TabsContext<D> & React.DOMAttributes<HTMLElement> & {
   className?: string;
   center?: boolean;
   wrap?: boolean;
@@ -22,10 +21,8 @@ export interface TabsProps<D = any> extends Context<D>, Omit<React.DOMAttributes
 export class Tabs extends React.PureComponent<TabsProps> {
   public elem: HTMLElement;
 
-  @autobind()
-  onWheel(evt: React.WheelEvent) {
-    evt.preventDefault();
-    this.elem.scrollLeft += (evt.deltaX + evt.deltaY);
+  static defaultProps: Partial<TabsProps> = {
+    scrollable: true,
   }
 
   @autobind()
@@ -34,22 +31,12 @@ export class Tabs extends React.PureComponent<TabsProps> {
   }
 
   render() {
-    var {
-      className, center, wrap, onChange, value, autoFocus,
-      scrollable = true,
-      ...elemProps
-    } = this.props;
-    className = cssNames("Tabs", className, {
-      "center": center,
-      "wrap": wrap,
-      "scrollable": scrollable,
-    });
+    var { className, center, wrap, scrollable, onChange, value, autoFocus, ...elemProps } = this.props;
     return (
       <TabsContext.Provider value={{ autoFocus, value, onChange }}>
         <div
           {...elemProps}
-          className={className}
-          onWheel={this.onWheel}
+          className={cssNames("Tabs", className, { center, wrap, scrollable })}
           ref={this.bindRef}
         />
       </TabsContext.Provider>
@@ -68,7 +55,7 @@ export interface TabProps<D = any> extends React.DOMAttributes<HTMLElement> {
 
 export class Tab extends React.PureComponent<TabProps> {
   static contextType = TabsContext;
-  public context: Context;
+  public context: TabsContext;
   public elem: HTMLElement;
 
   get isActive() {
@@ -105,15 +92,16 @@ export class Tab extends React.PureComponent<TabProps> {
 
   @autobind()
   onKeyDown(evt: React.KeyboardEvent<HTMLElement>) {
-    var ENTER_KEY = evt.keyCode === 13;
-    var SPACE_KEY = evt.keyCode === 32;
+    var ENTER_KEY = evt.nativeEvent.code === "Enter";
+    var SPACE_KEY = evt.nativeEvent.code === "Space";
     if (SPACE_KEY || ENTER_KEY) this.elem.click();
     var { onKeyDown } = this.props;
     if (onKeyDown) onKeyDown(evt);
   }
 
   componentDidMount() {
-    if (this.isActive && this.context.autoFocus) {
+    var { autoFocus } = this.context;
+    if (this.isActive && autoFocus) {
       this.focus();
     }
   }
@@ -124,10 +112,10 @@ export class Tab extends React.PureComponent<TabProps> {
   }
 
   render() {
-    var { className, active, disabled, label, value, ...elemProps } = this.props;
+    var { className, active, icon, disabled, label, value, ...elemProps } = this.props;
     className = cssNames("Tab flex gaps align-center", className, {
-      "active": this.isActive,
-      "disabled": disabled,
+      active: this.isActive,
+      disabled: disabled,
     });
     return (
       <div
@@ -139,6 +127,7 @@ export class Tab extends React.PureComponent<TabProps> {
         onKeyDown={this.onKeyDown}
         ref={this.bindRef}
       >
+        {typeof icon === "string" ? <Icon small material={icon}/> : icon}
         <div className="label">{label}</div>
       </div>
     )

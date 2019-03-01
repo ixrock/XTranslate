@@ -1,7 +1,7 @@
 import "./radio.scss";
 import * as React from "react";
 import { autobind, cssNames } from "../../utils";
-import uniqueId = require('lodash/uniqueId');
+import uniqueId from "lodash/uniqueId"
 
 interface RadioGroupProps {
   className?: any

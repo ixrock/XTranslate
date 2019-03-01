@@ -1,30 +1,53 @@
-
 .Tooltip {
   position: absolute;
   background: rgba(45, 48, 53, 0.94);
-  color: gainsboro;
-  font-size: inherit;
-  text-align: center;
-  padding: $padding;
+  font-size: small;
+  font-weight: normal;
+  border: 1px solid $border-color;
   border-radius: $radius;
-  margin-top: $padding;
-  margin-left: -$padding;
-  visibility: hidden;
-  opacity: 0;
-  transition: 250ms opacity 100ms;
-  z-index: 100;
+  color: gainsboro;
+  margin: #{$padding / 2 $padding / 3};
+  white-space: normal;
+  padding: .5em;
+  text-align: center;
+  z-index: 10001;
+
+  * {
+    white-space: normal;
+  }
 
   &:empty {
     display: none;
   }
 
-  &.visible {
-    visibility: visible;
-    opacity: 1;
-  }
-
   &.following {
     position: fixed;
-    margin: 0;
+  }
+
+  &:not(.following) {
+    &.left {
+      left: 0;
+    }
+
+    &.right {
+      right: 0;
+    }
+
+    &.top {
+      bottom: 100%;
+    }
+
+    &.bottom {
+      top: 100%;
+    }
+
+    &.center {
+      left: 50%;
+      transform: translateX(-50%);
+    }
+  }
+
+  &.nowrap {
+    white-space: nowrap;
   }
 }

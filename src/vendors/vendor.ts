@@ -1,4 +1,4 @@
-import omit = require("lodash/omit");
+import { omit } from "lodash";
 import { vendors } from "./index";
 
 export abstract class Vendor {

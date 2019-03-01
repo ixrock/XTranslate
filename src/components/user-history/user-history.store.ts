@@ -1,7 +1,7 @@
 import { observable, reaction, when } from "mobx";
 import { Translation } from "../../vendors";
 import { settingsStore } from "../settings/settings.store";
-import isEqual = require("lodash/isEqual");
+import isEqual from "lodash/isEqual";
 
 export enum HistoryTimeFrame {
   HOUR, DAY, MONTH, YEAR, ALL

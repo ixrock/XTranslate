@@ -4,9 +4,9 @@ import * as React from 'react';
 import { observer } from "mobx-react";
 import { __i18n } from "../../extension/i18n";
 import { getVendorByName } from '../../vendors';
-import { cssNames, noop, autobind } from "../../utils";
+import { autobind, cssNames, noop } from "../../utils";
 import { Option, Select } from "../select";
-import { MaterialIcon } from "../icons";
+import { Icon } from "../icon";
 import { settingsStore } from "../settings/settings.store";
 
 interface Props extends React.HTMLProps<any> {
@@ -47,7 +47,7 @@ export class SelectLanguage extends React.Component<Props, {}> {
   render() {
     var { vendor, langFrom, langTo } = this.settings;
     var { langFrom: listFrom, langTo: listTo } = getVendorByName(vendor);
-    var className = cssNames('SelectLanguage flex align-flex-start', this.props.className);
+    var className = cssNames('SelectLanguage flex gaps align-flex-start', this.props.className);
     return (
       <div className={className}>
         <Select value={langFrom} onChange={this.onChangeLangFrom}>
@@ -55,9 +55,12 @@ export class SelectLanguage extends React.Component<Props, {}> {
             <Option key={lang} value={lang} disabled={lang === langTo} title={listFrom[lang]}/>
           ))}
         </Select>
-        <MaterialIcon
-          name="swap_horiz" title={__i18n("swap_languages")}
-          className="swap-icon mh1" onClick={this.swapLanguages}/>
+        <Icon
+          material="swap_horiz"
+          className="swap-icon"
+          title={__i18n("swap_languages")}
+          onClick={this.swapLanguages}
+        />
         <Select value={langTo} onChange={this.onChangeLangTo}>
           {Object.keys(listTo).map(lang => (
             <Option key={lang} value={lang} disabled={lang === langFrom} title={listTo[lang]}/>

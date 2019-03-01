@@ -2,21 +2,19 @@ import "./input-translation.scss";
 
 import * as React from "react";
 import { observer } from "mobx-react";
+import { debounce, find, remove } from "lodash";
 import { getVendorByName, Translation, TranslationError, Vendor, vendors } from "../../vendors";
 import { __i18n, MessageType, onMessage, tabs } from "../../extension";
 import { createStorage, cssNames, isMac } from "../../utils";
 import { SelectLanguage } from "../select-language";
 import { TextField } from "../text-field";
 import { OptGroup, Option, Select } from "../select";
-import { MaterialIcon } from "../icons";
 import { Spinner } from "../spinner";
 import { settingsStore } from "../settings/settings.store";
 import { Favorite, favoritesStore } from "./favorites.store";
 import { AppRoute } from "../app/app.route";
 import { userHistoryStore } from "../user-history/user-history.store";
-import find = require("lodash/find");
-import debounce = require("lodash/debounce");
-import remove = require("lodash/remove");
+import { Icon } from "../icon";
 
 const lastText = createStorage("last_text", "");
 
@@ -84,7 +82,7 @@ export class InputTranslation extends React.Component<{}, State> {
     favoritesStore.data[vendor] = favorites;
   }
 
-  addFavorite() {
+  addFavorite = () => {
     var { langFrom, langTo, vendor } = this.state;
     var fav: Favorite = { from: langFrom, to: langTo };
     var favorites: Favorite[] = favoritesStore.getByVendor(vendor);
@@ -93,7 +91,7 @@ export class InputTranslation extends React.Component<{}, State> {
     }
   }
 
-  removeFavorite() {
+  removeFavorite = () => {
     var { useFavorite, vendor, langFrom, langTo } = this.state;
     if (useFavorite) {
       // remove actively selected favorite from the list
@@ -162,6 +160,7 @@ export class InputTranslation extends React.Component<{}, State> {
     }, 1000);
   }
 
+  // fixme: avoid translation delay
   translateWord(text: string) {
     this.textField.focus();
     this.setState({ text });
@@ -222,15 +221,18 @@ export class InputTranslation extends React.Component<{}, State> {
         <Select value={vendor} onChange={this.onVendorChange}>
           {vendors.map(v => <Option key={v.name} value={v.name} title={v.title}/>)}
         </Select>
-        {isFavorite ?
-          <MaterialIcon
-            name="favorite" title={__i18n("favorites_remove_item")}
-            onClick={() => this.removeFavorite()}/>
-          : null}
+        {isFavorite && (
+          <Icon
+            material="favorite"
+            title={__i18n("favorites_remove_item")}
+            onClick={this.removeFavorite}
+          />
+        )}
         {!isFavorite ?
-          <MaterialIcon
-            name="favorite_border" title={__i18n("favorites_add_item")}
-            onClick={() => this.addFavorite()}/>
+          <Icon
+            material="favorite_border"
+            title={__i18n("favorites_add_item")}
+            onClick={this.addFavorite}/>
           : null}
       </div>
     )
@@ -296,9 +298,9 @@ export class InputTranslation extends React.Component<{}, State> {
     return (
       <div className={cssNames("translation-results", { rtl: isRTL })}>
         {translation ?
-          <div className="translation flex gaps">
-            <MaterialIcon
-              name="play_circle_outline"
+          <div className="translation flex gaps align-flex-start">
+            <Icon
+              material="play_circle_outline"
               title={__i18n("popup_play_icon_title")}
               disabled={!canPlayText}
               onClick={() => this.playText()}

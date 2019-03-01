@@ -1,10 +1,7 @@
 @import "~flex.box";
-@import "app.theme-dark";
+@import "theme-dark";
 @import "../mixins";
 @import "../fonts";
-
-@include generate-offsets;
-@include generate-widths-heights;
 
 *, *:before, *:after {
   box-sizing: border-box;
@@ -23,9 +20,10 @@ html {
 }
 
 body {
+  --flex-gap: #{$margin * 1.2};
+  @include custom-scrollbar(dark);
   font: $font-size $font-main;
   height: inherit;
-  @include custom-scrollbar(dark);
 }
 
 code {
@@ -66,13 +64,6 @@ hr {
   margin: auto;
 }
 
-#loading {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  margin: -15px;
-}
-
 .sub-title {
   text-transform: uppercase;
   font-weight: bold;
@@ -81,6 +72,7 @@ hr {
 }
 
 .page-title {
+  --flex-gap: #{$padding / 2};
   text-transform: uppercase;
   font-weight: bold;
   text-align: left;
@@ -96,20 +88,12 @@ hr {
   }
 }
 
-.dark-theme-icon {
-  $iconSize: 24px;
+.App {
+  .dark-theme-icon {
+    opacity: .5;
 
-  opacity: .25;
-  cursor: pointer;
-  width: $iconSize;
-  height: $iconSize;
-  margin-right: $margin / 2;
-
-  &.active {
-    filter: invert(100%);
-  }
-
-  &:hover {
-    opacity: .75;
+    &:hover {
+      opacity: .75;
+    }
   }
 }

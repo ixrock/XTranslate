@@ -19,15 +19,8 @@
   }
 
   &.scrollable {
-    overflow: auto;
-    -ms-overflow-style: none;
-
-    @include firefoxOnly {
-      overflow: hidden;
-    }
-    &::-webkit-scrollbar {
-      display: none;
-    }
+    @include hidden-scrollbar;
+    overflow-y: hidden;
   }
 }
 

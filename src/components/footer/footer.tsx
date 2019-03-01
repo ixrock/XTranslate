@@ -17,17 +17,17 @@ export class Footer extends React.Component {
   private shareIcons: ShareIcon[] = [
     {
       title: "VK.com",
-      icon: require('../icons/vk.svg'),
+      icon: require('../icon/vk.svg'),
       url: `http://vkontakte.ru/share.php?url=${this.storeUrl}`,
     },
     {
       title: "Facebook",
-      icon: require('../icons/facebook.svg'),
+      icon: require('../icon/facebook.svg'),
       url: `https://www.facebook.com/sharer/sharer.php?u=${this.storeUrl}`,
     },
     {
       title: "Twitter",
-      icon: require('../icons/twitter.svg'),
+      icon: require('../icon/twitter.svg'),
       url: [
         `https://twitter.com/intent/tweet?source=webclient`,
         `url=${this.storeUrl}`,

@@ -2,6 +2,7 @@ import "./theme-manager.scss";
 
 import * as React from "react";
 import { observer } from "mobx-react";
+import { isEqual } from "lodash";
 import { __i18n } from "../../extension/i18n";
 import { themeStore } from "./theme.store";
 import { settingsStore } from "../settings/settings.store";
@@ -13,7 +14,6 @@ import { Checkbox } from "../checkbox";
 import { Option, Select } from "../select";
 import { Slider } from "../slider";
 import { Button } from "../button";
-import isEqual = require("lodash/isEqual");
 
 @observer
 export class ThemeManager extends React.Component {
@@ -42,15 +42,16 @@ export class ThemeManager extends React.Component {
     var { theme } = this;
     var isDefault = isEqual(theme, themeStore.defaultTheme);
     return (
-      <div className="ThemeManager">
-        <div className="flex center pb1">
-          <Popup preview translation={this.translationExample}/>
-        </div>
+      <div className="ThemeManager flex column gaps">
+        <Popup
+          preview translation={this.translationExample}
+          className="box center"
+        />
         <div className="theme">
-          <div className="flex auto">
+          <div className="flex gaps auto">
             <div className="box">
               <span className="sub-title">{__i18n("sub_header_background")}</span>
-              <div className="flex gaps align-center pl1">
+              <div className="flex gaps align-center">
                 <span className="heading">{__i18n("background_color")}</span>
                 <div className="flex align-center">
                   <ColorPicker
@@ -217,7 +218,7 @@ export class ThemeManager extends React.Component {
           </div>
         </div>
 
-        <div className="reset flex center pt2">
+        <div className="reset flex center">
           <Button
             accent
             label={__i18n("reset_to_default_button_text")}

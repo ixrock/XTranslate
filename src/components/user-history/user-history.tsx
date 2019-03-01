@@ -3,10 +3,10 @@ import "./user-history.scss";
 import * as React from "react";
 import { computed, observable, reaction } from "mobx";
 import { disposeOnUnmount, observer } from "mobx-react";
+import { groupBy } from "lodash";
 import { __i18n } from "../../extension/i18n";
 import { cssNames, download, prevDefault } from "../../utils";
 import { getVendorByName } from "../../vendors";
-import { MaterialIcon } from "../icons";
 import { Checkbox } from "../checkbox";
 import { Menu, MenuItem } from "../menu";
 import { TextField } from "../text-field";
@@ -15,7 +15,7 @@ import { Button } from "../button";
 import { Spinner } from "../spinner";
 import { settingsStore } from "../settings/settings.store";
 import { HistoryTimeFrame, IHistoryItem, IHistoryStorageItem, userHistoryStore } from "./user-history.store";
-import groupBy = require("lodash/groupBy");
+import { Icon } from "../icon";
 
 @observer
 export class UserHistory extends React.Component {
@@ -159,20 +159,20 @@ export class UserHistory extends React.Component {
                       className={cssNames("history-item", { open: showDetails })}
                       onClick={() => this.toggleDetails(storageItem)}>
                     <div className="main-info flex gaps">
-                    <span className="text box grow flex align-center">
-                      {showDetails ?
-                        <MaterialIcon
-                          className="mr1"
-                          name="play_circle_outline"
+                    <span className="text box grow flex gaps align-center">
+                      {showDetails && (
+                        <Icon
+                          material="play_circle_outline"
                           onClick={prevDefault(() => this.playText(vendor, from, text))}
-                        /> : null}
+                        />
+                      )}
                       <span className="text">{text}</span>
                       {transcription ? <span className="transcription">({transcription})</span> : null}
                     </span>
                       <span className={cssNames("translation box grow", rtlClass)}>{translation}</span>
-                      <MaterialIcon
+                      <Icon
                         className="remove-icon"
-                        name="remove_circle_outline"
+                        material="remove_circle_outline"
                         onClick={prevDefault(() => this.clearItem(storageItem))}
                       />
                     </div>
@@ -213,19 +213,19 @@ export class UserHistory extends React.Component {
     var { historyEnabled, historyAvoidDuplicates, historySaveWordsOnly, historyPageSize } = this.settings;
     return (
       <div className="UserHistory">
-        <div className="flex align-center justify-center">
+        <div className="settings flex align-center justify-center">
           <Checkbox
             label={__i18n("history_enabled_flag")}
             checked={historyEnabled}
             onChange={v => this.settings.historyEnabled = v}
           />
-          <MaterialIcon
-            name="find_in_page"
-            active={showSearch}
+          <Icon
+            material="find_in_page"
+            className={cssNames({ active: showSearch })}
             onClick={() => this.showSearch = !showSearch}
           />
           <div className="flex">
-            <MaterialIcon id="export_history" name="file_download" button/>
+            <Icon id="export_history" material="file_download" actionIcon/>
             <Menu htmlFor="export_history">
               <MenuItem onClick={() => this.exportHistory("csv")}>
                 {__i18n("history_export_entries", ["CSV"])}
@@ -236,61 +236,62 @@ export class UserHistory extends React.Component {
               </MenuItem>
             </Menu>
           </div>
-          <MaterialIcon
-            name="settings"
-            active={showSettings}
+          <Icon
+            material="settings"
+            className={cssNames({ active: showSettings })}
             onClick={() => this.showSettings = !showSettings}
           />
         </div>
-        {showSearch && (
-          <TextField
-            autoFocus showErrors={false}
-            className="mt1"
-            placeholder={__i18n("history_search_input_placeholder")}
-            value={searchText}
-            onChange={v => this.searchText = v}
-          />
-        )}
-        {showSettings && (
-          <div className="settings flex column gaps mt1">
-            <div className="flex gaps align-center">
-              <Select className="box grow" value={timeFrame} onChange={v => this.timeFrame = v}>
-                <Option value={HistoryTimeFrame.HOUR} title={__i18n("history_clear_period_hour")}/>
-                <Option value={HistoryTimeFrame.DAY} title={__i18n("history_clear_period_day")}/>
-                <Option value={HistoryTimeFrame.MONTH} title={__i18n("history_clear_period_month")}/>
-                <Option value={HistoryTimeFrame.ALL} title={__i18n("history_clear_period_all")}/>
-              </Select>
-              <Button
-                accent label={__i18n("history_button_clear")}
-                onClick={clearItemsByTimeFrame}
-              />
-            </div>
-            <div className="box flex gaps auto align-center">
-              <Checkbox
-                label={__i18n("history_settings_save_words_only")}
-                checked={historySaveWordsOnly}
-                onChange={v => this.settings.historySaveWordsOnly = v}
-              />
-              <Checkbox
-                label={__i18n("history_settings_avoid_duplicates")}
-                checked={historyAvoidDuplicates}
-                onChange={v => this.settings.historyAvoidDuplicates = v}
-              />
-              <div className="page-size flex gaps align-center">
-                <span className="box grow">{__i18n("history_page_size")}</span>
-                <TextField
-                  type="number" min={10} max={100000}
-                  value={historyPageSize} showErrors={false}
-                  onChange={v => this.settings.historyPageSize = v}
+        <div className="settings-content flex column gaps">
+          {showSearch && (
+            <TextField
+              autoFocus showErrors={false}
+              placeholder={__i18n("history_search_input_placeholder")}
+              value={searchText}
+              onChange={v => this.searchText = v}
+            />
+          )}
+          {showSettings && (
+            <div className="flex column gaps">
+              <div className="flex gaps align-center">
+                <Select className="box grow" value={timeFrame} onChange={v => this.timeFrame = v}>
+                  <Option value={HistoryTimeFrame.HOUR} title={__i18n("history_clear_period_hour")}/>
+                  <Option value={HistoryTimeFrame.DAY} title={__i18n("history_clear_period_day")}/>
+                  <Option value={HistoryTimeFrame.MONTH} title={__i18n("history_clear_period_month")}/>
+                  <Option value={HistoryTimeFrame.ALL} title={__i18n("history_clear_period_all")}/>
+                </Select>
+                <Button
+                  accent label={__i18n("history_button_clear")}
+                  onClick={clearItemsByTimeFrame}
                 />
               </div>
+              <div className="box flex gaps auto align-center">
+                <Checkbox
+                  label={__i18n("history_settings_save_words_only")}
+                  checked={historySaveWordsOnly}
+                  onChange={v => this.settings.historySaveWordsOnly = v}
+                />
+                <Checkbox
+                  label={__i18n("history_settings_avoid_duplicates")}
+                  checked={historyAvoidDuplicates}
+                  onChange={v => this.settings.historyAvoidDuplicates = v}
+                />
+                <div className="page-size flex gaps align-center">
+                  <span className="box grow">{__i18n("history_page_size")}</span>
+                  <TextField
+                    type="number" min={10} max={100000}
+                    value={historyPageSize} showErrors={false}
+                    onChange={v => this.settings.historyPageSize = v}
+                  />
+                </div>
+              </div>
             </div>
-          </div>
-        )}
-        {loading && <div className="pt1"><Spinner center/></div>}
+          )}
+        </div>
+        {loading && <div className="loading"><Spinner/></div>}
         {loaded && this.renderHistory()}
         {hasMore && (
-          <div className="load-more flex center mt2">
+          <div className="load-more flex center">
             <Button
               primary label={__i18n("history_button_show_more")}
               onClick={() => this.page++}

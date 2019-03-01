@@ -1,6 +1,6 @@
 import { parseJson, Translation, Vendor } from "./vendor";
 import { encodeQuery } from "../utils";
-import groupBy = require("lodash/groupBy");
+import { groupBy } from "lodash";
 
 class Bing extends Vendor {
   public name = 'bing';

@@ -1,29 +1,50 @@
 import './tooltip.scss'
-import * as React from 'react'
+
+import React from "react"
+import { createPortal } from "react-dom"
 import { autobind, cssNames } from "../../utils";
 
-interface Props extends React.HTMLProps<any> {
+export interface TooltipProps {
   htmlFor: string
-  following?: boolean
+  className?: string;
+  following?: boolean;
+  position?: Position;
+  children?: React.ReactNode;
 }
 
-export class Tooltip extends React.Component<Props> {
-  private anchor: HTMLElement;
-  private tooltip: HTMLElement;
+interface Position {
+  left?: boolean;
+  right?: boolean
+  top?: boolean
+  bottom?: boolean
+  center?: boolean;
+}
 
-  static IS_VISIBLE = "visible";
-  static IS_FOLLOWING = "following";
+interface State {
+  visible?: boolean;
+}
+
+export class Tooltip extends React.Component<TooltipProps, State> {
+  static defaultProps: Partial<TooltipProps> = {
+    position: {
+      center: true,
+      bottom: true,
+    }
+  }
+
+  public anchor: HTMLElement;
+  public elem: HTMLElement;
+  public state: State = {};
 
   componentDidMount() {
-    var { htmlFor, following } = this.props;
-    this.anchor = document.getElementById(htmlFor);
+    this.anchor = document.getElementById(this.props.htmlFor);
     if (this.anchor) {
+      if (window.getComputedStyle(this.anchor).position === "static") {
+        this.anchor.style.position = "relative"
+      }
       this.anchor.addEventListener("mouseenter", this.onMouseEnter);
       this.anchor.addEventListener("mouseleave", this.onMouseLeave);
-      if (following) {
-        this.anchor.addEventListener("mousemove", this.onMouseMove);
-        this.tooltip.classList.add(Tooltip.IS_FOLLOWING);
-      }
+      this.anchor.addEventListener("mousemove", this.onMouseMove);
     }
   }
 
@@ -37,38 +58,55 @@ export class Tooltip extends React.Component<Props> {
 
   @autobind()
   onMouseEnter(evt: MouseEvent) {
-    this.tooltip.classList.add(Tooltip.IS_VISIBLE);
+    this.setState({ visible: true });
+    this.onMouseMove(evt);
   }
 
   @autobind()
   onMouseLeave(evt: MouseEvent) {
-    this.tooltip.classList.remove(Tooltip.IS_VISIBLE);
+    this.setState({ visible: false });
   }
 
   @autobind()
-  onMouseMove({ pageX, pageY }: MouseEvent) {
-    var offset = 10;
-    this.tooltip.style.left = (pageX + offset) + "px"
-    this.tooltip.style.top = (pageY + offset) + "px"
+  onMouseMove(evt: MouseEvent) {
+    if (!this.props.following) return;
 
-    // tooltip position correction
-    var viewportWidth = window.innerWidth;
-    var viewportHeight = window.innerHeight;
-    var tooltipRect = this.tooltip.getBoundingClientRect();
-    if (tooltipRect.right > viewportWidth) {
-      this.tooltip.style.left = (pageX - tooltipRect.width - offset / 2) + "px"
+    var offset = 15;
+    var { pageX, pageY } = evt;
+    this.elem.style.left = (pageX + offset) + "px"
+    this.elem.style.top = (pageY + offset) + "px"
+
+    // correct position if not fits to viewport
+    var { innerWidth: viewportWidth, innerHeight: viewportHeight } = window;
+    var { right, bottom, width, height } = this.elem.getBoundingClientRect();
+    if (right > viewportWidth) {
+      this.elem.style.left = (pageX - width - offset / 2) + "px"
     }
-    if (tooltipRect.bottom > viewportHeight) {
-      this.tooltip.style.top = (pageY - tooltipRect.height - offset / 2) + "px"
+    if (bottom > viewportHeight) {
+      this.elem.style.top = (pageY - height - offset / 2) + "px"
     }
   }
 
+  @autobind()
+  bindRef(elem: HTMLElement) {
+    this.elem = elem;
+  }
+
   render() {
-    const className = cssNames('Tooltip', this.props.className);
-    return (
-      <div className={className} ref={e => this.tooltip = e}>
-        {this.props.children}
-      </div>
-    );
+    if (!this.state.visible) {
+      return null;
+    }
+    var { className, position, following, children } = this.props;
+    className = cssNames('Tooltip', position, { following }, className);
+    var tooltip = (
+      <div
+        className={className}
+        children={children}
+        ref={this.bindRef}
+      />
+    )
+    return following
+      ? createPortal(tooltip, document.body)
+      : tooltip;
   }
 }

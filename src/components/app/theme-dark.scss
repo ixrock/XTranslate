@@ -17,18 +17,18 @@ body {
       --slider-thumb-color-active: white;
     }
 
-    .Dialog {
-      .MaterialIcon.button:hover {
-        color: inherit;
-      }
-    }
-
     .Menu {
-      --menu-bgc: #{$bgc-dark};
+      --bgc: #{$bgc-dark};
+      --bgc-active: var(--theme-contast-color-invert);
     }
 
-    .MaterialIcon.button:hover {
-      color: white;
+    .Icon {
+      --bgc-focus: none;
+      color: lighten($color-secondary, 20%);
+
+      &:focus, &:hover {
+        color: var(--theme-contast-color);
+      }
     }
   }
 }

@@ -1,0 +1,99 @@
+.Icon {
+  --bgc-focus: #ffffff22;
+  --default-size: 24px;
+  --small-size: 18px;
+  --big-size: 32px;
+
+  display: inline-flex;
+  font-style: normal;
+  vertical-align: middle;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  user-select: none;
+  -webkit-user-select: none; /* safari */
+  -moz-user-select: none; /* firefox */
+
+  font-size: var(--default-size);
+  width: var(--default-size);
+  height: var(--default-size);
+
+  &.small {
+    font-size: var(--small-size);
+    width: var(--small-size);
+    height: var(--small-size);
+  }
+
+  &.big {
+    font-size: var(--small-size);
+    width: var(--big-size);
+    height: var(--big-size);
+  }
+
+  // material-icon
+  &.material {
+    > span {
+      font-family: "Material Icons";
+      font-size: inherit;
+      font-weight: normal;
+      font-style: normal;
+      display: inline-block;
+      line-height: 1;
+      text-transform: none;
+      letter-spacing: normal;
+      word-wrap: normal;
+      white-space: nowrap;
+      direction: ltr;
+
+      /* Support for all WebKit browsers. */
+      -webkit-font-smoothing: antialiased;
+      /* Support for Safari and Chrome. */
+      text-rendering: optimizeLegibility;
+      /* Support for Firefox. */
+      -moz-osx-font-smoothing: grayscale;
+      /* Support for IE. */
+      font-feature-settings: 'liga';
+    }
+  }
+
+  // inline svg icon
+  &.svg {
+    box-sizing: content-box;
+
+    > span {
+      width: 100%;
+      height: 100%;
+    }
+
+    svg {
+      pointer-events: none;
+      width: 100%;
+      height: 100%;
+
+      * {
+        fill: currentColor;
+      }
+
+      line {
+        stroke: currentColor;
+      }
+    }
+  }
+
+  &.disabled {
+    opacity: .75;
+    pointer-events: none;
+  }
+
+  &.actionIcon {
+    cursor: pointer;
+    transition: 250ms color, 250ms opacity, 150ms background-color, 150ms box-shadow;
+    border-radius: 50%;
+
+    &:focus, &:hover {
+      color: black;
+      box-shadow: 0 0 0 3px var(--bgc-focus);
+      background-color: var(--bgc-focus);
+    }
+  }
+}

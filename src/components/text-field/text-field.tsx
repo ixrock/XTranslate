@@ -1,15 +1,12 @@
 import "./text-field.scss";
 
 import * as React from "react";
-import { cssNames, autobind } from "../../utils";
-import { MaterialIcon } from "../icons/material-icon";
+import { isFunction, isString, uniqueId } from "lodash";
+import { autobind, cssNames } from "../../utils";
 import { Props, State, ValidatorError, ValidatorObject } from "./text-field.types";
 import { Validators } from "./text-field.validators";
 import { Tooltip } from "../tooltip";
-import { SvgIcon } from "../icons/svg-icon";
-import isFunction = require("lodash/isFunction");
-import isString = require("lodash/isString");
-import uniqueId = require("lodash/uniqueId");
+import { Icon } from "../icon";
 
 export class TextField extends React.Component<Props, State> {
   public id = uniqueId("text_field_");
@@ -251,8 +248,8 @@ export class TextField extends React.Component<Props, State> {
     var { errors, dirty, valid, validating } = this.state;
     var currentValue = this.getValue();
 
-    if (isString(iconLeft)) iconLeft = <MaterialIcon name={iconLeft}/>
-    if (isString(iconRight)) iconRight = <MaterialIcon name={iconRight}/>
+    if (isString(iconLeft)) iconLeft = <Icon material={iconLeft}/>
+    if (isString(iconRight)) iconRight = <Icon material={iconRight}/>
 
     var inputProps = Object.assign(props, {
       className: "input box grow",
@@ -277,8 +274,8 @@ export class TextField extends React.Component<Props, State> {
       var validationIcon = (
         <div id={tooltipId} className={cssNames("validation-icon", { valid, invalid: !valid })}>
           {validating
-            ? <SvgIcon name="spinner" small/>
-            : <MaterialIcon name={valid ? "check" : "error_outline"}/>}
+            ? <Icon svg="spinner" small/>
+            : <Icon material={valid ? "check" : "error_outline"}/>}
           <Tooltip htmlFor={tooltipId}>{React.Children.toArray(errors)}</Tooltip>
         </div>
       );
@@ -302,8 +299,8 @@ export class TextField extends React.Component<Props, State> {
           {iconRight}
           {type === "number" ? (
             <div className="arrow-icons">
-              <MaterialIcon name="arrow_drop_up" className="up" onClick={this.increment}/>
-              <MaterialIcon name="arrow_drop_down" className="down" onClick={this.decrement}/>
+              <Icon material="arrow_drop_up" className="up" onClick={this.increment}/>
+              <Icon material="arrow_drop_down" className="down" onClick={this.decrement}/>
             </div>
           ) : null}
         </label>

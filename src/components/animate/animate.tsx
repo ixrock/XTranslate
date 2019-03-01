@@ -1,69 +1,73 @@
 import "./animate.scss";
 import * as React from "react";
-import { cssNames, noop, autobind } from "../../utils";
+import { autobind, cssNames, noop } from "../../utils";
 
 interface Props {
-  className?: string | object
   name?: string
-  leaveTimeout?: number
-  leaveCallback?: () => void
+  className?: string
+  enter?: boolean
+  onEnter?: () => void;
+  onLeave?: () => void;
 }
 
 interface State {
-  className?: string
+  enter?: boolean
+  leave?: boolean
 }
 
-export class Animate extends React.Component<Props, State> {
-  public elem: HTMLElement;
-  public state: State = {};
-
-  static ENTER = "enter";
-  static LEAVE = "leave";
-  static ACTIVE = "active";
-
+export class Animate extends React.PureComponent<Props, State> {
   static defaultProps = {
     name: "opacity",
-    leaveTimeout: 0,
-    leaveCallback: noop
+    enter: true,
+    onEnter: noop,
+    onLeave: noop,
   };
 
-  @autobind()
-  enter() {
-    this.setState({ className: Animate.ENTER });
-  }
-
-  @autobind()
-  leave() {
-    this.setState({ className: Animate.LEAVE });
-  }
+  public state: State = {}
 
   componentDidMount() {
-    setTimeout(this.enter, 25);
-    if (this.props.leaveTimeout) {
-      setTimeout(this.leave, this.props.leaveTimeout);
+    if (this.props.enter) this.enter();
+  }
+
+  componentWillReceiveProps(nextProps: Props) {
+    if (this.props.enter !== nextProps.enter) {
+      if (nextProps.enter) setTimeout(() => this.enter(), 25);
+      else this.leave();
     }
   }
 
+  enter() {
+    this.props.onEnter();
+    this.setState({ enter: true, leave: false });
+  }
+
+  leave() {
+    this.props.onLeave();
+    this.setState({ leave: true, enter: false });
+  }
+
+  get contentElem() {
+    return React.Children.only(this.props.children) as React.ReactElement<React.HTMLAttributes<any>>;
+  }
+
   @autobind()
-  onTransitionEnd(evt: React.TransitionEvent<HTMLDivElement>) {
-    var classNames = this.state.className.split(" ");
-    if (classNames.find(c => c === Animate.ENTER)) {
-      this.setState({
-        className: cssNames(Animate.ENTER, Animate.ACTIVE)
-      });
-    }
-    else if (classNames.find(c => c === Animate.LEAVE)) {
-      this.props.leaveCallback();
-    }
+  onTransitionEnd(evt: React.TransitionEvent) {
+    var { onTransitionEnd } = this.contentElem.props;
+    if (onTransitionEnd) onTransitionEnd(evt);
+    if (this.state.leave) this.setState({ leave: false });
   }
 
   render() {
-    var { className, name, children } = this.props;
-    className = cssNames(className, "Animate", name, this.state.className);
-    return (
-      <div className={className} onTransitionEnd={this.onTransitionEnd} ref={e => this.elem = e}>
-        {children}
-      </div>
-    );
+    var { className, name, enter } = this.props;
+    var contentElem = this.contentElem;
+    var contentProps: React.HTMLAttributes<any> = {
+      className: cssNames(
+        contentElem.props.className, className,
+        "Animate", name, this.state,
+      ),
+      children: enter || this.state.leave ? contentElem.props.children : null,
+      onTransitionEnd: this.onTransitionEnd,
+    };
+    return React.cloneElement(contentElem, contentProps);
   }
 }

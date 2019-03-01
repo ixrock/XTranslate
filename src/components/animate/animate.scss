@@ -1,42 +1,21 @@
-// Animations available by name
+// Animations
 
-@mixin animate-opacity($enterDuration: 350ms, $leaveDuration: 500ms) {
+@mixin animate-opacity($enterDuration: 350ms, $leaveDuration: 250ms) {
   &.Animate {
     opacity: 0;
-    will-change: opacity;
 
     &.enter {
       transition: opacity $enterDuration;
       opacity: 1;
     }
     &.leave {
-      transition: opacity $leaveDuration;
+      transition: opacity $leaveDuration ease-out;
       opacity: 0;
     }
   }
 }
 
-@mixin animate-drop-down($enterDuration: 150ms, $leaveDuration: 350ms) {
-  &.Animate {
-    position: absolute;
-    overflow: hidden;
-
-    > * {
-      will-change: transform;
-      transform: translateY(-100%);
-    }
-    &.enter > * {
-      transform: translateY(0%);
-      transition: transform $enterDuration;
-      transition-timing-function: $animation-curve-fast-out-slow-in;
-    }
-    &.enter.active {
-      overflow: visible;
-    }
-  }
-}
-
-@mixin animate-slide-right($enterDuration: 150ms, $leaveDuration: 350ms) {
+@mixin animate-slide-right($enterDuration: 150ms, $leaveDuration: 150ms) {
   &.Animate {
     transform: translateX(100%);
     will-change: transform;
@@ -52,12 +31,11 @@
   }
 }
 
-@mixin animate-opacity-scale($enterDuration: 100ms, $leaveDuration: 150ms) {
+@mixin animate-opacity-scale($enterDuration: 250ms, $leaveDuration: 150ms) {
   &.Animate {
     opacity: 0;
 
     &.enter {
-      will-change: opacity;
       transition: opacity $enterDuration;
       opacity: 1;
     }
@@ -70,12 +48,9 @@
   }
 }
 
+// Predefined names for <Animate name="..."/>
 .opacity {
   @include animate-opacity;
-}
-
-.drop-down {
-  @include animate-drop-down;
 }
 
 .slide-right {

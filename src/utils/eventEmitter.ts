@@ -1,88 +1,59 @@
-// Helper for subscribing to custom class events
-import isString from "lodash/isString"
-import isFunction from "lodash/isFunction"
+// Event emitter
 
-interface Subscriber<D extends Event = Event> {
-  eventType: string
-  callback: EventListener<D>
-  options?: EventOptions
+interface Options {
+  once?: boolean;
+  prepend?: boolean;
 }
 
-interface Event {
-  type: string;
-  [data: string]: any;
+interface Callback<D = any> {
+  (...data: D[]): void | boolean; // if listener return false it will prevent calling rest of callbacks
+  once?: boolean; // remove listener after first call
 }
 
-interface EventListener<D extends Event = Event> {
-  (this: EventEmitter<D>, evt: D): void;
-}
+export class EventEmitter<D = any> {
+  private events: { [evtName: string]: Callback<D>[] } = {};
 
-interface EventOptions {
-  once?: boolean
-}
-
-export class EventEmitter<D extends Event = Event> {
-  private subscribers: Subscriber<D>[] = [];
-
-  private parseEventTypes(type: string): string[] {
-    return type.trim().split(/\s+/);
+  private parseEvents(events: string) {
+    return events.split(/\s+/);
   }
 
-  addListener(eventType: string | EventListener<D>, callback?: EventListener<D> | EventOptions, options?: EventOptions): this {
-    var subscriber = {
-      eventType: isString(eventType) ? eventType : "*",
-      callback: isFunction(eventType) ? eventType : callback as EventListener<D>,
-      options: (isFunction(eventType) ? callback as EventOptions : options) || {},
-    };
-    {
-      let { eventType, options, callback } = subscriber;
-      if (options.once) {
-        var originalCallback = callback;
-        callback = (event: D) => {
-          originalCallback.call(this, event);
-          this.removeListener(event.type, callback);
-        };
-      }
-      this.parseEventTypes(eventType).forEach(eventType => {
-        this.subscribers.push({ eventType, callback, options });
+  addListener(events: string, callback: Callback<D>, options: Options = {}) {
+    this.parseEvents(events).forEach(evtName => {
+      var listeners = this.events[evtName] || [];
+      var { once, prepend } = options;
+      if (once) callback.once = once;
+      if (prepend) listeners.unshift(callback);
+      else listeners.push(callback);
+      this.events[evtName] = listeners;
+    });
+  }
+
+  removeListeners(events?: string, callback?: Callback<D>) {
+    if (!events) this.events = {};
+    else {
+      this.parseEvents(events).forEach(evtName => {
+        var listeners = this.events[evtName];
+        if (!listeners) return;
+        if (callback) {
+          var index = listeners.lastIndexOf(callback);
+          if (index > -1) listeners.splice(index, 1);
+        }
+        else {
+          this.events[evtName].length = 0;
+        }
       });
     }
-    return this;
   }
 
-  removeListener(eventType?: string | EventListener, callback?: EventListener): this {
-    if (!arguments.length) {
-      this.subscribers = [];
-    }
-    else {
-      // remove subscriptions with specific event types and optional callback
-      if (typeof eventType === "string") {
-        var eventTypes = this.parseEventTypes(eventType);
-        this.subscribers = this.subscribers
-          .filter(subscriber => {
-            var byType = eventTypes.includes(subscriber.eventType);
-            var byCallback = callback === subscriber.callback;
-            if (callback) return !(byType && byCallback);
-            return !byType;
-          });
+  emit(events: string, ...data: D[]) {
+    this.parseEvents(events).forEach(evtName => {
+      var listeners = this.events[evtName];
+      if (!listeners) return;
+      for (let callback of listeners) {
+        var result = callback(...data);
+        if (result === false) break; // prevent calling rest of listeners for that event
+        if (callback.once) this.removeListeners(evtName, callback);
       }
-      // remove all subscriptions with specific callback
-      else {
-        this.subscribers = this.subscribers
-          .filter(subscriber => subscriber.callback !== callback)
-      }
-    }
-    return this;
-  }
-
-  dispatch(eventType: string | D, data?: D): this {
-    data = isString(eventType) ? data : eventType;
-    eventType = isString(eventType) ? eventType : "*";
-
-    this.subscribers.forEach(subscriber => {
-      if (subscriber.eventType !== eventType) return;
-      subscriber.callback.call(this, data);
     });
-    return this;
   }
 }

@@ -23,14 +23,17 @@
         left: 0;
         top: 0;
       }
+
       &.leftBottom {
         left: 0;
         bottom: 0;
       }
+
       &.rightTop {
         right: 0;
         top: 0;
       }
+
       &.rightBottom {
         right: 0;
         bottom: 0;
@@ -57,14 +60,17 @@
   > .content {
     $scrollSize: 10px;
     overflow: auto;
+
     &::-webkit-scrollbar {
       width: $scrollSize;
       height: $scrollSize;
     }
+
     &::-webkit-scrollbar-thumb {
       border: 1px solid;
       border-radius: $scrollSize / 2;
     }
+
     &::-webkit-scrollbar-corner {
       background: none;
     }
@@ -74,15 +80,18 @@
     direction: rtl;
   }
 
-  .MaterialIcon {
+  .Icon {
+    --bgc-focus: none;
+
     font-size: 1.6em;
     opacity: .75;
     cursor: pointer;
     user-select: none;
+    color: inherit !important;
 
+    &:focus,
     &:hover {
       opacity: 1;
-      color: inherit !important;
     }
   }
 
@@ -100,11 +109,14 @@
 
     .dictionary {
       margin-top: $spacing /2;
+
       .word-type {
         font-weight: bold;
       }
+
       .word-meanings {
         padding-left: $padding;
+
         .word[title] {
           cursor: help;
         }

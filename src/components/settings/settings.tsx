@@ -9,9 +9,9 @@ import { SelectLanguage } from "../select-language";
 import { TextField } from "../text-field";
 import { Checkbox } from "../checkbox";
 import { Radio, RadioGroup } from "../radio";
-import { MaterialIcon } from "../icons";
 import { Option, Select } from "../select";
 import { settingsStore } from "./settings.store";
+import { Icon } from "../icon";
 
 @observer
 export class Settings extends React.Component {
@@ -43,7 +43,7 @@ export class Settings extends React.Component {
     var { settings } = this;
     var hotkey = parseHotkey(settings.hotkey);
     return (
-      <div className="Settings">
+      <div className="Settings flex column gaps">
         <p className="sub-title">{__i18n("setting_title_common")}</p>
         <div className="display-options flex column">
           <Checkbox
@@ -63,7 +63,7 @@ export class Settings extends React.Component {
           />
         </div>
 
-        <p className="sub-title mt2">{__i18n("sub_header_translator")}</p>
+        <p className="sub-title">{__i18n("sub_header_translator")}</p>
         <div className="vendors flex gaps">
           <RadioGroup
             className="vendor flex gaps column"
@@ -83,7 +83,7 @@ export class Settings extends React.Component {
           <SelectLanguage className="box grow"/>
         </div>
 
-        <p className="sub-title mt2">{__i18n("setting_title_popup")}</p>
+        <p className="sub-title">{__i18n("setting_title_popup")}</p>
         <div className="display-options flex gaps auto">
           <div className="box">
             <Checkbox
@@ -112,9 +112,9 @@ export class Settings extends React.Component {
               label={__i18n("display_popup_on_hotkey")}
               checked={settings.showPopupOnHotkey}
               onChange={v => settings.showPopupOnHotkey = v}>
-              <div className="flex center pl1">
+              <div className="flex center">
                 <label htmlFor="hotkey">
-                  <MaterialIcon name="keyboard"/>
+                  <Icon material="keyboard"/>
                 </label>
                 <TextField
                   readOnly className="hotkey"
@@ -140,7 +140,7 @@ export class Settings extends React.Component {
           </Select>
         </div>
 
-        <p className="sub-title mt2">{__i18n("setting_title_text_input")}</p>
+        <p className="sub-title">{__i18n("setting_title_text_input")}</p>
         <div className="display-options flex gaps align-flex-start">
           <Checkbox
             label={__i18n("remember_last_typed_text")}
@@ -161,7 +161,7 @@ export class Settings extends React.Component {
           </div>
         </div>
 
-        <div className="text-input-hotkey mt2">
+        <div className="text-input-hotkey flex column gaps">
           <p className="sub-title">{__i18n("sub_header_quick_access")}</p>
           <a href="#" onClick={prevDefault(() => tabs.open("chrome://extensions/configureCommands"))}>
             {__i18n("quick_access_configure_link")}

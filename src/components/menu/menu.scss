@@ -1,51 +1,102 @@
-
 .Menu {
-  --menu-bgc: white;
+  --bgc: white;
+  --bgc-active: #fafafa;
 
   position: absolute;
-  z-index: 10000;
-  background: var(--menu-bgc);
+  display: flex;
+  flex-direction: column;
+  background: var(--bgc);
+  list-style: none;
+  border: 1px solid $border-color;
   border-radius: $radius;
-  overflow: hidden;
-  border: 1px solid;
+  z-index: 100;
 
-  &.left {
-    left: 0;
+  &.portal {
+    left: -1000px;
+    top: -1000px;
+
+    &.top {
+      margin-top: -$margin;
+    }
+
+    &.bottom {
+      margin-top: $margin;
+    }
   }
-  &.right {
-    right: 0;
+
+  &:not(.portal) {
+    margin: $margin / 2 0;
+
+    &.left {
+      left: 0;
+    }
+
+    &.right {
+      right: 0;
+    }
+
+    &.top {
+      bottom: 100%;
+    }
+
+    &.bottom {
+      top: 100%;
+    }
   }
-  &.top {
-    bottom: 100%;
-  }
-  &.bottom {
-    top: 100%;
+
+  &:empty {
+    display: none;
   }
 }
 
 .MenuItem {
-  padding: $padding;
-  white-space: nowrap;
-  transition: 250ms color, 250ms background;
+  --color: inherit;
+  --color-active: #{$color-secondary};
+  --spacing: #{$padding};
 
-  &.spacer {
-    padding: 0;
-    height: 0;
-    overflow: hidden;
-    border-top: 1px solid;
-    pointer-events: none;
+  position: relative;
+  display: flex;
+  align-items: center;
+  color: var(--color);
+  padding: var(--spacing);
+  white-space: nowrap;
+  transition: 250ms background;
+  text-decoration: none;
+  text-overflow: ellipsis;
+
+  &:hover:not(.disabled) {
+    color: var(--color-active);
+    background: var(--bgc-active);
+    cursor: pointer;
   }
 
-  &:not(.disabled) {
-    cursor: pointer;
-    transition: 200ms box-shadow;
-    &:hover {
-      box-shadow: 0 0 0 4px rgba(0, 0, 0, .15) inset;
-    }
+  &:focus {
+    outline: 1px solid $bgc-primary;
+  }
+
+  &.active {
+    color: var(--color-active);
+    background-color: var(--bgc-active);
+    cursor: default;
   }
 
   &.disabled {
     pointer-events: none;
     opacity: .5;
+  }
+
+  &.spacer {
+    padding: 0;
+    height: 0;
+    overflow: hidden;
+    border-top: 1px solid $border-color;
+    pointer-events: none;
+  }
+
+  .Icon {
+    &:first-child {
+      margin-left: 0;
+      margin-right: $padding;
+    }
   }
 }

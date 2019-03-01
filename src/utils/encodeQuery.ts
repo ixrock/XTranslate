@@ -2,12 +2,12 @@
 
 type Param = string | { [param: string]: any };
 
-var encodeParam = function (key, value) {
-  return key + "=" + encodeURIComponent(value)
+var encodeParam = function (key: string, value: string) {
+  return key + "=" + encodeURIComponent(value);
 };
 
 export function encodeQuery(...params: Param[]): string {
-  var query = [];
+  var query: string[] = [];
   params.forEach(param => {
     if (typeof param === 'string') query.push(param);
     else {

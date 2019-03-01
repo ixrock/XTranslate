@@ -5,7 +5,7 @@ import { getVendorByName, vendors } from "../vendors";
 import { __i18n, getManifest, MenuTranslateFavoritePayload, MenuTranslateVendorPayload, MessageType, tabs } from "../extension";
 import { Favorite, favoritesStore } from "../components/input-translation/favorites.store";
 import { settingsStore } from "../components/settings/settings.store";
-import orderBy = require("lodash/orderBy");
+import orderBy from "lodash/orderBy";
 
 var settings = settingsStore.data;
 var favorites = favoritesStore.data;

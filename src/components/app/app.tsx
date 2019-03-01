@@ -11,31 +11,27 @@ import { settingsStore } from '../settings/settings.store'
 import { themeStore } from "../theme-manager/theme.store";
 import { Footer } from '../footer'
 import { Spinner } from "../spinner";
-import { MaterialIcon } from "../icons";
 import { Tab, Tabs } from "../tabs";
 import { ThemeManager } from "../theme-manager";
 import { InputTranslation } from "../input-translation";
 import { UserHistory } from "../user-history";
 import { AppRoute } from "./app.route";
+import { Icon } from "../icon";
 
 @observer
 export class App extends React.Component {
-  static loading: Spinner;
+  static rootElem = document.getElementById('app');
+
   public manifest = getManifest();
   public settings = settingsStore.data;
 
-  // show waiting indicator while loading app state & render
   static async init() {
-    render(
-      <Spinner singleColor={false} ref={e => App.loading = e}/>,
-      document.getElementById('loading')
-    );
+    render(<Spinner center/>, App.rootElem); // show loading state
     await when(() => !settingsStore.loading && !themeStore.loading);
-    render(<App/>, document.getElementById('app'));
+    render(<App/>, App.rootElem);
   }
 
   componentDidMount() {
-    App.loading.hide();
     this.setUpTheme();
     reaction(() => this.settings.useDarkTheme, this.setUpTheme);
     document.title = this.manifest.name;
@@ -62,18 +58,21 @@ export class App extends React.Component {
     var activePageId = location.hash || AppRoute.settings;
     return (
       <div className="App">
-        <h4 className="page-title flex">
-          <span className="box grow">{name} <sup>{version}</sup></span>
-          <img
-            src={require('../icons/moon.svg')}
+        <h4 className="page-title flex gaps">
+          <div className="name box grow">
+            {name} <sup>{version}</sup>
+          </div>
+          <Icon
+            svg="moon"
             title={__i18n("use_dark_theme")}
             className={cssNames("dark-theme-icon", { active: useDarkTheme })}
             onClick={() => this.settings.useDarkTheme = !useDarkTheme}
           />
-          <MaterialIcon
-            name="open_in_new"
+          <Icon
+            material="open_in_new"
             title={__i18n("open_in_window")}
-            onClick={this.detachWindow}/>
+            onClick={this.detachWindow}
+          />
         </h4>
         <Tabs center value={activePageId} onChange={hash => location.href = hash}>
           <Tab value={AppRoute.settings} label={__i18n("tab_settings")}/>
@@ -87,12 +86,11 @@ export class App extends React.Component {
           {activePageId === AppRoute.popup && <InputTranslation/>}
           {activePageId === AppRoute.history && <UserHistory/>}
         </div>
-        <hr className="mb1"/>
         <Footer/>
       </div>
     );
   }
 }
 
-// init app, delayed call cause sometimes window might collapse on open
-setTimeout(() => App.init());
+// init app
+App.init();
