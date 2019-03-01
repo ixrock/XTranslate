@@ -259,5 +259,17 @@
   },
   "use_dark_theme": {
     "message": "Dunkles Thema für dieses Fenster verwenden"
+  },
+  "translation_delay": {
+    "message": "Übersetzungsverzögerung"
+  },
+  "translation_delay_info": {
+    "message": "Stellen Sie einen höheren Wert für die Verzögerung ein, wenn Sie oft von Google oder anderen Diensten blockiert werden (Fehler 503)"
+  },
+  "text_input_translation_hint": {
+    "message": "%hotkey% für sofortige Übersetzung, Verzögerung: %ms%"
+  },
+  "history_page_size": {
+    "message": "Anzahl Einträge"
   }
 }
