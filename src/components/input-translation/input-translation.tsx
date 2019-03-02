@@ -4,7 +4,7 @@ import * as React from "react";
 import { observer } from "mobx-react";
 import { debounce, find, remove } from "lodash";
 import { getVendorByName, Translation, TranslationError, Vendor, vendors } from "../../vendors";
-import { __i18n, MessageType, onMessage, tabs } from "../../extension";
+import { __i18n, getActiveTab, MessageType, onMessage, sendTabMessage } from "../../extension";
 import { createStorage, cssNames, isMac } from "../../utils";
 import { SelectLanguage } from "../select-language";
 import { TextField } from "../text-field";
@@ -15,8 +15,6 @@ import { Favorite, favoritesStore } from "./favorites.store";
 import { AppRoute } from "../app/app.route";
 import { userHistoryStore } from "../user-history/user-history.store";
 import { Icon } from "../icon";
-
-const lastText = createStorage("last_text", "");
 
 interface State {
   text?: string
@@ -36,6 +34,7 @@ interface State {
 
 @observer
 export class InputTranslation extends React.Component<{}, State> {
+  static lastText = createStorage("last_text", "");
   settings = settingsStore.data;
 
   private textField: TextField;
@@ -43,7 +42,7 @@ export class InputTranslation extends React.Component<{}, State> {
   private loadingTimer;
 
   public state: State = {
-    text: this.settings.rememberLastText ? lastText() : "",
+    text: this.settings.rememberLastText ? InputTranslation.lastText() : "",
     vendor: this.settings.vendor,
     langFrom: this.settings.langFrom,
     langTo: this.settings.langTo,
@@ -65,8 +64,8 @@ export class InputTranslation extends React.Component<{}, State> {
   }
 
   async componentDidMount() {
-    var activeTab = await tabs.getActive();
-    tabs.sendMessage(activeTab.id, {
+    var activeTab = await getActiveTab();
+    sendTabMessage(activeTab.id, {
       type: MessageType.GET_SELECTED_TEXT
     });
     onMessage(({ payload, type }) => {
@@ -172,7 +171,7 @@ export class InputTranslation extends React.Component<{}, State> {
   }, this.settings.textInputTranslateDelayMs)
 
   onTextChange = (text: string) => {
-    if (this.settings.rememberLastText) lastText(text);
+    if (this.settings.rememberLastText) InputTranslation.lastText(text);
     this.setState({ text, immediate: false }, this.translateLazy);
     if (!text.trim()) {
       this.setState({ translation: null });

@@ -1,7 +1,7 @@
 // Background page
 
 import "./contextMenu"
-import { MessageType, onMessage, openOptionsPage, PlayTextToSpeechPayload } from '../extension'
+import { createTab, getOptionsPageUrl, MessageType, onMessage, PlayTextToSpeechPayload } from '../extension'
 import { getVendorByName } from "../vendors";
 import { AppRoute } from "../components/app/app.route";
 
@@ -21,6 +21,6 @@ onMessage(function (message) {
 // open settings on install
 chrome.runtime.onInstalled.addListener(function (evt) {
   if (evt.reason === "install") {
-    openOptionsPage(AppRoute.settings);
+    createTab(getOptionsPageUrl(AppRoute.settings));
   }
 });

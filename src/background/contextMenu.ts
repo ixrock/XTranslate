@@ -2,13 +2,10 @@
 
 import { autorun } from "mobx";
 import { getVendorByName, vendors } from "../vendors";
-import { __i18n, getManifest, MenuTranslateFavoritePayload, MenuTranslateVendorPayload, MessageType, tabs } from "../extension";
+import { __i18n, createTab, getActiveTab, getManifest, MenuTranslateFavoritePayload, MenuTranslateVendorPayload, MessageType, sendTabMessage } from "../extension";
 import { Favorite, favoritesStore } from "../components/input-translation/favorites.store";
 import { settingsStore } from "../components/settings/settings.store";
 import orderBy from "lodash/orderBy";
-
-var settings = settingsStore.data;
-var favorites = favoritesStore.data;
 
 // handle menu clicks
 chrome.contextMenus.onClicked.addListener(
@@ -16,19 +13,19 @@ chrome.contextMenus.onClicked.addListener(
     var settings = settingsStore.data;
     var [type, vendor, from, to] = String(info.menuItemId).split("-");
     var selectedText = info.selectionText;
-    var tab = await tabs.getActive();
+    var tab = await getActiveTab();
 
     var enumType = Number(type);
     if (enumType === MessageType.MENU_TRANSLATE_WITH_VENDOR) {
       let payload: MenuTranslateVendorPayload = { vendor, selectedText };
-      tabs.sendMessage(tab.id, {
+      sendTabMessage(tab.id, {
         type: MessageType.MENU_TRANSLATE_WITH_VENDOR,
         payload: payload
       });
     }
     if (enumType === MessageType.MENU_TRANSLATE_FAVORITE) {
       let payload: MenuTranslateFavoritePayload = { vendor, from, to, selectedText };
-      tabs.sendMessage(tab.id, {
+      sendTabMessage(tab.id, {
         type: MessageType.MENU_TRANSLATE_FAVORITE,
         payload: payload
       });
@@ -47,13 +44,15 @@ chrome.contextMenus.onClicked.addListener(
           translatePageUrl = `http://www.microsofttranslator.com/bv.aspx?to=${langTo}&a=${tab.url}`;
           break;
       }
-      tabs.open(translatePageUrl);
+      createTab(translatePageUrl);
     }
   }
 );
 
 // create, update or hide context menu regarding the settings
 autorun(() => {
+  var settings = settingsStore.data;
+  var favorites = favoritesStore.data;
   var menuName = getManifest().name;
   const selectionContext = ['selection'];
   const pageContext = selectionContext.concat('page');
@@ -121,4 +120,4 @@ autorun(() => {
       });
     }
   }
-}, { delay: 250 })
+});

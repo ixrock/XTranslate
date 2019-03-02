@@ -4,7 +4,7 @@ body {
     --theme-contast-color-invert: #{darken($bgc-dark, 2.5%)};
 
     background: $bgc-dark;
-    color: silver;
+    color: $color-secondary;
     @include custom-scrollbar(light);
 
     .page-title {
@@ -23,12 +23,8 @@ body {
     }
 
     .Icon {
-      --bgc-focus: none;
-      color: lighten($color-secondary, 20%);
-
-      &:focus, &:hover {
-        color: var(--theme-contast-color);
-      }
+      --bgc-active: none;
+      --color-active: var(--theme-contast-color);
     }
   }
 }

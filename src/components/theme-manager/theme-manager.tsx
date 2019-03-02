@@ -66,7 +66,7 @@ export class ThemeManager extends React.Component {
                 </div>
                 <Checkbox
                   label={__i18n("background_linear_gradient")}
-                  checked={theme.bgcLinear}
+                  value={theme.bgcLinear}
                   onChange={v => theme.bgcLinear = v}
                 />
               </div>
@@ -87,9 +87,9 @@ export class ThemeManager extends React.Component {
                   onChange={v => theme.boxShadowColor = v}
                 />
                 <Checkbox
-                  checked={theme.boxShadowInner}
-                  onChange={v => theme.boxShadowInner = v}
                   label={__i18n("box_shadow_inner")}
+                  value={theme.boxShadowInner}
+                  onChange={v => theme.boxShadowInner = v}
                 />
               </div>
             </div>

@@ -81,7 +81,13 @@ hr {
 }
 
 .Tabs {
+  overflow: initial !important;
   border-bottom: 1px solid $border-color;
+
+  .Tab {
+    position: relative;
+    top: 1px;
+  }
 
   + .tab-content {
     padding: $padding * 2 $padding;

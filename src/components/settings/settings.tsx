@@ -3,7 +3,7 @@ import "./settings.scss";
 import * as React from "react";
 import { observer } from "mobx-react";
 import { getVendorByName, vendors } from "../../vendors";
-import { __i18n, tabs } from "../../extension";
+import { __i18n, createTab } from "../../extension";
 import { autobind, getHotkey, parseHotkey, prevDefault } from "../../utils";
 import { SelectLanguage } from "../select-language";
 import { TextField } from "../text-field";
@@ -48,17 +48,17 @@ export class Settings extends React.Component {
         <div className="display-options flex column">
           <Checkbox
             label={__i18n("auto_play_tts")}
-            checked={settings.autoPlayText}
+            value={settings.autoPlayText}
             onChange={v => settings.autoPlayText = v}
           />
           <Checkbox
             label={__i18n("show_context_menu")}
-            checked={settings.showInContextMenu}
+            value={settings.showInContextMenu}
             onChange={v => settings.showInContextMenu = v}
           />
           <Checkbox
             label={__i18n("display_icon_near_selection")}
-            checked={settings.showIconNearSelection}
+            value={settings.showIconNearSelection}
             onChange={v => settings.showIconNearSelection = v}
           />
         </div>
@@ -88,29 +88,29 @@ export class Settings extends React.Component {
           <div className="box">
             <Checkbox
               label={__i18n("show_tts_icon_inside_popup")}
-              checked={settings.showTextToSpeechIcon}
+              value={settings.showTextToSpeechIcon}
               onChange={v => settings.showTextToSpeechIcon = v}/>
             <Checkbox
               label={__i18n("show_next_vendor_icon_in_popup")}
-              checked={settings.showNextVendorIcon}
+              value={settings.showNextVendorIcon}
               onChange={v => settings.showNextVendorIcon = v}/>
             <Checkbox
               label={__i18n("show_copy_translation_icon")}
-              checked={settings.showCopyTranslationIcon}
+              value={settings.showCopyTranslationIcon}
               onChange={v => settings.showCopyTranslationIcon = v}/>
           </div>
           <div className="box">
             <Checkbox
               label={__i18n("display_popup_after_text_selected")}
-              checked={settings.showPopupAfterSelection}
+              value={settings.showPopupAfterSelection}
               onChange={v => settings.showPopupAfterSelection = v}/>
             <Checkbox
               label={__i18n("display_popup_on_double_click")}
-              checked={settings.showPopupOnDoubleClick}
+              value={settings.showPopupOnDoubleClick}
               onChange={v => settings.showPopupOnDoubleClick = v}/>
             <Checkbox
               label={__i18n("display_popup_on_hotkey")}
-              checked={settings.showPopupOnHotkey}
+              value={settings.showPopupOnHotkey}
               onChange={v => settings.showPopupOnHotkey = v}>
               <div className="flex center">
                 <label htmlFor="hotkey">
@@ -144,7 +144,7 @@ export class Settings extends React.Component {
         <div className="display-options flex gaps align-flex-start">
           <Checkbox
             label={__i18n("remember_last_typed_text")}
-            checked={settings.rememberLastText}
+            value={settings.rememberLastText}
             onChange={v => settings.rememberLastText = v}
           />
           <div className="translate-delay">
@@ -163,7 +163,7 @@ export class Settings extends React.Component {
 
         <div className="text-input-hotkey flex column gaps">
           <p className="sub-title">{__i18n("sub_header_quick_access")}</p>
-          <a href="#" onClick={prevDefault(() => tabs.open("chrome://extensions/configureCommands"))}>
+          <a href="#" onClick={prevDefault(() => createTab("chrome://extensions/configureCommands"))}>
             {__i18n("quick_access_configure_link")}
           </a>
         </div>

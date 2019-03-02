@@ -1,6 +1,5 @@
 // Chrome extension's runtime api helpers
 import { Message } from './message'
-import { tabs } from './tabs'
 
 export function getId() {
   return chrome.runtime.id;
@@ -17,10 +16,6 @@ export function getURL(path: string) {
 export function getOptionsPageUrl(hash = location.hash) {
   if (hash && !hash.startsWith('#')) hash = "#" + hash;
   return getURL(getManifest().options_page) + hash;
-}
-
-export function openOptionsPage(hash?: string) {
-  tabs.open(getOptionsPageUrl(hash));
 }
 
 export function sendMessage(message: Message) {

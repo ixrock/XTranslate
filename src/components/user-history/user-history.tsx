@@ -216,7 +216,7 @@ export class UserHistory extends React.Component {
         <div className="settings flex align-center justify-center">
           <Checkbox
             label={__i18n("history_enabled_flag")}
-            checked={historyEnabled}
+            value={historyEnabled}
             onChange={v => this.settings.historyEnabled = v}
           />
           <Icon
@@ -268,12 +268,12 @@ export class UserHistory extends React.Component {
               <div className="box flex gaps auto align-center">
                 <Checkbox
                   label={__i18n("history_settings_save_words_only")}
-                  checked={historySaveWordsOnly}
+                  value={historySaveWordsOnly}
                   onChange={v => this.settings.historySaveWordsOnly = v}
                 />
                 <Checkbox
                   label={__i18n("history_settings_avoid_duplicates")}
-                  checked={historyAvoidDuplicates}
+                  value={historyAvoidDuplicates}
                   onChange={v => this.settings.historyAvoidDuplicates = v}
                 />
                 <div className="page-size flex gaps align-center">

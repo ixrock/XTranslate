@@ -29,6 +29,7 @@ export class SettingsStore {
   };
 
   @observable loading = false;
+  @observable loaded = false;
   @observable saving = false;
   @observable data = this.initialData;
 
@@ -49,11 +50,13 @@ export class SettingsStore {
     });
   }
 
-  protected load = () => {
+  protected load = (force?: boolean) => {
+    if (this.loaded && !force) return;
     this.loading = true;
     chrome.storage.sync.get(this.id, items => {
       Object.assign(this.data, items[this.id]);
       this.loading = false;
+      this.loaded = true;
     });
   }
 

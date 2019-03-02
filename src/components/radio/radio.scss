@@ -1,66 +1,18 @@
-@import "../vars";
-
-.RadioGroup {
-  $buttonChecked: silver;
-  $buttonFocused: $bgc-primary;
-
-  &.buttonsView {
-    display: inline-flex;
-
-    .Radio {
-      display: inline-block;
-      border: 1px solid $color-primary;
-      text-align: center;
-      min-width: 7.5 * $unit;
-      padding: $padding * .4 $padding;
-
-      &:not(.checked):not(.disabled) {
-        cursor: pointer;
-        &:not(:active):focus {
-          position: relative;
-          border-color: $buttonFocused;
-          box-shadow: inset 0 0 0 1px $buttonFocused;
-        }
-      }
-
-      &.checked {
-        background-color: $buttonChecked;
-        color: white;
-        * {
-          cursor: default;
-        }
-      }
-
-      + .Radio {
-        margin-left: -1px;
-      }
-      &:first-of-type {
-        border-top-left-radius: $radius;
-        border-bottom-left-radius: $radius;
-      }
-      &:last-of-type {
-        border-top-right-radius: $radius;
-        border-bottom-right-radius: $radius;
-      }
-      .label {
-        margin-left: 0;
-      }
-      .tick {
-        display: none;
-      }
-    }
-  }
-}
-
 .Radio {
-  $tickSize: 1.8 * $unit;
-  $tickColor: currentColor;
-  $tickColorActive: $bgc-primary;
+  $buttonSize: 17px;
+
+  --color: currentColor;
+  --color-active: var(--color);
+  --color-hover: #{$bgc-primary};
 
   &:hover {
     input:not(:checked):not(:disabled) {
-      ~ .tick:after {
-        opacity: 1;
+      ~ .tick {
+        color: var(--color-hover);
+
+        &:after {
+          opacity: 1;
+        }
       }
     }
   }
@@ -76,21 +28,21 @@
 
     &:checked {
       ~ .tick {
-        color: $tickColorActive;
+        color: var(--color-active);
+
         &:after {
           opacity: 1;
         }
       }
     }
+
     &:disabled {
-      ~ .tick {
-        color: $tickColor;
-      }
       ~ * {
         opacity: .5;
         pointer-events: none;
       }
     }
+
     &:not(:disabled) ~ * {
       cursor: pointer;
     }
@@ -98,11 +50,11 @@
 
   > .tick {
     position: relative;
-    width: $tickSize;
-    height: $tickSize;
+    width: $buttonSize;
+    height: $buttonSize;
+    color: var(--color);
     border-radius: 50%;
-    color: $tickColor;
-    border: 2px outset currentColor;
+    border: 2px solid currentColor;
 
     &:after {
       content: "";

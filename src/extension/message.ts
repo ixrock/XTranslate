@@ -18,20 +18,6 @@ export interface Message<D = any> {
   payload?: D
 }
 
-export function postMessage(message: Message) {
-  window.top.postMessage({ id: getId(), message: message }, "*");
-}
-
-export function onPostMessage(callback: (message: Message) => void) {
-  var listener = function (e: MessageEvent) {
-    var { id, message } = e.data;
-    if (id !== getId()) return;
-    callback(message);
-  };
-  window.addEventListener("message", listener, false);
-  return () => window.removeEventListener("message", listener, false);
-}
-
 export interface MenuTranslateVendorPayload {
   vendor: string
   selectedText: string
@@ -51,4 +37,18 @@ export interface PlayTextToSpeechPayload {
   vendor: string
   lang: string
   text: string
+}
+
+export function postMessage(message: Message) {
+  window.top.postMessage({ id: getId(), message: message }, "*");
+}
+
+export function onPostMessage(callback: (message: Message) => void) {
+  var listener = function (e: MessageEvent) {
+    var { id, message } = e.data;
+    if (id !== getId()) return;
+    callback(message);
+  };
+  window.addEventListener("message", listener, false);
+  return () => window.removeEventListener("message", listener, false);
 }

@@ -1,33 +1,47 @@
-import "./checkbox.scss";
-import * as React from "react";
-import { cssNames } from "../../utils";
+import './checkbox.scss'
+import React from 'react'
+import { autobind, cssNames } from "../../utils";
 
-type Props = React.HTMLProps<any> & {
+interface Props<T = boolean> {
+  theme?: "dark" | "light";
+  className?: string;
   label?: string
   inline?: boolean
-  onChange?(checked: boolean): void;
+  disabled?: boolean;
+  value?: T;
+  onChange?(value: T, evt: React.ChangeEvent<HTMLInputElement>): void;
 }
 
-export class Checkbox extends React.Component<Props, {}> {
+export class Checkbox extends React.PureComponent<Props> {
   private input: HTMLInputElement;
 
-  onChange = (evt) => {
-    var checked = this.input.checked;
-    var onChange = this.props.onChange;
-    if (onChange) onChange(checked);
-  };
+  @autobind()
+  onChange(evt: React.ChangeEvent<HTMLInputElement>) {
+    if (this.props.onChange) {
+      this.props.onChange(this.input.checked, evt)
+    }
+  }
+
+  getValue() {
+    if (this.props.value !== undefined) return this.props.value;
+    return this.input.checked;
+  }
 
   render() {
-    var { label, inline, className, children, ...inputProps } = this.props;
+    var { label, inline, className, value, theme, children, ...inputProps } = this.props;
     var componentClass = cssNames('Checkbox flex align-center', className, {
       inline: inline,
-      checked: this.props.checked,
+      checked: value,
       disabled: this.props.disabled,
     });
     return (
       <label className={componentClass}>
-        <input type="checkbox" {...inputProps} onChange={this.onChange} ref={e => this.input = e}/>
-        <i className="tick flex center"/>
+        <input
+          {...inputProps}
+          type="checkbox" checked={value} onChange={this.onChange}
+          ref={e => this.input = e}
+        />
+        <i className="box flex align-center"/>
         {label ? <span className="label">{label}</span> : null}
         {children}
       </label>

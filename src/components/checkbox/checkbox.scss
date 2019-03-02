@@ -1,44 +1,48 @@
-@import "../vars";
 
 .Checkbox {
-  $tickSize: round(1.7 * $unit);
-  $tickColor: currentColor;
-  $tickColorActive: $bgc-primary;
+  $buttonSize: 17px;
+
+  --color: currentColor;
+  --color-active: var(--color);
+  --color-hover: #{$bgc-primary};
+
+  flex-shrink: 0;
 
   &:hover {
     input:not(:checked):not(:disabled) {
-      ~ .tick:after {
-        opacity: 1;
-      }
-    }
-  }
-
-  input[type="checkbox"] {
-    position: absolute;
-    opacity: 0;
-    pointer-events: none;
-
-    &:focus ~ .tick {
-      border-style: solid;
-    }
-
-    &:checked {
-      ~ .tick {
-        color: $tickColorActive;
+      ~ .box {
+        color: var(--color-hover);
         &:after {
           opacity: 1;
         }
       }
     }
-    &:disabled {
-      ~ .tick {
-        color: $tickColor;
+  }
+
+  input[type="checkbox"] {
+    display: none;
+
+    &:checked {
+      ~ .box {
+        color: var(--color-active);
+
+        &:after {
+          opacity: 1;
+        }
       }
+    }
+
+    &:disabled {
+      ~ .box {
+        color: var(--color);
+      }
+
       ~ * {
         opacity: .5;
         pointer-events: none;
       }
     }
+
     &:not(:disabled) ~ * {
       cursor: pointer;
     }
@@ -48,23 +52,23 @@
     margin-right: $margin;
   }
 
-  > .tick {
+  > .box {
     position: relative;
-    width: $tickSize;
-    height: $tickSize;
-    border-radius: $radius;
-    color: $tickColor;
-    border: 2px outset currentColor;
+    width: $buttonSize;
+    height: $buttonSize;
+    border-radius: 2px;
+    color: var(--color);
+    border: 2px solid currentColor;
     flex-shrink: 0;
 
     &:after {
       content: "";
       position: absolute;
-      left: 1px;
-      top: -1px;
-      width: 120%;
+      left: 0;
+      top: 0;
+      width: 100%;
       height: 60%;
-      border: 3px solid currentColor;
+      border: 2px solid currentColor;
       border-top: 0;
       border-right: 0;
       transform: rotate(-45deg);

@@ -9,7 +9,6 @@ interface RadioGroupProps {
   value?: any
   defaultValue?: any
   disabled?: boolean
-  buttonsView?: boolean
   onChange?(value): void
 }
 
@@ -19,8 +18,8 @@ export class RadioGroup extends React.Component<RadioGroupProps, {}> {
   };
 
   render() {
-    var { value, defaultValue, buttonsView, className, disabled, onChange } = this.props;
-    var radioGroupClassName = cssNames("RadioGroup", { buttonsView }, className);
+    var { value, defaultValue, className, disabled, onChange } = this.props;
+    var radioGroupClassName = cssNames("RadioGroup", className);
     var radios = React.Children.toArray(this.props.children) as React.ReactElement<RadioProps>[];
     return (
       <div className={radioGroupClassName}>
