@@ -159,10 +159,12 @@ export class InputTranslation extends React.Component<{}, State> {
     }, 1000);
   }
 
-  // fixme: avoid translation delay
   translateWord(text: string) {
     this.textField.focus();
-    this.setState({ text });
+    this.setState({ text }, () => {
+      this.setState({ immediate: true });
+      this.translate();
+    });
   }
 
   translateLazy = debounce(() => {
