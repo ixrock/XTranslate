@@ -2,8 +2,7 @@ import './checkbox.scss'
 import React from 'react'
 import { autobind, cssNames } from "../../utils";
 
-interface Props<T = boolean> {
-  theme?: "dark" | "light";
+export interface CheckboxProps<T = boolean> {
   className?: string;
   label?: string
   inline?: boolean
@@ -12,7 +11,7 @@ interface Props<T = boolean> {
   onChange?(value: T, evt: React.ChangeEvent<HTMLInputElement>): void;
 }
 
-export class Checkbox extends React.PureComponent<Props> {
+export class Checkbox extends React.PureComponent<CheckboxProps> {
   private input: HTMLInputElement;
 
   @autobind()
@@ -28,7 +27,7 @@ export class Checkbox extends React.PureComponent<Props> {
   }
 
   render() {
-    var { label, inline, className, value, theme, children, ...inputProps } = this.props;
+    var { label, inline, className, value, children, ...inputProps } = this.props;
     var componentClass = cssNames('Checkbox flex align-center', className, {
       inline: inline,
       checked: value,

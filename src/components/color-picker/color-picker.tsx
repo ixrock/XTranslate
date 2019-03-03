@@ -1,92 +1,91 @@
 import "./color-picker.scss";
 
 import * as React from 'react'
-import { cssNames, noop } from "../../utils";
-import { Color, ColorValue, cssColor } from "./cssColor";
-import ChromePicker from "react-color/lib/Chrome"
+import { ChromePicker, Color, ColorResult } from "react-color"
+import { autobind, cssNames, toCssColor, noop } from "../../utils";
 
 interface Props {
-  className?: any
+  className?: string
   disabled?: boolean
-  position?: "top left" | "top right" | "bottom left" | "bottom right"
-  value?: ColorValue
-  onChange?(color: ColorValue): void;
+  defaultOpen?: boolean;
+  position?: { left?: boolean, right?: boolean, top?: boolean, bottom?: boolean }
+  value?: Color
+  onChange?(color: Color): void;
 }
 
-export class ColorPicker extends React.Component<Props> {
-  private elem: HTMLElement;
-  private handler: HTMLElement;
+interface State {
+  open?: boolean;
+}
 
-  public state = {
-    visible: false,
-    color: this.props.value,
-  };
+export class ColorPicker extends React.Component<Props, State> {
+  private opener: HTMLElement;
 
   static defaultProps: Props = {
-    position: "bottom left",
+    position: { bottom: true, left: true },
     value: "#fff",
     onChange: noop,
   };
 
-  componentWillReceiveProps(nextProps: Props) {
-    if (this.value !== nextProps.value && nextProps.hasOwnProperty('value')) {
-      this.setValue(nextProps.value, true);
-    }
+  public state: State = {
+    open: !!this.props.defaultOpen,
+  };
+
+  componentDidMount() {
+    window.addEventListener('click', this.onClickOutside);
   }
 
   componentWillUnmount() {
-    this.unbindEvents();
+    window.removeEventListener('click', this.onClickOutside);
   }
 
-  get value() {
-    return this.state.color;
-  }
-
-  set value(color) {
-    this.setValue(color);
-  }
-
-  setValue(color, silent = false) {
-    this.setState({ color });
-    if (!silent) this.props.onChange(color);
-  }
-
-  toggle(visible = !this.state.visible) {
-    this.setState({ visible }, this.bindEvents);
-  }
-
-  private onClickWindow = (e: MouseEvent) => {
-    var target = e.target as HTMLElement;
-    if (target !== this.handler && !target.closest('.chrome-picker')) {
-      this.toggle(false);
+  @autobind()
+  onClickOutside(evt: MouseEvent) {
+    if (!this.state.open) {
+      return;
+    }
+    var target = evt.target as HTMLElement;
+    if (target !== this.opener && !target.closest('.chrome-picker')) {
+      this.hide();
     }
   }
 
-  bindEvents = () => {
-    window.addEventListener('click', this.onClickWindow, false);
+  @autobind()
+  onChange(color: ColorResult) {
+    if (this.props.onChange) {
+      this.props.onChange(color.rgb);
+    }
   }
 
-  unbindEvents = () => {
-    window.removeEventListener('click', this.onClickWindow, false);
+  show() {
+    this.setState({ open: true });
   }
 
-  onChange = (color: Color) => {
-    this.value = color.rgb;
+  hide() {
+    this.setState({ open: false })
+  }
+
+  @autobind()
+  toggle() {
+    if (this.state.open) this.hide();
+    else this.show();
   }
 
   render() {
-    var visible = this.state.visible;
-    var className = cssNames('ColorPicker', this.props.className, this.props.position);
+    var { open } = this.state;
+    var { className, value, disabled, position } = this.props;
+    var color = toCssColor(value);
     return (
-      <div className={className} ref={e => this.elem = e}>
-        <input type="color" disabled={this.props.disabled} hidden/>
-        {visible && (
-          <ChromePicker color={this.value} onChange={this.onChange}/>
+      <div className={cssNames("ColorPicker", className, position, { disabled })}>
+        <input type="color" disabled={disabled} hidden/>
+        {open && (
+          <ChromePicker color={value} onChange={this.onChange}/>
         )}
-        <i className="value"
-           onClick={() => this.toggle()}
-           style={{ color: cssColor(this.value) }}
-           ref={e => this.handler = e}/>
+        <span
+          className="value"
+          style={{ color }}
+          onClick={this.toggle}
+          ref={e => this.opener = e}
+        />
       </div>
     );
   }

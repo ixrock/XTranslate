@@ -6,7 +6,7 @@ import { __i18n } from "../../extension/i18n";
 import { MessageType } from "../../extension/message";
 import { sendMessage } from "../../extension/runtime";
 import { cssNames } from "../../utils/cssNames";
-import { cssColor } from "../color-picker/cssColor";
+import { toCssColor } from "../../utils/toCssColor";
 import { getNextVendor, getVendorByName, Translation, TranslationError } from "../../vendors";
 import { autobind } from "../../utils/autobind";
 import { settingsStore } from "../settings/settings.store";
@@ -44,27 +44,27 @@ export class Popup extends React.Component<Props> {
     } = this.theme;
     return {
       background: bgcLinear
-        ? `linear-gradient(180deg, ${cssColor(bgcMain)}, ${cssColor(bgcSecondary)})`
-        : cssColor(bgcMain),
+        ? `linear-gradient(180deg, ${toCssColor(bgcMain)}, ${toCssColor(bgcSecondary)})`
+        : toCssColor(bgcMain),
       borderRadius: borderRadius,
       fontFamily: `${fontFamily}, sans-serif`,
       fontSize: fontSize,
-      color: cssColor(textColor),
+      color: toCssColor(textColor),
       border: borderWidth ? [
         borderWidth + "px",
         borderStyle,
-        cssColor(borderColor)
+        toCssColor(borderColor)
       ].join(" ") : "",
       textShadow: (textShadowRadius || textShadowOffsetX || textShadowOffsetY) ? [
         textShadowOffsetX + "px",
         textShadowOffsetY + "px",
         textShadowRadius + "px",
-        cssColor(textShadowColor)
+        toCssColor(textShadowColor)
       ].join(" ") : "",
       boxShadow: boxShadowBlur ? [
         boxShadowInner ? "inset" : "",
         0, 0, boxShadowBlur + "px",
-        cssColor(boxShadowColor)
+        toCssColor(boxShadowColor)
       ].join(" ") : ""
     };
   }

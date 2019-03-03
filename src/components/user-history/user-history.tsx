@@ -255,10 +255,10 @@ export class UserHistory extends React.Component {
             <div className="flex column gaps">
               <div className="flex gaps align-center">
                 <Select className="box grow" value={timeFrame} onChange={v => this.timeFrame = v}>
-                  <Option value={HistoryTimeFrame.HOUR} title={__i18n("history_clear_period_hour")}/>
-                  <Option value={HistoryTimeFrame.DAY} title={__i18n("history_clear_period_day")}/>
-                  <Option value={HistoryTimeFrame.MONTH} title={__i18n("history_clear_period_month")}/>
-                  <Option value={HistoryTimeFrame.ALL} title={__i18n("history_clear_period_all")}/>
+                  <Option value={HistoryTimeFrame.HOUR} label={__i18n("history_clear_period_hour")}/>
+                  <Option value={HistoryTimeFrame.DAY} label={__i18n("history_clear_period_day")}/>
+                  <Option value={HistoryTimeFrame.MONTH} label={__i18n("history_clear_period_month")}/>
+                  <Option value={HistoryTimeFrame.ALL} label={__i18n("history_clear_period_all")}/>
                 </Select>
                 <Button
                   accent label={__i18n("history_button_clear")}

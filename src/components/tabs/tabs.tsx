@@ -3,15 +3,15 @@ import * as React from "react";
 import { autobind, cssNames } from "../../utils";
 import { Icon } from "../icon";
 
-const TabsContext = React.createContext<TabsContext>({});
+const TabsContext = React.createContext<TabsContextValue>({});
 
-export interface TabsContext<D = any> {
+export interface TabsContextValue<D = any> {
   autoFocus?: boolean;
   value?: D;
   onChange?(value: D): void;
 }
 
-export type TabsProps<D = any> = TabsContext<D> & React.DOMAttributes<HTMLElement> & {
+export type TabsProps<D = any> = TabsContextValue<D> & React.DOMAttributes<HTMLElement> & {
   className?: string;
   center?: boolean;
   wrap?: boolean;
@@ -55,7 +55,7 @@ export interface TabProps<D = any> extends React.DOMAttributes<HTMLElement> {
 
 export class Tab extends React.PureComponent<TabProps> {
   static contextType = TabsContext;
-  public context: TabsContext;
+  public context: TabsContextValue;
   public elem: HTMLElement;
 
   get isActive() {

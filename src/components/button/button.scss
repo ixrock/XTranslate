@@ -1,15 +1,16 @@
-
 .Button {
   position: relative;
-  overflow: hidden;
+  overflow: hidden; // required for transition effect on hover
   color: white;
   text-align: center;
   text-decoration: none;
   cursor: pointer;
-  border-radius: $radius;
   background: #414448;
-  padding: $padding * .8 $padding * 1.5;
+  flex-shrink: 0;
+  line-height: 1;
   font: inherit;
+  border-radius: $radius;
+  padding: round($padding * .9) $padding * 1.5;
 
   &[href] {
     display: inline-block;
@@ -18,23 +19,40 @@
   &.primary {
     background: $bgc-primary;
   }
+
   &.accent {
     background: $bgc-accent;
   }
 
   &.plain {
-    background: transparent;
     color: inherit;
-    box-shadow: none !important;
+    background: transparent;
+    box-shadow: none;
+
+    &:disabled {
+      background: none;
+      opacity: .5;
+    }
+
+    &.active,
     &:focus:not(:active) {
-      background: $bgc-dark;
-      &, * {
-        color: white;
-      }
+      color: $bgc-primary;
+      box-shadow: 0 0 0 1px inset;
     }
   }
 
-  form:not([novalidate]):invalid &[type=submit],
+  &.big {
+    font-size: 2.2 * $unit;
+    border-radius: 50px;
+    padding: .75em 1em;
+  }
+
+  &.round {
+    border-radius: 50%;
+    padding: .7em;
+  }
+
+  form:not([novalidate]):invalid &[type=submit]:not(.active),
   &:disabled {
     color: silver;
     background: gray;
@@ -43,6 +61,7 @@
 
   &.waiting {
     pointer-events: none;
+
     &:after {
       content: "";
       position: absolute;
@@ -51,7 +70,7 @@
       width: 0;
       height: 100%;
       background: transparentize(white, .85);
-      animation: waiting 1.5s infinite linear;
+      animation: ButtonWaitingAnimation 1.5s infinite linear;
     }
   }
 
@@ -71,8 +90,7 @@
     transform-origin: left top;
     transition: transform 150ms;
     transform: rotate(0deg);
-    // hackfix: safari prevents clicks on button when click-target is a child element nor button itself
-    pointer-events: none;
+    pointer-events: none; // hackfix: safari prevents clicks on button when click-target is a child element nor button itself
   }
 
   &:before {
@@ -81,7 +99,7 @@
   }
 }
 
-@keyframes waiting {
+@keyframes ButtonWaitingAnimation {
   0% {
     left: 0;
     width: 0;

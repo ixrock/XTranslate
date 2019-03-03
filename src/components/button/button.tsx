@@ -2,7 +2,7 @@ import "./button.scss";
 import * as React from "react";
 import { cssNames } from "../../utils";
 
-interface Props extends React.HTMLProps<any> {
+export interface ButtonProps extends React.HTMLProps<any> {
   href?: string
   label?: string
   waiting?: boolean
@@ -10,25 +10,23 @@ interface Props extends React.HTMLProps<any> {
   accent?: boolean
   plain?: boolean
   hidden?: boolean
+  active?: boolean
+  big?: boolean
+  round?: boolean
 }
 
-export class Button extends React.Component<Props, {}> {
+export class Button extends React.PureComponent<ButtonProps> {
   private link: HTMLAnchorElement;
   private button: HTMLButtonElement;
 
   render() {
-    var { className, waiting, label, primary, accent, plain, hidden, children, ...props } = this.props;
+    var { className, waiting, label, primary, accent, plain, hidden, active, big, round, children, ...props } = this.props;
+    var btnProps = props as Partial<ButtonProps>;
     if (hidden) return null;
 
-    Object.assign(props, {
-      className: cssNames('Button', {
-          waiting,
-          primary,
-          accent,
-          plain,
-        }, className
-      )
-    })
+    btnProps.className = cssNames('Button', className, {
+      waiting, primary, accent, plain, active, big, round,
+    });
 
     var content = label && children
       ? React.Children.toArray([label, children])
@@ -37,7 +35,7 @@ export class Button extends React.Component<Props, {}> {
     // render as link
     if (this.props.href) {
       return (
-        <a {...props} ref={e => this.link = e}>
+        <a {...btnProps} ref={e => this.link = e}>
           {content}
         </a>
       )
@@ -45,7 +43,7 @@ export class Button extends React.Component<Props, {}> {
 
     // render as button
     return (
-      <button type="button" {...props} ref={e => this.button = e}>
+      <button type="button" {...btnProps} ref={e => this.button = e}>
         {content}
       </button>
     )

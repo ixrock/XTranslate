@@ -132,11 +132,11 @@ export class Settings extends React.Component {
           <Select className="box grow"
                   value={settings.popupFixedPos}
                   onChange={v => settings.popupFixedPos = v}>
-            <Option value="" title={__i18n("popup_position_auto")}/>
-            <Option value="leftTop" title={__i18n("popup_position_left_top")}/>
-            <Option value="rightTop" title={__i18n("popup_position_right_top")}/>
-            <Option value="leftBottom" title={__i18n("popup_position_left_bottom")}/>
-            <Option value="rightBottom" title={__i18n("popup_position_right_bottom")}/>
+            <Option value="" label={__i18n("popup_position_auto")}/>
+            <Option value="leftTop" label={__i18n("popup_position_left_top")}/>
+            <Option value="rightTop" label={__i18n("popup_position_right_top")}/>
+            <Option value="leftBottom" label={__i18n("popup_position_left_bottom")}/>
+            <Option value="rightBottom" label={__i18n("popup_position_right_bottom")}/>
           </Select>
         </div>
 

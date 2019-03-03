@@ -82,7 +82,7 @@ export class ThemeManager extends React.Component {
                 />
                 <span className="heading">{__i18n("box_shadow_color")}</span>
                 <ColorPicker
-                  position="bottom right"
+                  position={{ bottom: true, right: true }}
                   value={theme.boxShadowColor}
                   onChange={v => theme.boxShadowColor = v}
                 />
@@ -141,7 +141,7 @@ export class ThemeManager extends React.Component {
             />
             <span className="heading">{__i18n("text_shadow_color")}</span>
             <ColorPicker
-              position="bottom right"
+              position={{ bottom: true, right: true }}
               value={theme.textShadowColor}
               onChange={v => theme.textShadowColor = v}
             />
@@ -169,7 +169,7 @@ export class ThemeManager extends React.Component {
             </Select>
             <span className="heading">{__i18n("border_color")}</span>
             <ColorPicker
-              position="bottom right"
+              position={{ bottom: true, right: true }}
               value={theme.borderColor}
               onChange={v => theme.borderColor = v}/>
           </div>

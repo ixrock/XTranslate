@@ -8,7 +8,7 @@ import { __i18n, getActiveTab, MessageType, onMessage, sendTabMessage } from "..
 import { createStorage, cssNames, isMac } from "../../utils";
 import { SelectLanguage } from "../select-language";
 import { TextField } from "../text-field";
-import { OptGroup, Option, Select } from "../select";
+import { OptionsGroup, Option, Select } from "../select";
 import { Spinner } from "../spinner";
 import { settingsStore } from "../settings/settings.store";
 import { Favorite, favoritesStore } from "./favorites.store";
@@ -216,11 +216,11 @@ export class InputTranslation extends React.Component<{}, State> {
       <div className="language flex gaps">
         <SelectLanguage
           className="box grow"
-          onChangeLang={this.onLangChange}
-          onSwapLang={this.onSwapLang}
+          onChange={this.onLangChange}
+          onSwap={this.onSwapLang}
         />
         <Select value={vendor} onChange={this.onVendorChange}>
-          {vendors.map(v => <Option key={v.name} value={v.name} title={v.title}/>)}
+          {vendors.map(v => <Option key={v.name} value={v.name} label={v.title}/>)}
         </Select>
         {isFavorite && (
           <Icon
@@ -266,19 +266,19 @@ export class InputTranslation extends React.Component<{}, State> {
     return (
       <div className="favorites flex gaps align-flex-start">
         <Select className="box grow" onChange={this.useFavorite}>
-          <Option value="" title={`${__i18n("favorites_translate_with")}`}/>
+          <Option value="" label={`${__i18n("favorites_translate_with")}`}/>
           {favoritesByVendors.map(favList => {
             var { vendor, favorites } = favList;
             return (
-              <OptGroup key={vendor.name} label={vendor.title}>
+              <OptionsGroup key={vendor.name} label={vendor.title}>
                 {favorites.map(fav => {
                   var { from, to } = fav;
                   var langPair = [from, to].join("-").toUpperCase();
                   var title = [vendor.langFrom[from], vendor.langTo[to]].join(' → ');
                   var value = [vendor.name, from, to].join("-");
-                  return <Option key={langPair} title={title} value={value}/>
+                  return <Option key={langPair} label={title} value={value}/>
                 })}
-              </OptGroup>
+              </OptionsGroup>
             )
           })}
         </Select>

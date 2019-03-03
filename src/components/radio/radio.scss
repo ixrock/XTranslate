@@ -1,6 +1,5 @@
 .Radio {
-  $buttonSize: 17px;
-
+  --size: 17px;
   --color: currentColor;
   --color-active: var(--color);
   --color-hover: #{$bgc-primary};
@@ -50,8 +49,8 @@
 
   > .tick {
     position: relative;
-    width: $buttonSize;
-    height: $buttonSize;
+    width: var(--size);
+    height: var(--size);
     color: var(--color);
     border-radius: 50%;
     border: 2px solid currentColor;

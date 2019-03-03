@@ -9,9 +9,10 @@ import { Option, Select } from "../select";
 import { Icon } from "../icon";
 import { settingsStore } from "../settings/settings.store";
 
-interface Props extends React.HTMLProps<any> {
-  onSwapLang?(langFrom: string, langTo: string): void;
-  onChangeLang?(langFrom: string, langTo: string): void;
+interface Props {
+  className?: string;
+  onSwap?(langFrom: string, langTo: string): void;
+  onChange?(langFrom: string, langTo: string): void;
 }
 
 @observer
@@ -19,8 +20,8 @@ export class SelectLanguage extends React.Component<Props, {}> {
   settings = settingsStore.data;
 
   static defaultProps: Props = {
-    onSwapLang: noop,
-    onChangeLang: noop,
+    onSwap: noop,
+    onChange: noop,
   };
 
   @autobind()
@@ -29,19 +30,19 @@ export class SelectLanguage extends React.Component<Props, {}> {
     if (langFrom === 'auto') return;
     this.settings.langFrom = langTo;
     this.settings.langTo = langFrom;
-    this.props.onSwapLang(langTo, langFrom);
+    this.props.onSwap(langTo, langFrom);
   }
 
   @autobind()
   onChangeLangFrom(langFrom) {
     this.settings.langFrom = langFrom;
-    this.props.onChangeLang(langFrom, null);
+    this.props.onChange(langFrom, null);
   }
 
   @autobind()
   onChangeLangTo(langTo) {
     this.settings.langTo = langTo;
-    this.props.onChangeLang(null, langTo);
+    this.props.onChange(null, langTo);
   }
 
   render() {
@@ -52,7 +53,7 @@ export class SelectLanguage extends React.Component<Props, {}> {
       <div className={className}>
         <Select value={langFrom} onChange={this.onChangeLangFrom}>
           {Object.keys(listFrom).map(lang => (
-            <Option key={lang} value={lang} disabled={lang === langTo} title={listFrom[lang]}/>
+            <Option key={lang} value={lang} disabled={lang === langTo} label={listFrom[lang]}/>
           ))}
         </Select>
         <Icon
@@ -63,7 +64,7 @@ export class SelectLanguage extends React.Component<Props, {}> {
         />
         <Select value={langTo} onChange={this.onChangeLangTo}>
           {Object.keys(listTo).map(lang => (
-            <Option key={lang} value={lang} disabled={lang === langFrom} title={listTo[lang]}/>
+            <Option key={lang} value={lang} disabled={lang === langFrom} label={listTo[lang]}/>
           ))}
         </Select>
       </div>

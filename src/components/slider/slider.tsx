@@ -1,6 +1,6 @@
 import "./slider.scss";
 import * as React from 'react'
-import { cssNames } from "../../utils";
+import { autobind, cssNames } from "../../utils";
 
 type Props = React.HTMLProps<any> & {
   value?: any
@@ -8,14 +8,15 @@ type Props = React.HTMLProps<any> & {
   onChange?(value: number): void;
 }
 
-export class Slider extends React.Component<Props, {}> {
+export class Slider extends React.Component<Props> {
   private input: HTMLInputElement;
 
-  onChange = () => {
+  @autobind()
+  onChange() {
     var value = this.input.valueAsNumber;
     var onChange = this.props.onChange;
     if (onChange) onChange(value);
-  };
+  }
 
   render() {
     var value = this.props.value;
@@ -24,10 +25,10 @@ export class Slider extends React.Component<Props, {}> {
       disabled: this.props.disabled,
     });
     return (
-        <div className={componentClass}>
-          <input {...inputProps} type="range" onChange={this.onChange} ref={e => this.input = e}/>
-          <span className="value">{value}</span>
-        </div>
+      <div className={componentClass}>
+        <input {...inputProps} type="range" onChange={this.onChange} ref={e => this.input = e}/>
+        <span className="value">{value}</span>
+      </div>
     );
   }
 }

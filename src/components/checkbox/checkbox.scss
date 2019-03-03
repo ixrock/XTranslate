@@ -1,7 +1,5 @@
-
 .Checkbox {
-  $buttonSize: 17px;
-
+  --size: 17px;
   --color: currentColor;
   --color-active: var(--color);
   --color-hover: #{$bgc-primary};
@@ -54,8 +52,8 @@
 
   > .box {
     position: relative;
-    width: $buttonSize;
-    height: $buttonSize;
+    width: var(--size);
+    height: var(--size);
     border-radius: 2px;
     color: var(--color);
     border: 2px solid currentColor;

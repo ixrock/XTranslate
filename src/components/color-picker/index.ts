@@ -1,2 +1,2 @@
 export * from './color-picker'
-export * from './cssColor'
+export * from '../../utils/toCssColor'

@@ -1,79 +1,95 @@
 import "./select.scss";
 
 import * as React from "react";
-import { autobind, cssNames, noop } from "../../utils";
+import { autobind, cssNames } from "../../utils";
 import { Icon } from "../icon";
 
-interface Props extends React.HTMLProps<any> {
-  value?: any
-  inline?: boolean
-  onChange?: (value) => any;
+const SelectContext = React.createContext(null);
+
+export interface SelectProps<T = any> {
+  className?: string;
+  autoFocus?: boolean;
+  disabled?: boolean;
+  required?: boolean;
+  value?: T;
+  onChange?(value: T, evt: React.ChangeEvent<HTMLSelectElement>): void;
+  getOptionValue?(value: T): string;
+  getOptionLabel?(value: T): string;
 }
 
-export class Select extends React.Component<Props, {}> {
-  static defaultProps: Props = {
-    inline: false,
-    onChange: noop
-  }
+export class Select extends React.Component<SelectProps> {
+  static defaultProps: SelectProps = {
+    getOptionValue: (value: any) => JSON.stringify(value),
+    getOptionLabel: (value: any) => String(value),
+  };
 
-  private findValueByIndex(index: number, options = this.props.children) {
-    var items = React.Children.toArray(options) as React.ReactElement<OptionProps>[];
-    var searchIndex = 0;
-    for (var item of items) {
-      let { type, props } = item;
-      if (type === Option || type === "option") {
-        if (index === searchIndex) return props.value;
-        else searchIndex++;
-      }
-      else if (type === OptGroup || type === "optgroup") {
-        let groupOptions = React.Children.toArray(props.children);
-        let value = this.findValueByIndex(index - searchIndex, groupOptions);
-        if (value !== undefined) return value;
-        else searchIndex += groupOptions.length;
-      }
+  public options: { [value: string]: Option } = {};
+
+  @autobind()
+  onChange(evt: React.ChangeEvent<HTMLSelectElement>) {
+    var elemValue = evt.target.value;
+    var option = this.options[elemValue];
+    var value = option.props.value;
+    if (this.props.onChange) {
+      this.props.onChange(value, evt);
     }
   }
 
-  @autobind()
-  onChange(evt: React.FormEvent<HTMLSelectElement>) {
-    var selectedIndex = evt.currentTarget.selectedIndex;
-    var value = this.findValueByIndex(selectedIndex);
-    this.props.onChange(value);
-  }
-
   render() {
-    var { className, inline, multiple, ...selectProps } = this.props;
-    var componentClass = cssNames('Select flex', { inline }, className);
+    var { className, value, getOptionValue, getOptionLabel, ...selectProps } = this.props;
     return (
-      <div className={componentClass}>
-        <select {...selectProps} onChange={this.onChange}/>
-        <Icon material="keyboard_arrow_down" className="icon"/>
+      <div className={cssNames("Select flex", className)}>
+        <SelectContext.Provider value={this}>
+          <select
+            {...selectProps}
+            value={getOptionValue(value)}
+            onChange={this.onChange}
+          />
+          <Icon material="keyboard_arrow_down" className="arrow-icon"/>
+        </SelectContext.Provider>
       </div>
     );
   }
 }
 
-interface OptGroupProps extends React.DOMAttributes<HTMLOptGroupElement> {
-  label?: string
+interface OptionsGroupProps extends React.HTMLProps<HTMLOptGroupElement> {
+  label?: string;
   disabled?: boolean
 }
 
-export class OptGroup extends React.Component<OptGroupProps, {}> {
+export class OptionsGroup extends React.Component<OptionsGroupProps> {
   render() {
     return <optgroup {...this.props}/>
   }
 }
 
-interface OptionProps extends React.DOMAttributes<HTMLOptionElement> {
+interface OptionProps {
   value: any
-  title?: string
+  label?: string
   disabled?: boolean
 }
 
-export class Option extends React.Component<OptionProps, {}> {
+export class Option extends React.Component<OptionProps> {
+  static contextType = SelectContext;
+  public context: Select;
+  public elem: HTMLOptionElement;
+
+  @autobind()
+  bindRef(elem: HTMLOptionElement) {
+    var { value } = this.props;
+    var { getOptionValue } = this.context.props;
+    this.context.options[getOptionValue(value)] = this;
+    this.elem = elem;
+  }
+
   render() {
-    var { value, title, ...props } = this.props;
-    title = title != null ? title : String(value);
-    return <option {...props} value={value}>{title}</option>
+    var { getOptionValue, getOptionLabel } = this.context.props;
+    var { value, label, ...optProps } = this.props;
+    if (!label) label = getOptionLabel(value);
+    return (
+      <option {...optProps} value={getOptionValue(value)} ref={this.bindRef}>
+        {label}
+      </option>
+    )
   }
 }

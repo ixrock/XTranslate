@@ -1,5 +1,5 @@
 import { observable, reaction, toJS, when } from "mobx";
-import { ColorValue } from "../color-picker/cssColor";
+import { Color } from "react-color"
 
 export class ThemeStore {
   private id = "theme";
@@ -10,17 +10,17 @@ export class ThemeStore {
   ];
 
   public defaultTheme = {
-    bgcMain: "#000" as ColorValue,
-    bgcSecondary: { r: 98, g: 101, b: 101, a: .95 } as ColorValue,
+    bgcMain: "#000" as Color,
+    bgcSecondary: { r: 98, g: 101, b: 101, a: .95 } as Color,
     bgcLinear: true,
     fontSize: 15,
     fontFamily: "Roboto",
-    textColor: { r: 255, g: 255, b: 255, a: .85 } as ColorValue,
+    textColor: { r: 255, g: 255, b: 255, a: .85 } as Color,
     textShadowRadius: 0,
     textShadowOffsetX: 0,
     textShadowOffsetY: 0,
-    textShadowColor: "#ffffff" as ColorValue,
-    borderColor: { r: 135, g: 144, b: 156, a: .5 } as ColorValue,
+    textShadowColor: "#ffffff" as Color,
+    borderColor: { r: 135, g: 144, b: 156, a: .5 } as Color,
     borderWidth: 2,
     borderStyle: "solid",
     borderRadius: 5,
@@ -29,7 +29,7 @@ export class ThemeStore {
     minWidth: 0,
     minHeight: 0,
     boxShadowBlur: 10,
-    boxShadowColor: { r: 102, g: 102, b: 102, a: .5 } as ColorValue,
+    boxShadowColor: { r: 102, g: 102, b: 102, a: .5 } as Color,
     boxShadowInner: false,
   };
 

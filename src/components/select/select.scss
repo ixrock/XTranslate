@@ -1,10 +1,9 @@
 @import "../vars";
 
 .Select {
-  $activeColor: $bgc-primary;
-  $bottomOffset: $padding / 2;
-  $lineColor: transparentize($color-primary, .5);
-  $arrowIconSize: 2.4 * $unit;
+  --icon-size: 24px; // .Icon > --default-icon-size
+  --line-color: #{$border-color};
+  --line-color-active: #{$bgc-primary};
 
   position: relative;
 
@@ -12,35 +11,35 @@
     -webkit-appearance: none;
     -moz-appearance: none;
     width: 100%;
-    border-bottom: 1px solid $lineColor;
     text-overflow: ellipsis;
     background: none;
     border-radius: 0;
-    padding-right: 2.5 * $unit;
-    padding-bottom: $bottomOffset;
     font: inherit;
+    line-height: 160%;
+    padding-right: var(--icon-size);
+    box-shadow: 0 1px var(--line-color);
 
     &:focus {
-      padding-bottom: calc(#{$bottomOffset} - 1px);
-      border-bottom: 2px solid $activeColor;
-      ~ .icon {
-        color: $activeColor;
+      box-shadow: 0 2px var(--line-color-active);
+
+      ~ .arrow-icon {
+        color: var(--line-color-active);
       }
     }
 
     &:disabled {
-      &, ~ .icon {
+      &, ~ .arrow-icon {
         opacity: .7;
       }
     }
   }
 
-  .icon {
+  .arrow-icon {
     position: absolute;
     right: 0;
     top: 50%;
     transform: translateY(-50%);
     pointer-events: none;
-    font-size: $arrowIconSize;
+    font-size: var(--icon-size);
   }
 }

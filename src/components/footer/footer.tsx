@@ -11,26 +11,26 @@ interface ShareIcon {
 
 export class Footer extends React.Component {
   private manifest = getManifest();
-  private storeUrl = 'https://chrome.google.com/webstore/detail/gfgpkepllngchpmcippidfhmbhlljhoo';
   private shareTags = ["chrome", "extension", "xtranslate"];
+  private appStoreUrl = 'https://chrome.google.com/webstore/detail/gfgpkepllngchpmcippidfhmbhlljhoo';
 
   private shareIcons: ShareIcon[] = [
     {
       title: "VK.com",
       icon: require('../icon/vk.svg'),
-      url: `http://vkontakte.ru/share.php?url=${this.storeUrl}`,
+      url: `http://vkontakte.ru/share.php?url=${this.appStoreUrl}`,
     },
     {
       title: "Facebook",
       icon: require('../icon/facebook.svg'),
-      url: `https://www.facebook.com/sharer/sharer.php?u=${this.storeUrl}`,
+      url: `https://www.facebook.com/sharer/sharer.php?u=${this.appStoreUrl}`,
     },
     {
       title: "Twitter",
       icon: require('../icon/twitter.svg'),
       url: [
         `https://twitter.com/intent/tweet?source=webclient`,
-        `url=${this.storeUrl}`,
+        `url=${this.appStoreUrl}`,
         `text=${[this.manifest.name, __i18n("short_description")].join(' - ')}`,
         `hashtags=${this.shareTags.join(',')}`
       ].join("&")
