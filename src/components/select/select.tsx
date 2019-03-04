@@ -23,13 +23,11 @@ export class Select extends React.Component<SelectProps> {
     getOptionLabel: (value: any) => String(value),
   };
 
-  public options: { [value: string]: Option } = {};
+  public optionValues = new Map<string, any>();
 
   @autobind()
   onChange(evt: React.ChangeEvent<HTMLSelectElement>) {
-    var elemValue = evt.target.value;
-    var option = this.options[elemValue];
-    var value = option.props.value;
+    var value = this.optionValues.get(evt.target.value);
     if (this.props.onChange) {
       this.props.onChange(value, evt);
     }
@@ -78,7 +76,7 @@ export class Option extends React.Component<OptionProps> {
   bindRef(elem: HTMLOptionElement) {
     var { value } = this.props;
     var { getOptionValue } = this.context.props;
-    this.context.options[getOptionValue(value)] = this;
+    this.context.optionValues.set(getOptionValue(value), value);
     this.elem = elem;
   }
 

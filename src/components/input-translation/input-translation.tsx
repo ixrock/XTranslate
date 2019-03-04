@@ -7,8 +7,8 @@ import { getVendorByName, Translation, TranslationError, Vendor, vendors } from 
 import { __i18n, getActiveTab, MessageType, onMessage, sendTabMessage } from "../../extension";
 import { createStorage, cssNames, isMac } from "../../utils";
 import { SelectLanguage } from "../select-language";
-import { TextField } from "../text-field";
-import { OptionsGroup, Option, Select } from "../select";
+import { Input } from "../input";
+import { Option, OptionsGroup, Select } from "../select";
 import { Spinner } from "../spinner";
 import { settingsStore } from "../settings/settings.store";
 import { Favorite, favoritesStore } from "./favorites.store";
@@ -37,7 +37,7 @@ export class InputTranslation extends React.Component<{}, State> {
   static lastText = createStorage("last_text", "");
   settings = settingsStore.data;
 
-  private textField: TextField;
+  private input: Input;
   private translation: Promise<any>;
   private loadingTimer;
 
@@ -74,7 +74,7 @@ export class InputTranslation extends React.Component<{}, State> {
       }
     });
     if (this.state.text) this.translate();
-    this.textField.focus();
+    this.input.focus();
   }
 
   saveFavorites(vendor: string, favorites: Favorite[]) {
@@ -160,7 +160,7 @@ export class InputTranslation extends React.Component<{}, State> {
   }
 
   translateWord(text: string) {
-    this.textField.focus();
+    this.input.focus();
     this.setState({ text }, () => {
       this.setState({ immediate: true });
       this.translate();
@@ -247,7 +247,7 @@ export class InputTranslation extends React.Component<{}, State> {
       if (vendor) useFavorite = { vendor, from, to };
     }
     this.setState({ useFavorite }, () => {
-      this.textField.focus();
+      this.input.focus();
       this.translate();
     });
   };
@@ -380,24 +380,27 @@ export class InputTranslation extends React.Component<{}, State> {
   render() {
     var { textInputTranslateDelayMs } = this.settings;
     return (
-      <div className="InputTranslation">
+      <div className="InputTranslation flex column gaps">
         {this.renderHeader()}
         {this.renderFavorites()}
-        <TextField
+        <Input
+          autoFocus
+          multiLine rows={2} tabIndex={1}
           placeholder={__i18n("text_field_placeholder")}
-          autoFocus multiLine rows={2} tabIndex={1}
           maxLength={this.vendor.maxTextInputLength}
-          value={this.state.text} onChange={v => this.onTextChange(v)}
+          value={this.state.text}
+          onChange={this.onTextChange}
           onKeyDown={this.onKeyDown}
-          ref={e => this.textField = e}
-        >
-          <div className="info">
-            {__i18n("text_input_translation_hint", [
-              `${isMac ? "Cmd" : "Ctrl"}+Enter`,
-              ms => <a href={AppRoute.settings} key="delay">{textInputTranslateDelayMs}{ms}</a>
-            ])}
-          </div>
-        </TextField>
+          ref={e => this.input = e}
+          infoContent={(
+            <small className="hint">
+              {__i18n("text_input_translation_hint", [
+                `${isMac ? "Cmd" : "Ctrl"}+Enter`,
+                ms => <a href={AppRoute.settings} key="delay">{textInputTranslateDelayMs}{ms}</a>
+              ])}
+            </small>
+          )}
+        />
         {this.renderTranslation()}
       </div>
     );

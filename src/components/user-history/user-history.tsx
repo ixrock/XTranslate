@@ -9,7 +9,7 @@ import { cssNames, download, prevDefault } from "../../utils";
 import { getVendorByName } from "../../vendors";
 import { Checkbox } from "../checkbox";
 import { Menu, MenuItem } from "../menu";
-import { TextField } from "../text-field";
+import { Input, NumberInput } from "../input";
 import { Option, Select } from "../select";
 import { Button } from "../button";
 import { Spinner } from "../spinner";
@@ -244,8 +244,8 @@ export class UserHistory extends React.Component {
         </div>
         <div className="settings-content flex column gaps">
           {showSearch && (
-            <TextField
-              autoFocus showErrors={false}
+            <Input
+              autoFocus
               placeholder={__i18n("history_search_input_placeholder")}
               value={searchText}
               onChange={v => this.searchText = v}
@@ -278,9 +278,9 @@ export class UserHistory extends React.Component {
                 />
                 <div className="page-size flex gaps align-center">
                   <span className="box grow">{__i18n("history_page_size")}</span>
-                  <TextField
-                    type="number" min={10} max={100000}
-                    value={historyPageSize} showErrors={false}
+                  <NumberInput
+                    min={10} max={100000}
+                    value={historyPageSize}
                     onChange={v => this.settings.historyPageSize = v}
                   />
                 </div>

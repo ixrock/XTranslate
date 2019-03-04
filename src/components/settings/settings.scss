@@ -3,30 +3,28 @@
     padding: 0;
   }
 
-  > .display-options {
-    .Checkbox {
-      flex: 1 0 50%;
-      margin-bottom: $padding / 2;
-      &:nth-child(odd) {
-        padding-right: $padding;
-      }
-    }
+  .checkbox-group {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
 
-    .hotkey {
-      min-width: 75px;
-      text-align: center;
-      .errors {
-        display: none;
-      }
+    > :not(:last-child) {
+      margin-bottom: $padding /2;
     }
   }
-  
+
+  .hotkey {
+    width: 75px;
+    text-align: center;
+  }
+
   small {
     color: $color-secondary;
   }
 
   .vendor > * {
     --flex-gap: #{$margin /2};
+
     .label {
       margin-right: var(--flex-gap);
     }

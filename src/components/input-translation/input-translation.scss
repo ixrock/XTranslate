@@ -2,10 +2,6 @@
 .InputTranslation {
   --flex-gap: #{$margin};
 
-  > :not(:last-child):not(.TextField) {
-    margin-bottom: $margin;
-  }
-
   .translation-results {
     &.rtl {
       direction: rtl;
@@ -72,19 +68,8 @@
     color: $red-300;
   }
 
-  .favorites {
-    margin: $margin * 1.5 0;
-  }
-
-  .info {
-    font-size: smaller;
+  .hint {
     opacity: .55;
     padding-right: 60px; // input's max-length block
-  }
-
-  .TextField {
-    .label {
-      margin-bottom: 2px;
-    }
   }
 }

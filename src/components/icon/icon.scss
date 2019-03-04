@@ -1,5 +1,5 @@
 .Icon {
-  --default-size: 24px;
+  --size: 24px;
   --small-size: 18px;
   --big-size: 32px;
   --color-active: black;
@@ -15,9 +15,9 @@
   -webkit-user-select: none; /* safari */
   -moz-user-select: none; /* firefox */
 
-  font-size: var(--default-size);
-  width: var(--default-size);
-  height: var(--default-size);
+  font-size: var(--size);
+  width: var(--size);
+  height: var(--size);
 
   &.small {
     font-size: var(--small-size);
@@ -26,7 +26,7 @@
   }
 
   &.big {
-    font-size: var(--small-size);
+    font-size: var(--big-size);
     width: var(--big-size);
     height: var(--big-size);
   }

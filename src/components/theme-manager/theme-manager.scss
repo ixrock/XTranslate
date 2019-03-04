@@ -9,16 +9,21 @@
     > .flex {
       padding: $padding;
       padding-top: 0;
+
       &.auto {
         padding-left: 0;
       }
     }
+
     .ColorPicker + .ColorPicker {
       margin-left: $padding / 2;
     }
-    .TextField {
-      .errors {
-        display: none;
+
+    .shadow-settings {
+      overflow: hidden;
+      .Input {
+        overflow: hidden;
+        max-width: 100px;
       }
     }
   }

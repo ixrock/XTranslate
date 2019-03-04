@@ -1,7 +1,7 @@
 @import "../vars";
 
 .Select {
-  --icon-size: 24px; // .Icon > --default-icon-size
+  --icon-size: 24px; // .Icon > --size
   --line-color: #{$border-color};
   --line-color-active: #{$bgc-primary};
 
@@ -15,7 +15,7 @@
     background: none;
     border-radius: 0;
     font: inherit;
-    line-height: 160%;
+    line-height: 1.6;
     padding-right: var(--icon-size);
     box-shadow: 0 1px var(--line-color);
 
@@ -35,11 +35,11 @@
   }
 
   .arrow-icon {
+    --size: var(--icon-size);
     position: absolute;
     right: 0;
     top: 50%;
     transform: translateY(-50%);
     pointer-events: none;
-    font-size: var(--icon-size);
   }
 }

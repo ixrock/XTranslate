@@ -5,13 +5,18 @@ import { observer } from "mobx-react";
 import { __i18n } from "../../extension/i18n";
 import { MessageType } from "../../extension/message";
 import { sendMessage } from "../../extension/runtime";
+import { autobind } from "../../utils/autobind";
 import { cssNames } from "../../utils/cssNames";
 import { toCssColor } from "../../utils/toCssColor";
+import { prevDefault } from "../../utils/prevDefault";
 import { getNextVendor, getVendorByName, Translation, TranslationError } from "../../vendors";
-import { autobind } from "../../utils/autobind";
 import { settingsStore } from "../settings/settings.store";
 import { themeStore } from "../theme-manager/theme.store";
 import { Icon } from "../icon";
+
+// todo / fixme
+// 1) повтороное нажатие на play-tts-icon ставит воспроизведение на паузу => обновлять иконку
+// 2) после закрытия попапа аудио всё еще остается на паузе => ресетить
 
 interface Props extends React.HTMLProps<any> {
   preview?: boolean;
@@ -131,7 +136,7 @@ export class Popup extends React.Component<Props> {
     if (showNextVendorIcon) {
       let nextVendor = getNextVendor(vendor, langFrom, langTo);
       let iconTitle = __i18n("popup_next_vendor_icon_title", [nextVendor.title]).join("");
-      nextVendorIcon = <Icon material="arrow_forward" onClick={this.translateNextVendor} title={iconTitle}/>
+      nextVendorIcon = <Icon material="arrow_forward" onClick={prevDefault(this.translateNextVendor)} title={iconTitle}/>
     }
     return (
       <div className="translation-result" style={this.getTranslationStyle()}>

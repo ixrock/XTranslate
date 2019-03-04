@@ -12,27 +12,24 @@ interface RadioGroupProps {
   onChange?(value): void
 }
 
-export class RadioGroup extends React.Component<RadioGroupProps, {}> {
-  public state = {
-    name: this.props.name || uniqueId("radioGroup"),
-  };
+export class RadioGroup extends React.Component<RadioGroupProps> {
+  public name = this.props.name || uniqueId("radioGroup");
 
   render() {
     var { value, defaultValue, className, disabled, onChange } = this.props;
-    var radioGroupClassName = cssNames("RadioGroup", className);
     var radios = React.Children.toArray(this.props.children) as React.ReactElement<RadioProps>[];
     return (
-      <div className={radioGroupClassName}>
+      <div className={cssNames("RadioGroup", className)}>
         {radios.map(radio => {
           if (!radio.props) return;
-          var radioProps = {
-            name: this.state.name,
+          var radioProps: Partial<RadioProps> = {
+            name: this.name,
             disabled: disabled != null ? disabled : radio.props.disabled,
             defaultChecked: defaultValue != null ? defaultValue == radio.props.value : radio.props.defaultChecked,
             checked: value != null ? value === radio.props.value : radio.props.checked,
             onChange: onChange
           };
-          return React.cloneElement(radio, radioProps as any)
+          return React.cloneElement(radio, radioProps)
         })}
       </div>
     );

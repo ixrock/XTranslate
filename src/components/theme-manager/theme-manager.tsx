@@ -9,7 +9,7 @@ import { settingsStore } from "../settings/settings.store";
 import { Translation } from "../../vendors";
 import { Popup } from "../popup";
 import { ColorPicker } from "../color-picker";
-import { TextField } from "../text-field";
+import { NumberInput } from "../input";
 import { Checkbox } from "../checkbox";
 import { Option, Select } from "../select";
 import { Slider } from "../slider";
@@ -74,9 +74,9 @@ export class ThemeManager extends React.Component {
             <div className="box">
               <span className="sub-title">{__i18n("sub_header_box_shadow")}</span>
               <div className="flex gaps align-center">
-                <TextField
+                <NumberInput
                   className="box grow"
-                  type="number" min={0} max={100}
+                  min={0} max={100}
                   value={theme.boxShadowBlur}
                   onChange={v => theme.boxShadowBlur = v}
                 />
@@ -103,9 +103,9 @@ export class ThemeManager extends React.Component {
               onChange={v => theme.textColor = v}
             />
             <span className="heading">{__i18n("text_size")}</span>
-            <TextField
+            <NumberInput
               className="box grow"
-              type="number" min={10} max={25}
+              min={10} max={25}
               value={theme.fontSize}
               onChange={v => theme.fontSize = v}
             />
@@ -118,41 +118,39 @@ export class ThemeManager extends React.Component {
           </div>
           <div className="flex gaps align-center">
             <span className="heading">{__i18n("text_shadow")}</span>
-            <TextField
-              type="number"
-              className="box grow"
-              title={__i18n("text_shadow_size")}
-              value={theme.textShadowRadius}
-              onChange={v => theme.textShadowRadius = v}
-            />
-            <TextField
-              type="number"
-              className="box grow"
-              title={__i18n("text_shadow_offset_x")}
-              value={theme.textShadowOffsetX}
-              onChange={v => theme.textShadowOffsetX = v}
-            />
-            <TextField
-              type="number"
-              className="box grow"
-              title={__i18n("text_shadow_offset_y")}
-              value={theme.textShadowOffsetY}
-              onChange={v => theme.textShadowOffsetY = v}
-            />
-            <span className="heading">{__i18n("text_shadow_color")}</span>
-            <ColorPicker
-              position={{ bottom: true, right: true }}
-              value={theme.textShadowColor}
-              onChange={v => theme.textShadowColor = v}
-            />
+            <div className="shadow-settings box grow flex gaps auto">
+              <NumberInput
+                title={__i18n("text_shadow_size")}
+                value={theme.textShadowRadius}
+                onChange={v => theme.textShadowRadius = v}
+              />
+              <NumberInput
+                title={__i18n("text_shadow_offset_x")}
+                value={theme.textShadowOffsetX}
+                onChange={v => theme.textShadowOffsetX = v}
+              />
+              <NumberInput
+                title={__i18n("text_shadow_offset_y")}
+                value={theme.textShadowOffsetY}
+                onChange={v => theme.textShadowOffsetY = v}
+              />
+            </div>
+            <div className="flex gaps align-center">
+              <span className="heading">{__i18n("text_shadow_color")}</span>
+              <ColorPicker
+                position={{ bottom: true, right: true }}
+                value={theme.textShadowColor}
+                onChange={v => theme.textShadowColor = v}
+              />
+            </div>
           </div>
 
           <span className="sub-title">{__i18n("sub_header_border")}</span>
           <div className="flex gaps align-center">
             <span className="heading">{__i18n("border_width")}</span>
-            <TextField
+            <NumberInput
               className="box grow"
-              type="number" min={0} max={25}
+              min={0} max={25}
               value={theme.borderWidth}
               onChange={v => theme.borderWidth = v}
             />

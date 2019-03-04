@@ -1,0 +1,29 @@
+.NumberInput {
+  input[type="number"] {
+    -moz-appearance: textfield;
+
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+  }
+
+  .arrow-icons {
+    width: 20px;
+    height: 20px;
+    display: flex;
+    flex-direction: column;
+
+    .Icon {
+      --size: 20px;
+      --bgc-active: none;
+      --color-active: #{$bgc-primary};
+      flex: 1;
+
+      > span {
+        line-height: 50%;
+      }
+    }
+  }
+}
