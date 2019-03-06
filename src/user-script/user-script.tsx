@@ -3,8 +3,9 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { toJS, when } from "mobx";
+import { observer } from "mobx-react";
 import { getManifest, getURL, MenuTranslateFavoritePayload, MenuTranslateVendorPayload, Message, MessageType, onMessage, onPostMessage, postMessage, sendMessage, TranslateFromFramePayload } from "../extension";
-import { getNextVendor, getVendorByName, Translation, TranslationError } from "../vendors";
+import { getNextTranslator, getTranslatorByName, ITranslationError, ITranslationResult } from "../vendors";
 import { Popup } from "../components/popup/popup";
 import { cssNames } from "../utils/cssNames";
 import { getHotkey } from "../utils/parseHotkey";
@@ -20,8 +21,8 @@ const isFrameWindow = window !== topWindow;
 const isPdf = document['contentType'] === "application/pdf";
 
 interface State {
-  translation?: Translation
-  error?: TranslationError
+  translation?: ITranslationResult
+  error?: ITranslationError
   rect?: ClientRect
   position?: Position
 }
@@ -33,6 +34,7 @@ interface Position {
   bottom?: number
 }
 
+@observer
 class App extends React.Component<{}, State> {
   public state: State = {};
   public appName = getManifest().name;
@@ -125,7 +127,7 @@ class App extends React.Component<{}, State> {
     if (!this.icon) return;
     var s = this.selection;
     var text = this.text;
-    var vendor = getVendorByName(this.settings.vendor);
+    var vendor = getTranslatorByName(this.settings.vendor);
     if (!s.rangeCount || !text || text.length > vendor.maxTextInputLength) return;
     var focusOffset = s.focusOffset;
     var anchorOffset = s.anchorOffset;
@@ -264,7 +266,7 @@ class App extends React.Component<{}, State> {
   @autobind()
   onMouseUp(e: MouseEvent) {
     if (this.isEditable(document.activeElement)) return;
-    if (this.settings.showPopupAfterSelection && this.text) {
+    if (this.settings.showPopupAfterSelection && this.text && this.isHidden) {
       return this.translate();
     }
     if (this.settings.showIconNearSelection) {
@@ -291,7 +293,7 @@ class App extends React.Component<{}, State> {
   translateWith(vendorName: string, langFrom?, langTo?, text = this.text, rect?: ClientRect) {
     langFrom = langFrom || this.settings.langFrom;
     langTo = langTo || this.settings.langTo;
-    var vendorApi = getVendorByName(vendorName);
+    var vendorApi = getTranslatorByName(vendorName);
     if (text && text.length <= vendorApi.maxTextInputLength) {
       if (isFrameWindow) {
         postMessage({
@@ -314,13 +316,13 @@ class App extends React.Component<{}, State> {
     var { langFrom, langTo } = this.settings;
     var { rect, translation } = this.state;
     var { vendor, originalText } = translation;
-    var vendorApi = getNextVendor(vendor, langFrom, langTo, reverse);
+    var vendorApi = getNextTranslator(vendor, langFrom, langTo, reverse);
     if (vendorApi) {
       this.translateWith(vendorApi.name, langFrom, langTo, originalText, rect);
     }
   }
 
-  handleTranslation(translation: Promise<Translation>, rect = this.getRect()) {
+  handleTranslation(translation: Promise<ITranslationResult>, rect = this.getRect()) {
     var promise = this.translation = translation.then(result => {
       this.hideIcon();
       if (this.translation !== promise) return;

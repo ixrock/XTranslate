@@ -1,26 +1,30 @@
-import { parseJson, Translation, TranslationError, Vendor } from "./vendor";
+import { ITranslationError, ITranslationResult, Translator } from "./translator";
 import { encodeQuery } from "../utils/encodeQuery";
 
-class Google extends Vendor {
+class Google extends Translator {
   public name = 'google';
   public title = 'Google';
-  public url = 'https://translate.googleapis.com';
+  public apiUrl = 'https://translate.googleapis.com';
   public publicUrl = 'https://translate.google.com';
   public maxTextInputLength = 5000;
   public ttsMaxLength = 187;
+
+  constructor() {
+    super(require("./google.json"));
+  }
 
   // todo: split long texts to queue of chunks with ttsMaxLenght and play one by one
   getAudioUrl(lang, text) {
     if (text.length > this.ttsMaxLength) return;
     var textEncoded = encodeURIComponent(text);
-    return this.url + `/translate_tts?client=gtx&ie=UTF-8&tl=${lang}&q=${textEncoded}`;
+    return this.apiUrl + `/translate_tts?client=gtx&ie=UTF-8&tl=${lang}&q=${textEncoded}`;
   }
 
-  protected translate(langFrom, langTo, text): Promise<Translation> {
+  protected translate(langFrom, langTo, text): Promise<ITranslationResult> {
     var reqParams: RequestInit = {};
 
     var getApiUrl = (withText = true) => {
-      return this.url + '/translate_a/single?' +
+      return this.apiUrl + '/translate_a/single?' +
         encodeQuery('client=gtx&dj=1&source=input', {
           q: withText ? text : null,
           sl: langFrom,
@@ -51,9 +55,9 @@ class Google extends Vendor {
       };
     }
 
-    return fetch(url, reqParams).then(parseJson).then((res: GoogleTranslation) => {
+    return fetch(url, reqParams).then(this.parseJson).then((res: GoogleTranslation) => {
       var { src, sentences, dict, spell } = res;
-      var translation: Translation = {
+      var translation: ITranslationResult = {
         langDetected: src,
         translation: sentences.map(sentence => sentence.trans).join(''),
         dictionary: []
@@ -76,9 +80,9 @@ class Google extends Vendor {
         });
       }
       return translation;
-    }).catch((error: TranslationError) => {
-      var { status, url, responseText } = error;
-      if (status === 503 && url.startsWith("https://ipv4.google.com/sorry")) {
+    }).catch((error: ITranslationError) => {
+      var { statusCode, url, responseText } = error;
+      if (statusCode === 503 && url.startsWith("https://ipv4.google.com/sorry")) {
         var parser = new DOMParser();
         var doc = parser.parseFromString(responseText, "text/html");
         var infoDiv = doc.querySelector("#infoDiv");
@@ -151,5 +155,5 @@ interface GoogleTranslation {
   }
 }
 
-const params = require('./google.json');
-export const google = new Google(params);
+const google = new Google();
+Translator.registerVendor(google.name, google);

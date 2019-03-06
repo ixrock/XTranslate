@@ -1,13 +1,17 @@
-import { parseJson, Translation, Vendor, VendorParams } from "./vendor";
+import { ITranslationResult, Translator } from "./translator";
 import { encodeQuery } from "../utils/encodeQuery";
 
-class Yandex extends Vendor {
+class Yandex extends Translator {
   public name = 'yandex';
   public title = 'Yandex';
-  public url = 'https://translate.yandex.net';
+  public apiUrl = 'https://translate.yandex.net';
   public publicUrl = 'https://translate.yandex.com';
   public maxTextInputLength = 10000;
   public ttsMaxLength = 300;
+
+  constructor() {
+    super(require('./yandex.json'));
+  }
 
   getAudioUrl(lang, text) {
     lang = this.params.tts[lang];
@@ -24,16 +28,16 @@ class Yandex extends Vendor {
     return this.params.dictionary.indexOf([langFrom, langTo].join('-')) > -1;
   }
 
-  protected async translate(langFrom, langTo, text): Promise<Translation> {
+  protected async translate(langFrom, langTo, text): Promise<ITranslationResult> {
     var translationReq = (): Promise<YandexTranslation> => {
-      var apiUrl = this.url + '/api/v1/tr.json/translate?' +
+      var apiUrl = this.apiUrl + '/api/v1/tr.json/translate?' +
         encodeQuery({
           srv: "yawidget",
           options: 1, // add detected language to response
           lang: langFrom === "auto" ? langTo : [langFrom, langTo].join('-'),
           text: text,
         });
-      return fetch(apiUrl).then(parseJson);
+      return fetch(apiUrl).then(this.parseJson);
     };
 
     var dictReq = (from = langFrom, to = langTo): Promise<YandexDictionary> => {
@@ -46,12 +50,12 @@ class Yandex extends Vendor {
       var canUseDictionary = this.canUseDictionary(from, to);
       var tooBigUrl = apiUrl.length >= this.maxUrlLength;
       if (tooBigUrl || !canUseDictionary) return Promise.resolve(null);
-      return fetch(apiUrl).then(parseJson).catch(() => null);
+      return fetch(apiUrl).then(this.parseJson).catch(() => null);
     };
 
     // main translation
     var translationRes = await translationReq();
-    var translation: Translation = {
+    var translation: ITranslationResult = {
       langDetected: translationRes.detected.lang,
       translation: translationRes.text.join(' '),
       dictionary: []
@@ -119,5 +123,5 @@ interface YandexDictionary {
   }[]
 }
 
-const params: VendorParams = require('./yandex.json');
-export const yandex = new Yandex(params);
+const yandex = new Yandex();
+Translator.registerVendor(yandex.name, yandex);

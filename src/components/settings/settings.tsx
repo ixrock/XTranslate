@@ -2,7 +2,7 @@ import "./settings.scss";
 
 import * as React from "react";
 import { observer } from "mobx-react";
-import { getVendorByName, vendors } from "../../vendors";
+import { getTranslatorByName, getTranslators } from "../../vendors";
 import { __i18n, createTab } from "../../extension";
 import { autobind, getHotkey, parseHotkey, prevDefault } from "../../utils";
 import { SelectLanguage } from "../select-language";
@@ -30,7 +30,7 @@ export class Settings extends React.Component {
   onVendorChange(vendorName: string) {
     this.settings.vendor = vendorName;
     var { langFrom, langTo } = this.settings;
-    var vendor = getVendorByName(vendorName);
+    var vendor = getTranslatorByName(vendorName);
     if (!vendor.langFrom[langFrom]) {
       this.settings.langFrom = Object.keys(vendor.langFrom)[0];
     }
@@ -70,7 +70,7 @@ export class Settings extends React.Component {
             value={settings.vendor}
             onChange={this.onVendorChange}
             children={
-              vendors.map(({ name, title, publicUrl }) => {
+              getTranslators().map(({ name, title, publicUrl }) => {
                 var domain = publicUrl.match(/https?:\/\/(.*?)(?:\/\w*|$)/i)[1];
                 return (
                   <Radio key={name} value={name}>

@@ -2,6 +2,12 @@
 .InputTranslation {
   --flex-gap: #{$margin};
 
+  .Input {
+    label {
+      padding-bottom: $padding / 2;
+    }
+  }
+
   .translation-results {
     &.rtl {
       direction: rtl;

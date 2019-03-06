@@ -1,5 +1,5 @@
 import { observable, reaction, when } from "mobx";
-import { Translation } from "../../vendors";
+import { ITranslationResult } from "../../vendors";
 import { settingsStore } from "../settings/settings.store";
 import isEqual from "lodash/isEqual";
 
@@ -46,7 +46,7 @@ export class UserHistoryStore {
     });
   }
 
-  async saveTranslation(translation: Translation) {
+  async saveTranslation(translation: ITranslationResult) {
     if (!translation) return;
     if (!this.loaded) {
       this.load();
@@ -74,7 +74,7 @@ export class UserHistoryStore {
     this.items.replace(newItems);
   }
 
-  protected toStorageItem(translation: Translation): IHistoryStorageItem {
+  protected toStorageItem(translation: ITranslationResult): IHistoryStorageItem {
     return [
       Date.now(),
       translation.vendor,

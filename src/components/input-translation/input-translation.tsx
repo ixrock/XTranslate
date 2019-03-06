@@ -3,7 +3,7 @@ import "./input-translation.scss";
 import * as React from "react";
 import { observer } from "mobx-react";
 import { debounce, find, remove } from "lodash";
-import { getVendorByName, Translation, TranslationError, Vendor, vendors } from "../../vendors";
+import { getTranslatorByName, getTranslators, isRTL, ITranslationError, ITranslationResult, Translator } from "../../vendors";
 import { __i18n, getActiveTab, MessageType, onMessage, sendTabMessage } from "../../extension";
 import { createStorage, cssNames, isMac } from "../../utils";
 import { SelectLanguage } from "../select-language";
@@ -23,10 +23,10 @@ interface State {
   vendor?: string
   loading?: boolean
   immediate?: boolean
-  translation?: Translation
-  error?: TranslationError
+  translation?: ITranslationResult
+  error?: ITranslationError
   useFavorite?: {
-    vendor: Vendor,
+    vendor: Translator,
     from: string,
     to: string
   }
@@ -51,7 +51,7 @@ export class InputTranslation extends React.Component<{}, State> {
   get vendor() {
     var useFavorite = this.state.useFavorite;
     if (useFavorite) return useFavorite.vendor;
-    return getVendorByName(this.state.vendor);
+    return getTranslatorByName(this.state.vendor);
   }
 
   get isFavorite() {
@@ -108,14 +108,14 @@ export class InputTranslation extends React.Component<{}, State> {
     }
   }
 
-  playText() {
+  playText = () => {
     var { langDetected, langFrom, originalText } = this.state.translation;
     this.vendor.playText(langDetected || langFrom, originalText);
   }
 
   translate = (text = this.state.text.trim()) => {
     if (!text) {
-      if (this.vendor.isPlayingText()) {
+      if (this.vendor.isPlaying) {
         this.vendor.stopPlaying();
       }
       return;
@@ -129,7 +129,7 @@ export class InputTranslation extends React.Component<{}, State> {
     this.handleTranslation(translating);
   }
 
-  private handleTranslation(translation: Promise<Translation>) {
+  private handleTranslation(translation: Promise<ITranslationResult>) {
     this.setLoading();
     var text = this.state.text;
     var promise = this.translation = translation.then(result => {
@@ -192,7 +192,7 @@ export class InputTranslation extends React.Component<{}, State> {
   onVendorChange = (vendorName: string) => {
     var { langFrom, langTo } = this.state;
     var state = { vendor: vendorName } as State;
-    var vendor = getVendorByName(vendorName);
+    var vendor = getTranslatorByName(vendorName);
     if (!vendor.langFrom[langFrom]) state.langFrom = Object.keys(vendor.langFrom)[0];
     if (!vendor.langTo[langTo]) state.langTo = Object.keys(vendor.langTo)[0];
     this.setState(state, this.translate);
@@ -220,7 +220,7 @@ export class InputTranslation extends React.Component<{}, State> {
           onSwap={this.onSwapLang}
         />
         <Select value={vendor} onChange={this.onVendorChange}>
-          {vendors.map(v => <Option key={v.name} value={v.name} label={v.title}/>)}
+          {getTranslators().map(v => <Option key={v.name} value={v.name} label={v.title}/>)}
         </Select>
         {isFavorite && (
           <Icon
@@ -243,7 +243,7 @@ export class InputTranslation extends React.Component<{}, State> {
     var useFavorite = null;
     if (value) {
       var [vendorName, from, to] = value.split("-");
-      var vendor = getVendorByName(vendorName);
+      var vendor = getTranslatorByName(vendorName);
       if (vendor) useFavorite = { vendor, from, to };
     }
     this.setState({ useFavorite }, () => {
@@ -254,7 +254,7 @@ export class InputTranslation extends React.Component<{}, State> {
 
   renderFavorites() {
     var favorites = favoritesStore.data;
-    var favoritesByVendors = vendors.filter(v => {
+    var favoritesByVendors = getTranslators().filter(v => {
       return favorites[v.name] && favorites[v.name].length > 0
     }).map(v => {
       return {
@@ -289,22 +289,22 @@ export class InputTranslation extends React.Component<{}, State> {
   renderResult() {
     var { translation: result } = this.state;
     if (!result) return null;
+    var { vendor } = this;
     var { langFrom, langTo, langDetected, translation, transcription, dictionary, spellCorrection } = result;
     if (langDetected) langFrom = langDetected;
     var langPair = [langFrom, langTo].join(' → ').toUpperCase();
-    var langPairFull = [this.vendor.langFrom[langFrom], this.vendor.langTo[langTo]].join(' → ');
-    var title = __i18n("translated_with", [this.vendor.title, langPairFull]).join("");
-    var isRTL = this.vendor.isRightToLeft(langTo);
+    var langPairFull = [vendor.langFrom[langFrom], vendor.langTo[langTo]].join(' → ');
+    var title = __i18n("translated_with", [vendor.title, langPairFull]).join("");
     var canPlayText = this.vendor.canPlayText(langFrom, translation);
     return (
-      <div className={cssNames("translation-results", { rtl: isRTL })}>
+      <div className={cssNames("translation-results", { rtl: isRTL(langTo) })}>
         {translation ?
           <div className="translation flex gaps align-flex-start">
             <Icon
-              material="play_circle_outline"
+              material={`${vendor.isPlaying ? "pause" : "play"}_circle_outline`}
               title={__i18n("popup_play_icon_title")}
               disabled={!canPlayText}
-              onClick={() => this.playText()}
+              onClick={this.playText}
             />
             <div className="value box grow">
               <span>{translation}</span>
@@ -361,10 +361,10 @@ export class InputTranslation extends React.Component<{}, State> {
 
   renderError() {
     if (!this.state.error) return null;
-    var { status, statusText } = this.state.error;
+    var { statusCode, statusText } = this.state.error;
     return (
       <div className="translation-error">
-        {status} - {statusText}
+        {statusCode} - {statusText}
       </div>
     );
   }

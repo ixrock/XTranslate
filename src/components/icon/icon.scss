@@ -12,6 +12,7 @@
   justify-content: center;
   text-decoration: none;
   user-select: none;
+  box-sizing: content-box; // allow to use padding for outer spacing
   -webkit-user-select: none; /* safari */
   -moz-user-select: none; /* firefox */
 

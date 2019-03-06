@@ -1,0 +1,48 @@
+.MenuActions {
+  &.toolbar {
+    .Icon {
+      color: white;
+      margin-right: 0;
+      padding-right: 0;
+    }
+
+    .title, .arrow {
+      display: none;
+    }
+
+    .MenuItem > .Menu {
+      $offset: $margin;
+
+      margin-top: $offset;
+      top: 100%;
+      right: $padding;
+
+      &:before {
+        position: absolute;
+        width: 100%;
+        top: -$offset;
+        height: $offset;
+        content: "";
+      }
+    }
+  }
+
+  .MenuItem {
+    position: relative;
+
+    &:hover > .Menu {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    > .Menu {
+      margin: 0;
+      transition: opacity 150ms ease-in-out;
+      opacity: 0;
+      visibility: hidden;
+      right: 100%;
+      top: -1px;
+      margin-right: 2px;
+    }
+  }
+}

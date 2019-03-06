@@ -1,13 +1,17 @@
-import { parseJson, Translation, Vendor } from "./vendor";
+import { ITranslationResult, Translator } from "./translator";
 import { encodeQuery } from "../utils";
-import { groupBy } from "lodash";
+import groupBy from "lodash/groupBy";
 
-class Bing extends Vendor {
+class Bing extends Translator {
   public name = 'bing';
   public title = 'Bing';
-  public url = 'https://www.bing.com';
-  public publicUrl = `${this.url}/translator`;
+  public apiUrl = 'https://www.bing.com';
+  public publicUrl = `${this.apiUrl}/translator`;
   public maxTextInputLength = 5000;
+
+  constructor() {
+    super(require("./bing.json"))
+  }
 
   refreshCookie() {
     console.log('refreshing cookies..');
@@ -18,14 +22,14 @@ class Bing extends Vendor {
     var locale = lang;
     var textEncoded = encodeURIComponent(text);
     if (lang === "en") locale = "en-US"
-    return this.url + `/tspeak?text=${textEncoded}&` + encodeQuery({
+    return this.apiUrl + `/tspeak?text=${textEncoded}&` + encodeQuery({
       language: locale,
       format: this.ttsFormat,
       options: "male",
     });
   }
 
-  protected translate(langFrom, langTo, text): Promise<Translation> {
+  protected translate(langFrom, langTo, text): Promise<ITranslationResult> {
     var reqInitBase: RequestInit = {
       method: 'post',
       credentials: 'include',
@@ -35,7 +39,7 @@ class Bing extends Vendor {
     }
 
     var detectLangReq = (): Promise<string> => {
-      var url = this.url + "/tdetect";
+      var url = this.apiUrl + "/tdetect";
       return fetch(url, {
         ...reqInitBase,
         body: encodeQuery({ text }),
@@ -43,30 +47,30 @@ class Bing extends Vendor {
     }
 
     var translationReq = (langFrom: string): Promise<BingTranslation> => {
-      var url = this.url + "/ttranslate";
+      var url = this.apiUrl + "/ttranslate";
       return fetch(url, {
         ...reqInitBase,
         body: encodeQuery({ from: langFrom, to: langTo, text }),
-      }).then(parseJson);
+      }).then(this.parseJson);
     };
 
     var dictReq = (langFrom: string): Promise<BingDictionary> => {
-      var url = this.url + '/ttranslationlookup';
+      var url = this.apiUrl + '/ttranslationlookup';
       return fetch(url, {
         ...reqInitBase,
         body: encodeQuery({ from: langFrom, to: langTo, text: text }),
-      }).then(parseJson);
+      }).then(this.parseJson);
     };
 
     var refreshCookie = false;
-    var request = async (): Promise<Translation> => {
+    var request = async () => {
       try {
         var langDetected = langFrom === "auto" ? await detectLangReq() : langFrom;
         var [transRes, dictRes] = await Promise.all([
           translationReq(langDetected),
           dictReq(langDetected).catch(() => null)
         ]);
-        var response: Translation = {
+        var response: ITranslationResult = {
           langDetected: langDetected,
           translation: transRes.translationResponse,
           dictionary: []
@@ -86,8 +90,7 @@ class Bing extends Vendor {
           });
         }
         return response;
-      }
-      catch (error) {
+      } catch (error) {
         if (!refreshCookie) {
           refreshCookie = true;
           return this.refreshCookie().then(request);
@@ -124,5 +127,5 @@ interface DictTranslation {
   }[]
 }
 
-const params = require('./bing.json');
-export const bing = new Bing(params);
+const bing = new Bing();
+Translator.registerVendor(bing.name, bing);

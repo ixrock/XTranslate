@@ -6,7 +6,7 @@ import { isEqual } from "lodash";
 import { __i18n } from "../../extension/i18n";
 import { themeStore } from "./theme.store";
 import { settingsStore } from "../settings/settings.store";
-import { Translation } from "../../vendors";
+import { ITranslationResult } from "../../vendors";
 import { Popup } from "../popup";
 import { ColorPicker } from "../color-picker";
 import { NumberInput } from "../input";
@@ -20,7 +20,7 @@ export class ThemeManager extends React.Component {
   settings = settingsStore.data;
   theme = themeStore.data;
 
-  translationExample: Translation = {
+  translationExample: ITranslationResult = {
     vendor: this.settings.vendor,
     langFrom: this.settings.langFrom,
     langTo: this.settings.langTo,

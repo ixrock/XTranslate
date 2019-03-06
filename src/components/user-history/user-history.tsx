@@ -6,9 +6,9 @@ import { disposeOnUnmount, observer } from "mobx-react";
 import { groupBy } from "lodash";
 import { __i18n } from "../../extension/i18n";
 import { cssNames, download, prevDefault } from "../../utils";
-import { getVendorByName } from "../../vendors";
+import { getTranslatorByName, isRTL } from "../../vendors";
 import { Checkbox } from "../checkbox";
-import { Menu, MenuItem } from "../menu";
+import { MenuActions, MenuItem } from "../menu";
 import { Input, NumberInput } from "../input";
 import { Option, Select } from "../select";
 import { Button } from "../button";
@@ -87,7 +87,7 @@ export class UserHistory extends React.Component {
         history.forEach(item => {
           csv.push([
             new Date(item.date).toLocaleString(),
-            getVendorByName(item.vendor).title,
+            getTranslatorByName(item.vendor).title,
             item.from + "-" + item.to,
             item.text,
             item.translation,
@@ -126,7 +126,7 @@ export class UserHistory extends React.Component {
   }
 
   playText = (vendor: string, lang: string, text: string) => {
-    getVendorByName(vendor).playText(lang, text);
+    getTranslatorByName(vendor).playText(lang, text);
   }
 
   renderHistory() {
@@ -150,9 +150,7 @@ export class UserHistory extends React.Component {
                   vendor[0].toUpperCase() + vendor.substr(1),
                   [from, to].join(" → ").toUpperCase()
                 ]).join("");
-                var rtlClass = {
-                  rtl: getVendorByName(vendor).isRightToLeft(to)
-                };
+                var rtlClass = { rtl: isRTL(to) };
                 return (
                   <li key={date}
                       title={translatedWith}
@@ -225,8 +223,7 @@ export class UserHistory extends React.Component {
             onClick={() => this.showSearch = !showSearch}
           />
           <div className="flex">
-            <Icon id="export_history" material="file_download" actionIcon/>
-            <Menu htmlFor="export_history">
+            <MenuActions triggerIcon="file_download">
               <MenuItem onClick={() => this.exportHistory("csv")}>
                 {__i18n("history_export_entries", ["CSV"])}
               </MenuItem>
@@ -234,7 +231,7 @@ export class UserHistory extends React.Component {
               <MenuItem onClick={() => this.exportHistory("json")}>
                 {__i18n("history_export_entries", ["JSON"])}
               </MenuItem>
-            </Menu>
+            </MenuActions>
           </div>
           <Icon
             material="settings"

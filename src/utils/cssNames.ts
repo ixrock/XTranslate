@@ -1,10 +1,11 @@
 // Helper for combining css classes inside components
 
-type ClassName = string | string[] | { [className: string]: boolean } | any;
+type IClassName = string | string[] | { [className: string]: boolean } | any;
+type IClassNameMap = { [name: string]: boolean };
 
-export function cssNames(...args: ClassName[]): string {
-  var map = {};
-  var addName = (className:string) => map[className.trim()] = true;
+export function cssNames(...args: IClassName[]): string {
+  var map: IClassNameMap = {};
+  var addName = (className: string) => map[className.trim()] = true;
   args.forEach(function (className) {
     if (typeof className === 'string') className = className.split(/\s+/g);
     if (Array.isArray(className)) className.forEach(addName);

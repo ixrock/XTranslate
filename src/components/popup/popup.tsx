@@ -9,20 +9,17 @@ import { autobind } from "../../utils/autobind";
 import { cssNames } from "../../utils/cssNames";
 import { toCssColor } from "../../utils/toCssColor";
 import { prevDefault } from "../../utils/prevDefault";
-import { getNextVendor, getVendorByName, Translation, TranslationError } from "../../vendors";
+import { getNextTranslator, getTranslatorByName, isRTL, ITranslationError, ITranslationResult } from "../../vendors";
 import { settingsStore } from "../settings/settings.store";
 import { themeStore } from "../theme-manager/theme.store";
 import { Icon } from "../icon";
 
-// todo / fixme
-// 1) повтороное нажатие на play-tts-icon ставит воспроизведение на паузу => обновлять иконку
-// 2) после закрытия попапа аудио всё еще остается на паузе => ресетить
-
 interface Props extends React.HTMLProps<any> {
   preview?: boolean;
   className?: any
-  translation?: Translation
-  error?: TranslationError
+  isPlaying?: boolean;
+  translation?: ITranslationResult
+  error?: ITranslationError
   position?: React.CSSProperties
   next?: () => void;
 }
@@ -126,15 +123,15 @@ export class Popup extends React.Component<Props> {
     if (!result) return null;
     const { translation, transcription, dictionary, vendor, langFrom, langTo, langDetected } = result;
     const { showTextToSpeechIcon, showNextVendorIcon, showCopyTranslationIcon } = this.settings;
-    const vendorApi = getVendorByName(vendor);
-    const rtlClass = { rtl: vendorApi.isRightToLeft(langTo) };
-    const canPlayText = vendorApi.canPlayText(langDetected || langFrom, translation);
+    const translator = getTranslatorByName(vendor);
+    const rtlClass = { rtl: isRTL(langTo) };
+    const canPlayText = translator.canPlayText(langDetected || langFrom, translation);
     const title = __i18n("translated_with", [
-      vendorApi.title, `${langDetected || langFrom} → ${langTo}`.toUpperCase()
+      translator.title, `${langDetected || langFrom} → ${langTo}`.toUpperCase()
     ]).join("");
     var nextVendorIcon = null;
     if (showNextVendorIcon) {
-      let nextVendor = getNextVendor(vendor, langFrom, langTo);
+      let nextVendor = getNextTranslator(vendor, langFrom, langTo);
       let iconTitle = __i18n("popup_next_vendor_icon_title", [nextVendor.title]).join("");
       nextVendorIcon = <Icon material="arrow_forward" onClick={prevDefault(this.translateNextVendor)} title={iconTitle}/>
     }
@@ -184,10 +181,10 @@ export class Popup extends React.Component<Props> {
 
   renderError() {
     if (!this.props.error) return null;
-    var { status, statusText } = this.props.error;
+    var { statusCode, statusText } = this.props.error;
     return (
       <div className="translation-error">
-        {status} - {statusText}
+        {statusCode} - {statusText}
       </div>
     )
   }

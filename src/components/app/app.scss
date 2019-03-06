@@ -103,3 +103,19 @@ hr {
     }
   }
 }
+
+.flow {
+  --flow-space: #{$margin};
+
+  &:not(.column) {
+    > * + * {
+      margin-left: var(--flow-space);
+    }
+  }
+
+  &.column {
+    > * + * {
+      margin-top: var(--flow-space);
+    }
+  }
+}

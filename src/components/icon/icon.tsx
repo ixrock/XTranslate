@@ -1,18 +1,20 @@
 import './icon.scss'
 
-import React, { isValidElement } from "react";
+import React, { CSSProperties, isValidElement } from "react";
 import { findDOMNode } from "react-dom";
 import { autobind, cssNames } from "../../utils";
 import { Tooltip, TooltipProps } from "../tooltip";
 import uniqueId from "lodash/uniqueId"
 import isPlainObject from "lodash/isPlainObject"
+import isNumber from "lodash/isNumber"
 
-export interface IconProps extends React.HTMLProps<any> {
+export type IconProps = React.HTMLProps<any> & {
   material?: string;          // material-icon, see available names at https://material.io/icons/
   svg?: string;               // svg-filename without extension in current folder
   actionIcon?: boolean;       // indicates that icon is interactive and highlight it on hover
   href?: string;              // render icon as hyperlink
   tooltip?: React.ReactNode | Partial<TooltipProps>;  // add tooltip on hover
+  size?: string | number;     // icon-size
   small?: boolean;
   big?: boolean;
   disabled?: boolean;
@@ -39,14 +41,18 @@ export class Icon extends React.PureComponent<IconProps> {
   }
 
   render() {
-    var { className, href, material, svg, actionIcon, tooltip, small, big, disabled, ...elemProps } = this.props;
+    var { className, href, material, svg, actionIcon, tooltip, size, small, big, disabled, ...elemProps } = this.props;
     actionIcon = this.isActionIcon;
 
     var iconProps: Partial<IconProps> = {
       id: this.tooltipId,
-      className: cssNames("Icon", className, { svg, material, actionIcon, small, big, disabled }),
+      className: cssNames("Icon", className,
+        { svg, material, actionIcon, disabled },
+        !size ? { small, big } : {}
+      ),
       onKeyDown: actionIcon ? this.onKeyDown : undefined,
       tabIndex: actionIcon ? 0 : undefined,
+      style: size ? { "--size": size + (isNumber(size) ? "px" : "") } as CSSProperties : undefined,
       ...elemProps
     };
 

@@ -1,10 +1,10 @@
 // Extension's context menu
 
 import { autorun } from "mobx";
-import { getVendorByName, vendors } from "../vendors";
 import { __i18n, createTab, getActiveTab, getManifest, MenuTranslateFavoritePayload, MenuTranslateVendorPayload, MessageType, sendTabMessage } from "../extension";
 import { Favorite, favoritesStore } from "../components/input-translation/favorites.store";
 import { settingsStore } from "../components/settings/settings.store";
+import { getTranslatorByName, getTranslators } from "../vendors";
 import orderBy from "lodash/orderBy";
 
 // handle menu clicks
@@ -51,12 +51,14 @@ chrome.contextMenus.onClicked.addListener(
 
 // create, update or hide context menu regarding the settings
 autorun(() => {
+  chrome.contextMenus.removeAll(); // clean up
+
   var settings = settingsStore.data;
   var favorites = favoritesStore.data;
   var menuName = getManifest().name;
-  const selectionContext = ['selection'];
-  const pageContext = selectionContext.concat('page');
-  chrome.contextMenus.removeAll();
+  var selectionContext = ['selection'];
+  var pageContext = selectionContext.concat('page');
+  var translators = getTranslators();
 
   if (settings.showInContextMenu) {
     var topMenu = chrome.contextMenus.create({
@@ -66,7 +68,7 @@ autorun(() => {
     });
 
     // translate active page in new tab
-    vendors.forEach(vendor => {
+    translators.forEach(vendor => {
       chrome.contextMenus.create({
         id: [MessageType.MENU_TRANSLATE_FULL_PAGE, vendor.name].join("-"),
         title: __i18n("context_menu_translate_full_page", [vendor.title]).join(""),
@@ -83,7 +85,7 @@ autorun(() => {
     });
 
     // translate with current language set from settings
-    vendors.forEach(vendor => {
+    translators.forEach(vendor => {
       chrome.contextMenus.create({
         id: [MessageType.MENU_TRANSLATE_WITH_VENDOR, vendor.name].join("-"),
         title: __i18n("context_menu_translate_selection", ['"%s"', vendor.title]).join(""),
@@ -102,7 +104,7 @@ autorun(() => {
         contexts: selectionContext,
       });
       Object.keys(favorites).forEach(vendorName => {
-        var vendor = getVendorByName(vendorName);
+        var vendor = getTranslatorByName(vendorName);
         var favList: Favorite[] = orderBy(favorites[vendorName], [
           (fav: Favorite) => fav.from !== 'auto',
           'from'

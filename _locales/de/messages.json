@@ -104,6 +104,9 @@
   "history_export_entries": {
     "message": "Exportiere %format%"
   },
+  "history_page_size": {
+    "message": "Einträge je Seite"
+  },
   "history_search_input_placeholder": {
     "message": "Verlauf durchsuchen"
   },
@@ -236,6 +239,9 @@
   "text_font_family": {
     "message": "Schriftart"
   },
+  "text_input_translation_hint": {
+    "message": "%hotkey% für sofortige Übersetzung, Verzögerung: %ms%"
+  },
   "text_shadow": {
     "message": "Schatten"
   },
@@ -257,19 +263,13 @@
   "translated_with": {
     "message": "Übersetzt mit %translator% (%lang%)"
   },
-  "use_dark_theme": {
-    "message": "Dunkles Thema für dieses Fenster verwenden"
-  },
   "translation_delay": {
     "message": "Übersetzungsverzögerung"
   },
   "translation_delay_info": {
-    "message": "Stellen Sie einen höheren Wert für die Verzögerung ein, wenn Sie oft von Google oder anderen Diensten blockiert werden (Fehler 503)"
+    "message": "Stellen Sie einen höheren Wert für die Verzögerung ein, wenn Sie oft Blockaden durch Google oder andere Dienste feststellen (Fehler 503)"
   },
-  "text_input_translation_hint": {
-    "message": "%hotkey% für sofortige Übersetzung, Verzögerung: %ms%"
-  },
-  "history_page_size": {
-    "message": "Anzahl Einträge"
+  "use_dark_theme": {
+    "message": "Dunkles Thema für dieses Fenster verwenden"
   }
 }

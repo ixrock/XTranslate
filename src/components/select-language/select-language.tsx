@@ -3,11 +3,11 @@ import "./select-language.scss";
 import * as React from 'react';
 import { observer } from "mobx-react";
 import { __i18n } from "../../extension/i18n";
-import { getVendorByName } from '../../vendors';
 import { autobind, cssNames, noop } from "../../utils";
 import { Option, Select } from "../select";
 import { Icon } from "../icon";
 import { settingsStore } from "../settings/settings.store";
+import { getTranslatorByName } from "../../vendors";
 
 interface Props {
   className?: string;
@@ -47,7 +47,7 @@ export class SelectLanguage extends React.Component<Props, {}> {
 
   render() {
     var { vendor, langFrom, langTo } = this.settings;
-    var { langFrom: listFrom, langTo: listTo } = getVendorByName(vendor);
+    var { langFrom: listFrom, langTo: listTo } = getTranslatorByName(vendor);
     var className = cssNames('SelectLanguage flex gaps align-flex-start', this.props.className);
     return (
       <div className={className}>
