@@ -17,7 +17,6 @@ import { Icon } from "../icon";
 interface Props extends React.HTMLProps<any> {
   preview?: boolean;
   className?: any
-  isPlaying?: boolean;
   translation?: ITranslationResult
   error?: ITranslationError
   position?: React.CSSProperties
