@@ -17,6 +17,7 @@ import { userHistoryStore } from "../user-history/user-history.store";
 import { Icon } from "../icon";
 
 // todo: refactor
+// todo: new look&feel for favorites
 // fixme: selecting new language for translate doesn't trigger translation when selected favorite pair
 
 interface State {

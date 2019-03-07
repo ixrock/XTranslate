@@ -165,7 +165,7 @@ export class Settings extends React.Component {
               outline
               id="add-shortcut"
               className="box flex gaps"
-              label={__i18n("sub_header_quick_access")}
+              label={__i18n("sub_header_quick_access_hotkey")}
               onClick={() => createTab("chrome://extensions/configureCommands")}
             />
             <Tooltip htmlFor="add-shortcut" following>

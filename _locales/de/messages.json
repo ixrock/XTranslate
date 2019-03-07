@@ -71,12 +71,6 @@
   "footer": {
     "message": "Wenn Sie diese Erweiterung mögen, teilen Sie es mit Ihren Freunden:"
   },
-  "footer_donate_click_to_copy": {
-    "message": "(Klicken, um Adresse zu kopieren)"
-  },
-  "footer_donate_title": {
-    "message": "Spende:"
-  },
   "footer_leave_review_and_donate": {
     "message": "Sie können auch %leave a review% oder %make a donation% um die Erweiterung zu unterstützen."
   },
@@ -206,7 +200,7 @@
   "sub_header_favorites": {
     "message": "Favoriten"
   },
-  "sub_header_quick_access": {
+  "sub_header_quick_access_hotkey": {
     "message": "Schnellzugriff"
   },
   "sub_header_text": {

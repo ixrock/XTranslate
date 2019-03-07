@@ -18,7 +18,7 @@
   "display_popup_on_double_click"    : {"message": "Прикажи искачући прозор двоструким кликом на реч"},
   "display_popup_on_hotkey"          : {"message": "Прикажи прозор када притиснем"},
   "sub_header_translator"            : {"message": "Преводилац"},
-  "sub_header_quick_access"          : {"message": "Брзи приступ"},
+  "sub_header_quick_access_hotkey"   : {"message": "Брзи приступ"},
   "quick_access_configure_link"      : {"message": "Подеси тастерску пречицу за активирање прозора за унос текста"},
   "swap_languages"                   : {"message": "Замени језике"},
   "___________theme_________________": {"message": "----------------------------------------------"},
