@@ -36,12 +36,12 @@ export class UserHistory extends React.Component {
 
   @computed get items() {
     if (this.searchedText) return userHistoryStore.findItems(this.searchedText);
-    return userHistoryStore.items.slice(0, this.page * this.settings.historyPageSize);
+    return userHistoryStore.data.slice(0, this.page * this.settings.historyPageSize);
   }
 
   @computed get hasMore() {
     if (this.searchedText) return false;
-    return userHistoryStore.items.length > this.items.length;
+    return userHistoryStore.data.length > this.items.length;
   }
 
   componentDidMount() {
@@ -119,7 +119,7 @@ export class UserHistory extends React.Component {
       return date.join("-");
     }
     var clearAll = timeFrame === HistoryTimeFrame.ALL;
-    var latestItem = userHistoryStore.toHistoryItem(userHistoryStore.items[0]);
+    var latestItem = userHistoryStore.toHistoryItem(userHistoryStore.data[0]);
     var latestFrame = getTimeFrame(latestItem.date, timeFrame);
     var clearFilter = (item: IHistoryItem) => latestFrame === getTimeFrame(item.date, timeFrame);
     userHistoryStore.clear(clearAll ? null : clearFilter);
@@ -276,7 +276,7 @@ export class UserHistory extends React.Component {
                 <div className="page-size flex gaps align-center">
                   <span className="box grow">{__i18n("history_page_size")}</span>
                   <NumberInput
-                    min={10} max={100000}
+                    step={10} min={10} max={100000}
                     value={historyPageSize}
                     onChange={v => this.settings.historyPageSize = v}
                   />

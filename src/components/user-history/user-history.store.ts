@@ -1,5 +1,7 @@
-import { observable, reaction, when } from "mobx";
-import { ITranslationResult } from "../../vendors";
+import { IObservableArray, observable, when } from "mobx";
+import { Store } from "../../store";
+import { autobind } from "../../utils/autobind";
+import { ITranslationResult } from "../../vendors/translator";
 import { settingsStore } from "../settings/settings.store";
 import isEqual from "lodash/isEqual";
 
@@ -7,43 +9,20 @@ export enum HistoryTimeFrame {
   HOUR, DAY, MONTH, YEAR, ALL
 }
 
-export class UserHistoryStore {
-  private id = "history";
-
-  @observable loaded = false;
-  @observable loading = false;
-  @observable saving = false;
-  @observable items = observable.array<IHistoryStorageItem>([], { deep: false });
+@autobind()
+export class UserHistoryStore extends Store<IObservableArray<IHistoryStorageItem>> {
+  protected id = "history";
 
   constructor() {
-    // start auto-saving items after first loading
-    when(() => this.loaded, () => {
-      reaction(() => this.items.length, this.save, { delay: 250 });
-    });
-    // sync store when saved new translation (e.g. from content-page)
-    chrome.storage.onChanged.addListener((changes, areaName) => {
-      if (this.saving) return;
-      if (areaName === "local" && changes[this.id]) {
-        this.items.replace(changes[this.id].newValue || []);
-      }
+    super({
+      autoLoad: false,
+      storageType: "local",
+      initialData: observable.array([], { deep: false }),
     });
   }
 
-  load = () => {
-    if (this.loaded) return;
-    this.loading = true;
-    chrome.storage.local.get(this.id, items => {
-      this.items.replace(items[this.id] || []);
-      this.loading = false;
-      this.loaded = true;
-    });
-  }
-
-  protected save = () => {
-    this.saving = true;
-    chrome.storage.local.set({ [this.id]: this.items.toJS() }, () => {
-      this.saving = false;
-    });
+  protected autoSaveReaction() {
+    return this.data.length;
   }
 
   async saveTranslation(translation: ITranslationResult) {
@@ -61,7 +40,7 @@ export class UserHistoryStore {
       translation.langFrom = langFrom = langDetected;
     }
     var newItems: IHistoryStorageItem[] = [
-      ...this.items
+      ...this.data
     ];
     if (historyAvoidDuplicates) {
       let newItemData = [vendor, langFrom, langTo, originalText];
@@ -71,7 +50,7 @@ export class UserHistoryStore {
       });
     }
     newItems.unshift(this.toStorageItem(translation));
-    this.items.replace(newItems);
+    this.data.replace(newItems);
   }
 
   protected toStorageItem(translation: ITranslationResult): IHistoryStorageItem {
@@ -120,7 +99,7 @@ export class UserHistoryStore {
   findItems(searchText = ""): IHistoryStorageItem[] {
     searchText = searchText.trim().toLowerCase();
     if (!searchText) return [];
-    return this.items.filter(item => {
+    return this.data.filter(item => {
       var { text, translation } = this.toHistoryItem(item);
       return (
         text.toLowerCase().includes(searchText) ||
@@ -131,15 +110,15 @@ export class UserHistoryStore {
 
   clear(itemOrFilter?: IHistoryStorageItem | ((item: IHistoryItem) => boolean)) {
     if (!itemOrFilter) {
-      this.items.replace([]); // remove all
+      this.data.replace([]); // remove all
     }
     else {
       if (typeof itemOrFilter === "function") {
-        var newItems = this.items.filter(item => !itemOrFilter(this.toHistoryItem(item)));
-        this.items.replace(newItems);
+        var newItems = this.data.filter(item => !itemOrFilter(this.toHistoryItem(item)));
+        this.data.replace(newItems);
       }
       else {
-        this.items.remove(itemOrFilter);
+        this.data.remove(itemOrFilter);
       }
     }
   }

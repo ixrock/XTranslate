@@ -1,4 +1,6 @@
 .Button {
+  --flex-gap: #{$margin / 2};
+
   position: relative;
   overflow: hidden; // required for transition effect on hover
   color: white;
@@ -24,20 +26,20 @@
     background: $bgc-accent;
   }
 
-  &.plain {
+  &.outline {
     color: inherit;
     background: transparent;
-    box-shadow: none;
+    box-shadow: 0 0 0 1px inset;
+    transition: 100ms box-shadow ease-out;
+
+    &:focus,
+    &:hover {
+      box-shadow: 0 0 0 2px inset !important;
+    }
 
     &:disabled {
       background: none;
       opacity: .5;
-    }
-
-    &.active,
-    &:focus:not(:active) {
-      color: $bgc-primary;
-      box-shadow: 0 0 0 1px inset;
     }
   }
 

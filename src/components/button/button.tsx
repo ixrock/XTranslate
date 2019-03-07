@@ -8,7 +8,7 @@ export interface ButtonProps extends React.HTMLProps<any> {
   waiting?: boolean
   primary?: boolean
   accent?: boolean
-  plain?: boolean
+  outline?: boolean
   hidden?: boolean
   active?: boolean
   big?: boolean
@@ -20,12 +20,12 @@ export class Button extends React.PureComponent<ButtonProps> {
   private button: HTMLButtonElement;
 
   render() {
-    var { className, waiting, label, primary, accent, plain, hidden, active, big, round, children, ...props } = this.props;
+    var { className, waiting, label, primary, accent, outline, hidden, active, big, round, children, ...props } = this.props;
     var btnProps = props as Partial<ButtonProps>;
     if (hidden) return null;
 
     btnProps.className = cssNames('Button', className, {
-      waiting, primary, accent, plain, active, big, round,
+      waiting, primary, accent, outline: outline, active, big, round,
     });
 
     var content = label && children

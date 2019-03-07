@@ -11,10 +11,13 @@ import { Input } from "../input";
 import { Option, OptionsGroup, Select } from "../select";
 import { Spinner } from "../spinner";
 import { settingsStore } from "../settings/settings.store";
-import { Favorite, favoritesStore } from "./favorites.store";
+import { IFavorite, favoritesStore } from "./favorites.store";
 import { AppRoute } from "../app/app.route";
 import { userHistoryStore } from "../user-history/user-history.store";
 import { Icon } from "../icon";
+
+// todo: refactor
+// fixme: selecting new language for translate doesn't trigger translation when selected favorite pair
 
 interface State {
   text?: string
@@ -77,14 +80,14 @@ export class InputTranslation extends React.Component<{}, State> {
     this.input.focus();
   }
 
-  saveFavorites(vendor: string, favorites: Favorite[]) {
+  saveFavorites(vendor: string, favorites: IFavorite[]) {
     favoritesStore.data[vendor] = favorites;
   }
 
   addFavorite = () => {
     var { langFrom, langTo, vendor } = this.state;
-    var fav: Favorite = { from: langFrom, to: langTo };
-    var favorites: Favorite[] = favoritesStore.getByVendor(vendor);
+    var fav: IFavorite = { from: langFrom, to: langTo };
+    var favorites: IFavorite[] = favoritesStore.getByVendor(vendor);
     if (!find(favorites, fav)) {
       this.saveFavorites(vendor, [...favorites, fav]);
     }

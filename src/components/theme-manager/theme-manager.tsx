@@ -4,7 +4,7 @@ import * as React from "react";
 import { observer } from "mobx-react";
 import { isEqual } from "lodash";
 import { __i18n } from "../../extension/i18n";
-import { themeStore } from "./theme.store";
+import { defaultTheme, themeStore } from "./theme.store";
 import { settingsStore } from "../settings/settings.store";
 import { ITranslationResult } from "../../vendors";
 import { Popup } from "../popup";
@@ -40,7 +40,7 @@ export class ThemeManager extends React.Component {
 
   render() {
     var { theme } = this;
-    var isDefault = isEqual(theme, themeStore.defaultTheme);
+    var isDefault = isEqual(theme, defaultTheme);
     return (
       <div className="ThemeManager flex column gaps">
         <Popup

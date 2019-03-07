@@ -15,8 +15,7 @@
 html {
   font-size: 62.5%; // 1 rem == 10px
   color: $color-primary;
-  height: 100%;
-  min-height: 599px; // max-width for chrome extensions
+  min-height: 100%;
 }
 
 body {
@@ -39,15 +38,12 @@ input, select, textarea {
 }
 
 a {
-  color: transparentize($color-primary, .25);
+  color: $color-secondary;
 
-  &:focus {
-    color: $bgc-primary;
-    opacity: 1;
-  }
-
+  &:focus,
   &:hover {
-    opacity: 1;
+    color: $bgc-primary;
+    text-decoration: none;
   }
 }
 
@@ -58,7 +54,7 @@ hr {
 
 #app {
   padding: $padding * 2;
-  min-height: 100%;
+  min-height: 599px; // max-width for chrome extensions
   min-width: 550px;
   max-width: 700px;
   margin: auto;

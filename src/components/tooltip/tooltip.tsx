@@ -71,19 +71,20 @@ export class Tooltip extends React.Component<TooltipProps, State> {
   onMouseMove(evt: MouseEvent) {
     if (!this.props.following) return;
 
-    var offset = 15;
+    var offset = 10;
     var { pageX, pageY } = evt;
     this.elem.style.left = (pageX + offset) + "px"
     this.elem.style.top = (pageY + offset) + "px"
 
     // correct position if not fits to viewport
-    var { innerWidth: viewportWidth, innerHeight: viewportHeight } = window;
+    var { innerWidth, innerHeight } = window;
     var { right, bottom, width, height } = this.elem.getBoundingClientRect();
-    if (right > viewportWidth) {
-      this.elem.style.left = (pageX - width - offset / 2) + "px"
+
+    if (right > innerWidth) {
+      this.elem.style.left = (pageX - width - offset) + "px"
     }
-    if (bottom > viewportHeight) {
-      this.elem.style.top = (pageY - height - offset / 2) + "px"
+    if (bottom > innerHeight) {
+      this.elem.style.top = (pageY - height - offset) + "px"
     }
   }
 

@@ -71,13 +71,17 @@
       pointer-events: none;
       width: 100%;
       height: 100%;
+    }
 
-      * {
-        fill: currentColor;
-      }
+    &:not(.colorful) {
+      svg {
+        * {
+          fill: currentColor;
+        }
 
-      line {
-        stroke: currentColor;
+        line {
+          stroke: currentColor;
+        }
       }
     }
   }

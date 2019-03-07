@@ -2,7 +2,7 @@
 
 import { autorun } from "mobx";
 import { __i18n, createTab, getActiveTab, getManifest, MenuTranslateFavoritePayload, MenuTranslateVendorPayload, MessageType, sendTabMessage } from "../extension";
-import { Favorite, favoritesStore } from "../components/input-translation/favorites.store";
+import { IFavorite, favoritesStore } from "../components/input-translation/favorites.store";
 import { settingsStore } from "../components/settings/settings.store";
 import { getTranslatorByName, getTranslators } from "../vendors";
 import orderBy from "lodash/orderBy";
@@ -57,7 +57,7 @@ autorun(() => {
   var favorites = favoritesStore.data;
   var menuName = getManifest().name;
   var selectionContext = ['selection'];
-  var pageContext = selectionContext.concat('page');
+  var pageContext = [...selectionContext, 'page'];
   var translators = getTranslators();
 
   if (settings.showInContextMenu) {
@@ -105,8 +105,8 @@ autorun(() => {
       });
       Object.keys(favorites).forEach(vendorName => {
         var vendor = getTranslatorByName(vendorName);
-        var favList: Favorite[] = orderBy(favorites[vendorName], [
-          (fav: Favorite) => fav.from !== 'auto',
+        var favList: IFavorite[] = orderBy(favorites[vendorName], [
+          (fav: IFavorite) => fav.from !== 'auto',
           'from'
         ]);
         favList.forEach(fav => {

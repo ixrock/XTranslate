@@ -4,7 +4,7 @@ import * as React from "react";
 import { observer } from "mobx-react";
 import { getTranslatorByName, getTranslators } from "../../vendors";
 import { __i18n, createTab } from "../../extension";
-import { autobind, getHotkey, parseHotkey, prevDefault } from "../../utils";
+import { autobind, getHotkey, parseHotkey } from "../../utils";
 import { SelectLanguage } from "../select-language";
 import { Input, NumberInput } from "../input";
 import { Checkbox } from "../checkbox";
@@ -12,6 +12,8 @@ import { Radio, RadioGroup } from "../radio";
 import { Option, Select } from "../select";
 import { Icon } from "../icon";
 import { settingsStore } from "./settings.store";
+import { Button } from "../button";
+import { Tooltip } from "../tooltip";
 
 @observer
 export class Settings extends React.Component {
@@ -152,12 +154,24 @@ export class Settings extends React.Component {
         </div>
 
         <p className="sub-title">{__i18n("setting_title_text_input")}</p>
-        <div className="display-options flex gaps align-flex-start">
-          <Checkbox
-            label={__i18n("remember_last_typed_text")}
-            value={settings.rememberLastText}
-            onChange={v => settings.rememberLastText = v}
-          />
+        <div className="display-options flex gaps auto">
+          <div className="flex column gaps align-flex-start">
+            <Checkbox
+              label={__i18n("remember_last_typed_text")}
+              value={settings.rememberLastText}
+              onChange={v => settings.rememberLastText = v}
+            />
+            <Button
+              outline
+              id="add-shortcut"
+              className="box flex gaps"
+              label={__i18n("sub_header_quick_access")}
+              onClick={() => createTab("chrome://extensions/configureCommands")}
+            />
+            <Tooltip htmlFor="add-shortcut" following>
+              {__i18n("quick_access_configure_link")}
+            </Tooltip>
+          </div>
           <div className="translate-delay">
             <div className="flex gaps">
               <p>{__i18n("translation_delay")}</p>
@@ -170,13 +184,6 @@ export class Settings extends React.Component {
             </div>
             <small>{__i18n("translation_delay_info")}</small>
           </div>
-        </div>
-
-        <div className="text-input-hotkey flex column gaps">
-          <p className="sub-title">{__i18n("sub_header_quick_access")}</p>
-          <a href="#" onClick={prevDefault(() => createTab("chrome://extensions/configureCommands"))}>
-            {__i18n("quick_access_configure_link")}
-          </a>
         </div>
       </div>
     );
