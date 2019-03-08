@@ -118,31 +118,27 @@ export class ThemeManager extends React.Component {
           </div>
           <div className="flex gaps align-center">
             <span className="heading">{__i18n("text_shadow")}</span>
-            <div className="shadow-settings box grow flex gaps auto">
-              <NumberInput
-                title={__i18n("text_shadow_size")}
-                value={theme.textShadowRadius}
-                onChange={v => theme.textShadowRadius = v}
-              />
-              <NumberInput
-                title={__i18n("text_shadow_offset_x")}
-                value={theme.textShadowOffsetX}
-                onChange={v => theme.textShadowOffsetX = v}
-              />
-              <NumberInput
-                title={__i18n("text_shadow_offset_y")}
-                value={theme.textShadowOffsetY}
-                onChange={v => theme.textShadowOffsetY = v}
-              />
-            </div>
-            <div className="flex gaps align-center">
-              <span className="heading">{__i18n("text_shadow_color")}</span>
-              <ColorPicker
-                position={{ bottom: true, right: true }}
-                value={theme.textShadowColor}
-                onChange={v => theme.textShadowColor = v}
-              />
-            </div>
+            <NumberInput
+              title={__i18n("text_shadow_size")}
+              value={theme.textShadowRadius}
+              onChange={v => theme.textShadowRadius = v}
+            />
+            <NumberInput
+              title={__i18n("text_shadow_offset_x")}
+              value={theme.textShadowOffsetX}
+              onChange={v => theme.textShadowOffsetX = v}
+            />
+            <NumberInput
+              title={__i18n("text_shadow_offset_y")}
+              value={theme.textShadowOffsetY}
+              onChange={v => theme.textShadowOffsetY = v}
+            />
+            <span className="heading">{__i18n("text_shadow_color")}</span>
+            <ColorPicker
+              position={{ bottom: true, right: true }}
+              value={theme.textShadowColor}
+              onChange={v => theme.textShadowColor = v}
+            />
           </div>
 
           <span className="sub-title">{__i18n("sub_header_border")}</span>

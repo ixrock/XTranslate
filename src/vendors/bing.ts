@@ -7,7 +7,7 @@ class Bing extends Translator {
   public title = 'Bing';
   public apiUrl = 'https://www.bing.com';
   public publicUrl = `${this.apiUrl}/translator`;
-  public maxTextInputLength = 5000;
+  public textInputMaxLength = 5000;
 
   constructor() {
     super(require("./bing.json"))

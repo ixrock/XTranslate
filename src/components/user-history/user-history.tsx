@@ -17,6 +17,8 @@ import { settingsStore } from "../settings/settings.store";
 import { HistoryTimeFrame, IHistoryItem, IHistoryStorageItem, userHistoryStore } from "./user-history.store";
 import { Icon } from "../icon";
 
+// todo: make possible to import history data, keep version of export format
+
 @observer
 export class UserHistory extends React.Component {
   settings = settingsStore.data;
@@ -206,7 +208,7 @@ export class UserHistory extends React.Component {
   }
 
   render() {
-    var { loading, loaded } = userHistoryStore;
+    var { isLoading, isLoaded } = userHistoryStore;
     var { timeFrame, showSettings, showSearch, searchText, hasMore, clearItemsByTimeFrame } = this;
     var { historyEnabled, historyAvoidDuplicates, historySaveWordsOnly, historyPageSize } = this.settings;
     return (
@@ -285,8 +287,8 @@ export class UserHistory extends React.Component {
             </div>
           )}
         </div>
-        {loading && <div className="loading"><Spinner/></div>}
-        {loaded && this.renderHistory()}
+        {isLoading && <div className="loading"><Spinner/></div>}
+        {isLoaded && this.renderHistory()}
         {hasMore && (
           <div className="load-more flex center">
             <Button

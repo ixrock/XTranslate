@@ -2,10 +2,9 @@
 
 import { autorun } from "mobx";
 import { __i18n, createTab, getActiveTab, getManifest, MenuTranslateFavoritePayload, MenuTranslateVendorPayload, MessageType, sendTabMessage } from "../extension";
-import { IFavorite, favoritesStore } from "../components/input-translation/favorites.store";
+import { favoritesStore, IFavorite } from "../components/input-translation/favorites.store";
 import { settingsStore } from "../components/settings/settings.store";
-import { getTranslatorByName, getTranslators } from "../vendors";
-import orderBy from "lodash/orderBy";
+import { getTranslators } from "../vendors";
 
 // handle menu clicks
 chrome.contextMenus.onClicked.addListener(
@@ -49,18 +48,16 @@ chrome.contextMenus.onClicked.addListener(
   }
 );
 
-// create, update or hide context menu regarding the settings
+// refresh context menu regarding the settings and favorites list
 autorun(() => {
-  chrome.contextMenus.removeAll(); // clean up
-
-  var settings = settingsStore.data;
-  var favorites = favoritesStore.data;
   var menuName = getManifest().name;
   var selectionContext = ['selection'];
   var pageContext = [...selectionContext, 'page'];
   var translators = getTranslators();
 
-  if (settings.showInContextMenu) {
+  chrome.contextMenus.removeAll();
+
+  if (settingsStore.data.showInContextMenu) {
     var topMenu = chrome.contextMenus.create({
       id: menuName,
       title: menuName,
@@ -95,22 +92,16 @@ autorun(() => {
     });
 
     // translate from favorites
-    var favCount = Object.keys(favorites).reduce((count, vendor) => count + favorites[vendor].length, 0);
-    if (favCount) {
+    if (favoritesStore.getCount() > 0) {
       chrome.contextMenus.create({
         id: Math.random().toString(),
         parentId: topMenu,
         type: "separator",
         contexts: selectionContext,
       });
-      Object.keys(favorites).forEach(vendorName => {
-        var vendor = getTranslatorByName(vendorName);
-        var favList: IFavorite[] = orderBy(favorites[vendorName], [
-          (fav: IFavorite) => fav.from !== 'auto',
-          'from'
-        ]);
-        favList.forEach(fav => {
-          var id = [MessageType.MENU_TRANSLATE_FAVORITE, vendorName, fav.from, fav.to].join('-');
+      favoritesStore.getFavorites().forEach(({ vendor, favorites }) => {
+        favorites.forEach((fav: IFavorite) => {
+          var id = [MessageType.MENU_TRANSLATE_FAVORITE, vendor.name, fav.from, fav.to].join('-');
           var title = `${vendor.title} (${[vendor.langFrom[fav.from], vendor.langTo[fav.to]].join(' → ')})`;
           chrome.contextMenus.create({
             id: id,
@@ -118,8 +109,8 @@ autorun(() => {
             parentId: topMenu,
             contexts: selectionContext,
           });
-        });
+        })
       });
     }
   }
-});
+}, { delay: 250 });

@@ -1,9 +1,9 @@
 import "./input-translation.scss";
 
-import * as React from "react";
-import { observer } from "mobx-react";
-import { debounce, find, remove } from "lodash";
-import { getTranslatorByName, getTranslators, isRTL, ITranslationError, ITranslationResult, Translator } from "../../vendors";
+import React, { Fragment } from "react";
+import { computed, observable, reaction, toJS } from "mobx";
+import { disposeOnUnmount, observer } from "mobx-react";
+import { getTranslatorByName, getTranslators, isRTL, ITranslationError, ITranslationResult } from "../../vendors";
 import { __i18n, getActiveTab, MessageType, onMessage, sendTabMessage } from "../../extension";
 import { createStorage, cssNames, isMac } from "../../utils";
 import { SelectLanguage } from "../select-language";
@@ -11,217 +11,171 @@ import { Input } from "../input";
 import { Option, OptionsGroup, Select } from "../select";
 import { Spinner } from "../spinner";
 import { settingsStore } from "../settings/settings.store";
-import { IFavorite, favoritesStore } from "./favorites.store";
-import { AppRoute } from "../app/app.route";
+import { favoritesStore } from "./favorites.store";
 import { userHistoryStore } from "../user-history/user-history.store";
+import { AppRoute } from "../app/app.route";
 import { Icon } from "../icon";
 
-// todo: refactor
-// todo: new look&feel for favorites
-// fixme: selecting new language for translate doesn't trigger translation when selected favorite pair
-
-interface State {
-  text?: string
-  langFrom?: string
-  langTo?: string
-  vendor?: string
-  loading?: boolean
-  immediate?: boolean
-  translation?: ITranslationResult
-  error?: ITranslationError
-  useFavorite?: {
-    vendor: Translator,
-    from: string,
-    to: string
-  }
+interface TranslateParams {
+  vendor: string;
+  langFrom: string;
+  langTo: string;
 }
 
 @observer
-export class InputTranslation extends React.Component<{}, State> {
+export class InputTranslation extends React.Component {
   static lastText = createStorage("last_text", "");
-  settings = settingsStore.data;
 
-  private input: Input;
-  private translation: Promise<any>;
-  private loadingTimer;
+  public input: Input;
+  public settings = settingsStore.data;
+  public loadingTimer;
+  public translateTimer;
 
-  public state: State = {
-    text: this.settings.rememberLastText ? InputTranslation.lastText() : "",
+  @observable isLoading = false;
+  @observable text = this.settings.rememberLastText ? InputTranslation.lastText() : "";
+  @observable translation: ITranslationResult;
+  @observable error: ITranslationError;
+  @observable favorite: TranslateParams = null;
+
+  @observable params: TranslateParams = {
     vendor: this.settings.vendor,
     langFrom: this.settings.langFrom,
     langTo: this.settings.langTo,
   };
 
-  get vendor() {
-    var useFavorite = this.state.useFavorite;
-    if (useFavorite) return useFavorite.vendor;
-    return getTranslatorByName(this.state.vendor);
+  @computed get isFavorite() {
+    if (this.favorite) return true;
+    var { vendor, langFrom, langTo } = this.params;
+    return favoritesStore.isFavorite(vendor, langFrom, langTo);
   }
 
-  get isFavorite() {
-    var { useFavorite, vendor, langFrom, langTo } = this.state;
-    if (useFavorite) {
-      let { vendor, from, to } = useFavorite;
-      return !!find(favoritesStore.getByVendor(vendor.name), { from, to });
-    }
-    return !!find(favoritesStore.getByVendor(vendor), { from: langFrom, to: langTo });
+  get activeVendor() {
+    var name = this.favorite ? this.favorite.vendor : this.params.vendor;
+    return getTranslatorByName(name)
   }
 
   async componentDidMount() {
+    if (this.text) this.translate();
+    this.input.focus();
+
     var activeTab = await getActiveTab();
     sendTabMessage(activeTab.id, {
       type: MessageType.GET_SELECTED_TEXT
     });
     onMessage(({ payload, type }) => {
       if (type === MessageType.SELECTED_TEXT) {
-        this.translateWord(payload);
+        this.translateText(payload);
       }
     });
-    if (this.state.text) this.translate();
-    this.input.focus();
-  }
-
-  saveFavorites(vendor: string, favorites: IFavorite[]) {
-    favoritesStore.data[vendor] = favorites;
+    // auto-translate when affecting params to translate is changing
+    disposeOnUnmount(this, [
+      reaction(() => [this.favorite, toJS(this.params)], () => {
+        if (this.translation) this.translate();
+      }, { delay: 100 })
+    ]);
   }
 
   addFavorite = () => {
-    var { langFrom, langTo, vendor } = this.state;
-    var fav: IFavorite = { from: langFrom, to: langTo };
-    var favorites: IFavorite[] = favoritesStore.getByVendor(vendor);
-    if (!find(favorites, fav)) {
-      this.saveFavorites(vendor, [...favorites, fav]);
-    }
+    var { langFrom, langTo, vendor } = this.params;
+    favoritesStore.addFavorite(vendor, {
+      from: langFrom,
+      to: langTo
+    });
   }
 
   removeFavorite = () => {
-    var { useFavorite, vendor, langFrom, langTo } = this.state;
-    if (useFavorite) {
-      // remove actively selected favorite from the list
-      let { vendor, from, to } = useFavorite;
-      let favorites = favoritesStore.getByVendor(vendor.name);
-      remove(favorites, { from, to });
-      this.saveFavorites(vendor.name, favorites);
-      this.useFavorite("");
-    }
-    else {
-      // remove current lang-pair from favorites
-      let favorites = favoritesStore.getByVendor(vendor);
-      remove(favorites, { from: langFrom, to: langTo });
-      this.saveFavorites(vendor, favorites);
-    }
-  }
-
-  playText = () => {
-    var { langDetected, langFrom, originalText } = this.state.translation;
-    this.vendor.playText(langDetected || langFrom, originalText);
-  }
-
-  translate = (text = this.state.text.trim()) => {
-    if (!text) {
-      if (this.vendor.isPlaying) {
-        this.vendor.stopPlaying();
-      }
-      return;
-    }
-    var { useFavorite, langFrom, langTo } = this.state;
-    if (useFavorite) {
-      langFrom = useFavorite.from;
-      langTo = useFavorite.to;
-    }
-    var translating = this.vendor.getTranslation(langFrom, langTo, text);
-    this.handleTranslation(translating);
-  }
-
-  private handleTranslation(translation: Promise<ITranslationResult>) {
-    this.setLoading();
-    var text = this.state.text;
-    var promise = this.translation = translation.then(result => {
-      if (this.translation !== promise || !text) return; // update state only with latest request
-      this.setState({ translation: result, error: null }, this.onTranslationReady);
-      return result;
-    }).catch(error => {
-      if (this.translation !== promise) return;
-      this.setState({ translation: null, error: error });
+    var { vendor, langFrom, langTo } = this.favorite || this.params;
+    favoritesStore.removeFavorite(vendor, {
+      from: langFrom,
+      to: langTo
     });
+    this.clearFavorite();
   }
 
-  onTranslationReady = () => {
-    var translation = this.state.translation;
+  clearFavorite = () => {
+    this.favorite = null;
+  }
+
+  playText = async () => {
+    if (!this.translation) return;
+    var { vendor, langDetected, langFrom, originalText } = this.translation;
+    await getTranslatorByName(vendor).playText(langDetected || langFrom, originalText);
+  }
+
+  translate = async (text = this.text.trim()) => {
     var { autoPlayText, historyEnabled } = this.settings;
-    if (autoPlayText) this.playText();
-    if (historyEnabled) userHistoryStore.saveTranslation(translation);
-  }
+    var { vendor, langFrom, langTo } = this.favorite || this.params;
+    var translator = getTranslatorByName(vendor);
+    if (!text) return;
+    try {
+      this.error = null;
+      this.loadingTimer = setTimeout(() => this.isLoading = true, 1000);
+      this.translation = await translator.getTranslation(langFrom, langTo, text);
+      if (autoPlayText) this.playText();
+      if (historyEnabled) userHistoryStore.saveTranslation(this.translation);
 
-  // show loading indicator only for long delays
-  setLoading() {
+    } catch (err) {
+      this.error = err;
+    }
     clearTimeout(this.loadingTimer);
-    this.loadingTimer = setTimeout(() => {
-      var ready = () => this.setState({ loading: false });
-      this.setState({ loading: true });
-      this.translation.then(ready, ready);
-    }, 1000);
+    this.isLoading = false;
   }
 
-  translateWord(text: string) {
+  translateText = (text: string) => {
     this.input.focus();
-    this.setState({ text }, () => {
-      this.setState({ immediate: true });
-      this.translate();
-    });
+    this.text = text;
+    this.translate();
   }
 
-  translateLazy = debounce(() => {
-    if (this.state.immediate) return;
+  translateImmediate = () => {
+    clearTimeout(this.translateTimer);
     this.translate();
-  }, this.settings.textInputTranslateDelayMs)
+  }
 
   onTextChange = (text: string) => {
-    if (this.settings.rememberLastText) InputTranslation.lastText(text);
-    this.setState({ text, immediate: false }, this.translateLazy);
-    if (!text.trim()) {
-      this.setState({ translation: null });
+    this.text = text;
+    var { rememberLastText, textInputTranslateDelayMs } = this.settings;
+    if (rememberLastText) {
+      InputTranslation.lastText(text);
     }
+    if (!text) {
+      var { activeVendor } = this;
+      if (activeVendor.isPlaying) activeVendor.stopPlaying();
+      this.translation = null;
+      this.error = null;
+    }
+    clearTimeout(this.translateTimer);
+    this.translateTimer = setTimeout(this.translate, textInputTranslateDelayMs);
   }
 
   onKeyDown = (evt: React.KeyboardEvent<HTMLInputElement>) => {
-    var meta = evt.metaKey || evt.ctrlKey;
-    var enter = evt.keyCode === 13;
-    if (enter && meta) {
-      this.setState({ immediate: true });
-      this.translate();
+    var isCmdEnter = (evt.metaKey || evt.ctrlKey) && evt.keyCode === 13;
+    if (isCmdEnter) {
+      this.translateImmediate();
     }
   }
 
-  onVendorChange = (vendorName: string) => {
-    var { langFrom, langTo } = this.state;
-    var state = { vendor: vendorName } as State;
-    var vendor = getTranslatorByName(vendorName);
-    if (!vendor.langFrom[langFrom]) state.langFrom = Object.keys(vendor.langFrom)[0];
-    if (!vendor.langTo[langTo]) state.langTo = Object.keys(vendor.langTo)[0];
-    this.setState(state, this.translate);
+  onLangChange = (from: string, to: string) => {
+    this.params.langFrom = from;
+    this.params.langTo = to;
+    this.clearFavorite();
   }
 
-  onLangChange = (langFrom: string, langTo: string) => {
-    var state = Object.assign({}, this.state);
-    if (langFrom) state.langFrom = langFrom;
-    if (langTo) state.langTo = langTo;
-    this.setState(state, this.translate);
-  }
-
-  onSwapLang = (langFrom: string, langTo: string) => {
-    this.setState({ langFrom, langTo }, this.translate);
+  onVendorChange = (vendor: string) => {
+    this.params.vendor = vendor;
+    this.clearFavorite();
   }
 
   renderHeader() {
-    var { vendor } = this.state;
-    var isFavorite = this.isFavorite;
+    var { isFavorite } = this;
+    var { vendor, langFrom, langTo } = this.params;
     return (
       <div className="language flex gaps">
         <SelectLanguage
-          className="box grow"
+          vendor={vendor}
+          from={langFrom}
+          to={langTo}
           onChange={this.onLangChange}
-          onSwap={this.onSwapLang}
         />
         <Select value={vendor} onChange={this.onVendorChange}>
           {getTranslators().map(v => <Option key={v.name} value={v.name} label={v.title}/>)}
@@ -229,77 +183,70 @@ export class InputTranslation extends React.Component<{}, State> {
         {isFavorite && (
           <Icon
             material="favorite"
-            title={__i18n("favorites_remove_item")}
+            tooltip={__i18n("favorites_remove_item")}
             onClick={this.removeFavorite}
           />
         )}
         {!isFavorite ?
           <Icon
             material="favorite_border"
-            title={__i18n("favorites_add_item")}
+            tooltip={__i18n("favorites_add_item")}
             onClick={this.addFavorite}/>
           : null}
       </div>
     )
   }
 
-  useFavorite = (value: string) => {
-    var useFavorite = null;
-    if (value) {
-      var [vendorName, from, to] = value.split("-");
-      var vendor = getTranslatorByName(vendorName);
-      if (vendor) useFavorite = { vendor, from, to };
-    }
-    this.setState({ useFavorite }, () => {
-      this.input.focus();
-      this.translate();
-    });
-  };
-
   renderFavorites() {
-    var favorites = favoritesStore.data;
-    var favoritesByVendors = getTranslators().filter(v => {
-      return favorites[v.name] && favorites[v.name].length > 0
-    }).map(v => {
-      return {
-        vendor: v,
-        favorites: favorites[v.name]
-      }
-    });
-    if (!favoritesByVendors.length) return null;
+    var { getCount, getFavorites } = favoritesStore;
+    if (!getCount()) return;
     return (
-      <div className="favorites flex gaps align-flex-start">
-        <Select className="box grow" onChange={this.useFavorite}>
+      <div className="favorites flex gaps">
+        <Select
+          className="box grow"
+          value={this.favorite}
+          onChange={(v: TranslateParams) => this.favorite = v}
+        >
           <Option value="" label={`${__i18n("favorites_translate_with")}`}/>
-          {favoritesByVendors.map(favList => {
-            var { vendor, favorites } = favList;
+          {getFavorites().map(({ vendor, favorites }) => {
             return (
               <OptionsGroup key={vendor.name} label={vendor.title}>
                 {favorites.map(fav => {
                   var { from, to } = fav;
-                  var langPair = [from, to].join("-").toUpperCase();
-                  var title = [vendor.langFrom[from], vendor.langTo[to]].join(' → ');
-                  var value = [vendor.name, from, to].join("-");
-                  return <Option key={langPair} label={title} value={value}/>
+                  var value: TranslateParams = {
+                    vendor: vendor.name,
+                    langFrom: from,
+                    langTo: to,
+                  };
+                  return (
+                    <Option
+                      key={[vendor.name, from, to].join("-")}
+                      value={value}
+                      label={`${vendor.langFrom[from]} → ${vendor.langTo[to]} (${vendor.title})`}
+                    />
+                  )
                 })}
               </OptionsGroup>
             )
           })}
         </Select>
+        <Icon
+          material="clear"
+          tooltip={__i18n("favorites_clear_all")}
+          onClick={() => favoritesStore.reset()}
+        />
       </div>
     );
   }
 
   renderResult() {
-    var { translation: result } = this.state;
-    if (!result) return null;
-    var { vendor } = this;
-    var { langFrom, langTo, langDetected, translation, transcription, dictionary, spellCorrection } = result;
+    var { langFrom, langTo, langDetected, translation, transcription, dictionary, spellCorrection } = this.translation;
+    var vendor = getTranslatorByName(this.translation.vendor);
     if (langDetected) langFrom = langDetected;
     var langPair = [langFrom, langTo].join(' → ').toUpperCase();
     var langPairFull = [vendor.langFrom[langFrom], vendor.langTo[langTo]].join(' → ');
     var title = __i18n("translated_with", [vendor.title, langPairFull]).join("");
-    var canPlayText = this.vendor.canPlayText(langFrom, translation);
+    var canPlayText = vendor.canPlayText(langFrom, translation);
     return (
       <div className={cssNames("translation-results", { rtl: isRTL(langTo) })}>
         {translation ?
@@ -314,13 +261,15 @@ export class InputTranslation extends React.Component<{}, State> {
               <span>{translation}</span>
               {transcription ? <i className="transcription">[{transcription}]</i> : null}
             </div>
-            <span className="lang" title={title}>{langPair}</span>
+            <span className="lang" title={title}>
+              {langPair}
+            </span>
           </div>
           : null}
         {spellCorrection ? (
           <div className="spell-correction">
             {__i18n("spell_correction", React.Children.toArray([
-              <b className="link" onClick={() => this.translateWord(spellCorrection)}>
+              <b className="link" onClick={() => this.translateText(spellCorrection)}>
                 {spellCorrection}
               </b>
             ]))}
@@ -328,34 +277,36 @@ export class InputTranslation extends React.Component<{}, State> {
         ) : null}
         <table className="dictionary">
           <tbody>
-          {dictionary.map((dict) => {
-            return React.Children.toArray([
-              <tr>
-                <td className="word-type" colSpan={2}>{dict.wordType}</td>
-              </tr>,
-              dict.meanings.map(meaning => {
-                var examples = meaning.examples
-                  ? meaning.examples.map(example => example.join(" - ")).join("\n")
-                  : "";
-                return (
-                  <tr>
-                    <td className="word">
-                      {meaning.word}
-                      {examples ? <span className="examples" title={examples}>*</span> : null}
-                    </td>
-                    <td className="word-meanings">
-                      {meaning.translation.map((word, i, list) => {
-                        var last = i === list.length - 1;
-                        return [
-                          <span key={i} className="link" onClick={() => this.translateWord(word)}>{word}</span>,
-                          !last ? ", " : null
-                        ];
-                      })}
-                    </td>
-                  </tr>
-                );
-              })
-            ])
+          {dictionary.map(({ wordType, meanings }) => {
+            return (
+              <Fragment key={wordType}>
+                <tr>
+                  <td className="word-type" colSpan={2}>{wordType}</td>
+                </tr>
+                {meanings.map(meaning => {
+                  var examples = meaning.examples
+                    ? meaning.examples.map(example => example.join(" - ")).join("\n")
+                    : "";
+                  return (
+                    <tr key={meaning.word}>
+                      <td className="word">
+                        {meaning.word}
+                        {examples ? <span className="examples" title={examples}>*</span> : null}
+                      </td>
+                      <td className="word-meanings">
+                        {meaning.translation.map((word, i, list) => {
+                          var last = i === list.length - 1;
+                          return [
+                            <span key={i} className="link" onClick={() => this.translateText(word)}>{word}</span>,
+                            !last ? ", " : null
+                          ];
+                        })}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </Fragment>
+            )
           })}
           </tbody>
         </table>
@@ -364,8 +315,7 @@ export class InputTranslation extends React.Component<{}, State> {
   }
 
   renderError() {
-    if (!this.state.error) return null;
-    var { statusCode, statusText } = this.state.error;
+    var { statusCode, statusText } = this.error;
     return (
       <div className="translation-error">
         {statusCode} - {statusText}
@@ -374,14 +324,15 @@ export class InputTranslation extends React.Component<{}, State> {
   }
 
   renderTranslation() {
-    var { text, loading, translation, error } = this.state;
+    var { text, isLoading, translation, error } = this;
     if (!text) return;
-    if (loading) return <Spinner center/>;
+    if (isLoading) return <Spinner center/>;
     if (translation) return this.renderResult();
     if (error) return this.renderError();
   }
 
   render() {
+    var { textInputMaxLength } = this.activeVendor;
     var { textInputTranslateDelayMs } = this.settings;
     return (
       <div className="InputTranslation flex column gaps">
@@ -391,8 +342,8 @@ export class InputTranslation extends React.Component<{}, State> {
           autoFocus
           multiLine rows={2} tabIndex={1}
           placeholder={__i18n("text_field_placeholder")}
-          maxLength={this.vendor.maxTextInputLength}
-          value={this.state.text}
+          maxLength={textInputMaxLength}
+          value={this.text}
           onChange={this.onTextChange}
           onKeyDown={this.onKeyDown}
           ref={e => this.input = e}

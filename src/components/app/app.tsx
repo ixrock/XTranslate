@@ -26,8 +26,8 @@ export class App extends React.Component {
   public settings = settingsStore.data;
 
   static async init() {
-    render(<Spinner center/>, App.rootElem); // show loading state
-    await when(() => !settingsStore.loading && !themeStore.loading);
+    render(<Spinner center/>, App.rootElem); // show loading indicator
+    await when(() => settingsStore.isLoaded && themeStore.isLoaded);
     render(<App/>, App.rootElem);
   }
 
@@ -75,10 +75,10 @@ export class App extends React.Component {
           />
         </h4>
         <Tabs center value={activePageId} onChange={hash => location.href = hash}>
-          <Tab value={AppRoute.settings} label={__i18n("tab_settings")}/>
-          <Tab value={AppRoute.theme} label={__i18n("tab_theme")}/>
-          <Tab value={AppRoute.popup} label={__i18n("tab_text_input")}/>
-          <Tab value={AppRoute.history} label={__i18n("tab_history")}/>
+          <Tab value={AppRoute.settings} label={__i18n("tab_settings")} icon="settings"/>
+          <Tab value={AppRoute.theme} label={__i18n("tab_theme")} icon="color_lens"/>
+          <Tab value={AppRoute.popup} label={__i18n("tab_text_input")} icon="translate"/>
+          <Tab value={AppRoute.history} label={__i18n("tab_history")} icon="history"/>
         </Tabs>
         <div className="tab-content">
           {activePageId === AppRoute.settings && <Settings/>}

@@ -61,7 +61,7 @@ class App extends React.Component<{}, State> {
   }
 
   async componentDidMount() {
-    await when(() => !settingsStore.loading && !themeStore.loading);
+    await when(() => settingsStore.isLoaded && themeStore.isLoaded);
     this.initIcon();
     onMessage(this.onMenuClick);
     onMessage(this.onGetSelectedText);
@@ -128,7 +128,7 @@ class App extends React.Component<{}, State> {
     var s = this.selection;
     var text = this.text;
     var vendor = getTranslatorByName(this.settings.vendor);
-    if (!s.rangeCount || !text || text.length > vendor.maxTextInputLength) return;
+    if (!s.rangeCount || !text || text.length > vendor.textInputMaxLength) return;
     var focusOffset = s.focusOffset;
     var anchorOffset = s.anchorOffset;
 
@@ -294,7 +294,7 @@ class App extends React.Component<{}, State> {
     langFrom = langFrom || this.settings.langFrom;
     langTo = langTo || this.settings.langTo;
     var vendorApi = getTranslatorByName(vendorName);
-    if (text && text.length <= vendorApi.maxTextInputLength) {
+    if (text && text.length <= vendorApi.textInputMaxLength) {
       if (isFrameWindow) {
         postMessage({
           type: MessageType.TRANSLATE_FROM_FRAME,

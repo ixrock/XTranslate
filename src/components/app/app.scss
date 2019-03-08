@@ -53,10 +53,13 @@ hr {
 }
 
 #app {
-  padding: $padding * 2;
-  min-height: 599px; // max-width for chrome extensions
-  min-width: 550px;
+  $width: 550px;
+  $height: 599px; // max-height for chrome extensions
+
   max-width: 700px;
+  min-width: $width;
+  min-height: $height;
+  padding: $padding * 2;
   margin: auto;
 }
 
@@ -64,6 +67,7 @@ hr {
   text-transform: uppercase;
   font-weight: bold;
   padding-bottom: $padding;
+  color: $color-secondary;
   display: block;
 }
 
@@ -73,7 +77,6 @@ hr {
   font-weight: bold;
   text-align: left;
   color: #666;
-  margin-bottom: $margin;
 }
 
 .Tabs {
@@ -83,6 +86,11 @@ hr {
   .Tab {
     position: relative;
     top: 1px;
+    flex-direction: column;
+
+    &.active {
+      color: $bgc-primary;
+    }
   }
 
   + .tab-content {
@@ -95,7 +103,7 @@ hr {
     opacity: .5;
 
     &:hover {
-      opacity: .75;
+      opacity: .7;
     }
   }
 }

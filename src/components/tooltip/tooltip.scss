@@ -7,7 +7,7 @@
   border-radius: $radius;
   color: gainsboro;
   margin: #{$padding / 2 $padding / 3};
-  white-space: normal;
+  white-space: nowrap;
   padding: .5em;
   text-align: center;
   z-index: 10001;
@@ -41,9 +41,5 @@
       left: 50%;
       transform: translateX(-50%);
     }
-  }
-
-  &.nowrap {
-    white-space: nowrap;
   }
 }

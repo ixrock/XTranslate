@@ -4,11 +4,16 @@ body {
     --theme-contast-color-invert: #{darken($bgc-dark, 2.5%)};
 
     background: $bgc-dark;
-    color: $color-secondary;
+    color: lighten($color-secondary, 2.5%);
     @include custom-scrollbar(light);
 
     .page-title {
       color: #cccccc;
+    }
+
+    .sub-title,
+    .Tabs {
+      color: lighten($color-primary, 10%);
     }
 
     .Slider {

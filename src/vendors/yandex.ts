@@ -6,7 +6,7 @@ class Yandex extends Translator {
   public title = 'Yandex';
   public apiUrl = 'https://translate.yandex.net';
   public publicUrl = 'https://translate.yandex.com';
-  public maxTextInputLength = 10000;
+  public textInputMaxLength = 10000;
   public ttsMaxLength = 300;
 
   constructor() {

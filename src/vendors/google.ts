@@ -6,7 +6,7 @@ class Google extends Translator {
   public title = 'Google';
   public apiUrl = 'https://translate.googleapis.com';
   public publicUrl = 'https://translate.google.com';
-  public maxTextInputLength = 5000;
+  public textInputMaxLength = 5000;
   public ttsMaxLength = 187;
 
   constructor() {

@@ -19,7 +19,7 @@ export interface SelectProps<T = any> {
 
 export class Select extends React.Component<SelectProps> {
   static defaultProps: SelectProps = {
-    getOptionValue: (value: any) => JSON.stringify(value),
+    getOptionValue: (value: any) => String(value),
     getOptionLabel: (value: any) => String(value),
   };
 

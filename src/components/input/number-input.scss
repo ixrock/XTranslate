@@ -10,16 +10,37 @@
   }
 
   .arrow-icons {
-    width: 20px;
-    height: 20px;
+    $boxSize: 20px;
+    width: $boxSize;
+    height: $boxSize;
     display: flex;
     flex-direction: column;
 
     .Icon {
-      --size: 20px;
+      --size: 22px;
       --bgc-active: none;
       --color-active: #{$bgc-primary};
+
+      position: relative;
       flex: 1;
+
+      // increase active clickable area
+      &:before {
+        content: "";
+        display: block;
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        transform: scale(1.5);
+      }
+
+      &.arrow-up:before {
+        transform-origin: bottom center;
+      }
+
+      &.arrow-down:before {
+        transform-origin: top center;
+      }
 
       > span {
         line-height: 50%;

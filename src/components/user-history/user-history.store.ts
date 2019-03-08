@@ -1,4 +1,4 @@
-import { IObservableArray, observable, when } from "mobx";
+import { observable, reaction } from "mobx";
 import { Store } from "../../store";
 import { autobind } from "../../utils/autobind";
 import { ITranslationResult } from "../../vendors/translator";
@@ -9,28 +9,32 @@ export enum HistoryTimeFrame {
   HOUR, DAY, MONTH, YEAR, ALL
 }
 
+const initHistoryData = observable.array<IHistoryStorageItem>([], {
+  deep: false
+});
+
 @autobind()
-export class UserHistoryStore extends Store<IObservableArray<IHistoryStorageItem>> {
+export class UserHistoryStore extends Store<typeof initHistoryData> {
   protected id = "history";
 
   constructor() {
     super({
       autoLoad: false,
       storageType: "local",
-      initialData: observable.array([], { deep: false }),
+      initialData: initHistoryData,
     });
   }
 
-  protected autoSaveReaction() {
-    return this.data.length;
+  protected bindAutoSave() {
+    reaction(() => this.data.length, this.save, {
+      delay: this.params.autoSaveDelayMs
+    })
   }
 
   async saveTranslation(translation: ITranslationResult) {
     if (!translation) return;
-    if (!this.loaded) {
-      this.load();
-      await when(() => this.loaded);
-    }
+    if (!this.isLoaded) await this.load();
+
     var { vendor, langFrom, langTo, langDetected, originalText } = translation;
     var { historySaveWordsOnly, historyAvoidDuplicates } = settingsStore.data;
     if (historySaveWordsOnly && !translation.dictionary.length) {

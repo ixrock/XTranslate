@@ -66,7 +66,7 @@ export abstract class Translator {
   public langFrom: ILanguages = {};
   public langTo: ILanguages = {};
   public maxUrlLength = 2048; // max length of the url for GET/POST requests
-  public maxTextInputLength = Number.MAX_SAFE_INTEGER;
+  public textInputMaxLength = Number.MAX_SAFE_INTEGER;
   protected autoSwapUsed = false;
 
   @observable isPlaying = false;

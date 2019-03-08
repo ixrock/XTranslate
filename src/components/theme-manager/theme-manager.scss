@@ -18,13 +18,5 @@
     .ColorPicker + .ColorPicker {
       margin-left: $padding / 2;
     }
-
-    .shadow-settings {
-      overflow: hidden;
-      .Input {
-        overflow: hidden;
-        max-width: 100px;
-      }
-    }
   }
 }

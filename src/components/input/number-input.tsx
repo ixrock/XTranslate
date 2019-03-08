@@ -35,11 +35,20 @@ export class NumberInput extends React.Component<Props> {
     className = cssNames("NumberInput", className);
     return (
       <Input
-        {...inputProps} type="number" className={className} ref={this.bindRef}
+        {...inputProps}
+        type="number" className={className} ref={this.bindRef}
         labelContent={(
           <div className="arrow-icons">
-            <Icon material="arrow_drop_up" onClick={this.increment}/>
-            <Icon material="arrow_drop_down" onClick={this.decrement}/>
+            <Icon
+              material="arrow_drop_up"
+              className="arrow-up"
+              onClick={this.increment}
+            />
+            <Icon
+              material="arrow_drop_down"
+              className="arrow-down"
+              onClick={this.decrement}
+            />
           </div>
         )}
       />

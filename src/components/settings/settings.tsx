@@ -2,7 +2,7 @@ import "./settings.scss";
 
 import * as React from "react";
 import { observer } from "mobx-react";
-import { getTranslatorByName, getTranslators } from "../../vendors";
+import { getTranslators } from "../../vendors";
 import { __i18n, createTab } from "../../extension";
 import { autobind, getHotkey, parseHotkey } from "../../utils";
 import { SelectLanguage } from "../select-language";
@@ -28,22 +28,9 @@ export class Settings extends React.Component {
     }
   }
 
-  @autobind()
-  onVendorChange(vendorName: string) {
-    this.settings.vendor = vendorName;
-    var { langFrom, langTo } = this.settings;
-    var vendor = getTranslatorByName(vendorName);
-    if (!vendor.langFrom[langFrom]) {
-      this.settings.langFrom = Object.keys(vendor.langFrom)[0];
-    }
-    if (!vendor.langTo[langTo]) {
-      this.settings.langTo = Object.keys(vendor.langTo)[0];
-    }
-  }
-
   render() {
     var { settings } = this;
-    var hotkey = parseHotkey(settings.hotkey);
+    var hotKey = parseHotkey(settings.hotkey);
     return (
       <div className="Settings flex column gaps">
         <p className="sub-title">{__i18n("setting_title_common")}</p>
@@ -65,12 +52,12 @@ export class Settings extends React.Component {
           />
         </div>
 
-        <p className="sub-title">{__i18n("sub_header_translator")}</p>
+        <p className="sub-title">{__i18n("setting_title_translator_service")}</p>
         <div className="vendors flex gaps">
           <RadioGroup
             className="vendor flex gaps column"
             value={settings.vendor}
-            onChange={this.onVendorChange}
+            onChange={v => settingsStore.setVendor(v)}
             children={
               getTranslators().map(({ name, title, publicUrl }) => {
                 var domain = publicUrl.match(/https?:\/\/(.*?)(?:\/\w*|$)/i)[1];
@@ -85,7 +72,7 @@ export class Settings extends React.Component {
               })
             }
           />
-          <SelectLanguage className="box grow"/>
+          <SelectLanguage/>
         </div>
 
         <p className="sub-title">{__i18n("setting_title_popup")}</p>
@@ -128,11 +115,13 @@ export class Settings extends React.Component {
               <label className="flex gaps">
                 <Icon material="keyboard"/>
                 <Input
-                  readOnly className="hotkey"
-                  title={hotkey.title}
-                  value={hotkey.value}
-                  onKeyDown={this.saveHotkey}
+                  readOnly
+                  id="hotkey" className="hotkey"
+                  value={hotKey.value} onKeyDown={this.saveHotkey}
                 />
+                <Tooltip htmlFor="hotkey" following>
+                  {hotKey.title}
+                </Tooltip>
               </label>
             </div>
           </div>
