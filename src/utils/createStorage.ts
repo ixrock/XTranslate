@@ -1,4 +1,4 @@
-// Helper utilities to work with browser's local-storage
+// Helper to work with browser's local-storage
 
 const keyPrefix = '';
 

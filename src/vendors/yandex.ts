@@ -6,7 +6,7 @@ class Yandex extends Translator {
   public title = 'Yandex';
   public apiUrl = 'https://translate.yandex.net';
   public publicUrl = 'https://translate.yandex.com';
-  public textInputMaxLength = 10000;
+  public textMaxLength = 10000;
   public ttsMaxLength = 300;
 
   constructor() {
@@ -124,4 +124,4 @@ interface YandexDictionary {
 }
 
 const yandex = new Yandex();
-Translator.registerVendor(yandex.name, yandex);
+Translator.register(yandex.name, yandex);

@@ -1,5 +1,5 @@
 // Chrome extension's runtime api helpers
-import { Message } from './message'
+import { Message } from './messages'
 
 export function getId() {
   return chrome.runtime.id;
@@ -18,7 +18,7 @@ export function getOptionsPageUrl(hash = location.hash) {
   return getURL(getManifest().options_page) + hash;
 }
 
-export function sendMessage(message: Message) {
+export function sendMessage<T>(message: Message<T>) {
   chrome.runtime.sendMessage(message)
 }
 

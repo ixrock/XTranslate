@@ -6,7 +6,7 @@ import { disposeOnUnmount, observer } from "mobx-react";
 import { groupBy } from "lodash";
 import { __i18n } from "../../extension/i18n";
 import { cssNames, download, prevDefault } from "../../utils";
-import { getTranslatorByName, isRTL } from "../../vendors";
+import { getTranslator, isRTL } from "../../vendors";
 import { Checkbox } from "../checkbox";
 import { MenuActions, MenuItem } from "../menu";
 import { Input, NumberInput } from "../input";
@@ -89,7 +89,7 @@ export class UserHistory extends React.Component {
         history.forEach(item => {
           csv.push([
             new Date(item.date).toLocaleString(),
-            getTranslatorByName(item.vendor).title,
+            getTranslator(item.vendor).title,
             item.from + "-" + item.to,
             item.text,
             item.translation,
@@ -128,7 +128,7 @@ export class UserHistory extends React.Component {
   }
 
   playText = (vendor: string, lang: string, text: string) => {
-    getTranslatorByName(vendor).playText(lang, text);
+    getTranslator(vendor).playText(lang, text);
   }
 
   renderHistory() {

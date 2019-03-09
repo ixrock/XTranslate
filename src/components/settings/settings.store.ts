@@ -1,6 +1,6 @@
 import { Store } from "../../store";
 import { Hotkey } from "../../utils/parseHotkey";
-import { getTranslatorByName } from "../../vendors";
+import { getTranslator } from "../../vendors";
 
 export const defaultSettings = {
   autoPlayText: false,
@@ -37,7 +37,7 @@ export class SettingsStore extends Store<typeof defaultSettings> {
   }
 
   setVendor(vendorName: string) {
-    var translator = getTranslatorByName(vendorName);
+    var translator = getTranslator(vendorName);
     var { vendor, langFrom, langTo } = this.data;
     if (!translator || vendor === vendorName) return;
     if (!translator.langFrom[langFrom]) {

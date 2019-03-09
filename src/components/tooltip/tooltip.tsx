@@ -7,7 +7,8 @@ import { autobind, cssNames } from "../../utils";
 export interface TooltipProps {
   htmlFor: string
   className?: string;
-  following?: boolean;
+  following?: boolean;  // tooltip is following mouse position
+  nowrap?: boolean;     // apply css: "white-space: nowrap"
   position?: Position;
   children?: React.ReactNode;
 }
@@ -26,6 +27,7 @@ interface State {
 
 export class Tooltip extends React.Component<TooltipProps, State> {
   static defaultProps: Partial<TooltipProps> = {
+    nowrap: true,
     position: {
       center: true,
       bottom: true,
@@ -97,8 +99,8 @@ export class Tooltip extends React.Component<TooltipProps, State> {
     if (!this.state.visible) {
       return null;
     }
-    var { className, position, following, children } = this.props;
-    className = cssNames('Tooltip', position, { following }, className);
+    var { className, position, following, nowrap, children } = this.props;
+    className = cssNames('Tooltip', position, { following, nowrap }, className);
     var tooltip = (
       <div
         className={className}

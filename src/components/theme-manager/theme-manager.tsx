@@ -152,14 +152,7 @@ export class ThemeManager extends React.Component {
             />
             <span className="heading">{__i18n("border_style")}</span>
             <Select className="box grow" value={theme.borderStyle} onChange={v => theme.borderStyle = v}>
-              <Option value="solid"/>
-              <Option value="dotted"/>
-              <Option value="dashed"/>
-              <Option value="double"/>
-              <Option value="groove"/>
-              <Option value="ridge"/>
-              <Option value="inset"/>
-              <Option value="outset"/>
+              {themeStore.borderStyle.map(style => <Option key={style} value={style}/>)}
             </Select>
             <span className="heading">{__i18n("border_color")}</span>
             <ColorPicker

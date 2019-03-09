@@ -1,7 +1,6 @@
 import './icon.scss'
 
-import React, { CSSProperties, isValidElement } from "react";
-import { findDOMNode } from "react-dom";
+import React, { isValidElement } from "react";
 import { autobind, cssNames } from "../../utils";
 import { Tooltip, TooltipProps } from "../tooltip";
 import uniqueId from "lodash/uniqueId"
@@ -21,8 +20,12 @@ export type IconProps = React.HTMLProps<any> & {
   disabled?: boolean;
 }
 
-export class Icon extends React.PureComponent<IconProps> {
-  private tooltipId = this.props.id || (this.props.tooltip ? uniqueId("icon_tooltip_") : undefined);
+export class Icon extends React.Component<IconProps> {
+  public elem: HTMLElement;
+
+  public tooltipId = this.props.id || (
+    this.props.tooltip ? uniqueId("icon_tooltip_") : undefined
+  );
 
   get isActionIcon() {
     var { actionIcon, onClick, href } = this.props;
@@ -34,17 +37,24 @@ export class Icon extends React.PureComponent<IconProps> {
     switch (evt.nativeEvent.code) {
       case "Space":
       case "Enter":
-        var icon = findDOMNode(this) as HTMLElement;
-        icon.click();
+        this.elem.click();
         evt.preventDefault();
         break;
     }
   }
 
-  render() {
-    var { className, href, material, svg, colorful, actionIcon, tooltip, size, small, big, disabled, ...elemProps } = this.props;
-    actionIcon = this.isActionIcon;
+  @autobind()
+  bindRef(elem: HTMLElement) {
+    this.elem = elem;
+  }
 
+  render() {
+    var { className, href, material, svg, colorful, actionIcon, tooltip, size, small, big, style, disabled, ...elemProps } = this.props;
+    actionIcon = this.isActionIcon;
+    if (size) {
+      style = style || {};
+      style["--size"] = size + (isNumber(size) ? "px" : "");
+    }
     var iconProps: Partial<IconProps> = {
       id: this.tooltipId,
       className: cssNames("Icon", className,
@@ -53,7 +63,8 @@ export class Icon extends React.PureComponent<IconProps> {
       ),
       onKeyDown: actionIcon ? this.onKeyDown : undefined,
       tabIndex: actionIcon ? 0 : undefined,
-      style: size ? { "--size": size + (isNumber(size) ? "px" : "") } as CSSProperties : undefined,
+      style: style,
+      ref: this.bindRef,
       ...elemProps
     };
 

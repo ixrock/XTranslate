@@ -33,6 +33,10 @@ export class ThemeStore extends Store<typeof defaultTheme> {
     "Arial", "Helvetica Neue", "Times New Roman", // system fonts
   ];
 
+  public borderStyle = [
+    "solid", "dotted", "dashed", "double", "groove", "ridge", "inset", "outset"
+  ];
+
   constructor() {
     super({
       storageType: "sync",

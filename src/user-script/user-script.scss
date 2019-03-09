@@ -1,8 +1,6 @@
 @import "../components/fonts";
 
 :host {
-  all: initial !important;
-
   @import "~flex.box";
   @import "../components/popup/popup";
   @import "../components/icon/icon";
@@ -16,8 +14,16 @@
   }
 }
 
+// reset styles, must be declared at the top in css file
+.XTranslate {
+  &, div, span, i, svg {
+    all: unset;
+  }
+}
+
 .XTranslate {
   @import "../components/icon/icon";
+  @import "../components/tooltip/tooltip";
 
   position: absolute !important;
   width: 100% !important;
@@ -27,27 +33,19 @@
 
   > .Icon {
     position: absolute;
-    font-style: normal;
-    cursor: pointer;
+    box-shadow: 0 0 5px -1px;
+    background: white;
     border-radius: 50%;
     overflow: hidden;
-    box-shadow: 0 0 5px -1px;
-    color: black;
-    background: white;
-    text-indent: 1px;
+    cursor: pointer;
 
-    &.isLeftTop {
-      transform: translate(-100%, -100%);
+    &[hidden] {
+      opacity: 0;
     }
 
     &:hover {
       background: black;
       color: white;
-    }
-
-    > span {
-      all: unset;
-      pointer-events: none;
     }
   }
 }

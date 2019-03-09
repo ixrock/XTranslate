@@ -3,7 +3,7 @@ import "./input-translation.scss";
 import React, { Fragment } from "react";
 import { computed, observable, reaction, toJS } from "mobx";
 import { disposeOnUnmount, observer } from "mobx-react";
-import { getTranslatorByName, getTranslators, isRTL, ITranslationError, ITranslationResult } from "../../vendors";
+import { getTranslator, getTranslators, isRTL, ITranslationError, ITranslationResult } from "../../vendors";
 import { __i18n, getActiveTab, MessageType, onMessage, sendTabMessage } from "../../extension";
 import { createStorage, cssNames, isMac } from "../../utils";
 import { SelectLanguage } from "../select-language";
@@ -51,7 +51,7 @@ export class InputTranslation extends React.Component {
 
   get activeVendor() {
     var name = this.favorite ? this.favorite.vendor : this.params.vendor;
-    return getTranslatorByName(name)
+    return getTranslator(name)
   }
 
   async componentDidMount() {
@@ -92,6 +92,11 @@ export class InputTranslation extends React.Component {
     this.clearFavorite();
   }
 
+  removeAllFavorites = () => {
+    favoritesStore.reset();
+    this.clearFavorite();
+  }
+
   clearFavorite = () => {
     this.favorite = null;
   }
@@ -99,13 +104,13 @@ export class InputTranslation extends React.Component {
   playText = async () => {
     if (!this.translation) return;
     var { vendor, langDetected, langFrom, originalText } = this.translation;
-    await getTranslatorByName(vendor).playText(langDetected || langFrom, originalText);
+    await getTranslator(vendor).playText(langDetected || langFrom, originalText);
   }
 
   translate = async (text = this.text.trim()) => {
     var { autoPlayText, historyEnabled } = this.settings;
     var { vendor, langFrom, langTo } = this.favorite || this.params;
-    var translator = getTranslatorByName(vendor);
+    var translator = getTranslator(vendor);
     if (!text) return;
     try {
       this.error = null;
@@ -233,7 +238,7 @@ export class InputTranslation extends React.Component {
         <Icon
           material="clear"
           tooltip={__i18n("favorites_clear_all")}
-          onClick={() => favoritesStore.reset()}
+          onClick={this.removeAllFavorites}
         />
       </div>
     );
@@ -241,7 +246,7 @@ export class InputTranslation extends React.Component {
 
   renderResult() {
     var { langFrom, langTo, langDetected, translation, transcription, dictionary, spellCorrection } = this.translation;
-    var vendor = getTranslatorByName(this.translation.vendor);
+    var vendor = getTranslator(this.translation.vendor);
     if (langDetected) langFrom = langDetected;
     var langPair = [langFrom, langTo].join(' → ').toUpperCase();
     var langPairFull = [vendor.langFrom[langFrom], vendor.langTo[langTo]].join(' → ');
@@ -332,7 +337,7 @@ export class InputTranslation extends React.Component {
   }
 
   render() {
-    var { textInputMaxLength } = this.activeVendor;
+    var { textMaxLength } = this.activeVendor;
     var { textInputTranslateDelayMs } = this.settings;
     return (
       <div className="InputTranslation flex column gaps">
@@ -342,7 +347,7 @@ export class InputTranslation extends React.Component {
           autoFocus
           multiLine rows={2} tabIndex={1}
           placeholder={__i18n("text_field_placeholder")}
-          maxLength={textInputMaxLength}
+          maxLength={textMaxLength}
           value={this.text}
           onChange={this.onTextChange}
           onKeyDown={this.onKeyDown}

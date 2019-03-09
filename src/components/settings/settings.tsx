@@ -157,7 +157,7 @@ export class Settings extends React.Component {
               label={__i18n("sub_header_quick_access_hotkey")}
               onClick={() => createTab("chrome://extensions/configureCommands")}
             />
-            <Tooltip htmlFor="add-shortcut" following>
+            <Tooltip htmlFor="add-shortcut" following nowrap={false}>
               {__i18n("quick_access_configure_link")}
             </Tooltip>
           </div>

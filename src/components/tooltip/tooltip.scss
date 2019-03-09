@@ -7,17 +7,16 @@
   border-radius: $radius;
   color: gainsboro;
   margin: #{$padding / 2 $padding / 3};
-  white-space: nowrap;
   padding: .5em;
   text-align: center;
   z-index: 10001;
 
-  * {
-    white-space: normal;
-  }
-
   &:empty {
     display: none;
+  }
+
+  &.nowrap {
+    white-space: nowrap;
   }
 
   &:not(.following) {

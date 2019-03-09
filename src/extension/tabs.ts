@@ -1,5 +1,5 @@
 // Chrome tabs's api helper
-import { Message } from './message'
+import { Message } from './messages'
 
 export function sendTabMessage(tabId: number, message: Message) {
   chrome.tabs.sendMessage(tabId, message);

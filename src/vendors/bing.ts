@@ -7,7 +7,7 @@ class Bing extends Translator {
   public title = 'Bing';
   public apiUrl = 'https://www.bing.com';
   public publicUrl = `${this.apiUrl}/translator`;
-  public textInputMaxLength = 5000;
+  public textMaxLength = 5000;
 
   constructor() {
     super(require("./bing.json"))
@@ -128,4 +128,4 @@ interface DictTranslation {
 }
 
 const bing = new Bing();
-Translator.registerVendor(bing.name, bing);
+Translator.register(bing.name, bing);

@@ -1,5 +1,6 @@
 // Base class for all translation vendors
 import { observable } from "mobx";
+import { autobind } from "../utils";
 
 export interface ITranslatorParams {
   apiKeys?: string[]
@@ -44,10 +45,11 @@ export interface ITranslationError {
   parseError?: string;
 }
 
+@autobind()
 export abstract class Translator {
   static vendors = new Map<string, Translator>();
 
-  static registerVendor(name: string, vendor: Translator) {
+  static register(name: string, vendor: Translator) {
     Translator.vendors.set(name, vendor);
   }
 
@@ -66,7 +68,7 @@ export abstract class Translator {
   public langFrom: ILanguages = {};
   public langTo: ILanguages = {};
   public maxUrlLength = 2048; // max length of the url for GET/POST requests
-  public textInputMaxLength = Number.MAX_SAFE_INTEGER;
+  public textMaxLength = Number.MAX_SAFE_INTEGER;
   protected autoSwapUsed = false;
 
   @observable isPlaying = false;
@@ -98,6 +100,9 @@ export abstract class Translator {
     var last = this.lastResult;
     if (last && last.langFrom === from && last.langTo === to && last.originalText === text) {
       return last;
+    }
+    if (text.length > this.textMaxLength) {
+      text = text.substr(0, this.textMaxLength);
     }
     try {
       this.lastError = null;
@@ -148,7 +153,7 @@ export abstract class Translator {
     var audioUrl = this.getAudioUrl(lang, text);
     if (audioUrl) {
       if (audioUrl !== this.lastAudioUrl) {
-        this.stopPlaying();
+        stopPlayingAll();
         this.lastAudioUrl = audioUrl;
         var src = await this.getAudioSource(audioUrl);
         var tts = this.ttsAudio = document.createElement('audio');
@@ -179,12 +184,10 @@ export abstract class Translator {
   }
 
   stopPlaying() {
-    getTranslators().forEach(translator => {
-      if (!translator.ttsAudio) return;
-      delete translator.lastAudioUrl;
-      translator.ttsAudio.pause();
-      URL.revokeObjectURL(translator.ttsAudio.src);
-    })
+    if (!this.ttsAudio || !this.isPlaying) return;
+    delete this.lastAudioUrl;
+    this.ttsAudio.pause();
+    URL.revokeObjectURL(this.ttsAudio.src);
   }
 
   canTranslate(langFrom: string, langTo: string) {
@@ -210,8 +213,12 @@ export function getTranslators() {
   return [...Translator.vendors.values()];
 }
 
-export function getTranslatorByName(name: string) {
+export function getTranslator(name: string) {
   return Translator.vendors.get(name);
+}
+
+export function stopPlayingAll() {
+  getTranslators().forEach(vendor => vendor.stopPlaying());
 }
 
 export function getNextTranslator(name: string, langFrom: string, langTo: string, reverse = false) {

@@ -3,7 +3,7 @@ import "./select-language.scss";
 import * as React from 'react';
 import { observer } from "mobx-react";
 import { __i18n } from "../../extension/i18n";
-import { getTranslatorByName } from "../../vendors";
+import { getTranslator } from "../../vendors";
 import { cssNames } from "../../utils";
 import { Option, Select } from "../select";
 import { Icon } from "../icon";
@@ -50,7 +50,7 @@ export class SelectLanguage extends React.Component<Props> {
 
   render() {
     var { vendor, langFrom, langTo, onChange } = this;
-    var { langFrom: listFrom, langTo: listTo } = getTranslatorByName(vendor);
+    var { langFrom: listFrom, langTo: listTo } = getTranslator(vendor);
     var className = cssNames('SelectLanguage flex gaps align-flex-start', this.props.className);
     return (
       <div className={className}>
