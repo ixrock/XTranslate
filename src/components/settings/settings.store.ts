@@ -39,13 +39,14 @@ export class SettingsStore extends Store<typeof defaultSettings> {
   setVendor(vendorName: string) {
     var translator = getTranslator(vendorName);
     var { vendor, langFrom, langTo } = this.data;
-    if (!translator || vendor === vendorName) return;
+    if (vendor === vendorName) return;
     if (!translator.langFrom[langFrom]) {
       this.data.langFrom = Object.keys(translator.langFrom)[0];
     }
     if (!translator.langTo[langTo]) {
       this.data.langTo = Object.keys(translator.langTo)[0];
     }
+    this.data.vendor = vendorName;
   }
 }
 
