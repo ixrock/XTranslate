@@ -287,17 +287,18 @@ class App extends React.Component {
     this.translate();
   }
 
-  @autobind()
-  onDoubleClick(evt: MouseEvent) {
+  // run with delay after `selectionchange` and get latest then `this.selectedText` in callback
+  onDoubleClick = debounce((evt: MouseEvent) => {
     var { showPopupAfterSelection, showPopupOnDoubleClick } = this.settings;
     if (showPopupAfterSelection || this.isEditable(evt.target as HTMLElement)) {
       return;
     }
     if (showPopupOnDoubleClick && this.selectedText) {
       this.hideIcon();
+      this.refreshRects();
       this.translate();
     }
-  }
+  }, 500);
 
   @autobind()
   onMenuClick(message: Message) {
