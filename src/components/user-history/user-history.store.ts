@@ -20,6 +20,7 @@ export class UserHistoryStore extends Store<typeof initHistoryData> {
   constructor() {
     super({
       autoLoad: false,
+      autoSaveDelayMs: 500,
       storageType: "local",
       initialData: initHistoryData,
     });

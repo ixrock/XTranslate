@@ -29,7 +29,7 @@ export abstract class Store<T = object> {
   protected constructor(protected params: StoreParams<T>) {
     this.params = Object.assign({}, Store.defaultParams, params);
 
-    var { initialData, autoLoad, autoSave, autoSaveDelayMs, storageType } = this.params;
+    var { initialData, autoLoad, autoSave, storageType } = this.params;
     this.data = initialData;
 
     if (autoLoad) {
@@ -55,11 +55,11 @@ export abstract class Store<T = object> {
     });
   }
 
-  async load(force?: boolean) {
+  async load(force?: boolean): Promise<T> {
     var { storageType } = this.params;
     if (this.isLoaded && !force) return;
     this.isLoading = true;
-    await new Promise((resolve, reject) => {
+    return new Promise((resolve, reject) => {
       chrome.storage[storageType].get(this.id, items => {
         this.update(items[this.id]);
         this.isLoading = false;

@@ -45,7 +45,7 @@ export class UserHistory extends React.Component {
   }
 
   componentDidMount() {
-    userHistoryStore.load();
+    userHistoryStore.load(true);
   }
 
   toggleDetails(item: IHistoryStorageItem) {
@@ -58,7 +58,6 @@ export class UserHistory extends React.Component {
     this.forceUpdate();
   }
 
-  // todo: make possible to import data, keep version of export format
   exportHistory(type: "json" | "csv") {
     var filename = `xtranslate-history.${type}`;
     var items = this.searchText ? this.items : userHistoryStore.data;
