@@ -1,3 +1,4 @@
+//-- Main window app (options page)
 import './app.scss'
 
 import * as React from 'react';

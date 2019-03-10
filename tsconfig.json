@@ -9,7 +9,7 @@
     "moduleResolution": "node",
     "allowJs": true,
     "sourceMap": true,
-    "noImplicitAny": false, // fixme
+    "noImplicitAny": false,
     "esModuleInterop": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true

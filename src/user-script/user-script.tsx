@@ -1,9 +1,10 @@
-//-- User script (page context)
+//-- User script app (page context)
 
 import React from "react";
 import { render } from "react-dom";
 import { computed, observable, toJS, when } from "mobx";
 import { observer } from "mobx-react";
+import { debounce, isEqual } from "lodash"
 import { autobind, cssNames, getHotkey } from "../utils";
 import { getManifest, getURL, MenuTranslateFavoritePayload, MenuTranslateVendorPayload, Message, MessageType, onMessage, PlayTextToSpeechPayload, sendMessage } from "../extension";
 import { getNextTranslator, getTranslator, ITranslationError, ITranslationResult } from "../vendors";
@@ -13,7 +14,6 @@ import { Popup } from "../components/popup/popup";
 import { settingsStore } from "../components/settings/settings.store";
 import { themeStore } from "../components/theme-manager/theme.store";
 import { userHistoryStore } from "../components/user-history/user-history.store";
-import isEqual from "lodash/isEqual"
 
 const isPdf = document.contentType === "application/pdf";
 
@@ -60,6 +60,7 @@ class App extends React.Component {
     document.addEventListener("mouseover", this.onMouseOver);
     document.addEventListener("dblclick", this.onDoubleClick);
     document.addEventListener("keydown", this.onKeyDown);
+    window.addEventListener("resize", this.onResizeWindow);
     onMessage(this.onMenuClick);
     onMessage(this.onGetSelectedText);
   }
@@ -198,8 +199,8 @@ class App extends React.Component {
       }
       var rects = Array.from(range.getClientRects());
       if (!rects.length) {
-        var commonRect = (focusNode instanceof HTMLElement ? focusNode : range).getBoundingClientRect();
-        rects.push(commonRect)
+        var rect = (focusNode instanceof HTMLElement ? focusNode : range).getBoundingClientRect();
+        rects.push(rect);
       }
       this.selectionRects = rects.map(rect => this.normalizeRect(rect));
       this.isRtlSelection = anchorOffset > focusOffset;
@@ -385,6 +386,11 @@ class App extends React.Component {
       }
     }
   }
+
+  onResizeWindow = debounce(() => {
+    if (this.selectedText) this.refreshRects();
+    this.refreshPosition();
+  }, 250)
 
   render() {
     var { translation, error, playText, translateNext, isIconShown, position, onIconClick } = this;
