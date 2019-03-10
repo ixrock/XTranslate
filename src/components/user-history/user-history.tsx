@@ -17,8 +17,6 @@ import { settingsStore } from "../settings/settings.store";
 import { HistoryTimeFrame, IHistoryItem, IHistoryStorageItem, userHistoryStore } from "./user-history.store";
 import { Icon } from "../icon";
 
-// todo: make possible to import history data, keep version of export format
-
 @observer
 export class UserHistory extends React.Component {
   settings = settingsStore.data;
@@ -60,9 +58,11 @@ export class UserHistory extends React.Component {
     this.forceUpdate();
   }
 
+  // todo: make possible to import data, keep version of export format
   exportHistory(type: "json" | "csv") {
     var filename = `xtranslate-history.${type}`;
-    var history = this.items.map(userHistoryStore.toHistoryItem);
+    var items = this.searchText ? this.items : userHistoryStore.data;
+    var history = items.map(userHistoryStore.toHistoryItem);
     switch (type) {
       case "json":
         var json = history.map(item => {
