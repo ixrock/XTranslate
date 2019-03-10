@@ -44,6 +44,7 @@ class App extends React.Component {
   private icon: Icon;
   private pointerElem: HTMLElement;
   private lastReqId: number;
+  private isDoubleClicked = false;
 
   @observable.ref translation: ITranslationResult;
   @observable.ref error: ITranslationError;
@@ -116,6 +117,7 @@ class App extends React.Component {
     this.refreshPosition();
   }
 
+  @autobind()
   translateNext(reverse = false) {
     if (!this.translation) return;
     var { vendor, langFrom, langTo, originalText } = this.translation;
@@ -199,8 +201,13 @@ class App extends React.Component {
       }
       var rects = Array.from(range.getClientRects());
       if (!rects.length) {
-        var rect = (focusNode instanceof HTMLElement ? focusNode : range).getBoundingClientRect();
-        rects.push(rect);
+        if (this.isEditable(document.activeElement)) {
+          rects.push(document.activeElement.getBoundingClientRect());
+        }
+        else {
+          var rect = (anchorNode instanceof HTMLElement ? anchorNode : range).getBoundingClientRect();
+          rects.push(rect);
+        }
       }
       this.selectionRects = rects.map(rect => this.normalizeRect(rect));
       this.isRtlSelection = anchorOffset > focusOffset;
@@ -241,38 +248,10 @@ class App extends React.Component {
   }
 
   @autobind()
-  onMouseUp(evt: MouseEvent) {
-    if (this.isEditable(document.activeElement) || !this.selectedText) {
-      return;
-    }
-    var { showPopupAfterSelection, showIconNearSelection } = this.settings;
-    var target = evt.target as HTMLElement;
-    var isOutsidePopup = this.isOutsideOfPopup(target);
-    if (isOutsidePopup) {
-      this.refreshRects();
-    }
-    if (showPopupAfterSelection) {
-      this.translate();
-    }
-    else if (showIconNearSelection) {
-      var isOutsideIcon = !this.icon.elem.contains(target);
-      if (isOutsideIcon && isOutsidePopup) {
-        this.showIcon();
-      }
-    }
-  };
-
-  @autobind()
-  onMouseDown(evt: MouseEvent) {
-    var target = evt.target as HTMLElement;
-    var isOutsideIcon = !this.icon.elem.contains(target);
-    if (isOutsideIcon) {
-      this.selectedText = "";
-      this.hideIcon();
-    }
-    if (this.isOutsideOfPopup(target)) {
-      this.hidePopup();
-    }
+  onIconClick(evt: React.MouseEvent) {
+    evt.nativeEvent.stopImmediatePropagation(); // don't reset text selection
+    this.hideIcon();
+    this.translate();
   }
 
   @autobind()
@@ -281,24 +260,47 @@ class App extends React.Component {
   }
 
   @autobind()
-  onIconClick(evt: React.MouseEvent) {
-    evt.nativeEvent.stopImmediatePropagation(); // don't reset text selection
-    this.hideIcon();
-    this.translate();
+  onMouseDown(evt: MouseEvent) {
+    var target = evt.target as HTMLElement;
+    if (!this.icon.elem.contains(target)) {
+      this.hideIcon();
+    }
+    if (this.isOutsideOfPopup(target)) {
+      this.hidePopup();
+    }
   }
 
   // run with delay after `selectionchange` and get latest then `this.selectedText` in callback
   onDoubleClick = debounce((evt: MouseEvent) => {
-    var { showPopupAfterSelection, showPopupOnDoubleClick } = this.settings;
-    if (showPopupAfterSelection || this.isEditable(evt.target as HTMLElement)) {
-      return;
-    }
-    if (showPopupOnDoubleClick && this.selectedText) {
-      this.hideIcon();
-      this.refreshRects();
+    this.isDoubleClicked = true;
+  });
+
+  // delayed call after double click
+  onMouseUp = debounce((evt: MouseEvent) => {
+    var target = evt.target as HTMLElement;
+    if (this.isEditable(document.activeElement)) return;
+    if (!this.isOutsideOfPopup(target as HTMLElement)) return;
+    if (!this.selectedText) return;
+    var { showPopupAfterSelection, showIconNearSelection, showPopupOnDoubleClick } = this.settings;
+
+    // refresh selection rects
+    this.refreshRects();
+
+    // handle actions
+    if (showPopupAfterSelection) {
       this.translate();
     }
-  }, 500);
+    else if (showPopupOnDoubleClick && this.isDoubleClicked) {
+      this.translate();
+      this.isDoubleClicked = false;
+    }
+    else if (showIconNearSelection) {
+      var isOutsideIcon = !this.icon.elem.contains(target);
+      if (isOutsideIcon) {
+        this.showIcon();
+      }
+    }
+  }, 250);
 
   @autobind()
   onMenuClick(message: Message) {
