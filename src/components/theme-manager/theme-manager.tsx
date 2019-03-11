@@ -17,13 +17,10 @@ import { Button } from "../button";
 
 @observer
 export class ThemeManager extends React.Component {
-  settings = settingsStore.data;
+  public settings = settingsStore.data;
+  public theme = themeStore.data;
 
-  get theme() {
-    return themeStore.data // keep actual link to data after reset()
-  }
-
-  translationExample: ITranslationResult = {
+  public translationExample: ITranslationResult = {
     vendor: this.settings.vendor,
     langFrom: this.settings.langFrom,
     langTo: this.settings.langTo,
