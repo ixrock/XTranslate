@@ -1,47 +1,82 @@
 import './checkbox.scss'
 import React from 'react'
-import { autobind, cssNames } from "../../utils";
+import { autobind, cssNames, IClassName } from "../../utils";
 
-export interface CheckboxProps<T = boolean> {
-  className?: string;
+export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
+
+export type CheckboxProps<D = any> = Omit<React.DOMAttributes<HTMLElement>, "onChange"> & {
+  checked: boolean;
+  className?: IClassName;
+  autoFocus?: boolean
   label?: string
   inline?: boolean
-  disabled?: boolean;
-  value?: T;
-  onChange?(value: T, evt: React.ChangeEvent<HTMLInputElement>): void;
+  disabled?: boolean
+  value?: D;
+  onChange?(checked: boolean, value: D): void;
 }
 
-export class Checkbox extends React.PureComponent<CheckboxProps> {
-  private input: HTMLInputElement;
+export class Checkbox extends React.Component<CheckboxProps> {
+  public elem: HTMLLabelElement;
 
-  @autobind()
-  onChange(evt: React.ChangeEvent<HTMLInputElement>) {
-    if (this.props.onChange) {
-      this.props.onChange(this.input.checked, evt)
+  componentDidMount() {
+    if (this.props.autoFocus) {
+      this.focus();
     }
   }
 
-  getValue() {
-    if (this.props.value !== undefined) return this.props.value;
-    return this.input.checked;
+  focus() {
+    this.elem.focus();
+  }
+
+  toggle() {
+    var { checked, value, disabled, onChange } = this.props;
+    if (disabled) return;
+    if (onChange) {
+      onChange(!checked, value);
+    }
+  }
+
+  @autobind()
+  onClick(evt: React.MouseEvent<any>) {
+    this.toggle();
+    if (this.props.onClick) {
+      this.props.onClick(evt);
+    }
+  }
+
+  @autobind()
+  onKeyDown(evt: React.KeyboardEvent<any>) {
+    switch (evt.nativeEvent.code) {
+      case "Enter":
+      case "Space":
+        this.toggle();
+        break;
+    }
+    if (this.props.onKeyDown) {
+      this.props.onKeyDown(evt);
+    }
+  }
+
+  @autobind()
+  bindRef(elem: HTMLLabelElement) {
+    this.elem = elem;
   }
 
   render() {
-    var { label, inline, className, value, children, ...inputProps } = this.props;
-    var componentClass = cssNames('Checkbox flex align-center', className, {
-      inline: inline,
-      checked: value,
-      disabled: this.props.disabled,
+    var { label, inline, className, checked, disabled, children } = this.props;
+    className = cssNames('Checkbox flex gaps align-center', className, {
+      inline, checked, disabled
     });
     return (
-      <label className={componentClass}>
-        <input
-          {...inputProps}
-          type="checkbox" checked={value} onChange={this.onChange}
-          ref={e => this.input = e}
-        />
-        <i className="box flex align-center"/>
-        {label ? <span className="label">{label}</span> : null}
+      <label
+        className={className}
+        tabIndex={disabled ? -1 : 0}
+        onClick={this.onClick}
+        onKeyDown={this.onKeyDown}
+        ref={this.bindRef}
+      >
+        <i className="box tick"/>
+        {label && <div className="label">{label}</div>}
         {children}
       </label>
     );

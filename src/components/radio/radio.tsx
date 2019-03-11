@@ -1,86 +1,72 @@
 import "./radio.scss";
 import * as React from "react";
-import { autobind, cssNames } from "../../utils";
-import uniqueId from "lodash/uniqueId"
+import { autobind, cssNames, IClassName } from "../../utils";
+import { Checkbox, CheckboxProps, Omit } from "../checkbox";
 
-interface RadioGroupProps {
-  className?: any
-  name?: string
-  value?: any
-  defaultValue?: any
+const RadioGroupContext = React.createContext<RadioGroup>(null);
+
+export interface RadioGroupProps<D = any> {
+  value: D;
+  className?: IClassName
+  autoFocus?: boolean;
   disabled?: boolean
-  onChange?(value): void
+  onChange?(value: any): void
 }
 
 export class RadioGroup extends React.Component<RadioGroupProps> {
-  public name = this.props.name || uniqueId("radioGroup");
-
   render() {
-    var { value, defaultValue, className, disabled, onChange } = this.props;
-    var radios = React.Children.toArray(this.props.children) as React.ReactElement<RadioProps>[];
+    var { className, children } = this.props;
     return (
-      <div className={cssNames("RadioGroup", className)}>
-        {radios.map(radio => {
-          if (!radio.props) return;
-          var radioProps: Partial<RadioProps> = {
-            name: this.name,
-            disabled: disabled != null ? disabled : radio.props.disabled,
-            defaultChecked: defaultValue != null ? defaultValue == radio.props.value : radio.props.defaultChecked,
-            checked: value != null ? value === radio.props.value : radio.props.checked,
-            onChange: onChange
-          };
-          return React.cloneElement(radio, radioProps)
-        })}
-      </div>
+      <RadioGroupContext.Provider value={this}>
+        <div className={cssNames("RadioGroup", className)}>
+          {children}
+        </div>
+      </RadioGroupContext.Provider>
     );
   }
 }
 
-type RadioProps = React.HTMLProps<any> & {
-  name?: string
-  label?: string
-  value?: any
-  onChange?(value): void;
+interface RadioProps extends Omit<CheckboxProps, "checked"> {
+  value: any;
+  onChange?(value: any): void;
 }
 
-export class Radio extends React.Component<RadioProps, {}> {
-  private elem: HTMLElement;
+export class Radio extends React.Component<RadioProps> {
+  static contextType = RadioGroupContext;
+  public context: RadioGroup;
 
-  @autobind()
-  onChange() {
-    var { value, onChange, checked } = this.props;
-    if (!checked && onChange) {
-      onChange(value);
-    }
+  get isChecked() {
+    var { value } = this.props;
+    return value === this.context.props.value;
   }
 
   @autobind()
-  onKeyDown(e: React.KeyboardEvent<any>) {
-    var SPACE_KEY = e.keyCode === 32;
-    var ENTER_KEY = e.keyCode === 13;
-    if (SPACE_KEY || ENTER_KEY) {
-      e.preventDefault();
-      this.elem.click();
+  onChange(checked: boolean, value: any) {
+    if (this.isChecked) return;
+    var { onChange } = this.context.props;
+    if (onChange) onChange(value);
+    if (this.props.onChange) {
+      this.props.onChange(value);
     }
   }
 
   render() {
-    var { className, label, children, ...inputProps } = this.props;
-    var checked = this.props.checked || this.props.defaultChecked;
-    var componentClass = cssNames('Radio flex align-center', className, {
-      checked: checked,
-      disabled: this.props.disabled,
-    });
+    var { autoFocus, disabled } = this.context.props;
+    var {
+      className,
+      autoFocus = autoFocus,
+      disabled = disabled,
+      ...checkboxProps
+    } = this.props;
     return (
-      <label className={componentClass}
-             tabIndex={!checked ? 0 : null}
-             onKeyDown={this.onKeyDown}
-             ref={e => this.elem = e}>
-        <input {...inputProps} type="radio" onChange={this.onChange}/>
-        <i className="tick flex center"/>
-        {label ? <span className="label">{label}</span> : null}
-        {children}
-      </label>
+      <Checkbox
+        {...checkboxProps}
+        autoFocus={autoFocus}
+        disabled={disabled}
+        className={cssNames("Radio", className)}
+        checked={this.isChecked}
+        onChange={this.onChange}
+      />
     );
   }
 }

@@ -37,41 +37,40 @@ export class Settings extends React.Component {
         <div className="checkbox-group">
           <Checkbox
             label={__i18n("auto_play_tts")}
-            value={settings.autoPlayText}
+            checked={settings.autoPlayText}
             onChange={v => settings.autoPlayText = v}
           />
           <Checkbox
             label={__i18n("show_context_menu")}
-            value={settings.showInContextMenu}
+            checked={settings.showInContextMenu}
             onChange={v => settings.showInContextMenu = v}
           />
           <Checkbox
             label={__i18n("display_icon_near_selection")}
-            value={settings.showIconNearSelection}
+            checked={settings.showIconNearSelection}
             onChange={v => settings.showIconNearSelection = v}
           />
         </div>
 
         <p className="sub-title">{__i18n("setting_title_translator_service")}</p>
-        <div className="vendors flex gaps">
+        <div className="service flex">
           <RadioGroup
-            className="vendor flex gaps column"
+            className="vendors flex gaps column"
             value={settings.vendor}
             onChange={v => settingsStore.setVendor(v)}
-            children={
-              getTranslators().map(({ name, title, publicUrl }) => {
-                var domain = publicUrl.match(/https?:\/\/(.*?)(?:\/\w*|$)/i)[1];
-                return (
-                  <Radio key={name} value={name}>
-                    <div className="label">{title}</div>
-                    <a href={publicUrl} target="_blank">
-                      {domain.split('.').slice(-2).join('.')}
-                    </a>
-                  </Radio>
-                )
-              })
-            }
-          />
+          >
+            {getTranslators().map(({ name, title, publicUrl }) => {
+              var domain = publicUrl.match(/https?:\/\/(.*?)(?:\/\w*|$)/i)[1];
+              return (
+                <div key={name} className="vendor flex gaps">
+                  <Radio value={name} label={title}/>
+                  <a href={publicUrl} target="_blank" tabIndex={-1}>
+                    {domain.split('.').slice(-2).join('.')}
+                  </a>
+                </div>
+              )
+            })}
+          </RadioGroup>
           <SelectLanguage/>
         </div>
 
@@ -80,36 +79,36 @@ export class Settings extends React.Component {
           <div className="checkbox-group">
             <Checkbox
               label={__i18n("show_tts_icon_inside_popup")}
-              value={settings.showTextToSpeechIcon}
+              checked={settings.showTextToSpeechIcon}
               onChange={v => settings.showTextToSpeechIcon = v}
             />
             <Checkbox
               label={__i18n("show_next_vendor_icon_in_popup")}
-              value={settings.showNextVendorIcon}
+              checked={settings.showNextVendorIcon}
               onChange={v => settings.showNextVendorIcon = v}
             />
             <Checkbox
               label={__i18n("show_copy_translation_icon")}
-              value={settings.showCopyTranslationIcon}
+              checked={settings.showCopyTranslationIcon}
               onChange={v => settings.showCopyTranslationIcon = v}
             />
           </div>
           <div className="checkbox-group">
             <Checkbox
               label={__i18n("display_popup_after_text_selected")}
-              value={settings.showPopupAfterSelection}
+              checked={settings.showPopupAfterSelection}
               onChange={v => settings.showPopupAfterSelection = v}
             />
             <Checkbox
               label={__i18n("display_popup_on_double_click")}
-              value={settings.showPopupOnDoubleClick}
+              checked={settings.showPopupOnDoubleClick}
               onChange={v => settings.showPopupOnDoubleClick = v}
             />
             <div className="use-hotkey flex">
               <Checkbox
                 className="box grow"
                 label={__i18n("display_popup_on_hotkey")}
-                value={settings.showPopupOnHotkey}
+                checked={settings.showPopupOnHotkey}
                 onChange={v => settings.showPopupOnHotkey = v}
               />
               <label className="flex gaps">
@@ -147,7 +146,7 @@ export class Settings extends React.Component {
           <div className="flex column gaps align-flex-start">
             <Checkbox
               label={__i18n("remember_last_typed_text")}
-              value={settings.rememberLastText}
+              checked={settings.rememberLastText}
               onChange={v => settings.rememberLastText = v}
             />
             <Button

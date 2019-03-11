@@ -22,12 +22,15 @@ interface Props extends React.HTMLProps<any> {
 export class Popup extends React.Component<Props> {
   public elem: HTMLElement;
   public settings = settingsStore.data;
-  public theme = themeStore.data;
 
   static defaultProps: Partial<Props> = {
     onPlayText: noop,
     onTranslateNext: noop,
   };
+
+  get theme() {
+    return themeStore.data; // always keep actual link to theme
+  }
 
   getPopupStyle(): CSSProperties {
     var {

@@ -76,7 +76,7 @@
   "text_field_placeholder"           : {"message": "Start typing here to get translation"},
   "translated_with"                  : {"message": "Translated with %translator% (%lang%)"},
   "spell_correction"                 : {"message": "Did you mean %spell_correction%?"},
-  "text_input_translation_hint"      : {"message": "Press %hotkey% to immediate translate, auto-delay: %ms%"},
+  "text_input_translation_hint"      : {"message": "%hotkey% to immediate translate, delay: %ms%"},
   "___________history_______________": {"message": "----------------------------------------------"},
   "history_enabled_flag"             : {"message": "Enabled"},
   "history_settings_save_words_only" : {"message": "Save only dictionary words"},

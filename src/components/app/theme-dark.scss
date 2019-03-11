@@ -22,6 +22,10 @@ body {
       --slider-thumb-color-active: white;
     }
 
+    .Checkbox {
+      --color-hover: var(--theme-contast-color);
+    }
+
     .Menu {
       --bgc: #{$bgc-dark};
       --bgc-active: var(--theme-contast-color-invert);

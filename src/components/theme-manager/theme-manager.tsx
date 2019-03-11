@@ -18,7 +18,10 @@ import { Button } from "../button";
 @observer
 export class ThemeManager extends React.Component {
   settings = settingsStore.data;
-  theme = themeStore.data;
+
+  get theme() {
+    return themeStore.data // keep actual link to data after reset()
+  }
 
   translationExample: ITranslationResult = {
     vendor: this.settings.vendor,
@@ -66,7 +69,7 @@ export class ThemeManager extends React.Component {
                 </div>
                 <Checkbox
                   label={__i18n("background_linear_gradient")}
-                  value={theme.bgcLinear}
+                  checked={theme.bgcLinear}
                   onChange={v => theme.bgcLinear = v}
                 />
               </div>
@@ -88,7 +91,7 @@ export class ThemeManager extends React.Component {
                 />
                 <Checkbox
                   label={__i18n("box_shadow_inner")}
-                  value={theme.boxShadowInner}
+                  checked={theme.boxShadowInner}
                   onChange={v => theme.boxShadowInner = v}
                 />
               </div>

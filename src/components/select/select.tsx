@@ -4,7 +4,7 @@ import * as React from "react";
 import { autobind, cssNames } from "../../utils";
 import { Icon } from "../icon";
 
-const SelectContext = React.createContext(null);
+const SelectContext = React.createContext<Select>(null);
 
 export interface SelectProps<T = any> {
   className?: string;
@@ -36,16 +36,16 @@ export class Select extends React.Component<SelectProps> {
   render() {
     var { className, value, getOptionValue, getOptionLabel, ...selectProps } = this.props;
     return (
-      <div className={cssNames("Select flex", className)}>
-        <SelectContext.Provider value={this}>
+      <SelectContext.Provider value={this}>
+        <div className={cssNames("Select flex", className)}>
           <select
             {...selectProps}
             value={getOptionValue(value)}
             onChange={this.onChange}
           />
           <Icon material="keyboard_arrow_down" className="arrow-icon"/>
-        </SelectContext.Provider>
-      </div>
+        </div>
+      </SelectContext.Provider>
     );
   }
 }

@@ -22,11 +22,8 @@
     color: $color-secondary;
   }
 
-  .vendor > * {
+  .vendors {
     --flex-gap: #{$margin /2};
-
-    .label {
-      margin-right: var(--flex-gap);
-    }
+    margin-right: $margin * 2;
   }
 }

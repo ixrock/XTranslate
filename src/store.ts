@@ -1,6 +1,5 @@
 import { observable, reaction, toJS, when } from "mobx";
 import { autobind } from "./utils/autobind";
-import isEqual from "lodash/isEqual";
 
 export interface StoreParams<T = object> {
   initialData: T;
@@ -42,9 +41,7 @@ export abstract class Store<T = object> {
     chrome.storage.onChanged.addListener((changes, areaName) => {
       if (this.isSaving) return;
       if (areaName === storageType && changes[this.id]) {
-        var newData = changes[this.id].newValue;
-        if (isEqual(newData, toJS(initialData))) this.reset();
-        else this.update(newData);
+        this.data = changes[this.id].newValue || initialData;
       }
     });
   }
@@ -85,7 +82,7 @@ export abstract class Store<T = object> {
     })
   }
 
-  update(data: T) {
+  update(data: Partial<T>) {
     if (!data) return;
     if (Array.isArray(this.data)) {
       this.data.splice(0, this.data.length, ...[].concat(data)); // replace
@@ -99,12 +96,6 @@ export abstract class Store<T = object> {
   }
 
   reset() {
-    var { initialData } = this.params;
-    if (typeof this.data === "object" && !Array.isArray(this.data)) {
-      Object.keys(toJS(this.data)).forEach(prop => {
-        delete this.data[prop]; // clear
-      });
-    }
-    this.update(initialData);
+    this.data = this.params.initialData;
   }
 }

@@ -45,7 +45,7 @@ export class UserHistory extends React.Component {
   }
 
   componentDidMount() {
-    userHistoryStore.load(true);
+    userHistoryStore.load();
   }
 
   toggleDetails(item: IHistoryStorageItem) {
@@ -212,18 +212,18 @@ export class UserHistory extends React.Component {
     var { historyEnabled, historyAvoidDuplicates, historySaveWordsOnly, historyPageSize } = this.settings;
     return (
       <div className="UserHistory">
-        <div className="settings flex align-center justify-center">
+        <div className="settings flex gaps align-center justify-center">
           <Checkbox
             label={__i18n("history_enabled_flag")}
-            value={historyEnabled}
+            checked={historyEnabled}
             onChange={v => this.settings.historyEnabled = v}
           />
-          <Icon
-            material="find_in_page"
-            className={cssNames({ active: showSearch })}
-            onClick={() => this.showSearch = !showSearch}
-          />
-          <div className="flex">
+          <div className="actions">
+            <Icon
+              material="find_in_page"
+              className={cssNames({ active: showSearch })}
+              onClick={() => this.showSearch = !showSearch}
+            />
             <MenuActions triggerIcon="file_download">
               <MenuItem onClick={() => this.exportHistory("csv")}>
                 {__i18n("history_export_entries", ["CSV"])}
@@ -233,12 +233,12 @@ export class UserHistory extends React.Component {
                 {__i18n("history_export_entries", ["JSON"])}
               </MenuItem>
             </MenuActions>
+            <Icon
+              material="settings"
+              className={cssNames({ active: showSettings })}
+              onClick={() => this.showSettings = !showSettings}
+            />
           </div>
-          <Icon
-            material="settings"
-            className={cssNames({ active: showSettings })}
-            onClick={() => this.showSettings = !showSettings}
-          />
         </div>
         <div className="settings-content flex column gaps">
           {showSearch && (
@@ -266,12 +266,12 @@ export class UserHistory extends React.Component {
               <div className="box flex gaps auto align-center">
                 <Checkbox
                   label={__i18n("history_settings_save_words_only")}
-                  value={historySaveWordsOnly}
+                  checked={historySaveWordsOnly}
                   onChange={v => this.settings.historySaveWordsOnly = v}
                 />
                 <Checkbox
                   label={__i18n("history_settings_avoid_duplicates")}
-                  value={historyAvoidDuplicates}
+                  checked={historyAvoidDuplicates}
                   onChange={v => this.settings.historyAvoidDuplicates = v}
                 />
                 <div className="page-size flex gaps align-center">

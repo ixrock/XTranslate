@@ -1,59 +1,6 @@
-.Radio {
-  --size: 17px;
-  --color: currentColor;
-  --color-active: var(--color);
-  --color-hover: #{$bgc-primary};
-
-  &:hover {
-    input:not(:checked):not(:disabled) {
-      ~ .tick {
-        color: var(--color-hover);
-
-        &:after {
-          opacity: 1;
-        }
-      }
-    }
-  }
-
-  input[type="radio"] {
-    position: absolute;
-    opacity: 0;
-    pointer-events: none;
-
-    &:focus ~ .tick {
-      border-style: solid;
-    }
-
-    &:checked {
-      ~ .tick {
-        color: var(--color-active);
-
-        &:after {
-          opacity: 1;
-        }
-      }
-    }
-
-    &:disabled {
-      ~ * {
-        opacity: .5;
-        pointer-events: none;
-      }
-    }
-
-    &:not(:disabled) ~ * {
-      cursor: pointer;
-    }
-  }
-
-  > .tick {
-    position: relative;
-    width: var(--size);
-    height: var(--size);
-    color: var(--color);
+.Checkbox.Radio {
+  > .box {
     border-radius: 50%;
-    border: 2px solid currentColor;
 
     &:after {
       content: "";
@@ -62,11 +9,6 @@
       transform: scale(.7);
       border-radius: inherit;
       background: currentColor;
-      opacity: 0;
-    }
-
-    + * {
-      margin-left: .5em;
     }
   }
 }
