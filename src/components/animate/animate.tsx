@@ -4,8 +4,8 @@ import { autobind, cssNames, noop } from "../../utils";
 
 interface Props {
   name?: string
-  className?: string
-  enter?: boolean
+  enter?: boolean;
+  enabled?: boolean;
   onEnter?: () => void;
   onLeave?: () => void;
 }
@@ -16,9 +16,10 @@ interface State {
 }
 
 export class Animate extends React.PureComponent<Props, State> {
-  static defaultProps = {
+  static defaultProps: Props = {
     name: "opacity",
     enter: true,
+    enabled: true,
     onEnter: noop,
     onLeave: noop,
   };
@@ -58,14 +59,14 @@ export class Animate extends React.PureComponent<Props, State> {
   }
 
   render() {
-    var { className, name, enter } = this.props;
+    var { name, enter, enabled, children } = this.props;
+    if (!enabled) {
+      return children;
+    }
     var contentElem = this.contentElem;
     var contentProps: React.HTMLAttributes<any> = {
-      className: cssNames(
-        contentElem.props.className, className,
-        "Animate", name, this.state,
-      ),
-      children: enter || this.state.leave ? contentElem.props.children : null,
+      className: cssNames("Animate", name, this.state, contentElem.props.className),
+      children: (enter || this.state.leave) ? contentElem.props.children : null,
       onTransitionEnd: this.onTransitionEnd,
     };
     return React.cloneElement(contentElem, contentProps);

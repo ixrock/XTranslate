@@ -2,6 +2,8 @@ import { Store } from "../../store";
 import { Hotkey } from "../../utils/parseHotkey";
 import { getTranslator } from "../../vendors";
 
+export type ISettingsStoreData = typeof defaultSettings;
+
 export const defaultSettings = {
   autoPlayText: false,
   showTextToSpeechIcon: true,
@@ -26,7 +28,7 @@ export const defaultSettings = {
   hotkey: { altKey: true, code: "X" } as Hotkey,
 };
 
-export class SettingsStore extends Store<typeof defaultSettings> {
+export class SettingsStore extends Store<ISettingsStoreData> {
   protected id = "settings";
 
   constructor() {

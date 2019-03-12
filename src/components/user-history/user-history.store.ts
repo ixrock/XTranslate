@@ -9,12 +9,14 @@ export enum HistoryTimeFrame {
   HOUR, DAY, MONTH, YEAR, ALL
 }
 
-const initHistoryData = observable.array<IHistoryStorageItem>([], {
+export type IUserHistoryStoreData = typeof defaultHistory;
+
+const defaultHistory = observable.array<IHistoryStorageItem>([], {
   deep: false
 });
 
 @autobind()
-export class UserHistoryStore extends Store<typeof initHistoryData> {
+export class UserHistoryStore extends Store<IUserHistoryStoreData> {
   protected id = "history";
 
   constructor() {
@@ -22,7 +24,7 @@ export class UserHistoryStore extends Store<typeof initHistoryData> {
       autoLoad: false,
       autoSaveDelayMs: 500,
       storageType: "local",
-      initialData: initHistoryData,
+      initialData: defaultHistory,
     });
   }
 

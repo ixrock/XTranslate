@@ -291,6 +291,7 @@ export class Input extends React.Component<InputProps, State> {
             </div>
           )}
         </div>
+        {children}
       </div>
     );
   }

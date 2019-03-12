@@ -3,7 +3,7 @@ import { Store } from "../../store";
 import { autobind } from "../../utils";
 import { getTranslators } from "../../vendors";
 
-export interface IFavoritesStore {
+export type IFavoritesStoreData = {
   [vendor: string]: IFavorite[];
 }
 
@@ -13,7 +13,7 @@ export interface IFavorite {
 }
 
 @autobind()
-export class FavoritesStore extends Store<IFavoritesStore> {
+export class FavoritesStore extends Store<IFavoritesStoreData> {
   protected id = "favorites";
 
   constructor() {

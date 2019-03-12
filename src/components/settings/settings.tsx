@@ -11,9 +11,10 @@ import { Checkbox } from "../checkbox";
 import { Radio, RadioGroup } from "../radio";
 import { Option, Select } from "../select";
 import { Icon } from "../icon";
-import { settingsStore } from "./settings.store";
+import { ISettingsStoreData, settingsStore } from "./settings.store";
 import { Button } from "../button";
 import { Tooltip } from "../tooltip";
+import { Popup } from "../popup";
 
 @observer
 export class Settings extends React.Component {
@@ -26,6 +27,14 @@ export class Settings extends React.Component {
     if (hotkey.code) {
       this.settings.hotkey = getHotkey(nativeEvent);
     }
+  }
+
+  renderPopupPreview(customSettings?: Partial<ISettingsStoreData>) {
+    return (
+      <Tooltip following className="popup-preview">
+        <Popup preview/>
+      </Tooltip>
+    )
   }
 
   render() {
@@ -81,16 +90,19 @@ export class Settings extends React.Component {
               label={__i18n("show_tts_icon_inside_popup")}
               checked={settings.showTextToSpeechIcon}
               onChange={v => settings.showTextToSpeechIcon = v}
+              children={this.renderPopupPreview({ showTextToSpeechIcon: true })}
             />
             <Checkbox
               label={__i18n("show_next_vendor_icon_in_popup")}
               checked={settings.showNextVendorIcon}
               onChange={v => settings.showNextVendorIcon = v}
+              children={this.renderPopupPreview({ showNextVendorIcon: true })}
             />
             <Checkbox
               label={__i18n("show_copy_translation_icon")}
               checked={settings.showCopyTranslationIcon}
               onChange={v => settings.showCopyTranslationIcon = v}
+              children={this.renderPopupPreview({ showCopyTranslationIcon: true })}
             />
           </div>
           <div className="checkbox-group">
@@ -104,7 +116,7 @@ export class Settings extends React.Component {
               checked={settings.showPopupOnDoubleClick}
               onChange={v => settings.showPopupOnDoubleClick = v}
             />
-            <div className="use-hotkey flex">
+            <div className="use-hotkey flex gaps">
               <Checkbox
                 className="box grow"
                 label={__i18n("display_popup_on_hotkey")}
@@ -114,13 +126,14 @@ export class Settings extends React.Component {
               <label className="flex gaps">
                 <Icon material="keyboard"/>
                 <Input
-                  readOnly
-                  id="hotkey" className="hotkey"
-                  value={hotKey.value} onKeyDown={this.saveHotkey}
-                />
-                <Tooltip htmlFor="hotkey" following>
-                  {hotKey.title}
-                </Tooltip>
+                  readOnly className="hotkey"
+                  value={hotKey.value}
+                  onKeyDown={this.saveHotkey}
+                >
+                  <Tooltip following>
+                    {hotKey.title}
+                  </Tooltip>
+                </Input>
               </label>
             </div>
           </div>
@@ -151,14 +164,14 @@ export class Settings extends React.Component {
             />
             <Button
               outline
-              id="add-shortcut"
               className="box flex gaps"
               label={__i18n("sub_header_quick_access_hotkey")}
               onClick={() => createTab("chrome://extensions/configureCommands")}
-            />
-            <Tooltip htmlFor="add-shortcut" following nowrap={false}>
-              {__i18n("quick_access_configure_link")}
-            </Tooltip>
+            >
+              <Tooltip following nowrap={false}>
+                {__i18n("quick_access_configure_link")}
+              </Tooltip>
+            </Button>
           </div>
           <div className="translate-delay">
             <div className="flex gaps">

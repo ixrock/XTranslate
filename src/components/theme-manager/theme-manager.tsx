@@ -5,9 +5,8 @@ import { observer } from "mobx-react";
 import { isEqual } from "lodash";
 import { __i18n } from "../../extension/i18n";
 import { defaultTheme, themeStore } from "./theme.store";
-import { defaultSettings, settingsStore } from "../settings/settings.store";
-import { ITranslationResult } from "../../vendors";
-import { ITranslateParams, Popup } from "../popup";
+import { settingsStore } from "../settings/settings.store";
+import { Popup } from "../popup";
 import { ColorPicker } from "../color-picker";
 import { NumberInput } from "../input";
 import { Checkbox } from "../checkbox";
@@ -20,42 +19,12 @@ export class ThemeManager extends React.Component {
   public settings = settingsStore.data;
   public theme = themeStore.data;
 
-  public exampleParams: ITranslateParams = {
-    vendor: defaultSettings.vendor,
-    from: defaultSettings.langFrom,
-    to: defaultSettings.langTo,
-    text: "",
-  }
-
-  public example: ITranslationResult = {
-    vendor: this.exampleParams.vendor,
-    langFrom: this.exampleParams.from,
-    langTo: this.exampleParams.to,
-    translation: __i18n("popup_demo_translation"),
-    dictionary: [
-      {
-        wordType: __i18n("popup_demo_dictionary_noun"),
-        meanings: [
-          {
-            word: __i18n("popup_demo_dictionary_values"),
-            translation: []
-          }
-        ]
-      }
-    ]
-  };
-
   render() {
     var { theme } = this;
     var isDefault = isEqual(theme, defaultTheme);
     return (
       <div className="ThemeManager flex column gaps">
-        <Popup
-          preview
-          className="box center"
-          translation={this.example}
-          params={this.exampleParams}
-        />
+        <Popup preview className="box center"/>
         <div className="theme">
           <div className="flex gaps auto">
             <div className="box">

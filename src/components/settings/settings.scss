@@ -22,6 +22,19 @@
     color: $color-secondary;
   }
 
+  .Tooltip {
+    &.popup-preview {
+      padding: 0;
+      background: none;
+      border-radius: 0;
+      border: none;
+
+      .Popup {
+        text-align: left;
+      }
+    }
+  }
+
   .vendors {
     --flex-gap: #{$margin /2};
     margin-right: $margin * 2;

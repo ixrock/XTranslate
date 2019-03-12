@@ -1,11 +1,12 @@
 import "./popup.scss"
 
 import React, { CSSProperties } from "react";
+import { computed } from "mobx";
 import { observer } from "mobx-react";
 import { __i18n } from "../../extension/i18n";
-import { autobind, cssNames, noop, prevDefault, toCssColor } from "../../utils";
+import { cssNames, noop, prevDefault, toCssColor } from "../../utils";
 import { getNextTranslator, getTranslator, isRTL, ITranslationError, ITranslationResult } from "../../vendors";
-import { settingsStore } from "../settings/settings.store";
+import { defaultSettings, ISettingsStoreData, settingsStore } from "../settings/settings.store";
 import { themeStore } from "../theme-manager/theme.store";
 import { Icon } from "../icon";
 
@@ -19,8 +20,9 @@ export interface ITranslateParams {
 interface Props extends React.HTMLProps<any> {
   preview?: boolean;
   className?: string;
-  params: ITranslateParams;
+  params?: ITranslateParams;
   translation?: ITranslationResult
+  withSettings?: Partial<ISettingsStoreData>;
   error?: ITranslationError
   onPlayText?: () => void;
   onTranslateNext?: () => void;
@@ -29,13 +31,54 @@ interface Props extends React.HTMLProps<any> {
 @observer
 export class Popup extends React.Component<Props> {
   public elem: HTMLElement;
-  public settings = settingsStore.data;
   public theme = themeStore.data;
 
   static defaultProps: Partial<Props> = {
     onPlayText: noop,
     onTranslateNext: noop,
   };
+
+  static preview: ITranslationResult = {
+    vendor: defaultSettings.vendor,
+    langFrom: defaultSettings.langFrom,
+    langTo: defaultSettings.langTo,
+    translation: __i18n("popup_demo_translation"),
+    dictionary: [
+      {
+        wordType: __i18n("popup_demo_dictionary_noun"),
+        meanings: [
+          {
+            word: __i18n("popup_demo_dictionary_values"),
+            translation: []
+          }
+        ]
+      }
+    ]
+  };
+
+  @computed get settings() {
+    var { withSettings } = this.props;
+    var data = settingsStore.data;
+    return withSettings ? Object.assign({}, data, withSettings) : data;
+  }
+
+  @computed get params(): Partial<ITranslateParams> {
+    if (!this.translation) {
+      return null;
+    }
+    var { preview, params } = this.props;
+    var { vendor, langTo, langFrom } = this.translation;
+    return params || (preview ? {
+      vendor: vendor,
+      from: langFrom,
+      to: langTo,
+    } : null)
+  }
+
+  @computed get translation() {
+    var { preview, translation } = this.props;
+    return translation || (preview ? Popup.preview : null);
+  }
 
   getPopupStyle(): CSSProperties {
     var {
@@ -82,17 +125,46 @@ export class Popup extends React.Component<Props> {
     }
   }
 
-  @autobind()
-  copyToClipboard() {
+  copyToClipboard = () => {
     window.getSelection().selectAllChildren(this.elem);
     document.execCommand("copy");
   }
 
-  renderNextTranslationIcon() {
-    if (!this.settings.showNextVendorIcon || !this.props.params) {
+  renderCopyTranslationIcon() {
+    if (!this.settings.showCopyTranslationIcon) {
       return;
     }
-    var { vendor, from, to } = this.props.params;
+    return (
+      <Icon
+        material="content_copy"
+        title={__i18n("popup_copy_translation_title")}
+        onClick={this.copyToClipboard}
+      />
+    )
+  }
+
+  renderPlayTextIcon() {
+    if (!this.settings.showTextToSpeechIcon) {
+      return;
+    }
+    const { translation, vendor, langFrom, langDetected } = this.translation;
+    const translator = getTranslator(vendor);
+    const canPlayText = translator.canPlayText(langDetected || langFrom, translation);
+    return (
+      <Icon
+        material="play_circle_outline"
+        title={__i18n("popup_play_icon_title")}
+        disabled={!canPlayText}
+        onClick={prevDefault(this.props.onPlayText)}
+      />
+    );
+  }
+
+  renderNextTranslationIcon() {
+    if (!this.settings.showNextVendorIcon || !this.params) {
+      return;
+    }
+    var { vendor, from, to } = this.params;
     var nextVendor = getNextTranslator(vendor, from, to);
     var iconTitle = __i18n("popup_next_vendor_icon_title", [nextVendor.title]).join("");
     return (
@@ -105,12 +177,10 @@ export class Popup extends React.Component<Props> {
   }
 
   renderResult() {
-    if (!this.props.translation) return;
-    const { showTextToSpeechIcon, showCopyTranslationIcon } = this.settings;
-    const { translation, transcription, dictionary, vendor, langFrom, langTo, langDetected } = this.props.translation;
+    if (!this.translation) return;
+    const { translation, transcription, dictionary, vendor, langFrom, langTo, langDetected } = this.translation;
     const translator = getTranslator(vendor);
     const rtlClass = { rtl: isRTL(langTo) };
-    const canPlayText = translator.canPlayText(langDetected || langFrom, translation);
     const title = __i18n("translated_with", [
       translator.title,
       `${langDetected || langFrom} → ${langTo}`.toUpperCase()
@@ -118,26 +188,13 @@ export class Popup extends React.Component<Props> {
     return (
       <div className="translation-result" style={this.getTranslationStyle()}>
         <div className="translation flex gaps">
-          {showTextToSpeechIcon && (
-            <Icon
-              material="play_circle_outline"
-              title={__i18n("popup_play_icon_title")}
-              disabled={!canPlayText}
-              onClick={prevDefault(this.props.onPlayText)}
-            />
-          )}
+          {this.renderPlayTextIcon()}
           <div className={cssNames("value box grow", rtlClass)} title={title}>
             <span>{translation}</span>
             {transcription ? <i className="transcription">{" "}[{transcription}]</i> : null}
           </div>
           <div className="icons">
-            {showCopyTranslationIcon && (
-              <Icon
-                material="content_copy"
-                title={__i18n("popup_copy_translation_title")}
-                onClick={this.copyToClipboard}
-              />
-            )}
+            {this.renderCopyTranslationIcon()}
             {this.renderNextTranslationIcon()}
           </div>
         </div>
@@ -182,10 +239,11 @@ export class Popup extends React.Component<Props> {
 
   render() {
     var { popupFixedPos } = this.settings;
-    var { translation, error, className, style, preview } = this.props;
-    var visible = translation || error;
+    var { error, className, style, preview } = this.props;
+    var isVisible = !!(this.translation || error);
     var popupClass = cssNames("Popup", className, {
-      visible, preview,
+      preview: preview,
+      visible: isVisible,
       ["fixedPos " + popupFixedPos]: popupFixedPos && !preview
     });
     style = Object.assign(this.getPopupStyle(), style);

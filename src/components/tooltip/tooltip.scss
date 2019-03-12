@@ -3,7 +3,6 @@
   background: rgba(45, 48, 53, 0.94);
   font-size: small;
   font-weight: normal;
-  border: 1px solid $border-color;
   border-radius: $radius;
   color: gainsboro;
   margin: #{$padding / 2 $padding / 3};
@@ -13,6 +12,10 @@
 
   &:empty {
     display: none;
+  }
+
+  &.following {
+    position: fixed;
   }
 
   &.nowrap {
