@@ -125,6 +125,18 @@
     }
   }
 
+  .translation-error {
+    --flex-gap: #{$padding};
+
+    .Icon.info {
+      pointer-events: none;
+    }
+
+    a {
+      font-style: italic;
+    }
+  }
+
   a {
     color: inherit;
   }

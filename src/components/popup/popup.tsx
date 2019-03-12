@@ -9,9 +9,17 @@ import { settingsStore } from "../settings/settings.store";
 import { themeStore } from "../theme-manager/theme.store";
 import { Icon } from "../icon";
 
+export interface ITranslateParams {
+  vendor: string;
+  from: string;
+  to: string;
+  text: string;
+}
+
 interface Props extends React.HTMLProps<any> {
   preview?: boolean;
   className?: string;
+  params: ITranslateParams;
   translation?: ITranslationResult
   error?: ITranslationError
   onPlayText?: () => void;
@@ -80,11 +88,26 @@ export class Popup extends React.Component<Props> {
     document.execCommand("copy");
   }
 
+  renderNextTranslationIcon() {
+    if (!this.settings.showNextVendorIcon || !this.props.params) {
+      return;
+    }
+    var { vendor, from, to } = this.props.params;
+    var nextVendor = getNextTranslator(vendor, from, to);
+    var iconTitle = __i18n("popup_next_vendor_icon_title", [nextVendor.title]).join("");
+    return (
+      <Icon
+        material="arrow_forward"
+        title={iconTitle}
+        onClick={prevDefault(this.props.onTranslateNext)}
+      />
+    )
+  }
+
   renderResult() {
-    const { translation: result, onPlayText, onTranslateNext } = this.props;
-    if (!result) return;
-    const { showTextToSpeechIcon, showNextVendorIcon, showCopyTranslationIcon } = this.settings;
-    const { translation, transcription, dictionary, vendor, langFrom, langTo, langDetected } = result;
+    if (!this.props.translation) return;
+    const { showTextToSpeechIcon, showCopyTranslationIcon } = this.settings;
+    const { translation, transcription, dictionary, vendor, langFrom, langTo, langDetected } = this.props.translation;
     const translator = getTranslator(vendor);
     const rtlClass = { rtl: isRTL(langTo) };
     const canPlayText = translator.canPlayText(langDetected || langFrom, translation);
@@ -92,17 +115,6 @@ export class Popup extends React.Component<Props> {
       translator.title,
       `${langDetected || langFrom} → ${langTo}`.toUpperCase()
     ]).join("");
-    if (showNextVendorIcon) {
-      var nextVendor = getNextTranslator(vendor, langFrom, langTo);
-      var iconTitle = __i18n("popup_next_vendor_icon_title", [nextVendor.title]).join("");
-      var nextVendorIcon = (
-        <Icon
-          material="arrow_forward"
-          title={iconTitle}
-          onClick={prevDefault(onTranslateNext)}
-        />
-      )
-    }
     return (
       <div className="translation-result" style={this.getTranslationStyle()}>
         <div className="translation flex gaps">
@@ -111,7 +123,7 @@ export class Popup extends React.Component<Props> {
               material="play_circle_outline"
               title={__i18n("popup_play_icon_title")}
               disabled={!canPlayText}
-              onClick={prevDefault(onPlayText)}
+              onClick={prevDefault(this.props.onPlayText)}
             />
           )}
           <div className={cssNames("value box grow", rtlClass)} title={title}>
@@ -126,7 +138,7 @@ export class Popup extends React.Component<Props> {
                 onClick={this.copyToClipboard}
               />
             )}
-            {nextVendorIcon}
+            {this.renderNextTranslationIcon()}
           </div>
         </div>
         {dictionary.map(({ wordType, meanings }, index) =>
@@ -149,12 +161,21 @@ export class Popup extends React.Component<Props> {
   }
 
   renderError() {
-    var error = this.props.error;
+    var { error } = this.props;
     if (!error) return;
-    var { statusCode, statusText } = error;
+    var { statusCode, url } = error;
     return (
       <div className="translation-error">
-        {statusCode} - {statusText}
+        <div className="title flex gaps align-center">
+          <Icon material="error_outline" className="info"/>
+          <div className="box grow">
+            {statusCode}: {__i18n("translation_data_failed")}
+          </div>
+          {this.renderNextTranslationIcon()}
+        </div>
+        <a href={url} target="_blank">
+          {__i18n("translation_data_failed_check_url")}
+        </a>
       </div>
     )
   }

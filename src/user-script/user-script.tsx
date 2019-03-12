@@ -10,19 +10,12 @@ import { getManifest, getURL, MenuTranslateFavoritePayload, MenuTranslateVendorP
 import { getNextTranslator, getTranslator, ITranslationError, ITranslationResult } from "../vendors";
 import ReactShadow from "react-shadow"
 import { Icon } from "../components/icon";
-import { Popup } from "../components/popup/popup";
+import { ITranslateParams, Popup } from "../components/popup/popup";
 import { settingsStore } from "../components/settings/settings.store";
 import { themeStore } from "../components/theme-manager/theme.store";
 import { userHistoryStore } from "../components/user-history/user-history.store";
 
 const isPdf = document.contentType === "application/pdf";
-
-interface TranslateParams {
-  vendor?: string;
-  from?: string;
-  to?: string;
-  text?: string;
-}
 
 @observer
 class App extends React.Component {
@@ -43,7 +36,7 @@ class App extends React.Component {
   private popup: Popup;
   private icon: Icon;
   private pointerElem: HTMLElement;
-  private lastReqId: number;
+  private lastParams: ITranslateParams;
   private isDoubleClicked = false;
 
   @observable.ref translation: ITranslationResult;
@@ -53,17 +46,21 @@ class App extends React.Component {
   @observable selectedText = "";
   @observable isRtlSelection = false;
   @observable isIconShown = false;
+  @observable isLoading = false;
 
   componentDidMount() {
     document.addEventListener("selectionchange", this.onSelectionChange);
     document.addEventListener("mouseup", this.onMouseUp);
-    document.addEventListener("mousedown", this.onMouseDown);
     document.addEventListener("mouseover", this.onMouseOver);
     document.addEventListener("dblclick", this.onDoubleClick);
     document.addEventListener("keydown", this.onKeyDown);
     window.addEventListener("resize", this.onResizeWindow);
     onMessage(this.onMenuClick);
     onMessage(this.onGetSelectedText);
+  }
+
+  @computed get isPopupHidden() {
+    return !(this.translation || this.error);
   }
 
   @computed get iconPosition(): React.CSSProperties {
@@ -90,7 +87,7 @@ class App extends React.Component {
     }
   }
 
-  async translate(params?: TranslateParams) {
+  translate = async (params?: Partial<ITranslateParams>) => {
     var { vendor, langFrom, langTo, autoPlayText, historyEnabled } = this.settings;
     params = Object.assign({
       vendor: vendor,
@@ -101,32 +98,31 @@ class App extends React.Component {
     var { vendor, from, to, text } = params;
     if (!text) return;
     try {
-      var reqId = Math.random();
       var translator = getTranslator(vendor);
-      this.error = null;
-      this.lastReqId = reqId;
+      this.isLoading = true;
+      this.lastParams = params as ITranslateParams;
       var translation = await translator.getTranslation(from, to, text);
-      if (reqId === this.lastReqId) {
+      if (params === this.lastParams) {
         this.translation = translation;
+        this.error = null;
         if (autoPlayText) setTimeout(this.playText);
         if (historyEnabled) userHistoryStore.saveTranslation(this.translation);
       }
     } catch (err) {
       this.error = err;
     }
+    this.isLoading = false;
     this.refreshPosition();
   }
 
   @autobind()
   translateNext(reverse = false) {
-    if (!this.translation) return;
-    var { vendor, langFrom, langTo, originalText } = this.translation;
-    var nextTranslator = getNextTranslator(vendor, langFrom, langTo, reverse);
+    if (!this.lastParams) return;
+    var { vendor, from, to, text } = this.lastParams;
+    var nextTranslator = getNextTranslator(vendor, from, to, reverse);
     return this.translate({
       vendor: nextTranslator.name,
-      from: langFrom,
-      to: langTo,
-      text: originalText,
+      from, to, text,
     });
   }
 
@@ -159,10 +155,12 @@ class App extends React.Component {
   }
 
   hidePopup() {
-    if (!this.translation) return;
+    if (this.isPopupHidden) return;
     this.translation = null;
     this.error = null;
     this.position = null;
+    this.lastParams = null;
+    this.selectionRects = null;
     this.stopPlaying();
   }
 
@@ -260,47 +258,43 @@ class App extends React.Component {
   }
 
   @autobind()
-  onMouseDown(evt: MouseEvent) {
-    var target = evt.target as HTMLElement;
-    if (!this.icon.elem.contains(target)) {
-      this.hideIcon();
-    }
-    if (this.isOutsideOfPopup(target)) {
-      this.hidePopup();
-    }
-  }
-
-  // run with delay after `selectionchange` and get latest then `this.selectedText` in callback
-  onDoubleClick = debounce((evt: MouseEvent) => {
+  onDoubleClick() {
     this.isDoubleClicked = true;
-  });
+  }
 
   // delayed call after double click
   onMouseUp = debounce((evt: MouseEvent) => {
     var target = evt.target as HTMLElement;
-    if (this.isEditable(document.activeElement)) return;
-    if (!this.isOutsideOfPopup(target as HTMLElement)) return;
-    if (!this.selectedText) return;
+
+    if (!this.selectedText) {
+      this.hideIcon();
+      if (this.isOutsideOfPopup(target)) {
+        this.hidePopup();
+      }
+      return;
+    }
+
+    var isIconClick = this.icon.elem.contains(target);
     var { showPopupAfterSelection, showIconNearSelection, showPopupOnDoubleClick } = this.settings;
+    var isSelectionChanged = this.lastParams && this.lastParams.text !== this.selectedText;
+    showPopupOnDoubleClick = showPopupOnDoubleClick && this.isDoubleClicked;
+    showPopupAfterSelection = showPopupAfterSelection && this.isPopupHidden;
+    showIconNearSelection = showIconNearSelection && !isIconClick && this.isPopupHidden;
 
     // refresh selection rects
     this.refreshRects();
 
     // handle actions
-    if (showPopupAfterSelection) {
+    if (showPopupAfterSelection || showPopupOnDoubleClick || isSelectionChanged) {
       this.translate();
-    }
-    else if (showPopupOnDoubleClick && this.isDoubleClicked) {
-      this.translate();
-      this.isDoubleClicked = false;
     }
     else if (showIconNearSelection) {
-      var isOutsideIcon = !this.icon.elem.contains(target);
-      if (isOutsideIcon) {
-        this.showIcon();
-      }
+      this.showIcon();
     }
-  }, 250);
+    if (this.isDoubleClicked) {
+      this.isDoubleClicked = false;
+    }
+  }, 150);
 
   @autobind()
   onMenuClick(message: Message) {
@@ -396,7 +390,7 @@ class App extends React.Component {
   }, 250)
 
   render() {
-    var { translation, error, playText, translateNext, isIconShown, position, onIconClick } = this;
+    var { translation, error, playText, translateNext, isIconShown, position, onIconClick, lastParams } = this;
     var { langFrom, langTo } = this.settings;
     return (
       <>
@@ -405,6 +399,7 @@ class App extends React.Component {
             <Popup
               className={cssNames({ showInPdf: isPdf })}
               style={position}
+              params={lastParams}
               translation={translation} error={error}
               onPlayText={playText}
               onTranslateNext={() => translateNext()}

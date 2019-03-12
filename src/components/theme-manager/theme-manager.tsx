@@ -5,9 +5,9 @@ import { observer } from "mobx-react";
 import { isEqual } from "lodash";
 import { __i18n } from "../../extension/i18n";
 import { defaultTheme, themeStore } from "./theme.store";
-import { settingsStore } from "../settings/settings.store";
+import { defaultSettings, settingsStore } from "../settings/settings.store";
 import { ITranslationResult } from "../../vendors";
-import { Popup } from "../popup";
+import { ITranslateParams, Popup } from "../popup";
 import { ColorPicker } from "../color-picker";
 import { NumberInput } from "../input";
 import { Checkbox } from "../checkbox";
@@ -20,10 +20,17 @@ export class ThemeManager extends React.Component {
   public settings = settingsStore.data;
   public theme = themeStore.data;
 
-  public translationExample: ITranslationResult = {
-    vendor: this.settings.vendor,
-    langFrom: this.settings.langFrom,
-    langTo: this.settings.langTo,
+  public exampleParams: ITranslateParams = {
+    vendor: defaultSettings.vendor,
+    from: defaultSettings.langFrom,
+    to: defaultSettings.langTo,
+    text: "",
+  }
+
+  public example: ITranslationResult = {
+    vendor: this.exampleParams.vendor,
+    langFrom: this.exampleParams.from,
+    langTo: this.exampleParams.to,
     translation: __i18n("popup_demo_translation"),
     dictionary: [
       {
@@ -44,8 +51,10 @@ export class ThemeManager extends React.Component {
     return (
       <div className="ThemeManager flex column gaps">
         <Popup
-          preview translation={this.translationExample}
+          preview
           className="box center"
+          translation={this.example}
+          params={this.exampleParams}
         />
         <div className="theme">
           <div className="flex gaps auto">
