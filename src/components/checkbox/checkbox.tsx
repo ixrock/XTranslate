@@ -50,6 +50,7 @@ export class Checkbox extends React.Component<CheckboxProps> {
       case "Enter":
       case "Space":
         this.toggle();
+        evt.preventDefault(); // prevent page scrolling (space)
         break;
     }
     if (this.props.onKeyDown) {

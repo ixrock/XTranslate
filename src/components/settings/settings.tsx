@@ -4,7 +4,7 @@ import * as React from "react";
 import { observer } from "mobx-react";
 import { getTranslators } from "../../vendors";
 import { __i18n, createTab } from "../../extension";
-import { autobind, getHotkey, parseHotkey } from "../../utils";
+import { autobind, getHotkey, parseHotkey, prevDefault } from "../../utils";
 import { SelectLanguage } from "../select-language";
 import { Input, NumberInput } from "../input";
 import { Checkbox } from "../checkbox";
@@ -21,8 +21,8 @@ export class Settings extends React.Component {
   settings = settingsStore.data;
 
   @autobind()
-  saveHotkey(e: React.KeyboardEvent) {
-    var nativeEvent = e.nativeEvent;
+  saveHotkey(evt: React.KeyboardEvent) {
+    var nativeEvent = evt.nativeEvent;
     var hotkey = parseHotkey(nativeEvent);
     if (hotkey.code) {
       this.settings.hotkey = getHotkey(nativeEvent);
@@ -128,7 +128,7 @@ export class Settings extends React.Component {
                 <Input
                   readOnly className="hotkey"
                   value={hotKey.value}
-                  onKeyDown={this.saveHotkey}
+                  onKeyDown={prevDefault(this.saveHotkey)}
                 >
                   <Tooltip following>
                     {hotKey.title}
