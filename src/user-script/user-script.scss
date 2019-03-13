@@ -30,7 +30,7 @@
   top: 0 !important;
   z-index: 1000000000 !important;
 
-  > .Icon {
+  > .Icon.actionIcon {
     position: absolute;
     box-shadow: 0 0 5px -1px;
     background: white;
@@ -38,6 +38,7 @@
     border-radius: 50%;
     overflow: hidden;
     cursor: pointer;
+    transition: none;
 
     &[hidden] {
       opacity: 0;

@@ -38,7 +38,7 @@ export class Icon extends React.Component<IconProps> {
       case "Space":
       case "Enter":
         this.elem.click();
-        evt.preventDefault();
+        evt.preventDefault(); // e.g. prevent page scrolling
         break;
     }
   }

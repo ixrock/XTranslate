@@ -5,7 +5,7 @@ import { render } from "react-dom";
 import { computed, observable, toJS, when } from "mobx";
 import { observer } from "mobx-react";
 import { debounce, isEqual } from "lodash"
-import { autobind, cssNames, getHotkey } from "../utils";
+import { autobind, cssNames, getHotkey, prevDefault } from "../utils";
 import { getManifest, getURL, MenuTranslateFavoritePayload, MenuTranslateVendorPayload, Message, MessageType, onMessage, PlayTextToSpeechPayload, sendMessage } from "../extension";
 import { getNextTranslator, getTranslator, ITranslationError, ITranslationResult } from "../vendors";
 import ReactShadow from "react-shadow"
@@ -35,9 +35,10 @@ class App extends React.Component {
   private style = getURL('pageStyle.css');
   private popup: Popup;
   private icon: Icon;
-  private pointerElem: HTMLElement;
+  private mouseTarget: HTMLElement;
   private lastParams: ITranslateParams;
-  private isDoubleClicked = false;
+  private isDblClicked = false;
+  private isHotkeyActivated = false;
 
   @observable.ref translation: ITranslationResult;
   @observable.ref error: ITranslationError;
@@ -50,12 +51,12 @@ class App extends React.Component {
 
   componentDidMount() {
     document.addEventListener("selectionchange", this.onSelectionChange);
-    document.addEventListener("mouseup", this.onMouseUp);
-    document.addEventListener("mouseover", this.onMouseOver);
+    document.addEventListener("mousemove", this.onMouseMove);
+    document.addEventListener("mousedown", this.onMouseDown);
     document.addEventListener("dblclick", this.onDoubleClick);
     document.addEventListener("keydown", this.onKeyDown);
     window.addEventListener("resize", this.onResizeWindow);
-    onMessage(this.onMenuClick);
+    onMessage(this.onContextMenu);
     onMessage(this.onGetSelectedText);
   }
 
@@ -65,7 +66,7 @@ class App extends React.Component {
 
   @computed get iconPosition(): React.CSSProperties {
     var { selectedText, selectionRects, isRtlSelection } = this;
-    if (!selectedText || !selectionRects) {
+    if (!selectedText || !selectionRects || !this.isPopupHidden) {
       return {
         display: "none"
       }
@@ -87,7 +88,10 @@ class App extends React.Component {
     }
   }
 
-  translate = async (params?: Partial<ITranslateParams>) => {
+  translateLazy = debounce(this.translate, 500);
+
+  @autobind()
+  async translate(params?: Partial<ITranslateParams>) {
     var { vendor, langFrom, langTo, autoPlayText, historyEnabled } = this.settings;
     params = Object.assign({
       vendor: vendor,
@@ -96,7 +100,9 @@ class App extends React.Component {
       text: this.selectedText,
     }, params);
     var { vendor, from, to, text } = params;
-    if (!text) return;
+    if (!text || isEqual(params, this.lastParams)) {
+      return;
+    }
     try {
       var translator = getTranslator(vendor);
       this.isLoading = true;
@@ -161,6 +167,9 @@ class App extends React.Component {
     this.position = null;
     this.lastParams = null;
     this.selectionRects = null;
+    this.isDblClicked = false;
+    this.isHotkeyActivated = false;
+    this.selection.removeAllRanges();
     this.stopPlaying();
   }
 
@@ -175,7 +184,7 @@ class App extends React.Component {
     return !popupHost.contains(elem as HTMLElement);
   }
 
-  normalizeRect(rect: ClientRect, withScroll = true) {
+  normalizeRect(rect: ClientRect, withScroll = true): ClientRect {
     var { left, top, width, height } = rect;
     if (withScroll) {
       left += window.pageXOffset;
@@ -202,15 +211,17 @@ class App extends React.Component {
         if (this.isEditable(document.activeElement)) {
           rects.push(document.activeElement.getBoundingClientRect());
         }
+        else if (focusNode === anchorNode && focusNode instanceof HTMLElement) {
+          rects.push(focusNode.getBoundingClientRect());
+        }
         else {
-          var rect = (anchorNode instanceof HTMLElement ? anchorNode : range).getBoundingClientRect();
-          rects.push(rect);
+          rects.push(range.getBoundingClientRect());
         }
       }
       this.selectionRects = rects.map(rect => this.normalizeRect(rect));
       this.isRtlSelection = anchorOffset > focusOffset;
     }
-    else {
+    else if (this.selectionRects) {
       this.selectionRects = null;
       this.isRtlSelection = false;
     }
@@ -240,70 +251,69 @@ class App extends React.Component {
     }
   }
 
-  @autobind()
-  onSelectionChange() {
+  onSelectionChange = debounce(() => {
     this.selectedText = this.selection.toString().trim();
-  }
+
+    if (this.isEditable(document.activeElement) || !this.selectedText) {
+      return;
+    }
+    var { showPopupAfterSelection, showIconNearSelection, showPopupOnDoubleClick } = this.settings;
+    if (showPopupAfterSelection) {
+      this.refreshRects();
+      this.translateLazy();
+    }
+    else if (this.isPopupHidden) {
+      this.refreshRects();
+      var showOnDoubleClick = showPopupOnDoubleClick && this.isDblClicked;
+      if (showOnDoubleClick || this.isHotkeyActivated || this.isLoading) {
+        this.translate();
+      }
+      else if (showIconNearSelection) {
+        this.showIcon();
+      }
+    }
+  }, 50);
 
   @autobind()
   onIconClick(evt: React.MouseEvent) {
-    evt.nativeEvent.stopImmediatePropagation(); // don't reset text selection
     this.hideIcon();
     this.translate();
   }
 
   @autobind()
-  onMouseOver(evt: MouseEvent) {
-    this.pointerElem = evt.target as HTMLElement; // keep element for keydown event
+  onMouseMove(evt: MouseEvent) {
+    this.mouseTarget = evt.target as HTMLElement;
   }
 
   @autobind()
-  onDoubleClick() {
-    this.isDoubleClicked = true;
-  }
-
-  // delayed call after double click
-  onMouseUp = debounce((evt: MouseEvent) => {
-    var target = evt.target as HTMLElement;
-
-    if (!this.selectedText) {
-      this.hideIcon();
-      if (this.isOutsideOfPopup(target)) {
-        this.hidePopup();
-      }
+  onMouseDown(evt: MouseEvent) {
+    var rightBtnClick = evt.button === 2;
+    if (rightBtnClick) {
       return;
     }
-
-    var isIconClick = this.icon.elem.contains(target);
-    var { showPopupAfterSelection, showIconNearSelection, showPopupOnDoubleClick } = this.settings;
-    var isSelectionChanged = this.lastParams && this.lastParams.text !== this.selectedText;
-    showPopupOnDoubleClick = showPopupOnDoubleClick && this.isDoubleClicked;
-    showPopupAfterSelection = showPopupAfterSelection && this.isPopupHidden;
-    showIconNearSelection = showIconNearSelection && !isIconClick && this.isPopupHidden;
-
-    // refresh selection rects
-    this.refreshRects();
-
-    // handle actions
-    if (showPopupAfterSelection || showPopupOnDoubleClick || isSelectionChanged) {
-      this.translate();
+    this.hideIcon();
+    if (this.isOutsideOfPopup(evt.target as HTMLElement)) {
+      this.hidePopup();
     }
-    else if (showIconNearSelection) {
-      this.showIcon();
-    }
-    if (this.isDoubleClicked) {
-      this.isDoubleClicked = false;
-    }
-  }, 150);
+  }
 
   @autobind()
-  onMenuClick(message: Message) {
+  onDoubleClick(evt: MouseEvent) {
+    if (this.settings.showPopupOnDoubleClick) {
+      this.isDblClicked = true;
+    }
+  }
+
+  @autobind()
+  onContextMenu(message: Message) {
     var { type } = message;
     if (type === MessageType.MENU_TRANSLATE_WITH_VENDOR) {
+      this.hideIcon();
       let { vendor, selectedText } = message.payload as MenuTranslateVendorPayload;
       this.translate({ vendor, text: selectedText });
     }
     if (type === MessageType.MENU_TRANSLATE_FAVORITE) {
+      this.hideIcon();
       let { vendor, from, to, selectedText } = message.payload as MenuTranslateFavoritePayload;
       this.translate({ vendor, from, to, text: selectedText });
     }
@@ -323,8 +333,7 @@ class App extends React.Component {
 
   @autobind()
   onKeyDown(evt: KeyboardEvent) {
-    var popupIsVisible = !!(this.translation || this.error);
-    if (popupIsVisible) {
+    if (!this.isPopupHidden) {
       switch (evt.code) {
         case "Escape":
           this.hidePopup();
@@ -346,46 +355,39 @@ class App extends React.Component {
     }
     var hotkey = getHotkey(evt);
     var { keyCode, ...currentHotkey } = toJS(this.settings.hotkey);
-    if (isEqual(currentHotkey, hotkey)) {
-      var text = this.selectedText;
-      var elem = this.pointerElem;
-      var notRoot = elem !== document.documentElement && elem !== document.body;
-      var obtainText = !text && elem && notRoot && this.isOutsideOfPopup(elem);
-      if (obtainText) {
-        this.selection.collapse(elem, 0);
+    if (isEqual(currentHotkey, hotkey) && this.isPopupHidden) {
+      evt.preventDefault();
+      this.isHotkeyActivated = true;
 
-        // detect and select text nodes from element under mouse cursor
-        var textNode: Node, textNodes: Node[] = [];
-        var searchTextNodes = document.evaluate('.//text()', elem, null, XPathResult.ANY_TYPE, null);
-        while ((textNode = searchTextNodes.iterateNext())) {
-          textNodes.push(textNode);
-        }
-        if (textNodes.length) {
-          var lastNode = textNodes.slice(-1)[0];
-          this.selection.extend(lastNode, lastNode.textContent.length);
-          this.onSelectionChange();
-          text = this.selectedText;
-        }
-        // if still no text try to get some information from input fields or images
-        if (!text) {
-          if (elem instanceof HTMLInputElement || elem instanceof HTMLTextAreaElement) {
-            text = elem.value || elem.placeholder;
+      var text = this.selectedText;
+      var enterElem = this.mouseTarget;
+      var notRoot = enterElem !== document.documentElement && enterElem !== document.body;
+      var autoSelectText = !text && notRoot && this.isOutsideOfPopup(enterElem);
+      if (autoSelectText) {
+        this.selection.selectAllChildren(enterElem);
+
+        if (["input", "textarea", "img"].includes(enterElem.nodeName.toLowerCase())) {
+          if (enterElem instanceof HTMLInputElement || enterElem instanceof HTMLTextAreaElement) {
+            text = enterElem.value || enterElem.placeholder;
           }
-          if (elem instanceof HTMLImageElement) {
-            text = elem.title || elem.alt;
+          if (enterElem instanceof HTMLImageElement) {
+            text = enterElem.title || enterElem.alt;
+          }
+          if (text) {
+            this.selectionRects = [this.normalizeRect(enterElem.getBoundingClientRect())];
+            this.translate({ text });
           }
         }
       }
-      if (text) {
+      else if (text) {
         this.refreshRects();
-        this.translate({ text });
-        evt.preventDefault();
+        this.translate();
       }
     }
   }
 
   onResizeWindow = debounce(() => {
-    if (this.selectedText) this.refreshRects();
+    if (!this.isPopupHidden) this.refreshRects();
     this.refreshPosition();
   }, 250)
 
@@ -411,7 +413,7 @@ class App extends React.Component {
           material="explore"
           style={this.iconPosition}
           hidden={!isIconShown}
-          onMouseDown={onIconClick}
+          onClick={prevDefault(onIconClick)}
           title={`${this.appName}: ${[langFrom, langTo].join(' → ').toUpperCase()}`}
           ref={e => this.icon = e}
         />
