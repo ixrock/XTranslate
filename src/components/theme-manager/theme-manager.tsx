@@ -83,7 +83,7 @@ export class ThemeManager extends React.Component {
             <span className="heading">{__i18n("text_size")}</span>
             <NumberInput
               className="box grow"
-              min={10} max={25}
+              min={10} max={50}
               value={theme.fontSize}
               onChange={v => theme.fontSize = v}
             />

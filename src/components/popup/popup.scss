@@ -10,6 +10,25 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
 
+  @mixin customScroll {
+    $scrollSize: .6em;
+    overflow: auto;
+
+    &::-webkit-scrollbar {
+      width: $scrollSize;
+      height: $scrollSize;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      border: 1px solid;
+      border-radius: $scrollSize / 2;
+    }
+
+    &::-webkit-scrollbar-corner {
+      background: none;
+    }
+  }
+
   &:not(.preview) {
     &:not(.fixedPos) {
       position: absolute;
@@ -46,35 +65,10 @@
     }
   }
 
-  &.preview {
-    > .content {
-      overflow: initial;
-    }
-  }
-
   &.visible {
     visibility: visible;
     opacity: 1;
     transition-delay: 100ms;
-  }
-
-  > .content {
-    $scrollSize: 10px;
-    overflow: auto;
-
-    &::-webkit-scrollbar {
-      width: $scrollSize;
-      height: $scrollSize;
-    }
-
-    &::-webkit-scrollbar-thumb {
-      border: 1px solid;
-      border-radius: $scrollSize / 2;
-    }
-
-    &::-webkit-scrollbar-corner {
-      background: none;
-    }
   }
 
   .rtl {
@@ -82,9 +76,11 @@
   }
 
   .Icon {
+    --size: 1.6em;
     --bgc-active: none;
 
-    font-size: 1.6em;
+    width: auto;
+    height: auto;
     opacity: .75;
     cursor: pointer;
     user-select: none;
@@ -99,11 +95,7 @@
   .translation-result {
     --flex-gap: 5px;
 
-    .translation {
-      // hackfix: popup has a scroll sometimes when it should not
-      // happens when right icons-block are visible (copy/next)
-      width: calc(100% - 1px);
-    }
+    @include customScroll;
 
     .value {
       padding: 2px 0;

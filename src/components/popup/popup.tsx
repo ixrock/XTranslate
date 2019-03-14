@@ -249,9 +249,7 @@ export class Popup extends React.Component<Props> {
     style = Object.assign(this.getPopupStyle(), style);
     return (
       <div className={popupClass} style={style} tabIndex={-1} ref={e => this.elem = e}>
-        <div className="content">
-          {error ? this.renderError() : this.renderResult()}
-        </div>
+        {error ? this.renderError() : this.renderResult()}
       </div>
     );
   }
