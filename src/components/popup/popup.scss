@@ -99,6 +99,12 @@
   .translation-result {
     --flex-gap: 5px;
 
+    .translation {
+      // hackfix: popup has a scroll sometimes when it should not
+      // happens when right icons-block are visible (copy/next)
+      width: calc(100% - 1px);
+    }
+
     .value {
       padding: 2px 0;
     }
