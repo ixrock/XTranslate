@@ -1,0 +1,15 @@
+.XTranslateIcon {
+  --size: 16px;
+
+  position: absolute;
+  box-shadow: 0 0 5px -1px black !important;
+  background: white !important;
+  padding: 5px;
+  border-radius: 50%;
+
+  &:not(:hover) {
+    path {
+      fill: black;
+    }
+  }
+}

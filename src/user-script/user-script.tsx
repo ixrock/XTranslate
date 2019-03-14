@@ -10,6 +10,7 @@ import { getManifest, getURL, MenuTranslateFavoritePayload, MenuTranslateVendorP
 import { getNextTranslator, getTranslator, ITranslationError, ITranslationResult } from "../vendors";
 import ReactShadow from "react-shadow"
 import { Icon } from "../components/icon";
+import { XTranslateIcon } from "./xtranslate-icon";
 import { ITranslateParams, Popup } from "../components/popup/popup";
 import { settingsStore } from "../components/settings/settings.store";
 import { themeStore } from "../components/theme-manager/theme.store";
@@ -65,8 +66,8 @@ class App extends React.Component {
   }
 
   @computed get iconPosition(): React.CSSProperties {
-    var { selectedText, selectionRects, isRtlSelection } = this;
-    if (!selectedText || !selectionRects || !this.isPopupHidden) {
+    var { selectedText, selectionRects, isRtlSelection, isIconShown } = this;
+    if (!selectedText || !selectionRects || !isIconShown || !this.isPopupHidden) {
       return {
         display: "none"
       }
@@ -88,7 +89,7 @@ class App extends React.Component {
     }
   }
 
-  translateLazy = debounce(this.translate, 500);
+  translateLazy = debounce(this.translate, 250);
 
   @autobind()
   async translate(params?: Partial<ITranslateParams>) {
@@ -197,7 +198,7 @@ class App extends React.Component {
     };
   }
 
-  refreshRects() {
+  saveSelectionRects() {
     if (this.selection.rangeCount > 0) {
       var { anchorOffset, anchorNode, focusNode, focusOffset } = this.selection;
       var range = this.selection.getRangeAt(0);
@@ -259,11 +260,11 @@ class App extends React.Component {
     }
     var { showPopupAfterSelection, showIconNearSelection, showPopupOnDoubleClick } = this.settings;
     if (showPopupAfterSelection) {
-      this.refreshRects();
+      this.saveSelectionRects();
       this.translateLazy();
     }
     else if (this.isPopupHidden) {
-      this.refreshRects();
+      this.saveSelectionRects();
       var showOnDoubleClick = showPopupOnDoubleClick && this.isDblClicked;
       if (showOnDoubleClick || this.isHotkeyActivated || this.isLoading) {
         this.translate();
@@ -272,7 +273,7 @@ class App extends React.Component {
         this.showIcon();
       }
     }
-  }, 50);
+  }, 150);
 
   @autobind()
   onIconClick(evt: React.MouseEvent) {
@@ -287,12 +288,15 @@ class App extends React.Component {
 
   @autobind()
   onMouseDown(evt: MouseEvent) {
+    var clickedElem = evt.target as HTMLElement;
     var rightBtnClick = evt.button === 2;
     if (rightBtnClick) {
       return;
     }
-    this.hideIcon();
-    if (this.isOutsideOfPopup(evt.target as HTMLElement)) {
+    if (!this.icon.elem.contains(clickedElem)) {
+      this.hideIcon();
+    }
+    if (this.isOutsideOfPopup(clickedElem)) {
       this.hidePopup();
     }
   }
@@ -380,19 +384,19 @@ class App extends React.Component {
         }
       }
       else if (text) {
-        this.refreshRects();
+        this.saveSelectionRects();
         this.translate();
       }
     }
   }
 
   onResizeWindow = debounce(() => {
-    if (!this.isPopupHidden) this.refreshRects();
+    if (!this.isPopupHidden) this.saveSelectionRects();
     this.refreshPosition();
   }, 250)
 
   render() {
-    var { translation, error, playText, translateNext, isIconShown, position, onIconClick, lastParams } = this;
+    var { translation, error, playText, translateNext, position, onIconClick, lastParams } = this;
     var { langFrom, langTo } = this.settings;
     return (
       <>
@@ -409,13 +413,11 @@ class App extends React.Component {
             />
           </div>
         </ReactShadow>
-        <Icon
-          material="explore"
+        <XTranslateIcon
           style={this.iconPosition}
-          hidden={!isIconShown}
           onClick={prevDefault(onIconClick)}
           title={`${this.appName}: ${[langFrom, langTo].join(' → ').toUpperCase()}`}
-          ref={e => this.icon = e}
+          bindRef={e => this.icon = e}
         />
       </>
     )

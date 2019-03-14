@@ -5,6 +5,7 @@ import { observer } from "mobx-react";
 import { getTranslators } from "../../vendors";
 import { __i18n, createTab } from "../../extension";
 import { autobind, getHotkey, parseHotkey, prevDefault } from "../../utils";
+import { XTranslateIcon } from "../../user-script/xtranslate-icon";
 import { SelectLanguage } from "../select-language";
 import { Input, NumberInput } from "../input";
 import { Checkbox } from "../checkbox";
@@ -31,7 +32,7 @@ export class Settings extends React.Component {
 
   renderPopupPreview(customSettings?: Partial<ISettingsStoreData>) {
     return (
-      <Tooltip following className="popup-preview">
+      <Tooltip following className="preview">
         <Popup preview/>
       </Tooltip>
     )
@@ -43,7 +44,7 @@ export class Settings extends React.Component {
     return (
       <div className="Settings flex column gaps">
         <p className="sub-title">{__i18n("setting_title_common")}</p>
-        <div className="checkbox-group">
+        <div className="common-settings checkbox-group">
           <Checkbox
             label={__i18n("auto_play_tts")}
             checked={settings.autoPlayText}
@@ -58,11 +59,15 @@ export class Settings extends React.Component {
             label={__i18n("display_icon_near_selection")}
             checked={settings.showIconNearSelection}
             onChange={v => settings.showIconNearSelection = v}
-          />
+          >
+            <Tooltip following className="preview">
+              <XTranslateIcon/>
+            </Tooltip>
+          </Checkbox>
         </div>
 
         <p className="sub-title">{__i18n("setting_title_translator_service")}</p>
-        <div className="service flex">
+        <div className="translator-settings flex">
           <RadioGroup
             className="vendors flex gaps column"
             value={settings.vendor}
@@ -84,7 +89,7 @@ export class Settings extends React.Component {
         </div>
 
         <p className="sub-title">{__i18n("setting_title_popup")}</p>
-        <div className="display-options flex gaps auto">
+        <div className="popup-settings flex gaps auto">
           <div className="checkbox-group">
             <Checkbox
               label={__i18n("show_tts_icon_inside_popup")}
@@ -155,8 +160,8 @@ export class Settings extends React.Component {
         </div>
 
         <p className="sub-title">{__i18n("setting_title_text_input")}</p>
-        <div className="display-options flex gaps auto">
-          <div className="flex column gaps align-flex-start">
+        <div className="flex gaps auto">
+          <div className="translate-settings">
             <Checkbox
               label={__i18n("remember_last_typed_text")}
               checked={settings.rememberLastText}

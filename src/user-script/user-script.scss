@@ -23,30 +23,11 @@
 
 .XTranslate {
   @import "../components/icon/icon";
+  @import "./xtranslate-icon";
 
   position: absolute !important;
   width: 100% !important;
   left: 0 !important;
   top: 0 !important;
   z-index: 1000000000 !important;
-
-  > .Icon.actionIcon {
-    position: absolute;
-    box-shadow: 0 0 5px -1px;
-    background: white;
-    color: black;
-    border-radius: 50%;
-    overflow: hidden;
-    cursor: pointer;
-    transition: none;
-
-    &[hidden] {
-      opacity: 0;
-    }
-
-    &:hover {
-      background: black;
-      color: white;
-    }
-  }
 }

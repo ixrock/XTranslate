@@ -23,7 +23,7 @@
   }
 
   .Tooltip {
-    &.popup-preview {
+    &.preview {
       padding: 0;
       background: none;
       border-radius: 0;
@@ -38,5 +38,11 @@
   .vendors {
     --flex-gap: #{$margin /2};
     margin-right: $margin * 2;
+  }
+
+  .translate-settings {
+    .Checkbox {
+      margin-bottom: $margin * 1.5;
+    }
   }
 }
