@@ -43,7 +43,6 @@ export class ThemeStore extends Store<IUserHistoryStoreData> {
     super({
       storageType: "sync",
       initialData: defaultTheme,
-      autoSaveDelayMs: 500,
     });
   }
 }

@@ -1,6 +1,5 @@
-import { observable, reaction, toJS, when } from "mobx";
+import { action, observable, reaction, toJS, when } from "mobx";
 import { autobind } from "./utils/autobind";
-import isEqual from "lodash/isEqual";
 
 export interface StoreParams<T = object> {
   initialData: T;
@@ -16,7 +15,7 @@ export abstract class Store<T = object> {
 
   static defaultParams: Partial<StoreParams> = {
     autoLoad: true,
-    autoSave: true,
+    autoSave: false,
     autoSaveDelayMs: 250,
     storageType: "local",
   };
@@ -26,35 +25,47 @@ export abstract class Store<T = object> {
   @observable isSaving = false;
   @observable data: T;
 
-  protected constructor(protected params: StoreParams<T>) {
-    this.params = Object.assign({}, Store.defaultParams, params);
+  get params() {
+    return Object.assign({}, Store.defaultParams, this.initialParams);
+  }
 
-    var { initialData, autoLoad, autoSave, storageType } = this.params;
+  constructor(protected initialParams: StoreParams<T>) {
+    var { initialData, autoLoad, storageType } = this.params;
     this.data = initialData;
 
     if (autoLoad) {
       this.load();
     }
-    if (autoSave) {
-      when(() => this.isLoaded, this.bindAutoSave);
-    }
-    // sync storage changes made from options page (for background & content pages)
+
+    // bind auto-save to chrome.store reaction on data change
+    when(() => this.isLoaded, () => {
+      reaction(() => toJS(this.data), this.onChange, {
+        delay: this.params.autoSaveDelayMs
+      });
+    });
+
+    // sync changes made from options page (for background & content pages)
     chrome.storage.onChanged.addListener((changes, areaName) => {
-      if (this.isSaving) return;
-      if (areaName === storageType && changes[this.id]) {
-        var newData = changes[this.id].newValue;
-        if (isEqual(newData, toJS(initialData))) this.reset();
-        else this.update(newData);
+      var isCurrentStore = areaName === storageType && changes[this.id];
+      if (!isCurrentStore || this.isSaving) {
+        return;
+      }
+      var data = changes[this.id];
+      if (data.newValue) {
+        this.update(data.newValue);
+      }
+      else if (data.oldValue && !data.newValue) {
+        this.reset();
       }
     });
   }
 
-  protected bindAutoSave() {
-    reaction(() => toJS(this.data), this.save, {
-      delay: this.params.autoSaveDelayMs
-    });
+  protected onChange() {
+    if (!this.params.autoSave) return;
+    this.save();
   }
 
+  @action
   async load(force?: boolean): Promise<T> {
     var { storageType } = this.params;
     if (this.isLoaded && !force) return;
@@ -71,6 +82,7 @@ export abstract class Store<T = object> {
     })
   }
 
+  @action
   async save() {
     if (!this.isLoaded) await this.load();
     var { storageType } = this.params;
@@ -85,6 +97,7 @@ export abstract class Store<T = object> {
     })
   }
 
+  @action
   update(data: Partial<T>) {
     if (!data) return;
     if (Array.isArray(this.data)) {
@@ -98,13 +111,18 @@ export abstract class Store<T = object> {
     }
   }
 
+  @action
   reset() {
-    var { initialData } = this.params;
-    if (typeof this.data === "object" && !Array.isArray(this.data)) {
-      Object.keys(toJS(this.data)).forEach(prop => {
-        delete this.data[prop]; // clear
-      });
-    }
-    this.update(initialData);
+    var { initialData, storageType } = this.params;
+    this.isSaving = true;
+    chrome.storage[storageType].remove(this.id, () => {
+      if (typeof this.data === "object" && !Array.isArray(this.data)) {
+        Object.keys(toJS(this.data)).forEach(prop => {
+          delete this.data[prop]; // clear
+        });
+      }
+      this.update(initialData);
+      this.isSaving = false;
+    });
   }
 }

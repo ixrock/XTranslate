@@ -1,4 +1,4 @@
-import { observable, reaction } from "mobx";
+import { observable } from "mobx";
 import { Store } from "../../store";
 import { autobind } from "../../utils/autobind";
 import { ITranslationResult } from "../../vendors/translator";
@@ -11,9 +11,7 @@ export enum HistoryTimeFrame {
 
 export type IUserHistoryStoreData = typeof defaultHistory;
 
-const defaultHistory = observable.array<IHistoryStorageItem>([], {
-  deep: false
-});
+const defaultHistory = observable.array<IHistoryStorageItem>([], { deep: false });
 
 @autobind()
 export class UserHistoryStore extends Store<IUserHistoryStoreData> {
@@ -21,17 +19,11 @@ export class UserHistoryStore extends Store<IUserHistoryStoreData> {
 
   constructor() {
     super({
+      autoSave: true,
       autoLoad: false,
-      autoSaveDelayMs: 500,
       storageType: "local",
       initialData: defaultHistory,
     });
-  }
-
-  protected bindAutoSave() {
-    reaction(() => this.data.length, this.save, {
-      delay: this.params.autoSaveDelayMs
-    })
   }
 
   async saveTranslation(translation: ITranslationResult) {

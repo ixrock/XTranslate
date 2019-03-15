@@ -18,6 +18,7 @@ import { InputTranslation } from "../input-translation";
 import { UserHistory } from "../user-history";
 import { AppRoute } from "./app.route";
 import { Icon } from "../icon";
+import { Store } from "../../store";
 
 @observer
 export class App extends React.Component {
@@ -27,6 +28,7 @@ export class App extends React.Component {
   public settings = settingsStore.data;
 
   static async init() {
+    Store.defaultParams.autoSave = true; // enable default auto-saving only to options page
     render(<Spinner center/>, App.rootElem); // show loading indicator
     await when(() => settingsStore.isLoaded && themeStore.isLoaded);
     render(<App/>, App.rootElem);

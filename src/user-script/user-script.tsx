@@ -273,7 +273,7 @@ class App extends React.Component {
         this.showIcon();
       }
     }
-  }, 150);
+  }, 250);
 
   @autobind()
   onIconClick(evt: React.MouseEvent) {
