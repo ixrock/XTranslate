@@ -1,4 +1,5 @@
 // Message types for communication btw different parts of the app
+import { ITranslationError, ITranslationResult } from "../vendors/translator";
 
 export enum MessageType {
   MENU_TRANSLATE_WITH_VENDOR,
@@ -8,6 +9,7 @@ export enum MessageType {
   STOP_TTS_PLAYING,
   GET_SELECTED_TEXT,
   SELECTED_TEXT,
+  TRANSLATE_TEXT,
 }
 
 export interface Message<D = any> {
@@ -29,4 +31,16 @@ export interface PlayTextToSpeechPayload {
   vendor: string
   lang: string
   text: string
+}
+
+export interface TranslatePayload {
+  vendor: string;
+  from: string;
+  to: string;
+  text: string;
+}
+
+export interface TranslatePayloadResult {
+  data?: ITranslationResult;
+  error?: ITranslationError;
 }

@@ -11,7 +11,9 @@ export interface TabsContextValue<D = any> {
   onChange?(value: D): void;
 }
 
-export type TabsProps<D = any> = TabsContextValue<D> & React.DOMAttributes<HTMLElement> & {
+type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>
+
+export interface TabsProps<D = any> extends TabsContextValue<D>, Omit<React.DOMAttributes<HTMLElement>, "onChange"> {
   className?: string;
   center?: boolean;
   wrap?: boolean;
@@ -92,11 +94,16 @@ export class Tab extends React.PureComponent<TabProps> {
 
   @autobind()
   onKeyDown(evt: React.KeyboardEvent<HTMLElement>) {
-    var ENTER_KEY = evt.nativeEvent.code === "Enter";
-    var SPACE_KEY = evt.nativeEvent.code === "Space";
-    if (SPACE_KEY || ENTER_KEY) this.elem.click();
-    var { onKeyDown } = this.props;
-    if (onKeyDown) onKeyDown(evt);
+    switch (evt.nativeEvent.code) {
+      case "Enter":
+      case "Space":
+        this.elem.click();
+        evt.preventDefault(); // avoid page scrolling
+        break;
+    }
+    if (this.props.onKeyDown) {
+      this.props.onKeyDown(evt);
+    }
   }
 
   componentDidMount() {

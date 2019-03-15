@@ -6,8 +6,8 @@ import { computed, observable, toJS, when } from "mobx";
 import { observer } from "mobx-react";
 import { debounce, isEqual } from "lodash"
 import { autobind, cssNames, getHotkey, prevDefault } from "../utils";
-import { getManifest, getURL, MenuTranslateFavoritePayload, MenuTranslateVendorPayload, Message, MessageType, onMessage, PlayTextToSpeechPayload, sendMessage } from "../extension";
-import { getNextTranslator, getTranslator, ITranslationError, ITranslationResult } from "../vendors";
+import { getManifest, getURL, MenuTranslateFavoritePayload, MenuTranslateVendorPayload, Message, MessageType, onMessage, PlayTextToSpeechPayload, sendMessage, TranslatePayload, TranslatePayloadResult } from "../extension";
+import { getNextTranslator, ITranslationError, ITranslationResult } from "../vendors";
 import ReactShadow from "react-shadow"
 import { Icon } from "../components/icon";
 import { XTranslateIcon } from "./xtranslate-icon";
@@ -100,15 +100,13 @@ class App extends React.Component {
       to: langTo,
       text: this.selectedText,
     }, params);
-    var { vendor, from, to, text } = params;
-    if (!text || isEqual(params, this.lastParams)) {
+    if (!this.selectedText || isEqual(params, this.lastParams)) {
       return;
     }
     try {
-      var translator = getTranslator(vendor);
       this.isLoading = true;
       this.lastParams = params as ITranslateParams;
-      var translation = await translator.getTranslation(from, to, text);
+      var translation = await this.translateProxy(params);
       if (params === this.lastParams) {
         this.translation = translation;
         this.error = null;
@@ -130,6 +128,26 @@ class App extends React.Component {
     return this.translate({
       vendor: nextTranslator.name,
       from, to, text,
+    });
+  }
+
+  @autobind()
+  async translateProxy(params: Partial<ITranslateParams>): Promise<ITranslationResult> {
+    sendMessage<TranslatePayload>({
+      type: MessageType.TRANSLATE_TEXT,
+      payload: params as ITranslateParams,
+    });
+    return new Promise((resolve, reject) => {
+      var stopListen = onMessage(({ type, payload }) => {
+        if (type === MessageType.TRANSLATE_TEXT) {
+          stopListen();
+          if (isEqual(params, this.lastParams)) {
+            var { data, error } = payload as TranslatePayloadResult;
+            if (data) resolve(data);
+            else reject(error);
+          }
+        }
+      });
     });
   }
 

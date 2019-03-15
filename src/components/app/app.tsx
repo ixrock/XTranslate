@@ -55,6 +55,11 @@ export class App extends React.Component {
     });
   }
 
+  onTabsChange = (location: string) => {
+    document.location.href = location;
+    window.scrollTo(0, 0);
+  }
+
   render() {
     var { name, version } = this.manifest;
     var { useDarkTheme } = this.settings;
@@ -77,7 +82,7 @@ export class App extends React.Component {
             onClick={this.detachWindow}
           />
         </h4>
-        <Tabs center value={activePageId} onChange={hash => location.href = hash}>
+        <Tabs center value={activePageId} onChange={this.onTabsChange}>
           <Tab value={AppRoute.settings} label={__i18n("tab_settings")} icon="settings"/>
           <Tab value={AppRoute.theme} label={__i18n("tab_theme")} icon="color_lens"/>
           <Tab value={AppRoute.popup} label={__i18n("tab_text_input")} icon="translate"/>

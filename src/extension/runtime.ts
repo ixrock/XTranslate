@@ -22,8 +22,10 @@ export function sendMessage<T>(message: Message<T>) {
   chrome.runtime.sendMessage(message)
 }
 
-export function onMessage(callback: (message: Message, sender: chrome.runtime.MessageSender, sendResponse) => void) {
-  var listener = function (message, sender: chrome.runtime.MessageSender, sendResponse) {
+type OnMessageCallback = (message: Message, sender: chrome.runtime.MessageSender, sendResponse: (data?: any) => void) => void;
+
+export function onMessage(callback: OnMessageCallback) {
+  var listener: OnMessageCallback = (message, sender, sendResponse) => {
     if (getId() !== sender.id) return;
     callback(message, sender, sendResponse);
   };
