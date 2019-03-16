@@ -52,10 +52,10 @@ class App extends React.Component {
 
   componentDidMount() {
     document.addEventListener("selectionchange", this.onSelectionChange);
-    document.addEventListener("mousemove", this.onMouseMove);
-    document.addEventListener("mousedown", this.onMouseDown);
-    document.addEventListener("dblclick", this.onDoubleClick);
-    document.addEventListener("keydown", this.onKeyDown);
+    document.addEventListener("mousemove", this.onMouseMove, true);
+    document.addEventListener("mousedown", this.onMouseDown, true);
+    document.addEventListener("dblclick", this.onDoubleClick, true);
+    document.addEventListener("keydown", this.onKeyDown, true);
     window.addEventListener("resize", this.onResizeWindow);
     onMessage(this.onContextMenu);
     onMessage(this.onGetSelectedText);
@@ -297,6 +297,7 @@ class App extends React.Component {
   onIconClick(evt: React.MouseEvent) {
     this.hideIcon();
     this.translate();
+    evt.stopPropagation();
   }
 
   @autobind()
@@ -433,7 +434,7 @@ class App extends React.Component {
         </ReactShadow>
         <XTranslateIcon
           style={this.iconPosition}
-          onClick={prevDefault(onIconClick)}
+          onMouseDown={onIconClick}
           title={`${this.appName}: ${[langFrom, langTo].join(' → ').toUpperCase()}`}
           bindRef={e => this.icon = e}
         />

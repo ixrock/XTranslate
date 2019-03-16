@@ -6,6 +6,7 @@
   visibility: hidden;
   opacity: 0;
   transition: opacity 100ms ease-out;
+  transition-delay: 100ms;
   line-height: normal;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -68,7 +69,6 @@
   &.visible {
     visibility: visible;
     opacity: 1;
-    transition-delay: 100ms;
   }
 
   .rtl {
