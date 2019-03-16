@@ -100,7 +100,7 @@ class App extends React.Component {
       to: langTo,
       text: this.selectedText,
     }, params);
-    if (!this.selectedText || isEqual(params, this.lastParams)) {
+    if (!params.text || isEqual(params, this.lastParams)) {
       return;
     }
     try {
