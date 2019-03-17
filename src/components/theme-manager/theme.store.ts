@@ -8,7 +8,7 @@ export const defaultTheme = {
   bgcSecondary: { r: 98, g: 101, b: 101, a: .95 } as Color,
   bgcLinear: true,
   fontSize: 15,
-  fontFamily: "Roboto",
+  fontFamily: "Open Sans",
   textColor: { r: 255, g: 255, b: 255, a: .85 } as Color,
   textShadowRadius: 0,
   textShadowOffsetX: 0,

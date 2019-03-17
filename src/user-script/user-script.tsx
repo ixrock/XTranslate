@@ -379,10 +379,12 @@ class App extends React.Component {
           break;
         case "ArrowLeft":
           this.translateNext(true);
+          evt.stopImmediatePropagation();
           evt.preventDefault();
           break;
         case "ArrowRight":
           this.translateNext();
+          evt.stopImmediatePropagation();
           evt.preventDefault();
           break;
       }
