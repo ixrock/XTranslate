@@ -3,31 +3,42 @@ import * as React from 'react'
 import { autobind, cssNames } from "../../utils";
 
 type Props = React.HTMLProps<any> & {
-  value?: any
-  defaultValue?: any
-  onChange?(value: number): void;
+  value?: number;
+  min?: number;
+  max?: number;
+  step?: number;
+  formatTitle?(value: number): string | React.ReactNode;
+  onChange?(value: number, evt: React.ChangeEvent<HTMLInputElement>): void;
 }
 
 export class Slider extends React.Component<Props> {
-  private input: HTMLInputElement;
+  public input: HTMLInputElement;
+
+  focus() {
+    this.input.focus();
+  }
 
   @autobind()
-  onChange() {
-    var value = this.input.valueAsNumber;
+  onChange(evt: React.ChangeEvent<HTMLInputElement>) {
+    var value = evt.target.valueAsNumber;
     var onChange = this.props.onChange;
-    if (onChange) onChange(value);
+    if (onChange) {
+      onChange(value, evt);
+    }
   }
 
   render() {
     var value = this.props.value;
-    var { className, children, ...inputProps } = this.props;
+    var { className, formatTitle, children, ...inputProps } = this.props;
     var componentClass = cssNames("Slider", className, {
       disabled: this.props.disabled,
     });
     return (
       <div className={componentClass}>
         <input {...inputProps} type="range" onChange={this.onChange} ref={e => this.input = e}/>
-        <span className="value">{value}</span>
+        <span className="title">
+          {formatTitle ? formatTitle(value) : value}
+        </span>
       </div>
     );
   }

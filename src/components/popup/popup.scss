@@ -85,6 +85,8 @@
     cursor: pointer;
     user-select: none;
     color: inherit !important;
+    border-radius: 0 !important;
+    overflow: hidden; // avoid jumping scrollbar on first show (due .Icon's size based on material-icons font)
 
     &:focus,
     &:hover {

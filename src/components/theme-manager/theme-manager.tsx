@@ -19,6 +19,8 @@ export class ThemeManager extends React.Component {
   public settings = settingsStore.data;
   public theme = themeStore.data;
 
+  public formatMinMaxTitle = (value: number) => !value ? "auto" : value;
+
   render() {
     var { theme } = this;
     var isDefault = isEqual(theme, defaultTheme);
@@ -152,33 +154,37 @@ export class ThemeManager extends React.Component {
           <div className="flex gaps align-center">
             <span className="heading">{__i18n("box_size_min_width")}</span>
             <Slider
-              min={0} max={1000}
+              className="box grow"
+              min={0} max={500} step={50}
               value={theme.minWidth}
               onChange={v => theme.minWidth = v}
-              className="box grow"
+              formatTitle={this.formatMinMaxTitle}
             />
             <span className="heading">{__i18n("box_size_min_height")}</span>
             <Slider
-              min={0} max={1000}
+              className="box grow"
+              min={0} max={500} step={50}
               value={theme.minHeight}
               onChange={v => theme.minHeight = v}
-              className="box grow"
+              formatTitle={this.formatMinMaxTitle}
             />
           </div>
           <div className="flex gaps align-center">
             <span className="heading">{__i18n("box_size_max_width")}</span>
             <Slider
-              min={0} max={1000}
+              className="box grow"
+              min={0} max={500} step={50}
               value={theme.maxWidth}
               onChange={v => theme.maxWidth = v}
-              className="box grow"
+              formatTitle={this.formatMinMaxTitle}
             />
             <span className="heading">{__i18n("box_size_max_height")}</span>
             <Slider
-              min={0} max={1000}
+              className="box grow"
+              min={0} max={500} step={50}
               value={theme.maxHeight}
               onChange={v => theme.maxHeight = v}
-              className="box grow"
+              formatTitle={this.formatMinMaxTitle}
             />
           </div>
         </div>

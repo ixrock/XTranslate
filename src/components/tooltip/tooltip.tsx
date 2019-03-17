@@ -83,20 +83,22 @@ export class Tooltip extends React.Component<TooltipProps, State> {
       return;
     }
 
-    var offset = 10;
+    var posOffset = 10;
     var { clientX, clientY } = evt;
-    this.elem.style.left = (clientX + offset) + "px"
-    this.elem.style.top = (clientY + offset) + "px"
+    this.elem.style.left = (clientX + posOffset) + "px"
+    this.elem.style.top = (clientY + posOffset) + "px"
 
     // correct position if not fits to viewport
     var { innerWidth, innerHeight } = window;
     var { right, bottom, width, height } = this.elem.getBoundingClientRect();
 
     if (right > innerWidth) {
-      this.elem.style.left = (clientX - width - offset) + "px"
+      var left = clientX - width - posOffset;
+      if (left > 0) this.elem.style.left = `${left}px`
     }
     if (bottom > innerHeight) {
-      this.elem.style.top = (clientY - height - offset) + "px"
+      var top = clientY - height - posOffset;
+      if (top > 0) this.elem.style.top = `${top}px`
     }
   }
 

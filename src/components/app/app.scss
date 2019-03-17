@@ -71,12 +71,17 @@ hr {
   display: block;
 }
 
-.page-title {
+header {
   --flex-gap: #{$padding / 2};
   text-transform: uppercase;
   font-weight: bold;
   text-align: left;
   color: #666;
+
+  .app-version {
+    font-weight: normal;
+    font-size: 11px;
+  }
 }
 
 .Tabs {

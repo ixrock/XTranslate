@@ -5,7 +5,7 @@ import { render } from "react-dom";
 import { computed, observable, toJS, when } from "mobx";
 import { observer } from "mobx-react";
 import { debounce, isEqual } from "lodash"
-import { autobind, cssNames, getHotkey, prevDefault } from "../utils";
+import { autobind, cssNames, getHotkey } from "../utils";
 import { getManifest, getURL, MenuTranslateFavoritePayload, MenuTranslateVendorPayload, Message, MessageType, onMessage, PlayTextToSpeechPayload, sendMessage, TranslatePayload, TranslatePayloadResult } from "../extension";
 import { getNextTranslator, ITranslationError, ITranslationResult } from "../vendors";
 import ReactShadow from "react-shadow"
@@ -203,6 +203,13 @@ class App extends React.Component {
     return !popupHost.contains(elem as HTMLElement);
   }
 
+  getViewportSize() {
+    return {
+      width: document.documentElement.clientWidth, // window.innerWidth + scrollbar
+      height: document.documentElement.clientHeight, // window.innerHeight + scrollbar
+    }
+  }
+
   normalizeRect(rect: ClientRect, withScroll = true): ClientRect {
     var { left, top, width, height } = rect;
     if (withScroll) {
@@ -250,24 +257,33 @@ class App extends React.Component {
     var { popupFixedPos } = this.settings;
     if (popupFixedPos || !this.selectionRects) return;
     var { top } = this.selectionRects[0];
-    var { left, bottom, right } = this.selectionRects.slice(-1)[0];
-    this.position = {
-      left: left,
-      top: bottom,
-    };
-    var popupRect = this.popup.elem.getBoundingClientRect();
-    var viewPort = {
-      width: document.documentElement.clientWidth, // window.innerWidth + scrollbar
-      height: document.documentElement.clientHeight, // window.innerHeight + scrollbar
-    };
-    if (popupRect.right > viewPort.width) {
-      delete this.position.left;
-      this.position.right = viewPort.width - right;
-    }
-    if (popupRect.bottom > viewPort.height) {
-      delete this.position.top;
-      this.position.bottom = -top;
-    }
+    var { bottom } = this.selectionRects.slice(-1)[0];
+    var left = Math.min(...this.selectionRects.map(({ left }) => left));
+    var right = Math.max(...this.selectionRects.map(({ right }) => right));
+    var viewPort = this.getViewportSize();
+
+    // available position
+    var positions: Partial<ClientRect>[] = [
+      { left: left, top: bottom },
+      { right: viewPort.width - right, bottom: -top }
+    ];
+
+    // apply first without viewport fitting check
+    this.position = positions[0];
+
+    // add initial position to the end in case of nothing will fit
+    positions.slice(1).concat(positions[0])
+      .forEach(({ left, right, top, bottom }, index) => {
+        var popupPos = this.popup.elem.getBoundingClientRect();
+        if (popupPos.left < 0 || popupPos.right > viewPort.width) {
+          this.position.left = left;
+          this.position.right = right;
+        }
+        if (popupPos.top < 0 || popupPos.bottom > viewPort.height) {
+          this.position.top = top;
+          this.position.bottom = bottom;
+        }
+      });
   }
 
   onSelectionChange = debounce(() => {
@@ -344,12 +360,11 @@ class App extends React.Component {
 
   @autobind()
   onGetSelectedText(message: Message) {
-    var { selectedText } = this;
-    if (!selectedText) return;
-    if (message.type === MessageType.GET_SELECTED_TEXT) {
+    if (!this.selectedText) return;
+    if (message.type === MessageType.SELECTED_TEXT) {
       sendMessage({
-        type: MessageType.SELECTED_TEXT,
-        payload: selectedText,
+        type: message.type,
+        payload: this.selectedText,
       })
     }
   }

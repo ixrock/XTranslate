@@ -66,9 +66,9 @@ export class App extends React.Component {
     var activePageId = location.hash || AppRoute.settings;
     return (
       <div className="App">
-        <h4 className="page-title flex gaps">
-          <div className="name box grow">
-            {name} <sup>{version}</sup>
+        <header className="flex gaps">
+          <div className="app-title box grow">
+            {name} <sup className="app-version">{version}</sup>
           </div>
           <Icon
             svg="moon"
@@ -81,7 +81,7 @@ export class App extends React.Component {
             title={__i18n("open_in_window")}
             onClick={this.detachWindow}
           />
-        </h4>
+        </header>
         <Tabs center value={activePageId} onChange={this.onTabsChange}>
           <Tab value={AppRoute.settings} label={__i18n("tab_settings")} icon="settings"/>
           <Tab value={AppRoute.theme} label={__i18n("tab_theme")} icon="color_lens"/>

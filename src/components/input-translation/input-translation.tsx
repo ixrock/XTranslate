@@ -60,7 +60,7 @@ export class InputTranslation extends React.Component {
 
     var activeTab = await getActiveTab();
     sendTabMessage(activeTab.id, {
-      type: MessageType.GET_SELECTED_TEXT
+      type: MessageType.SELECTED_TEXT
     });
     onMessage(({ payload, type }) => {
       if (type === MessageType.SELECTED_TEXT) {

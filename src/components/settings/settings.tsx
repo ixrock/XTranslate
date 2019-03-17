@@ -43,7 +43,6 @@ export class Settings extends React.Component {
     var hotKey = parseHotkey(settings.hotkey);
     return (
       <div className="Settings flex column gaps">
-        <p className="sub-title">{__i18n("setting_title_common")}</p>
         <div className="common-settings checkbox-group">
           <Checkbox
             label={__i18n("auto_play_tts")}

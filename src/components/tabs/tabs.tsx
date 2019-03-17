@@ -3,29 +3,23 @@ import * as React from "react";
 import { autobind, cssNames } from "../../utils";
 import { Icon } from "../icon";
 
-const TabsContext = React.createContext<TabsContextValue>({});
+const TabsContext = React.createContext<TabsContextValue>(null);
 
-export interface TabsContextValue<D = any> {
-  autoFocus?: boolean;
-  value?: D;
-  onChange?(value: D): void;
-}
-
+type TabsContextValue = TabsProps;
 type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>
 
-export interface TabsProps<D = any> extends TabsContextValue<D>, Omit<React.DOMAttributes<HTMLElement>, "onChange"> {
+export interface TabsProps<D = any> extends Omit<React.DOMAttributes<HTMLElement>, "onChange"> {
+  value?: D;
+  autoFocus?: boolean;
   className?: string;
   center?: boolean;
   wrap?: boolean;
   scrollable?: boolean;
+  onChange?(value: D): void;
 }
 
-export class Tabs extends React.PureComponent<TabsProps> {
+export class Tabs extends React.Component<TabsProps> {
   public elem: HTMLElement;
-
-  static defaultProps: Partial<TabsProps> = {
-    scrollable: true,
-  }
 
   @autobind()
   protected bindRef(elem: HTMLElement) {
@@ -35,7 +29,7 @@ export class Tabs extends React.PureComponent<TabsProps> {
   render() {
     var { className, center, wrap, scrollable, onChange, value, autoFocus, ...elemProps } = this.props;
     return (
-      <TabsContext.Provider value={{ autoFocus, value, onChange }}>
+      <TabsContext.Provider value={this.props}>
         <div
           {...elemProps}
           className={cssNames("Tabs", className, { center, wrap, scrollable })}
@@ -87,9 +81,10 @@ export class Tab extends React.PureComponent<TabProps> {
 
   @autobind()
   onFocus(evt: React.FocusEvent<HTMLElement>) {
+    var { scrollable } = this.context;
     var { onFocus } = this.props;
     if (onFocus) onFocus(evt);
-    this.scrollIntoView();
+    if (scrollable) this.scrollIntoView();
   }
 
   @autobind()

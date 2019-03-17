@@ -9,7 +9,7 @@
   --slider-thumb-size: 15px;
   --slider-track-height: 3px;
 
-  .value {
+  .title {
     position: absolute;
     border-radius: $radius;
     bottom: 100%;
@@ -30,7 +30,7 @@
     background: none;
     outline: none;
 
-    &:hover ~ .value {
+    &:hover ~ .title {
       opacity: 1;
     }
   }

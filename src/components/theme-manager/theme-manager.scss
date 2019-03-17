@@ -1,10 +1,11 @@
 
 .ThemeManager {
   .theme {
-    margin-top: $margin;
-    padding: $padding;
-    border: 1px solid $border-color;
-    border-radius: $padding / 2;
+    margin: $margin 0;
+    margin-bottom: $margin * 2 !important;
+    padding: $padding 0;
+    border-top: 1px solid $border-color;
+    border-bottom: 1px solid $border-color;
 
     > .flex {
       padding: $padding;

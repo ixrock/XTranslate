@@ -7,8 +7,13 @@ body {
     color: lighten($color-secondary, 2.5%);
     @include custom-scrollbar(light);
 
-    .page-title {
+    header {
       color: #cccccc;
+    }
+
+    .Tooltip {
+      background: var(--theme-contast-color);
+      color: var(--theme-contast-color-invert);
     }
 
     .sub-title,
