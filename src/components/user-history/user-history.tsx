@@ -14,12 +14,13 @@ import { Option, Select } from "../select";
 import { Button } from "../button";
 import { Spinner } from "../spinner";
 import { settingsStore } from "../settings/settings.store";
-import { HistoryTimeFrame, IHistoryItem, IHistoryStorageItem, userHistoryStore } from "./user-history.store";
+import { HistoryTimeFrame, IHistoryItem, IHistoryStorageItem, UserHistoryStore, userHistoryStore } from "./user-history.store";
 import { Icon } from "../icon";
 
 @observer
 export class UserHistory extends React.Component {
   settings = settingsStore.data;
+  userHistory = userHistoryStore;
   showDetailsMap = new WeakMap<IHistoryStorageItem, boolean>();
 
   @observable page = 1;
@@ -35,17 +36,17 @@ export class UserHistory extends React.Component {
   }, { delay: 500 })
 
   @computed get items() {
-    if (this.searchedText) return userHistoryStore.findItems(this.searchedText);
-    return userHistoryStore.data.slice(0, this.page * this.settings.historyPageSize);
+    if (this.searchedText) return this.userHistory.findItems(this.searchedText);
+    return this.userHistory.data.slice(0, this.page * this.settings.historyPageSize);
   }
 
   @computed get hasMore() {
     if (this.searchedText) return false;
-    return userHistoryStore.data.length > this.items.length;
+    return this.userHistory.data.length > this.items.length;
   }
 
   componentDidMount() {
-    userHistoryStore.load();
+    this.userHistory.load();
   }
 
   toggleDetails(item: IHistoryStorageItem) {
@@ -60,8 +61,8 @@ export class UserHistory extends React.Component {
 
   exportHistory(type: "json" | "csv") {
     var filename = `xtranslate-history.${type}`;
-    var items = this.searchText ? this.items : userHistoryStore.data;
-    var history = items.map(userHistoryStore.toHistoryItem);
+    var items = this.searchText ? this.items : this.userHistory.data;
+    var history = items.map(UserHistoryStore.toHistoryItem);
     switch (type) {
       case "json":
         var json = history.map(item => {
@@ -104,7 +105,7 @@ export class UserHistory extends React.Component {
   }
 
   clearItem = (item: IHistoryStorageItem) => {
-    userHistoryStore.clear(item);
+    this.userHistory.clear(item);
   }
 
   clearItemsByTimeFrame = () => {
@@ -120,10 +121,10 @@ export class UserHistory extends React.Component {
       return date.join("-");
     }
     var clearAll = timeFrame === HistoryTimeFrame.ALL;
-    var latestItem = userHistoryStore.toHistoryItem(userHistoryStore.data[0]);
+    var latestItem = UserHistoryStore.toHistoryItem(this.userHistory.data[0]);
     var latestFrame = getTimeFrame(latestItem.date, timeFrame);
     var clearFilter = (item: IHistoryItem) => latestFrame === getTimeFrame(item.date, timeFrame);
-    userHistoryStore.clear(clearAll ? null : clearFilter);
+    this.userHistory.clear(clearAll ? null : clearFilter);
   }
 
   playText = (vendor: string, lang: string, text: string) => {
@@ -133,7 +134,7 @@ export class UserHistory extends React.Component {
   renderHistory() {
     var items = this.items.map(item => ({
       storageItem: item,
-      historyItem: userHistoryStore.toHistoryItem(item),
+      historyItem: UserHistoryStore.toHistoryItem(item),
     }));
     var groupedItems = groupBy(items, item => {
       return new Date(item.historyItem.date).toDateString();
@@ -207,9 +208,9 @@ export class UserHistory extends React.Component {
   }
 
   render() {
-    var { isLoading, isLoaded } = userHistoryStore;
     var { timeFrame, showSettings, showSearch, searchText, hasMore, clearItemsByTimeFrame } = this;
     var { historyEnabled, historyAvoidDuplicates, historySaveWordsOnly, historyPageSize } = this.settings;
+    var { isLoading, isLoaded } = this.userHistory;
     return (
       <div className="UserHistory">
         <div className="settings flex gaps align-center justify-center">

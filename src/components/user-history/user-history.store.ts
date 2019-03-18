@@ -1,5 +1,5 @@
 import { observable } from "mobx";
-import { Store } from "../../store";
+import { Store, StoreParams } from "../../store";
 import { autobind } from "../../utils/autobind";
 import { ITranslationResult } from "../../vendors/translator";
 import { settingsStore } from "../settings/settings.store";
@@ -17,42 +17,17 @@ const defaultHistory = observable.array<IHistoryStorageItem>([], { deep: false }
 export class UserHistoryStore extends Store<IUserHistoryStoreData> {
   protected id = "history";
 
-  constructor() {
+  constructor(params: Partial<StoreParams<IUserHistoryStoreData>> = {}) {
     super({
       autoSave: true,
       autoLoad: false,
       storageType: "local",
       initialData: defaultHistory,
+      ...params
     });
   }
 
-  async saveTranslation(translation: ITranslationResult) {
-    if (!translation) return;
-    if (!this.isLoaded) await this.load();
-
-    var { vendor, langFrom, langTo, langDetected, originalText } = translation;
-    var { historySaveWordsOnly, historyAvoidDuplicates } = settingsStore.data;
-    if (historySaveWordsOnly && !translation.dictionary.length) {
-      return;
-    }
-    if (langFrom === "auto") {
-      translation.langFrom = langFrom = langDetected;
-    }
-    var newItems: IHistoryStorageItem[] = [
-      ...this.data
-    ];
-    if (historyAvoidDuplicates) {
-      let newItemData = [vendor, langFrom, langTo, originalText];
-      newItems = newItems.filter(item => {
-        let { vendor, from, to, text } = this.toHistoryItem(item);
-        return !isEqual(newItemData, [vendor, from, to, text]);
-      });
-    }
-    newItems.unshift(this.toStorageItem(translation));
-    this.data.replace(newItems);
-  }
-
-  protected toStorageItem(translation: ITranslationResult): IHistoryStorageItem {
+  static toStorageItem(translation: ITranslationResult): IHistoryStorageItem {
     return [
       Date.now(),
       translation.vendor,
@@ -68,7 +43,7 @@ export class UserHistoryStore extends Store<IUserHistoryStoreData> {
     ]
   }
 
-  toHistoryItem(storageItem: IHistoryStorageItem): IHistoryItem {
+  static toHistoryItem(storageItem: IHistoryStorageItem): IHistoryItem {
     var item: IHistoryItem;
     if (Array.isArray(storageItem)) {
       var [date, vendor, from, to, text, translation, transcription, dict] = storageItem;
@@ -95,11 +70,37 @@ export class UserHistoryStore extends Store<IUserHistoryStoreData> {
     return item;
   }
 
+  async saveTranslation(translation: ITranslationResult) {
+    if (!translation) return;
+    if (!this.isLoaded) await this.load();
+
+    var { vendor, langFrom, langTo, langDetected, originalText } = translation;
+    var { historySaveWordsOnly, historyAvoidDuplicates } = settingsStore.data;
+    if (historySaveWordsOnly && !translation.dictionary.length) {
+      return;
+    }
+    if (langFrom === "auto") {
+      translation.langFrom = langFrom = langDetected;
+    }
+    var newItems: IHistoryStorageItem[] = [
+      ...this.data
+    ];
+    if (historyAvoidDuplicates) {
+      let newItemData = [vendor, langFrom, langTo, originalText];
+      newItems = newItems.filter(item => {
+        let { vendor, from, to, text } = UserHistoryStore.toHistoryItem(item);
+        return !isEqual(newItemData, [vendor, from, to, text]);
+      });
+    }
+    newItems.unshift(UserHistoryStore.toStorageItem(translation));
+    this.data.replace(newItems);
+  }
+
   findItems(searchText = ""): IHistoryStorageItem[] {
     searchText = searchText.trim().toLowerCase();
     if (!searchText) return [];
     return this.data.filter(item => {
-      var { text, translation } = this.toHistoryItem(item);
+      var { text, translation } = UserHistoryStore.toHistoryItem(item);
       return (
         text.toLowerCase().includes(searchText) ||
         translation.toLowerCase().includes(searchText)
@@ -113,7 +114,7 @@ export class UserHistoryStore extends Store<IUserHistoryStoreData> {
     }
     else {
       if (typeof itemOrFilter === "function") {
-        var newItems = this.data.filter(item => !itemOrFilter(this.toHistoryItem(item)));
+        var newItems = this.data.filter(item => !itemOrFilter(UserHistoryStore.toHistoryItem(item)));
         this.data.replace(newItems);
       }
       else {

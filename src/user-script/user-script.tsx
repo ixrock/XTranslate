@@ -361,9 +361,9 @@ class App extends React.Component {
   @autobind()
   onGetSelectedText(message: Message) {
     if (!this.selectedText) return;
-    if (message.type === MessageType.SELECTED_TEXT) {
+    if (message.type === MessageType.GET_SELECTED_TEXT) {
       sendMessage({
-        type: message.type,
+        type: MessageType.SELECTED_TEXT,
         payload: this.selectedText,
       })
     }
@@ -404,8 +404,6 @@ class App extends React.Component {
       var notRoot = enterElem !== document.documentElement && enterElem !== document.body;
       var autoSelectText = !text && notRoot && this.isOutsideOfPopup(enterElem);
       if (autoSelectText) {
-        this.selection.selectAllChildren(enterElem);
-
         if (["input", "textarea", "img"].includes(enterElem.nodeName.toLowerCase())) {
           if (enterElem instanceof HTMLInputElement || enterElem instanceof HTMLTextAreaElement) {
             text = enterElem.value || enterElem.placeholder;
@@ -415,13 +413,18 @@ class App extends React.Component {
           }
           if (text) {
             this.selectionRects = [this.normalizeRect(enterElem.getBoundingClientRect())];
-            this.translate({ text });
           }
         }
+        else {
+          enterElem.style.userSelect = "auto"; // make sure selection is not blocked from css
+          this.selection.selectAllChildren(enterElem);
+          this.saveSelectionRects();
+          text = this.selection.toString().trim();
+          enterElem.style.userSelect = null;
+        }
       }
-      else if (text) {
-        this.saveSelectionRects();
-        this.translate();
+      if (text) {
+        this.translate({ text });
       }
     }
   }
