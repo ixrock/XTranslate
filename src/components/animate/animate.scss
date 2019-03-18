@@ -1,16 +1,19 @@
 // Animations
 
-@mixin animate-opacity($enterDuration: 100ms, $leaveDuration: 250ms) {
+@mixin animate-opacity($enterDuration: 250ms, $leaveDuration: 150ms) {
   &.Animate {
     opacity: 0;
-    transition-delay: 100ms !important;
 
     &.enter {
-      transition: opacity $enterDuration ease-in;
+      transition-property: opacity;
+      transition-duration: $enterDuration;
       opacity: 1;
     }
+
     &.leave {
-      transition: opacity $leaveDuration ease-out;
+      transition-property: opacity;
+      transition-duration: $leaveDuration;
+      transition-timing-function: ease-out;
       opacity: 0;
     }
   }
