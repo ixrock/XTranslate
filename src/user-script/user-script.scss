@@ -1,9 +1,18 @@
 @import "../components/fonts";
 
+.XTranslate {
+  position: absolute !important;
+  width: 100% !important;
+  left: 0 !important;
+  top: 0 !important;
+  z-index: 1000000000 !important;
+}
+
 :host {
   @import "~flex.box";
   @import "../components/popup/popup";
   @import "../components/icon/icon";
+  @import "./xtranslate-icon";
 
   *, *:after, *:before {
     box-sizing: border-box;
@@ -12,22 +21,4 @@
     border: 0;
     outline: none;
   }
-}
-
-// reset styles, must be declared at the top in css file
-.XTranslate {
-  &, div, span, i, svg {
-    all: unset;
-  }
-}
-
-.XTranslate {
-  @import "../components/icon/icon";
-  @import "./xtranslate-icon";
-
-  position: absolute !important;
-  width: 100% !important;
-  left: 0 !important;
-  top: 0 !important;
-  z-index: 1000000000 !important;
 }

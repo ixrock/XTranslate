@@ -70,7 +70,7 @@ export class Icon extends React.Component<IconProps> {
 
     // render as inline svg-icon
     if (svg) {
-      var svgIcon = require("!!raw-loader!./" + svg + ".svg");
+      var svgIcon = require("!!raw-loader!./" + svg + ".svg").default;
       iconProps.children = <span dangerouslySetInnerHTML={{ __html: svgIcon }}/>;
     }
 

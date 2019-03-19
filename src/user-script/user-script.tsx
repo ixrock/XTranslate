@@ -6,9 +6,8 @@ import { computed, observable, toJS, when } from "mobx";
 import { observer } from "mobx-react";
 import { debounce, isEqual } from "lodash"
 import { autobind, cssNames, getHotkey } from "../utils";
-import { getManifest, getURL, MenuTranslateFavoritePayload, MenuTranslateVendorPayload, Message, MessageType, onMessage, PlayTextToSpeechPayload, sendMessage, TranslatePayload, TranslatePayloadResult } from "../extension";
+import { getManifest, getStyles, MenuTranslateFavoritePayload, MenuTranslateVendorPayload, Message, MessageType, onMessage, PlayTextToSpeechPayload, sendMessage, TranslatePayload, TranslatePayloadResult } from "../extension";
 import { getNextTranslator, ITranslationError, ITranslationResult } from "../vendors";
-import ReactShadow from "react-shadow"
 import { Icon } from "../components/icon";
 import { XTranslateIcon } from "./xtranslate-icon";
 import { ITranslateParams, Popup } from "../components/popup/popup";
@@ -18,22 +17,28 @@ import { userHistoryStore } from "../components/user-history/user-history.store"
 
 const isPdf = document.contentType === "application/pdf";
 
+interface Props {
+  style: string;
+}
+
 @observer
-class App extends React.Component {
+class App extends React.Component<Props> {
   static rootElem = document.createElement("div");
 
   static async init() {
-    var appContainer = App.rootElem;
-    appContainer.className = "XTranslate";
-    document.documentElement.appendChild(appContainer);
+    App.rootElem.className = "XTranslate";
+    document.documentElement.appendChild(App.rootElem);
+
+    // render app inside the shadow-dom to avoid collisions with page styles
+    var shadowRoot = App.rootElem.attachShadow({ mode: "open" });
+    var style = await getStyles();
     await when(() => settingsStore.isLoaded && themeStore.isLoaded);
-    render(<App/>, appContainer);
+    render(<App style={style}/>, shadowRoot as any);
   }
 
   public appName = getManifest().name;
   private settings = settingsStore.data;
   private selection = window.getSelection();
-  private style = getURL('pageStyle.css');
   private popup: Popup;
   private icon: Icon;
   private mouseTarget: HTMLElement;
@@ -198,9 +203,8 @@ class App extends React.Component {
       || (elem as HTMLElement).isContentEditable;
   }
 
-  isOutsideOfPopup(elem: Element) {
-    var popupHost = App.rootElem.querySelector(".popup-host");
-    return !popupHost.contains(elem as HTMLElement);
+  isOutside(elem: HTMLElement) {
+    return !App.rootElem.contains(elem);
   }
 
   getViewportSize() {
@@ -273,7 +277,7 @@ class App extends React.Component {
 
     // add initial position to the end in case of nothing will fit
     positions.slice(1).concat(positions[0])
-      .forEach(({ left, right, top, bottom }, index) => {
+      .forEach(({ left, right, top, bottom }) => {
         var popupPos = this.popup.elem.getBoundingClientRect();
         if (popupPos.left < 0 || popupPos.right > viewPort.width) {
           this.position.left = left;
@@ -331,7 +335,7 @@ class App extends React.Component {
     if (!this.icon.elem.contains(clickedElem)) {
       this.hideIcon();
     }
-    if (this.isOutsideOfPopup(clickedElem)) {
+    if (this.isOutside(clickedElem)) {
       this.hidePopup();
     }
   }
@@ -402,7 +406,7 @@ class App extends React.Component {
       var text = this.selectedText;
       var enterElem = this.mouseTarget;
       var notRoot = enterElem !== document.documentElement && enterElem !== document.body;
-      var autoSelectText = !text && notRoot && this.isOutsideOfPopup(enterElem);
+      var autoSelectText = !text && notRoot && this.isOutside(enterElem);
       if (autoSelectText) {
         if (["input", "textarea", "img"].includes(enterElem.nodeName.toLowerCase())) {
           if (enterElem instanceof HTMLInputElement || enterElem instanceof HTMLTextAreaElement) {
@@ -439,25 +443,24 @@ class App extends React.Component {
     var { langFrom, langTo } = this.settings;
     return (
       <>
-        <ReactShadow include={[this.style]}>
-          <div className="popup-host">
-            <Popup
-              className={cssNames({ showInPdf: isPdf })}
-              style={position}
-              params={lastParams}
-              translation={translation} error={error}
-              onPlayText={playText}
-              onTranslateNext={() => translateNext()}
-              ref={e => this.popup = e}
-            />
-          </div>
-        </ReactShadow>
+        <Popup
+          className={cssNames({ showInPdf: isPdf })}
+          style={position}
+          params={lastParams}
+          translation={translation} error={error}
+          onPlayText={playText}
+          onTranslateNext={() => translateNext()}
+          ref={e => this.popup = e}
+        />
         <XTranslateIcon
           style={this.iconPosition}
           onMouseDown={onIconClick}
           title={`${this.appName}: ${[langFrom, langTo].join(' → ').toUpperCase()}`}
           bindRef={e => this.icon = e}
         />
+        <style type="text/css">
+          {this.props.style}
+        </style>
       </>
     )
   }
