@@ -1,59 +1,61 @@
-// Helper to work with browser's local-storage
+// Helper to work with browser's local/session storage api
 
-const keyPrefix = '';
-
-interface StorageHelper<T> {
-  (value?: T): T;
-  key?: string // local-storage key
-  reset?: () => void; // reset to default value
+interface IStorageHelperOptions {
+  addKeyPrefix?: boolean;
+  useSession?: boolean; // use `sessionStorage` instead of `localStorage`
 }
 
-export function createStorage<T>(key: string, defaultValue?: T, initDefault?: boolean) {
-  key = keyPrefix + key;
+export function createStorage<T>(key: string, defaultValue?: T, options?: IStorageHelperOptions) {
+  return new StorageHelper(key, defaultValue, options);
+}
 
-  const itemManager: StorageHelper<T> = function (value?: T) {
-    var clear = value === null;
-    // setter
-    if (arguments.length && !clear) {
-      var item = JSON.stringify(value);
-      localStorage.setItem(key, item);
+export class StorageHelper<T> {
+  static keyPrefix = "";
+
+  static defaultOptions: IStorageHelperOptions = {
+    addKeyPrefix: true,
+    useSession: false,
+  }
+
+  constructor(protected key: string, protected defaultValue?: T, protected options?: IStorageHelperOptions) {
+    this.options = Object.assign({}, StorageHelper.defaultOptions, options);
+    if (this.options.addKeyPrefix) {
+      this.key = StorageHelper.keyPrefix + key;
     }
-    // getter
-    else {
-      var item = localStorage.getItem(key);
-      if (clear) localStorage.removeItem(key);
-      if (item) {
-        try {
-          return JSON.parse(item);
-        } catch (e) {
-          console.error("Parse storage item error", e);
-        }
+  }
+
+  protected get storage() {
+    if (this.options.useSession) return window.sessionStorage;
+    return window.localStorage;
+  }
+
+  get() {
+    var strValue = this.storage.getItem(this.key);
+    if (strValue != null) {
+      try {
+        return JSON.parse(strValue);
+      } catch (e) {
       }
-      return defaultValue;
     }
-  };
-
-  // save default value if empty to the storage
-  if (arguments.length === 3 && initDefault) {
-    var value = localStorage.getItem(key);
-    if (value == null) itemManager(defaultValue);
+    return this.defaultValue;
   }
 
-  // extra helpers related to specific storage item
-  itemManager.key = key;
-  itemManager.reset = () => itemManager(defaultValue);
-
-  return itemManager;
-}
-
-export function clearStorage(key?: string) {
-  key = key ? key + keyPrefix : "";
-  if (key) {
-    localStorage.removeItem(key);
+  set(value: T) {
+    this.storage.setItem(this.key, JSON.stringify(value));
+    return this;
   }
-  else {
-    Object.keys(localStorage)
-      .filter(key => key.startsWith(keyPrefix))
-      .forEach(key => localStorage.removeItem(key));
+
+  merge(value: Partial<T>) {
+    var currentValue = this.get();
+    return this.set(Object.assign(currentValue, value));
+  }
+
+  clear() {
+    this.storage.removeItem(this.key);
+    return this;
+  }
+
+  restoreDefault() {
+    return this.set(this.defaultValue);
   }
 }

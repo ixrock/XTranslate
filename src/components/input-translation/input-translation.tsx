@@ -24,15 +24,14 @@ interface TranslateParams {
 
 @observer
 export class InputTranslation extends React.Component {
-  static lastText = createStorage("last_text", "");
-
+  public lastText = createStorage("last_text", "");
   public input: Input;
   public settings = settingsStore.data;
   public loadingTimer;
   public translateTimer;
 
   @observable isLoading = false;
-  @observable text = this.settings.rememberLastText ? InputTranslation.lastText() : "";
+  @observable text = this.settings.rememberLastText ? this.lastText.get() : "";
   @observable translation: ITranslationResult;
   @observable error: ITranslationError;
   @observable favorite: TranslateParams = null;
@@ -141,7 +140,7 @@ export class InputTranslation extends React.Component {
     this.text = text;
     var { rememberLastText, textInputTranslateDelayMs } = this.settings;
     if (rememberLastText) {
-      InputTranslation.lastText(text);
+      this.lastText.set(text);
     }
     if (!text) {
       var { activeVendor } = this;
