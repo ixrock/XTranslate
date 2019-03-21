@@ -1,5 +1,5 @@
 import { ITranslationError, ITranslationResult, Translator } from "./translator";
-import { encodeQuery } from "../utils/encodeQuery";
+import { createStorage, delay, encodeQuery } from "../utils";
 
 class Google extends Translator {
   public name = 'google';
@@ -9,39 +9,53 @@ class Google extends Translator {
   public textMaxLength = 5000;
   public ttsMaxLength = 187;
 
+  protected apiClients = ["dict-chrome-ex", "gtx"];
+  protected apiClient = createStorage("google_api_client", this.apiClients[0]);
+  protected apiClientSwitched = false;
+
   constructor() {
     super(require("./google.json"));
+  }
+
+  // try to use next available api-client id if google has blocked the traffic
+  protected useNextApiClient() {
+    var apiClient = this.apiClient.get();
+    var index = this.apiClients.indexOf(apiClient);
+    var nextApiClient = this.apiClients[index + 1] || this.apiClients[0];
+    this.apiClient.set(nextApiClient);
   }
 
   // todo: split long texts to queue of chunks with ttsMaxLenght and play one by one
   getAudioUrl(lang, text) {
     if (text.length > this.ttsMaxLength) return;
     var textEncoded = encodeURIComponent(text);
-    return this.apiUrl + `/translate_tts?client=gtx&ie=UTF-8&tl=${lang}&q=${textEncoded}`;
+    var apiClient = this.apiClient.get();
+    return this.apiUrl + `/translate_tts?client=${apiClient}&ie=UTF-8&tl=${lang}&q=${textEncoded}`;
   }
 
   protected translate(langFrom, langTo, text): Promise<ITranslationResult> {
+    var apiClient = this.apiClient.get();
     var reqParams: RequestInit = {};
 
     var getApiUrl = (withText = true) => {
-      return this.apiUrl + '/translate_a/single?' +
-        encodeQuery('client=gtx&dj=1&source=input', {
-          q: withText ? text : null,
-          sl: langFrom,
-          tl: langTo,
-          hl: langTo, // header for dictionary (part of speech)
-          dt: [
-            "t", // translation
-            "bd", // dictionary
-            "rm", // translit
-            "qca", // spelling correction
-            // "ss", // synsets
-            // "rw", // related words
-            // "md", // definitions
-            // "at", // alternative translations
-            // "ex", // examples
-          ],
-        })
+      return this.apiUrl + '/translate_a/t?' + encodeQuery({
+        client: apiClient,
+        q: withText ? text : null,
+        sl: langFrom,
+        tl: langTo,
+        hl: langTo, // header for dictionary (part of speech)
+        dt: [
+          "t", // translation
+          "bd", // dictionary
+          "rm", // translit
+          "qca", // spelling correction
+          // "ss", // synsets
+          // "rw", // related words
+          // "md", // definitions
+          // "at", // alternative translations
+          // "ex", // examples
+        ],
+      })
     }
 
     var url = getApiUrl();
@@ -80,14 +94,15 @@ class Google extends Translator {
         });
       }
       return translation;
-    }).catch((error: ITranslationError) => {
-      var { statusCode, url, responseText } = error;
-      if (statusCode === 503 && url.startsWith("https://ipv4.google.com/sorry")) {
-        var parser = new DOMParser();
-        var doc = parser.parseFromString(responseText, "text/html");
-        var infoDiv = doc.querySelector("#infoDiv");
-        if (infoDiv) error.statusText = infoDiv.innerHTML;
-        window.open(this.publicUrl + `/#${langFrom}/${langTo}/${text}`);
+    }).catch(async (error: ITranslationError) => {
+      var { statusCode } = error;
+      if (statusCode === 503 && !this.apiClientSwitched) {
+        await delay(1000);
+        this.useNextApiClient();
+        this.apiClientSwitched = true;
+        return this.translate(langFrom, langTo, text).finally(() => {
+          this.apiClientSwitched = false;
+        });
       }
       throw error;
     });

@@ -15,6 +15,7 @@ import { favoritesStore } from "./favorites.store";
 import { userHistoryStore } from "../user-history/user-history.store";
 import { AppRoute } from "../app/app.route";
 import { Icon } from "../icon";
+import { Tooltip } from "../tooltip";
 
 interface TranslateParams {
   vendor: string;
@@ -249,7 +250,6 @@ export class InputTranslation extends React.Component {
     if (langDetected) langFrom = langDetected;
     var langPair = [langFrom, langTo].join(' → ').toUpperCase();
     var langPairFull = [vendor.langFrom[langFrom], vendor.langTo[langTo]].join(' → ');
-    var title = __i18n("translated_with", [vendor.title, langPairFull]).join("");
     var canPlayText = vendor.canPlayText(langFrom, translation);
     return (
       <div className={cssNames("translation-results", { rtl: isRTL(langTo) })}>
@@ -265,8 +265,11 @@ export class InputTranslation extends React.Component {
               <span>{translation}</span>
               {transcription ? <i className="transcription">[{transcription}]</i> : null}
             </div>
-            <span className="lang" title={title}>
+            <span className="lang" id="translated_with">
               {langPair}
+              <Tooltip htmlFor="translated_with" usePortal following>
+                {__i18n("translated_with", [vendor.title, langPairFull]).join("")}
+              </Tooltip>
             </span>
           </div>
           : null}

@@ -41,10 +41,10 @@ class App extends React.Component<Props> {
   private selection = window.getSelection();
   private popup: Popup;
   private icon: Icon;
-  private mouseTarget: HTMLElement;
   private lastParams: ITranslateParams;
   private isDblClicked = false;
   private isHotkeyActivated = false;
+  private mousePos = { x: 0, y: 0, pageX: 0, pageY: 0 };
 
   @observable.ref translation: ITranslationResult;
   @observable.ref error: ITranslationError;
@@ -290,6 +290,15 @@ class App extends React.Component<Props> {
       });
   }
 
+  isClickedOnSelection() {
+    if (!this.settings.showPopupOnClickBySelection) return;
+    if (!this.selectedText || !this.selectionRects) return;
+    var { pageX, pageY } = this.mousePos;
+    return this.selectionRects.some(({ left, top, right, bottom }) => {
+      return left <= pageX && pageX <= right && top <= pageY && pageY <= bottom;
+    });
+  }
+
   onSelectionChange = debounce(() => {
     this.selectedText = this.selection.toString().trim();
 
@@ -321,8 +330,11 @@ class App extends React.Component<Props> {
   }
 
   @autobind()
-  onMouseMove(evt: MouseEvent) {
-    this.mouseTarget = evt.target as HTMLElement;
+  onMouseMove({ clientX, clientY, pageX, pageY }: MouseEvent) {
+    this.mousePos.x = clientX; // relative to viewport
+    this.mousePos.y = clientY;
+    this.mousePos.pageX = pageX; // with page scroll
+    this.mousePos.pageY = pageY;
   }
 
   @autobind()
@@ -336,7 +348,13 @@ class App extends React.Component<Props> {
       this.hideIcon();
     }
     if (this.isOutside(clickedElem)) {
-      this.hidePopup();
+      if (this.isPopupHidden && this.isClickedOnSelection()) {
+        this.translate();
+        evt.preventDefault(); // don't reset selection
+      }
+      else {
+        this.hidePopup();
+      }
     }
   }
 
@@ -404,27 +422,27 @@ class App extends React.Component<Props> {
       this.isHotkeyActivated = true;
 
       var text = this.selectedText;
-      var enterElem = this.mouseTarget;
-      var notRoot = enterElem !== document.documentElement && enterElem !== document.body;
-      var autoSelectText = !text && notRoot && this.isOutside(enterElem);
+      var mouseTarget = document.elementFromPoint(this.mousePos.x, this.mousePos.y) as HTMLElement;
+      var notRoot = mouseTarget !== document.documentElement && mouseTarget !== document.body;
+      var autoSelectText = !text && notRoot && this.isOutside(mouseTarget);
       if (autoSelectText) {
-        if (["input", "textarea", "img"].includes(enterElem.nodeName.toLowerCase())) {
-          if (enterElem instanceof HTMLInputElement || enterElem instanceof HTMLTextAreaElement) {
-            text = enterElem.value || enterElem.placeholder;
+        if (["input", "textarea", "img"].includes(mouseTarget.nodeName.toLowerCase())) {
+          if (mouseTarget instanceof HTMLInputElement || mouseTarget instanceof HTMLTextAreaElement) {
+            text = mouseTarget.value || mouseTarget.placeholder;
           }
-          if (enterElem instanceof HTMLImageElement) {
-            text = enterElem.title || enterElem.alt;
+          if (mouseTarget instanceof HTMLImageElement) {
+            text = mouseTarget.title || mouseTarget.alt;
           }
           if (text) {
-            this.selectionRects = [this.normalizeRect(enterElem.getBoundingClientRect())];
+            this.selectionRects = [this.normalizeRect(mouseTarget.getBoundingClientRect())];
           }
         }
         else {
-          enterElem.style.userSelect = "auto"; // make sure selection is not blocked from css
-          this.selection.selectAllChildren(enterElem);
+          mouseTarget.style.userSelect = "auto"; // make sure selection is not blocked from css
+          this.selection.selectAllChildren(mouseTarget);
           this.saveSelectionRects();
           text = this.selection.toString().trim();
-          enterElem.style.userSelect = null;
+          mouseTarget.style.userSelect = null;
         }
       }
       if (text) {

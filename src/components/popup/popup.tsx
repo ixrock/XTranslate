@@ -40,8 +40,8 @@ export class Popup extends React.Component<Props> {
 
   static preview: ITranslationResult = {
     vendor: defaultSettings.vendor,
-    langFrom: defaultSettings.langFrom,
-    langTo: defaultSettings.langTo,
+    langFrom: "en",
+    langTo: navigator.language.split("-")[0],
     translation: __i18n("popup_demo_translation"),
     dictionary: [
       {
@@ -178,18 +178,15 @@ export class Popup extends React.Component<Props> {
 
   renderResult() {
     if (!this.translation) return;
-    const { translation, transcription, dictionary, vendor, langFrom, langTo, langDetected } = this.translation;
+    var { translation, transcription, dictionary, vendor, langFrom, langTo, langDetected } = this.translation;
+    if (langDetected) langFrom = langDetected;
     const translator = getTranslator(vendor);
     const rtlClass = { rtl: isRTL(langTo) };
-    const title = __i18n("translated_with", [
-      translator.title,
-      `${langDetected || langFrom} → ${langTo}`.toUpperCase()
-    ]).join("");
     return (
       <div className="translation-result" style={this.getTranslationStyle()}>
         <div className="translation flex gaps">
           {this.renderPlayTextIcon()}
-          <div className={cssNames("value box grow", rtlClass)} title={title}>
+          <div className={cssNames("value box grow", rtlClass)}>
             <span>{translation}</span>
             {transcription ? <i className="transcription">{" "}[{transcription}]</i> : null}
           </div>
@@ -213,6 +210,14 @@ export class Popup extends React.Component<Props> {
             </div>
           </div>
         )}
+        {
+          this.settings.showTranslatedFrom && (
+            <div className="translated-from">
+              {__i18n("translated_from", [translator.langFrom[langFrom]]).join("")}
+              {` (${translator.title})`}
+            </div>
+          )
+        }
       </div>
     );
   }

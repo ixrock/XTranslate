@@ -108,12 +108,23 @@ export class Settings extends React.Component {
               onChange={v => settings.showCopyTranslationIcon = v}
               children={this.renderPopupPreview({ showCopyTranslationIcon: true })}
             />
+            <Checkbox
+              label={__i18n("show_detected_language_block")}
+              checked={settings.showTranslatedFrom}
+              onChange={v => settings.showTranslatedFrom = v}
+              children={this.renderPopupPreview({ showTranslatedFrom: true })}
+            />
           </div>
           <div className="checkbox-group">
             <Checkbox
               label={__i18n("display_popup_after_text_selected")}
               checked={settings.showPopupAfterSelection}
               onChange={v => settings.showPopupAfterSelection = v}
+            />
+            <Checkbox
+              label={__i18n("display_on_click_by_selected_text")}
+              checked={settings.showPopupOnClickBySelection}
+              onChange={v => settings.showPopupOnClickBySelection = v}
             />
             <Checkbox
               label={__i18n("display_popup_on_double_click")}
@@ -166,12 +177,8 @@ export class Settings extends React.Component {
               checked={settings.rememberLastText}
               onChange={v => settings.rememberLastText = v}
             />
-            <Button
-              outline
-              className="box flex gaps"
-              label={__i18n("sub_header_quick_access_hotkey")}
-              onClick={() => createTab("chrome://extensions/configureCommands")}
-            >
+            <Button outline className="box flex gaps" onClick={() => createTab("chrome://extensions/shortcuts")}>
+              {__i18n("sub_header_quick_access_hotkey")}
               <Tooltip following nowrap={false}>
                 {__i18n("quick_access_configure_link")}
               </Tooltip>

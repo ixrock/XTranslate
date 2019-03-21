@@ -1,6 +1,8 @@
 import { ITranslationResult, Translator } from "./translator";
 import { encodeQuery } from "../utils/encodeQuery";
 
+// todo: check out new better api (from official extension / website)
+
 class Yandex extends Translator {
   public name = 'yandex';
   public title = 'Yandex';
