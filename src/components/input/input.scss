@@ -61,7 +61,7 @@
   }
 
   textarea {
-    @include custom-scrollbar(none, 0);
+    @include hidden-scrollbar;
     line-height: 1.2;
     resize: none;
   }

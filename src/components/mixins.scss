@@ -1,27 +1,18 @@
 //-- Mixins
 
-@mixin custom-scrollbar($theme: light, $overlay: false) {
+@mixin custom-scrollbar($theme: light, $size: 7px, $spaceAround: 5px) {
   $themes: (
     light: rgba(255, 255, 255, .25),
-    dark: rgba(0, 0, 0, .25)
+    dark: rgba(0, 0, 0, .25),
   );
 
-  $scrollBarSize: $unit * .8;
   $scrollBarColor: if(map_has_key($themes, $theme), map_get($themes, $theme), none);
-  $innerBorderSpace: 5px;
-  $scrollBarSize: calc(#{$scrollBarSize} + #{$innerBorderSpace} * 2);
+  $scrollBarSize: calc(#{$size} + #{$spaceAround} * 2);
 
-  overflow: auto;
-  @if ($overlay) {
-    overflow: overlay;
-    overscroll-behavior: contain;
-  }
+  overflow: auto; // allow scrolling for container
+  //overscroll-behavior: contain;
 
-  // Firefox 65+
-  scrollbar-color: $scrollBarColor transparent;
-  scrollbar-width: thin;
-
-  // Chrome, safari
+  // Webkit
   &::-webkit-scrollbar {
     width: $scrollBarSize;
     height: $scrollBarSize;
@@ -31,13 +22,17 @@
   &::-webkit-scrollbar-thumb {
     background: $scrollBarColor;
     background-clip: padding-box;
-    border: $innerBorderSpace solid transparent;
+    border: $spaceAround solid transparent;
     border-radius: $scrollBarSize;
   }
 
   &::-webkit-scrollbar-corner {
     background-color: transparent;
   }
+
+  // Firefox
+  scrollbar-color: $scrollBarColor transparent;
+  scrollbar-width: thin;
 }
 
 // Hide scrollbar but keep the element scrollable

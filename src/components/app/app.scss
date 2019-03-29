@@ -20,7 +20,7 @@ html {
 
 body {
   --flex-gap: #{$margin * 1.2};
-  @include custom-scrollbar(dark);
+  @include custom-scrollbar($theme: dark);
   font: $font-size $font-main;
   height: inherit;
 }
