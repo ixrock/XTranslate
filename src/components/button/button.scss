@@ -1,6 +1,4 @@
 .Button {
-  --flex-gap: #{$margin / 2};
-
   position: relative;
   overflow: hidden; // required for transition effect on hover
   color: white;

@@ -1,0 +1,12 @@
+.AppRateDialog {
+  --flex-gap: #{$margin};
+
+  > .box {
+    background: white;
+    padding: $padding * 2;
+
+    > :not(:last-child) {
+      margin-bottom: $margin;
+    }
+  }
+}

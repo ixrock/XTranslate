@@ -100,5 +100,9 @@
   "footer"                           : {"message": "If you like the app share it with your friends:"},
   "footer_leave_review_and_donate"   : {"message": "Also you can %leave a review% or %make a donation% for extension's support."},
   "translation_data_failed"          : {"message": "Data loading failed"},
-  "translation_data_failed_check_url": {"message": "Check response url"}
+  "translation_data_failed_check_url": {"message": "Check response url"},
+  "rate_app_info1"                   : {"message": "Enjoy using the app? Please rate us with 5 stars!"},
+  "rate_app_info2"                   : {"message": "It will help other users to find extension and spread the goodies."},
+  "rate_app_button"                  : {"message": "Rate at Chrome store"},
+  "rate_app_button_later"            : {"message": "Remind me later"}
 }

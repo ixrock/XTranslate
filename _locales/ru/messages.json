@@ -101,5 +101,9 @@
   "footer_leave_review_and_donate"   : {"message": "Также вы можете %оставить отзыв% или %сделать пожертвование% на поддержку расширения."},
   "____________other________________": {"message": "----------------------------------------------"},
   "translation_data_failed"          : {"message": "Ошибка получения данных"},
-  "translation_data_failed_check_url": {"message": "Посмотреть данные ответа"}
+  "translation_data_failed_check_url": {"message": "Посмотреть данные ответа"},
+  "rate_app_info1"                   : {"message": "Нравится приложение? Пожалуйста оцените нас на 5 звезд!"},
+  "rate_app_info2"                   : {"message": "Это поможет другим пользователям быстрее найти расширение в магазине хром."},
+  "rate_app_button"                  : {"message": "Оценить в магазине хром"},
+  "rate_app_button_later"            : {"message": "Напомнить позже"}
 }

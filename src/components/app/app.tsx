@@ -19,6 +19,7 @@ import { UserHistory } from "../user-history";
 import { AppRoute } from "./app.route";
 import { Icon } from "../icon";
 import { Store } from "../../store";
+import { AppRateDialog } from "./app-rate.dialog";
 
 @observer
 export class App extends React.Component {
@@ -95,6 +96,7 @@ export class App extends React.Component {
           {activePageId === AppRoute.history && <UserHistory/>}
         </div>
         <Footer/>
+        <AppRateDialog/>
       </div>
     );
   }

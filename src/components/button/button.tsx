@@ -15,7 +15,7 @@ export interface ButtonProps extends React.HTMLProps<any> {
   round?: boolean
 }
 
-export class Button extends React.PureComponent<ButtonProps> {
+export class Button extends React.Component<ButtonProps> {
   private link: HTMLAnchorElement;
   private button: HTMLButtonElement;
 
