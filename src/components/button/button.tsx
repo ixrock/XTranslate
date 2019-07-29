@@ -1,9 +1,9 @@
 import "./button.scss";
-import * as React from "react";
+import React, { ButtonHTMLAttributes } from "react";
 import { cssNames } from "../../utils";
 
-export interface ButtonProps extends React.HTMLProps<any> {
-  href?: string
+export interface ButtonProps extends ButtonHTMLAttributes<any> {
+  href?: string // render as link (<a>)
   label?: string
   waiting?: boolean
   primary?: boolean
