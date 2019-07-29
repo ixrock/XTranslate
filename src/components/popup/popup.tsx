@@ -147,14 +147,10 @@ export class Popup extends React.Component<Props> {
     if (!this.settings.showTextToSpeechIcon) {
       return;
     }
-    const { translation, vendor, langFrom, langDetected } = this.translation;
-    const translator = getTranslator(vendor);
-    const canPlayText = translator.canPlayText(langDetected || langFrom, translation);
     return (
       <Icon
         material="play_circle_outline"
         title={__i18n("popup_play_icon_title")}
-        disabled={!canPlayText}
         onClick={prevDefault(this.props.onPlayText)}
       />
     );

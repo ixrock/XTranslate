@@ -1,6 +1,6 @@
 // Base class for all translation vendors
-import { observable } from "mobx";
 import { autobind } from "../utils";
+import { settingsStore } from "../components/settings/settings.store";
 
 export interface ITranslatorParams {
   apiKeys?: string[]
@@ -71,8 +71,6 @@ export abstract class Translator {
   public textMaxLength = Number.MAX_SAFE_INTEGER;
   protected autoSwapUsed = false;
 
-  @observable isPlaying = false;
-
   constructor(protected params: ITranslatorParams) {
     var { from: langFrom, to: langTo } = params.languages;
     var { auto, ...langToFallback } = langFrom;
@@ -113,17 +111,21 @@ export abstract class Translator {
         langFrom: from,
         langTo: to,
       });
-      return this.autoSwapLang(this.lastResult);
+      return this.useAutoSwap() ? this.autoSwap(this.lastResult) : this.lastResult;
     } catch (err) {
       this.lastError = err;
       throw err;
     }
   }
 
-  private autoSwapLang = (result: ITranslationResult) => {
+  protected useAutoSwap(): boolean {
+    return true;
+  }
+
+  private autoSwap(result: ITranslationResult) {
     try {
       var { langTo, langFrom, originalText, translation, langDetected } = result;
-      var autoDetect = langFrom === 'auto';
+      var autoDetect = langFrom === "auto";
       var sameText = originalText.trim().toLowerCase() === translation.toLowerCase().trim();
       var otherLangDetected = langDetected && langDetected !== langFrom;
       if (!autoDetect && !this.autoSwapUsed && (sameText || otherLangDetected)) {
@@ -150,24 +152,27 @@ export abstract class Translator {
   };
 
   async playText(lang: string, text: string) {
+    stopPlayingAll();
     var audioUrl = this.getAudioUrl(lang, text);
-    if (audioUrl) {
+    if (audioUrl && !settingsStore.data.useChromeTtsEngine) {
       if (audioUrl !== this.lastAudioUrl) {
-        stopPlayingAll();
         this.lastAudioUrl = audioUrl;
-        var src = await this.getAudioSource(audioUrl);
-        var tts = this.ttsAudio = document.createElement('audio');
-        tts.onplay = tts.onplaying = () => this.isPlaying = true;
-        tts.onpause = tts.onended = () => this.isPlaying = false;
-        tts.autoplay = true;
-        tts.src = src;
-      }
-      else if (this.isPlaying) {
-        this.ttsAudio.pause();
+        var audioFile = await this.getAudioSource(audioUrl);
+        var ttsAudio = this.ttsAudio = document.createElement('audio');
+        ttsAudio.autoplay = true;
+        ttsAudio.src = audioFile;
       }
       else {
         this.ttsAudio.play();
       }
+    }
+    else {
+      if (lang === "en") lang = "en-GB";
+      chrome.tts.speak(text, {
+          lang: lang,
+          rate: 1.0
+        }
+      );
     }
   }
 
@@ -184,7 +189,8 @@ export abstract class Translator {
   }
 
   stopPlaying() {
-    if (!this.ttsAudio || !this.isPlaying) return;
+    chrome.tts.stop();
+    if (!this.ttsAudio) return;
     delete this.lastAudioUrl;
     this.ttsAudio.pause();
     URL.revokeObjectURL(this.ttsAudio.src);
@@ -192,10 +198,6 @@ export abstract class Translator {
 
   canTranslate(langFrom: string, langTo: string) {
     return !!(this.langFrom[langFrom] && this.langTo[langTo]);
-  }
-
-  canPlayText(lang: string, text: string): boolean {
-    return !!this.getAudioUrl(lang, text);
   }
 }
 

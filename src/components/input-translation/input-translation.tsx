@@ -3,7 +3,7 @@ import "./input-translation.scss";
 import React, { Fragment } from "react";
 import { computed, observable, reaction, toJS } from "mobx";
 import { disposeOnUnmount, observer } from "mobx-react";
-import { getTranslator, getTranslators, isRTL, ITranslationError, ITranslationResult } from "../../vendors";
+import { getTranslator, getTranslators, isRTL, ITranslationError, ITranslationResult, stopPlayingAll } from "../../vendors";
 import { __i18n, getActiveTab, MessageType, onMessage, sendTabMessage } from "../../extension";
 import { createStorage, cssNames, isMac } from "../../utils";
 import { SelectLanguage } from "../select-language";
@@ -75,6 +75,10 @@ export class InputTranslation extends React.Component {
     ]);
   }
 
+  componentWillUnmount() {
+    stopPlayingAll();
+  }
+
   addFavorite = () => {
     var { langFrom, langTo, vendor } = this.params;
     favoritesStore.addFavorite(vendor, {
@@ -144,8 +148,7 @@ export class InputTranslation extends React.Component {
       this.lastText.set(text);
     }
     if (!text) {
-      var { activeVendor } = this;
-      if (activeVendor.isPlaying) activeVendor.stopPlaying();
+      stopPlayingAll();
       this.translation = null;
       this.error = null;
     }
@@ -166,8 +169,17 @@ export class InputTranslation extends React.Component {
     this.clearFavorite();
   }
 
-  onVendorChange = (vendor: string) => {
-    this.params.vendor = vendor;
+  onVendorChange = (vendorName: string) => {
+    var vendor = getTranslator(vendorName);
+    var { langFrom, langTo } = this.params;
+    if (!vendor.langFrom[langFrom]) {
+      this.params.langFrom = "auto";
+    }
+    if (!vendor.langTo[langTo]) {
+      var navLang = navigator.language.split("-")[0];
+      this.params.langTo = vendor.langTo[navLang] ? navLang : "en";
+    }
+    this.params.vendor = vendorName;
     this.clearFavorite();
   }
 
@@ -188,14 +200,14 @@ export class InputTranslation extends React.Component {
         {isFavorite && (
           <Icon
             material="favorite"
-            tooltip={__i18n("favorites_remove_item")}
+            tooltip={{ nowrap: true, children: __i18n("favorites_remove_item") }}
             onClick={this.removeFavorite}
           />
         )}
         {!isFavorite ?
           <Icon
             material="favorite_border"
-            tooltip={__i18n("favorites_add_item")}
+            tooltip={{ nowrap: true, children: __i18n("favorites_add_item") }}
             onClick={this.addFavorite}/>
           : null}
       </div>
@@ -237,7 +249,7 @@ export class InputTranslation extends React.Component {
         </Select>
         <Icon
           material="clear"
-          tooltip={__i18n("favorites_clear_all")}
+          tooltip={{ nowrap: true, children: __i18n("favorites_clear_all") }}
           onClick={this.removeAllFavorites}
         />
       </div>
@@ -250,15 +262,13 @@ export class InputTranslation extends React.Component {
     if (langDetected) langFrom = langDetected;
     var langPair = [langFrom, langTo].join(' → ').toUpperCase();
     var langPairFull = [vendor.langFrom[langFrom], vendor.langTo[langTo]].join(' → ');
-    var canPlayText = vendor.canPlayText(langFrom, translation);
     return (
       <div className={cssNames("translation-results", { rtl: isRTL(langTo) })}>
         {translation ?
           <div className="translation flex gaps align-flex-start">
             <Icon
-              material={`${vendor.isPlaying ? "pause" : "play"}_circle_outline`}
+              material="play_circle_outline"
               title={__i18n("popup_play_icon_title")}
-              disabled={!canPlayText}
               onClick={this.playText}
             />
             <div className="value box grow">
@@ -267,7 +277,7 @@ export class InputTranslation extends React.Component {
             </div>
             <span className="lang" id="translated_with">
               {langPair}
-              <Tooltip htmlFor="translated_with" usePortal following>
+              <Tooltip htmlFor="translated_with" usePortal following nowrap>
                 {__i18n("translated_with", [vendor.title, langPairFull]).join("")}
               </Tooltip>
             </span>

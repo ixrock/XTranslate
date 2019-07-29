@@ -34,7 +34,7 @@ export class FavoritesStore extends Store<IFavoritesStoreData> {
         return {
           vendor: translator,
           favorites: orderBy(this.getByVendor(translator.name), [
-            (fav: IFavorite) => fav.from !== 'auto',
+            (fav: IFavorite) => fav.from !== "auto",
             'from'
           ])
         }

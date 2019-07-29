@@ -32,7 +32,7 @@ export class Tooltip extends React.Component<TooltipProps, State> {
   static defaultProps: Partial<TooltipProps> = {
     usePortal: false,
     useAnimation: true,
-    nowrap: true,
+    nowrap: false,
     position: {
       center: true,
       bottom: true,

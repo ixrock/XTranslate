@@ -13,6 +13,8 @@
   "setting_title_popup"              : {"message": "Попап"},
   "setting_title_text_input"         : {"message": "Переводчик"},
   "auto_play_tts"                    : {"message": "Авто-воспроизведение текста в речь"},
+  "use_chrome_tts"                   : {"message": "Использовать системный преобразователь текста в речь"},
+  "use_chrome_tts_tooltip_info"      : {"message": "Эта опция используется по-умолчанию когда поставщик перевода не имеет доступную систему озвучки текста"},
   "use_dark_theme"                   : {"message": "Использовать темную тему для этого окна"},
   "show_tts_icon_inside_popup"       : {"message": "Показывать иконку озвучивания"},
   "show_context_menu"                : {"message": "Отображать элемент в контекстном меню страницы"},

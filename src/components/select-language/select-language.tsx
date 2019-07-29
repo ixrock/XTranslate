@@ -34,7 +34,7 @@ export class SelectLanguage extends React.Component<Props> {
   }
 
   swap = () => {
-    if (this.langFrom === 'auto') return;
+    if (this.langFrom === "auto") return;
     this.onChange(this.langTo, this.langFrom);
   }
 

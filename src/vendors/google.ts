@@ -70,9 +70,10 @@ class Google extends Translator {
     }
 
     return fetch(url, reqParams).then(this.parseJson).then((res: GoogleTranslation) => {
-      var { src, sentences, dict, spell } = res;
+      var { src, ld_result, sentences, dict, spell } = res;
+      var detectedLang = src || ld_result ? ld_result.srclangs[0] : "";
       var translation: ITranslationResult = {
-        langDetected: src,
+        langDetected: detectedLang,
         translation: sentences.map(sentence => sentence.trans).join(''),
         dictionary: []
       };
@@ -142,6 +143,10 @@ interface GoogleTranslation {
       score: number
     }[]
   }[]
+  ld_result: {
+    extended_srclangs: string[]
+    srclangs: string[]
+  }
   definitions?: {
     pos: string
     base_form: string

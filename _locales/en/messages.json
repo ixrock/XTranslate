@@ -13,6 +13,8 @@
   "setting_title_popup"              : {"message": "Popup"},
   "setting_title_translator_service" : {"message": "Service"},
   "auto_play_tts"                    : {"message": "Auto-play text-to-speech"},
+  "use_chrome_tts"                   : {"message": "Force use chrome text-to-speech engine"},
+  "use_chrome_tts_tooltip_info"      : {"message": "This option is enabled anyway when translator don't have available TTS engine"},
   "use_dark_theme"                   : {"message": "Use dark theme for this window"},
   "show_context_menu"                : {"message": "Show in page context menu"},
   "display_icon_near_selection"      : {"message": "Show translate-icon near selected text"},

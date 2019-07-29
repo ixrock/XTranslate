@@ -43,26 +43,39 @@ export class Settings extends React.Component {
     var hotKey = parseHotkey(settings.hotkey);
     return (
       <div className="Settings flex column gaps">
-        <div className="common-settings checkbox-group">
-          <Checkbox
-            label={__i18n("auto_play_tts")}
-            checked={settings.autoPlayText}
-            onChange={v => settings.autoPlayText = v}
-          />
-          <Checkbox
-            label={__i18n("show_context_menu")}
-            checked={settings.showInContextMenu}
-            onChange={v => settings.showInContextMenu = v}
-          />
-          <Checkbox
-            label={__i18n("display_icon_near_selection")}
-            checked={settings.showIconNearSelection}
-            onChange={v => settings.showIconNearSelection = v}
-          >
-            <Tooltip following className="preview">
-              <XTranslateIcon/>
-            </Tooltip>
-          </Checkbox>
+        <div className="common-settings flex gaps auto">
+          <div className="checkbox-group">
+            <Checkbox
+              label={__i18n("auto_play_tts")}
+              checked={settings.autoPlayText}
+              onChange={v => settings.autoPlayText = v}
+            />
+            <Checkbox
+              label={__i18n("use_chrome_tts")}
+              checked={settings.useChromeTtsEngine}
+              onChange={v => settings.useChromeTtsEngine = v}
+            >
+              <Tooltip following>
+                {__i18n("use_chrome_tts_tooltip_info")}
+              </Tooltip>
+            </Checkbox>
+          </div>
+          <div className="checkbox-group">
+            <Checkbox
+              label={__i18n("show_context_menu")}
+              checked={settings.showInContextMenu}
+              onChange={v => settings.showInContextMenu = v}
+            />
+            <Checkbox
+              label={__i18n("display_icon_near_selection")}
+              checked={settings.showIconNearSelection}
+              onChange={v => settings.showIconNearSelection = v}
+            >
+              <Tooltip following className="preview">
+                <XTranslateIcon/>
+              </Tooltip>
+            </Checkbox>
+          </div>
         </div>
 
         <p className="sub-title">{__i18n("setting_title_translator_service")}</p>

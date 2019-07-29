@@ -1,29 +1,15 @@
 import { ITranslationResult, Translator } from "./translator";
 import { encodeQuery } from "../utils/encodeQuery";
 
-// todo: check out new better api (from official extension / website)
-
 class Yandex extends Translator {
   public name = 'yandex';
   public title = 'Yandex';
   public apiUrl = 'https://translate.yandex.net';
   public publicUrl = 'https://translate.yandex.com';
   public textMaxLength = 10000;
-  public ttsMaxLength = 300;
 
   constructor() {
     super(require('./yandex.json'));
-  }
-
-  getAudioUrl(lang, text) {
-    lang = this.params.tts[lang];
-    if (!lang || text.length > this.ttsMaxLength) return;
-    var textEncoded = encodeURIComponent(text);
-    var format = this.ttsFormat.split('/')[1];
-    return [
-      `https://tts.voicetech.yandex.net/tts?format=${format}`,
-      `quality=hi&platform=web&lang=${lang}&text=${textEncoded}`
-    ].join('&');
   }
 
   canUseDictionary(langFrom: string, langTo: string) {

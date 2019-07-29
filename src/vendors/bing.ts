@@ -18,17 +18,6 @@ class Bing extends Translator {
     return fetch(this.publicUrl, { credentials: 'include' });
   }
 
-  getAudioUrl(lang, text) {
-    var locale = lang;
-    var textEncoded = encodeURIComponent(text);
-    if (lang === "en") locale = "en-US"
-    return this.apiUrl + `/tspeak?text=${textEncoded}&` + encodeQuery({
-      language: locale,
-      format: this.ttsFormat,
-      options: "male",
-    });
-  }
-
   protected translate(langFrom, langTo, text): Promise<ITranslationResult> {
     var reqInitBase: RequestInit = {
       method: 'post',
@@ -38,46 +27,43 @@ class Bing extends Translator {
       }
     }
 
-    var detectLangReq = (): Promise<string> => {
-      var url = this.apiUrl + "/tdetect";
+    var translationReq = (langFrom: string): Promise<BingTranslation[]> => {
+      var url = this.apiUrl + "/ttranslatev3";
       return fetch(url, {
         ...reqInitBase,
-        body: encodeQuery({ text }),
-      }).then(res => res.text());
-    }
+        body: encodeQuery({
+          fromLang: langFrom === "auto" ? "auto-detect" : langFrom,
+          to: langTo,
+          text: text
+        }),
+      }).then(this.parseJson);
+    };
 
-    var translationReq = (langFrom: string): Promise<BingTranslation> => {
-      var url = this.apiUrl + "/ttranslate";
+    var dictionaryReq = (langFrom: string): Promise<BingDictionary[]> => {
+      var url = this.apiUrl + '/tlookupv3';
       return fetch(url, {
         ...reqInitBase,
         body: encodeQuery({ from: langFrom, to: langTo, text }),
       }).then(this.parseJson);
     };
 
-    var dictReq = (langFrom: string): Promise<BingDictionary> => {
-      var url = this.apiUrl + '/ttranslationlookup';
-      return fetch(url, {
-        ...reqInitBase,
-        body: encodeQuery({ from: langFrom, to: langTo, text: text }),
-      }).then(this.parseJson);
-    };
-
     var refreshCookie = false;
     var request = async () => {
       try {
-        var langDetected = langFrom === "auto" ? await detectLangReq() : langFrom;
-        var [transRes, dictRes] = await Promise.all([
-          translationReq(langDetected),
-          dictReq(langDetected).catch(() => null)
-        ]);
-        var response: ITranslationResult = {
-          langDetected: langDetected,
-          translation: transRes.translationResponse,
+        // base translation results
+        var transRes = await translationReq(langFrom);
+        var { translations, detectedLanguage } = transRes[0];
+        var result: ITranslationResult = {
+          langDetected: detectedLanguage.language,
+          translation: translations.length ? translations[0].text : "",
           dictionary: []
         };
+
+        // dictionary results
+        var dictRes = await dictionaryReq(result.langDetected).catch(() => null);
         if (dictRes) {
-          var dictGroups = groupBy<DictTranslation>(dictRes.translations, trans => trans.posTag)
-          response.dictionary = Object.keys(dictGroups).map(wordType => {
+          var dictGroups = groupBy<DictTranslation>(dictRes[0].translations, trans => trans.posTag)
+          result.dictionary = Object.keys(dictGroups).map(wordType => {
             return {
               wordType: wordType.toLowerCase(),
               meanings: dictGroups[wordType].map(trans => {
@@ -89,7 +75,7 @@ class Bing extends Translator {
             }
           });
         }
-        return response;
+        return result;
       } catch (error) {
         if (!refreshCookie) {
           refreshCookie = true;
@@ -103,13 +89,19 @@ class Bing extends Translator {
 }
 
 interface BingTranslation {
-  statusCode: number
-  translationResponse: string
+  detectedLanguage: {
+    language: string;
+    score: number;
+  }
+  translations: {
+    text: string;
+    to: string;
+  }[];
 }
 
 interface BingDictionary {
-  normalizedSource: string
   displaySource: string
+  normalizedSource: string
   translations: DictTranslation[]
 }
 

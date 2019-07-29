@@ -1,6 +1,5 @@
 //-- Background page script
 
-import "./refs"
 import "crx-hotreload"
 import "./contextMenu"
 import { createTab, getOptionsPageUrl, Message, MessageType, onMessage, PlayTextToSpeechPayload, sendTabMessage, TranslatePayload, TranslatePayloadResult } from '../extension'

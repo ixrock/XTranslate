@@ -6,6 +6,7 @@ export type ISettingsStoreData = typeof defaultSettings;
 
 export const defaultSettings = {
   autoPlayText: false,
+  useChromeTtsEngine: false,
   showTextToSpeechIcon: true,
   showNextVendorIcon: true,
   showCopyTranslationIcon: true,
