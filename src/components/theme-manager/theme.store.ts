@@ -1,7 +1,7 @@
 import { Color } from "react-color"
 import { Store } from "../../store";
 
-export type IUserHistoryStoreData = typeof defaultTheme;
+export type IThemeStoreData = typeof defaultTheme;
 
 export const defaultTheme = {
   bgcMain: "#000" as Color,
@@ -27,7 +27,7 @@ export const defaultTheme = {
   boxShadowInner: false,
 }
 
-export class ThemeStore extends Store<IUserHistoryStoreData> {
+export class ThemeStore extends Store<IThemeStoreData> {
   protected id = "theme";
 
   public fonts = [

@@ -169,5 +169,5 @@ export type IHistoryStorageItemVersion2 = [
     // 7 - dictionary
     string, /*word type*/
     string[] /*translations*/
-    ][]
-  ];
+  ][]
+];
