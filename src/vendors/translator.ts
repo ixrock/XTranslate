@@ -105,74 +105,60 @@ export abstract class Translator {
     try {
       this.lastError = null;
       var translation = await this.translate(from, to, text);
-      this.lastResult = Object.assign(translation, {
+      this.lastResult = {
+        ...translation,
         vendor: this.name,
         originalText: text,
         langFrom: from,
         langTo: to,
-      });
-      return this.useAutoSwap() ? this.autoSwap(this.lastResult) : this.lastResult;
+      };
+      return this.autoSwap(this.lastResult);
     } catch (err) {
       this.lastError = err;
       throw err;
     }
   }
 
-  protected useAutoSwap(): boolean {
-    return true;
-  }
-
   private autoSwap(result: ITranslationResult) {
     try {
-      var { langTo, langFrom, originalText, translation, langDetected } = result;
+      var { langTo, langFrom, originalText, translation } = result;
       var autoDetect = langFrom === "auto";
       var sameText = originalText.trim().toLowerCase() === translation.toLowerCase().trim();
-      var otherLangDetected = langDetected && langDetected !== langFrom;
-      if (!autoDetect && !this.autoSwapUsed && (sameText || otherLangDetected)) {
-        [langFrom, langTo] = [langTo, langFrom];
-        if (otherLangDetected) langFrom = langDetected;
+      if (!this.autoSwapUsed && sameText) {
         this.autoSwapUsed = true;
-        return this.getTranslation(langFrom, langTo, originalText);
-      }
-      if (autoDetect && langDetected) {
-        var navLang = navigator.language.split('-')[0];
-        if (langDetected === langTo && navLang !== langTo) {
-          langFrom = langDetected;
-          langTo = navLang;
-          this.autoSwapUsed = true;
-          return this.getTranslation(langFrom, langTo, originalText);
-        }
+        [langFrom, langTo] = [langTo, langFrom];
+        if (autoDetect) langTo = navigator.language.split('-')[0];
+        return this.getTranslation(langFrom, langTo, originalText).finally(() => {
+          this.autoSwapUsed = false;
+        });
       }
     } catch (err) {
-      console.log("auto-swap failed", this.name, err);
-      console.log("translation", result);
+      console.log("auto-swap failed", this.name, { result, err });
     }
-    this.autoSwapUsed = false;
     return result;
   };
 
   async playText(lang: string, text: string) {
     stopPlayingAll();
-    var audioUrl = this.getAudioUrl(lang, text);
-    if (audioUrl && !settingsStore.data.useChromeTtsEngine) {
-      if (audioUrl !== this.lastAudioUrl) {
-        this.lastAudioUrl = audioUrl;
-        var audioFile = await this.getAudioSource(audioUrl);
-        var ttsAudio = this.ttsAudio = document.createElement('audio');
-        ttsAudio.autoplay = true;
-        ttsAudio.src = audioFile;
-      }
-      else {
-        this.ttsAudio.play();
-      }
-    }
-    else {
+    if (settingsStore.data.useChromeTtsEngine && chrome.tts) {
       if (lang === "en") lang = "en-GB";
       chrome.tts.speak(text, {
           lang: lang,
           rate: 1.0
         }
       );
+    }
+    else {
+      var audioUrl = this.getAudioUrl(lang, text);
+      if (audioUrl && audioUrl !== this.lastAudioUrl) {
+        this.lastAudioUrl = audioUrl;
+        var audio = this.ttsAudio = document.createElement('audio');
+        audio.autoplay = true;
+        audio.src = await getTranslator("google").getAudioSource(audioUrl);
+      }
+      else {
+        this.ttsAudio.play();
+      }
     }
   }
 
@@ -189,7 +175,7 @@ export abstract class Translator {
   }
 
   stopPlaying() {
-    chrome.tts.stop();
+    chrome.tts && chrome.tts.stop();
     if (!this.ttsAudio) return;
     delete this.lastAudioUrl;
     this.ttsAudio.pause();
