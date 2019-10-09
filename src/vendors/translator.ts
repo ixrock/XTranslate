@@ -121,13 +121,14 @@ export abstract class Translator {
 
   private autoSwap(result: ITranslationResult) {
     try {
-      var { langTo, langFrom, originalText, translation } = result;
+      var { langTo, langFrom, langDetected, originalText, translation } = result;
       var autoDetect = langFrom === "auto";
       var sameText = originalText.trim().toLowerCase() === translation.toLowerCase().trim();
       if (!this.autoSwapUsed && sameText) {
         this.autoSwapUsed = true;
-        [langFrom, langTo] = [langTo, langFrom];
-        if (autoDetect) langTo = navigator.language.split('-')[0];
+        var navLang = navigator.language.split('-')[0];
+        if (langDetected === langTo) langTo = autoDetect ? navLang : langFrom;
+        langFrom = langDetected || navLang;
         return this.getTranslation(langFrom, langTo, originalText).finally(() => {
           this.autoSwapUsed = false;
         });
@@ -140,7 +141,9 @@ export abstract class Translator {
 
   async playText(lang: string, text: string) {
     stopPlayingAll();
-    if (settingsStore.data.useChromeTtsEngine && chrome.tts) {
+    var audioUrl = this.getAudioUrl(lang, text);
+    if (settingsStore.data.useChromeTtsEngine || !audioUrl) {
+      if (!chrome.tts) return;
       if (lang === "en") lang = "en-GB";
       chrome.tts.speak(text, {
           lang: lang,
@@ -148,17 +151,14 @@ export abstract class Translator {
         }
       );
     }
-    else {
-      var audioUrl = this.getAudioUrl(lang, text);
-      if (audioUrl && audioUrl !== this.lastAudioUrl) {
-        this.lastAudioUrl = audioUrl;
-        var audio = this.ttsAudio = document.createElement('audio');
-        audio.autoplay = true;
-        audio.src = await getTranslator("google").getAudioSource(audioUrl);
-      }
-      else {
-        this.ttsAudio.play();
-      }
+    else if (audioUrl !== this.lastAudioUrl) {
+      this.lastAudioUrl = audioUrl;
+      var audio = this.ttsAudio = document.createElement('audio');
+      audio.autoplay = true;
+      audio.src = await getTranslator("google").getAudioSource(audioUrl);
+    }
+    else if (this.ttsAudio) {
+      this.ttsAudio.play();
     }
   }
 
