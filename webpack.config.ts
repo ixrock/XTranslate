@@ -63,11 +63,12 @@ export = () => {
             {
               loader: "sass-loader",
               options: {
-                sourceMap: true,
-                data: '@import "' + commonVars + '";',
-                includePaths: [srcPath]
+                prependData: '@import "' + commonVars + '";',
+                sassOptions: {
+                  includePaths: [srcPath]
+                },
               }
-            }
+            },
           ]
         },
         {
