@@ -1,4 +1,4 @@
-import { action, observable, reaction, toJS, when } from "mobx";
+import { action, observable, reaction, runInAction, toJS, when } from "mobx";
 import { autobind } from "./utils/autobind";
 import MD5 from "crypto-js/md5";
 
@@ -88,13 +88,15 @@ export abstract class Store<T = object> {
     this.isLoading = true;
     return new Promise((resolve, reject) => {
       chrome.storage[storageType].get(this.id, items => {
-        this.update(items[this.id]);
-        this.isLoading = false;
-        this.isLoaded = true;
-        this.dataHash = this.getHash();
-        var error = chrome.runtime.lastError;
-        if (error) reject(error);
-        else resolve(this.data);
+        runInAction(() => {
+          this.update(items[this.id]);
+          this.isLoading = false;
+          this.isLoaded = true;
+          this.dataHash = this.getHash();
+          var error = chrome.runtime.lastError;
+          if (error) reject(error);
+          else resolve(this.data);
+        })
       });
     })
   }
@@ -134,26 +136,15 @@ export abstract class Store<T = object> {
     var { initialData, storageType } = this.params;
     this.isSaving = true;
     chrome.storage[storageType].remove(this.id, () => {
-      if (typeof this.data === "object" && !Array.isArray(this.data)) {
-        Object.keys(toJS(this.data)).forEach(prop => {
-          delete this.data[prop]; // clear
-        });
-      }
-      this.update(initialData);
-      this.isSaving = false;
+      runInAction(() => {
+        if (typeof this.data === "object" && !Array.isArray(this.data)) {
+          Object.keys(toJS(this.data)).forEach(prop => {
+            delete this.data[prop]; // clear
+          });
+        }
+        this.update(initialData);
+        this.isSaving = false;
+      })
     });
-  }
-
-  cloneWithParams(params: Partial<StoreParams<T>> = {}): this {
-    var StoreClass = this.constructor as new (params: StoreParams<T>) => this;
-    var clone = new StoreClass({
-      ...this.initialParams,
-      ...params,
-      initialData: params.initialData || toJS(this.data),
-    });
-    if (this.isLoaded) {
-      clone.isLoaded = true;
-    }
-    return clone;
   }
 }

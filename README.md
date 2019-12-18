@@ -1,6 +1,6 @@
 XTranslate
 ==========
-This is chrome-extension for translating languages.
+Chrome-extension for translating foreign languages at page context.
 Translate from 100+ foreign languages to your native directly on web-site you're reading or 
 put text in the extension's drop-down window.
 
@@ -8,33 +8,33 @@ put text in the extension's drop-down window.
 
 Features:
 -----------
-1) There are many ways of getting translation from texts the page:
+1) Many ways to get translation from texts within web page:
 - double-click on the word
 
-select text and get immediate translation after one of the following actions:
-- press hotkey defined in extension settings (**alt+x** by default)
+select text and get translation right after one of the following actions:
+- press hotkey defined in extension settings (**alt+shift+x** by default)
 - click on the translate icon appeared near selected text
-- just release mouse left button (turned off by default)
-- write text in input fields, mouse over it and press hotkey
+- release mouse button after selecting a text (this option is turned off by default)
+- write text in the input fields, mouse-over it and press hotkey
 
-You can get even some information from images by putting mouse cursor over the image element and 
-press hotkey (title or alt attributes will be used, if applicable).
-Even more, with this feature is possible to get auto-selection of text from element under mouse cursor.
-Just move the pointer to element on the page and press hotkey!
+You can get even some translation from images by mouse overing the image element and 
+press hotkey (title or alt attributes will be used when applicable).
+Even more, with this feature it is possible to get auto-translation by block of text at the page 
+just by pressing the hotkey when mouse over it!
 
 Translations in **PDF files** are also supported, but it works only from context menu due technical restrictions of how chrome renders pdf-files.
 Select a text in opened file (be sure it's not an image file inside pdf content),  
-then do mouse right click on selection and choose an item to get translation with specific translation vendor.
+then click mouse right button on selection and choose an to translate text from context menu.
 
 2) Listen text-to-speech for all supported translation vendors
 
-3) Create your unique design (theme) for the popup with translation
+3) Create your unique design (theme) for the popup with translation results
 
-4) Customize ways of getting translation and other options in the settings
+4) Customize ways of getting translation and other options in app's settings
 
-5) Insert any text in the extension's drop-down window and get translation of sentences or words with dictionary support
+5) Insert any text in the app's "translate" tab (**alt+x** by default) and get translation of sentences or words with dictionary support
 
-6) Save your favorite language directions with specific vendor as bookmarks for quick access
+6) Save your favorite directions with preferred translation services as bookmarks for quick access
 
 7) History of translations
 

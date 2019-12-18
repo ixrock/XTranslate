@@ -1,66 +1,68 @@
 // Animations
 
-@mixin animate-opacity($enterDuration: 250ms, $leaveDuration: 150ms) {
-  &.Animate {
+@mixin animate-opacity($enterDuration: 100ms, $leaveDuration: 150ms) {
+  opacity: 0;
+
+  &.enter {
+    transition-property: opacity;
+    transition-duration: $enterDuration;
+    opacity: 1;
+  }
+
+  &.leave {
+    transition-duration: $leaveDuration;
+    transition-timing-function: ease-out;
     opacity: 0;
-
-    &.enter {
-      transition-property: opacity;
-      transition-duration: $enterDuration;
-      opacity: 1;
-    }
-
-    &.leave {
-      transition-property: opacity;
-      transition-duration: $leaveDuration;
-      transition-timing-function: ease-out;
-      opacity: 0;
-    }
   }
 }
 
-@mixin animate-slide-right($enterDuration: 150ms, $leaveDuration: 150ms) {
-  &.Animate {
-    transform: translateX(100%);
-    will-change: transform;
+@mixin animate-slide-right($enterDuration: 100ms, $leaveDuration: 150ms) {
+  transform: translateX(100%);
+  will-change: transform;
 
-    &.enter {
-      transform: translateX(0);
-      transition: transform $enterDuration;
-    }
-    &.leave {
-      transform: translateX(100%);
-      transition: transform $leaveDuration;
-    }
+  &.enter {
+    transform: translateX(0);
+    transition: transform $enterDuration;
+    transition-timing-function: ease-in-out;
+  }
+
+  &.leave {
+    transform: translateX(100%);
+    transition: transform $leaveDuration;
   }
 }
 
 @mixin animate-opacity-scale($enterDuration: 250ms, $leaveDuration: 150ms) {
-  &.Animate {
-    opacity: 0;
+  opacity: 0;
 
-    &.enter {
-      transition: opacity $enterDuration;
-      opacity: 1;
-    }
-    &.leave {
-      will-change: opacity, transform;
-      opacity: 0;
-      transform: scale(1.3);
-      transition: transform $leaveDuration ease-in, opacity $leaveDuration ease-in;
-    }
+  &.enter {
+    transition: opacity $enterDuration;
+    opacity: 1;
+  }
+
+  &.leave {
+    will-change: opacity, transform;
+    opacity: 0;
+    transform: scale(1.25);
+    transition: transform $leaveDuration ease-in, opacity $leaveDuration ease-out;
   }
 }
 
-// Predefined names for <Animate name="..."/>
-.opacity {
-  @include animate-opacity;
-}
+.Animate {
+  &:empty {
+    display: none;
+  }
 
-.slide-right {
-  @include animate-slide-right;
-}
+  // Animation name
+  &.opacity {
+    @include animate-opacity;
+  }
 
-.opacity-scale {
-  @include animate-opacity-scale;
+  &.slide-right {
+    @include animate-slide-right;
+  }
+
+  &.opacity-scale {
+    @include animate-opacity-scale;
+  }
 }

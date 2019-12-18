@@ -1,19 +1,21 @@
 import './tooltip.scss'
 
 import React from "react"
+import { observer } from "mobx-react";
+import { observable } from "mobx";
 import { createPortal } from "react-dom"
 import { autobind, cssNames } from "../../utils";
 import { Animate } from "../animate";
 
 export interface TooltipProps {
-  htmlFor?: string;
+  htmlFor: string
   className?: string;
-  usePortal?: boolean;
-  useAnimation?: boolean;
-  following?: boolean;  // tooltip is following mouse position
-  nowrap?: boolean;     // apply css: "white-space: nowrap"
   position?: Position;
+  useAnimation?: boolean;
+  following?: boolean; // tooltip is following mouse position
+  nowrap?: boolean; // css-shortcut for style={{whiteSpace: "nowrap"}}
   children?: React.ReactNode;
+  style?: React.CSSProperties;
 }
 
 interface Position {
@@ -24,26 +26,23 @@ interface Position {
   center?: boolean;
 }
 
-interface State {
-  visible?: boolean;
-}
-
-export class Tooltip extends React.Component<TooltipProps, State> {
-  static defaultProps: Partial<TooltipProps> = {
-    usePortal: false,
-    useAnimation: true,
-    nowrap: false,
-    position: {
-      center: true,
-      bottom: true,
-    }
+const defaultProps: Partial<TooltipProps> = {
+  useAnimation: true,
+  position: {
+    center: true,
+    bottom: true,
   }
+};
+
+@observer
+export class Tooltip extends React.Component<TooltipProps> {
+  static defaultProps = defaultProps as object;
 
   public anchor: HTMLElement;
   public elem: HTMLElement;
-  public state: State = {
-    visible: false,
-  };
+  public lastMousePos = { x: 0, y: 0 };
+
+  @observable isVisible = false;
 
   componentDidMount() {
     var { htmlFor } = this.props;
@@ -68,37 +67,45 @@ export class Tooltip extends React.Component<TooltipProps, State> {
 
   @autobind()
   onMouseEnter(evt: MouseEvent) {
-    this.setState({ visible: true });
+    this.isVisible = true;
     this.onMouseMove(evt);
   }
 
   @autobind()
   onMouseLeave(evt: MouseEvent) {
-    this.setState({ visible: false });
+    this.isVisible = false;
   }
 
   @autobind()
   onMouseMove(evt: MouseEvent) {
+    if (!this.props.following) return;
+    this.lastMousePos.x = evt.clientX;
+    this.lastMousePos.y = evt.clientY;
+    this.refreshPosition();
+  }
+
+  refreshPosition({ x = 0, y = 0 } = this.lastMousePos) {
     if (!this.props.following) {
       return;
     }
+    var offset = 10;
+    var viewportWidth = document.documentElement.clientWidth;
+    var viewportHeight = document.documentElement.clientHeight;
 
-    var posOffset = 10;
-    var { clientX, clientY } = evt;
-    this.elem.style.left = (clientX + posOffset) + "px"
-    this.elem.style.top = (clientY + posOffset) + "px"
+    var style = this.elem.style;
+    style.left = x + offset + "px"
+    style.top = y + offset + "px"
 
-    // correct position if not fits to viewport
-    var { innerWidth, innerHeight } = window;
+    // correct position if not fitting to viewport
     var { right, bottom, width, height } = this.elem.getBoundingClientRect();
+    var leftMirrorPos = x - width - offset;
+    var topMirrorPos = y - height - offset;
 
-    if (right > innerWidth) {
-      var left = clientX - width - posOffset;
-      if (left > 0) this.elem.style.left = `${left}px`
+    if (right > viewportWidth && leftMirrorPos > 0) {
+      style.left = leftMirrorPos + "px"
     }
-    if (bottom > innerHeight) {
-      var top = clientY - height - posOffset;
-      if (top > 0) this.elem.style.top = `${top}px`
+    if (bottom > viewportHeight) {
+      style.top = topMirrorPos + "px";
     }
   }
 
@@ -108,17 +115,26 @@ export class Tooltip extends React.Component<TooltipProps, State> {
   }
 
   render() {
-    var { visible } = this.state;
-    var { className, usePortal, useAnimation, position, following, nowrap, children } = this.props;
+    var { isVisible } = this;
+    var { className, useAnimation, position, following, nowrap, style, children } = this.props;
     className = cssNames('Tooltip', position, { following, nowrap }, className);
-    var tooltip = (
-      <Animate enter={visible} enabled={useAnimation}>
-        <div className={className} ref={this.bindRef}>
-          {visible && children}
-        </div>
-      </Animate>
+    var content = (
+      <div className={className} ref={this.bindRef} style={style}>
+        {children}
+      </div>
     );
-    if (usePortal && following) {
+    var tooltip = content;
+    if (useAnimation) {
+      tooltip = (
+        <Animate enter={isVisible} onEnter={() => this.refreshPosition()}>
+          {content}
+        </Animate>
+      )
+    }
+    else if (!isVisible) {
+      return null;
+    }
+    if (following) {
       return createPortal(tooltip, document.body);
     }
     return tooltip;

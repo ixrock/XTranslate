@@ -23,7 +23,7 @@ export class MenuActions extends React.Component<MenuActionsProps> {
     }
     var iconProps: Partial<IconProps> = {
       id: this.id,
-      actionIcon: true,
+      interactive: true,
       material: isString(triggerIcon) ? triggerIcon : undefined,
       ...(typeof triggerIcon === "object" ? triggerIcon : {})
     }

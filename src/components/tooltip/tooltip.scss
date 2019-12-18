@@ -7,8 +7,9 @@
   color: gainsboro;
   margin: #{$padding / 2 $padding / 3};
   padding: .5em;
-  transition-delay: 100ms;
-  z-index: 10001;
+  pointer-events: none;
+  max-width: 50%;
+  z-index: 1000;
 
   &:empty {
     display: none;

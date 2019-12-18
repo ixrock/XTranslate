@@ -36,7 +36,8 @@ export class NumberInput extends React.Component<Props> {
     return (
       <Input
         {...inputProps}
-        type="number" className={className} ref={this.bindRef}
+        type="number"
+        className={className}
         labelContent={(
           <div className="arrow-icons">
             <Icon
@@ -51,6 +52,7 @@ export class NumberInput extends React.Component<Props> {
             />
           </div>
         )}
+        ref={this.bindRef}
       />
     );
   }

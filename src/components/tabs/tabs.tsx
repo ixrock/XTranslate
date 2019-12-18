@@ -4,9 +4,7 @@ import { autobind, cssNames } from "../../utils";
 import { Icon } from "../icon";
 
 const TabsContext = React.createContext<TabsContextValue>(null);
-
 type TabsContextValue = TabsProps;
-type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>
 
 export interface TabsProps<D = any> extends Omit<React.DOMAttributes<HTMLElement>, "onChange"> {
   value?: D;

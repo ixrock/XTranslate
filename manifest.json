@@ -1,7 +1,7 @@
 {
   "name": "XTranslate",
   "description": "__MSG_description__",
-  "version": "2.26.2",
+  "version": "2.27.0",
   "manifest_version": 2,
   "default_locale": "en",
   "minimum_chrome_version": "53",
@@ -16,6 +16,13 @@
     "default_icon": {
       "19": "icons/48.png",
       "38": "icons/48.png"
+    }
+  },
+  "commands": {
+    "_execute_browser_action": {
+      "suggested_key": {
+        "default": "Alt+X"
+      }
     }
   },
   "background": {

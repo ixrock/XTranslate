@@ -9,7 +9,6 @@ import isFunction from "lodash/isFunction"
 import isBoolean from "lodash/isBoolean"
 import uniqueId from "lodash/uniqueId"
 
-type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>
 type InputElement = HTMLInputElement | HTMLTextAreaElement;
 type InputElementProps = InputHTMLAttributes<InputElement> & TextareaHTMLAttributes<InputElement> & DOMAttributes<InputElement>;
 
@@ -17,14 +16,24 @@ export type InputProps<T = any> = Omit<InputElementProps, "onChange"> & {
   className?: string;
   value?: T;
   multiLine?: boolean; // use text-area as input field
+  maxRows?: number; // when multiLine={true} define max rows size
   dirty?: boolean; // show validation errors even if the field wasn't touched yet
+  showErrors?: boolean; // show text error messages under input element
   showValidationLine?: boolean; // show animated validation line for async validators
+  restoreInvalidOnBlur?: boolean; // restore "focused" valid value on-blur when if it's invalid
   iconLeft?: string | React.ReactNode; // material-icon name in case of string-type
   iconRight?: string | React.ReactNode;
   validators?: Validator | Validator[];
   labelContent?: React.ReactNode;
   infoContent?: React.ReactNode;
   onChange?(value: T, evt: React.ChangeEvent<InputElement>): void;
+  onBlurChanged?(data: OnBlurChangedData, evt: React.ChangeEvent<InputElement>): void;
+}
+
+export interface OnBlurChangedData {
+  valid: boolean;
+  focusValue: string;
+  value: string;
 }
 
 interface State {
@@ -36,14 +45,21 @@ interface State {
   errors?: React.ReactNode[]
 }
 
+const defaultProps: Partial<InputProps> = {
+  rows: 1,
+  maxRows: 10000,
+  showErrors: true,
+  showValidationLine: true,
+  restoreInvalidOnBlur: true,
+  validators: [],
+}
+
 export class Input extends React.Component<InputProps, State> {
+  static defaultProps = defaultProps as object;
+
   public input: InputElement;
   public validators: Validator[] = [];
-
-  static defaultProps: Partial<InputProps> = {
-    showValidationLine: true,
-    validators: [],
-  }
+  public focusValue: string;
 
   public state: State = {
     dirty: !!this.props.dirty,
@@ -51,8 +67,8 @@ export class Input extends React.Component<InputProps, State> {
     errors: [],
   }
 
-  setValue(value: any) {
-    if (value !== this.getValue()) {
+  setValue(value: string | number) {
+    if (value != this.getValue()) {
       var nativeInputValueSetter = Object.getOwnPropertyDescriptor(this.input.constructor.prototype, "value").set;
       nativeInputValueSetter.call(this.input, value);
       var evt = new Event("input", { bubbles: true });
@@ -80,13 +96,15 @@ export class Input extends React.Component<InputProps, State> {
   }
 
   private autoFitHeight() {
-    if (!this.props.multiLine) return;
+    var { multiLine, rows, maxRows } = this.props;
+    if (!multiLine) {
+      return;
+    }
     var textArea = this.input;
-    var lineHeight = parseInt(window.getComputedStyle(textArea).lineHeight);
-    var minHeight = lineHeight * (this.props.rows || 1);
-    textArea.style.height = "0";
-    var paddings = textArea.offsetHeight;
-    textArea.style.height = Math.max(minHeight, textArea.scrollHeight) + paddings + "px";
+    var lineHeight = parseFloat(window.getComputedStyle(textArea).lineHeight);
+    var rowsCount = (this.getValue().match(/\n/g) || []).length + 1;
+    var height = lineHeight * Math.min(Math.max(rowsCount, rows), maxRows);
+    textArea.style.height = height + "px";
   }
 
   private validationId: string;
@@ -151,7 +169,7 @@ export class Input extends React.Component<InputProps, State> {
 
   private setupValidators() {
     this.validators = conditionalValidators
-    // add conditional validators if matches input props
+      // add conditional validators if matches input props
       .filter(validator => validator.condition(this.props))
       // add custom validators
       .concat(this.props.validators)
@@ -171,36 +189,51 @@ export class Input extends React.Component<InputProps, State> {
 
   @autobind()
   onFocus(evt: React.FocusEvent<InputElement>) {
-    var { onFocus } = this.props;
-    if (onFocus) onFocus(evt);
+    var { onFocus, onBlurChanged, restoreInvalidOnBlur } = this.props;
+    if (onBlurChanged || restoreInvalidOnBlur) {
+      this.focusValue = this.getValue();
+    }
+    if (onFocus) {
+      onFocus(evt);
+    }
     this.setState({ focused: true });
   }
 
   @autobind()
   onBlur(evt: React.FocusEvent<InputElement>) {
-    var { onBlur } = this.props;
-    if (onBlur) onBlur(evt);
-    if (this.state.dirtyOnBlur) this.setState({ dirty: true, dirtyOnBlur: false });
+    var { onBlurChanged, onBlur, restoreInvalidOnBlur } = this.props;
+    var focusValue = this.focusValue;
+    var value = this.getValue();
+    var { valid, dirtyOnBlur } = this.state;
+    if (restoreInvalidOnBlur && !valid) {
+      value = focusValue;
+      this.setValue(focusValue);
+    }
+    if (onBlur) {
+      onBlur(evt);
+    }
+    if (onBlurChanged && focusValue != value) {
+      onBlurChanged({ valid, value, focusValue }, evt);
+    }
+    if (dirtyOnBlur) {
+      this.setState({ dirty: true, dirtyOnBlur: false });
+    }
     this.setState({ focused: false });
   }
 
   @autobind()
-  async onChange(evt: React.ChangeEvent<HTMLInputElement>) {
+  onChange(evt: React.ChangeEvent<any>) {
     if (this.props.onChange) {
-      var input = evt.target;
-      var isNumber = this.props.type === "number" && !isNaN(input.valueAsNumber);
-      var value = isNumber ? input.valueAsNumber : input.value;
-      this.props.onChange(value, evt);
+      this.props.onChange(evt.currentTarget.value, evt);
     }
 
-    // validate
     this.validate();
-
-    // fit size for textarea
     this.autoFitHeight();
 
     // mark input as dirty for the first time only onBlur() to avoid immediate error-state show when start typing
-    if (!this.state.dirty) this.setState({ dirtyOnBlur: true });
+    if (!this.state.dirty) {
+      this.setState({ dirtyOnBlur: true });
+    }
 
     // re-render component when used as uncontrolled input
     // when used @defaultValue instead of @value changing real input.value doesn't call render()
@@ -243,7 +276,12 @@ export class Input extends React.Component<InputProps, State> {
   }
 
   render() {
-    var { className, iconLeft, iconRight, multiLine, dirty, showValidationLine, validators, labelContent, infoContent, children, ...inputProps } = this.props;
+    var {
+      className, iconLeft, iconRight, multiLine, dirty,
+      showValidationLine, showErrors, validators, maxRows, children,
+      restoreInvalidOnBlur, onBlurChanged, labelContent, infoContent,
+      ...inputProps
+    } = this.props;
     var { maxLength, rows, disabled } = this.props;
     var { focused, dirty, valid, validating, errors } = this.state;
 
@@ -280,7 +318,7 @@ export class Input extends React.Component<InputProps, State> {
         </label>
         <div className="input-info flex gaps">
           {infoContent}
-          {!valid && dirty && (
+          {showErrors && !valid && dirty && (
             <div className="errors box grow">
               {errors.map((error, i) => <p key={i}>{error}</p>)}
             </div>
@@ -291,7 +329,6 @@ export class Input extends React.Component<InputProps, State> {
             </div>
           )}
         </div>
-        {children}
       </div>
     );
   }

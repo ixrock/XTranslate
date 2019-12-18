@@ -90,18 +90,27 @@
 
   &.disabled {
     opacity: .5;
-    pointer-events: none;
+    color: inherit !important;
+    cursor: not-allowed !important;
   }
 
-  &.actionIcon {
+  &.active {
+    color: var(--color-active);
+    box-shadow: 0 0 0 3px var(--bgc-active);
+    background-color: var(--bgc-active);
+  }
+
+  &.interactive {
     cursor: pointer;
     transition: 250ms color, 250ms opacity, 150ms background-color, 150ms box-shadow;
     border-radius: 50%;
 
-    &:focus, &:hover {
-      color: var(--color-active);
-      box-shadow: 0 0 0 3px var(--bgc-active);
-      background-color: var(--bgc-active);
+    &.focusable:focus {
+      @extend .active;
+    }
+
+    &:hover {
+      @extend .active;
     }
   }
 }

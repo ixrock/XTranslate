@@ -1,10 +1,10 @@
 import "./button.scss";
-import React, { ButtonHTMLAttributes } from "react";
+import React, { ButtonHTMLAttributes, ReactNode } from "react";
 import { cssNames } from "../../utils";
+import { TooltipDecoratorProps, withTooltip } from "../tooltip";
 
-export interface ButtonProps extends ButtonHTMLAttributes<any> {
-  href?: string // render as link (<a>)
-  label?: string
+export interface ButtonProps extends ButtonHTMLAttributes<any>, TooltipDecoratorProps {
+  label?: React.ReactNode;
   waiting?: boolean
   primary?: boolean
   accent?: boolean
@@ -13,30 +13,36 @@ export interface ButtonProps extends ButtonHTMLAttributes<any> {
   active?: boolean
   big?: boolean
   round?: boolean
+  href?: string // render as hyperlink
+  target?: string // in case of using @href
 }
 
-export class Button extends React.Component<ButtonProps> {
+@withTooltip
+export class Button extends React.PureComponent<ButtonProps, {}> {
   private link: HTMLAnchorElement;
   private button: HTMLButtonElement;
 
   render() {
-    var { className, waiting, label, primary, accent, outline, hidden, active, big, round, children, ...props } = this.props;
+    var { className, waiting, label, primary, accent, outline, hidden, active, big, round, tooltip, children, ...props } = this.props;
     var btnProps = props as Partial<ButtonProps>;
     if (hidden) return null;
 
     btnProps.className = cssNames('Button', className, {
-      waiting, primary, accent, outline: outline, active, big, round,
+      waiting, primary, accent, outline, active, big, round,
     });
 
-    var content = label && children
-      ? React.Children.toArray([label, children])
-      : label || children;
+    var btnContent: ReactNode = (
+      <>
+        {label}
+        {children}
+      </>
+    );
 
     // render as link
     if (this.props.href) {
       return (
         <a {...btnProps} ref={e => this.link = e}>
-          {content}
+          {btnContent}
         </a>
       )
     }
@@ -44,7 +50,7 @@ export class Button extends React.Component<ButtonProps> {
     // render as button
     return (
       <button type="button" {...btnProps} ref={e => this.button = e}>
-        {content}
+        {btnContent}
       </button>
     )
   }

@@ -1,7 +1,7 @@
 import "./radio.scss";
 import * as React from "react";
 import { autobind, cssNames, IClassName } from "../../utils";
-import { Checkbox, CheckboxProps, Omit } from "../checkbox";
+import { Checkbox, CheckboxProps } from "../checkbox";
 
 const RadioGroupContext = React.createContext<RadioGroup>(null);
 

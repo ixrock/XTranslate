@@ -1,35 +1,45 @@
 import './icon.scss'
 
-import React, { isValidElement } from "react";
+import React, { ReactNode } from "react";
+import { findDOMNode } from "react-dom";
 import { autobind, cssNames } from "../../utils";
-import { Tooltip, TooltipProps } from "../tooltip";
-import uniqueId from "lodash/uniqueId"
-import isPlainObject from "lodash/isPlainObject"
+import { TooltipDecoratorProps, withTooltip } from "../tooltip";
 import isNumber from "lodash/isNumber"
 
-export type IconProps = React.HTMLProps<any> & {
+export interface IconProps extends React.HTMLAttributes<any>, TooltipDecoratorProps {
   material?: string;          // material-icon, see available names at https://material.io/icons/
   svg?: string;               // svg-filename without extension in current folder
-  actionIcon?: boolean;       // indicates that icon is interactive and highlight it on hover
   colorful?: boolean;         // has effect only for svg icons: don't fill internal elements to current css-color
   href?: string;              // render icon as hyperlink
-  tooltip?: React.ReactNode | Partial<TooltipProps>;  // add tooltip on hover
   size?: string | number;     // icon-size
-  small?: boolean;
-  big?: boolean;
+  small?: boolean;            // pre-defined icon-size
+  big?: boolean;              // pre-defined icon-size
+  active?: boolean;           // apply active-state styles
+  interactive?: boolean;      // indicates that icon is interactive and highlight it on focus/hover
+  focusable?: boolean;        // allow focus to the icon + show .active styles (default: "true", when icon is interactive)
+  sticker?: boolean;
   disabled?: boolean;
 }
 
-export class Icon extends React.Component<IconProps> {
-  public elem: HTMLElement;
+@withTooltip
+export class Icon extends React.PureComponent<IconProps> {
+  static defaultProps: IconProps = {
+    focusable: true,
+  };
 
-  public tooltipId = this.props.id || (
-    this.props.tooltip ? uniqueId("icon_tooltip_") : undefined
-  );
+  get isInteractive() {
+    var { interactive, onClick, href } = this.props;
+    return interactive || !!(onClick || href);
+  }
 
-  get isActionIcon() {
-    var { actionIcon, onClick, href } = this.props;
-    return actionIcon || !!(onClick || href);
+  @autobind()
+  onClick(evt: React.MouseEvent) {
+    if (this.props.disabled) {
+      return;
+    }
+    if (this.props.onClick) {
+      this.props.onClick(evt);
+    }
   }
 
   @autobind()
@@ -37,70 +47,66 @@ export class Icon extends React.Component<IconProps> {
     switch (evt.nativeEvent.code) {
       case "Space":
       case "Enter":
-        this.elem.click();
-        evt.preventDefault(); // e.g. prevent page scrolling
+        var icon = findDOMNode(this) as HTMLElement;
+        setTimeout(() => icon.click());
+        evt.preventDefault();
         break;
     }
-  }
-
-  @autobind()
-  bindRef(elem: HTMLElement) {
-    this.elem = elem;
+    if (this.props.onKeyDown) {
+      this.props.onKeyDown(evt);
+    }
   }
 
   render() {
-    var { className, href, material, svg, colorful, actionIcon, tooltip, size, small, big, style, disabled, ...elemProps } = this.props;
-    actionIcon = this.isActionIcon;
-    if (size) {
-      style = style || {};
-      style["--size"] = size + (isNumber(size) ? "px" : "");
-    }
+    var { isInteractive } = this;
+    var {
+      // skip passing props to icon's html element
+      className, href, colorful, material, svg, size, small, big,
+      disabled, sticker, active, focusable, children, tooltip,
+      interactive: _interactive,
+      onClick: _onClick,
+      onKeyDown: _onKeyDown,
+      ...elemProps
+    } = this.props;
+
+    var iconContent: ReactNode;
     var iconProps: Partial<IconProps> = {
-      id: this.tooltipId,
-      className: cssNames("Icon", className,
-        { svg, material, actionIcon, disabled, colorful },
+      className: cssNames("Icon", className, {
+          svg, material, disabled, sticker, active, focusable, colorful,
+          interactive: isInteractive,
+        },
         !size ? { small, big } : {}
       ),
-      onKeyDown: actionIcon ? this.onKeyDown : undefined,
-      tabIndex: actionIcon ? 0 : undefined,
-      style: style,
-      ref: this.bindRef,
-      ...elemProps
+      onClick: isInteractive ? this.onClick : undefined,
+      onKeyDown: isInteractive ? this.onKeyDown : undefined,
+      tabIndex: isInteractive && focusable && !disabled ? 0 : undefined,
+      style: size ? { "--size": size + (isNumber(size) ? "px" : "") } as React.CSSProperties : undefined,
+      ...elemProps,
     };
 
     // render as inline svg-icon
     if (svg) {
-      var svgIcon = require("!!raw-loader!./" + svg + ".svg").default;
-      iconProps.children = <span dangerouslySetInnerHTML={{ __html: svgIcon }}/>;
+      var svgIconText = require("!!raw-loader!./" + svg + ".svg").default;
+      iconContent = <span dangerouslySetInnerHTML={{ __html: svgIconText }}/>;
     }
 
     // render as material-icon
     if (material) {
-      iconProps.children = <span>{material}</span>;
+      iconContent = <span className="material-icons">{material}</span>;
     }
 
-    // add tooltip
-    if (tooltip) {
-      var iconContent = iconProps.children;
-      var tooltipProps: Partial<TooltipProps> = {
-        htmlFor: this.tooltipId,
-        following: true,
-      };
-      if (isPlainObject(tooltip) && !isValidElement(tooltip)) {
-        Object.assign(tooltipProps, tooltip);
-      }
-      else {
-        tooltipProps.children = tooltip;
-      }
-      iconProps.children = (
-        <>
-          {iconContent}
-          <Tooltip {...tooltipProps}/>
-        </>
-      )
+    // wrap icon's content passed from decorator
+    iconProps.children = (
+      <>
+        {tooltip}
+        {iconContent}
+      </>
+    );
+
+    // render icon type
+    if (href) {
+      return <a {...iconProps} href={href}/>
     }
-    return href
-      ? <a {...iconProps} href={href}/>
-      : <i {...iconProps} />
+    return <i {...iconProps}/>
   }
 }

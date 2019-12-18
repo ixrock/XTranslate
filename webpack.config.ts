@@ -76,12 +76,24 @@ export = () => {
           use: 'raw-loader'
         },
         {
-          test: /\.(jpg|png|svg)$/,
-          use: "file-loader?name=assets/[name]-[hash:6].[ext]"
+          test: /\.(jpg|png|svg|map|ico)$/,
+          use: {
+            loader: 'file-loader',
+            options: {
+              name: "assets/[name]-[hash:6].[ext]",
+              esModule: false,
+            },
+          }
         },
         {
           test: /\.(ttf|eot|woff2?)$/,
-          use: 'file-loader?name=fonts/[name].[ext]'
+          use: {
+            loader: 'file-loader',
+            options: {
+              name: "fonts/[name].[ext]",
+              esModule: false,
+            },
+          },
         },
       ]
     },

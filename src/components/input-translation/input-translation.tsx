@@ -277,7 +277,7 @@ export class InputTranslation extends React.Component {
             </div>
             <span className="lang" id="translated_with">
               {langPair}
-              <Tooltip htmlFor="translated_with" usePortal following nowrap>
+              <Tooltip htmlFor="translated_with" following>
                 {__i18n("translated_with", [vendor.title, langPairFull]).join("")}
               </Tooltip>
             </span>

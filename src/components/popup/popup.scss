@@ -30,6 +30,10 @@
     }
   }
 
+  &.preview {
+    text-align: left;
+  }
+
   &:not(.preview) {
     &:not(.fixedPos) {
       position: absolute;

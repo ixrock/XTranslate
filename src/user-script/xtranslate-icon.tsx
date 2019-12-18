@@ -1,21 +1,27 @@
 import "./xtranslate-icon.scss"
 
 import React from "react";
+import { findDOMNode } from "react-dom";
 import { cssNames } from "../utils";
 import { Icon, IconProps } from "../components/icon";
 
 interface Props extends Partial<IconProps> {
-  bindRef?: (icon: Icon) => void;
+  preview?: boolean;
 }
 
 export class XTranslateIcon extends React.Component<Props> {
+  get elem() {
+    return findDOMNode(this)
+  }
+
   render() {
-    var { className, bindRef, ...iconProps } = this.props;
+    var { className, preview, ...iconProps } = this.props;
     return (
       <Icon
-        className={cssNames("XTranslateIcon", className)}
-        svg="logo" colorful actionIcon
-        ref={bindRef}
+        className={cssNames("XTranslateIcon", className, { preview })}
+        svg="logo"
+        interactive={true}
+        colorful={true}
         {...iconProps}
       />
     )

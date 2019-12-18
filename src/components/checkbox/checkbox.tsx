@@ -1,10 +1,10 @@
 import './checkbox.scss'
-import React from 'react'
+import React, { DOMAttributes } from 'react'
 import { autobind, cssNames, IClassName } from "../../utils";
+import { TooltipDecoratorProps, withTooltip } from "../tooltip";
 
-export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
-
-export type CheckboxProps<D = any> = Omit<React.DOMAttributes<HTMLElement>, "onChange"> & {
+export type CheckboxProps<D = any> = Omit<DOMAttributes<any>, "onChange"> & TooltipDecoratorProps & {
+  id?: string;
   checked: boolean;
   className?: IClassName;
   autoFocus?: boolean
@@ -15,6 +15,7 @@ export type CheckboxProps<D = any> = Omit<React.DOMAttributes<HTMLElement>, "onC
   onChange?(checked: boolean, value: D): void;
 }
 
+@withTooltip
 export class Checkbox extends React.Component<CheckboxProps> {
   public elem: HTMLLabelElement;
 
@@ -64,12 +65,13 @@ export class Checkbox extends React.Component<CheckboxProps> {
   }
 
   render() {
-    var { label, inline, className, checked, disabled, children } = this.props;
+    var { id, label, inline, className, checked, disabled, tooltip, children } = this.props;
     className = cssNames('Checkbox flex gaps align-center', className, {
       inline, checked, disabled
     });
     return (
       <label
+        id={id}
         className={className}
         tabIndex={disabled ? -1 : 0}
         onClick={this.onClick}

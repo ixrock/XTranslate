@@ -1,20 +1,22 @@
 // Helper for combining css classes inside components
-export type IClassName = string | string[] | { [className: string]: boolean | any };
+
+export type IClassName = string | string[] | IClassNameMap;
+export type IClassNameMap = {
+  [className: string]: boolean | any
+};
 
 export function cssNames(...args: IClassName[]): string {
-  var map: { [name: string]: boolean } = {};
-  var addName = (className: string) => map[className.trim()] = true;
-  args.forEach(function (className) {
-    if (typeof className === 'string') className = className.split(/\s+/g);
-    if (Array.isArray(className)) className.forEach(addName);
-    else if (typeof className === 'object') {
-      // remove keys with undefined values
-      Object.keys(className).forEach(function (name) {
-        if (className[name] === undefined) delete className[name];
-      });
-      // merge to common list
+  var map: IClassNameMap = {};
+  args.forEach(className => {
+    if (typeof className === "string" || Array.isArray(className)) {
+      [].concat(className).forEach(name => map[name] = true);
+    }
+    else {
       Object.assign(map, className);
     }
   });
-  return Object.keys(map).filter((className) => !!map[className]).join(' ');
+  return Object.entries(map)
+    .filter(([className, isActive]) => !!isActive)
+    .map(([className]) => className.trim())
+    .join(' ');
 }

@@ -1,6 +1,7 @@
 .idea
 node_modules
 dist
+build
 backup
 *-mock.json
 npm-debug.log

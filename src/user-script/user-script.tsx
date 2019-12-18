@@ -8,7 +8,6 @@ import { debounce, isEqual } from "lodash"
 import { autobind, cssNames, getHotkey } from "../utils";
 import { getManifest, getStyles, MenuTranslateFavoritePayload, MenuTranslateVendorPayload, Message, MessageType, onMessage, PlayTextToSpeechPayload, sendMessage, TranslatePayload, TranslatePayloadResult } from "../extension";
 import { getNextTranslator, ITranslationError, ITranslationResult } from "../vendors";
-import { Icon } from "../components/icon";
 import { XTranslateIcon } from "./xtranslate-icon";
 import { ITranslateParams, Popup } from "../components/popup/popup";
 import { settingsStore } from "../components/settings/settings.store";
@@ -40,7 +39,7 @@ class App extends React.Component<Props> {
   private settings = settingsStore.data;
   private selection = window.getSelection();
   private popup: Popup;
-  private icon: Icon;
+  private icon: XTranslateIcon;
   private lastParams: ITranslateParams;
   private isDblClicked = false;
   private isHotkeyActivated = false;
@@ -474,7 +473,7 @@ class App extends React.Component<Props> {
           style={this.iconPosition}
           onMouseDown={onIconClick}
           title={`${this.appName}: ${[langFrom, langTo].join(' → ').toUpperCase()}`}
-          bindRef={e => this.icon = e}
+          ref={e => this.icon = e}
         />
         <style type="text/css">
           {this.props.style}

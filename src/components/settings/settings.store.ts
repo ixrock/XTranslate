@@ -4,6 +4,12 @@ import { getTranslator } from "../../vendors";
 
 export type ISettingsStoreData = typeof defaultSettings;
 
+export const defaultHokey: Hotkey = {
+  altKey: true,
+  shiftKey: true,
+  code: "X"
+}
+
 export const defaultSettings = {
   autoPlayText: false,
   useChromeTtsEngine: false,
@@ -28,7 +34,7 @@ export const defaultSettings = {
   historyAvoidDuplicates: true,
   historyPageSize: 100,
   popupFixedPos: "", // possible values defined as css-classes in popup.scss
-  hotkey: { altKey: true, code: "X" } as Hotkey,
+  hotkey: defaultHokey,
 };
 
 export class SettingsStore extends Store<ISettingsStoreData> {
