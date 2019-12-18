@@ -27,7 +27,7 @@
   "display_popup_on_double_click"    : {"message": "Display on double-click a word"},
   "display_popup_on_hotkey"          : {"message": "Display when I press hotkey"},
   "remember_last_typed_text"         : {"message": "Remember last typed text"},
-  "sub_header_quick_access_hotkey"   : {"message": "Set global hotkey to app"},
+  "sub_header_quick_access_hotkey"   : {"message": "Setup global hotkey"},
   "quick_access_configure_link"      : {"message": "Configure keyboard shortcut for quick access to this window"},
   "swap_languages"                   : {"message": "Swap languages"},
   "popup_position_title"             : {"message": "Position"},

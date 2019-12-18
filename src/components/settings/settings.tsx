@@ -2,6 +2,7 @@ import "./settings.scss";
 
 import * as React from "react";
 import { observer } from "mobx-react";
+import { observable } from "mobx";
 import { getTranslators } from "../../vendors";
 import { __i18n, createTab } from "../../extension";
 import { autobind, getHotkey, parseHotkey, prevDefault } from "../../utils";
@@ -19,7 +20,17 @@ import { TooltipProps } from "../tooltip";
 
 @observer
 export class Settings extends React.Component {
-  settings = settingsStore.data;
+  @observable settings = settingsStore.data;
+  @observable windowAppCmd = ""
+
+  componentDidMount() {
+    chrome.commands.getAll(commands => {
+      var windowAppCmd = commands.find(cmd => cmd.name == "_execute_browser_action");
+      if (windowAppCmd) {
+        this.windowAppCmd = windowAppCmd.shortcut;
+      }
+    })
+  }
 
   @autobind()
   saveHotkey(evt: React.KeyboardEvent) {
@@ -38,7 +49,7 @@ export class Settings extends React.Component {
   }
 
   render() {
-    var { settings } = this;
+    var { settings, windowAppCmd } = this;
     var hotKey = parseHotkey(settings.hotkey);
     return (
       <div className="Settings flex column gaps">
@@ -186,7 +197,9 @@ export class Settings extends React.Component {
               className="box flex gaps"
               onClick={() => createTab("chrome://extensions/shortcuts")}
               tooltip={__i18n("quick_access_configure_link")}
-              children={__i18n("sub_header_quick_access_hotkey")}
+              children={__i18n("sub_header_quick_access_hotkey") + (
+                windowAppCmd ? ` (${windowAppCmd})` : ""
+              )}
             />
           </div>
           <div className="translate-delay">
