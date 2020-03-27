@@ -94,7 +94,7 @@ export class Popup extends React.Component<Props> {
         : toCssColor(bgcMain),
       borderRadius: borderRadius,
       fontFamily: `${fontFamily}, sans-serif`,
-      fontSize: fontSize,
+      fontSize: fontSize + "px",
       color: toCssColor(textColor),
       border: borderWidth ? [
         borderWidth + "px",

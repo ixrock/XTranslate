@@ -1,0 +1,26 @@
+.UserHistoryImport {
+  > .box {
+    border-radius: $radius;
+    background: white;
+    padding: $margin 0;
+  }
+
+  .title {
+    text-align: center;
+    padding: $padding;
+    padding-bottom: $padding * 2;
+  }
+
+  .AceEditor {
+    width: 80vw;
+    height: 65vh;
+    border: 1px solid $border-color;
+    border-left: 0;
+    border-right: 0;
+  }
+
+  .buttons {
+    margin-top: $margin;
+    text-align: center;
+  }
+}

@@ -7,6 +7,7 @@ import { cssNames, noop, stopPropagation } from "../../utils";
 
 export interface DialogProps {
   className?: string
+  contentClassName?: string
   isOpen?: boolean
   open?: () => void
   close?: () => void
@@ -108,11 +109,12 @@ export class Dialog extends React.Component<DialogProps, DialogState> {
 
   render() {
     if (!this.isOpen) return null;
-    var { className, modal, animated, pinned } = this.props;
+    var { className, modal, animated, pinned, contentClassName } = this.props;
     className = cssNames("Dialog flex center", className, { modal, pinned });
+    contentClassName = cssNames("box", contentClassName)
     var dialog = (
       <div className={className} onClick={stopPropagation}>
-        <div className="box" ref={e => this.contentElem = e}>
+        <div className={contentClassName} ref={e => this.contentElem = e}>
           {this.props.children}
         </div>
       </div>

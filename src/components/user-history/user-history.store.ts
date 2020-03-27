@@ -1,15 +1,20 @@
-import { observable } from "mobx";
+import { action, IObservableArray, observable } from "mobx";
 import { Store, StoreParams } from "../../store";
 import { autobind } from "../../utils/autobind";
 import { ITranslationResult } from "../../vendors/translator";
 import { settingsStore } from "../settings/settings.store";
-import isEqual from "lodash/isEqual";
+import orderBy from "lodash/orderBy";
+import uniqBy from "lodash/uniqBy";
 
 export enum HistoryTimeFrame {
-  HOUR, DAY, MONTH, YEAR, ALL
+  HOUR,
+  DAY,
+  MONTH,
+  YEAR,
+  ALL,
 }
 
-export type IUserHistoryStoreData = typeof defaultHistory;
+export type IUserHistoryStoreData = IObservableArray<IHistoryStorageItem>;
 
 const defaultHistory = observable.array<IHistoryStorageItem>([], { deep: false });
 
@@ -23,84 +28,80 @@ export class UserHistoryStore extends Store<IUserHistoryStoreData> {
       autoLoad: false,
       storageType: "local",
       initialData: defaultHistory,
-      ...params
+      ...params,
     });
   }
 
-  static toStorageItem(translation: ITranslationResult): IHistoryStorageItem {
-    return [
-      Date.now(),
-      translation.vendor,
-      translation.langFrom,
-      translation.langTo,
-      translation.originalText,
-      translation.translation,
-      translation.transcription,
-      translation.dictionary.map(dict => [
-        dict.wordType,
-        dict.meanings.map(mean => mean.word)
-      ] as [string, string[]])
+  @action
+  async importItems(items: IHistoryStorageItem[]): Promise<number> {
+    if (!this.isLoaded) {
+      await this.load();
+    }
+    var historyItems: IHistoryStorageItem[] = [
+      ...this.data,
+      ...items.filter(item => {
+        if (Array.isArray(item)) {
+          return item.length >= 6 && typeof item[0] === "number"
+        }
+        else {
+          var { date, vendor, from, to, text, } = item;
+          return !!(date && vendor && from && to && text);
+        }
+      }),
     ]
-  }
-
-  static toHistoryItem(storageItem: IHistoryStorageItem): IHistoryItem {
-    var item: IHistoryItem;
-    if (Array.isArray(storageItem)) {
-      var [date, vendor, from, to, text, translation, transcription, dict] = storageItem;
-      item = {
-        date, vendor, from, to, text, translation, transcription,
-        dictionary: dict.map(dict => ({
-          wordType: dict[0],
-          translation: dict[1]
-        }))
-      };
-    }
-    else {
-      var { date, vendor, from, to, text, tr, ts, dict: dictionary } = storageItem;
-      item = {
-        date, vendor, from, to, text,
-        translation: tr,
-        transcription: ts,
-        dictionary: dictionary.map(dict => ({
-          wordType: dict.w,
-          translation: dict.tr
-        }))
+    var newItems = orderBy(historyItems, item => {
+      if (Array.isArray(item)) {
+        if (typeof item[0] === "number") return item[0]; // v2
       }
-    }
-    return item;
+      else {
+        return item.date; // v1
+      }
+    }, "desc");
+
+    var countBeforeCleanUp = this.data.length;
+    newItems = this.removeDuplicates(newItems);
+    this.data.replace(newItems);
+    return newItems.length - countBeforeCleanUp;
   }
 
+  @action
   async saveTranslation(translation: ITranslationResult) {
-    if (!translation) return;
-    if (!this.isLoaded) await this.load();
-
-    var { vendor, langFrom, langTo, langDetected, originalText } = translation;
-    var { historySaveWordsOnly, historyAvoidDuplicates } = settingsStore.data;
-    if (historySaveWordsOnly && !translation.dictionary.length) {
+    var { historySaveWordsOnly } = settingsStore.data;
+    var noDictionary = !translation?.dictionary.length;
+    if (!translation || this.isLoading || (historySaveWordsOnly && noDictionary)) {
       return;
     }
+    if (!this.isLoaded) {
+      await this.load();
+    }
+    var { langFrom, langDetected } = translation;
     if (langFrom === "auto") {
-      translation.langFrom = langFrom = langDetected;
+      translation.langFrom = langDetected;
     }
     var newItems: IHistoryStorageItem[] = [
-      ...this.data
+      toStorageItem(translation),
+      ...this.data,
     ];
-    if (historyAvoidDuplicates) {
-      let newItemData = [vendor, langFrom, langTo, originalText];
-      newItems = newItems.filter(item => {
-        let { vendor, from, to, text } = UserHistoryStore.toHistoryItem(item);
-        return !isEqual(newItemData, [vendor, from, to, text]);
-      });
-    }
-    newItems.unshift(UserHistoryStore.toStorageItem(translation));
+    newItems = this.removeDuplicates(newItems);
     this.data.replace(newItems);
+  }
+
+  removeDuplicates(items: IHistoryStorageItem[]) {
+    var { historyAvoidDuplicates } = settingsStore.data;
+    if (historyAvoidDuplicates) {
+      return uniqBy(items, item => {
+        var { vendor, from, to, text } = toHistoryItem(item);
+        return vendor + from + to + text;
+      })
+    }
+    return items;
   }
 
   findItems(searchText = ""): IHistoryStorageItem[] {
     searchText = searchText.trim().toLowerCase();
     if (!searchText) return [];
     return this.data.filter(item => {
-      var { text, translation } = UserHistoryStore.toHistoryItem(item);
+      var { text, translation } = toHistoryItem(item);
       return (
         text.toLowerCase().includes(searchText) ||
         translation.toLowerCase().includes(searchText)
@@ -114,7 +115,7 @@ export class UserHistoryStore extends Store<IUserHistoryStoreData> {
     }
     else {
       if (typeof itemOrFilter === "function") {
-        var newItems = this.data.filter(item => !itemOrFilter(UserHistoryStore.toHistoryItem(item)));
+        var newItems = this.data.filter(item => !itemOrFilter(toHistoryItem(item)));
         this.data.replace(newItems);
       }
       else {
@@ -122,6 +123,69 @@ export class UserHistoryStore extends Store<IUserHistoryStoreData> {
       }
     }
   }
+}
+
+export function toStorageItem(data: ITranslationResult | IHistoryItem): IHistoryStorageItem {
+  var { vendor, transcription, translation } = data;
+  if (isHistoryItem(data)) {
+    return [
+      data.date,
+      vendor,
+      data.from,
+      data.to,
+      data.text,
+      translation,
+      transcription,
+      data.dictionary.map(dict => [
+        dict.wordType,
+        dict.translation,
+      ])
+    ]
+  }
+  else {
+    return [
+      Date.now(),
+      vendor,
+      data.langFrom,
+      data.langTo,
+      data.originalText,
+      translation,
+      transcription,
+      data.dictionary.map(dict => [
+        dict.wordType,
+        dict.meanings.map(mean => mean.word)
+      ])
+    ]
+  }
+}
+
+export function toHistoryItem(data: IHistoryStorageItem): IHistoryItem {
+  if (Array.isArray(data)) {
+    var [date, vendor, from, to, text, translation, transcription, dict] = data;
+    return {
+      date, vendor, from, to, text, translation, transcription,
+      dictionary: dict.map(dict => ({
+        wordType: dict[0],
+        translation: dict[1]
+      }))
+    };
+  }
+  else {
+    var { date, vendor, from, to, text, tr, ts, dict: dictionary = [] } = data;
+    return {
+      date, vendor, from, to, text,
+      translation: tr,
+      transcription: ts,
+      dictionary: dictionary.map(dict => ({
+        wordType: dict.w,
+        translation: dict.tr
+      }))
+    }
+  }
+}
+
+export function isHistoryItem(item: any | IHistoryItem = {}): item is IHistoryItem {
+  return !!(item.from && item.to);
 }
 
 export const userHistoryStore = new UserHistoryStore();

@@ -71,11 +71,12 @@ export class Icon extends React.PureComponent<IconProps> {
 
     var iconContent: ReactNode;
     var iconProps: Partial<IconProps> = {
-      className: cssNames("Icon", className, {
+      className: cssNames("Icon", {
           svg, material, disabled, sticker, active, focusable, colorful,
           interactive: isInteractive,
         },
-        !size ? { small, big } : {}
+        !size ? { small, big } : {},
+        className, // keep it last to allow overriding
       ),
       onClick: isInteractive ? this.onClick : undefined,
       onKeyDown: isInteractive ? this.onKeyDown : undefined,

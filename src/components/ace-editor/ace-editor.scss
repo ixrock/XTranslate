@@ -1,0 +1,25 @@
+.AceEditor {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  flex: 1;
+  z-index: 10;
+
+  &.hidden {
+    visibility: hidden;
+  }
+
+  &.light {
+    .ace_scrollbar {
+      @include custom-scrollbar($theme: dark);
+    }
+  }
+
+  > .editor {
+    position: absolute;
+    width: inherit;
+    height: inherit;
+    font-size: 90%;
+    border-radius: $radius;
+  }
+}

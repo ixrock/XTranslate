@@ -2,19 +2,20 @@
 
 interface Localization {
   (messageId: string): string;
-  (messageId: string, replacers?: PlaceholderReplacer[]): any[];
+  (messageId: string, ...replacers: PlaceholderReplacer[]): any[];
 }
 
-export const __i18n: Localization = function (messageId, replacers?): any {
+export const __i18n: Localization = function (messageId, ...replacers: PlaceholderReplacer[]): any {
   var message = chrome.i18n.getMessage(messageId);
-  if (!replacers) return message;
-  return processMessage(message, replacers);
+  if (!replacers.length) return message;
+  return processMessage(message, replacers.flat());
 };
 
 export type PlaceholderReplacer = ((placeholder: string) => any) | any;
 
 // process placeholders %any text inside message% from localization files
 const placeholderMatcher = /%(.*?)%/;
+
 function processMessage(message: string, replacers: PlaceholderReplacer[] = [], result = []) {
   var match = message.match(placeholderMatcher);
   if (match) {
@@ -26,7 +27,8 @@ function processMessage(message: string, replacers: PlaceholderReplacer[] = [], 
     var substr = isFunction ? replacer(match[1]) : replacer != null ? replacer : match[1];
     result.push(substr); // add processed sub-string to end result
     processMessage(message.substr(index + match[0].length), replacers, result); // replace rest part of message
-  } else {
+  }
+  else {
     result.push(message); // just put rest of the message if no matches found
   }
   return result;

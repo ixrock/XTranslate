@@ -1,6 +1,6 @@
 //-- Background page script
 
-import "crx-hotreload"
+// import "crx-hotreload"
 import "./contextMenu"
 import { createTab, getOptionsPageUrl, Message, MessageType, onMessage, PlayTextToSpeechPayload, sendTabMessage, TranslatePayload, TranslatePayloadResult } from '../extension'
 import { AppRoute } from "../components/app/app.route";

@@ -20,6 +20,7 @@ import { AppRoute } from "./app.route";
 import { Icon } from "../icon";
 import { Store } from "../../store";
 import { AppRateDialog } from "./app-rate.dialog";
+import { Notifications } from "../notifications";
 
 @observer
 export class App extends React.Component {
@@ -73,13 +74,13 @@ export class App extends React.Component {
           </div>
           <Icon
             svg="moon"
-            title={__i18n("use_dark_theme")}
+            tooltip={{ nowrap: true, children: __i18n("use_dark_theme") }}
             className={cssNames("dark-theme-icon", { active: useDarkTheme })}
             onClick={() => this.settings.useDarkTheme = !useDarkTheme}
           />
           <Icon
             material="open_in_new"
-            title={__i18n("open_in_window")}
+            tooltip={{ nowrap: true, children: __i18n("open_in_window") }}
             onClick={this.detachWindow}
           />
         </header>
@@ -96,6 +97,7 @@ export class App extends React.Component {
           {activePageId === AppRoute.history && <UserHistory/>}
         </div>
         <Footer/>
+        <Notifications/>
         <AppRateDialog/>
       </div>
     );

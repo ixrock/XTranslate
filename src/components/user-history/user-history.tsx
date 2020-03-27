@@ -14,7 +14,8 @@ import { Option, Select } from "../select";
 import { Button } from "../button";
 import { Spinner } from "../spinner";
 import { settingsStore } from "../settings/settings.store";
-import { HistoryTimeFrame, IHistoryItem, IHistoryStorageItem, UserHistoryStore, userHistoryStore } from "./user-history.store";
+import { HistoryTimeFrame, IHistoryItem, IHistoryStorageItem, toHistoryItem, userHistoryStore } from "./user-history.store";
+import { UserHistoryImport } from "./user-history-import";
 import { Icon } from "../icon";
 
 @observer
@@ -26,6 +27,7 @@ export class UserHistory extends React.Component {
   @observable page = 1;
   @observable showSettings = false;
   @observable showSearch = false;
+  @observable showImportExport = false;
   @observable searchText = "";
   @observable searchedText = "";
   @observable timeFrame = HistoryTimeFrame.DAY;
@@ -60,33 +62,19 @@ export class UserHistory extends React.Component {
   }
 
   exportHistory(type: "json" | "csv") {
-    var filename = `xtranslate-history.${type}`;
+    var date = new Date().toISOString().replace(/:/g, "_");
+    var filename = `xtranslate-history-${date}.${type}`;
     var items = this.searchText ? this.items : this.userHistory.data;
-    var history = items.map(UserHistoryStore.toHistoryItem);
     switch (type) {
       case "json":
-        var json = history.map(item => {
-          var ts = item.transcription;
-          return {
-            date: new Date(item.date).toLocaleString(),
-            lang: `${item.from}-${item.to}`,
-            translator: item.vendor,
-            text: item.text,
-            translation: item.translation + (ts ? ` (${ts})` : ""),
-            dictionary: item.dictionary.reduce((result, dict) => {
-              result[dict.wordType] = dict.translation;
-              return result;
-            }, {})
-          }
-        });
-        download.json(filename, json)
+        download.json(filename, items);
         break;
 
       case "csv":
         var csv = [
           ["Date", "Translator", "Language", "Original text", "Translation", "Transcription", "Dictionary"]
         ];
-        history.forEach(item => {
+        items.map(toHistoryItem).forEach(item => {
           csv.push([
             new Date(item.date).toLocaleString(),
             getTranslator(item.vendor).title,
@@ -121,7 +109,7 @@ export class UserHistory extends React.Component {
       return date.join("-");
     }
     var clearAll = timeFrame === HistoryTimeFrame.ALL;
-    var latestItem = UserHistoryStore.toHistoryItem(this.userHistory.data[0]);
+    var latestItem = toHistoryItem(this.userHistory.data[0]);
     var latestFrame = getTimeFrame(latestItem.date, timeFrame);
     var clearFilter = (item: IHistoryItem) => latestFrame === getTimeFrame(item.date, timeFrame);
     this.userHistory.clear(clearAll ? null : clearFilter);
@@ -134,7 +122,7 @@ export class UserHistory extends React.Component {
   renderHistory() {
     var items = this.items.map(item => ({
       storageItem: item,
-      historyItem: UserHistoryStore.toHistoryItem(item),
+      historyItem: toHistoryItem(item),
     }));
     var groupedItems = groupBy(items, item => {
       return new Date(item.historyItem.date).toDateString();
@@ -145,7 +133,7 @@ export class UserHistory extends React.Component {
           return (
             <React.Fragment key={day}>
               <li className="history-date">{day}</li>
-              {groupedItems[day].map(({ historyItem, storageItem }) => {
+              {groupedItems[day].map(({ historyItem, storageItem }, groupIndex) => {
                 var { date, vendor, from, to, text, translation, transcription } = historyItem;
                 var showDetails = this.showDetailsMap.has(storageItem);
                 var translatedWith = __i18n("translated_with", [
@@ -154,7 +142,7 @@ export class UserHistory extends React.Component {
                 ]).join("");
                 var rtlClass = { rtl: isRTL(to) };
                 return (
-                  <li key={date}
+                  <li key={groupIndex}
                       title={translatedWith}
                       className={cssNames("history-item", { open: showDetails })}
                       onClick={() => this.toggleDetails(storageItem)}>
@@ -208,7 +196,7 @@ export class UserHistory extends React.Component {
   }
 
   render() {
-    var { timeFrame, showSettings, showSearch, searchText, hasMore, clearItemsByTimeFrame } = this;
+    var { timeFrame, showSettings, showSearch, showImportExport, searchText, hasMore, clearItemsByTimeFrame } = this;
     var { historyEnabled, historyAvoidDuplicates, historySaveWordsOnly, historyPageSize } = this.settings;
     var { isLoading, isLoaded } = this.userHistory;
     return (
@@ -221,21 +209,33 @@ export class UserHistory extends React.Component {
           />
           <div className="actions">
             <Icon
-              material="find_in_page"
+              material="search"
+              tooltip={!showSearch ? __i18n("history_icon_tooltip_search") : undefined}
               className={cssNames({ active: showSearch })}
               onClick={() => this.showSearch = !showSearch}
             />
-            <MenuActions triggerIcon="file_download">
-              <MenuItem onClick={() => this.exportHistory("csv")}>
-                {__i18n("history_export_entries", ["CSV"])}
+            <MenuActions
+              onOpen={() => this.showImportExport = true}
+              onClose={() => this.showImportExport = false}
+              triggerIcon={{
+                material: "import_export",
+                tooltip: !showImportExport ? __i18n("history_icon_tooltip_imp_exp") : undefined,
+              }}
+            >
+              <MenuItem onClick={() => UserHistoryImport.show()}>
+                {__i18n("history_import_entries", ["JSON"])}
               </MenuItem>
               <MenuItem spacer/>
               <MenuItem onClick={() => this.exportHistory("json")}>
                 {__i18n("history_export_entries", ["JSON"])}
               </MenuItem>
+              <MenuItem onClick={() => this.exportHistory("csv")}>
+                {__i18n("history_export_entries", ["CSV"])}
+              </MenuItem>
             </MenuActions>
             <Icon
               material="settings"
+              tooltip={!showSettings ? __i18n("history_icon_tooltip_settings") : undefined}
               className={cssNames({ active: showSettings })}
               onClick={() => this.showSettings = !showSettings}
             />
@@ -297,6 +297,7 @@ export class UserHistory extends React.Component {
             />
           </div>
         )}
+        <UserHistoryImport/>
       </div>
     );
   }
