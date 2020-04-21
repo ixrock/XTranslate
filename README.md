@@ -40,8 +40,8 @@ then click mouse right button on selection and choose an to translate text from 
 
 Install extension:
 -----------
-* [Chrome's web store](https://chrome.google.com/webstore/detail/xtranslate/gfgpkepllngchpmcippidfhmbhlljhoo)
-* [Opera's installer from chrome store](https://addons.opera.com/en/extensions/details/download-chrome-extension-9/?display=en)
+* [Chrome's Web Store](https://chrome.google.com/webstore/detail/xtranslate/gfgpkepllngchpmcippidfhmbhlljhoo)
+* [Microsoft Edge Add-ons](https://microsoftedge.microsoft.com/addons/detail/cinfaflgbaachkaamaeglolofeahelkd)
 
 Available translation vendors:
 -----------
