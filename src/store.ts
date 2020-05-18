@@ -31,7 +31,7 @@ export abstract class Store<T = object> {
     return Object.assign({}, Store.defaultParams, this.initialParams);
   }
 
-  constructor(protected initialParams: StoreParams<T>) {
+  protected constructor(protected initialParams: StoreParams<T>) {
     var { initialData, autoLoad, storageType } = this.params;
     this.data = initialData;
     this.dataHash = this.getHash();

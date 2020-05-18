@@ -15,8 +15,9 @@ import { Button } from "../button";
 import { Spinner } from "../spinner";
 import { settingsStore } from "../settings/settings.store";
 import { HistoryTimeFrame, IHistoryItem, IHistoryStorageItem, toHistoryItem, userHistoryStore } from "./user-history.store";
-import { UserHistoryImport } from "./user-history-import";
 import { Icon } from "../icon";
+import { ImportingFile, UserHistoryImport } from "./user-history-import";
+import { Notifications } from "../notifications";
 
 @observer
 export class UserHistory extends React.Component {
@@ -195,12 +196,32 @@ export class UserHistory extends React.Component {
     );
   }
 
+  onImport = async (files: ImportingFile[]) => {
+    var historyItems: IHistoryStorageItem[] = [];
+    files.forEach(({ file, data, error }) => {
+      if (error) {
+        Notifications.error(__i18n("history_import_file_error", [
+          file.name, error
+        ]));
+        return;
+      }
+      try {
+        historyItems.push(...JSON.parse(data));
+      } catch (err) {
+        console.error(`Parsing "${file.name}" has failed:`, err);
+      }
+    });
+    var count = await userHistoryStore.importItems(historyItems);
+    Notifications.ok(__i18n("history_import_success", count));
+  }
+
   render() {
     var { timeFrame, showSettings, showSearch, showImportExport, searchText, hasMore, clearItemsByTimeFrame } = this;
     var { historyEnabled, historyAvoidDuplicates, historySaveWordsOnly, historyPageSize } = this.settings;
     var { isLoading, isLoaded } = this.userHistory;
     return (
       <div className="UserHistory">
+        <UserHistoryImport id="importInput" onImport={this.onImport}/>
         <div className="settings flex gaps align-center justify-center">
           <Checkbox
             label={__i18n("history_enabled_flag")}
@@ -222,7 +243,7 @@ export class UserHistory extends React.Component {
                 tooltip: !showImportExport ? __i18n("history_icon_tooltip_imp_exp") : undefined,
               }}
             >
-              <MenuItem onClick={() => UserHistoryImport.show()}>
+              <MenuItem htmlFor="importInput">
                 {__i18n("history_import_entries", ["JSON"])}
               </MenuItem>
               <MenuItem spacer/>
@@ -297,7 +318,6 @@ export class UserHistory extends React.Component {
             />
           </div>
         )}
-        <UserHistoryImport/>
       </div>
     );
   }

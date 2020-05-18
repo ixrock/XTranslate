@@ -6,26 +6,28 @@ import { observer } from "mobx-react";
 import { Dialog } from "../dialog";
 import { Button } from "../button";
 import { Icon } from "../icon";
-import { config } from "../../config";
+import { config, getAppStoreUrl } from "../../config";
 import { __i18n } from "../../extension";
 
 @observer
 export class AppRateDialog extends React.Component {
-  @observable isOpen = true;
+  @observable isOpen = false;
 
-  close() {
-    this.isOpen = false;
+  constructor(props) {
+    super(props);
+    this.visibilityCheck();
   }
 
-  get isHidden() {
+  visibilityCheck = () => {
     var isRated = config.rateBtnClicked.get();
     var delayLastTime = config.rateDelayLastTime.get();
     var delayDuration = 1000 * 60 * 60 * 24 * 7; // 1 week
-    return isRated || (delayLastTime + delayDuration > Date.now());
+    var isHidden = isRated || (delayLastTime + delayDuration > Date.now());
+    this.isOpen = !isHidden;
   }
 
   rateApp = () => {
-    window.open(config.storeUrl);
+    window.open(getAppStoreUrl());
     config.rateBtnClicked.set(true);
     this.close();
   }
@@ -35,10 +37,11 @@ export class AppRateDialog extends React.Component {
     this.close();
   }
 
+  close() {
+    this.isOpen = false;
+  }
+
   render() {
-    if (this.isHidden) {
-      return null;
-    }
     return (
       <Dialog pinned className="AppRateDialog" isOpen={this.isOpen}>
         <h4>{__i18n("rate_app_info1")}</h4>

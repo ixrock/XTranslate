@@ -6,6 +6,8 @@ import { settingsStore } from "../settings/settings.store";
 import orderBy from "lodash/orderBy";
 import uniqBy from "lodash/uniqBy";
 
+// fixme: history saving slowness with big data (>1-2MB)
+
 export enum HistoryTimeFrame {
   HOUR,
   DAY,

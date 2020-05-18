@@ -1,5 +1,4 @@
 import './menu.scss'
-
 import React, { Fragment, ReactElement, ReactNode } from "react";
 import { createPortal } from "react-dom";
 import { autobind, cssNames, noop } from "../../utils";
@@ -292,10 +291,6 @@ export class MenuItem extends React.Component<MenuItemProps> {
     return !(disabled || spacer);
   }
 
-  get isLink() {
-    return !!this.props.href;
-  }
-
   onClick(evt: React.MouseEvent) {
     var menu = this.context;
     var { spacer, onClick } = this.props;
@@ -325,8 +320,11 @@ export class MenuItem extends React.Component<MenuItemProps> {
       children: icon ? <><Icon {...iconProps}/> {children}</> : children,
       ref: this.bindRef,
     }
-    if (this.isLink) {
+    if (elemProps.href) {
       return <a {...elemProps}/>
+    }
+    if (elemProps.htmlFor) {
+      return <label {...elemProps}/>
     }
     return <li {...elemProps}/>
   }
