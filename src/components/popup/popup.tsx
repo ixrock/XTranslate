@@ -6,9 +6,9 @@ import { observer } from "mobx-react";
 import { __i18n } from "../../extension/i18n";
 import { cssNames, noop, prevDefault, toCssColor } from "../../utils";
 import { getNextTranslator, getTranslator, isRTL, ITranslationError, ITranslationResult } from "../../vendors";
-import { defaultSettings, ISettingsStoreData, settingsStore } from "../settings/settings.store";
-import { themeStore } from "../theme-manager/theme.store";
 import { Icon } from "../icon";
+import { defaultSettings, settingsStore } from "../settings/settings.store";
+import { themeStore } from "../theme-manager/theme.store";
 
 export interface ITranslateParams {
   vendor: string;
@@ -22,7 +22,6 @@ interface Props extends React.HTMLProps<any> {
   className?: string;
   params?: ITranslateParams;
   translation?: ITranslationResult
-  withSettings?: Partial<ISettingsStoreData>;
   error?: ITranslationError
   onPlayText?: () => void;
   onTranslateNext?: () => void;
@@ -31,7 +30,6 @@ interface Props extends React.HTMLProps<any> {
 @observer
 export class Popup extends React.Component<Props> {
   public elem: HTMLElement;
-  public theme = themeStore.data;
 
   static defaultProps: Partial<Props> = {
     onPlayText: noop,
@@ -55,12 +53,6 @@ export class Popup extends React.Component<Props> {
       }
     ]
   };
-
-  @computed get settings() {
-    var { withSettings } = this.props;
-    var data = settingsStore.data;
-    return withSettings ? Object.assign({}, data, withSettings) : data;
-  }
 
   @computed get params(): Partial<ITranslateParams> {
     if (!this.translation) {
@@ -87,7 +79,7 @@ export class Popup extends React.Component<Props> {
       borderWidth, borderStyle, borderColor,
       textShadowRadius, textShadowColor, textShadowOffsetX, textShadowOffsetY,
       boxShadowColor, boxShadowBlur, boxShadowInner
-    } = this.theme;
+    } = themeStore.data;
     return {
       background: bgcLinear
         ? `linear-gradient(180deg, ${toCssColor(bgcMain)}, ${toCssColor(bgcSecondary)})`
@@ -116,7 +108,7 @@ export class Popup extends React.Component<Props> {
   }
 
   getTranslationStyle(): CSSProperties {
-    var { maxHeight, maxWidth, minHeight, minWidth } = this.theme;
+    var { maxHeight, maxWidth, minHeight, minWidth } = themeStore.data;
     return {
       maxWidth: !maxWidth ? "" : Math.max(maxWidth, minWidth),
       maxHeight: !maxHeight ? "" : Math.max(maxHeight, minHeight),
@@ -131,7 +123,7 @@ export class Popup extends React.Component<Props> {
   }
 
   renderCopyTranslationIcon() {
-    if (!this.settings.showCopyTranslationIcon) {
+    if (!settingsStore.data.showCopyTranslationIcon) {
       return;
     }
     return (
@@ -144,7 +136,7 @@ export class Popup extends React.Component<Props> {
   }
 
   renderPlayTextIcon() {
-    if (!this.settings.showTextToSpeechIcon) {
+    if (!settingsStore.data.showTextToSpeechIcon) {
       return;
     }
     return (
@@ -157,7 +149,7 @@ export class Popup extends React.Component<Props> {
   }
 
   renderNextTranslationIcon() {
-    if (!this.settings.showNextVendorIcon || !this.params) {
+    if (!settingsStore.data.showNextVendorIcon || !this.params) {
       return;
     }
     var { vendor, from, to } = this.params;
@@ -207,7 +199,7 @@ export class Popup extends React.Component<Props> {
           </div>
         )}
         {
-          this.settings.showTranslatedFrom && (
+          settingsStore.data.showTranslatedFrom && (
             <div className="translated-from">
               {__i18n("translated_from", [translator.langFrom[langFrom]]).join("")}
               {` (${translator.title})`}
@@ -239,7 +231,7 @@ export class Popup extends React.Component<Props> {
   }
 
   render() {
-    var { popupFixedPos } = this.settings;
+    var { popupFixedPos } = settingsStore.data;
     var { error, className, style, preview } = this.props;
     var isVisible = !!(this.translation || error);
     var popupClass = cssNames("Popup", className, {

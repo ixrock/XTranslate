@@ -16,35 +16,31 @@ import { Tab, Tabs } from "../tabs";
 import { ThemeManager } from "../theme-manager";
 import { InputTranslation } from "../input-translation";
 import { UserHistory } from "../user-history";
-import { AppRoute } from "./app.route";
 import { Icon } from "../icon";
-import { Store } from "../../store";
 import { AppRateDialog } from "./app-rate.dialog";
 import { Notifications } from "../notifications";
+import { appRoutes } from "../../common";
 
 @observer
 export class App extends React.Component {
-  static rootElem = document.getElementById('app');
-
   public manifest = getManifest();
-  public settings = settingsStore.data;
 
   static async init() {
-    Store.defaultParams.autoSave = true; // enable default auto-saving only to options page
-    render(<Spinner center/>, App.rootElem); // show loading indicator
-    await when(() => settingsStore.isLoaded && themeStore.isLoaded);
-    render(<App/>, App.rootElem);
+    var appRootElem = document.getElementById('app');
+    render(<Spinner center/>, appRootElem); // show loading indicator
+    await when(() => settingsStore.isLoaded && themeStore.isLoaded); // wait stores initialization
+    render(<App/>, appRootElem);
   }
 
   componentDidMount() {
     this.setUpTheme();
-    reaction(() => this.settings.useDarkTheme, this.setUpTheme);
+    reaction(() => settingsStore.data.useDarkTheme, this.setUpTheme);
     document.title = this.manifest.name;
     window.addEventListener("hashchange", () => this.forceUpdate());
   }
 
   setUpTheme = () => {
-    document.body.classList.toggle('theme-dark', this.settings.useDarkTheme);
+    document.body.classList.toggle('theme-dark', settingsStore.data.useDarkTheme);
   }
 
   detachWindow = () => {
@@ -64,8 +60,8 @@ export class App extends React.Component {
 
   render() {
     var { name, version } = this.manifest;
-    var { useDarkTheme } = this.settings;
-    var activePageId = location.hash || AppRoute.settings;
+    var { useDarkTheme } = settingsStore.data;
+    var activePageId = location.hash || appRoutes.settings;
     return (
       <div className="App">
         <header className="flex gaps">
@@ -76,7 +72,7 @@ export class App extends React.Component {
             svg="moon"
             tooltip={{ nowrap: true, children: __i18n("use_dark_theme") }}
             className={cssNames("dark-theme-icon", { active: useDarkTheme })}
-            onClick={() => this.settings.useDarkTheme = !useDarkTheme}
+            onClick={() => settingsStore.data.useDarkTheme = !useDarkTheme}
           />
           <Icon
             material="open_in_new"
@@ -85,16 +81,16 @@ export class App extends React.Component {
           />
         </header>
         <Tabs center value={activePageId} onChange={this.onTabsChange}>
-          <Tab value={AppRoute.settings} label={__i18n("tab_settings")} icon="settings"/>
-          <Tab value={AppRoute.theme} label={__i18n("tab_theme")} icon="color_lens"/>
-          <Tab value={AppRoute.popup} label={__i18n("tab_text_input")} icon="translate"/>
-          <Tab value={AppRoute.history} label={__i18n("tab_history")} icon="history"/>
+          <Tab value={appRoutes.settings} label={__i18n("tab_settings")} icon="settings"/>
+          <Tab value={appRoutes.theme} label={__i18n("tab_theme")} icon="color_lens"/>
+          <Tab value={appRoutes.popup} label={__i18n("tab_text_input")} icon="translate"/>
+          <Tab value={appRoutes.history} label={__i18n("tab_history")} icon="history"/>
         </Tabs>
         <div className="tab-content">
-          {activePageId === AppRoute.settings && <Settings/>}
-          {activePageId === AppRoute.theme && <ThemeManager/>}
-          {activePageId === AppRoute.popup && <InputTranslation/>}
-          {activePageId === AppRoute.history && <UserHistory/>}
+          {activePageId === appRoutes.settings && <Settings/>}
+          {activePageId === appRoutes.theme && <ThemeManager/>}
+          {activePageId === appRoutes.popup && <InputTranslation/>}
+          {activePageId === appRoutes.history && <UserHistory/>}
         </div>
         <Footer/>
         <Notifications/>

@@ -13,9 +13,9 @@ import { Spinner } from "../spinner";
 import { settingsStore } from "../settings/settings.store";
 import { favoritesStore } from "./favorites.store";
 import { userHistoryStore } from "../user-history/user-history.store";
-import { AppRoute } from "../app/app.route";
 import { Icon } from "../icon";
 import { Tooltip } from "../tooltip";
+import { appRoutes } from "../../common";
 
 interface TranslateParams {
   vendor: string;
@@ -27,20 +27,19 @@ interface TranslateParams {
 export class InputTranslation extends React.Component {
   public lastText = createStorage("last_text", "");
   public input: Input;
-  public settings = settingsStore.data;
   public loadingTimer;
   public translateTimer;
 
   @observable isLoading = false;
-  @observable text = this.settings.rememberLastText ? this.lastText.get() : "";
+  @observable text = settingsStore.data.rememberLastText ? this.lastText.get() : "";
   @observable translation: ITranslationResult;
   @observable error: ITranslationError;
   @observable favorite: TranslateParams = null;
 
   @observable params: TranslateParams = {
-    vendor: this.settings.vendor,
-    langFrom: this.settings.langFrom,
-    langTo: this.settings.langTo,
+    vendor: settingsStore.data.vendor,
+    langFrom: settingsStore.data.langFrom,
+    langTo: settingsStore.data.langTo,
   };
 
   @computed get isFavorite() {
@@ -112,7 +111,7 @@ export class InputTranslation extends React.Component {
   }
 
   translate = async (text = this.text.trim()) => {
-    var { autoPlayText, historyEnabled } = this.settings;
+    var { autoPlayText, historyEnabled } = settingsStore.data;
     var { vendor, langFrom, langTo } = this.favorite || this.params;
     var translator = getTranslator(vendor);
     if (!text) return;
@@ -143,7 +142,7 @@ export class InputTranslation extends React.Component {
 
   onTextChange = (text: string) => {
     this.text = text;
-    var { rememberLastText, textInputTranslateDelayMs } = this.settings;
+    var { rememberLastText, textInputTranslateDelayMs } = settingsStore.data;
     if (rememberLastText) {
       this.lastText.set(text);
     }
@@ -277,7 +276,7 @@ export class InputTranslation extends React.Component {
             </div>
             <span className="lang" id="translated_with">
               {langPair}
-              <Tooltip htmlFor="translated_with" following>
+              <Tooltip htmlFor="translated_with" following nowrap>
                 {__i18n("translated_with", [vendor.title, langPairFull]).join("")}
               </Tooltip>
             </span>
@@ -350,7 +349,7 @@ export class InputTranslation extends React.Component {
 
   render() {
     var { textMaxLength } = this.activeVendor;
-    var { textInputTranslateDelayMs } = this.settings;
+    var { textInputTranslateDelayMs } = settingsStore.data;
     return (
       <div className="InputTranslation flex column gaps">
         {this.renderHeader()}
@@ -368,7 +367,7 @@ export class InputTranslation extends React.Component {
             <small className="hint">
               {__i18n("text_input_translation_hint", [
                 `${isMac ? "Cmd" : "Ctrl"}+Enter`,
-                ms => <a href={AppRoute.settings} key="delay">{textInputTranslateDelayMs}{ms}</a>
+                ms => <a href={appRoutes.settings} key="delay">{textInputTranslateDelayMs}{ms}</a>
               ])}
             </small>
           )}

@@ -28,8 +28,6 @@ export const defaultTheme = {
 }
 
 export class ThemeStore extends Store<IThemeStoreData> {
-  protected id = "theme";
-
   public fonts = [
     "Roboto", "Lato", "Open Sans", "Raleway", "Lobster", // custom fonts
     "Arial", "Helvetica Neue", "Times New Roman", // system fonts
@@ -41,6 +39,7 @@ export class ThemeStore extends Store<IThemeStoreData> {
 
   constructor() {
     super({
+      id: "theme",
       storageType: "sync",
       initialData: defaultTheme,
     });

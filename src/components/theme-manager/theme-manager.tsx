@@ -1,28 +1,24 @@
 import "./theme-manager.scss";
 
-import * as React from "react";
+import React from "react";
 import { observer } from "mobx-react";
-import { isEqual } from "lodash";
 import { __i18n } from "../../extension/i18n";
 import { defaultTheme, themeStore } from "./theme.store";
-import { settingsStore } from "../settings/settings.store";
 import { Popup } from "../popup";
-import { ColorPicker } from "../color-picker";
 import { NumberInput } from "../input";
 import { Checkbox } from "../checkbox";
 import { Option, Select } from "../select";
 import { Slider } from "../slider";
 import { Button } from "../button";
+import { ColorPicker } from "../color-picker";
+import isEqual from "lodash/isEqual";
 
 @observer
 export class ThemeManager extends React.Component {
-  public settings = settingsStore.data;
-  public theme = themeStore.data;
-
-  public formatMinMaxTitle = (value: number) => !value ? "auto" : value;
+  protected formatMinMaxTitle = (value: number) => !value ? "auto" : value;
 
   render() {
-    var { theme } = this;
+    var theme = themeStore.data;
     var isDefault = isEqual(theme, defaultTheme);
     return (
       <div className="ThemeManager flex column gaps">

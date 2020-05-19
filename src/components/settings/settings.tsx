@@ -13,21 +13,20 @@ import { Checkbox } from "../checkbox";
 import { Radio, RadioGroup } from "../radio";
 import { Option, Select } from "../select";
 import { Icon } from "../icon";
-import { settingsStore } from "./settings.store";
 import { Button } from "../button";
 import { Popup } from "../popup";
 import { TooltipProps } from "../tooltip";
+import { settingsStore } from "./settings.store";
 
 @observer
 export class Settings extends React.Component {
-  @observable settings = settingsStore.data;
-  @observable windowAppCmd = ""
+  @observable appWindowCmd = "";
 
   componentDidMount() {
     chrome.commands.getAll(commands => {
       var windowAppCmd = commands.find(cmd => cmd.name == "_execute_browser_action");
       if (windowAppCmd) {
-        this.windowAppCmd = windowAppCmd.shortcut;
+        this.appWindowCmd = windowAppCmd.shortcut;
       }
     })
   }
@@ -37,7 +36,7 @@ export class Settings extends React.Component {
     var nativeEvent = evt.nativeEvent;
     var hotkey = parseHotkey(nativeEvent);
     if (hotkey.code) {
-      this.settings.hotkey = getHotkey(nativeEvent);
+      settingsStore.data.hotkey = getHotkey(nativeEvent);
     }
   }
 
@@ -49,7 +48,8 @@ export class Settings extends React.Component {
   }
 
   render() {
-    var { settings, windowAppCmd } = this;
+    var { appWindowCmd } = this;
+    var settings = settingsStore.data;
     var hotKey = parseHotkey(settings.hotkey);
     return (
       <div className="Settings flex column gaps">
@@ -198,7 +198,7 @@ export class Settings extends React.Component {
               onClick={() => createTab("chrome://extensions/shortcuts")}
               tooltip={__i18n("quick_access_configure_link")}
               children={__i18n("sub_header_quick_access_hotkey") + (
-                windowAppCmd ? ` (${windowAppCmd})` : ""
+                appWindowCmd ? ` (${appWindowCmd})` : ""
               )}
             />
           </div>

@@ -1,150 +1,119 @@
 import { action, observable, reaction, runInAction, toJS, when } from "mobx";
 import { autobind } from "./utils/autobind";
-import MD5 from "crypto-js/md5";
+import isEqual from "lodash/isEqual";
+import { logger } from "./logger";
 
 export interface StoreParams<T = object> {
+  id: string;
   initialData: T;
   storageType?: "sync" | "local"
   autoLoad?: boolean;
-  autoSave?: boolean;
-  autoSaveDelayMs?: number;
+  syncDelayMs?: number;
 }
 
 @autobind()
 export abstract class Store<T = object> {
-  protected abstract id: string;
-  protected dataHash: string;
-
   static defaultParams: Partial<StoreParams> = {
+    initialData: {},
     autoLoad: true,
-    autoSave: false,
-    autoSaveDelayMs: 250,
+    syncDelayMs: 250,
     storageType: "local",
   };
 
   @observable isLoading = false;
   @observable isLoaded = false;
-  @observable isSaving = false;
   @observable data: T;
+
+  get id() {
+    return this.params.id;
+  }
 
   get params() {
     return Object.assign({}, Store.defaultParams, this.initialParams);
   }
 
-  protected constructor(protected initialParams: StoreParams<T>) {
+  protected get storage() {
+    return chrome.storage[this.params.storageType];
+  }
+
+  constructor(protected initialParams: StoreParams<T>) {
     var { initialData, autoLoad, storageType } = this.params;
     this.data = initialData;
-    this.dataHash = this.getHash();
 
     if (autoLoad) {
       this.load();
     }
 
-    // bind auto-save to chrome.store reaction on data change
+    // sync data state with chrome.storage on change
     when(() => this.isLoaded, () => {
-      reaction(() => toJS(this.data), this.onChange, {
-        delay: this.params.autoSaveDelayMs
+      reaction(() => toJS(this.data), this.save, {
+        delay: this.params.syncDelayMs
       });
     });
 
-    // sync changes made from options page (for background & content pages)
+    // sync data from chrome.storage (options page <-> background process <-> content script)
     chrome.storage.onChanged.addListener((changes, areaName) => {
       var isCurrentStore = areaName === storageType && changes[this.id];
-      if (!isCurrentStore) {
-        return;
+      if (!isCurrentStore || !this.isLoaded || this.isLoading) return;
+      var { newValue, oldValue } = changes[this.id];
+      if (!isEqual(newValue, toJS(this.data))) {
+        logger.debug(`Sync "${this.id}" from chrome.storage`, { newValue, oldValue });
+        this.update(newValue);
       }
-      if (!this.isSaving) {
-        var { newValue, oldValue } = changes[this.id];
-        if (newValue) {
-          this.update(newValue);
-        }
-        else if (!newValue && oldValue) {
-          this.reset();
-        }
-      }
-      this.dataHash = this.getHash();
     });
   }
 
-  protected getHash() {
-    return MD5(JSON.stringify(this.data)).toString();
-  }
-
-  protected isChanged() {
-    return this.dataHash !== this.getHash();
-  }
-
-  protected onChange() {
-    if (!this.params.autoSave) return;
-    this.save();
-  }
-
   @action
-  async load(force?: boolean): Promise<T> {
-    var { storageType } = this.params;
-    if (this.isLoaded && !force) {
-      return this.data;
+  async load(): Promise<T> {
+    if (this.isLoaded || this.isLoading) {
+      return;
     }
+    logger.debug(`Loading store "${this.id}"`);
     this.isLoading = true;
     return new Promise((resolve, reject) => {
-      chrome.storage[storageType].get(this.id, items => {
+      this.storage.get(this.id, items => {
         runInAction(() => {
-          this.update(items[this.id]);
-          this.isLoading = false;
           this.isLoaded = true;
-          this.dataHash = this.getHash();
+          this.isLoading = false;
+          var data = items[this.id];
           var error = chrome.runtime.lastError;
-          if (error) reject(error);
-          else resolve(this.data);
+          if (error) {
+            logger.error(`Loading "${this.id}" error`, error);
+            reject(error);
+          }
+          else {
+            logger.debug(`Loaded "${this.id}"`, data);
+            resolve();
+          }
+          this.update(data);
         })
       });
     })
   }
 
   @action
-  async save(force?: boolean) {
-    if (!this.isChanged() && !force) return;
-    if (!this.isLoaded) await this.load();
-    var { storageType } = this.params;
-    this.isSaving = true;
-    return new Promise((resolve, reject) => {
-      chrome.storage[storageType].set({ [this.id]: toJS(this.data) }, () => {
-        this.isSaving = false;
+  async save(data: T = this.data) {
+    logger.debug(`Saving data to "${this.id}"`, data)
+    return new Promise(async (resolve, reject) => {
+      this.storage.set({ [this.id]: data }, () => {
         var error = chrome.runtime.lastError;
-        if (error) reject(error);
+        if (error) {
+          logger.error(`Saving data to "${this.id}" has failed`, error);
+          reject(error);
+        }
         else resolve();
       });
     })
   }
 
   @action
-  update(data: Partial<T>) {
+  update(data: T) {
     if (!data) return;
-    if (Array.isArray(this.data)) {
-      this.data.splice(0, this.data.length, ...[].concat(data)); // replace
-    }
-    else if (typeof data === "object") {
-      Object.assign(this.data, data); // merge
-    }
-    else {
-      this.data = data;
-    }
+    this.data = data;
   }
 
   @action
-  reset() {
-    var { initialData, storageType } = this.params;
-    this.isSaving = true;
-    chrome.storage[storageType].remove(this.id, () => {
-      runInAction(() => {
-        if (typeof this.data === "object" && !Array.isArray(this.data)) {
-          Object.keys(toJS(this.data)).forEach(prop => {
-            delete this.data[prop]; // clear
-          });
-        }
-        this.update(initialData);
-        this.isSaving = false;
-      })
-    });
+  async reset() {
+    this.update(this.params.initialData);
   }
 }

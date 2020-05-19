@@ -38,10 +38,9 @@ export const defaultSettings = {
 };
 
 export class SettingsStore extends Store<ISettingsStoreData> {
-  protected id = "settings";
-
   constructor() {
     super({
+      id: "settings",
       storageType: "sync",
       initialData: defaultSettings
     });

@@ -14,6 +14,7 @@ import { settingsStore } from "../components/settings/settings.store";
 import { themeStore } from "../components/theme-manager/theme.store";
 import { userHistoryStore } from "../components/user-history/user-history.store";
 
+const appRootElem = document.createElement("div");
 const isPdf = document.contentType === "application/pdf";
 
 interface Props {
@@ -22,14 +23,12 @@ interface Props {
 
 @observer
 class App extends React.Component<Props> {
-  static rootElem = document.createElement("div");
-
   static async init() {
-    App.rootElem.className = "XTranslate";
-    document.documentElement.appendChild(App.rootElem);
+    appRootElem.className = "XTranslate";
+    document.documentElement.appendChild(appRootElem);
 
     // render app inside the shadow-dom to avoid collisions with page styles
-    var shadowRoot = App.rootElem.attachShadow({ mode: "open" });
+    var shadowRoot = appRootElem.attachShadow({ mode: "open" });
     var style = await getStyles();
     await when(() => settingsStore.isLoaded && themeStore.isLoaded);
     render(<App style={style}/>, shadowRoot as any);
@@ -203,7 +202,7 @@ class App extends React.Component<Props> {
   }
 
   isOutside(elem: HTMLElement) {
-    return !App.rootElem.contains(elem);
+    return !appRootElem.contains(elem);
   }
 
   getViewportSize() {

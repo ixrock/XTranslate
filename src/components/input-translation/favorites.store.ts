@@ -14,10 +14,9 @@ export interface IFavorite {
 
 @autobind()
 export class FavoritesStore extends Store<IFavoritesStoreData> {
-  protected id = "favorites";
-
   constructor() {
     super({
+      id: "favorites",
       storageType: "sync",
       initialData: {},
     })

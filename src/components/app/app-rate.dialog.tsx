@@ -6,8 +6,8 @@ import { observer } from "mobx-react";
 import { Dialog } from "../dialog";
 import { Button } from "../button";
 import { Icon } from "../icon";
-import { config, getAppStoreUrl } from "../../config";
 import { __i18n } from "../../extension";
+import { getAppStoreUrl, rateButtonClicked, rateLastTimestamp } from "../../common";
 
 @observer
 export class AppRateDialog extends React.Component {
@@ -19,8 +19,8 @@ export class AppRateDialog extends React.Component {
   }
 
   visibilityCheck = () => {
-    var isRated = config.rateBtnClicked.get();
-    var delayLastTime = config.rateDelayLastTime.get();
+    var isRated = rateButtonClicked.get();
+    var delayLastTime = rateLastTimestamp.get();
     var delayDuration = 1000 * 60 * 60 * 24 * 7; // 1 week
     var isHidden = isRated || (delayLastTime + delayDuration > Date.now());
     this.isOpen = !isHidden;
@@ -28,12 +28,12 @@ export class AppRateDialog extends React.Component {
 
   rateApp = () => {
     window.open(getAppStoreUrl());
-    config.rateBtnClicked.set(true);
+    rateButtonClicked.set(true);
     this.close();
   }
 
   remindLater = () => {
-    config.rateDelayLastTime.set(Date.now());
+    rateLastTimestamp.set(Date.now());
     this.close();
   }
 

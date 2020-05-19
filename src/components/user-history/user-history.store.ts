@@ -6,8 +6,6 @@ import { settingsStore } from "../settings/settings.store";
 import orderBy from "lodash/orderBy";
 import uniqBy from "lodash/uniqBy";
 
-// fixme: history saving slowness with big data (>1-2MB)
-
 export enum HistoryTimeFrame {
   HOUR,
   DAY,
@@ -22,13 +20,11 @@ const defaultHistory = observable.array<IHistoryStorageItem>([], { deep: false }
 
 @autobind()
 export class UserHistoryStore extends Store<IUserHistoryStoreData> {
-  protected id = "history";
-
   constructor(params: Partial<StoreParams<IUserHistoryStoreData>> = {}) {
     super({
-      autoSave: true,
-      autoLoad: false,
+      id: "history",
       storageType: "local",
+      autoLoad: false,
       initialData: defaultHistory,
       ...params,
     });

@@ -3,7 +3,7 @@ import './footer.scss'
 import * as React from 'react';
 import { autobind, prevDefault } from '../../utils'
 import { __i18n, getManifest } from '../../extension'
-import { getAppStoreUrl } from "../../config";
+import { getAppStoreUrl } from "../../common";
 
 interface ShareIcon {
   title: string

@@ -19,18 +19,19 @@ interface Props {
 
 @observer
 export class SelectLanguage extends React.Component<Props> {
-  settings = settingsStore.data;
-
   get langFrom() {
-    return this.props.from || this.settings.langFrom;
+    var { from: langFrom } = this.props;
+    return langFrom || settingsStore.data.langFrom;
   }
 
   get langTo() {
-    return this.props.to || this.settings.langTo;
+    var { to: langTo } = this.props;
+    return langTo || settingsStore.data.langTo;
   }
 
   get vendor() {
-    return this.props.vendor || this.settings.vendor;
+    var { vendor } = this.props;
+    return vendor || settingsStore.data.vendor;
   }
 
   swap = () => {
@@ -39,12 +40,13 @@ export class SelectLanguage extends React.Component<Props> {
   }
 
   onChange = (langFrom: string, langTo: string) => {
-    if (this.props.onChange) {
-      this.props.onChange(langFrom, langTo)
+    var { onChange } = this.props;
+    if (onChange) {
+      onChange(langFrom, langTo)
     }
     else {
-      this.settings.langFrom = langFrom;
-      this.settings.langTo = langTo;
+      settingsStore.data.langFrom = langFrom;
+      settingsStore.data.langTo = langTo;
     }
   }
 

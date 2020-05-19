@@ -9,7 +9,6 @@ import { getTranslators } from "../vendors";
 // handle menu clicks
 chrome.contextMenus.onClicked.addListener(
   async (info: chrome.contextMenus.OnClickData) => {
-    var settings = settingsStore.data;
     var [type, vendor, from, to] = String(info.menuItemId).split("-");
     var selectedText = info.selectionText;
     var tab = await getActiveTab();
@@ -30,7 +29,7 @@ chrome.contextMenus.onClicked.addListener(
       });
     }
     if (enumType === MessageType.MENU_TRANSLATE_FULL_PAGE) {
-      var { langTo } = settings;
+      var { langTo } = settingsStore.data;
       var translatePageUrl = "";
       switch (vendor) {
         case "google":

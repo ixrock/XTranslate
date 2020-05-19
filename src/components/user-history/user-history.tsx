@@ -21,9 +21,7 @@ import { Notifications } from "../notifications";
 
 @observer
 export class UserHistory extends React.Component {
-  settings = settingsStore.data;
-  userHistory = userHistoryStore;
-  showDetailsMap = new WeakMap<IHistoryStorageItem, boolean>();
+  private showDetailsMap = new WeakMap<IHistoryStorageItem, boolean>();
 
   @observable page = 1;
   @observable showSettings = false;
@@ -39,17 +37,17 @@ export class UserHistory extends React.Component {
   }, { delay: 500 })
 
   @computed get items() {
-    if (this.searchedText) return this.userHistory.findItems(this.searchedText);
-    return this.userHistory.data.slice(0, this.page * this.settings.historyPageSize);
+    if (this.searchedText) return userHistoryStore.findItems(this.searchedText);
+    return userHistoryStore.data.slice(0, this.page * settingsStore.data.historyPageSize);
   }
 
   @computed get hasMore() {
     if (this.searchedText) return false;
-    return this.userHistory.data.length > this.items.length;
+    return userHistoryStore.data.length > this.items.length;
   }
 
   componentDidMount() {
-    this.userHistory.load();
+    userHistoryStore.load();
   }
 
   toggleDetails(item: IHistoryStorageItem) {
@@ -65,7 +63,7 @@ export class UserHistory extends React.Component {
   exportHistory(type: "json" | "csv") {
     var date = new Date().toISOString().replace(/:/g, "_");
     var filename = `xtranslate-history-${date}.${type}`;
-    var items = this.searchText ? this.items : this.userHistory.data;
+    var items = this.searchText ? this.items : userHistoryStore.data;
     switch (type) {
       case "json":
         download.json(filename, items);
@@ -94,7 +92,7 @@ export class UserHistory extends React.Component {
   }
 
   clearItem = (item: IHistoryStorageItem) => {
-    this.userHistory.clear(item);
+    userHistoryStore.clear(item);
   }
 
   clearItemsByTimeFrame = () => {
@@ -110,10 +108,10 @@ export class UserHistory extends React.Component {
       return date.join("-");
     }
     var clearAll = timeFrame === HistoryTimeFrame.ALL;
-    var latestItem = toHistoryItem(this.userHistory.data[0]);
+    var latestItem = toHistoryItem(userHistoryStore.data[0]);
     var latestFrame = getTimeFrame(latestItem.date, timeFrame);
     var clearFilter = (item: IHistoryItem) => latestFrame === getTimeFrame(item.date, timeFrame);
-    this.userHistory.clear(clearAll ? null : clearFilter);
+    userHistoryStore.clear(clearAll ? null : clearFilter);
   }
 
   playText = (vendor: string, lang: string, text: string) => {
@@ -217,8 +215,8 @@ export class UserHistory extends React.Component {
 
   render() {
     var { timeFrame, showSettings, showSearch, showImportExport, searchText, hasMore, clearItemsByTimeFrame } = this;
-    var { historyEnabled, historyAvoidDuplicates, historySaveWordsOnly, historyPageSize } = this.settings;
-    var { isLoading, isLoaded } = this.userHistory;
+    var { historyEnabled, historyAvoidDuplicates, historySaveWordsOnly, historyPageSize } = settingsStore.data;
+    var { isLoading, isLoaded } = userHistoryStore;
     return (
       <div className="UserHistory">
         <UserHistoryImport id="importInput" onImport={this.onImport}/>
@@ -226,7 +224,7 @@ export class UserHistory extends React.Component {
           <Checkbox
             label={__i18n("history_enabled_flag")}
             checked={historyEnabled}
-            onChange={v => this.settings.historyEnabled = v}
+            onChange={v => settingsStore.data.historyEnabled = v}
           />
           <div className="actions">
             <Icon
@@ -289,19 +287,19 @@ export class UserHistory extends React.Component {
                 <Checkbox
                   label={__i18n("history_settings_save_words_only")}
                   checked={historySaveWordsOnly}
-                  onChange={v => this.settings.historySaveWordsOnly = v}
+                  onChange={v => settingsStore.data.historySaveWordsOnly = v}
                 />
                 <Checkbox
                   label={__i18n("history_settings_avoid_duplicates")}
                   checked={historyAvoidDuplicates}
-                  onChange={v => this.settings.historyAvoidDuplicates = v}
+                  onChange={v => settingsStore.data.historyAvoidDuplicates = v}
                 />
                 <div className="page-size flex gaps align-center">
                   <span className="box grow">{__i18n("history_page_size")}</span>
                   <NumberInput
                     step={10} min={10} max={100000}
                     value={historyPageSize}
-                    onChange={v => this.settings.historyPageSize = v}
+                    onChange={v => settingsStore.data.historyPageSize = v}
                   />
                 </div>
               </div>
