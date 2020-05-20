@@ -1,10 +1,13 @@
 import { action, IObservableArray, observable } from "mobx";
-import { Store, StoreParams } from "../../store";
 import { autobind } from "../../utils/autobind";
 import { ITranslationResult } from "../../vendors/translator";
+import { Store } from "../../store";
 import { settingsStore } from "../settings/settings.store";
 import orderBy from "lodash/orderBy";
 import uniqBy from "lodash/uniqBy";
+
+// todo: move saving task to worker if possible (?)
+// fixme: optimize performance on save (noticeable when data >2MB)
 
 export enum HistoryTimeFrame {
   HOUR,
@@ -20,13 +23,12 @@ const defaultHistory = observable.array<IHistoryStorageItem>([], { deep: false }
 
 @autobind()
 export class UserHistoryStore extends Store<IUserHistoryStoreData> {
-  constructor(params: Partial<StoreParams<IUserHistoryStoreData>> = {}) {
+  constructor() {
     super({
       id: "history",
       storageType: "local",
-      autoLoad: false,
       initialData: defaultHistory,
-      ...params,
+      autoLoad: false,
     });
   }
 

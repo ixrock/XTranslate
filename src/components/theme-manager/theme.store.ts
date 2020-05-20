@@ -1,5 +1,7 @@
+import { autorun, when } from "mobx";
 import { Color } from "react-color"
 import { Store } from "../../store";
+import { getURL } from "../../extension";
 
 export type IThemeStoreData = typeof defaultTheme;
 
@@ -27,10 +29,28 @@ export const defaultTheme = {
   boxShadowInner: false,
 }
 
+export interface IThemeFont {
+  familyName: string;
+  fileName?: string;
+}
+
 export class ThemeStore extends Store<IThemeStoreData> {
-  public fonts = [
-    "Roboto", "Lato", "Open Sans", "Raleway", "Lobster", // custom fonts
-    "Arial", "Helvetica Neue", "Times New Roman", // system fonts
+  private loadedFonts = new Set<string>();
+
+  public iconsFont: IThemeFont = {
+    familyName: "Material Icons",
+    fileName: "MaterialIcons-Regular.ttf",
+  };
+
+  public fonts: IThemeFont[] = [
+    { familyName: "Roboto", fileName: "Roboto-Regular.ttf" },
+    { familyName: "Lato", fileName: "Lato-Regular.ttf" },
+    { familyName: "Open Sans", fileName: "OpenSans-Regular.ttf" },
+    { familyName: "Raleway", fileName: "Raleway-Regular.ttf" },
+    { familyName: "Lobster", fileName: "Lobster-Regular.ttf" },
+    { familyName: "Arial" }, // system fonts
+    { familyName: "Helvetica Neue" },
+    { familyName: "Times New Roman" },
   ];
 
   public borderStyle = [
@@ -43,6 +63,36 @@ export class ThemeStore extends Store<IThemeStoreData> {
       storageType: "sync",
       initialData: defaultTheme,
     });
+    this.initFonts();
+  }
+
+  protected async initFonts() {
+    this.loadFont(this.iconsFont);
+    await when(() => this.isLoaded);
+    autorun(() => this.loadFont(this.data.fontFamily));
+  }
+
+  getFont(font: string | IThemeFont) {
+    if (typeof font == "string") {
+      return this.fonts.find(({ familyName }) => font === familyName);
+    }
+    return font;
+  }
+
+  getFontUrl(font: string | IThemeFont) {
+    font = this.getFont(font);
+    return getURL(`assets/fonts/${font?.fileName}`)
+  }
+
+  async loadFont(font: string | IThemeFont) {
+    var { fileName, familyName } = this.getFont(font);
+    if (!fileName || this.loadedFonts.has(familyName)) {
+      return;
+    }
+    var fontFace = new FontFace(familyName, `url(${this.getFontUrl(font)})`);
+    await fontFace.load();
+    document.fonts.add(fontFace);
+    this.loadedFonts.add(familyName);
   }
 }
 

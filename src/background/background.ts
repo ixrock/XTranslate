@@ -4,13 +4,13 @@
 import "./contextMenu"
 import { createTab, getOptionsPageUrl, Message, MessageType, onMessage, PlayTextToSpeechPayload, sendTabMessage, TranslatePayload, TranslatePayloadResult } from '../extension'
 import { getTranslator, stopPlayingAll } from "../vendors";
-import { appRoutes, rateLastTimestamp } from "../common";
+import { AppPageId, rateLastTimestamp } from "../common";
 
 // open settings on install
 chrome.runtime.onInstalled.addListener(function (evt) {
   if (evt.reason === "install") {
     rateLastTimestamp.set(Date.now());
-    createTab(getOptionsPageUrl(appRoutes.settings));
+    createTab(getOptionsPageUrl(AppPageId.settings));
   }
 });
 

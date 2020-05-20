@@ -90,7 +90,7 @@ export = () => {
           use: {
             loader: 'file-loader',
             options: {
-              name: "fonts/[name].[ext]",
+              name: "assets/[name].[ext]",
               esModule: false,
             },
           },
@@ -117,8 +117,7 @@ export = () => {
       new CopyWebpackPlugin([
         { from: "../manifest.json" },
         { from: "../_locales", to: "_locales" },
-        { from: "../fonts", to: "fonts" },
-        { from: "../icons", to: "icons" }
+        { from: "../assets", to: "assets" },
       ]),
     ],
   };

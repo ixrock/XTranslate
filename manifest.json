@@ -1,21 +1,21 @@
 {
   "name": "XTranslate",
   "description": "__MSG_description__",
-  "version": "2.30.0",
+  "version": "2.40.0",
   "manifest_version": 2,
   "default_locale": "en",
   "minimum_chrome_version": "53",
   "icons": {
-    "16": "icons/16.png",
-    "48": "icons/48.png",
-    "128": "icons/128.png"
+    "16": "assets/icons/16.png",
+    "48": "assets/icons/48.png",
+    "128": "assets/icons/128.png"
   },
   "options_page": "options.html",
   "browser_action": {
-    "default_popup": "options.html#popup",
+    "default_popup": "options.html?page=popup",
     "default_icon": {
-      "19": "icons/48.png",
-      "38": "icons/48.png"
+      "19": "assets/icons/48.png",
+      "38": "assets/icons/48.png"
     }
   },
   "commands": {

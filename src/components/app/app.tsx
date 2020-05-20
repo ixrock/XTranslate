@@ -5,8 +5,9 @@ import * as React from 'react';
 import { render } from 'react-dom'
 import { reaction, when } from "mobx";
 import { observer } from "mobx-react";
+import { createObservableHistory } from "mobx-observable-history";
 import { cssNames } from "../../utils/cssNames";
-import { __i18n, getManifest, getOptionsPageUrl } from "../../extension";
+import { __i18n, getManifest } from "../../extension";
 import { Settings } from '../settings'
 import { settingsStore } from '../settings/settings.store'
 import { themeStore } from "../theme-manager/theme.store";
@@ -19,7 +20,9 @@ import { UserHistory } from "../user-history";
 import { Icon } from "../icon";
 import { AppRateDialog } from "./app-rate.dialog";
 import { Notifications } from "../notifications";
-import { appRoutes } from "../../common";
+import { AppPageId } from "../../common";
+
+const navigation = createObservableHistory();
 
 @observer
 export class App extends React.Component {
@@ -36,7 +39,6 @@ export class App extends React.Component {
     this.setUpTheme();
     reaction(() => settingsStore.data.useDarkTheme, this.setUpTheme);
     document.title = this.manifest.name;
-    window.addEventListener("hashchange", () => this.forceUpdate());
   }
 
   setUpTheme = () => {
@@ -45,23 +47,25 @@ export class App extends React.Component {
 
   detachWindow = () => {
     chrome.windows.create({
-      url: getOptionsPageUrl(),
+      url: navigation.getPath(),
       focused: true,
-      width: 570,
-      height: 650,
+      width: 600,
+      height: 700,
+      left: 25,
+      top: 25,
       type: "popup"
     });
   }
 
-  onTabsChange = (location: string) => {
-    document.location.href = location;
+  onTabsChange = (page: AppPageId) => {
+    navigation.searchParams.set("page", page);
     window.scrollTo(0, 0);
   }
 
   render() {
     var { name, version } = this.manifest;
     var { useDarkTheme } = settingsStore.data;
-    var activePageId = location.hash || appRoutes.settings;
+    var pageId = navigation.searchParams.get("page") || AppPageId.settings;
     return (
       <div className="App">
         <header className="flex gaps">
@@ -80,17 +84,17 @@ export class App extends React.Component {
             onClick={this.detachWindow}
           />
         </header>
-        <Tabs center value={activePageId} onChange={this.onTabsChange}>
-          <Tab value={appRoutes.settings} label={__i18n("tab_settings")} icon="settings"/>
-          <Tab value={appRoutes.theme} label={__i18n("tab_theme")} icon="color_lens"/>
-          <Tab value={appRoutes.popup} label={__i18n("tab_text_input")} icon="translate"/>
-          <Tab value={appRoutes.history} label={__i18n("tab_history")} icon="history"/>
+        <Tabs center value={pageId} onChange={this.onTabsChange}>
+          <Tab value={AppPageId.settings} label={__i18n("tab_settings")} icon="settings"/>
+          <Tab value={AppPageId.theme} label={__i18n("tab_theme")} icon="color_lens"/>
+          <Tab value={AppPageId.popup} label={__i18n("tab_text_input")} icon="translate"/>
+          <Tab value={AppPageId.history} label={__i18n("tab_history")} icon="history"/>
         </Tabs>
         <div className="tab-content">
-          {activePageId === appRoutes.settings && <Settings/>}
-          {activePageId === appRoutes.theme && <ThemeManager/>}
-          {activePageId === appRoutes.popup && <InputTranslation/>}
-          {activePageId === appRoutes.history && <UserHistory/>}
+          {pageId === AppPageId.settings && <Settings/>}
+          {pageId === AppPageId.theme && <ThemeManager/>}
+          {pageId === AppPageId.popup && <InputTranslation/>}
+          {pageId === AppPageId.history && <UserHistory/>}
         </div>
         <Footer/>
         <Notifications/>

@@ -6,7 +6,7 @@ import { computed, observable, toJS, when } from "mobx";
 import { observer } from "mobx-react";
 import { debounce, isEqual } from "lodash"
 import { autobind, cssNames, getHotkey } from "../utils";
-import { getManifest, getStyles, MenuTranslateFavoritePayload, MenuTranslateVendorPayload, Message, MessageType, onMessage, PlayTextToSpeechPayload, sendMessage, TranslatePayload, TranslatePayloadResult } from "../extension";
+import { getManifest, getStyleUrl, MenuTranslateFavoritePayload, MenuTranslateVendorPayload, Message, MessageType, onMessage, PlayTextToSpeechPayload, sendMessage, TranslatePayload, TranslatePayloadResult } from "../extension";
 import { getNextTranslator, ITranslationError, ITranslationResult } from "../vendors";
 import { XTranslateIcon } from "./xtranslate-icon";
 import { ITranslateParams, Popup } from "../components/popup/popup";
@@ -14,28 +14,22 @@ import { settingsStore } from "../components/settings/settings.store";
 import { themeStore } from "../components/theme-manager/theme.store";
 import { userHistoryStore } from "../components/user-history/user-history.store";
 
-const appRootElem = document.createElement("div");
+const rootElem = document.createElement("div");
 const isPdf = document.contentType === "application/pdf";
 
-interface Props {
-  style: string;
-}
-
 @observer
-class App extends React.Component<Props> {
+class App extends React.Component {
   static async init() {
-    appRootElem.className = "XTranslate";
-    document.documentElement.appendChild(appRootElem);
+    rootElem.className = "XTranslate";
+    document.documentElement.appendChild(rootElem);
 
     // render app inside the shadow-dom to avoid collisions with page styles
-    var shadowRoot = appRootElem.attachShadow({ mode: "open" });
-    var style = await getStyles();
+    var shadowRoot = rootElem.attachShadow({ mode: "open" });
     await when(() => settingsStore.isLoaded && themeStore.isLoaded);
-    render(<App style={style}/>, shadowRoot as any);
+    render(<App/>, shadowRoot as any);
   }
 
   public appName = getManifest().name;
-  private settings = settingsStore.data;
   private selection = window.getSelection();
   private popup: Popup;
   private icon: XTranslateIcon;
@@ -96,7 +90,7 @@ class App extends React.Component<Props> {
 
   @autobind()
   async translate(params?: Partial<ITranslateParams>) {
-    var { vendor, langFrom, langTo, autoPlayText, historyEnabled } = this.settings;
+    var { vendor, langFrom, langTo, autoPlayText, historyEnabled } = settingsStore.data;
     params = Object.assign({
       vendor: vendor,
       from: langFrom,
@@ -202,7 +196,7 @@ class App extends React.Component<Props> {
   }
 
   isOutside(elem: HTMLElement) {
-    return !appRootElem.contains(elem);
+    return !rootElem.contains(elem);
   }
 
   getViewportSize() {
@@ -256,7 +250,7 @@ class App extends React.Component<Props> {
   }
 
   refreshPosition() {
-    var { popupFixedPos } = this.settings;
+    var { popupFixedPos } = settingsStore.data;
     if (popupFixedPos || !this.selectionRects) return;
     var { top } = this.selectionRects[0];
     var { bottom } = this.selectionRects.slice(-1)[0];
@@ -289,7 +283,7 @@ class App extends React.Component<Props> {
   }
 
   isClickedOnSelection() {
-    if (!this.settings.showPopupOnClickBySelection) return;
+    if (!settingsStore.data.showPopupOnClickBySelection) return;
     if (!this.selectedText || !this.selectionRects) return;
     var { pageX, pageY } = this.mousePos;
     return this.selectionRects.some(({ left, top, right, bottom }) => {
@@ -299,11 +293,10 @@ class App extends React.Component<Props> {
 
   onSelectionChange = debounce(() => {
     this.selectedText = this.selection.toString().trim();
-
     if (this.isEditable(document.activeElement) || !this.selectedText) {
       return;
     }
-    var { showPopupAfterSelection, showIconNearSelection, showPopupOnDoubleClick } = this.settings;
+    var { showPopupAfterSelection, showIconNearSelection, showPopupOnDoubleClick } = settingsStore.data;
     if (showPopupAfterSelection) {
       this.saveSelectionRects();
       this.translateLazy();
@@ -358,7 +351,7 @@ class App extends React.Component<Props> {
 
   @autobind()
   onDoubleClick(evt: MouseEvent) {
-    if (this.settings.showPopupOnDoubleClick) {
+    if (settingsStore.data.showPopupOnDoubleClick) {
       this.isDblClicked = true;
     }
   }
@@ -410,11 +403,11 @@ class App extends React.Component<Props> {
       }
     }
     // handle text translation by hotkey
-    if (!this.settings.showPopupOnHotkey) {
+    if (!settingsStore.data.showPopupOnHotkey) {
       return;
     }
     var hotkey = getHotkey(evt);
-    var { keyCode, ...currentHotkey } = toJS(this.settings.hotkey);
+    var { keyCode, ...currentHotkey } = toJS(settingsStore.data.hotkey);
     if (isEqual(currentHotkey, hotkey) && this.isPopupHidden) {
       evt.preventDefault();
       this.isHotkeyActivated = true;
@@ -456,9 +449,10 @@ class App extends React.Component<Props> {
 
   render() {
     var { translation, error, playText, translateNext, position, onIconClick, lastParams } = this;
-    var { langFrom, langTo } = this.settings;
+    var { langFrom, langTo } = settingsStore.data;
     return (
       <>
+        <link rel="stylesheet" href={getStyleUrl()}/>
         <Popup
           className={cssNames({ showInPdf: isPdf })}
           style={position}
@@ -474,9 +468,6 @@ class App extends React.Component<Props> {
           title={`${this.appName}: ${[langFrom, langTo].join(' → ').toUpperCase()}`}
           ref={e => this.icon = e}
         />
-        <style type="text/css">
-          {this.props.style}
-        </style>
       </>
     )
   }

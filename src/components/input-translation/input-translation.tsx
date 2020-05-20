@@ -15,7 +15,7 @@ import { favoritesStore } from "./favorites.store";
 import { userHistoryStore } from "../user-history/user-history.store";
 import { Icon } from "../icon";
 import { Tooltip } from "../tooltip";
-import { appRoutes } from "../../common";
+import { AppPageId } from "../../common";
 
 interface TranslateParams {
   vendor: string;
@@ -367,7 +367,7 @@ export class InputTranslation extends React.Component {
             <small className="hint">
               {__i18n("text_input_translation_hint", [
                 `${isMac ? "Cmd" : "Ctrl"}+Enter`,
-                ms => <a href={appRoutes.settings} key="delay">{textInputTranslateDelayMs}{ms}</a>
+                ms => <a href={AppPageId.settings} key="delay">{textInputTranslateDelayMs}{ms}</a>
               ])}
             </small>
           )}

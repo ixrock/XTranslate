@@ -5,7 +5,7 @@ import { logger } from "./logger";
 
 export interface StoreParams<T = object> {
   id: string;
-  initialData: T;
+  initialData?: T;
   storageType?: "sync" | "local"
   autoLoad?: boolean;
   syncDelayMs?: number;
@@ -36,7 +36,7 @@ export abstract class Store<T = object> {
     return chrome.storage[this.params.storageType];
   }
 
-  constructor(protected initialParams: StoreParams<T>) {
+  protected constructor(protected initialParams: StoreParams<T>) {
     var { initialData, autoLoad, storageType } = this.params;
     this.data = initialData;
 
@@ -57,7 +57,7 @@ export abstract class Store<T = object> {
       if (!isCurrentStore || !this.isLoaded || this.isLoading) return;
       var { newValue, oldValue } = changes[this.id];
       if (!isEqual(newValue, toJS(this.data))) {
-        logger.debug(`Sync "${this.id}" from chrome.storage`, { newValue, oldValue });
+        logger.debug(`Sync "${this.id}" from chrome.storage`, changes);
         this.update(newValue);
       }
     });
@@ -72,20 +72,19 @@ export abstract class Store<T = object> {
     this.isLoading = true;
     return new Promise((resolve, reject) => {
       this.storage.get(this.id, items => {
+        var error = chrome.runtime.lastError;
+        if (error) {
+          logger.error(`Loading error`, error, this);
+          reject(error);
+        }
+        else {
+          logger.debug(`Loaded store "${this.id}"`, items);
+          resolve();
+        }
         runInAction(() => {
+          this.update(items[this.id]);
           this.isLoaded = true;
           this.isLoading = false;
-          var data = items[this.id];
-          var error = chrome.runtime.lastError;
-          if (error) {
-            logger.error(`Loading "${this.id}" error`, error);
-            reject(error);
-          }
-          else {
-            logger.debug(`Loaded "${this.id}"`, data);
-            resolve();
-          }
-          this.update(data);
         })
       });
     })
@@ -93,12 +92,13 @@ export abstract class Store<T = object> {
 
   @action
   async save(data: T = this.data) {
-    logger.debug(`Saving data to "${this.id}"`, data)
+    var storageData = { [this.id]: data };
+    logger.debug(`Saving store`, storageData)
     return new Promise(async (resolve, reject) => {
-      this.storage.set({ [this.id]: data }, () => {
+      this.storage.set(storageData, () => {
         var error = chrome.runtime.lastError;
         if (error) {
-          logger.error(`Saving data to "${this.id}" has failed`, error);
+          logger.error(`Saving error`, error, this);
           reject(error);
         }
         else resolve();
@@ -113,7 +113,7 @@ export abstract class Store<T = object> {
   }
 
   @action
-  async reset() {
+  reset() {
     this.update(this.params.initialData);
   }
 }

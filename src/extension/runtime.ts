@@ -13,15 +13,16 @@ export function getURL(path: string) {
   return chrome.runtime.getURL(path);
 }
 
-export async function getStyles() {
+export function getStyleUrl() {
   var manifest = getManifest();
-  var cssFile = manifest.content_scripts.map(script => script.css)[0][0];
-  return fetch(getURL(cssFile)).then(res => res.text());
+  var filePath = manifest.content_scripts.map(script => script.css)[0][0];
+  return getURL(filePath);
 }
 
-export function getOptionsPageUrl(hash = location.hash) {
-  if (hash && !hash.startsWith('#')) hash = "#" + hash;
-  return getURL(getManifest().options_page) + hash;
+export function getOptionsPageUrl(page?: string) {
+  var optionsPage = getURL(getManifest().options_page);
+  if (page) optionsPage += `?page=` + page;
+  return optionsPage;
 }
 
 export function sendMessage<T>(message: Message<T>) {

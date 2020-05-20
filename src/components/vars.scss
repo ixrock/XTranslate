@@ -4,6 +4,9 @@
 @import "colors";
 @import "mixins";
 
+// Paths
+$assetsPath: "chrome-extension://__MSG_@@extension_id__/assets";
+
 // Dimensions
 $unit: 10px !default;
 $padding: $unit !default;
@@ -11,7 +14,7 @@ $margin: $unit !default;
 $radius: round($unit * .3) !default;
 
 // Fonts
-$font-main: Helvetica Neue, sans-serif !default;
+$font-main: Helvetica Neue, Roboto, sans-serif !default;
 $font-monospace: Lucida Console, Monaco, Consolas, monospace;
 $font-size: 1rem * 1.5;
 

@@ -87,8 +87,8 @@ export class ThemeManager extends React.Component {
             />
             <span className="heading">{__i18n("text_font_family")}</span>
             <Select className="box grow" value={theme.fontFamily} onChange={v => theme.fontFamily = v}>
-              {themeStore.fonts.map(fontFamily => (
-                <Option key={fontFamily} value={fontFamily}/>
+              {themeStore.fonts.map(({ familyName }) => (
+                <Option key={familyName} value={familyName}/>
               ))}
             </Select>
           </div>
@@ -190,7 +190,7 @@ export class ThemeManager extends React.Component {
             accent
             label={__i18n("reset_to_default_button_text")}
             disabled={isDefault}
-            onClick={themeStore.reset}
+            onClick={() => themeStore.reset()}
           />
         </div>
       </div>

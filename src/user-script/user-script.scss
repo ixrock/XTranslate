@@ -1,6 +1,5 @@
-@import "../components/fonts";
-
 .XTranslate {
+  all: initial; // reset all due possible leaking of inherited props (color, font, line-height, etc.)
   position: absolute !important;
   width: 100% !important;
   left: 0 !important;
