@@ -4,7 +4,7 @@ import React, { Fragment } from "react";
 import { computed, observable, reaction, toJS } from "mobx";
 import { disposeOnUnmount, observer } from "mobx-react";
 import { getTranslator, getTranslators, isRTL, ITranslationError, ITranslationResult, stopPlayingAll } from "../../vendors";
-import { __i18n, getActiveTab, MessageType, onMessage, sendTabMessage } from "../../extension";
+import { __i18n, getActiveTab, getOptionsPageUrl, MessageType, onMessage, sendTabMessage } from "../../extension";
 import { createStorage, cssNames, isMac } from "../../utils";
 import { SelectLanguage } from "../select-language";
 import { Input } from "../input";
@@ -367,7 +367,7 @@ export class InputTranslation extends React.Component {
             <small className="hint">
               {__i18n("text_input_translation_hint", [
                 `${isMac ? "Cmd" : "Ctrl"}+Enter`,
-                ms => <a href={AppPageId.settings} key="delay">{textInputTranslateDelayMs}{ms}</a>
+                ms => <a href={getOptionsPageUrl(AppPageId.settings)} key="delay">{textInputTranslateDelayMs}{ms}</a>
               ])}
             </small>
           )}
