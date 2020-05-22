@@ -9,14 +9,13 @@ import { cssNames, download, prevDefault } from "../../utils";
 import { getTranslator, isRTL } from "../../vendors";
 import { Checkbox } from "../checkbox";
 import { MenuActions, MenuItem } from "../menu";
-import { Input, NumberInput } from "../input";
+import { FileInput, ImportingFile, Input, NumberInput } from "../input";
 import { Option, Select } from "../select";
 import { Button } from "../button";
 import { Spinner } from "../spinner";
 import { settingsStore } from "../settings/settings.store";
 import { HistoryTimeFrame, IHistoryItem, IHistoryStorageItem, toHistoryItem, userHistoryStore } from "./user-history.store";
 import { Icon } from "../icon";
-import { ImportingFile, UserHistoryImport } from "./user-history-import";
 import { Notifications } from "../notifications";
 
 @observer
@@ -219,7 +218,11 @@ export class UserHistory extends React.Component {
     var { isLoading, isLoaded } = userHistoryStore;
     return (
       <div className="UserHistory">
-        <UserHistoryImport id="importInput" onImport={this.onImport}/>
+        <FileInput
+          id="import-history"
+          accept="application/json"
+          onImport={this.onImport}
+        />
         <div className="settings flex gaps align-center justify-center">
           <Checkbox
             label={__i18n("history_enabled_flag")}
@@ -241,7 +244,7 @@ export class UserHistory extends React.Component {
                 tooltip: !showImportExport ? __i18n("history_icon_tooltip_imp_exp") : undefined,
               }}
             >
-              <MenuItem htmlFor="importInput">
+              <MenuItem htmlFor="import-history">
                 {__i18n("history_import_entries", ["JSON"])}
               </MenuItem>
               <MenuItem spacer/>

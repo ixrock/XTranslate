@@ -1,4 +1,4 @@
-import React from "react";
+import React, { InputHTMLAttributes } from "react";
 
 export interface ImportingFile<T = string> {
   file: File;
@@ -6,13 +6,14 @@ export interface ImportingFile<T = string> {
   error?: string;
 }
 
-interface Props {
-  id?: string;
+interface Props extends InputHTMLAttributes<any> {
+  id?: string; // could be used with <label htmlFor={id}/> to open filesystem dialog
+  accept?: string; // allowed file types to select, e.g. "application/json"
   multiple?: boolean;
   onImport(data: ImportingFile[]): void;
 }
 
-export class UserHistoryImport extends React.Component<Props> {
+export class FileInput extends React.Component<Props> {
   protected input: HTMLInputElement;
 
   protected style: React.CSSProperties = {
@@ -50,12 +51,11 @@ export class UserHistoryImport extends React.Component<Props> {
     var { onImport, ...props } = this.props;
     return (
       <input
-        {...props}
         type="file"
-        accept="application/json"
         style={this.style}
         onChange={this.onChange}
         ref={e => this.input = e}
+        {...props}
       />
     )
   }

@@ -25,6 +25,16 @@ export function getOptionsPageUrl(page?: string) {
   return optionsPage;
 }
 
+export function getBgcPage(): Promise<typeof window> {
+  return new Promise((resolve, reject) => {
+    chrome.runtime.getBackgroundPage(bgcWin => {
+      var error = chrome.runtime.lastError;
+      if (error) reject(error)
+      else resolve(bgcWin as any)
+    })
+  })
+}
+
 export function sendMessage<T>(message: Message<T>) {
   chrome.runtime.sendMessage(message)
 }
