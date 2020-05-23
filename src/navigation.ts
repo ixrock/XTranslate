@@ -1,5 +1,5 @@
 import { createObservableHistory } from "mobx-observable-history";
-import { getManifest, getURL } from "./extension";
+import { createTab, getManifest, getURL } from "./extension";
 
 export const navigation = createObservableHistory();
 
@@ -38,4 +38,9 @@ export function getRouteParams({ withDefaults = true } = {}): AppRouteParams {
     }
     return routeParams
   }, {})
+}
+
+export async function openAppTab(page = defaultRouteParams.page) {
+  var url = buildURL({ page }, { absPath: true });
+  await createTab(url);
 }
