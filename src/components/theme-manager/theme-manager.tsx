@@ -4,6 +4,7 @@ import React from "react";
 import { observer } from "mobx-react";
 import { __i18n } from "../../extension/i18n";
 import { defaultTheme, themeStore } from "./theme.store";
+import { viewsManager } from "../app/views-manager";
 import { Popup } from "../popup";
 import { NumberInput } from "../input";
 import { Checkbox } from "../checkbox";
@@ -12,6 +13,8 @@ import { Slider } from "../slider";
 import { Button } from "../button";
 import { ColorPicker } from "../color-picker";
 import isEqual from "lodash/isEqual";
+import { AppPageId } from "../../navigation";
+import { Tab } from "../tabs";
 
 @observer
 export class ThemeManager extends React.Component {
@@ -197,3 +200,8 @@ export class ThemeManager extends React.Component {
     );
   }
 }
+
+viewsManager.registerView(AppPageId.theme, {
+  Tab: props => <Tab {...props} label={__i18n("tab_theme")} icon="color_lens"/>,
+  Page: ThemeManager,
+});

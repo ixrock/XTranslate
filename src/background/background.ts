@@ -2,15 +2,16 @@
 
 // import "crx-hotreload"
 import "./contextMenu"
-import { createTab, getOptionsPageUrl, Message, MessageType, onMessage, PlayTextToSpeechPayload, sendTabMessage, TranslatePayload, TranslatePayloadResult } from '../extension'
+import { createTab, Message, MessageType, onMessage, PlayTextToSpeechPayload, sendTabMessage, TranslatePayload, TranslatePayloadResult } from '../extension'
 import { getTranslator, stopPlayingAll } from "../vendors";
-import { AppPageId, rateLastTimestamp } from "../common";
+import { rateLastTimestamp } from "../common";
+import { buildURL, defaultRouteParams } from "../navigation";
 
 // open settings on install
 chrome.runtime.onInstalled.addListener(function (evt) {
   if (evt.reason === "install") {
     rateLastTimestamp.set(Date.now());
-    createTab(getOptionsPageUrl(AppPageId.settings));
+    createTab(buildURL(defaultRouteParams));
   }
 });
 

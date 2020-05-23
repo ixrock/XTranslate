@@ -17,6 +17,9 @@ import { Button } from "../button";
 import { Popup } from "../popup";
 import { TooltipProps } from "../tooltip";
 import { settingsStore } from "./settings.store";
+import { viewsManager } from "../app/views-manager";
+import { AppPageId } from "../../navigation";
+import { Tab } from "../tabs";
 
 @observer
 export class Settings extends React.Component {
@@ -219,3 +222,8 @@ export class Settings extends React.Component {
     );
   }
 }
+
+viewsManager.registerView(AppPageId.settings, {
+  Tab: props => <Tab {...props} label={__i18n("tab_settings")} icon="settings"/>,
+  Page: Settings,
+});

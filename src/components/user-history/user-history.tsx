@@ -1,9 +1,9 @@
 import "./user-history.scss";
 
 import * as React from "react";
+import { groupBy } from "lodash";
 import { computed, observable, reaction } from "mobx";
 import { disposeOnUnmount, observer } from "mobx-react";
-import { groupBy } from "lodash";
 import { __i18n } from "../../extension/i18n";
 import { cssNames, download, prevDefault } from "../../utils";
 import { getTranslator, isRTL } from "../../vendors";
@@ -14,9 +14,14 @@ import { Option, Select } from "../select";
 import { Button } from "../button";
 import { Spinner } from "../spinner";
 import { settingsStore } from "../settings/settings.store";
+import { viewsManager } from "../app/views-manager";
 import { HistoryTimeFrame, IHistoryItem, IHistoryStorageItem, toHistoryItem, userHistoryStore } from "./user-history.store";
-import { Icon } from "../icon";
 import { Notifications } from "../notifications";
+import { AppPageId } from "../../navigation";
+import { Icon } from "../icon";
+import { Tab } from "../tabs";
+
+// fixme: check proper encoding/format for CSV-export
 
 @observer
 export class UserHistory extends React.Component {
@@ -323,3 +328,8 @@ export class UserHistory extends React.Component {
     );
   }
 }
+
+viewsManager.registerView(AppPageId.history, {
+  Tab: props => <Tab {...props} label={__i18n("tab_history")} icon="history"/>,
+  Page: UserHistory,
+});
