@@ -3,24 +3,17 @@ import "./popup.scss"
 import React, { CSSProperties } from "react";
 import { computed } from "mobx";
 import { observer } from "mobx-react";
-import { __i18n } from "../../extension/i18n";
+import { __i18n, TranslatePayload } from "../../extension";
 import { cssNames, noop, prevDefault, toCssColor } from "../../utils";
 import { getNextTranslator, getTranslator, isRTL, ITranslationError, ITranslationResult } from "../../vendors";
 import { Icon } from "../icon";
 import { defaultSettings, settingsStore } from "../settings/settings.store";
 import { themeStore } from "../theme-manager/theme.store";
 
-export interface ITranslateParams {
-  vendor: string;
-  from: string;
-  to: string;
-  text: string;
-}
-
 interface Props extends React.HTMLProps<any> {
   preview?: boolean;
   className?: string;
-  params?: ITranslateParams;
+  initParams?: TranslatePayload;
   translation?: ITranslationResult
   error?: ITranslationError
   onPlayText?: () => void;
@@ -36,7 +29,7 @@ export class Popup extends React.Component<Props> {
     onTranslateNext: noop,
   };
 
-  static preview: ITranslationResult = {
+  static demoTranslation: ITranslationResult = {
     vendor: defaultSettings.vendor,
     langFrom: "en",
     langTo: navigator.language.split("-")[0],
@@ -54,13 +47,16 @@ export class Popup extends React.Component<Props> {
     ]
   };
 
-  @computed get params(): Partial<ITranslateParams> {
+  @computed get params() {
     if (!this.translation) {
       return null;
     }
-    var { preview, params } = this.props;
+    var { preview, initParams } = this.props;
     var { vendor, langTo, langFrom } = this.translation;
-    return params || (preview ? {
+    if (preview) {
+      return initParams;
+    }
+    return initParams || (preview ? {
       vendor: vendor,
       from: langFrom,
       to: langTo,
@@ -69,7 +65,7 @@ export class Popup extends React.Component<Props> {
 
   @computed get translation() {
     var { preview, translation } = this.props;
-    return translation || (preview ? Popup.preview : null);
+    return translation || (preview ? Popup.demoTranslation : null);
   }
 
   getPopupStyle(): CSSProperties {

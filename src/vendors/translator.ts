@@ -227,3 +227,8 @@ export function getNextTranslator(name: string, langFrom: string, langTo: string
   }
   return null;
 }
+
+export function isTranslation(result: ITranslationResult | any = {}): result is ITranslationResult {
+  var { translation, originalText, vendor }: ITranslationResult = result;
+  return !!(translation && originalText && vendor);
+}

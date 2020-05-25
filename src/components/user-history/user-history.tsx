@@ -5,6 +5,7 @@ import { groupBy } from "lodash";
 import { computed, observable, reaction } from "mobx";
 import { disposeOnUnmount, observer } from "mobx-react";
 import { __i18n } from "../../extension/i18n";
+import { ttsPlay } from "../../extension/actions";
 import { cssNames, download, prevDefault } from "../../utils";
 import { getTranslator, isRTL } from "../../vendors";
 import { Checkbox } from "../checkbox";
@@ -15,11 +16,15 @@ import { Button } from "../button";
 import { Spinner } from "../spinner";
 import { settingsStore } from "../settings/settings.store";
 import { viewsManager } from "../app/views-manager";
-import { HistoryTimeFrame, IHistoryItem, IHistoryStorageItem, toHistoryItem, userHistoryStore } from "./user-history.store";
+import { IHistoryItem, IHistoryStorageItem, toHistoryItem, userHistoryStore } from "./user-history.store";
 import { Notifications } from "../notifications";
 import { AppPageId } from "../../navigation";
 import { Icon } from "../icon";
 import { Tab } from "../tabs";
+
+enum HistoryTimeFrame {
+  HOUR, DAY, MONTH, YEAR, ALL,
+}
 
 @observer
 export class UserHistory extends React.Component {
@@ -39,7 +44,7 @@ export class UserHistory extends React.Component {
   }, { delay: 500 })
 
   @computed get items() {
-    if (this.searchedText) return userHistoryStore.findItems(this.searchedText);
+    if (this.searchedText) return userHistoryStore.searchItems(this.searchedText);
     return userHistoryStore.data.slice(0, this.page * settingsStore.data.historyPageSize);
   }
 
@@ -116,10 +121,6 @@ export class UserHistory extends React.Component {
     userHistoryStore.clear(clearAll ? null : clearFilter);
   }
 
-  playText = (vendor: string, lang: string, text: string) => {
-    getTranslator(vendor).playText(lang, text);
-  }
-
   renderHistory() {
     var items = this.items.map(item => ({
       storageItem: item,
@@ -152,7 +153,7 @@ export class UserHistory extends React.Component {
                       {showDetails && (
                         <Icon
                           material="play_circle_outline"
-                          onClick={prevDefault(() => this.playText(vendor, from, text))}
+                          onClick={prevDefault(() => ttsPlay({ vendor, text, lang: from }))}
                         />
                       )}
                       <span className="text">{text}</span>

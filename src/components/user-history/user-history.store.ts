@@ -1,33 +1,63 @@
-import { action, IObservableArray, observable } from "mobx";
+import { action } from "mobx";
+import { orderBy, uniqBy } from "lodash";
 import { autobind } from "../../utils/autobind";
 import { ITranslationResult } from "../../vendors/translator";
 import { Store } from "../../store";
 import { settingsStore } from "../settings/settings.store";
-import orderBy from "lodash/orderBy";
-import uniqBy from "lodash/uniqBy";
 
-// todo: move saving task to worker if possible (?)
-// fixme: optimize performance on save (noticeable when data >2MB)
-
-export enum HistoryTimeFrame {
-  HOUR,
-  DAY,
-  MONTH,
-  YEAR,
-  ALL,
+export interface IHistoryItem {
+  date: number
+  vendor: string
+  from: string
+  to: string
+  text: string
+  translation: string
+  transcription?: string
+  dictionary: {
+    wordType: string
+    translation: string[]
+  }[]
 }
 
-export type IUserHistoryStoreData = IObservableArray<IHistoryStorageItem>;
+// format used for keeping data in chrome.storage
+export type IHistoryStorageItem = IHistoryStorageItemVersion1 | IHistoryStorageItemVersion2;
 
-const defaultHistory = observable.array<IHistoryStorageItem>([], { deep: false });
+export interface IHistoryStorageItemVersion1 {
+  date: number
+  vendor: string
+  from: string
+  to: string
+  text: string
+  tr: string
+  ts?: string
+  dict: {
+    w: string
+    tr: string[]
+  }[]
+}
+
+export type IHistoryStorageItemVersion2 = [
+  number, // 0 - time
+  string, // 1 - vendor
+  string, // 2 - lang from
+  string, // 3 - lang to
+  string, // 4 - original text
+  string, // 5 - translation result
+  string, // 6 - transcription
+  [
+    // 7 - dictionary
+    string, /*word type*/
+    string[] /*translations*/
+  ][]
+];
 
 @autobind()
-export class UserHistoryStore extends Store<IUserHistoryStoreData> {
+export class UserHistoryStore extends Store<IHistoryStorageItem[]> {
   constructor() {
     super({
       id: "history",
       storageType: "local",
-      initialData: defaultHistory,
+      initialData: [],
       autoLoad: false,
     });
   }
@@ -37,7 +67,8 @@ export class UserHistoryStore extends Store<IUserHistoryStoreData> {
     if (!this.isLoaded) {
       await this.load();
     }
-    var historyItems: IHistoryStorageItem[] = [
+    var { historyAvoidDuplicates } = settingsStore.data;
+    var storageItems: IHistoryStorageItem[] = [
       ...this.data,
       ...items.filter(item => {
         if (Array.isArray(item)) {
@@ -49,7 +80,7 @@ export class UserHistoryStore extends Store<IUserHistoryStoreData> {
         }
       }),
     ]
-    var newItems = orderBy(historyItems, item => {
+    var data = orderBy(storageItems, item => {
       if (Array.isArray(item)) {
         if (typeof item[0] === "number") return item[0]; // v2
       }
@@ -57,16 +88,17 @@ export class UserHistoryStore extends Store<IUserHistoryStoreData> {
         return item.date; // v1
       }
     }, "desc");
-
     var countBeforeCleanUp = this.data.length;
-    newItems = this.removeDuplicates(newItems);
-    this.data.replace(newItems);
-    return newItems.length - countBeforeCleanUp;
+    if (historyAvoidDuplicates) {
+      data = this.removeDuplicates(data);
+    }
+    this.update(data);
+    return data.length - countBeforeCleanUp;
   }
 
-  @action
   async saveTranslation(translation: ITranslationResult) {
-    var { historySaveWordsOnly } = settingsStore.data;
+    var { historySaveWordsOnly, historyAvoidDuplicates } = settingsStore.data;
+    var { langFrom, langDetected } = translation;
     var noDictionary = !translation?.dictionary.length;
     if (!translation || this.isLoading || (historySaveWordsOnly && noDictionary)) {
       return;
@@ -74,52 +106,49 @@ export class UserHistoryStore extends Store<IUserHistoryStoreData> {
     if (!this.isLoaded) {
       await this.load();
     }
-    var { langFrom, langDetected } = translation;
-    if (langFrom === "auto") {
-      translation.langFrom = langDetected;
-    }
-    var newItems: IHistoryStorageItem[] = [
-      toStorageItem(translation),
+    var data: IHistoryStorageItem[] = [
+      toStorageItem({
+        ...translation,
+        langFrom: langFrom === "auto" ? langDetected : langFrom
+      }),
       ...this.data,
     ];
-    newItems = this.removeDuplicates(newItems);
-    this.data.replace(newItems);
-  }
-
-  removeDuplicates(items: IHistoryStorageItem[]) {
-    var { historyAvoidDuplicates } = settingsStore.data;
     if (historyAvoidDuplicates) {
-      return uniqBy(items, item => {
-        var { vendor, from, to, text } = toHistoryItem(item);
-        return vendor + from + to + text;
-      })
+      data = this.removeDuplicates(data);
     }
-    return items;
+    this.update(data);
   }
 
-  findItems(searchText = ""): IHistoryStorageItem[] {
-    searchText = searchText.trim().toLowerCase();
-    if (!searchText) return [];
+  protected removeDuplicates(items: IHistoryStorageItem[]) {
+    return uniqBy(items, item => {
+      var { vendor, from, to, text } = toHistoryItem(item);
+      return vendor + from + to + text;
+    })
+  }
+
+  searchItems(text = ""): IHistoryStorageItem[] {
+    text = text.trim().toLowerCase();
+    if (!text) return [];
     return this.data.filter(item => {
       var { text, translation } = toHistoryItem(item);
       return (
-        text.toLowerCase().includes(searchText) ||
-        translation.toLowerCase().includes(searchText)
+        text.toLowerCase().includes(text) ||
+        translation.toLowerCase().includes(text)
       )
     });
   }
 
   clear(itemOrFilter?: IHistoryStorageItem | ((item: IHistoryItem) => boolean)) {
     if (!itemOrFilter) {
-      this.data.replace([]); // remove all
+      this.reset();
     }
     else {
       if (typeof itemOrFilter === "function") {
-        var newItems = this.data.filter(item => !itemOrFilter(toHistoryItem(item)));
-        this.data.replace(newItems);
+        this.data = this.data.filter(item => !itemOrFilter(toHistoryItem(item)));
       }
       else {
-        this.data.remove(itemOrFilter);
+        var index = this.data.findIndex(item => item === itemOrFilter);
+        this.data.splice(index, 1);
       }
     }
   }
@@ -189,49 +218,3 @@ export function isHistoryItem(item: any | IHistoryItem = {}): item is IHistoryIt
 }
 
 export const userHistoryStore = new UserHistoryStore();
-
-export interface IHistoryItem {
-  date: number
-  vendor: string
-  from: string
-  to: string
-  text: string
-  translation: string
-  transcription?: string
-  dictionary: {
-    wordType: string
-    translation: string[]
-  }[]
-}
-
-// format used for keeping data in chrome.storage
-export type IHistoryStorageItem = IHistoryStorageItemVersion1 | IHistoryStorageItemVersion2;
-
-export interface IHistoryStorageItemVersion1 {
-  date: number
-  vendor: string
-  from: string
-  to: string
-  text: string
-  tr: string
-  ts?: string
-  dict: {
-    w: string
-    tr: string[]
-  }[]
-}
-
-export type IHistoryStorageItemVersion2 = [
-  number, // 0 - time
-  string, // 1 - vendor
-  string, // 2 - lang from
-  string, // 3 - lang to
-  string, // 4 - original text
-  string, // 5 - translation result
-  string, // 6 - transcription
-  [
-    // 7 - dictionary
-    string, /*word type*/
-    string[] /*translations*/
-  ][]
-];

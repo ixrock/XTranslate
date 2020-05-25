@@ -6,13 +6,13 @@ import { computed, observable, toJS, when } from "mobx";
 import { observer } from "mobx-react";
 import { debounce, isEqual } from "lodash"
 import { autobind, cssNames, getHotkey } from "../utils";
-import { getManifest, getStyleUrl, MenuTranslateFavoritePayload, MenuTranslateVendorPayload, Message, MessageType, onMessage, PlayTextToSpeechPayload, sendMessage, TranslatePayload, TranslatePayloadResult } from "../extension";
+import { getManifest, getStyleUrl, MenuTranslateFavoritePayload, MenuTranslateVendorPayload, Message, MessageType, onMessage, sendMessage, TranslatePayload } from "../extension";
+import { translateText, ttsPlay, ttsStop } from "../extension/actions";
 import { getNextTranslator, ITranslationError, ITranslationResult } from "../vendors";
 import { XTranslateIcon } from "./xtranslate-icon";
-import { ITranslateParams, Popup } from "../components/popup/popup";
+import { Popup } from "../components/popup/popup";
 import { settingsStore } from "../components/settings/settings.store";
 import { themeStore } from "../components/theme-manager/theme.store";
-import { userHistoryStore } from "../components/user-history/user-history.store";
 
 const rootElem = document.createElement("div");
 const isPdf = document.contentType === "application/pdf";
@@ -33,7 +33,7 @@ class App extends React.Component {
   private selection = window.getSelection();
   private popup: Popup;
   private icon: XTranslateIcon;
-  private lastParams: ITranslateParams;
+  private lastParams: TranslatePayload;
   private isDblClicked = false;
   private isHotkeyActivated = false;
   private mousePos = { x: 0, y: 0, pageX: 0, pageY: 0 };
@@ -89,26 +89,24 @@ class App extends React.Component {
   translateLazy = debounce(this.translate, 250);
 
   @autobind()
-  async translate(params?: Partial<ITranslateParams>) {
-    var { vendor, langFrom, langTo, autoPlayText, historyEnabled } = settingsStore.data;
-    params = Object.assign({
+  async translate(initParams?: Partial<TranslatePayload>) {
+    var { vendor, langFrom, langTo } = settingsStore.data;
+    var params = Object.assign({
       vendor: vendor,
       from: langFrom,
       to: langTo,
       text: this.selectedText,
-    }, params);
+    }, initParams);
     if (!params.text || isEqual(params, this.lastParams)) {
       return;
     }
     try {
       this.isLoading = true;
-      this.lastParams = params as ITranslateParams;
-      var translation = await this.translateProxy(params);
+      this.lastParams = params;
+      var translation = await translateText(params);
       if (params === this.lastParams) {
         this.translation = translation;
         this.error = null;
-        if (autoPlayText) setTimeout(this.playText);
-        if (historyEnabled) userHistoryStore.saveTranslation(this.translation);
       }
     } catch (err) {
       this.error = err;
@@ -121,51 +119,17 @@ class App extends React.Component {
   translateNext(reverse = false) {
     if (!this.lastParams) return;
     var { vendor, from, to, text } = this.lastParams;
-    var nextTranslator = getNextTranslator(vendor, from, to, reverse);
+    var nextVendor = getNextTranslator(vendor, from, to, reverse);
     return this.translate({
-      vendor: nextTranslator.name,
+      vendor: nextVendor.name,
       from, to, text,
     });
   }
 
   @autobind()
-  async translateProxy(params: Partial<ITranslateParams>): Promise<ITranslationResult> {
-    sendMessage<TranslatePayload>({
-      type: MessageType.TRANSLATE_TEXT,
-      payload: params as ITranslateParams,
-    });
-    return new Promise((resolve, reject) => {
-      var stopListen = onMessage(({ type, payload }) => {
-        if (type === MessageType.TRANSLATE_TEXT) {
-          stopListen();
-          if (isEqual(params, this.lastParams)) {
-            var { data, error } = payload as TranslatePayloadResult;
-            if (data) resolve(data);
-            else reject(error);
-          }
-        }
-      });
-    });
-  }
-
-  @autobind()
   playText() {
-    var { langDetected, langFrom, originalText, vendor } = this.translation;
-    sendMessage<PlayTextToSpeechPayload>({
-      type: MessageType.PLAY_TEXT_TO_SPEECH,
-      payload: {
-        vendor: vendor,
-        lang: langDetected || langFrom,
-        text: originalText
-      }
-    });
-  }
-
-  @autobind()
-  stopPlaying() {
-    sendMessage({
-      type: MessageType.STOP_TTS_PLAYING
-    });
+    if (!this.translation) return;
+    ttsPlay(this.translation);
   }
 
   showIcon() {
@@ -186,7 +150,7 @@ class App extends React.Component {
     this.isDblClicked = false;
     this.isHotkeyActivated = false;
     this.selection.removeAllRanges();
-    this.stopPlaying();
+    ttsStop();
   }
 
   isEditable(elem: Element) {
@@ -456,7 +420,7 @@ class App extends React.Component {
         <Popup
           className={cssNames({ showInPdf: isPdf })}
           style={position}
-          params={lastParams}
+          initParams={lastParams}
           translation={translation} error={error}
           onPlayText={playText}
           onTranslateNext={() => translateNext()}

@@ -1,4 +1,4 @@
-// Message types for communication btw different parts of the app
+// Messages for communication btw background process and other extension parts
 import { ITranslationError, ITranslationResult } from "../vendors/translator";
 
 export enum MessageType {
@@ -13,6 +13,7 @@ export enum MessageType {
 }
 
 export interface Message<D = any> {
+  id?: string;
   type: MessageType
   payload?: D
 }

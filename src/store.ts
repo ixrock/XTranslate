@@ -1,14 +1,17 @@
 import { action, observable, reaction, runInAction, toJS, when } from "mobx";
 import { autobind } from "./utils/autobind";
-import isEqual from "lodash/isEqual";
 import { logger } from "./logger";
+import { isEqual } from "lodash";
+
+// todo: add revision number for better changes detection
 
 export interface StoreParams<T = object> {
   id: string;
   initialData?: T;
   storageType?: "sync" | "local"
   autoLoad?: boolean;
-  syncDelayMs?: number;
+  autoSave?: boolean;
+  autoSaveDelayMs?: number;
 }
 
 @autobind()
@@ -16,13 +19,14 @@ export abstract class Store<T = object> {
   static defaultParams: Partial<StoreParams> = {
     initialData: {},
     autoLoad: true,
-    syncDelayMs: 250,
+    autoSave: true,
+    autoSaveDelayMs: 250,
     storageType: "local",
   };
 
+  @observable.shallow data: T;
   @observable isLoading = false;
   @observable isLoaded = false;
-  @observable data: T;
 
   get id() {
     return this.params.id;
@@ -37,28 +41,33 @@ export abstract class Store<T = object> {
   }
 
   protected constructor(protected initialParams: StoreParams<T>) {
-    var { initialData, autoLoad, storageType } = this.params;
+    var { initialData, autoLoad, storageType, autoSave, autoSaveDelayMs } = this.params;
     this.data = initialData;
 
     if (autoLoad) {
       this.load();
     }
 
-    // sync data state with chrome.storage on change
-    when(() => this.isLoaded, () => {
-      reaction(() => toJS(this.data), this.save, {
-        delay: this.params.syncDelayMs
+    // auto-sync data with chrome.storage on change
+    if (autoSave) {
+      when(() => this.isLoaded, () => {
+        reaction(() => toJS(this.data), this.save, {
+          delay: autoSaveDelayMs
+        });
       });
-    });
+    }
 
-    // sync data from chrome.storage (options page <-> background process <-> content script)
+    // sync data from chrome.storage
     chrome.storage.onChanged.addListener((changes, areaName) => {
       var isCurrentStore = areaName === storageType && changes[this.id];
-      if (!isCurrentStore || !this.isLoaded || this.isLoading) return;
-      var { newValue, oldValue } = changes[this.id];
-      if (!isEqual(newValue, toJS(this.data))) {
-        logger.debug(`Sync "${this.id}" from chrome.storage`, changes);
-        this.update(newValue);
+      if (!isCurrentStore || this.isLoading) return;
+      var data = changes[this.id].newValue;
+      if (!isEqual(data, toJS(this.data))) {
+        runInAction(() => {
+          logger.debug(`Sync "${this.id}" from chrome.storage`, changes);
+          this.update(data);
+          this.isLoaded = true;
+        })
       }
     });
   }
@@ -92,7 +101,7 @@ export abstract class Store<T = object> {
 
   @action
   async save(data: T = this.data) {
-    var storageData = { [this.id]: data };
+    var storageData = { [this.id]: toJS(data) };
     logger.debug(`Saving store`, storageData)
     return new Promise(async (resolve, reject) => {
       this.storage.set(storageData, () => {

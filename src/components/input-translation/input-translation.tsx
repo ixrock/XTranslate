@@ -3,8 +3,9 @@ import "./input-translation.scss";
 import React, { Fragment } from "react";
 import { computed, observable, reaction, toJS } from "mobx";
 import { disposeOnUnmount, observer } from "mobx-react";
-import { getTranslator, getTranslators, isRTL, ITranslationError, ITranslationResult, stopPlayingAll } from "../../vendors";
+import { getTranslator, getTranslators, isRTL, ITranslationError, ITranslationResult } from "../../vendors";
 import { __i18n, getActiveTab, MessageType, onMessage, sendTabMessage } from "../../extension";
+import { translateText, ttsPlay, ttsStop } from "../../extension/actions";
 import { createStorage, cssNames, isMac } from "../../utils";
 import { SelectLanguage } from "../select-language";
 import { Input } from "../input";
@@ -12,7 +13,6 @@ import { Option, OptionsGroup, Select } from "../select";
 import { Spinner } from "../spinner";
 import { settingsStore } from "../settings/settings.store";
 import { favoritesStore } from "./favorites.store";
-import { userHistoryStore } from "../user-history/user-history.store";
 import { viewsManager } from "../app/views-manager";
 import { Icon } from "../icon";
 import { Tooltip } from "../tooltip";
@@ -77,7 +77,7 @@ export class InputTranslation extends React.Component {
   }
 
   componentWillUnmount() {
-    stopPlayingAll();
+    ttsStop();
   }
 
   addFavorite = () => {
@@ -106,24 +106,22 @@ export class InputTranslation extends React.Component {
     this.favorite = null;
   }
 
-  playText = async () => {
+  playText = () => {
     if (!this.translation) return;
-    var { vendor, langDetected, langFrom, originalText } = this.translation;
-    await getTranslator(vendor).playText(langDetected || langFrom, originalText);
+    ttsPlay(this.translation);
   }
 
   translate = async (text = this.text.trim()) => {
-    var { autoPlayText, historyEnabled } = settingsStore.data;
     var { vendor, langFrom, langTo } = this.favorite || this.params;
-    var translator = getTranslator(vendor);
     if (!text) return;
     try {
       this.error = null;
       this.loadingTimer = setTimeout(() => this.isLoading = true, 1000);
-      this.translation = await translator.getTranslation(langFrom, langTo, text);
-      if (autoPlayText) this.playText();
-      if (historyEnabled) userHistoryStore.saveTranslation(this.translation);
-
+      this.translation = await translateText({
+        from: langFrom,
+        to: langTo,
+        vendor, text,
+      })
     } catch (err) {
       this.error = err;
     }
@@ -149,7 +147,7 @@ export class InputTranslation extends React.Component {
       this.lastText.set(text);
     }
     if (!text) {
-      stopPlayingAll();
+      ttsStop();
       this.translation = null;
       this.error = null;
     }
