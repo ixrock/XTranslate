@@ -21,8 +21,6 @@ import { AppPageId } from "../../navigation";
 import { Icon } from "../icon";
 import { Tab } from "../tabs";
 
-// fixme: check proper encoding/format for CSV-export
-
 @observer
 export class UserHistory extends React.Component {
   private showDetailsMap = new WeakMap<IHistoryStorageItem, boolean>();
@@ -74,11 +72,11 @@ export class UserHistory extends React.Component {
         break;
 
       case "csv":
-        var csv = [
-          ["Date", "Translator", "Language", "Original text", "Translation", "Transcription", "Dictionary"]
+        var csvRows = [
+          ["Date", "Translator", "Language", "Text", "Translation", "Transcription", "Dictionary"]
         ];
         items.map(toHistoryItem).forEach(item => {
-          csv.push([
+          csvRows.push([
             new Date(item.date).toLocaleString(),
             getTranslator(item.vendor).title,
             item.from + "-" + item.to,
@@ -86,11 +84,11 @@ export class UserHistory extends React.Component {
             item.translation,
             item.transcription || "",
             item.dictionary.map(({ wordType, translation }) => {
-              return wordType + "\n" + translation.join(", ")
-            }).join("\n\n")
+              return wordType + ": " + translation.join(", ")
+            }).join("\n")
           ]);
         });
-        download.csv(filename, csv);
+        download.csv(filename, csvRows);
         break;
     }
   }
