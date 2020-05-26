@@ -1,9 +1,8 @@
 import "./popup.scss"
 
 import React, { CSSProperties } from "react";
-import { computed } from "mobx";
 import { observer } from "mobx-react";
-import { __i18n, TranslatePayload } from "../../extension";
+import { __i18n } from "../../extension";
 import { cssNames, noop, prevDefault, toCssColor } from "../../utils";
 import { getNextTranslator, getTranslator, isRTL, ITranslationError, ITranslationResult } from "../../vendors";
 import { Icon } from "../icon";
@@ -13,7 +12,6 @@ import { themeStore } from "../theme-manager/theme.store";
 interface Props extends React.HTMLProps<any> {
   preview?: boolean;
   className?: string;
-  initParams?: TranslatePayload;
   translation?: ITranslationResult
   error?: ITranslationError
   onPlayText?: () => void;
@@ -47,23 +45,7 @@ export class Popup extends React.Component<Props> {
     ]
   };
 
-  @computed get params() {
-    if (!this.translation) {
-      return null;
-    }
-    var { preview, initParams } = this.props;
-    var { vendor, langTo, langFrom } = this.translation;
-    if (preview) {
-      return initParams;
-    }
-    return initParams || (preview ? {
-      vendor: vendor,
-      from: langFrom,
-      to: langTo,
-    } : null)
-  }
-
-  @computed get translation() {
+  get translation() {
     var { preview, translation } = this.props;
     return translation || (preview ? Popup.demoTranslation : null);
   }
@@ -145,11 +127,11 @@ export class Popup extends React.Component<Props> {
   }
 
   renderNextTranslationIcon() {
-    if (!settingsStore.data.showNextVendorIcon || !this.params) {
+    if (!settingsStore.data.showNextVendorIcon) {
       return;
     }
-    var { vendor, from, to } = this.params;
-    var nextVendor = getNextTranslator(vendor, from, to);
+    var { vendor, langFrom, langTo } = this.translation;
+    var nextVendor = getNextTranslator(vendor, langFrom, langTo);
     var iconTitle = __i18n("popup_next_vendor_icon_title", [nextVendor.title]).join("");
     return (
       <Icon
@@ -161,7 +143,9 @@ export class Popup extends React.Component<Props> {
   }
 
   renderResult() {
-    if (!this.translation) return;
+    if (!this.translation) {
+      return;
+    }
     var { translation, transcription, dictionary, vendor, langFrom, langTo, langDetected } = this.translation;
     if (langDetected) langFrom = langDetected;
     const translator = getTranslator(vendor);

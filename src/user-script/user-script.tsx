@@ -412,7 +412,7 @@ class App extends React.Component {
   }, 250)
 
   render() {
-    var { translation, error, playText, translateNext, position, onIconClick, lastParams } = this;
+    var { translation, error, playText, translateNext, position, onIconClick } = this;
     var { langFrom, langTo } = settingsStore.data;
     return (
       <>
@@ -420,8 +420,8 @@ class App extends React.Component {
         <Popup
           className={cssNames({ showInPdf: isPdf })}
           style={position}
-          initParams={lastParams}
-          translation={translation} error={error}
+          translation={translation}
+          error={error}
           onPlayText={playText}
           onTranslateNext={() => translateNext()}
           ref={e => this.popup = e}
@@ -437,5 +437,5 @@ class App extends React.Component {
   }
 }
 
-// init
+// run
 App.init();

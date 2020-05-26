@@ -3,8 +3,6 @@ import { autobind } from "./utils/autobind";
 import { logger } from "./logger";
 import { isEqual } from "lodash";
 
-// todo: add revision number for better changes detection
-
 export interface StoreParams<T = object> {
   id: string;
   initialData?: T;
