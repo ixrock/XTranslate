@@ -4,8 +4,8 @@ import React, { Fragment } from "react";
 import { computed, observable, reaction, toJS } from "mobx";
 import { disposeOnUnmount, observer } from "mobx-react";
 import { getTranslator, getTranslators, isRTL, ITranslationError, ITranslationResult } from "../../vendors";
-import { __i18n, getActiveTab, MessageType, onMessage, sendTabMessage } from "../../extension";
-import { translateText, ttsPlay, ttsStop } from "../../extension/actions";
+import { __i18n } from "../../extension";
+import { getActiveTabText, translateText, ttsPlay, ttsStop } from "../../extension/actions";
 import { createStorage, cssNames, isMac } from "../../utils";
 import { SelectLanguage } from "../select-language";
 import { Input } from "../input";
@@ -59,21 +59,16 @@ export class InputTranslation extends React.Component {
     if (this.text) this.translate();
     this.input.focus();
 
-    var activeTab = await getActiveTab();
-    sendTabMessage(activeTab.id, {
-      type: MessageType.GET_SELECTED_TEXT
-    });
-    onMessage(({ payload, type }) => {
-      if (type === MessageType.SELECTED_TEXT) {
-        this.translateText(payload);
-      }
-    });
     // auto-translate when affecting params to translate is changing
     disposeOnUnmount(this, [
       reaction(() => [this.favorite, toJS(this.params)], () => {
         if (this.translation) this.translate();
       }, { delay: 100 })
     ]);
+
+    // auto-translate selected text from active tab
+    var selectedText = await getActiveTabText();
+    if (selectedText) this.translateText(selectedText);
   }
 
   componentWillUnmount() {

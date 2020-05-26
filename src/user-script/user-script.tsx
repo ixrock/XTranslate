@@ -55,7 +55,7 @@ class App extends React.Component {
     document.addEventListener("keydown", this.onKeyDown, true);
     window.addEventListener("resize", this.onResizeWindow);
     onMessage(this.onContextMenu);
-    onMessage(this.onGetSelectedText);
+    onMessage(this.onSelectedText);
   }
 
   @computed get isPopupHidden() {
@@ -336,12 +336,12 @@ class App extends React.Component {
   }
 
   @autobind()
-  onGetSelectedText(message: Message) {
-    if (!this.selectedText) return;
-    if (message.type === MessageType.GET_SELECTED_TEXT) {
+  onSelectedText({ id, type }: Message) {
+    var { selectedText } = this;
+    if (selectedText && type == MessageType.GET_SELECTED_TEXT) {
       sendMessage({
-        type: MessageType.SELECTED_TEXT,
-        payload: this.selectedText,
+        id, type,
+        payload: selectedText,
       })
     }
   }

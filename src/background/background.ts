@@ -41,11 +41,11 @@ onMessage(async (message: Message, sender) => {
       else sendMessage(result); // browser action window (popup)
       break;
 
-    case MessageType.PLAY_TEXT_TO_SPEECH:
+    case MessageType.TTS_PLAY:
       playText(payload);
       break;
 
-    case MessageType.STOP_TTS_PLAYING:
+    case MessageType.TTS_STOP:
       stopPlayingAll();
       break;
   }

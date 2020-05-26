@@ -35,13 +35,13 @@ export function getBgcPage(): Promise<typeof window> {
   })
 }
 
-export function sendMessage<T>(message: Message<T>) {
+export function sendMessage<P>(message: Message<P>) {
   chrome.runtime.sendMessage(message)
 }
 
-type OnMessageCallback = (message: Message, sender: chrome.runtime.MessageSender, sendResponse: (data?: any) => void) => void;
+type OnMessageCallback<P = any> = (message: Message<P>, sender: chrome.runtime.MessageSender, sendResponse: any) => void;
 
-export function onMessage(callback: OnMessageCallback) {
+export function onMessage<P = any>(callback: OnMessageCallback<P>) {
   var listener: OnMessageCallback = (message, sender, sendResponse) => {
     if (getId() !== sender.id) return;
     callback(message, sender, sendResponse);

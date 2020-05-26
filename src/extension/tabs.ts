@@ -12,7 +12,7 @@ export function createTab(url: string, active = true): Promise<chrome.tabs.Tab> 
 }
 
 export function getActiveTab(): Promise<chrome.tabs.Tab> {
-  return new Promise((resolve) => {
+  return new Promise(resolve => {
     chrome.tabs.query({ active: true }, function (tabs) {
       resolve(tabs[0]);
     });

@@ -1,27 +1,43 @@
-// Background page actions
+import { Message, MessageType, PlayTextToSpeechPayload, TranslatePayload, TranslatePayloadResult } from "./messages";
 import { onMessage, sendMessage } from "./runtime";
-import { MessageType, PlayTextToSpeechPayload, TranslatePayload, TranslatePayloadResult } from "./messages";
+import { getActiveTab, sendTabMessage } from "./tabs";
 import { isTranslation, ITranslationResult } from "../vendors";
 
-export async function translateText(payload: TranslatePayload): Promise<ITranslationResult> {
-  var msgId = Number(Date.now() * Math.random()).toString(16);
-  sendMessage<TranslatePayload>({
-    id: msgId,
-    type: MessageType.TRANSLATE_TEXT,
-    payload: payload,
-  });
-  return new Promise((resolve, reject) => {
-    var stopListen = onMessage(({ type, payload, id }) => {
-      if (type === MessageType.TRANSLATE_TEXT) {
-        if (msgId === id) {
-          stopListen();
-          var { data, error } = payload as TranslatePayloadResult;
-          if (data) resolve(data);
-          else reject(error);
-        }
+export async function promisifyMessage<P = any, R = any>({ tabId, ...message }: Message<P> & { tabId?: number }): Promise<R> {
+  if (!message.id) {
+    message.id = Number(Date.now() * Math.random()).toString(16);
+  }
+  if (tabId) {
+    sendTabMessage(tabId, message);
+  }
+  else {
+    sendMessage(message);
+  }
+  return new Promise(resolve => {
+    var stopListen = onMessage<R>(({ type, payload, id }) => {
+      if (type === message.type && id === message.id) {
+        stopListen();
+        resolve(payload);
       }
     });
   });
+}
+
+export async function getActiveTabText() {
+  var activeTab = await getActiveTab();
+  return promisifyMessage<void, string>({
+    tabId: activeTab.id,
+    type: MessageType.GET_SELECTED_TEXT
+  })
+}
+
+export async function translateText(payload: TranslatePayload) {
+  var { data, error } = await promisifyMessage<TranslatePayload, TranslatePayloadResult>({
+    type: MessageType.TRANSLATE_TEXT,
+    payload: payload
+  });
+  if (data) return data;
+  else throw error;
 }
 
 export function ttsPlay(payload: PlayTextToSpeechPayload | ITranslationResult) {
@@ -33,14 +49,14 @@ export function ttsPlay(payload: PlayTextToSpeechPayload | ITranslationResult) {
       text: originalText
     }
   }
-  sendMessage<PlayTextToSpeechPayload>({
-    type: MessageType.PLAY_TEXT_TO_SPEECH,
+  sendMessage({
+    type: MessageType.TTS_PLAY,
     payload: payload,
   });
 }
 
 export function ttsStop() {
   sendMessage({
-    type: MessageType.STOP_TTS_PLAYING
+    type: MessageType.TTS_STOP
   });
 }
