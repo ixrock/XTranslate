@@ -11,6 +11,8 @@ export function createTab(url: string, active = true): Promise<chrome.tabs.Tab> 
   });
 }
 
+// Requires "activeTab" or "tabs" permission to get access to tab.url in context menus
+// Read more: https://developer.chrome.com/extensions/tabs
 export function getActiveTab(): Promise<chrome.tabs.Tab> {
   return new Promise(resolve => {
     chrome.tabs.query({ active: true }, function (tabs) {

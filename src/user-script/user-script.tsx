@@ -6,7 +6,7 @@ import { computed, observable, toJS, when } from "mobx";
 import { observer } from "mobx-react";
 import { debounce, isEqual } from "lodash"
 import { autobind, cssNames, getHotkey } from "../utils";
-import { getManifest, getStyleUrl, MenuTranslateFavoritePayload, MenuTranslateVendorPayload, Message, MessageType, onMessage, sendMessage, TranslatePayload } from "../extension";
+import { getManifest, getStyleUrl, MenuTranslateFavoritePayload, MenuTranslateVendorPayload, Message, MessageType, onMessage, TranslatePayload } from "../extension";
 import { translateText, ttsPlay, ttsStop } from "../extension/actions";
 import { getNextTranslator, ITranslationError, ITranslationResult } from "../vendors";
 import { XTranslateIcon } from "./xtranslate-icon";
@@ -55,7 +55,11 @@ class App extends React.Component {
     document.addEventListener("keydown", this.onKeyDown, true);
     window.addEventListener("resize", this.onResizeWindow);
     onMessage(this.onContextMenu);
-    onMessage(this.onSelectedText);
+    onMessage(({ type }, sender, sendResponse) => {
+      if (type === MessageType.GET_SELECTED_TEXT) {
+        sendResponse(this.selectedText);
+      }
+    });
   }
 
   @computed get isPopupHidden() {
@@ -332,17 +336,6 @@ class App extends React.Component {
       this.hideIcon();
       let { vendor, from, to, selectedText } = message.payload as MenuTranslateFavoritePayload;
       this.translate({ vendor, from, to, text: selectedText });
-    }
-  }
-
-  @autobind()
-  onSelectedText({ id, type }: Message) {
-    var { selectedText } = this;
-    if (selectedText && type == MessageType.GET_SELECTED_TEXT) {
-      sendMessage({
-        id, type,
-        payload: selectedText,
-      })
     }
   }
 

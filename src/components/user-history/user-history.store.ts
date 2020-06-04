@@ -5,6 +5,8 @@ import { ITranslationResult } from "../../vendors/translator";
 import { Store } from "../../store";
 import { settingsStore } from "../settings/settings.store";
 
+// todo: optimize store, array -> map/object with history_item_id
+
 export interface IHistoryItem {
   date: number
   vendor: string
@@ -126,14 +128,14 @@ export class UserHistoryStore extends Store<IHistoryStorageItem[]> {
     })
   }
 
-  searchItems(text = ""): IHistoryStorageItem[] {
-    text = text.trim().toLowerCase();
-    if (!text) return [];
+  searchItems(query = ""): IHistoryStorageItem[] {
+    query = query.trim().toLowerCase();
+    if (!query) return [];
     return this.data.filter(item => {
       var { text, translation } = toHistoryItem(item);
       return (
-        text.toLowerCase().includes(text) ||
-        translation.toLowerCase().includes(text)
+        text.toLowerCase().includes(query) ||
+        translation.toLowerCase().includes(query)
       )
     });
   }

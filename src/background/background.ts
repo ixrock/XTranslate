@@ -2,7 +2,7 @@
 
 // import "crx-hotreload"
 import "./contextMenu"
-import { Message, MessageType, onMessage, PlayTextToSpeechPayload, sendMessage, sendTabMessage, TranslatePayload, TranslatePayloadResult } from '../extension'
+import { HistorySearchPayload, Message, MessageType, onMessage, PlayTextToSpeechPayload, TranslatePayload, TranslatePayloadResult } from '../extension'
 import { getTranslator, ITranslationResult, stopPlayingAll } from "../vendors";
 import { rateLastTimestamp } from "../common";
 import { settingsStore } from "../components/settings/settings.store";
@@ -17,28 +17,20 @@ chrome.runtime.onInstalled.addListener(function (evt) {
   }
 });
 
-// handle events from content page
-onMessage(async (message: Message, sender) => {
-  var { type, payload, id: msgId } = message;
+// handle ipc messages
+onMessage(async (message: Message, sender, sendResponse) => {
+  var { type, payload } = message;
   switch (type) {
     case MessageType.TRANSLATE_TEXT:
       var { vendor, from, to, text } = payload as TranslatePayload;
+      var req = getTranslator(vendor).getTranslation(from, to, text);
+      req.then(onTranslationReady);
 
-      // handle translation requests here due CORB/CORS blocking (from content page script)
-      var response = await getTranslator(vendor).getTranslation(from, to, text)
-        .then(onTranslationReady)
-        .then(data => ({ data }))
-        .catch(error => ({ error }));
-
-      var result: Message<TranslatePayloadResult> = {
-        id: msgId,
-        type: type,
-        payload: response
-      };
-
-      // send translation result back
-      if (sender.tab) sendTabMessage(sender.tab.id, result);
-      else sendMessage(result); // browser action window (popup)
+      sendResponse<TranslatePayloadResult>(
+        await req
+          .then(data => ({ data }))
+          .catch(error => ({ error }))
+      );
       break;
 
     case MessageType.TTS_PLAY:
@@ -47,6 +39,13 @@ onMessage(async (message: Message, sender) => {
 
     case MessageType.TTS_STOP:
       stopPlayingAll();
+      break;
+
+    case MessageType.SEARCH_IN_HISTORY:
+      await userHistoryStore.load();
+      var { query } = payload as HistorySearchPayload;
+      var items = userHistoryStore.searchItems(query);
+      sendResponse(items);
       break;
   }
 });
@@ -65,5 +64,4 @@ function onTranslationReady(translation: ITranslationResult) {
   if (historyEnabled) {
     userHistoryStore.saveTranslation(translation);
   }
-  return translation;
 }

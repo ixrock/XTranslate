@@ -1,27 +1,7 @@
-import { Message, MessageType, PlayTextToSpeechPayload, TranslatePayload, TranslatePayloadResult } from "./messages";
-import { onMessage, sendMessage } from "./runtime";
-import { getActiveTab, sendTabMessage } from "./tabs";
+import { HistorySearchPayload, MessageType, PlayTextToSpeechPayload, TranslatePayload, TranslatePayloadResult } from "./messages";
+import { promisifyMessage, sendMessage } from "./runtime";
+import { getActiveTab } from "./tabs";
 import { isTranslation, ITranslationResult } from "../vendors";
-
-export async function promisifyMessage<P = any, R = any>({ tabId, ...message }: Message<P> & { tabId?: number }): Promise<R> {
-  if (!message.id) {
-    message.id = Number(Date.now() * Math.random()).toString(16);
-  }
-  if (tabId) {
-    sendTabMessage(tabId, message);
-  }
-  else {
-    sendMessage(message);
-  }
-  return new Promise(resolve => {
-    var stopListen = onMessage<R>(({ type, payload, id }) => {
-      if (type === message.type && id === message.id) {
-        stopListen();
-        resolve(payload);
-      }
-    });
-  });
-}
 
 export async function getActiveTabText() {
   var activeTab = await getActiveTab();
@@ -58,5 +38,12 @@ export function ttsPlay(payload: PlayTextToSpeechPayload | ITranslationResult) {
 export function ttsStop() {
   sendMessage({
     type: MessageType.TTS_STOP
+  });
+}
+
+export async function searchInHistory(query: string) {
+  return await promisifyMessage<HistorySearchPayload>({
+    type: MessageType.SEARCH_IN_HISTORY,
+    payload: { query }
   });
 }

@@ -4,51 +4,12 @@ import { autorun } from "mobx";
 import { __i18n, createTab, getActiveTab, getManifest, MenuTranslateFavoritePayload, MenuTranslateVendorPayload, MessageType, sendTabMessage } from "../extension";
 import { favoritesStore, IFavorite } from "../components/input-translation/favorites.store";
 import { settingsStore } from "../components/settings/settings.store";
-import { getTranslators } from "../vendors";
-
-// handle menu clicks
-chrome.contextMenus.onClicked.addListener(
-  async (info: chrome.contextMenus.OnClickData) => {
-    var [type, vendor, from, to] = String(info.menuItemId).split("-");
-    var selectedText = info.selectionText;
-    var tab = await getActiveTab();
-
-    var enumType = Number(type);
-    if (enumType === MessageType.MENU_TRANSLATE_WITH_VENDOR) {
-      let payload: MenuTranslateVendorPayload = { vendor, selectedText };
-      sendTabMessage(tab.id, {
-        type: MessageType.MENU_TRANSLATE_WITH_VENDOR,
-        payload: payload
-      });
-    }
-    if (enumType === MessageType.MENU_TRANSLATE_FAVORITE) {
-      let payload: MenuTranslateFavoritePayload = { vendor, from, to, selectedText };
-      sendTabMessage(tab.id, {
-        type: MessageType.MENU_TRANSLATE_FAVORITE,
-        payload: payload
-      });
-    }
-    if (enumType === MessageType.MENU_TRANSLATE_FULL_PAGE) {
-      var { langTo } = settingsStore.data;
-      var translatePageUrl = "";
-      switch (vendor) {
-        case "google":
-          translatePageUrl = `https://translate.google.com/translate?tl=${langTo}&u=${tab.url}`;
-          break;
-        case "yandex":
-          translatePageUrl = `https://translate.yandex.com/translate?lang=${langTo}&url=${tab.url}`;
-          break;
-        case "bing":
-          translatePageUrl = `http://www.microsofttranslator.com/bv.aspx?to=${langTo}&a=${tab.url}`;
-          break;
-      }
-      createTab(translatePageUrl);
-    }
-  }
-);
+import { getTranslator, getTranslators } from "../vendors";
 
 // refresh context menu regarding the settings and favorites list
-autorun(() => {
+autorun(initMenus, { delay: 250 });
+
+export function initMenus() {
   var menuName = getManifest().name;
   var selectionContext = ['selection'];
   var pageContext = [...selectionContext, 'page'];
@@ -112,4 +73,39 @@ autorun(() => {
       });
     }
   }
-}, { delay: 250 });
+}
+
+// handle menu clicks
+chrome.contextMenus.onClicked.addListener(
+  async (info: chrome.contextMenus.OnClickData) => {
+    var [type, vendor, from, to] = String(info.menuItemId).split("-");
+    var selectedText = info.selectionText;
+    var tab = await getActiveTab();
+
+    switch (Number(type)) {
+      case MessageType.MENU_TRANSLATE_FULL_PAGE:
+        var { langTo } = settingsStore.data;
+        var url = getTranslator(vendor).getFullPageTranslationUrl(tab.url, langTo);
+        if (url) createTab(url);
+        break;
+
+      case MessageType.MENU_TRANSLATE_WITH_VENDOR:
+        sendTabMessage<MenuTranslateVendorPayload>(tab.id, {
+          type: MessageType.MENU_TRANSLATE_WITH_VENDOR,
+          payload: {
+            vendor, selectedText
+          }
+        });
+        break;
+
+      case MessageType.MENU_TRANSLATE_FAVORITE:
+        sendTabMessage<MenuTranslateFavoritePayload>(tab.id, {
+          type: MessageType.MENU_TRANSLATE_FAVORITE,
+          payload: {
+            vendor, from, to, selectedText
+          }
+        });
+        break;
+    }
+  }
+);

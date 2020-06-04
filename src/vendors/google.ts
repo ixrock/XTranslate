@@ -17,6 +17,10 @@ class Google extends Translator {
     super(require("./google.json"));
   }
 
+  getFullPageTranslationUrl(pageUrl: string, lang: string): string {
+    return `https://translate.google.com/translate?tl=${lang}&u=${pageUrl}`
+  }
+
   // try to use next available api-client id if google has blocked the traffic
   protected useNextApiClient() {
     var apiClient = this.apiClient.get();

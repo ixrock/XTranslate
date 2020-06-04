@@ -78,6 +78,10 @@ export abstract class Translator {
     this.langTo = langTo || langToFallback;
   }
 
+  getFullPageTranslationUrl(pageUrl: string, lang: string): string {
+    return null; // override
+  }
+
   protected parseJson<T = any>(res: Response): Promise<T> {
     var { status, statusText, url, ok } = res;
     var error: ITranslationError = { statusCode: status, statusText, url };

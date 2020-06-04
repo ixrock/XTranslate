@@ -12,6 +12,10 @@ class Yandex extends Translator {
     super(require('./yandex.json'));
   }
 
+  getFullPageTranslationUrl(pageUrl: string, lang: string): string {
+    return `https://translate.yandex.com/translate?lang=${lang}&url=${pageUrl}`
+  }
+
   canUseDictionary(langFrom: string, langTo: string) {
     return this.params.dictionary.indexOf([langFrom, langTo].join('-')) > -1;
   }

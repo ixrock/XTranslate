@@ -1,11 +1,11 @@
 import "./user-history.scss";
 
 import * as React from "react";
-import { groupBy } from "lodash";
-import { computed, observable, reaction } from "mobx";
-import { disposeOnUnmount, observer } from "mobx-react";
+import { debounce, groupBy } from "lodash";
+import { computed, observable } from "mobx";
+import { observer } from "mobx-react";
 import { __i18n } from "../../extension/i18n";
-import { ttsPlay } from "../../extension/actions";
+import { searchInHistory, ttsPlay } from "../../extension/actions";
 import { cssNames, download, prevDefault } from "../../utils";
 import { getTranslator, isRTL } from "../../vendors";
 import { Checkbox } from "../checkbox";
@@ -23,7 +23,11 @@ import { Icon } from "../icon";
 import { Tab } from "../tabs";
 
 enum HistoryTimeFrame {
-  HOUR, DAY, MONTH, YEAR, ALL,
+  HOUR,
+  DAY,
+  MONTH,
+  YEAR,
+  ALL,
 }
 
 @observer
@@ -34,27 +38,45 @@ export class UserHistory extends React.Component {
   @observable showSettings = false;
   @observable showSearch = false;
   @observable showImportExport = false;
+  @observable isSearching = false;
   @observable searchText = "";
-  @observable searchedText = "";
+  @observable searchResults: IHistoryStorageItem[] = [];
   @observable timeFrame = HistoryTimeFrame.DAY;
 
-  @disposeOnUnmount
-  searchChangeDisposer = reaction(() => this.searchText, text => {
-    this.searchedText = text; // update with delay to avoid freezing ui with big history data
-  }, { delay: 500 })
+  @computed get pageSize() {
+    return this.page * settingsStore.data.historyPageSize;
+  }
 
   @computed get items() {
-    if (this.searchedText) return userHistoryStore.searchItems(this.searchedText);
-    return userHistoryStore.data.slice(0, this.page * settingsStore.data.historyPageSize);
+    return this.searchText ? this.searchResults : userHistoryStore.data;
   }
 
   @computed get hasMore() {
-    if (this.searchedText) return false;
-    return userHistoryStore.data.length > this.items.length;
+    return this.items.length > this.pageSize;
   }
 
-  componentDidMount() {
-    userHistoryStore.load();
+  protected searchLazy = debounce(async (query: string) => {
+    if (this.searchText == query) {
+      this.searchResults = await searchInHistory(query);
+      this.isSearching = false;
+    }
+  }, 500);
+
+  protected onSearchChange = (query: string) => {
+    this.searchText = query.trim();
+    if (!this.searchText) {
+      this.isSearching = false;
+      this.searchResults = [];
+    }
+    else {
+      this.page = 1;
+      this.isSearching = true;
+      this.searchLazy(this.searchText);
+    }
+  }
+
+  async componentDidMount() {
+    await userHistoryStore.load();
   }
 
   toggleDetails(item: IHistoryStorageItem) {
@@ -70,7 +92,7 @@ export class UserHistory extends React.Component {
   exportHistory(type: "json" | "csv") {
     var date = new Date().toISOString().replace(/:/g, "_");
     var filename = `xtranslate-history-${date}.${type}`;
-    var items = this.searchText ? this.items : userHistoryStore.data;
+    var { items } = this;
     switch (type) {
       case "json":
         download.json(filename, items);
@@ -103,8 +125,7 @@ export class UserHistory extends React.Component {
   }
 
   clearItemsByTimeFrame = () => {
-    var { items, timeFrame } = this;
-    if (!items.length) return;
+    var { timeFrame } = this;
     var getTimeFrame = (timestamp: number, frame?: HistoryTimeFrame) => {
       var d = new Date(timestamp);
       var date = [d.getFullYear(), d.getMonth(), d.getDate()];
@@ -122,7 +143,7 @@ export class UserHistory extends React.Component {
   }
 
   renderHistory() {
-    var items = this.items.map(item => ({
+    var items = this.items.slice(0, this.pageSize).map(item => ({
       storageItem: item,
       historyItem: toHistoryItem(item),
     }));
@@ -217,7 +238,7 @@ export class UserHistory extends React.Component {
   }
 
   render() {
-    var { timeFrame, showSettings, showSearch, showImportExport, searchText, hasMore, clearItemsByTimeFrame } = this;
+    var { timeFrame, showSettings, showSearch, showImportExport, searchText, hasMore, clearItemsByTimeFrame, isSearching } = this;
     var { historyEnabled, historyAvoidDuplicates, historySaveWordsOnly, historyPageSize } = settingsStore.data;
     var { isLoading, isLoaded } = userHistoryStore;
     return (
@@ -273,7 +294,7 @@ export class UserHistory extends React.Component {
               autoFocus
               placeholder={__i18n("history_search_input_placeholder")}
               value={searchText}
-              onChange={v => this.searchText = v}
+              onChange={this.onSearchChange}
             />
           )}
           {showSettings && (
@@ -313,7 +334,9 @@ export class UserHistory extends React.Component {
             </div>
           )}
         </div>
-        {isLoading && <div className="loading"><Spinner/></div>}
+        {(isLoading || isSearching) && (
+          <div className="loading"><Spinner/></div>
+        )}
         {isLoaded && this.renderHistory()}
         {hasMore && (
           <div className="load-more flex center">

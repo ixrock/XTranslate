@@ -13,6 +13,10 @@ class Bing extends Translator {
     super(require("./bing.json"))
   }
 
+  getFullPageTranslationUrl(pageUrl: string, lang: string): string {
+    return `https://www.microsofttranslator.com/bv.aspx?to=${lang}&a=${pageUrl}`
+  }
+
   refreshCookie() {
     console.log('refreshing cookies..');
     return fetch(this.publicUrl, { credentials: 'include' });

@@ -114,11 +114,13 @@ export = () => {
           NODE_ENV: JSON.stringify(isProduction ? "production" : "development"),
         }
       }),
-      new CopyWebpackPlugin([
-        { from: "../manifest.json" },
-        { from: "../_locales", to: "_locales" },
-        { from: "../assets", to: "assets" },
-      ]),
+      new CopyWebpackPlugin({
+        patterns: [
+          { from: "../manifest.json" },
+          { from: "../_locales", to: "_locales" },
+          { from: "../assets", to: "assets" },
+        ]
+      }),
     ],
   };
 };
