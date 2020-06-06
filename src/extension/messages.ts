@@ -9,7 +9,6 @@ export enum MessageType {
   TTS_STOP,
   GET_SELECTED_TEXT,
   TRANSLATE_TEXT,
-  SEARCH_IN_HISTORY,
 }
 
 export interface Message<D = any> {
@@ -44,8 +43,4 @@ export interface TranslatePayload {
 export interface TranslatePayloadResult {
   data?: ITranslationResult;
   error?: ITranslationError;
-}
-
-export interface HistorySearchPayload {
-  query: string;
 }

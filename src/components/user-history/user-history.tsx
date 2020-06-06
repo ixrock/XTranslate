@@ -5,7 +5,7 @@ import { debounce, groupBy } from "lodash";
 import { computed, observable } from "mobx";
 import { observer } from "mobx-react";
 import { __i18n } from "../../extension/i18n";
-import { searchInHistory, ttsPlay } from "../../extension/actions";
+import { ttsPlay } from "../../extension/actions";
 import { cssNames, download, prevDefault } from "../../utils";
 import { getTranslator, isRTL } from "../../vendors";
 import { Checkbox } from "../checkbox";
@@ -16,7 +16,7 @@ import { Button } from "../button";
 import { Spinner } from "../spinner";
 import { settingsStore } from "../settings/settings.store";
 import { viewsManager } from "../app/views-manager";
-import { IHistoryItem, IHistoryStorageItem, toHistoryItem, userHistoryStore } from "./user-history.store";
+import { IHistoryItem, IHistoryItemId, IHistoryStorageItem, toStorageItem, userHistoryStore } from "./user-history.store";
 import { Notifications } from "../notifications";
 import { AppPageId } from "../../navigation";
 import { Icon } from "../icon";
@@ -32,61 +32,54 @@ enum HistoryTimeFrame {
 
 @observer
 export class UserHistory extends React.Component {
-  private showDetailsMap = new WeakMap<IHistoryStorageItem, boolean>();
+  private itemDetailsEnabled = observable.map<IHistoryItemId, boolean>();
+  public searchInput: Input;
 
   @observable page = 1;
   @observable showSettings = false;
   @observable showSearch = false;
   @observable showImportExport = false;
-  @observable isSearching = false;
+  @observable clearTimeFrame = HistoryTimeFrame.DAY;
   @observable searchText = "";
-  @observable searchResults: IHistoryStorageItem[] = [];
-  @observable timeFrame = HistoryTimeFrame.DAY;
 
   @computed get pageSize() {
     return this.page * settingsStore.data.historyPageSize;
   }
 
-  @computed get items() {
-    return this.searchText ? this.searchResults : userHistoryStore.data;
+  @computed get items(): IHistoryItem[] {
+    if (this.searchText) return this.searchedItems;
+    return userHistoryStore.items;
   }
 
-  @computed get hasMore() {
+  @computed get searchedItems() {
+    return userHistoryStore.searchItems(this.searchText);
+  }
+
+  @computed get groupedItems(): Record<string, IHistoryItem[]> {
+    var pageItems = this.items.slice(0, this.pageSize);
+    return groupBy(pageItems, item => new Date(item.date).toLocaleDateString());
+  }
+
+  @computed get hasMore(): boolean {
     return this.items.length > this.pageSize;
   }
 
-  protected searchLazy = debounce(async (query: string) => {
-    if (this.searchText == query) {
-      this.searchResults = await searchInHistory(query);
-      this.isSearching = false;
-    }
+  protected onSearchChange = debounce((searchQuery: string) => {
+    this.searchText = searchQuery.trim();
   }, 500);
-
-  protected onSearchChange = (query: string) => {
-    this.searchText = query.trim();
-    if (!this.searchText) {
-      this.isSearching = false;
-      this.searchResults = [];
-    }
-    else {
-      this.page = 1;
-      this.isSearching = true;
-      this.searchLazy(this.searchText);
-    }
-  }
 
   async componentDidMount() {
     await userHistoryStore.load();
   }
 
-  toggleDetails(item: IHistoryStorageItem) {
-    if (this.showDetailsMap.has(item)) {
-      this.showDetailsMap.delete(item);
+  toggleDetails(itemId: IHistoryItemId) {
+    var { itemDetailsEnabled: map } = this;
+    if (map.has(itemId)) {
+      map.delete(itemId);
     }
     else {
-      this.showDetailsMap.set(item, true)
+      map.set(itemId, true)
     }
-    this.forceUpdate();
   }
 
   exportHistory(type: "json" | "csv") {
@@ -95,14 +88,14 @@ export class UserHistory extends React.Component {
     var { items } = this;
     switch (type) {
       case "json":
-        download.json(filename, items);
+        download.json(filename, items.map(toStorageItem));
         break;
 
       case "csv":
         var csvRows = [
           ["Date", "Translator", "Language", "Text", "Translation", "Transcription", "Dictionary"]
         ];
-        items.map(toHistoryItem).forEach(item => {
+        items.forEach(item => {
           csvRows.push([
             new Date(item.date).toLocaleString(),
             getTranslator(item.vendor).title,
@@ -120,12 +113,12 @@ export class UserHistory extends React.Component {
     }
   }
 
-  clearItem = (item: IHistoryStorageItem) => {
-    userHistoryStore.clear(item);
+  clearById = (id?: IHistoryItemId) => {
+    userHistoryStore.clear(id);
   }
 
-  clearItemsByTimeFrame = () => {
-    var { timeFrame } = this;
+  clearByTimeFrame = () => {
+    var { clearTimeFrame } = this;
     var getTimeFrame = (timestamp: number, frame?: HistoryTimeFrame) => {
       var d = new Date(timestamp);
       var date = [d.getFullYear(), d.getMonth(), d.getDate()];
@@ -135,40 +128,34 @@ export class UserHistory extends React.Component {
       if (frame === HistoryTimeFrame.YEAR) date = date.slice(0, 1);
       return date.join("-");
     }
-    var clearAll = timeFrame === HistoryTimeFrame.ALL;
-    var latestItem = toHistoryItem(userHistoryStore.data[0]);
-    var latestFrame = getTimeFrame(latestItem.date, timeFrame);
-    var clearFilter = (item: IHistoryItem) => latestFrame === getTimeFrame(item.date, timeFrame);
+    var clearAll = clearTimeFrame === HistoryTimeFrame.ALL;
+    var latestItem = userHistoryStore.items[0];
+    var latestFrame = getTimeFrame(latestItem.date, clearTimeFrame);
+    var clearFilter = (item: IHistoryItem) => latestFrame === getTimeFrame(item.date, clearTimeFrame);
     userHistoryStore.clear(clearAll ? null : clearFilter);
   }
 
   renderHistory() {
-    var items = this.items.slice(0, this.pageSize).map(item => ({
-      storageItem: item,
-      historyItem: toHistoryItem(item),
-    }));
-    var groupedItems = groupBy(items, item => {
-      return new Date(item.historyItem.date).toDateString();
-    });
+    var { groupedItems, itemDetailsEnabled } = this;
     return (
       <ul className="history">
-        {Object.keys(groupedItems).map(day => {
+        {Object.keys(groupedItems).map(date => {
           return (
-            <React.Fragment key={day}>
-              <li className="history-date">{day}</li>
-              {groupedItems[day].map(({ historyItem, storageItem }, groupIndex) => {
-                var { date, vendor, from, to, text, translation, transcription } = historyItem;
-                var showDetails = this.showDetailsMap.has(storageItem);
+            <React.Fragment key={date}>
+              <li className="history-date">{date}</li>
+              {groupedItems[date].map(item => {
+                var { id: itemId, vendor, from, to, text, translation, transcription } = item;
+                var showDetails = itemDetailsEnabled.has(itemId);
                 var translatedWith = __i18n("translated_with", [
                   vendor[0].toUpperCase() + vendor.substr(1),
                   [from, to].join(" → ").toUpperCase()
                 ]).join("");
                 var rtlClass = { rtl: isRTL(to) };
                 return (
-                  <li key={groupIndex}
+                  <li key={itemId}
                       title={translatedWith}
                       className={cssNames("history-item", { open: showDetails })}
-                      onClick={() => this.toggleDetails(storageItem)}>
+                      onClick={() => this.toggleDetails(itemId)}>
                     <div className="main-info flex gaps">
                     <span className="text box grow flex gaps align-center">
                       {showDetails && (
@@ -184,10 +171,10 @@ export class UserHistory extends React.Component {
                       <Icon
                         className="remove-icon"
                         material="remove_circle_outline"
-                        onClick={prevDefault(() => this.clearItem(storageItem))}
+                        onClick={prevDefault(() => this.clearById(itemId))}
                       />
                     </div>
-                    {showDetails ? this.renderDetails(historyItem, rtlClass) : null}
+                    {showDetails ? this.renderDetails(item, rtlClass) : null}
                   </li>
                 );
               })}
@@ -238,7 +225,7 @@ export class UserHistory extends React.Component {
   }
 
   render() {
-    var { timeFrame, showSettings, showSearch, showImportExport, searchText, hasMore, clearItemsByTimeFrame, isSearching } = this;
+    var { clearTimeFrame, showSettings, showSearch, showImportExport, hasMore, clearByTimeFrame } = this;
     var { historyEnabled, historyAvoidDuplicates, historySaveWordsOnly, historyPageSize } = settingsStore.data;
     var { isLoading, isLoaded } = userHistoryStore;
     return (
@@ -293,14 +280,14 @@ export class UserHistory extends React.Component {
             <Input
               autoFocus
               placeholder={__i18n("history_search_input_placeholder")}
-              value={searchText}
               onChange={this.onSearchChange}
+              ref={elem => this.searchInput = elem}
             />
           )}
           {showSettings && (
             <div className="flex column gaps">
               <div className="flex gaps align-center">
-                <Select className="box grow" value={timeFrame} onChange={v => this.timeFrame = v}>
+                <Select className="box grow" value={clearTimeFrame} onChange={v => this.clearTimeFrame = v}>
                   <Option value={HistoryTimeFrame.HOUR} label={__i18n("history_clear_period_hour")}/>
                   <Option value={HistoryTimeFrame.DAY} label={__i18n("history_clear_period_day")}/>
                   <Option value={HistoryTimeFrame.MONTH} label={__i18n("history_clear_period_month")}/>
@@ -308,7 +295,7 @@ export class UserHistory extends React.Component {
                 </Select>
                 <Button
                   accent label={__i18n("history_button_clear")}
-                  onClick={clearItemsByTimeFrame}
+                  onClick={clearByTimeFrame}
                 />
               </div>
               <div className="box flex gaps auto align-center">
@@ -334,7 +321,7 @@ export class UserHistory extends React.Component {
             </div>
           )}
         </div>
-        {(isLoading || isSearching) && (
+        {isLoading && (
           <div className="loading"><Spinner/></div>
         )}
         {isLoaded && this.renderHistory()}

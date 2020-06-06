@@ -1,13 +1,14 @@
 // Extension's context menu
 
 import { autorun } from "mobx";
-import { __i18n, createTab, getActiveTab, getManifest, MenuTranslateFavoritePayload, MenuTranslateVendorPayload, MessageType, sendTabMessage } from "../extension";
+import { __i18n, createTab, getActiveTab, getManifest, MenuTranslateFavoritePayload, MenuTranslateVendorPayload, MessageType, onPermissionActivated, Permission, sendTabMessage } from "../extension";
 import { favoritesStore, IFavorite } from "../components/input-translation/favorites.store";
 import { settingsStore } from "../components/settings/settings.store";
 import { getTranslator, getTranslators } from "../vendors";
 
-// refresh context menu regarding the settings and favorites list
-autorun(initMenus, { delay: 250 });
+onPermissionActivated([Permission.ContextMenus], () => {
+  return autorun(initMenus, { delay: 250 });
+});
 
 export function initMenus() {
   var menuName = getManifest().name;
@@ -16,6 +17,7 @@ export function initMenus() {
   var translators = getTranslators();
 
   chrome.contextMenus.removeAll();
+  chrome.contextMenus.onClicked.addListener(onClickMenuItem);
 
   if (settingsStore.data.showInContextMenu) {
     var topMenu = chrome.contextMenus.create({
@@ -75,37 +77,36 @@ export function initMenus() {
   }
 }
 
-// handle menu clicks
-chrome.contextMenus.onClicked.addListener(
-  async (info: chrome.contextMenus.OnClickData) => {
-    var [type, vendor, from, to] = String(info.menuItemId).split("-");
-    var selectedText = info.selectionText;
-    var tab = await getActiveTab();
+// Handle menu clicks from web content pages
+async function onClickMenuItem(info: chrome.contextMenus.OnClickData) {
+  var { selectionText: selectedText, frameUrl, pageUrl = frameUrl } = info;
+  var [type, vendor, from, to] = String(info.menuItemId).split("-");
 
-    switch (Number(type)) {
-      case MessageType.MENU_TRANSLATE_FULL_PAGE:
-        var { langTo } = settingsStore.data;
-        var url = getTranslator(vendor).getFullPageTranslationUrl(tab.url, langTo);
-        if (url) createTab(url);
-        break;
+  switch (Number(type)) {
+    case MessageType.MENU_TRANSLATE_FULL_PAGE:
+      var { langTo } = settingsStore.data;
+      var url = getTranslator(vendor).getFullPageTranslationUrl(pageUrl, langTo);
+      if (url) createTab(url);
+      break;
 
-      case MessageType.MENU_TRANSLATE_WITH_VENDOR:
-        sendTabMessage<MenuTranslateVendorPayload>(tab.id, {
-          type: MessageType.MENU_TRANSLATE_WITH_VENDOR,
-          payload: {
-            vendor, selectedText
-          }
-        });
-        break;
+    case MessageType.MENU_TRANSLATE_WITH_VENDOR:
+      var tab = await getActiveTab();
+      sendTabMessage<MenuTranslateVendorPayload>(tab.id, {
+        type: MessageType.MENU_TRANSLATE_WITH_VENDOR,
+        payload: {
+          vendor, selectedText,
+        }
+      });
+      break;
 
-      case MessageType.MENU_TRANSLATE_FAVORITE:
-        sendTabMessage<MenuTranslateFavoritePayload>(tab.id, {
-          type: MessageType.MENU_TRANSLATE_FAVORITE,
-          payload: {
-            vendor, from, to, selectedText
-          }
-        });
-        break;
-    }
+    case MessageType.MENU_TRANSLATE_FAVORITE:
+      var tab = await getActiveTab();
+      sendTabMessage<MenuTranslateFavoritePayload>(tab.id, {
+        type: MessageType.MENU_TRANSLATE_FAVORITE,
+        payload: {
+          vendor, from, to, selectedText
+        }
+      });
+      break;
   }
-);
+}

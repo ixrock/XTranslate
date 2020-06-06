@@ -4,7 +4,7 @@ import * as React from "react";
 import { observer } from "mobx-react";
 import { observable } from "mobx";
 import { getTranslators } from "../../vendors";
-import { __i18n, createTab } from "../../extension";
+import { __i18n, createTab, Permission, requestPermissions } from "../../extension";
 import { autobind, getHotkey, parseHotkey, prevDefault } from "../../utils";
 import { XTranslateIcon } from "../../user-script/xtranslate-icon";
 import { SelectLanguage } from "../select-language";
@@ -43,10 +43,15 @@ export class Settings extends React.Component {
     }
   }
 
-  renderPopupPreviewTooltip(): Partial<TooltipProps> {
-    return {
-      style: { background: "none" },
-      children: <Popup preview/>
+  showInContextMenuChanged = async (enabled: boolean) => {
+    if (!enabled) {
+      settingsStore.data.showInContextMenu = false;
+    }
+    else {
+      var allowed = await requestPermissions([Permission.ContextMenus]);
+      if (allowed) {
+        settingsStore.data.showInContextMenu = true;
+      }
     }
   }
 
@@ -54,6 +59,10 @@ export class Settings extends React.Component {
     var { appWindowCmd } = this;
     var settings = settingsStore.data;
     var hotKey = parseHotkey(settings.hotkey);
+    var popupTooltip: Partial<TooltipProps> = {
+      style: { background: "none" },
+      children: <Popup preview/>
+    };
     return (
       <div className="Settings flex column gaps">
         <div className="common-settings flex gaps auto">
@@ -74,7 +83,7 @@ export class Settings extends React.Component {
             <Checkbox
               label={__i18n("show_context_menu")}
               checked={settings.showInContextMenu}
-              onChange={v => settings.showInContextMenu = v}
+              onChange={this.showInContextMenuChanged}
             />
             <Checkbox
               label={__i18n("display_icon_near_selection")}
@@ -114,25 +123,25 @@ export class Settings extends React.Component {
               label={__i18n("show_tts_icon_inside_popup")}
               checked={settings.showTextToSpeechIcon}
               onChange={v => settings.showTextToSpeechIcon = v}
-              tooltip={this.renderPopupPreviewTooltip()}
+              tooltip={popupTooltip}
             />
             <Checkbox
               label={__i18n("show_next_vendor_icon_in_popup")}
               checked={settings.showNextVendorIcon}
               onChange={v => settings.showNextVendorIcon = v}
-              tooltip={this.renderPopupPreviewTooltip()}
+              tooltip={popupTooltip}
             />
             <Checkbox
               label={__i18n("show_copy_translation_icon")}
               checked={settings.showCopyTranslationIcon}
               onChange={v => settings.showCopyTranslationIcon = v}
-              tooltip={this.renderPopupPreviewTooltip()}
+              tooltip={popupTooltip}
             />
             <Checkbox
               label={__i18n("show_detected_language_block")}
               checked={settings.showTranslatedFrom}
               onChange={v => settings.showTranslatedFrom = v}
-              tooltip={this.renderPopupPreviewTooltip()}
+              tooltip={popupTooltip}
             />
           </div>
           <div className="checkbox-group">

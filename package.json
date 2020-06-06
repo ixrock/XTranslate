@@ -21,6 +21,7 @@
   "dependencies": {
     "@types/chrome": "^0.0.114",
     "@types/copy-webpack-plugin": "^6.0.0",
+    "@types/crypto-js": "^3.1.47",
     "@types/hoist-non-react-statics": "^3.3.1",
     "@types/html-webpack-plugin": "^3.2.3",
     "@types/lodash": "^4.14.155",
@@ -33,6 +34,7 @@
     "ace-builds": "^1.4.11",
     "copy-webpack-plugin": "^6.0.2",
     "crx-hotreload": "^1.0.4",
+    "crypto-js": "^4.0.0",
     "css-loader": "^3.5.3",
     "file-loader": "^6.0.0",
     "flex.box": "^3.4.4",

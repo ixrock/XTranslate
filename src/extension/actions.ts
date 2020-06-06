@@ -1,4 +1,4 @@
-import { HistorySearchPayload, MessageType, PlayTextToSpeechPayload, TranslatePayload, TranslatePayloadResult } from "./messages";
+import { MessageType, PlayTextToSpeechPayload, TranslatePayload, TranslatePayloadResult } from "./messages";
 import { promisifyMessage, sendMessage } from "./runtime";
 import { getActiveTab } from "./tabs";
 import { isTranslation, ITranslationResult } from "../vendors";
@@ -38,12 +38,5 @@ export function ttsPlay(payload: PlayTextToSpeechPayload | ITranslationResult) {
 export function ttsStop() {
   sendMessage({
     type: MessageType.TTS_STOP
-  });
-}
-
-export async function searchInHistory(query: string) {
-  return await promisifyMessage<HistorySearchPayload>({
-    type: MessageType.SEARCH_IN_HISTORY,
-    payload: { query }
   });
 }

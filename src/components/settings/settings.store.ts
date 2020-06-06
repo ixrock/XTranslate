@@ -17,7 +17,7 @@ export const defaultSettings = {
   showNextVendorIcon: true,
   showCopyTranslationIcon: true,
   useDarkTheme: false,
-  showInContextMenu: true,
+  showInContextMenu: false,
   showIconNearSelection: true,
   showPopupAfterSelection: false,
   showPopupOnClickBySelection: false,

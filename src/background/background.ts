@@ -2,7 +2,7 @@
 
 // import "crx-hotreload"
 import "./contextMenu"
-import { HistorySearchPayload, Message, MessageType, onMessage, PlayTextToSpeechPayload, TranslatePayload, TranslatePayloadResult } from '../extension'
+import { Message, MessageType, onMessage, PlayTextToSpeechPayload, TranslatePayload, TranslatePayloadResult } from '../extension'
 import { getTranslator, ITranslationResult, stopPlayingAll } from "../vendors";
 import { rateLastTimestamp } from "../common";
 import { settingsStore } from "../components/settings/settings.store";
@@ -39,13 +39,6 @@ onMessage(async (message: Message, sender, sendResponse) => {
 
     case MessageType.TTS_STOP:
       stopPlayingAll();
-      break;
-
-    case MessageType.SEARCH_IN_HISTORY:
-      await userHistoryStore.load();
-      var { query } = payload as HistorySearchPayload;
-      var items = userHistoryStore.searchItems(query);
-      sendResponse(items);
       break;
   }
 });

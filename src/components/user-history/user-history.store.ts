@@ -1,13 +1,15 @@
-import { action } from "mobx";
+import md5 from "crypto-js/md5";
+import { action, computed } from "mobx";
 import { orderBy, uniqBy } from "lodash";
 import { autobind } from "../../utils/autobind";
 import { ITranslationResult } from "../../vendors/translator";
 import { Store } from "../../store";
 import { settingsStore } from "../settings/settings.store";
 
-// todo: optimize store, array -> map/object with history_item_id
+export type IHistoryItemId = string;
 
 export interface IHistoryItem {
+  id: IHistoryItemId;
   date: number
   vendor: string
   from: string
@@ -64,6 +66,10 @@ export class UserHistoryStore extends Store<IHistoryStorageItem[]> {
     });
   }
 
+  @computed get items() {
+    return this.data.map(toHistoryItem); // convert data to system format
+  }
+
   @action
   async importItems(items: IHistoryStorageItem[]): Promise<number> {
     if (!this.isLoaded) {
@@ -94,10 +100,11 @@ export class UserHistoryStore extends Store<IHistoryStorageItem[]> {
     if (historyAvoidDuplicates) {
       data = this.removeDuplicates(data);
     }
-    this.update(data);
+    this.data = data;
     return data.length - countBeforeCleanUp;
   }
 
+  @action
   async saveTranslation(translation: ITranslationResult) {
     var { historySaveWordsOnly, historyAvoidDuplicates } = settingsStore.data;
     var { langFrom, langDetected } = translation;
@@ -118,7 +125,7 @@ export class UserHistoryStore extends Store<IHistoryStorageItem[]> {
     if (historyAvoidDuplicates) {
       data = this.removeDuplicates(data);
     }
-    this.update(data);
+    this.data = data;
   }
 
   protected removeDuplicates(items: IHistoryStorageItem[]) {
@@ -128,11 +135,10 @@ export class UserHistoryStore extends Store<IHistoryStorageItem[]> {
     })
   }
 
-  searchItems(query = ""): IHistoryStorageItem[] {
+  searchItems(query = ""): IHistoryItem[] {
     query = query.trim().toLowerCase();
     if (!query) return [];
-    return this.data.filter(item => {
-      var { text, translation } = toHistoryItem(item);
+    return this.items.filter(({ text, translation }) => {
       return (
         text.toLowerCase().includes(query) ||
         translation.toLowerCase().includes(query)
@@ -140,17 +146,21 @@ export class UserHistoryStore extends Store<IHistoryStorageItem[]> {
     });
   }
 
-  clear(itemOrFilter?: IHistoryStorageItem | ((item: IHistoryItem) => boolean)) {
-    if (!itemOrFilter) {
-      this.reset();
+  @action
+  clear(matcher?: IHistoryItemId | ((item: IHistoryItem) => boolean)) {
+    if (!matcher) {
+      this.reset(); // all
     }
     else {
-      if (typeof itemOrFilter === "function") {
-        this.data = this.data.filter(item => !itemOrFilter(toHistoryItem(item)));
+      if (typeof matcher === "function") {
+        this.data = this.data.filter(storageItem => !matcher(toHistoryItem(storageItem)));
       }
       else {
-        var index = this.data.findIndex(item => item === itemOrFilter);
-        this.data.splice(index, 1);
+        var itemId = matcher; // remove single item otherwise
+        var index = this.items.findIndex(item => item.id == itemId);
+        if (index > -1) {
+          this.data.splice(index, 1);
+        }
       }
     }
   }
@@ -190,10 +200,15 @@ export function toStorageItem(data: ITranslationResult | IHistoryItem): IHistory
   }
 }
 
+export function getHistoryItemId(data: { date, vendor, from, to, text }): IHistoryItemId {
+  return md5(Object.values(data).join("-")).toString(); // dynamic id
+}
+
 export function toHistoryItem(data: IHistoryStorageItem): IHistoryItem {
   if (Array.isArray(data)) {
     var [date, vendor, from, to, text, translation, transcription, dict] = data;
     return {
+      id: getHistoryItemId({ text, to, from, vendor, date }),
       date, vendor, from, to, text, translation, transcription,
       dictionary: dict.map(dict => ({
         wordType: dict[0],
@@ -204,6 +219,7 @@ export function toHistoryItem(data: IHistoryStorageItem): IHistoryItem {
   else {
     var { date, vendor, from, to, text, tr, ts, dict: dictionary = [] } = data;
     return {
+      id: getHistoryItemId(data),
       date, vendor, from, to, text,
       translation: tr,
       transcription: ts,
