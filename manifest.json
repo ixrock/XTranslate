@@ -1,7 +1,7 @@
 {
   "name": "XTranslate",
   "description": "__MSG_description__",
-  "version": "2.51.0",
+  "version": "2.51.1",
   "manifest_version": 2,
   "default_locale": "en",
   "minimum_chrome_version": "53",
@@ -52,7 +52,6 @@
     "unlimitedStorage"
   ],
   "optional_permissions": [
-    "contextMenus",
-    "tabs"
+    "contextMenus"
   ]
 }
