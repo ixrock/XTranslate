@@ -35,8 +35,6 @@ export interface IThemeFont {
 }
 
 export class ThemeStore extends Store<IThemeStoreData> {
-  private loadedFonts = new Set<string>();
-
   public iconsFont: IThemeFont = {
     familyName: "Material Icons",
     fileName: "MaterialIcons-Regular.ttf",
@@ -67,9 +65,14 @@ export class ThemeStore extends Store<IThemeStoreData> {
   }
 
   protected async initFonts() {
-    this.loadFont(this.iconsFont);
+    await this.loadFont(this.iconsFont);
     await when(() => this.isLoaded);
     autorun(() => this.loadFont(this.data.fontFamily));
+  }
+
+  protected isFontLoaded(fontFamily: string) {
+    var pageFonts = Array.from(document.fonts);
+    return pageFonts.some(font => font.family === fontFamily);
   }
 
   getFont(font: string | IThemeFont) {
@@ -86,13 +89,12 @@ export class ThemeStore extends Store<IThemeStoreData> {
 
   async loadFont(font: string | IThemeFont) {
     var { fileName, familyName } = this.getFont(font);
-    if (!fileName || this.loadedFonts.has(familyName)) {
+    if (!fileName || this.isFontLoaded(familyName)) {
       return;
     }
     var fontFace = new FontFace(familyName, `url(${this.getFontUrl(font)})`);
     await fontFace.load();
     document.fonts.add(fontFace);
-    this.loadedFonts.add(familyName);
   }
 }
 
