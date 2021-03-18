@@ -1,46 +1,30 @@
 import { createObservableHistory } from "mobx-observable-history";
 import { createTab, getManifest, getURL } from "./extension";
+import { PageId } from "./components/app/views-manager";
+
+export interface PageParams {
+  page?: PageId;
+}
 
 export const navigation = createObservableHistory();
+export const defaultPageId: PageId = "settings";
 
-export interface AppRouteParams {
-  page?: AppPageId;
+export function navigate(params: PageParams = {}) {
+  const absPageUrl = getURL(getManifest().options_page); // starts with chrome://%extension-id/options.html
+  const isLocalRoute = document.location.href.startsWith(absPageUrl);
+
+  const urlParams = navigation.searchParams
+    .copyWith(params)
+    .toString({ withPrefix: true });
+
+  if (isLocalRoute) {
+    navigation.push(urlParams);
+  } else {
+    return createTab(absPageUrl + urlParams);
+  }
 }
 
-export enum AppPageId {
-  settings = "settings",
-  theme = "theme",
-  popup = "popup",
-  history = "history",
-}
-
-export const defaultRouteParams: AppRouteParams = {
-  page: AppPageId.settings,
-}
-
-export function navigate(params: AppRouteParams) {
-  navigation.merge({
-    search: buildURL(params)
-  });
-}
-
-export function buildURL(params: AppRouteParams = {}, { absPath = false } = {}) {
-  var pageUrl = absPath ? getURL(getManifest().options_page) : "";
-  pageUrl += "?" + new URLSearchParams(Object.entries(params));
-  return pageUrl;
-}
-
-export function getRouteParams({ withDefaults = true } = {}): AppRouteParams {
-  return Object.entries(defaultRouteParams).reduce((routeParams, [param, value]) => {
-    routeParams[param] = navigation.searchParams.get(param);
-    if (withDefaults && !routeParams[param]) {
-      routeParams[param] = value;
-    }
-    return routeParams
-  }, {})
-}
-
-export async function openAppTab(page = defaultRouteParams.page) {
-  var url = buildURL({ page }, { absPath: true });
-  await createTab(url);
+export function getCurrentPageId(): PageId {
+  const urlParam = navigation.searchParams.get("page") as PageId;
+  return urlParam ?? defaultPageId;
 }

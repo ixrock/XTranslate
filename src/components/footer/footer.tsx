@@ -3,7 +3,7 @@ import './footer.scss'
 import * as React from 'react';
 import { autobind, prevDefault } from '../../utils'
 import { __i18n, getManifest } from '../../extension'
-import { getAppStoreUrl } from "../../common";
+import { extensionUrl } from "../../common";
 
 interface ShareIcon {
   title: string
@@ -12,7 +12,6 @@ interface ShareIcon {
 }
 
 export class Footer extends React.Component {
-  private appUrl = getAppStoreUrl();
   private manifest = getManifest();
   private shareTags = ["chrome", "extension", "xtranslate"];
 
@@ -20,19 +19,19 @@ export class Footer extends React.Component {
     {
       title: "VK.com",
       icon: require('../icon/vk.svg'),
-      url: `http://vkontakte.ru/share.php?url=${this.appUrl}`,
+      url: `http://vkontakte.ru/share.php?url=${extensionUrl}`,
     },
     {
       title: "Facebook",
       icon: require('../icon/facebook.svg'),
-      url: `https://www.facebook.com/sharer/sharer.php?u=${this.appUrl}`,
+      url: `https://www.facebook.com/sharer/sharer.php?u=${extensionUrl}`,
     },
     {
       title: "Twitter",
       icon: require('../icon/twitter.svg'),
       url: [
         `https://twitter.com/intent/tweet?source=webclient`,
-        `url=${this.appUrl}`,
+        `url=${extensionUrl}`,
         `text=${[this.manifest.name, __i18n("short_description")].join(' - ')}`,
         `hashtags=${this.shareTags.join(',')}`
       ].join("&")

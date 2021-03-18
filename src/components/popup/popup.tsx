@@ -6,8 +6,8 @@ import { __i18n } from "../../extension";
 import { cssNames, noop, prevDefault, toCssColor } from "../../utils";
 import { getNextTranslator, getTranslator, isRTL, ITranslationError, ITranslationResult } from "../../vendors";
 import { Icon } from "../icon";
-import { defaultSettings, settingsStore } from "../settings/settings.store";
-import { themeStore } from "../theme-manager/theme.store";
+import { settingsStore, settingsStorage } from "../settings/settings.storage";
+import { themeStore } from "../theme-manager/theme.storage";
 
 interface Props extends React.HTMLProps<any> {
   preview?: boolean;
@@ -28,7 +28,7 @@ export class Popup extends React.Component<Props> {
   };
 
   static demoTranslation: ITranslationResult = {
-    vendor: defaultSettings.vendor,
+    vendor: settingsStorage.defaultValue.vendor,
     langFrom: "en",
     langTo: navigator.language.split("-")[0],
     translation: __i18n("popup_demo_translation"),

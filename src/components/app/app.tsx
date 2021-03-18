@@ -3,36 +3,37 @@ import './app.scss'
 
 import * as React from 'react';
 import { render } from 'react-dom'
-import { reaction, when } from "mobx";
+import { reaction } from "mobx";
 import { observer } from "mobx-react";
 import { cssNames } from "../../utils/cssNames";
 import { __i18n, getManifest } from "../../extension";
-import { settingsStore } from '../settings/settings.store'
-import { themeStore } from "../theme-manager/theme.store";
+import { settingsStore } from '../settings/settings.storage'
+import { themeStore } from "../theme-manager/theme.storage";
 import { Footer } from '../footer'
 import { Spinner } from "../spinner";
 import { Tab, Tabs } from "../tabs";
 import { Icon } from "../icon";
 import { AppRateDialog } from "./app-rate.dialog";
 import { Notifications } from "../notifications";
-import { AppPageId, getRouteParams, navigate } from "../../navigation";
-import { viewsManager } from "./views-manager";
+import { getCurrentPageId, navigate } from "../../navigation";
+import { PageId, viewsManager } from "./views-manager";
 
 @observer
 export class App extends React.Component {
-  public manifest = getManifest();
+  static manifest = getManifest();
+  static pages: PageId[] = ["settings", "theme", "popup", "history"];
 
   static async init() {
     var appRootElem = document.getElementById('app');
     render(<Spinner center/>, appRootElem); // show loading indicator
-    await when(() => settingsStore.isLoaded && themeStore.isLoaded); // wait stores initialization
+    await Promise.allSettled([settingsStore.ready, themeStore.ready]); // wait stores initialization
     render(<App/>, appRootElem);
   }
 
   componentDidMount() {
     this.setUpTheme();
     reaction(() => settingsStore.data.useDarkTheme, this.setUpTheme);
-    document.title = this.manifest.name;
+    document.title = App.manifest.name;
   }
 
   setUpTheme = () => {
@@ -51,16 +52,16 @@ export class App extends React.Component {
     });
   }
 
-  onTabsChange = (page: AppPageId) => {
-    navigate({ page });
+  onTabsChange = async (page: PageId) => {
+    await navigate({ page });
     window.scrollTo(0, 0);
   }
 
   render() {
-    var { name, version } = this.manifest;
-    var { useDarkTheme } = settingsStore.data;
-    var { page: pageId } = getRouteParams();
-    var { Page: TabContent } = viewsManager.getView(pageId);
+    const { name, version } = App.manifest;
+    const { useDarkTheme } = settingsStore.data;
+    const pageId = getCurrentPageId();
+    const { Page: TabContent } = viewsManager.getPageById(pageId);
     return (
       <div className="App">
         <header className="flex gaps">
@@ -80,8 +81,8 @@ export class App extends React.Component {
           />
         </header>
         <Tabs center value={pageId} onChange={this.onTabsChange}>
-          {Object.values(AppPageId).map(pageId => {
-            var { Tab } = viewsManager.getView(pageId);
+          {App.pages.map(pageId => {
+            var { Tab } = viewsManager.getPageById(pageId);
             if (Tab) return <Tab key={pageId} value={pageId}/>
           })}
         </Tabs>

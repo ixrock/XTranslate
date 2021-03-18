@@ -1,25 +1,25 @@
-import React from "react";
-import { TabProps } from "../tabs";
-import { AppPageId } from "../../navigation";
+import type { TabProps } from "../tabs";
+import type React from "react";
+import { observable } from "mobx";
 
-export interface AppView {
-  Tab?: React.ComponentType<TabProps>,
-  Page?: React.ComponentType<any>,
+export type PageId = "settings" | "theme" | "popup" | "history";
+
+export interface PageComponents {
+  Tab?: React.ComponentType<TabProps>;
+  Page?: React.ComponentType<any>;
 }
 
-const tabs = new Map<string, AppView["Tab"]>();
-const pages = new Map<string, AppView["Page"]>();
+const viewsRegistry = observable.map<PageId, PageComponents>();
 
 export const viewsManager = {
-  getView(pageId: AppPageId): AppView {
-    return {
-      Tab: tabs.get(pageId),
-      Page: pages.get(pageId),
-    }
+  getPageById(pageId: PageId): PageComponents {
+    return viewsRegistry.get(pageId) ?? {};
   },
 
-  registerView(pageId: AppPageId, view: AppView) {
-    tabs.set(pageId, view.Tab);
-    pages.set(pageId, view.Page);
+  registerPages(pageId: PageId, views: PageComponents) {
+    viewsRegistry.set(pageId, {
+      ...(viewsRegistry.get(pageId) ?? {}),
+      ...views,
+    });
   }
 }

@@ -1,5 +1,6 @@
 import { ITranslationError, ITranslationResult, Translator } from "./translator";
-import { createStorage, delay, encodeQuery } from "../utils";
+import { delay, encodeQuery } from "../utils";
+import { createStorage } from "../storages";
 
 class Google extends Translator {
   public name = 'google';
@@ -24,8 +25,8 @@ class Google extends Translator {
   // try to use next available api-client id if google has blocked the traffic
   protected useNextApiClient() {
     var apiClient = this.apiClient.get();
-    var index = this.apiClients.indexOf(apiClient);
-    var nextApiClient = this.apiClients[index + 1] || this.apiClients[0];
+    var index = this.apiClients.findIndex(client => client === apiClient);
+    var nextApiClient = this.apiClients[index + 1] ?? this.apiClients[0];
     this.apiClient.set(nextApiClient);
   }
 

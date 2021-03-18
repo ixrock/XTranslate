@@ -6,18 +6,21 @@ import { disposeOnUnmount, observer } from "mobx-react";
 import { getTranslator, getTranslators, isRTL, ITranslationError, ITranslationResult } from "../../vendors";
 import { __i18n } from "../../extension";
 import { getActiveTabText, translateText, ttsPlay, ttsStop } from "../../extension/actions";
-import { createStorage, cssNames, isMac } from "../../utils";
+import { cssNames, isMac } from "../../utils";
 import { SelectLanguage } from "../select-language";
 import { Input } from "../input";
 import { Option, OptionsGroup, Select } from "../select";
 import { Spinner } from "../spinner";
-import { settingsStore } from "../settings/settings.store";
-import { favoritesStore } from "./favorites.store";
+import { settingsStore } from "../settings/settings.storage";
+import { favoritesStore } from "./favorites.storage";
 import { viewsManager } from "../app/views-manager";
+import { Tab } from "../tabs";
 import { Icon } from "../icon";
 import { Tooltip } from "../tooltip";
-import { AppPageId, navigate } from "../../navigation";
-import { Tab } from "../tabs";
+import { navigate } from "../../navigation";
+import { createStorage } from "../../storages";
+
+export const lastInputText = createStorage("last_input_text", "");
 
 interface TranslateParams {
   vendor: string;
@@ -27,13 +30,12 @@ interface TranslateParams {
 
 @observer
 export class InputTranslation extends React.Component {
-  public lastText = createStorage("last_text", "");
   public input: Input;
   public loadingTimer;
   public translateTimer;
 
   @observable isLoading = false;
-  @observable text = settingsStore.data.rememberLastText ? this.lastText.get() : "";
+  @observable text = settingsStore.data.rememberLastText ? lastInputText.get() : "";
   @observable translation: ITranslationResult;
   @observable error: ITranslationError;
   @observable favorite: TranslateParams = null;
@@ -139,7 +141,7 @@ export class InputTranslation extends React.Component {
     this.text = text;
     var { rememberLastText, textInputTranslateDelayMs } = settingsStore.data;
     if (rememberLastText) {
-      this.lastText.set(text);
+      lastInputText.set(text);
     }
     if (!text) {
       ttsStop();
@@ -363,7 +365,7 @@ export class InputTranslation extends React.Component {
               {__i18n("text_input_translation_hint", [
                 `${isMac ? "Cmd" : "Ctrl"}+Enter`,
                 delayMs => (
-                  <a onClick={() => navigate({ page: AppPageId.settings })} key="delay">
+                  <a onClick={() => navigate({ page: "settings" })} key="delay">
                     {textInputTranslateDelayMs}{delayMs}
                   </a>
                 )
@@ -377,7 +379,7 @@ export class InputTranslation extends React.Component {
   }
 }
 
-viewsManager.registerView(AppPageId.popup, {
+viewsManager.registerPages("popup", {
   Tab: props => <Tab {...props} label={__i18n("tab_text_input")} icon="translate"/>,
   Page: InputTranslation,
 });

@@ -1,24 +1,34 @@
 import "./app-rate.dialog.scss";
 
 import React from "react";
-import { observable } from "mobx";
+import { computed, observable } from "mobx";
 import { observer } from "mobx-react";
 import { Dialog } from "../dialog";
 import { Button } from "../button";
 import { Icon } from "../icon";
 import { __i18n } from "../../extension";
-import { getAppStoreUrl, rateButtonClicked, rateLastTimestamp } from "../../common";
+import { createStorage } from "../../storages";
+import { extensionUrl } from "../../common";
+
+export const rateButtonClicked = createStorage("rate_btn_click", false);
+export const rateLastTimestamp = createStorage("rate_delay_last", 0);
 
 @observer
 export class AppRateDialog extends React.Component {
   @observable isOpen = false;
 
-  constructor(props) {
-    super(props);
-    this.visibilityCheck();
+  @computed get isReady(): boolean {
+    return Boolean(rateButtonClicked.initialized && rateLastTimestamp.initialized);
   }
 
-  visibilityCheck = () => {
+  async componentDidMount() {
+    await this.visibilityCheck();
+  }
+
+  async visibilityCheck() {
+    await rateButtonClicked.whenReady;
+    await rateLastTimestamp.whenReady;
+
     var isRated = rateButtonClicked.get();
     var delayLastTime = rateLastTimestamp.get();
     var delayDuration = 1000 * 60 * 60 * 24 * 7; // 1 week
@@ -27,7 +37,7 @@ export class AppRateDialog extends React.Component {
   }
 
   rateApp = () => {
-    window.open(getAppStoreUrl());
+    window.open(extensionUrl);
     rateButtonClicked.set(true);
     this.close();
   }
@@ -42,6 +52,9 @@ export class AppRateDialog extends React.Component {
   }
 
   render() {
+    if (!this.isReady) {
+      return null;
+    }
     return (
       <Dialog pinned className="AppRateDialog" isOpen={this.isOpen}>
         <h4>{__i18n("rate_app_info1")}</h4>

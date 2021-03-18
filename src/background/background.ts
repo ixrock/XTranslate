@@ -1,19 +1,24 @@
-//-- Background page script
+//-- Background page (main process)
 
 // import "crx-hotreload"
 import "./contextMenu"
 import { Message, MessageType, onMessage, PlayTextToSpeechPayload, TranslatePayload, TranslatePayloadResult } from '../extension'
 import { getTranslator, ITranslationResult, stopPlayingAll } from "../vendors";
-import { rateLastTimestamp } from "../common";
-import { settingsStore } from "../components/settings/settings.store";
-import { userHistoryStore } from "../components/user-history/user-history.store";
-import { AppPageId, openAppTab } from "../navigation";
+import { rateLastTimestamp } from "../components/app/app-rate.dialog";
+import { settingsStore } from "../components/settings/settings.storage";
+import { historyStore } from "../components/user-history/history.storage";
+import { defaultPageId, navigate } from "../navigation";
+
+// FIXME: google api broken
+// FIXME: check stores data sync (bgc <-> options-page <-> user-script)
+// FIXME: switching translation vendor after invalid response from current is failed
+// TODO: group same input translations with different vendors
 
 // open settings on install
 chrome.runtime.onInstalled.addListener(function (evt) {
   if (evt.reason === "install") {
     rateLastTimestamp.set(Date.now());
-    openAppTab(AppPageId.settings);
+    navigate({ page: defaultPageId }).catch(Function);
   }
 });
 
@@ -55,6 +60,6 @@ function onTranslationReady(translation: ITranslationResult) {
     playText({ vendor, text: originalText, lang: langDetected })
   }
   if (historyEnabled) {
-    userHistoryStore.saveTranslation(translation);
+    historyStore.saveTranslation(translation);
   }
 }

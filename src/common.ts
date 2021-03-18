@@ -1,10 +1,8 @@
-import { createStorage, isEdge } from "./utils";
+// Common variables for any process: background page (main), options page (renderer), user-script, etc.
 
-export const isProduction = process.env.NODE_ENV == "production";
-export const rateButtonClicked = createStorage("rate_btn_click", false);
-export const rateLastTimestamp = createStorage("rate_delay_last", 0);
+export const isProduction = process.env.NODE_ENV === "production" && process.env.DEBUG !== "true";
 
-const chromeStoreURL = 'https://chrome.google.com/webstore/detail/gfgpkepllngchpmcippidfhmbhlljhoo';
-const edgeAddonsURL = 'https://microsoftedge.microsoft.com/addons/detail/cinfaflgbaachkaamaeglolofeahelkd';
-
-export const getAppStoreUrl = () => isEdge ? edgeAddonsURL : chromeStoreURL;
+// Extension's public store url for different browsers besides Chrome, e.g. Brave, MS Edge, etc.
+export const chromeStoreURL = 'https://chrome.google.com/webstore/detail/gfgpkepllngchpmcippidfhmbhlljhoo';
+export const edgeAddonsURL = 'https://microsoftedge.microsoft.com/addons/detail/cinfaflgbaachkaamaeglolofeahelkd';
+export const extensionUrl = navigator.userAgent.match(/Edge?\//) ? edgeAddonsURL : chromeStoreURL;

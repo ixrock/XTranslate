@@ -16,10 +16,9 @@ import { Icon } from "../icon";
 import { Button } from "../button";
 import { Popup } from "../popup";
 import { TooltipProps } from "../tooltip";
-import { settingsStore } from "./settings.store";
-import { viewsManager } from "../app/views-manager";
-import { AppPageId } from "../../navigation";
 import { Tab } from "../tabs";
+import { settingsStore } from "./settings.storage";
+import { viewsManager } from "../app/views-manager";
 
 @observer
 export class Settings extends React.Component {
@@ -46,8 +45,7 @@ export class Settings extends React.Component {
   showInContextMenuChanged = async (enabled: boolean) => {
     if (!enabled) {
       settingsStore.data.showInContextMenu = false;
-    }
-    else {
+    } else {
       var allowed = await requestPermissions([Permission.ContextMenus]);
       if (allowed) {
         settingsStore.data.showInContextMenu = true;
@@ -232,7 +230,7 @@ export class Settings extends React.Component {
   }
 }
 
-viewsManager.registerView(AppPageId.settings, {
+viewsManager.registerPages("settings", {
   Tab: props => <Tab {...props} label={__i18n("tab_settings")} icon="settings"/>,
   Page: Settings,
 });

@@ -2,9 +2,9 @@ import md5 from "crypto-js/md5";
 import { action, computed } from "mobx";
 import { orderBy, uniqBy } from "lodash";
 import { autobind } from "../../utils/autobind";
+import { createStorage } from "../../storages";
 import { ITranslationResult } from "../../vendors/translator";
-import { Store } from "../../store";
-import { settingsStore } from "../settings/settings.store";
+import { settingsStore } from "../settings/settings.storage";
 
 export type IHistoryItemId = string;
 
@@ -56,33 +56,32 @@ export type IHistoryStorageItemVersion2 = [
 ];
 
 @autobind()
-export class UserHistoryStore extends Store<IHistoryStorageItem[]> {
-  constructor() {
-    super({
-      id: "history",
-      storageType: "local",
-      initialData: [],
-      autoLoad: false,
-    });
+export class UserHistoryStore {
+  private storage = historyStorage;
+
+  ready = Promise.allSettled([
+    settingsStore.ready,
+    historyStorage.whenReady,
+  ]);
+
+  private get data(): IHistoryStorageItem[] {
+    return this.storage.get();
   }
 
-  @computed get items() {
+  @computed get items(): IHistoryItem[] {
     return this.data.map(toHistoryItem); // convert data to system format
   }
 
   @action
   async importItems(items: IHistoryStorageItem[]): Promise<number> {
-    if (!this.isLoaded) {
-      await this.load();
-    }
+    await this.ready;
     var { historyAvoidDuplicates } = settingsStore.data;
     var storageItems: IHistoryStorageItem[] = [
       ...this.data,
       ...items.filter(item => {
         if (Array.isArray(item)) {
           return item.length >= 6 && typeof item[0] === "number"
-        }
-        else {
+        } else {
           var { date, vendor, from, to, text, } = item;
           return !!(date && vendor && from && to && text);
         }
@@ -91,8 +90,7 @@ export class UserHistoryStore extends Store<IHistoryStorageItem[]> {
     var data = orderBy(storageItems, item => {
       if (Array.isArray(item)) {
         if (typeof item[0] === "number") return item[0]; // v2
-      }
-      else {
+      } else {
         return item.date; // v1
       }
     }, "desc");
@@ -100,20 +98,18 @@ export class UserHistoryStore extends Store<IHistoryStorageItem[]> {
     if (historyAvoidDuplicates) {
       data = this.removeDuplicates(data);
     }
-    this.data = data;
+    this.storage.set(data);
     return data.length - countBeforeCleanUp;
   }
 
   @action
   async saveTranslation(translation: ITranslationResult) {
+    await this.ready;
     var { historySaveWordsOnly, historyAvoidDuplicates } = settingsStore.data;
     var { langFrom, langDetected } = translation;
     var noDictionary = !translation?.dictionary.length;
-    if (!translation || this.isLoading || (historySaveWordsOnly && noDictionary)) {
+    if (!translation || (historySaveWordsOnly && noDictionary)) {
       return;
-    }
-    if (!this.isLoaded) {
-      await this.load();
     }
     var data: IHistoryStorageItem[] = [
       toStorageItem({
@@ -125,7 +121,7 @@ export class UserHistoryStore extends Store<IHistoryStorageItem[]> {
     if (historyAvoidDuplicates) {
       data = this.removeDuplicates(data);
     }
-    this.data = data;
+    this.storage.set(data);
   }
 
   protected removeDuplicates(items: IHistoryStorageItem[]) {
@@ -149,17 +145,17 @@ export class UserHistoryStore extends Store<IHistoryStorageItem[]> {
   @action
   clear(matcher?: IHistoryItemId | ((item: IHistoryItem) => boolean)) {
     if (!matcher) {
-      this.reset(); // all
-    }
-    else {
+      this.storage.clear(); // remove all
+    } else {
       if (typeof matcher === "function") {
-        this.data = this.data.filter(storageItem => !matcher(toHistoryItem(storageItem)));
-      }
-      else {
-        var itemId = matcher; // remove single item otherwise
-        var index = this.items.findIndex(item => item.id == itemId);
+        const filteredData = this.data.filter(storageItem => !matcher(toHistoryItem(storageItem)));
+        this.storage.set(filteredData);
+      } else {
+        // remove single history item
+        var index = this.items.findIndex(item => item.id == matcher);
         if (index > -1) {
-          this.data.splice(index, 1);
+          const newData = this.data.filter((item, storageIndex) => storageIndex !== index);
+          this.storage.set(newData);
         }
       }
     }
@@ -182,8 +178,7 @@ export function toStorageItem(data: ITranslationResult | IHistoryItem): IHistory
         dict.translation,
       ])
     ]
-  }
-  else {
+  } else {
     return [
       Date.now(),
       vendor,
@@ -206,7 +201,7 @@ export function getHistoryItemId(data: { date, vendor, from, to, text }): IHisto
 
 export function toHistoryItem(data: IHistoryStorageItem): IHistoryItem {
   if (Array.isArray(data)) {
-    var [date, vendor, from, to, text, translation, transcription, dict] = data;
+    const [date, vendor, from, to, text, translation, transcription, dict] = data;
     return {
       id: getHistoryItemId({ text, to, from, vendor, date }),
       date, vendor, from, to, text, translation, transcription,
@@ -215,9 +210,8 @@ export function toHistoryItem(data: IHistoryStorageItem): IHistoryItem {
         translation: dict[1]
       }))
     };
-  }
-  else {
-    var { date, vendor, from, to, text, tr, ts, dict: dictionary = [] } = data;
+  } else {
+    const { date, vendor, from, to, text, tr, ts, dict: dictionary = [] } = data;
     return {
       id: getHistoryItemId(data),
       date, vendor, from, to, text,
@@ -235,4 +229,10 @@ export function isHistoryItem(item: any | IHistoryItem = {}): item is IHistoryIt
   return !!(item.from && item.to);
 }
 
-export const userHistoryStore = new UserHistoryStore();
+export const historyStorage = createStorage<IHistoryStorageItem[]>("history", [], {
+  observableOptions: {
+    deep: false,
+  }
+});
+
+export const historyStore = new UserHistoryStore();

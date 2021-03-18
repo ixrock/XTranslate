@@ -1,29 +1,30 @@
 import { find, flatten, orderBy, remove } from "lodash"
-import { Store } from "../../store";
 import { autobind } from "../../utils";
 import { getTranslators } from "../../vendors";
+import { createSyncStorage } from "../../storages";
 
-export type IFavoritesStoreData = {
-  [vendor: string]: IFavorite[];
+export type FavoritesStorage = {
+  [vendor: string]: FavoriteLangPair[];
 }
 
-export interface IFavorite {
+export interface FavoriteLangPair {
   from: string
   to: string
 }
 
+export const favoritesStorage = createSyncStorage<FavoritesStorage>("favorites", {});
+
 @autobind()
-export class FavoritesStore extends Store<IFavoritesStoreData> {
-  constructor() {
-    super({
-      id: "favorites",
-      storageType: "sync",
-      initialData: {},
-    })
+export class FavoritesStore {
+  private storage = favoritesStorage;
+  ready = favoritesStorage.whenReady;
+
+  get data() {
+    return this.storage.get();
   }
 
-  getByVendor(vendor: string): IFavorite[] {
-    return this.data[vendor] || [];
+  getByVendor(vendor: string): FavoriteLangPair[] {
+    return this.data[vendor] ?? [];
   }
 
   getFavorites() {
@@ -33,7 +34,7 @@ export class FavoritesStore extends Store<IFavoritesStoreData> {
         return {
           vendor: translator,
           favorites: orderBy(this.getByVendor(translator.name), [
-            (fav: IFavorite) => fav.from !== "auto",
+            (fav: FavoriteLangPair) => fav.from !== "auto",
             'from'
           ])
         }
@@ -47,14 +48,14 @@ export class FavoritesStore extends Store<IFavoritesStoreData> {
     });
   }
 
-  addFavorite(vendor: string, fav: IFavorite) {
+  addFavorite(vendor: string, fav: FavoriteLangPair) {
     var favorites = this.getByVendor(vendor);
     if (!this.isFavorite(vendor, fav.from, fav.to)) {
       this.data[vendor] = [...favorites, fav];
     }
   }
 
-  removeFavorite(vendor: string, fav: IFavorite) {
+  removeFavorite(vendor: string, fav: FavoriteLangPair) {
     var favorites = this.getByVendor(vendor);
     remove(favorites, fav);
   }
@@ -64,6 +65,10 @@ export class FavoritesStore extends Store<IFavoritesStoreData> {
       return this.getByVendor(vendor).length;
     }
     return flatten(Object.values(this.data)).length;
+  }
+
+  reset() {
+    this.storage.reset();
   }
 }
 

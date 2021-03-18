@@ -112,6 +112,6 @@
   "translation_data_failed_check_url": {"message": "Посмотреть данные ответа"},
   "rate_app_info1"                   : {"message": "Нравится приложение? Пожалуйста оцените нас на 5 звезд!"},
   "rate_app_info2"                   : {"message": "Это поможет другим пользователям быстрее найти расширение в магазине хром."},
-  "rate_app_button"                  : {"message": "Оценить в магазине хром"},
+  "rate_app_button"                  : {"message": "Оценить в магазине расширений"},
   "rate_app_button_later"            : {"message": "Напомнить позже"}
 }

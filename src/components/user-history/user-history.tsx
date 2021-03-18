@@ -13,12 +13,10 @@ import { MenuActions, MenuItem } from "../menu";
 import { FileInput, ImportingFile, Input, NumberInput } from "../input";
 import { Option, Select } from "../select";
 import { Button } from "../button";
-import { Spinner } from "../spinner";
-import { settingsStore } from "../settings/settings.store";
+import { settingsStore } from "../settings/settings.storage";
 import { viewsManager } from "../app/views-manager";
-import { IHistoryItem, IHistoryItemId, IHistoryStorageItem, toStorageItem, userHistoryStore } from "./user-history.store";
+import { IHistoryItem, IHistoryItemId, IHistoryStorageItem, toStorageItem, historyStore } from "./history.storage";
 import { Notifications } from "../notifications";
-import { AppPageId } from "../../navigation";
 import { Icon } from "../icon";
 import { Tab } from "../tabs";
 
@@ -48,11 +46,11 @@ export class UserHistory extends React.Component {
 
   @computed get items(): IHistoryItem[] {
     if (this.searchText) return this.searchedItems;
-    return userHistoryStore.items;
+    return historyStore.items;
   }
 
   @computed get searchedItems() {
-    return userHistoryStore.searchItems(this.searchText);
+    return historyStore.searchItems(this.searchText);
   }
 
   @computed get groupedItems(): Record<string, IHistoryItem[]> {
@@ -68,16 +66,11 @@ export class UserHistory extends React.Component {
     this.searchText = searchQuery.trim();
   }, 500);
 
-  async componentDidMount() {
-    await userHistoryStore.load();
-  }
-
   toggleDetails(itemId: IHistoryItemId) {
     var { itemDetailsEnabled: map } = this;
     if (map.has(itemId)) {
       map.delete(itemId);
-    }
-    else {
+    } else {
       map.set(itemId, true)
     }
   }
@@ -114,7 +107,7 @@ export class UserHistory extends React.Component {
   }
 
   clearById = (id?: IHistoryItemId) => {
-    userHistoryStore.clear(id);
+    historyStore.clear(id);
   }
 
   clearByTimeFrame = () => {
@@ -129,10 +122,10 @@ export class UserHistory extends React.Component {
       return date.join("-");
     }
     var clearAll = clearTimeFrame === HistoryTimeFrame.ALL;
-    var latestItem = userHistoryStore.items[0];
+    var latestItem = historyStore.items[0];
     var latestFrame = getTimeFrame(latestItem.date, clearTimeFrame);
     var clearFilter = (item: IHistoryItem) => latestFrame === getTimeFrame(item.date, clearTimeFrame);
-    userHistoryStore.clear(clearAll ? null : clearFilter);
+    historyStore.clear(clearAll ? null : clearFilter);
   }
 
   renderHistory() {
@@ -220,21 +213,15 @@ export class UserHistory extends React.Component {
         console.error(`Parsing "${file.name}" has failed:`, err);
       }
     });
-    var count = await userHistoryStore.importItems(historyItems);
+    var count = await historyStore.importItems(historyItems);
     Notifications.ok(__i18n("history_import_success", count));
   }
 
-  render() {
-    var { clearTimeFrame, showSettings, showSearch, showImportExport, hasMore, clearByTimeFrame } = this;
+  renderHeader() {
+    var { clearTimeFrame, showSettings, showSearch, showImportExport, clearByTimeFrame } = this;
     var { historyEnabled, historyAvoidDuplicates, historySaveWordsOnly, historyPageSize } = settingsStore.data;
-    var { isLoading, isLoaded } = userHistoryStore;
     return (
-      <div className="UserHistory">
-        <FileInput
-          id="import-history"
-          accept="application/json"
-          onImport={this.onImport}
-        />
+      <>
         <div className="settings flex gaps align-center justify-center">
           <Checkbox
             label={__i18n("history_enabled_flag")}
@@ -293,10 +280,7 @@ export class UserHistory extends React.Component {
                   <Option value={HistoryTimeFrame.MONTH} label={__i18n("history_clear_period_month")}/>
                   <Option value={HistoryTimeFrame.ALL} label={__i18n("history_clear_period_all")}/>
                 </Select>
-                <Button
-                  accent label={__i18n("history_button_clear")}
-                  onClick={clearByTimeFrame}
-                />
+                <Button accent label={__i18n("history_button_clear")} onClick={clearByTimeFrame}/>
               </div>
               <div className="box flex gaps auto align-center">
                 <Checkbox
@@ -321,11 +305,21 @@ export class UserHistory extends React.Component {
             </div>
           )}
         </div>
-        {isLoading && (
-          <div className="loading"><Spinner/></div>
-        )}
-        {isLoaded && this.renderHistory()}
-        {hasMore && (
+      </>
+    )
+  }
+
+  render() {
+    return (
+      <div className="UserHistory">
+        <FileInput
+          id="import-history"
+          accept="application/json"
+          onImport={this.onImport}
+        />
+        {this.renderHeader()}
+        {this.renderHistory()}
+        {this.hasMore && (
           <div className="load-more flex center">
             <Button
               primary label={__i18n("history_button_show_more")}
@@ -338,7 +332,7 @@ export class UserHistory extends React.Component {
   }
 }
 
-viewsManager.registerView(AppPageId.history, {
+viewsManager.registerPages("history", {
   Tab: props => <Tab {...props} label={__i18n("tab_history")} icon="history"/>,
   Page: UserHistory,
 });

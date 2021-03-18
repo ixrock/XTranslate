@@ -1,6 +1,6 @@
 // Base class for all translation vendors
 import { autobind } from "../utils";
-import { settingsStore } from "../components/settings/settings.store";
+import { settingsStore } from "../components/settings/settings.storage";
 
 export interface ITranslatorParams {
   apiKeys?: string[]

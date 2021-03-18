@@ -1,16 +1,8 @@
-import { Store } from "../../store";
 import { Hotkey } from "../../utils/parseHotkey";
 import { getTranslator } from "../../vendors";
+import { createSyncStorage } from "../../storages";
 
-export type ISettingsStoreData = typeof defaultSettings;
-
-export const defaultHokey: Hotkey = {
-  altKey: true,
-  shiftKey: true,
-  code: "X"
-}
-
-export const defaultSettings = {
+export const settingsStorage = createSyncStorage("settings", {
   autoPlayText: false,
   useChromeTtsEngine: false,
   showTextToSpeechIcon: true,
@@ -34,16 +26,18 @@ export const defaultSettings = {
   historyAvoidDuplicates: true,
   historyPageSize: 100,
   popupFixedPos: "", // possible values defined as css-classes in popup.scss
-  hotkey: defaultHokey,
-};
+  hotkey: {
+    altKey: true,
+    shiftKey: true,
+    code: "X"
+  } as Hotkey,
+});
 
-export class SettingsStore extends Store<ISettingsStoreData> {
-  constructor() {
-    super({
-      id: "settings",
-      storageType: "sync",
-      initialData: defaultSettings
-    });
+export class SettingsStore {
+  ready = settingsStorage.whenReady;
+
+  get data() {
+    return settingsStorage.get();
   }
 
   setVendor(vendorName: string) {

@@ -20,19 +20,9 @@ export function getStyleUrl() {
   return getURL(filePath);
 }
 
-export function getOptionsPageUrl(page?: string) {
-  var optionsPage = getURL(getManifest().options_page);
-  if (page) optionsPage += `?page=` + page;
-  return optionsPage;
-}
-
-export function getBgcPage(): Promise<typeof window> {
-  return new Promise((resolve, reject) => {
-    chrome.runtime.getBackgroundPage(bgcWin => {
-      var error = chrome.runtime.lastError;
-      if (error) reject(error)
-      else resolve(bgcWin as any)
-    })
+export function getBackgroundPage(): Promise<Window> {
+  return new Promise(resolve => {
+    chrome.runtime.getBackgroundPage(bgcPage => resolve(runtimeErrorCheck(bgcPage)))
   })
 }
 
@@ -85,4 +75,10 @@ export async function promisifyMessage<P = any, R = any>({ tabId, ...message }: 
       }
     });
   });
+}
+
+export async function runtimeErrorCheck<T>(data?: T): Promise<T> {
+  const error = chrome.runtime.lastError;
+  if (error) throw String(error);
+  return data;
 }

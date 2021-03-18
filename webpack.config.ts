@@ -10,7 +10,6 @@ export = () => {
   var distPath = path.resolve(__dirname, 'dist');
   var optionsPage = path.resolve(__dirname, "options.html");
   var componentsDir = path.resolve(srcPath, 'components');
-  var commonVars = path.resolve(componentsDir, "vars.scss");
 
   return {
     context: srcPath,
@@ -27,10 +26,13 @@ export = () => {
     },
 
     mode: isProduction ? "production" : "development",
-    devtool: isProduction ? "" : "cheap-module-eval-source-map",
+    devtool: "eval-cheap-module-source-map",
 
     resolve: {
       extensions: ['.ts', '.tsx', '.js', '.json'],
+      fallback: {
+        crypto: false // ignore browser polyfill warnings from "crypto-js" package
+      }
     },
 
     module: {
@@ -63,9 +65,9 @@ export = () => {
             {
               loader: "sass-loader",
               options: {
-                prependData: '@import "' + commonVars + '";',
+                additionalData: `@import "vars";`,
                 sassOptions: {
-                  includePaths: [srcPath]
+                  includePaths: [componentsDir]
                 },
               }
             },

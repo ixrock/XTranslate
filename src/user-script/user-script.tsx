@@ -2,7 +2,7 @@
 
 import React from "react";
 import { render } from "react-dom";
-import { computed, observable, toJS, when } from "mobx";
+import { computed, observable, toJS } from "mobx";
 import { observer } from "mobx-react";
 import { debounce, isEqual } from "lodash"
 import { autobind, cssNames, getHotkey } from "../utils";
@@ -11,8 +11,8 @@ import { translateText, ttsPlay, ttsStop } from "../extension/actions";
 import { getNextTranslator, ITranslationError, ITranslationResult } from "../vendors";
 import { XTranslateIcon } from "./xtranslate-icon";
 import { Popup } from "../components/popup/popup";
-import { settingsStore } from "../components/settings/settings.store";
-import { themeStore } from "../components/theme-manager/theme.store";
+import { settingsStore } from "../components/settings/settings.storage";
+import { themeStore } from "../components/theme-manager/theme.storage";
 
 const rootElem = document.createElement("div");
 const isPdf = document.contentType === "application/pdf";
@@ -25,7 +25,7 @@ class App extends React.Component {
 
     // render app inside the shadow-dom to avoid collisions with page styles
     var shadowRoot = rootElem.attachShadow({ mode: "open" });
-    await when(() => settingsStore.isLoaded && themeStore.isLoaded);
+    await Promise.allSettled([settingsStore.ready, themeStore.ready]);
     render(<App/>, shadowRoot as any);
   }
 
@@ -80,8 +80,7 @@ class App extends React.Component {
         top: top,
         transform: isRtlSelection ? "translate(-100%, -100%)" : undefined,
       }
-    }
-    else {
+    } else {
       var { right, bottom } = selectionRects.slice(-1)[0];
       return {
         left: right,
@@ -200,18 +199,15 @@ class App extends React.Component {
       if (!rects.length) {
         if (this.isEditable(document.activeElement)) {
           rects.push(document.activeElement.getBoundingClientRect());
-        }
-        else if (focusNode === anchorNode && focusNode instanceof HTMLElement) {
+        } else if (focusNode === anchorNode && focusNode instanceof HTMLElement) {
           rects.push(focusNode.getBoundingClientRect());
-        }
-        else {
+        } else {
           rects.push(range.getBoundingClientRect());
         }
       }
       this.selectionRects = rects.map(rect => this.normalizeRect(rect));
       this.isRtlSelection = anchorOffset > focusOffset;
-    }
-    else if (this.selectionRects) {
+    } else if (this.selectionRects) {
       this.selectionRects = null;
       this.isRtlSelection = false;
     }
@@ -268,14 +264,12 @@ class App extends React.Component {
     if (showPopupAfterSelection) {
       this.saveSelectionRects();
       this.translateLazy();
-    }
-    else if (this.isPopupHidden) {
+    } else if (this.isPopupHidden) {
       this.saveSelectionRects();
       var showOnDoubleClick = showPopupOnDoubleClick && this.isDblClicked;
       if (showOnDoubleClick || this.isHotkeyActivated || this.isLoading) {
         this.translate();
-      }
-      else if (showIconNearSelection) {
+      } else if (showIconNearSelection) {
         this.showIcon();
       }
     }
@@ -310,8 +304,7 @@ class App extends React.Component {
       if (this.isPopupHidden && this.isClickedOnSelection()) {
         this.translate();
         evt.preventDefault(); // don't reset selection
-      }
-      else {
+      } else {
         this.hidePopup();
       }
     }
@@ -384,8 +377,7 @@ class App extends React.Component {
           if (text) {
             this.selectionRects = [this.normalizeRect(mouseTarget.getBoundingClientRect())];
           }
-        }
-        else {
+        } else {
           mouseTarget.style.userSelect = "auto"; // make sure selection is not blocked from css
           this.selection.selectAllChildren(mouseTarget);
           this.saveSelectionRects();

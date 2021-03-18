@@ -2,12 +2,18 @@
 
 import { autorun } from "mobx";
 import { __i18n, createTab, getActiveTab, getManifest, MenuTranslateFavoritePayload, MenuTranslateVendorPayload, MessageType, onPermissionActivated, Permission, sendTabMessage } from "../extension";
-import { favoritesStore, IFavorite } from "../components/input-translation/favorites.store";
-import { settingsStore } from "../components/settings/settings.store";
+import { settingsStore } from "../components/settings/settings.storage";
+import { FavoriteLangPair, favoritesStore } from "../components/input-translation/favorites.storage";
 import { getTranslator, getTranslators } from "../vendors";
 
-onPermissionActivated([Permission.ContextMenus], () => {
-  return autorun(initMenus, { delay: 250 });
+Promise.all([
+  // prefetch data from storages first
+  settingsStore.ready,
+  favoritesStore.ready,
+]).then(() => {
+  onPermissionActivated([Permission.ContextMenus], () => {
+    return autorun(initMenus, { delay: 250 });
+  });
 });
 
 export function initMenus() {
@@ -62,7 +68,7 @@ export function initMenus() {
         contexts: selectionContext,
       });
       favoritesStore.getFavorites().forEach(({ vendor, favorites }) => {
-        favorites.forEach((fav: IFavorite) => {
+        favorites.forEach((fav: FavoriteLangPair) => {
           var id = [MessageType.MENU_TRANSLATE_FAVORITE, vendor.name, fav.from, fav.to].join('-');
           var title = `${vendor.title} (${[vendor.langFrom[fav.from], vendor.langTo[fav.to]].join(' → ')})`;
           chrome.contextMenus.create({
@@ -83,14 +89,15 @@ async function onClickMenuItem(info: chrome.contextMenus.OnClickData) {
   var [type, vendor, from, to] = String(info.menuItemId).split("-");
 
   switch (Number(type)) {
-    case MessageType.MENU_TRANSLATE_FULL_PAGE:
-      var { langTo } = settingsStore.data;
-      var url = getTranslator(vendor).getFullPageTranslationUrl(pageUrl, langTo);
+    case MessageType.MENU_TRANSLATE_FULL_PAGE: {
+      const { langTo } = settingsStore.data;
+      const url = getTranslator(vendor).getFullPageTranslationUrl(pageUrl, langTo);
       if (url) createTab(url);
       break;
+    }
 
-    case MessageType.MENU_TRANSLATE_WITH_VENDOR:
-      var tab = await getActiveTab();
+    case MessageType.MENU_TRANSLATE_WITH_VENDOR: {
+      const tab = await getActiveTab();
       sendTabMessage<MenuTranslateVendorPayload>(tab.id, {
         type: MessageType.MENU_TRANSLATE_WITH_VENDOR,
         payload: {
@@ -98,9 +105,10 @@ async function onClickMenuItem(info: chrome.contextMenus.OnClickData) {
         }
       });
       break;
+    }
 
-    case MessageType.MENU_TRANSLATE_FAVORITE:
-      var tab = await getActiveTab();
+    case MessageType.MENU_TRANSLATE_FAVORITE: {
+      const tab = await getActiveTab();
       sendTabMessage<MenuTranslateFavoritePayload>(tab.id, {
         type: MessageType.MENU_TRANSLATE_FAVORITE,
         payload: {
@@ -108,5 +116,6 @@ async function onClickMenuItem(info: chrome.contextMenus.OnClickData) {
         }
       });
       break;
+    }
   }
 }

@@ -1,11 +1,9 @@
-import { autorun, when } from "mobx";
+import { autorun } from "mobx";
 import { Color } from "react-color"
-import { Store } from "../../store";
 import { getURL } from "../../extension";
+import { createSyncStorage } from "../../storages";
 
-export type IThemeStoreData = typeof defaultTheme;
-
-export const defaultTheme = {
+export const themeStorage = createSyncStorage("theme", {
   bgcMain: "#000" as Color,
   bgcSecondary: { r: 98, g: 101, b: 101, a: .95 } as Color,
   bgcLinear: true,
@@ -27,14 +25,21 @@ export const defaultTheme = {
   boxShadowBlur: 10,
   boxShadowColor: { r: 102, g: 102, b: 102, a: .5 } as Color,
   boxShadowInner: false,
-}
+});
 
 export interface IThemeFont {
   familyName: string;
   fileName?: string;
 }
 
-export class ThemeStore extends Store<IThemeStoreData> {
+export class ThemeStore {
+  private storage = themeStorage;
+  public ready = themeStorage.whenReady;
+
+  get data() {
+    return this.storage.get();
+  }
+
   public iconsFont: IThemeFont = {
     familyName: "Material Icons",
     fileName: "MaterialIcons-Regular.ttf",
@@ -56,17 +61,12 @@ export class ThemeStore extends Store<IThemeStoreData> {
   ];
 
   constructor() {
-    super({
-      id: "theme",
-      storageType: "sync",
-      initialData: defaultTheme,
-    });
     this.initFonts();
   }
 
   protected async initFonts() {
+    await this.ready;
     await this.loadFont(this.iconsFont);
-    await when(() => this.isLoaded);
     autorun(() => this.loadFont(this.data.fontFamily));
   }
 
@@ -95,6 +95,10 @@ export class ThemeStore extends Store<IThemeStoreData> {
     var fontFace = new FontFace(familyName, `url(${this.getFontUrl(font)})`);
     await fontFace.load();
     document.fonts.add(fontFace);
+  }
+
+  reset(){
+    this.storage.reset();
   }
 }
 

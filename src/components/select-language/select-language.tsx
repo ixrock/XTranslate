@@ -7,7 +7,7 @@ import { getTranslator } from "../../vendors";
 import { cssNames } from "../../utils";
 import { Option, Select } from "../select";
 import { Icon } from "../icon";
-import { settingsStore } from "../settings/settings.store";
+import { settingsStore } from "../settings/settings.storage";
 
 interface Props {
   className?: string;
