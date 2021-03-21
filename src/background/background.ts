@@ -12,6 +12,7 @@ import { defaultPageId, navigate } from "../navigation";
 // FIXME: check stores data sync (bgc <-> options-page <-> user-script)
 // FIXME: switching translation vendor after invalid response from current is failed
 // TODO: group same input translations with different vendors
+// TODO: check import/export history dialog in brave browser in app's browser-icon window
 
 // open settings on install
 chrome.runtime.onInstalled.addListener(function (evt) {

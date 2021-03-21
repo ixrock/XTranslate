@@ -1,13 +1,14 @@
-import { debounce } from "lodash";
-import { runtimeErrorCheck } from "./extension/runtime";
-import { StorageAdapter, StorageHelper, StorageObservableOptions } from "./utils/storageHelper";
 import { isProduction } from "./common";
+import { onMessage, runtimeErrorCheck } from "./extension/runtime";
+import { StorageAdapter, StorageHelper, StorageObservableOptions } from "./utils/storageHelper";
+import { Message, MessageType, StorageStateChangePayload } from "./extension";
+import { broadcastStorageStateChange } from "./extension/actions";
 
 export interface CreateStorageOptions {
   autoLoad?: boolean; // default: true
   storageArea?: chrome.storage.StorageArea; // default: chrome.storage.local
+  broadcastChanges?: boolean; // broadcasting storage updates to background and user-script pages, default: true
   observableOptions?: StorageObservableOptions;
-  syncFromChromeStorage?: boolean; // auto-sync changes from chrome.storage, default: true
 }
 
 export function createSyncStorage<T>(key: string, defaultValue?: T, options: CreateStorageOptions = {}) {
@@ -20,40 +21,20 @@ export function createSyncStorage<T>(key: string, defaultValue?: T, options: Cre
 export function createStorage<T>(key: string, defaultValue?: T, opts: CreateStorageOptions = {}) {
   const {
     autoLoad = true,
+    broadcastChanges = true,
     storageArea = chrome.storage.local,
-    syncFromChromeStorage = false, // fixme: make proper sync via chrome.storage or chrome.runtime
     observableOptions,
   } = opts;
 
-  const storageHelper = new StorageHelper<T>(key, {
+  return new StorageHelper<T>(key, {
     autoInit: autoLoad,
     observable: observableOptions,
     defaultValue: defaultValue,
-    storage: createStorageAdapter<T>(storageArea),
+    storage: createStorageAdapter<T>(storageArea, { broadcastChanges }),
   });
-
-  // handle data changes from chrome.storage
-  if (syncFromChromeStorage) {
-    chrome.storage.onChanged.addListener(debounce((changes, areaName) => {
-      var isCurrent = chrome.storage[areaName] === storageArea && changes[key];
-      if (!isCurrent || !storageHelper.initialized) return; // skip
-      if (!isProduction) {
-        console.info(`[chrome.storage]: changed "${key}"`, { ...changes[key], areaName, });
-      }
-      const { newValue } = changes[key];
-      const isEmpty = newValue == null;
-      const isDefault = !storageHelper.isDefault(newValue);
-
-      if (isEmpty && isDefault) {
-        storageHelper.merge(newValue);
-      }
-    }, 250));
-  }
-
-  return storageHelper;
 }
 
-export function createStorageAdapter<T>(storage: chrome.storage.StorageArea): StorageAdapter<T> {
+export function createStorageAdapter<T>(storage: chrome.storage.StorageArea, opts: { broadcastChanges?: boolean } = {}): StorageAdapter<T> {
   return {
     async setItem(key: string, value: T) {
       return new Promise(resolve => {
@@ -78,6 +59,27 @@ export function createStorageAdapter<T>(storage: chrome.storage.StorageArea): St
           resolve(runtimeErrorCheck());
         });
       })
-    }
+    },
+    onChange({ key, value }: { key: string; value: T }) {
+      if (opts.broadcastChanges) {
+        if (!isProduction) {
+          console.info(`[storage-adapter]: broadcasting "${key}"`, value);
+        }
+        broadcastStorageStateChange<T>({
+          key: key,
+          state: value,
+          storageArea: storage === chrome.storage.local ? "local" : "sync",
+        });
+      }
+    },
   };
 }
+
+// TODO: merge changes into storages / find by storage-area + key at some registry
+// Subscribe for storage updates via chrome.runtime messaging
+onMessage(({ type, payload }: Message<StorageStateChangePayload>, sender, sendResponse) => {
+  if (type === MessageType.STORAGE_SYNC_STATE) {
+    const { key, storageArea, state } = payload ?? {};
+    console.info(`[runtime]: storage update for "${key}"`, { payload, location: location.href });
+  }
+});

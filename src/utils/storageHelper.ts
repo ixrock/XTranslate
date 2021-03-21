@@ -2,11 +2,12 @@
 
 import type { CreateObservableOptions } from "mobx/lib/api/observable";
 import { action, comparer, IReactionDisposer, observable, reaction, toJS, when } from "mobx";
-import produce, { Draft, setAutoFreeze } from "immer";
+import produce, { Draft, enableMapSet, setAutoFreeze } from "immer";
 import { isEqual, isPlainObject } from "lodash";
 import { isProduction } from "../common";
 
 setAutoFreeze(false); // allow to merge deep observables
+enableMapSet(); // allows usage of maps ans sets for produce()
 
 export interface StorageAdapter<T> {
   getItem(key: string): T | Promise<T>;
@@ -25,13 +26,13 @@ export interface StorageHelperOptions<T> {
 }
 
 export class StorageHelper<T> {
-  private syncOnChangeDisposer?: IReactionDisposer;
+  private stopStorageSync?: IReactionDisposer;
 
   static defaultOptions: Partial<StorageHelperOptions<any>> = {
     autoInit: true,
     observable: {
-      deep: true,
-      equals: comparer.structural,
+      deep: true, // deep observable tree
+      equals: comparer.shallow,
     }
   };
 
@@ -97,35 +98,39 @@ export class StorageHelper<T> {
     return data;
   }
 
+  isEqual(value: T): boolean {
+    return isEqual(toJS(this.get()), value);
+  }
+
   isDefault(value: T): boolean {
-    return isEqual(value, this.defaultValue);
+    return isEqual(this.defaultValue, value);
   }
 
   @action
-  private configureObservable(options = this.options.observable) {
+  protected configureObservable(options = this.options.observable) {
     this.data = observable.box<T>(this.data.get(), {
       ...StorageHelper.defaultOptions.observable, // inherit default observability options
       ...(options ?? {}),
     });
 
-    this.syncOnChangeDisposer?.(); // dispose previous if any
-    this.syncOnChangeDisposer = this.syncToStorageOnDataChange();
+    this.stopStorageSync?.(); // destroy previous reaction (if any)
+    this.stopStorageSync = this.bindAutoSaveOnChange();
   }
 
-  protected syncToStorageOnDataChange({ deep = true, delayMs = 500, autoRun = false } = {}): IReactionDisposer {
-    return reaction(() => this.toJS({ deep }), data => {
-      this.log([`[change]: ${this.key}`, data]);
-      this.onDataChange(data);
-    }, {
+  protected bindAutoSaveOnChange({ deep = true, delayMs = 500, autoRun = false } = {}): IReactionDisposer {
+    return reaction(() => this.toJS({ deep }), data => this.onDataChange(data), {
       delay: delayMs,
       fireImmediately: autoRun,
     });
   }
 
   protected onDataChange(value: T) {
-    if (!this.initialized) return;
-
+    if (!this.initialized) {
+      return; // skip
+    }
     try {
+      this.log([`[change]: ${this.key}`, value]);
+
       if (value == null) {
         this.storage.removeItem(this.key);
       } else {

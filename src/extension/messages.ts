@@ -9,6 +9,7 @@ export enum MessageType {
   TTS_STOP,
   GET_SELECTED_TEXT,
   TRANSLATE_TEXT,
+  STORAGE_SYNC_STATE
 }
 
 export interface Message<D = any> {
@@ -43,4 +44,10 @@ export interface TranslatePayload {
 export interface TranslatePayloadResult {
   data?: ITranslationResult;
   error?: ITranslationError;
+}
+
+export interface StorageStateChangePayload<S = any> {
+  key: string;
+  state: S;
+  storageArea?: "local" | "sync";
 }

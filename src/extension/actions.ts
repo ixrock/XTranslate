@@ -1,4 +1,4 @@
-import { MessageType, PlayTextToSpeechPayload, TranslatePayload, TranslatePayloadResult } from "./messages";
+import { MessageType, PlayTextToSpeechPayload, StorageStateChangePayload, TranslatePayload, TranslatePayloadResult } from "./messages";
 import { promisifyMessage, sendMessage } from "./runtime";
 import { getActiveTab } from "./tabs";
 import { isTranslation, ITranslationResult } from "../vendors";
@@ -38,5 +38,12 @@ export function ttsPlay(payload: PlayTextToSpeechPayload | ITranslationResult) {
 export function ttsStop() {
   sendMessage({
     type: MessageType.TTS_STOP
+  });
+}
+
+export function broadcastStorageStateChange<T>(payload: StorageStateChangePayload<T>) {
+  sendMessage({
+    type: MessageType.STORAGE_SYNC_STATE,
+    payload: payload,
   });
 }
