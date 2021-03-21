@@ -1,5 +1,6 @@
+import GoogleTranslateParams from "./google.json"
 import { ITranslationError, ITranslationResult, Translator } from "./translator";
-import { delay, encodeQuery } from "../utils";
+import { delay } from "../utils";
 import { createStorage } from "../storages";
 
 class Google extends Translator {
@@ -10,12 +11,12 @@ class Google extends Translator {
   public textMaxLength = 5000;
   public ttsMaxLength = 187;
 
-  protected apiClients = ["dict-chrome-ex", "gtx"];
-  protected apiClient = createStorage("google_api_client", this.apiClients[0]);
+  protected apiClients = ["gtx", "dict-chrome-ex"];
+  protected apiClient = createStorage<string>("google_api_client", this.apiClients[0]);
   protected apiClientSwitched = false;
 
   constructor() {
-    super(require("./google.json"));
+    super(GoogleTranslateParams);
   }
 
   getFullPageTranslationUrl(pageUrl: string, lang: string): string {
@@ -39,35 +40,30 @@ class Google extends Translator {
   }
 
   protected translate(langFrom, langTo, text): Promise<ITranslationResult> {
-    var apiClient = this.apiClient.get();
     var reqParams: RequestInit = {};
 
-    var getApiUrl = (withText = true) => {
-      return this.apiUrl + '/translate_a/t?' + encodeQuery({
-        client: apiClient,
-        q: withText ? text : null,
-        sl: langFrom,
-        tl: langTo,
-        hl: langTo, // header for dictionary (part of speech)
-        dt: [
-          "t", // translation
-          "bd", // dictionary
-          "rm", // translit
-          "qca", // spelling correction
-          // "ss", // synsets
-          // "rw", // related words
-          // "md", // definitions
-          // "at", // alternative translations
-          // "ex", // examples
-        ],
-      })
+    var getApiUrl = ({ query = text } = {}) => {
+      return this.apiUrl + '/translate_a/single?' + new URLSearchParams([
+        ["client", this.apiClient.get()],
+        ["source", "input"],
+        ["dj", "1"],
+        ["q", query],
+        ["sl", langFrom],
+        ["tl", langTo],
+        ["hl", langTo], // header in dictionary for part of speech
+        ["dt", "t"],    // translation
+        ["dt", "bd"],   // dictionary
+        ["dt", "rm"],   // translit (?)
+        ["dt", "rw"],   // related words
+        ["dt", "qca"],  // spelling correction
+      ])
     }
 
     var url = getApiUrl();
     if (url.length >= this.maxUrlLength) {
-      url = getApiUrl(false);
+      url = getApiUrl({ query: "" }); // skip text in url and send with POST body payload
 
-      reqParams.method = 'post';
+      reqParams.method = 'POST';
       reqParams.body = 'q=' + text;
       reqParams.headers = {
         'Content-type': 'application/x-www-form-urlencoded'

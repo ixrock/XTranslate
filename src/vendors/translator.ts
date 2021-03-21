@@ -1,5 +1,6 @@
-// Base class for all translation vendors
-import { autobind } from "../utils";
+// Base class for translation vendor
+import { observable } from "mobx";
+import { autobind } from "../utils/autobind";
 import { settingsStore } from "../components/settings/settings.storage";
 
 export interface ITranslatorParams {
@@ -47,7 +48,7 @@ export interface ITranslationError {
 
 @autobind()
 export abstract class Translator {
-  static vendors = new Map<string, Translator>();
+  static readonly vendors = observable.map<string, Translator>();
 
   static register(name: string, vendor: Translator) {
     Translator.vendors.set(name, vendor);
@@ -79,7 +80,7 @@ export abstract class Translator {
   }
 
   getFullPageTranslationUrl(pageUrl: string, lang: string): string {
-    return null; // override
+    return null; // should be overridden in sub-classes if supported
   }
 
   protected parseJson<T = any>(res: Response): Promise<T> {
@@ -154,14 +155,12 @@ export abstract class Translator {
           rate: 1.0
         }
       );
-    }
-    else if (audioUrl !== this.lastAudioUrl) {
+    } else if (audioUrl !== this.lastAudioUrl) {
       this.lastAudioUrl = audioUrl;
       var audio = this.ttsAudio = document.createElement('audio');
       audio.autoplay = true;
       audio.src = await getTranslator("google").getAudioSource(audioUrl);
-    }
-    else if (this.ttsAudio) {
+    } else if (this.ttsAudio) {
       this.ttsAudio.play();
     }
   }
@@ -201,7 +200,7 @@ export function isRTL(lang: string) {
   ].indexOf(lang) > -1;
 }
 
-export function getTranslators() {
+export function getTranslators(): Translator[] {
   return [...Translator.vendors.values()];
 }
 
@@ -222,8 +221,7 @@ export function getNextTranslator(name: string, langFrom: string, langTo: string
   var afterCurrent = vendors.slice(index + 1);
   if (reverse) {
     list.push(...beforeCurrent.reverse(), ...afterCurrent.reverse());
-  }
-  else {
+  } else {
     list.push(...afterCurrent, ...beforeCurrent)
   }
   while ((vendor = list.shift())) {

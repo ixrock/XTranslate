@@ -1,37 +1,13 @@
-import { reaction, toJS } from "mobx";
-import { isProduction } from "./common";
+import { debounce } from "lodash";
 import { runtimeErrorCheck } from "./extension/runtime";
-import { StorageAdapter, StorageHelper, StorageObservabilityOptions } from "./utils/storageHelper";
+import { StorageAdapter, StorageHelper, StorageObservableOptions } from "./utils/storageHelper";
+import { isProduction } from "./common";
 
 export interface CreateStorageOptions {
   autoLoad?: boolean; // default: true
   storageArea?: chrome.storage.StorageArea; // default: chrome.storage.local
-  observableOptions?: StorageObservabilityOptions;
-}
-
-export function createStorage<T>(key: string, defaultValue?: T, opts: CreateStorageOptions = {}) {
-  const { autoLoad = true, storageArea = chrome.storage.local, observableOptions } = opts;
-  const storageAdapter = createStorageAdapter<T>(storageArea);
-
-  const storage = new StorageHelper<T>(key, {
-    autoInit: autoLoad,
-    storage: storageAdapter,
-    observable: observableOptions,
-    defaultValue: defaultValue,
-  });
-
-  // manually track data changes & bind auto-saving for with deep direct data updates
-  // e.g. settingsStore.data.theme = "dark"
-  storage.whenReady.then(() => {
-    reaction(() => toJS(storage.get()), data => {
-      if (!isProduction) {
-        console.info(`[STORE]: "${key}" updated`, data);
-      }
-      storageAdapter.setItem(key, data);
-    });
-  });
-
-  return storage;
+  observableOptions?: StorageObservableOptions;
+  syncFromChromeStorage?: boolean; // auto-sync changes from chrome.storage, default: true
 }
 
 export function createSyncStorage<T>(key: string, defaultValue?: T, options: CreateStorageOptions = {}) {
@@ -39,6 +15,42 @@ export function createSyncStorage<T>(key: string, defaultValue?: T, options: Cre
     storageArea: chrome.storage.sync,
     ...options,
   });
+}
+
+export function createStorage<T>(key: string, defaultValue?: T, opts: CreateStorageOptions = {}) {
+  const {
+    autoLoad = true,
+    storageArea = chrome.storage.local,
+    syncFromChromeStorage = false, // fixme: make proper sync via chrome.storage or chrome.runtime
+    observableOptions,
+  } = opts;
+
+  const storageHelper = new StorageHelper<T>(key, {
+    autoInit: autoLoad,
+    observable: observableOptions,
+    defaultValue: defaultValue,
+    storage: createStorageAdapter<T>(storageArea),
+  });
+
+  // handle data changes from chrome.storage
+  if (syncFromChromeStorage) {
+    chrome.storage.onChanged.addListener(debounce((changes, areaName) => {
+      var isCurrent = chrome.storage[areaName] === storageArea && changes[key];
+      if (!isCurrent || !storageHelper.initialized) return; // skip
+      if (!isProduction) {
+        console.info(`[chrome.storage]: changed "${key}"`, { ...changes[key], areaName, });
+      }
+      const { newValue } = changes[key];
+      const isEmpty = newValue == null;
+      const isDefault = !storageHelper.isDefault(newValue);
+
+      if (isEmpty && isDefault) {
+        storageHelper.merge(newValue);
+      }
+    }, 250));
+  }
+
+  return storageHelper;
 }
 
 export function createStorageAdapter<T>(storage: chrome.storage.StorageArea): StorageAdapter<T> {

@@ -1,5 +1,5 @@
+import BingTranslateParams from "./bing.json"
 import { ITranslationResult, Translator } from "./translator";
-import { encodeQuery } from "../utils";
 import groupBy from "lodash/groupBy";
 
 class Bing extends Translator {
@@ -10,7 +10,7 @@ class Bing extends Translator {
   public textMaxLength = 5000;
 
   constructor() {
-    super(require("./bing.json"))
+    super(BingTranslateParams);
   }
 
   getFullPageTranslationUrl(pageUrl: string, lang: string): string {
@@ -35,10 +35,10 @@ class Bing extends Translator {
       var url = this.apiUrl + "/ttranslatev3";
       return fetch(url, {
         ...reqInitBase,
-        body: encodeQuery({
+        body: new URLSearchParams({
           fromLang: langFrom === "auto" ? "auto-detect" : langFrom,
           to: langTo,
-          text: text
+          text: text,
         }),
       }).then(this.parseJson);
     };
@@ -47,7 +47,7 @@ class Bing extends Translator {
       var url = this.apiUrl + '/tlookupv3';
       return fetch(url, {
         ...reqInitBase,
-        body: encodeQuery({ from: langFrom, to: langTo, text }),
+        body: new URLSearchParams({ from: langFrom, to: langTo, text }),
       }).then(this.parseJson);
     };
 

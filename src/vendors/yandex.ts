@@ -1,5 +1,5 @@
+import YandexTranslateParams from "./yandex.json"
 import { ITranslationResult, Translator } from "./translator";
-import { encodeQuery } from "../utils/encodeQuery";
 
 class Yandex extends Translator {
   public name = 'yandex';
@@ -9,7 +9,7 @@ class Yandex extends Translator {
   public textMaxLength = 10000;
 
   constructor() {
-    super(require('./yandex.json'));
+    super(YandexTranslateParams);
   }
 
   getFullPageTranslationUrl(pageUrl: string, lang: string): string {
@@ -23,9 +23,9 @@ class Yandex extends Translator {
   protected async translate(langFrom, langTo, text): Promise<ITranslationResult> {
     var translationReq = (): Promise<YandexTranslation> => {
       var apiUrl = this.apiUrl + '/api/v1/tr.json/translate?' +
-        encodeQuery({
+        new URLSearchParams({
           srv: "yawidget",
-          options: 1, // add detected language to response
+          options: "1", // add detected language to response
           lang: langFrom === "auto" ? langTo : [langFrom, langTo].join('-'),
           text: text,
         });
@@ -34,10 +34,10 @@ class Yandex extends Translator {
 
     var dictReq = (from = langFrom, to = langTo): Promise<YandexDictionary> => {
       var apiUrl = 'https://dictionary.yandex.net/dicservice.json/lookup?' +
-        encodeQuery({
+        new URLSearchParams({
           ui: to,
+          text: text,
           lang: [from, to].join('-'),
-          text: text
         });
       var canUseDictionary = this.canUseDictionary(from, to);
       var tooBigUrl = apiUrl.length >= this.maxUrlLength;

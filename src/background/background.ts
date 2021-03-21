@@ -9,7 +9,6 @@ import { settingsStore } from "../components/settings/settings.storage";
 import { historyStore } from "../components/user-history/history.storage";
 import { defaultPageId, navigate } from "../navigation";
 
-// FIXME: google api broken
 // FIXME: check stores data sync (bgc <-> options-page <-> user-script)
 // FIXME: switching translation vendor after invalid response from current is failed
 // TODO: group same input translations with different vendors
