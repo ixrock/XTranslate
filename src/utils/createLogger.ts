@@ -17,8 +17,8 @@ export function createLogger({ systemPrefix = "app", outputSource = console }: C
 
   // logs are shown only in development/debug mode
   if (isProduction) {
-    console.info = Function;
-    console.error = Function;
+    console.info = () => null;
+    console.error = () => null;
   } else {
     console.info = console.info.bind(console, prefix);
     console.error = console.error.bind(console, prefix);

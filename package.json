@@ -1,10 +1,10 @@
 {
-  "name": "x-translate",
+  "name": "xtranslate",
   "version": "2.0.0",
   "scripts": {
     "dev": "webpack --watch",
-    "build": "rm -rf ./dist && NODE_ENV=production webpack -p --progress",
-    "test": "jest"
+    "test": "jest",
+    "build": "rm -rf ./dist && NODE_ENV=production webpack --progress"
   },
   "jest": {
     "preset": "ts-jest",

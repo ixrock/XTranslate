@@ -7,7 +7,7 @@ import { ITranslationResult } from "../../vendors/translator";
 import { settingsStorage, settingsStore } from "../settings/settings.storage";
 
 // FIXME: fast removing history items might lead to infinite updates loop for bgc <-> options-page
-// FIXME: import history file-dialog out of viewport in brave-browser (when clicked from browser_action window)
+// FIXME: import-history file-dialog out of viewport in Brave when clicked from browser-action's window
 // TODO: optimize storage and removing items by id
 
 export type IHistoryItemId = string;
