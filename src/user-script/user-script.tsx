@@ -6,7 +6,7 @@ import { computed, observable, toJS } from "mobx";
 import { observer } from "mobx-react";
 import { debounce, isEqual } from "lodash"
 import { autobind, cssNames, getHotkey } from "../utils";
-import { getManifest, getStyleUrl, MenuTranslateFavoritePayload, MenuTranslateVendorPayload, Message, MessageType, onMessage, TranslatePayload } from "../extension";
+import { getManifest, getStyleUrl, MenuTranslateFavoritePayload, MenuTranslateVendorPayload, Message, MessageType, onMessageType, TranslatePayload } from "../extension";
 import { translateText, ttsPlay, ttsStop } from "../extension/actions";
 import { getNextTranslator, ITranslationError, ITranslationResult } from "../vendors";
 import { XTranslateIcon } from "./xtranslate-icon";
@@ -48,18 +48,28 @@ class App extends React.Component {
   @observable isLoading = false;
 
   componentDidMount() {
+    // bind extension runtime events
+    onMessageType<string>(MessageType.GET_SELECTED_TEXT, (message, sender, sendResponse) => {
+      sendResponse(this.selectedText);
+    });
+    onMessageType<MenuTranslateVendorPayload>(MessageType.MENU_TRANSLATE_WITH_VENDOR, ({ payload }) => {
+      const { vendor, selectedText } = payload;
+      this.hideIcon();
+      this.translate({ vendor, text: selectedText });
+    });
+    onMessageType<MenuTranslateFavoritePayload>(MessageType.MENU_TRANSLATE_FAVORITE, ({ payload }) => {
+      const { vendor, from, to, selectedText } = payload;
+      this.hideIcon();
+      this.translate({ vendor, from, to, text: selectedText });
+    });
+
+    // bind dom events
     document.addEventListener("selectionchange", this.onSelectionChange);
     document.addEventListener("mousemove", this.onMouseMove, true);
     document.addEventListener("mousedown", this.onMouseDown, true);
     document.addEventListener("dblclick", this.onDoubleClick, true);
     document.addEventListener("keydown", this.onKeyDown, true);
     window.addEventListener("resize", this.onResizeWindow);
-    onMessage(this.onContextMenu);
-    onMessage(({ type }, sender, sendResponse) => {
-      if (type === MessageType.GET_SELECTED_TEXT) {
-        sendResponse(this.selectedText);
-      }
-    });
   }
 
   @computed get isPopupHidden() {

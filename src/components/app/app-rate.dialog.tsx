@@ -1,7 +1,7 @@
 import "./app-rate.dialog.scss";
 
 import React from "react";
-import { computed, observable } from "mobx";
+import { observable } from "mobx";
 import { observer } from "mobx-react";
 import { Dialog } from "../dialog";
 import { Button } from "../button";
@@ -17,18 +17,17 @@ export const rateLastTimestamp = createStorage("rate_delay_last", 0);
 export class AppRateDialog extends React.Component {
   @observable isOpen = false;
 
-  @computed get isReady(): boolean {
-    return Boolean(rateButtonClicked.initialized && rateLastTimestamp.initialized);
-  }
+  ready = Promise.allSettled([
+    rateButtonClicked.whenReady,
+    rateLastTimestamp.whenReady,
+  ]);
 
   async componentDidMount() {
-    await this.visibilityCheck();
+    await this.ready;
+    this.visibilityCheck();
   }
 
-  async visibilityCheck() {
-    await rateButtonClicked.whenReady;
-    await rateLastTimestamp.whenReady;
-
+  visibilityCheck() {
     var isRated = rateButtonClicked.get();
     var delayLastTime = rateLastTimestamp.get();
     var delayDuration = 1000 * 60 * 60 * 24 * 7; // 1 week
@@ -52,9 +51,6 @@ export class AppRateDialog extends React.Component {
   }
 
   render() {
-    if (!this.isReady) {
-      return null;
-    }
     return (
       <Dialog pinned className="AppRateDialog" isOpen={this.isOpen}>
         <h4>{__i18n("rate_app_info1")}</h4>

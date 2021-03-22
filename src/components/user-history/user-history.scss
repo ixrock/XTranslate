@@ -21,7 +21,9 @@
   }
 
   .history {
+    position: relative;
     list-style: none;
+    min-height: 50px;
 
     .rtl {
       direction: rtl;

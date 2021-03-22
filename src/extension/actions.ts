@@ -1,6 +1,6 @@
-import { MessageType, PlayTextToSpeechPayload, StorageStateChangePayload, TranslatePayload, TranslatePayloadResult } from "./messages";
+import { Message, MessageType, PlayTextToSpeechPayload, StorageChangePayload, TranslatePayload, TranslatePayloadResult } from "./messages";
 import { promisifyMessage, sendMessage } from "./runtime";
-import { getActiveTab } from "./tabs";
+import { broadcastMessage, getActiveTab } from "./tabs";
 import { isTranslation, ITranslationResult } from "../vendors";
 
 export async function getActiveTabText() {
@@ -41,9 +41,11 @@ export function ttsStop() {
   });
 }
 
-export function broadcastStorageStateChange<T>(payload: StorageStateChangePayload<T>) {
-  sendMessage({
-    type: MessageType.STORAGE_SYNC_STATE,
+export function broadcastStorageChange<P>(payload: StorageChangePayload<P>) {
+  const message: Message = {
+    type: MessageType.STORAGE_CHANGE,
     payload: payload,
-  });
+  };
+  sendMessage(message); // chrome.runtime
+  broadcastMessage(message); // chrome.tabs
 }

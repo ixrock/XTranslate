@@ -15,10 +15,11 @@ import { Option, Select } from "../select";
 import { Button } from "../button";
 import { settingsStore } from "../settings/settings.storage";
 import { viewsManager } from "../app/views-manager";
-import { IHistoryItem, IHistoryItemId, IHistoryStorageItem, toStorageItem, historyStore } from "./history.storage";
+import { historyStore, IHistoryItem, IHistoryItemId, IHistoryStorageItem, toStorageItem } from "./history.storage";
 import { Notifications } from "../notifications";
 import { Icon } from "../icon";
 import { Tab } from "../tabs";
+import { Spinner } from "../spinner";
 
 enum HistoryTimeFrame {
   HOUR,
@@ -39,6 +40,12 @@ export class UserHistory extends React.Component {
   @observable showImportExport = false;
   @observable clearTimeFrame = HistoryTimeFrame.DAY;
   @observable searchText = "";
+  @observable isReady = false;
+
+  async componentDidMount() {
+    await historyStore.ready;
+    this.isReady = true;
+  }
 
   @computed get pageSize() {
     return this.page * settingsStore.data.historyPageSize;
@@ -132,6 +139,7 @@ export class UserHistory extends React.Component {
     var { groupedItems, itemDetailsEnabled } = this;
     return (
       <ul className="history">
+        {!this.isReady && <Spinner center/>}
         {Object.keys(groupedItems).map(date => {
           return (
             <React.Fragment key={date}>

@@ -6,11 +6,8 @@ import { settingsStore } from "../components/settings/settings.storage";
 import { FavoriteLangPair, favoritesStore } from "../components/input-translation/favorites.storage";
 import { getTranslator, getTranslators } from "../vendors";
 
-Promise.all([
-  // prefetch data from storages first
-  settingsStore.ready,
-  favoritesStore.ready,
-]).then(() => {
+// Prefetch menu-dependent data from the storages first
+Promise.all([settingsStore.ready, favoritesStore.ready]).then(() => {
   onPermissionActivated([Permission.ContextMenus], () => {
     return autorun(initMenus, { delay: 250 });
   });
@@ -88,7 +85,7 @@ async function onClickMenuItem(info: chrome.contextMenus.OnClickData) {
   var { selectionText: selectedText, frameUrl, pageUrl = frameUrl } = info;
   var [type, vendor, from, to] = String(info.menuItemId).split("-");
 
-  switch (Number(type)) {
+  switch (type) {
     case MessageType.MENU_TRANSLATE_FULL_PAGE: {
       const { langTo } = settingsStore.data;
       const url = getTranslator(vendor).getFullPageTranslationUrl(pageUrl, langTo);

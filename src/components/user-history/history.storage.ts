@@ -4,7 +4,11 @@ import { orderBy, uniqBy } from "lodash";
 import { autobind } from "../../utils/autobind";
 import { createStorage } from "../../storages";
 import { ITranslationResult } from "../../vendors/translator";
-import { settingsStore } from "../settings/settings.storage";
+import { settingsStorage, settingsStore } from "../settings/settings.storage";
+
+// FIXME: fast removing history items might lead to infinite updates loop for bgc <-> options-page
+// FIXME: import history file-dialog out of viewport in brave-browser (when clicked from browser_action window)
+// TODO: optimize storage and removing items by id
 
 export type IHistoryItemId = string;
 
@@ -60,7 +64,7 @@ export class UserHistoryStore {
   private storage = historyStorage;
 
   ready = Promise.allSettled([
-    settingsStore.ready,
+    settingsStorage.whenReady,
     historyStorage.whenReady,
   ]);
 
@@ -74,7 +78,8 @@ export class UserHistoryStore {
 
   @action
   async importItems(items: IHistoryStorageItem[]): Promise<number> {
-    await this.ready;
+    await this.storage.whenReady;
+
     var { historyAvoidDuplicates } = settingsStore.data;
     var storageItems: IHistoryStorageItem[] = [
       ...this.data,
@@ -104,7 +109,8 @@ export class UserHistoryStore {
 
   @action
   async saveTranslation(translation: ITranslationResult) {
-    await this.ready;
+    await this.storage.whenReady;
+
     var { historySaveWordsOnly, historyAvoidDuplicates } = settingsStore.data;
     var { langFrom, langDetected } = translation;
     var noDictionary = !translation?.dictionary.length;

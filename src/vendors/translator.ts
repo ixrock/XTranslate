@@ -1,6 +1,7 @@
 // Base class for translation vendor
 import { observable } from "mobx";
 import { autobind } from "../utils/autobind";
+import { PlayTextToSpeechPayload } from "../extension/messages";
 import { settingsStore } from "../components/settings/settings.storage";
 
 export interface ITranslatorParams {
@@ -206,6 +207,11 @@ export function getTranslators(): Translator[] {
 
 export function getTranslator(name: string) {
   return Translator.vendors.get(name);
+}
+
+export function playText(payload: PlayTextToSpeechPayload) {
+  const { vendor, text, lang } = payload;
+  return getTranslator(vendor).playText(lang, text);
 }
 
 export function stopPlayingAll() {

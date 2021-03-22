@@ -1,65 +1,49 @@
-//-- Background page (main process)
+//-- Background page
 
 // import "crx-hotreload"
 import "./contextMenu"
-import { Message, MessageType, onMessage, PlayTextToSpeechPayload, TranslatePayload, TranslatePayloadResult } from '../extension'
-import { getTranslator, ITranslationResult, stopPlayingAll } from "../vendors";
+import { isProduction } from "../common";
+import { MessageType, onAppInstall, onMessageType, PlayTextToSpeechPayload, TranslatePayload, TranslatePayloadResult } from '../extension'
+import { getTranslator, ITranslationResult, playText, stopPlayingAll } from "../vendors";
 import { rateLastTimestamp } from "../components/app/app-rate.dialog";
 import { settingsStore } from "../components/settings/settings.storage";
 import { historyStore } from "../components/user-history/history.storage";
 import { defaultPageId, navigate } from "../navigation";
 
-// FIXME: check stores data sync (bgc <-> options-page <-> user-script)
-// FIXME: switching translation vendor after invalid response from current is failed
-// TODO: group same input translations with different vendors
-// TODO: check import/export history dialog in brave browser in app's browser-icon window
-
-// open settings on install
-chrome.runtime.onInstalled.addListener(function (evt) {
-  if (evt.reason === "install") {
+onAppInstall(reason => {
+  if (reason === "install" || !isProduction) {
     rateLastTimestamp.set(Date.now());
     navigate({ page: defaultPageId }).catch(Function);
   }
 });
 
-// handle ipc messages
-onMessage(async (message: Message, sender, sendResponse) => {
-  var { type, payload } = message;
-  switch (type) {
-    case MessageType.TRANSLATE_TEXT:
-      var { vendor, from, to, text } = payload as TranslatePayload;
-      var req = getTranslator(vendor).getTranslation(from, to, text);
-      req.then(onTranslationReady);
+// Handle IPC for background process <-> options-page <-> content-script (browser pages)
+onMessageType<TranslatePayload>(MessageType.TRANSLATE_TEXT, async (message, sender, sendResponse) => {
+  const { vendor, from, to, text } = message.payload;
+  const request = getTranslator(vendor).getTranslation(from, to, text);
 
-      sendResponse<TranslatePayloadResult>(
-        await req
-          .then(data => ({ data }))
-          .catch(error => ({ error }))
-      );
-      break;
+  const response: TranslatePayloadResult = await request
+    .then(data => ({ data }))
+    .catch(error => ({ error }));
 
-    case MessageType.TTS_PLAY:
-      playText(payload);
-      break;
+  request.then((translation: ITranslationResult) => {
+    var { autoPlayText, historyEnabled } = settingsStore.data;
+    if (autoPlayText) {
+      let { vendor, originalText, langFrom, langDetected = langFrom } = translation;
+      playText({ vendor, text: originalText, lang: langDetected })
+    }
+    if (historyEnabled) {
+      historyStore.saveTranslation(translation);
+    }
+  });
 
-    case MessageType.TTS_STOP:
-      stopPlayingAll();
-      break;
-  }
+  sendResponse<TranslatePayloadResult>(response);
 });
 
-function playText(payload: PlayTextToSpeechPayload) {
-  var { vendor, text, lang } = payload;
-  getTranslator(vendor).playText(lang, text);
-}
+onMessageType<PlayTextToSpeechPayload>(MessageType.TTS_PLAY, ({ payload }) => {
+  playText(payload);
+});
 
-function onTranslationReady(translation: ITranslationResult) {
-  var { autoPlayText, historyEnabled } = settingsStore.data;
-  if (autoPlayText) {
-    let { vendor, originalText, langFrom, langDetected = langFrom } = translation;
-    playText({ vendor, text: originalText, lang: langDetected })
-  }
-  if (historyEnabled) {
-    historyStore.saveTranslation(translation);
-  }
-}
+onMessageType(MessageType.TTS_STOP, () => {
+  stopPlayingAll();
+});

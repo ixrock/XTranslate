@@ -40,7 +40,7 @@ describe("renderer/utils/StorageHelper", () => {
       expect(localStorage.getItem(storageKey)).toBe("test2");
 
       localStorage.setItem(storageKey, "test3");
-      storageHelper.init({ force: true }); // reload from underlying storage and merge
+      storageHelper.load(); // reload from underlying storage and merge
       expect(storageHelper.get()).toBe("test3");
     });
   });
@@ -113,8 +113,10 @@ describe("renderer/utils/StorageHelper", () => {
       expect(storageHelperAsync.initialized).toBeFalsy();
       storageHelperAsync.init();
       await delay(300);
+      expect(storageHelperAsync.loaded).toBeFalsy();
       expect(storageHelperAsync.get()).toEqual(defaultValue);
       await delay(200);
+      expect(storageHelperAsync.loaded).toBeTruthy();
       expect(storageHelperAsync.get().message).toBe("saved-before");
     });
 

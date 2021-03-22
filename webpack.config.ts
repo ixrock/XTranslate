@@ -26,7 +26,7 @@ export = () => {
     },
 
     mode: isProduction ? "production" : "development",
-    devtool: "eval-cheap-module-source-map",
+    devtool: "eval-cheap-source-map",
 
     resolve: {
       extensions: ['.ts', '.tsx', '.js', '.json'],

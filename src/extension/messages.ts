@@ -2,14 +2,14 @@
 import { ITranslationError, ITranslationResult } from "../vendors/translator";
 
 export enum MessageType {
-  MENU_TRANSLATE_WITH_VENDOR,
-  MENU_TRANSLATE_FAVORITE,
-  MENU_TRANSLATE_FULL_PAGE,
-  TTS_PLAY,
-  TTS_STOP,
-  GET_SELECTED_TEXT,
-  TRANSLATE_TEXT,
-  STORAGE_SYNC_STATE
+  MENU_TRANSLATE_WITH_VENDOR = "MENU_TRANSLATE_WITH_VENDOR",
+  MENU_TRANSLATE_FAVORITE = "MENU_TRANSLATE_FAVORITE",
+  MENU_TRANSLATE_FULL_PAGE = "MENU_TRANSLATE_FULL_PAGE",
+  TTS_PLAY = "TTS_PLAY",
+  TTS_STOP = "TTS_STOP",
+  GET_SELECTED_TEXT = "GET_SELECTED_TEXT",
+  TRANSLATE_TEXT = "TRANSLATE_TEXT",
+  STORAGE_CHANGE = "STORAGE_CHANGE",
 }
 
 export interface Message<D = any> {
@@ -46,7 +46,7 @@ export interface TranslatePayloadResult {
   error?: ITranslationError;
 }
 
-export interface StorageStateChangePayload<S = any> {
+export interface StorageChangePayload<S = any> {
   key: string;
   state: S;
   storageArea?: "local" | "sync";

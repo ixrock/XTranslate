@@ -1,17 +1,27 @@
 // Chrome extension's runtime api helpers
-import { Message } from './messages'
+import InstalledDetails = chrome.runtime.InstalledDetails;
+import { Message, MessageType } from './messages'
 import { sendTabMessage } from "./tabs";
+import { createLogger } from "../utils/createLogger";
 
-export function getId() {
-  return chrome.runtime.id;
+export const runtimeLogger = createLogger({
+  systemPrefix: "[RUNTIME]",
+});
+
+export function getAppId(): string {
+  return chrome.runtime.id; // e.g. "ifnohffoaebldaeimggnfadhfmlfgmie"
 }
 
 export function getManifest() {
   return chrome.runtime.getManifest();
 }
 
-export function getURL(path: string) {
+export function getURL(path = "") {
   return chrome.runtime.getURL(path);
+}
+
+export function isExtensionPage() {
+  return location.href.startsWith(getURL());
 }
 
 export function getStyleUrl() {
@@ -36,9 +46,17 @@ export type OnMessageCallback<P = any> = (
   sendResponse: <R = any>(payload: R) => void
 ) => void;
 
+export function onMessageType<P>(type: MessageType, callback: OnMessageCallback<P>) {
+  return onMessage((message, sender, sendResponse) => {
+    if (message.type === type) {
+      callback(message, sender, sendResponse);
+    }
+  });
+}
+
 export function onMessage<P = any>(callback: OnMessageCallback<P>) {
   var listener: OnMessageCallback = (message, sender) => {
-    if (getId() !== sender.id) {
+    if (getAppId() !== sender.id) {
       return;
     }
     var sendResponse = (payload: any) => {
@@ -47,8 +65,9 @@ export function onMessage<P = any>(callback: OnMessageCallback<P>) {
         type: message.type,
         payload: payload,
       }
-      if (sender.tab) sendTabMessage(sender.tab.id, responseMsg);
-      else {
+      if (sender.tab) {
+        sendTabMessage(sender.tab.id, responseMsg);
+      } else {
         // e.g. browser action window could catch response in this way
         sendMessage(responseMsg);
       }
@@ -81,4 +100,12 @@ export async function runtimeErrorCheck<T>(data?: T): Promise<T> {
   const error = chrome.runtime.lastError;
   if (error) throw String(error);
   return data;
+}
+
+export function onAppInstall(callback: (reason: "install" | "update" | "chrome_update", details: InstalledDetails) => void) {
+  const callbackWrapper = (event: InstalledDetails) => {
+    callback(event.reason as any, event);
+  };
+  chrome.runtime.onInstalled.addListener(callbackWrapper);
+  return () => chrome.runtime.onInstalled.removeListener(callbackWrapper);
 }
