@@ -1,24 +1,26 @@
 import { isExtensionPage, onMessageType, runtimeErrorCheck, runtimeLogger } from "./extension/runtime";
 import { StorageAdapter, StorageHelper, StorageObservableOptions } from "./utils/storageHelper";
-import { MessageType, StorageChangePayload } from "./extension";
-import { broadcastStorageChange } from "./extension/actions";
+import { MessageType, StoragePayload } from "./extension";
+import { broadcastStorage } from "./extension/actions";
 
-export interface CreateStorageOptions {
-  autoLoad?: boolean; // default: true
-  storageArea?: chrome.storage.StorageArea; // default: chrome.storage.local
+export interface CreateStorageOptions<T> {
+  autoLoad?: boolean; // preload data from storage immediately, default: true
+  autoSync?: boolean; // receive storage updates via chrome.runtime, default: true
+  storageArea?: chrome.storage.StorageArea; // chrome's storage area, default: chrome.storage.local
   observableOptions?: StorageObservableOptions;
 }
 
-export function createSyncStorage<T>(key: string, defaultValue?: T, options: CreateStorageOptions = {}) {
+export function createSyncStorage<T>(key: string, defaultValue?: T, options: CreateStorageOptions<T> = {}) {
   return createStorage<T>(key, defaultValue, {
     storageArea: chrome.storage.sync,
     ...options,
   });
 }
 
-export function createStorage<T>(key: string, defaultValue?: T, opts: CreateStorageOptions = {}) {
+export function createStorage<T>(key: string, defaultValue?: T, opts: CreateStorageOptions<T> = {}) {
   const {
     autoLoad = true,
+    autoSync = true,
     storageArea = chrome.storage.local,
     observableOptions,
   } = opts;
@@ -31,13 +33,12 @@ export function createStorage<T>(key: string, defaultValue?: T, opts: CreateStor
   });
 
   // subscribe for updates via chrome.runtime messaging
-  onMessageType<StorageChangePayload>(MessageType.STORAGE_CHANGE, ({ payload }) => {
+  onMessageType<StoragePayload>(MessageType.STORAGE_UPDATE, ({ payload }) => {
     const isCurrentStorage = storageArea === chrome.storage[payload.storageArea] && key === payload.key;
-    if (!isCurrentStorage || !storageHelper.initialized) return;
-    if (!storageHelper.isEqual(payload.state)) {
-      runtimeLogger.info(`storage update for "${payload.key}"`, payload);
-      storageHelper.merge(payload.state);
-    }
+    const skip = !isCurrentStorage || !autoSync || !storageHelper.initialized;
+    if (skip || storageHelper.isEqual(payload.state)) return;
+    runtimeLogger.info(`storage update for "${payload.key}"`, payload);
+    storageHelper.set(payload.state);
   });
 
   return storageHelper;
@@ -69,11 +70,12 @@ export function createStorageAdapter<T>(storage: chrome.storage.StorageArea): St
         });
       })
     },
-    onChange({ key, value }: { key: string; value: T }) {
+    onChange({ key, value }) {
       if (!isExtensionPage()) {
         return; // skip in content-page scripts
       }
-      broadcastStorageChange<T>({
+
+      broadcastStorage<T>({
         key: key,
         state: value,
         storageArea: storage === chrome.storage.local ? "local" : "sync",

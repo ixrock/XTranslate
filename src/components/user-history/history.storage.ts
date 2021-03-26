@@ -1,19 +1,213 @@
-import md5 from "crypto-js/md5";
-import { action, computed } from "mobx";
-import { orderBy, uniqBy } from "lodash";
+import { action, comparer, observable, reaction } from "mobx";
+import { uniqBy } from "lodash";
 import { autobind } from "../../utils/autobind";
 import { createStorage } from "../../storages";
 import { ITranslationResult } from "../../vendors/translator";
-import { settingsStorage, settingsStore } from "../settings/settings.storage";
+import { settingsStore } from "../settings/settings.storage";
 
-// FIXME: fast removing history items might lead to infinite updates loop for bgc <-> options-page
-// FIXME: import-history file-dialog out of viewport in Brave when clicked from browser-action's window
-// TODO: optimize storage and removing items by id
+export interface UserHistoryModel {
+  items: {
+    [timestamp: number]: IHistoryStorageItem;
+  }
+}
 
-export type IHistoryItemId = string;
+export const historyStorage = createStorage<UserHistoryModel>("history", { items: [] }, {
+  autoLoad: false, // load data manually by demand, e.g. history page, saving translation from website, etc.
+  autoSync: false, // avoid auto-merge storage changes coming from chrome.runtime
+});
+
+@autobind()
+export class UserHistoryStore {
+  private storage = historyStorage;
+
+  @observable isReady = false;
+  @observable items = observable.map<IHistoryItemId, IHistoryItem>([], { deep: false });
+
+  @action
+  async init() {
+    if (this.storage.initialized) return;
+    try {
+      this.storage.init({ migrate });
+      await this.storage.whenReady;
+
+      const items = Object.values(this.storage.get().items)
+        .map(toHistoryItem)
+        .map(item => [item.date, item]);
+
+      this.items.replace(items);
+      this.isReady = true;
+      this.bindAutoSave();
+    } catch (error) {
+      console.error(`[HISTORY-STORAGE]: init ${error}`, this);
+    }
+  }
+
+  private bindAutoSave() {
+    return reaction(() => this.items.toJSON(), items => {
+      const storageItems = Object.fromEntries(
+        Object.entries(items).map(([id, item]) => [id, toStorageItem(item)])
+      );
+      this.storage.merge({
+        items: storageItems,
+      });
+    }, {
+      delay: 250,
+      equals: comparer.shallow,
+    });
+  }
+
+  @action
+  async importItems(items: (IHistoryItem | IHistoryStorageItem)[]): Promise<number> {
+    await this.init();
+    const countBeforeUpdate = this.items.size;
+
+    // add items
+    items.forEach(item => {
+      const historyItem = isHistoryItem(item) ? item : toHistoryItem(item);
+      this.items.set(historyItem.date, historyItem);
+    });
+
+    // remove duplicates of the same translations
+    if (settingsStore.data.historyAvoidDuplicates) {
+      const entries: [IHistoryItemId, IHistoryItem][] = Array.from(this.items);
+      const newEntries = uniqBy(entries, ([id, { vendor, from, to, text }]) => [vendor, from, to, text].join());
+      if (entries.length !== newEntries.length) {
+        this.items.replace(newEntries);
+      }
+    }
+
+    // returns added items count
+    return this.items.size - countBeforeUpdate;
+  }
+
+  @action
+  async saveTranslation(translation: ITranslationResult) {
+    await this.init();
+
+    const skipWhen = [
+      !translation, // no translation
+      settingsStore.data.historySaveWordsOnly && !translation?.dictionary.length, // dictionary words only
+    ].some(Boolean);
+    if (skipWhen) {
+      return false;
+    }
+
+    const { langFrom, langDetected } = translation;
+    const storageItem = toStorageItem({
+      ...translation,
+      langFrom: langFrom === "auto" ? langDetected : langFrom
+    });
+
+    return this.importItems([storageItem]);
+  }
+
+  getLatestTimestamp(): number {
+    const timestamps = Array.from(this.items.values()).map(item => item.date);
+    return Math.max(...timestamps);
+  }
+
+  searchItems(query = ""): IHistoryItem[] {
+    query = query.trim().toLowerCase();
+    if (!query) return [];
+    return Array.from(this.items.values()).filter(({ text, translation }) => {
+      return (
+        text.toLowerCase().includes(query) ||
+        translation.toLowerCase().includes(query)
+      )
+    });
+  }
+
+  @action
+  remove(itemIdOrCallback?: IHistoryItemId | ((item: IHistoryItem) => boolean)) {
+    if (!itemIdOrCallback) {
+      this.items.clear(); // delete all
+    } else {
+      if (typeof itemIdOrCallback === "function") {
+        const items = Array.from(this.items.values()).filter(item => !itemIdOrCallback(item));
+        this.items.replace(items.map(item => [item.date, item]));
+      } else {
+        this.items.delete(itemIdOrCallback);
+      }
+    }
+  }
+}
+
+export function migrate(data: UserHistoryModel | IHistoryStorageItem[]): UserHistoryModel {
+  // migrate to latest storage format with plain-object as root
+  if (Array.isArray(data)) {
+    return {
+      items: Object.fromEntries(
+        data.map((item: IHistoryStorageItem) => [item[0], item])
+      )
+    };
+  }
+  return data;
+}
+
+export function toStorageItem(data: ITranslationResult | IHistoryItem): IHistoryStorageItem {
+  var { vendor, transcription, translation } = data;
+  if (isHistoryItem(data)) {
+    return [
+      data.date,
+      vendor,
+      data.from,
+      data.to,
+      data.text,
+      translation,
+      transcription,
+      data.dictionary.map(dict => [
+        dict.wordType,
+        dict.translation,
+      ])
+    ]
+  } else {
+    return [
+      Date.now(),
+      vendor,
+      data.langFrom,
+      data.langTo,
+      data.originalText,
+      translation,
+      transcription,
+      data.dictionary.map(dict => [
+        dict.wordType,
+        dict.meanings.map(mean => mean.word)
+      ])
+    ]
+  }
+}
+
+export function toHistoryItem(data: IHistoryStorageItem): IHistoryItem {
+  if (Array.isArray(data)) {
+    const [date, vendor, from, to, text, translation, transcription, dict] = data;
+    return {
+      date, vendor, from, to, text, translation, transcription,
+      dictionary: dict.map(dict => ({
+        wordType: dict[0],
+        translation: dict[1]
+      }))
+    };
+  } else {
+    const { date, vendor, from, to, text, tr, ts, dict: dictionary = [] } = data;
+    return {
+      date, vendor, from, to, text,
+      translation: tr,
+      transcription: ts,
+      dictionary: dictionary.map(dict => ({
+        wordType: dict.w,
+        translation: dict.tr
+      }))
+    }
+  }
+}
+
+export function isHistoryItem(item: any | IHistoryItem = {}): item is IHistoryItem {
+  return !!(item.from && item.to);
+}
+
+export type IHistoryItemId = string | number /* timestamp */;
 
 export interface IHistoryItem {
-  id: IHistoryItemId;
   date: number
   vendor: string
   from: string
@@ -58,187 +252,5 @@ export type IHistoryStorageItemVersion2 = [
     string[] /*translations*/
   ][]
 ];
-
-@autobind()
-export class UserHistoryStore {
-  private storage = historyStorage;
-
-  ready = Promise.allSettled([
-    settingsStorage.whenReady,
-    historyStorage.whenReady,
-  ]);
-
-  private get data(): IHistoryStorageItem[] {
-    return this.storage.get();
-  }
-
-  @computed get items(): IHistoryItem[] {
-    return this.data.map(toHistoryItem); // convert data to system format
-  }
-
-  @action
-  async importItems(items: IHistoryStorageItem[]): Promise<number> {
-    await this.storage.whenReady;
-
-    var { historyAvoidDuplicates } = settingsStore.data;
-    var storageItems: IHistoryStorageItem[] = [
-      ...this.data,
-      ...items.filter(item => {
-        if (Array.isArray(item)) {
-          return item.length >= 6 && typeof item[0] === "number"
-        } else {
-          var { date, vendor, from, to, text, } = item;
-          return !!(date && vendor && from && to && text);
-        }
-      }),
-    ]
-    var data = orderBy(storageItems, item => {
-      if (Array.isArray(item)) {
-        if (typeof item[0] === "number") return item[0]; // v2
-      } else {
-        return item.date; // v1
-      }
-    }, "desc");
-    var countBeforeCleanUp = this.data.length;
-    if (historyAvoidDuplicates) {
-      data = this.removeDuplicates(data);
-    }
-    this.storage.set(data);
-    return data.length - countBeforeCleanUp;
-  }
-
-  @action
-  async saveTranslation(translation: ITranslationResult) {
-    await this.storage.whenReady;
-
-    var { historySaveWordsOnly, historyAvoidDuplicates } = settingsStore.data;
-    var { langFrom, langDetected } = translation;
-    var noDictionary = !translation?.dictionary.length;
-    if (!translation || (historySaveWordsOnly && noDictionary)) {
-      return;
-    }
-    var data: IHistoryStorageItem[] = [
-      toStorageItem({
-        ...translation,
-        langFrom: langFrom === "auto" ? langDetected : langFrom
-      }),
-      ...this.data,
-    ];
-    if (historyAvoidDuplicates) {
-      data = this.removeDuplicates(data);
-    }
-    this.storage.set(data);
-  }
-
-  protected removeDuplicates(items: IHistoryStorageItem[]) {
-    return uniqBy(items, item => {
-      var { vendor, from, to, text } = toHistoryItem(item);
-      return vendor + from + to + text;
-    })
-  }
-
-  searchItems(query = ""): IHistoryItem[] {
-    query = query.trim().toLowerCase();
-    if (!query) return [];
-    return this.items.filter(({ text, translation }) => {
-      return (
-        text.toLowerCase().includes(query) ||
-        translation.toLowerCase().includes(query)
-      )
-    });
-  }
-
-  @action
-  clear(matcher?: IHistoryItemId | ((item: IHistoryItem) => boolean)) {
-    if (!matcher) {
-      this.storage.clear(); // remove all
-    } else {
-      if (typeof matcher === "function") {
-        const filteredData = this.data.filter(storageItem => !matcher(toHistoryItem(storageItem)));
-        this.storage.set(filteredData);
-      } else {
-        // remove single history item
-        var index = this.items.findIndex(item => item.id == matcher);
-        if (index > -1) {
-          const newData = this.data.filter((item, storageIndex) => storageIndex !== index);
-          this.storage.set(newData);
-        }
-      }
-    }
-  }
-}
-
-export function toStorageItem(data: ITranslationResult | IHistoryItem): IHistoryStorageItem {
-  var { vendor, transcription, translation } = data;
-  if (isHistoryItem(data)) {
-    return [
-      data.date,
-      vendor,
-      data.from,
-      data.to,
-      data.text,
-      translation,
-      transcription,
-      data.dictionary.map(dict => [
-        dict.wordType,
-        dict.translation,
-      ])
-    ]
-  } else {
-    return [
-      Date.now(),
-      vendor,
-      data.langFrom,
-      data.langTo,
-      data.originalText,
-      translation,
-      transcription,
-      data.dictionary.map(dict => [
-        dict.wordType,
-        dict.meanings.map(mean => mean.word)
-      ])
-    ]
-  }
-}
-
-export function getHistoryItemId(data: { date, vendor, from, to, text }): IHistoryItemId {
-  return md5(Object.values(data).join("-")).toString(); // dynamic id
-}
-
-export function toHistoryItem(data: IHistoryStorageItem): IHistoryItem {
-  if (Array.isArray(data)) {
-    const [date, vendor, from, to, text, translation, transcription, dict] = data;
-    return {
-      id: getHistoryItemId({ text, to, from, vendor, date }),
-      date, vendor, from, to, text, translation, transcription,
-      dictionary: dict.map(dict => ({
-        wordType: dict[0],
-        translation: dict[1]
-      }))
-    };
-  } else {
-    const { date, vendor, from, to, text, tr, ts, dict: dictionary = [] } = data;
-    return {
-      id: getHistoryItemId(data),
-      date, vendor, from, to, text,
-      translation: tr,
-      transcription: ts,
-      dictionary: dictionary.map(dict => ({
-        wordType: dict.w,
-        translation: dict.tr
-      }))
-    }
-  }
-}
-
-export function isHistoryItem(item: any | IHistoryItem = {}): item is IHistoryItem {
-  return !!(item.from && item.to);
-}
-
-export const historyStorage = createStorage<IHistoryStorageItem[]>("history", [], {
-  observableOptions: {
-    deep: false,
-  }
-});
 
 export const historyStore = new UserHistoryStore();

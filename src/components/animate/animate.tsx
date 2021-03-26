@@ -71,7 +71,6 @@ export class Animate extends React.Component<AnimateProps> {
     var { enter, leave } = this.statusClassName;
     var { onTransitionEnd } = this.contentElem.props;
     if (onTransitionEnd) onTransitionEnd(evt);
-    // todo: check evt.propertyName and make sure all animating props has finished their transition
     if (enter && leave) {
       this.reset();
     }

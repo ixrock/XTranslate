@@ -1,4 +1,4 @@
-import { Message, MessageType, PlayTextToSpeechPayload, StorageChangePayload, TranslatePayload, TranslatePayloadResult } from "./messages";
+import { Message, MessageType, PlayTextToSpeechPayload, StoragePayload, TranslatePayload, TranslatePayloadResult } from "./messages";
 import { promisifyMessage, sendMessage } from "./runtime";
 import { broadcastMessage, getActiveTab } from "./tabs";
 import { isTranslation, ITranslationResult } from "../vendors";
@@ -41,11 +41,11 @@ export function ttsStop() {
   });
 }
 
-export function broadcastStorageChange<P>(payload: StorageChangePayload<P>) {
+export function broadcastStorage<P>(payload: StoragePayload<P>) {
   const message: Message = {
-    type: MessageType.STORAGE_CHANGE,
+    type: MessageType.STORAGE_UPDATE,
     payload: payload,
   };
-  sendMessage(message); // chrome.runtime
-  broadcastMessage(message); // chrome.tabs
+  sendMessage(message); // chrome.runtime -> background page
+  broadcastMessage(message); // chrome.tabs -> web-content pages
 }

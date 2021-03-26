@@ -1,13 +1,13 @@
 // Helper for working with persistent storages (e.g. WebStorage API, NodeJS file-system api, etc.)
 
 import type { CreateObservableOptions } from "mobx/lib/api/observable";
-import { action, comparer, observable, reaction, toJS, when } from "mobx";
+import { action, comparer, IReactionDisposer, observable, reaction, toJS, when } from "mobx";
 import produce, { Draft, enableMapSet, setAutoFreeze } from "immer";
 import { isEqual, isPlainObject } from "lodash";
 import { createLogger } from "./createLogger";
 
 setAutoFreeze(false); // allow to merge deep observables
-enableMapSet(); // allows usage of maps ans sets for produce()
+enableMapSet(); // allow usage of maps ans sets
 
 export interface StorageAdapter<T> {
   getItem(key: string): T | Promise<T>;
@@ -20,25 +20,28 @@ export type StorageObservableOptions = CreateObservableOptions;
 
 export interface StorageHelperOptions<T> {
   autoInit?: boolean; // start preloading data immediately, default: true
-  autoSave?: boolean; // auto-save changes to remote storage, default: true
+  autoSave?: boolean; // auto-save data-changes to underlying storage, default: true
   defaultValue?: T;
   storage: StorageAdapter<T>;
   observable?: StorageObservableOptions;
+}
+
+export interface StorageHelperPreloadOptions<T> {
+  // customize data import on first loading, useful for updating storage with a new model type
+  migrate?: (data: T) => T;
 }
 
 export class StorageHelper<T> {
   static defaultLogger = createLogger({ systemPrefix: "[STORAGE]" });
   private logger = StorageHelper.defaultLogger;
 
-  static defaultObservabilityOptions: StorageObservableOptions = {
-    deep: true, // deep observable tree
-    equals: comparer.shallow, // check data before merge, affects to external reactions (if any)
-  };
-
   static defaultOptions: Partial<StorageHelperOptions<any>> = {
     autoInit: true,
     autoSave: true,
-    observable: StorageHelper.defaultObservabilityOptions,
+    observable: {
+      deep: true, // deep observable tree
+      equals: comparer.shallow,
+    },
   };
 
   @observable private data = observable.box<T>();
@@ -57,7 +60,7 @@ export class StorageHelper<T> {
 
   constructor(readonly key: string, private options: StorageHelperOptions<T>) {
     this.options = { ...StorageHelper.defaultOptions, ...options };
-    this.options.observable = { ...StorageHelper.defaultObservabilityOptions, ...this.options.observable };
+    this.options.observable = { ...StorageHelper.defaultOptions.observable, ...this.options.observable };
     this.reset();
 
     if (this.options.autoInit) {
@@ -66,26 +69,34 @@ export class StorageHelper<T> {
   }
 
   @action
-  init() {
+  init(opts?: StorageHelperPreloadOptions<T>) {
     if (this.initialized) return;
     this.initialized = true;
-    this.load();
+    this.load(opts);
 
     if (this.options.autoSave) {
-      this.onChange(value => this.onDataChange(value));
+      this.bindAutoSave();
     }
   }
 
+  bindAutoSave(): IReactionDisposer {
+    return this.onChange(value => this.onDataChange(value));
+  }
+
   @action
-  load() {
+  load({ migrate }: StorageHelperPreloadOptions<T> = {}) {
     this.loading = true;
+
     this.loadFromStorage({
       onData: (data: T) => {
         const notEmpty = data != null;
         const notDefault = !this.isDefault(data);
+
         if (notEmpty && notDefault) {
+          if (migrate) data = migrate(data);
           this.set(data);
         }
+
         this.loaded = true;
         this.loading = false;
       },

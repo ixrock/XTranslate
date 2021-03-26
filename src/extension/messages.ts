@@ -9,7 +9,7 @@ export enum MessageType {
   TTS_STOP = "TTS_STOP",
   GET_SELECTED_TEXT = "GET_SELECTED_TEXT",
   TRANSLATE_TEXT = "TRANSLATE_TEXT",
-  STORAGE_CHANGE = "STORAGE_CHANGE",
+  STORAGE_UPDATE = "STORAGE_UPDATE",
 }
 
 export interface Message<D = any> {
@@ -46,7 +46,7 @@ export interface TranslatePayloadResult {
   error?: ITranslationError;
 }
 
-export interface StorageChangePayload<S = any> {
+export interface StoragePayload<S = any /* json-serializable */> {
   key: string;
   state: S;
   storageArea?: "local" | "sync";

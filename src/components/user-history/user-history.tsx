@@ -1,7 +1,7 @@
 import "./user-history.scss";
 
 import * as React from "react";
-import { debounce, groupBy } from "lodash";
+import { debounce, groupBy, orderBy } from "lodash";
 import { computed, observable } from "mobx";
 import { observer } from "mobx-react";
 import { __i18n } from "../../extension/i18n";
@@ -31,6 +31,7 @@ enum HistoryTimeFrame {
 
 @observer
 export class UserHistory extends React.Component {
+  private store = historyStore;
   private itemDetailsEnabled = observable.map<IHistoryItemId, boolean>();
   public searchInput: Input;
 
@@ -40,11 +41,9 @@ export class UserHistory extends React.Component {
   @observable showImportExport = false;
   @observable clearTimeFrame = HistoryTimeFrame.DAY;
   @observable searchText = "";
-  @observable isReady = false;
 
   async componentDidMount() {
-    await historyStore.ready;
-    this.isReady = true;
+    await this.store.init();
   }
 
   @computed get pageSize() {
@@ -53,11 +52,12 @@ export class UserHistory extends React.Component {
 
   @computed get items(): IHistoryItem[] {
     if (this.searchText) return this.searchedItems;
-    return historyStore.items;
+    const items = Array.from(this.store.items.values());
+    return orderBy(items, item => item.date, "desc");
   }
 
   @computed get searchedItems() {
-    return historyStore.searchItems(this.searchText);
+    return this.store.searchItems(this.searchText);
   }
 
   @computed get groupedItems(): Record<string, IHistoryItem[]> {
@@ -114,7 +114,7 @@ export class UserHistory extends React.Component {
   }
 
   clearById = (id?: IHistoryItemId) => {
-    historyStore.clear(id);
+    this.store.remove(id);
   }
 
   clearByTimeFrame = () => {
@@ -129,23 +129,23 @@ export class UserHistory extends React.Component {
       return date.join("-");
     }
     var clearAll = clearTimeFrame === HistoryTimeFrame.ALL;
-    var latestItem = historyStore.items[0];
-    var latestFrame = getTimeFrame(latestItem.date, clearTimeFrame);
+    var latestFrame = getTimeFrame(this.store.getLatestTimestamp(), clearTimeFrame);
     var clearFilter = (item: IHistoryItem) => latestFrame === getTimeFrame(item.date, clearTimeFrame);
-    historyStore.clear(clearAll ? null : clearFilter);
+    historyStore.remove(clearAll ? null : clearFilter);
   }
 
   renderHistory() {
     var { groupedItems, itemDetailsEnabled } = this;
     return (
       <ul className="history">
-        {!this.isReady && <Spinner center/>}
+        {!this.store.isReady && <Spinner center/>}
         {Object.keys(groupedItems).map(date => {
           return (
             <React.Fragment key={date}>
               <li className="history-date">{date}</li>
               {groupedItems[date].map(item => {
-                var { id: itemId, vendor, from, to, text, translation, transcription } = item;
+                var { date, vendor, from, to, text, translation, transcription } = item;
+                var itemId = date; // timestamp considered as unique ID
                 var showDetails = itemDetailsEnabled.has(itemId);
                 var translatedWith = __i18n("translated_with", [
                   vendor[0].toUpperCase() + vendor.substr(1),
