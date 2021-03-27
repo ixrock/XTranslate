@@ -1,7 +1,7 @@
 import "./user-history.scss";
 
-import * as React from "react";
-import { debounce, groupBy, orderBy } from "lodash";
+import React from "react";
+import { debounce, groupBy } from "lodash";
 import { computed, observable } from "mobx";
 import { observer } from "mobx-react";
 import { __i18n } from "../../extension/i18n";
@@ -43,7 +43,7 @@ export class UserHistory extends React.Component {
   @observable searchText = "";
 
   async componentDidMount() {
-    await this.store.init();
+    await this.store.preload();
   }
 
   @computed get pageSize() {
@@ -52,8 +52,7 @@ export class UserHistory extends React.Component {
 
   @computed get items(): IHistoryItem[] {
     if (this.searchText) return this.searchedItems;
-    const items = Array.from(this.store.items.values());
-    return orderBy(items, item => item.date, "desc");
+    return Object.values(this.store.items);
   }
 
   @computed get searchedItems() {
@@ -207,7 +206,7 @@ export class UserHistory extends React.Component {
   }
 
   onImport = async (files: ImportingFile[]) => {
-    var historyItems: IHistoryStorageItem[] = [];
+    var items: IHistoryStorageItem[] = [];
     files.forEach(({ file, data, error }) => {
       if (error) {
         Notifications.error(__i18n("history_import_file_error", [
@@ -216,12 +215,12 @@ export class UserHistory extends React.Component {
         return;
       }
       try {
-        historyItems.push(...JSON.parse(data));
+        items.push(...JSON.parse(data));
       } catch (err) {
         console.error(`Parsing "${file.name}" has failed:`, err);
       }
     });
-    var count = await historyStore.importItems(historyItems);
+    var count = await historyStore.importItems(items);
     Notifications.ok(__i18n("history_import_success", count));
   }
 

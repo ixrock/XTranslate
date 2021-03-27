@@ -20,8 +20,12 @@ export function getURL(path = "") {
   return chrome.runtime.getURL(path);
 }
 
-export function isExtensionPage() {
+export function isExtensionPage(): boolean {
   return location.href.startsWith(getURL());
+}
+
+export function isBackgroundPage(): boolean {
+  return isExtensionPage() && location.href.endsWith("generated_background_page.html");
 }
 
 export function getStyleUrl() {

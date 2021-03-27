@@ -4,10 +4,12 @@ import { MessageType, StoragePayload } from "./extension";
 import { broadcastStorage } from "./extension/actions";
 
 export interface CreateStorageOptions<T> {
+  autoSave?: boolean;
   autoLoad?: boolean; // preload data from storage immediately, default: true
-  autoSync?: boolean; // receive storage updates via chrome.runtime, default: true
+  sync?: boolean; // receive storage updates via chrome.runtime, default: true
   storageArea?: chrome.storage.StorageArea; // chrome's storage area, default: chrome.storage.local
   observableOptions?: StorageObservableOptions;
+  onSync?(state: T): void; // allows to process remote changes manually with "sync:false"
 }
 
 export function createSyncStorage<T>(key: string, defaultValue?: T, options: CreateStorageOptions<T> = {}) {
@@ -20,13 +22,16 @@ export function createSyncStorage<T>(key: string, defaultValue?: T, options: Cre
 export function createStorage<T>(key: string, defaultValue?: T, opts: CreateStorageOptions<T> = {}) {
   const {
     autoLoad = true,
-    autoSync = true,
+    autoSave = true, // to remote storage on change
+    sync = true, // from remote storage
     storageArea = chrome.storage.local,
     observableOptions,
+    onSync,
   } = opts;
 
   const storageHelper = new StorageHelper<T>(key, {
     autoInit: autoLoad,
+    autoSave: autoSave,
     observable: observableOptions,
     defaultValue: defaultValue,
     storage: createStorageAdapter<T>(storageArea),
@@ -35,10 +40,13 @@ export function createStorage<T>(key: string, defaultValue?: T, opts: CreateStor
   // subscribe for updates via chrome.runtime messaging
   onMessageType<StoragePayload>(MessageType.STORAGE_UPDATE, ({ payload }) => {
     const isCurrentStorage = storageArea === chrome.storage[payload.storageArea] && key === payload.key;
-    const skip = !isCurrentStorage || !autoSync || !storageHelper.initialized;
-    if (skip || storageHelper.isEqual(payload.state)) return;
-    runtimeLogger.info(`storage update for "${payload.key}"`, payload);
-    storageHelper.set(payload.state);
+    if (!isCurrentStorage || !storageHelper.initialized) return;
+    if (storageHelper.isEqual(payload.state)) return; // not changed
+    if (sync) {
+      runtimeLogger.info(`storage update for "${payload.key}"`, payload);
+      storageHelper.set(payload.state);
+    }
+    onSync?.(payload.state);
   });
 
   return storageHelper;

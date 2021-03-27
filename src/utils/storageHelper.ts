@@ -1,7 +1,7 @@
 // Helper for working with persistent storages (e.g. WebStorage API, NodeJS file-system api, etc.)
 
 import type { CreateObservableOptions } from "mobx/lib/api/observable";
-import { action, comparer, IReactionDisposer, observable, reaction, toJS, when } from "mobx";
+import { action, comparer, observable, reaction, toJS, when } from "mobx";
 import produce, { Draft, enableMapSet, setAutoFreeze } from "immer";
 import { isEqual, isPlainObject } from "lodash";
 import { createLogger } from "./createLogger";
@@ -73,14 +73,6 @@ export class StorageHelper<T> {
     if (this.initialized) return;
     this.initialized = true;
     this.load(opts);
-
-    if (this.options.autoSave) {
-      this.bindAutoSave();
-    }
-  }
-
-  bindAutoSave(): IReactionDisposer {
-    return this.onChange(value => this.onDataChange(value));
   }
 
   @action
@@ -99,6 +91,7 @@ export class StorageHelper<T> {
 
         this.loaded = true;
         this.loading = false;
+        this.onChange(value => this.onDataChange(value));
       },
       onError: (error?: any) => {
         this.loading = false;
@@ -144,10 +137,12 @@ export class StorageHelper<T> {
     try {
       this.logger.info(`data changed for "${this.key}"`, value);
 
-      if (value == null) {
-        this.storage.removeItem(this.key);
-      } else {
-        this.storage.setItem(this.key, value);
+      if (this.options.autoSave) {
+        if (value == null) {
+          this.storage.removeItem(this.key);
+        } else {
+          this.storage.setItem(this.key, value);
+        }
       }
 
       this.storage.onChange?.({ value, key: this.key });
