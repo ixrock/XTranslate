@@ -1,6 +1,6 @@
 import { Hotkey } from "../../utils/parseHotkey";
 import { getTranslator } from "../../vendors";
-import { createSyncStorage } from "../../storages";
+import { createSyncStorage } from "../../storage-factory";
 
 export const settingsStorage = createSyncStorage("settings", {
   autoPlayText: false,

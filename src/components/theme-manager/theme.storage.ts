@@ -1,7 +1,7 @@
 import { autorun } from "mobx";
 import { Color } from "react-color"
 import { getURL } from "../../extension";
-import { createSyncStorage } from "../../storages";
+import { createSyncStorage } from "../../storage-factory";
 
 export const themeStorage = createSyncStorage("theme", {
   bgcMain: "#000" as Color,

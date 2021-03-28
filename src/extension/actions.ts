@@ -46,6 +46,6 @@ export function broadcastStorage<P>(payload: StoragePayload<P>) {
     type: MessageType.STORAGE_UPDATE,
     payload: payload,
   };
-  sendMessage(message); // chrome.runtime -> background page
-  broadcastMessage(message); // chrome.tabs -> web-content pages
+  sendMessage(message); // chrome.runtime -> background/options pages
+  broadcastMessage(message); // chrome.tabs -> content pages
 }

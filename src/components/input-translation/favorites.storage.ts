@@ -1,7 +1,7 @@
 import { find, flatten, orderBy, remove } from "lodash"
 import { autobind } from "../../utils";
 import { getTranslators } from "../../vendors";
-import { createSyncStorage } from "../../storages";
+import { createSyncStorage } from "../../storage-factory";
 
 export type FavoritesStorage = {
   [vendor: string]: FavoriteLangPair[];

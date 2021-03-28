@@ -1,5 +1,6 @@
 // Messages for communication btw background process and other extension parts
-import { ITranslationError, ITranslationResult } from "../vendors/translator";
+import type { StorageArea } from "../storage-factory";
+import type { ITranslationError, ITranslationResult } from "../vendors/translator";
 
 export enum MessageType {
   MENU_TRANSLATE_WITH_VENDOR = "MENU_TRANSLATE_WITH_VENDOR",
@@ -49,5 +50,5 @@ export interface TranslatePayloadResult {
 export interface StoragePayload<S = any /* json-serializable */> {
   key: string;
   state: S;
-  storageArea?: "local" | "sync";
+  storageArea: StorageArea;
 }

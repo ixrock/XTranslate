@@ -1,7 +1,7 @@
 import GoogleTranslateParams from "./google.json"
 import { ITranslationError, ITranslationResult, Translator } from "./translator";
 import { delay } from "../utils";
-import { createStorage } from "../storages";
+import { createStorage } from "../storage-factory";
 
 class Google extends Translator {
   public name = 'google';

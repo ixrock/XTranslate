@@ -1,35 +1,56 @@
 import { action, computed, } from "mobx";
 import { orderBy, uniqBy } from "lodash";
 import { autobind } from "../../utils/autobind";
-import { createStorage } from "../../storages";
+import { createStorage } from "../../storage-factory";
 import { ITranslationResult } from "../../vendors/translator";
 import { settingsStorage, settingsStore } from "../settings/settings.storage";
 
 export interface UserHistoryModel {
+  resourceVersion: number;
   items: IHistoryStorageItem[];
 }
 
+export const historyStorage = createStorage<UserHistoryModel>("history", {
+  resourceVersion: 1,
+  items: [],
+}, {
+  area: "local",
+  autoLoad: false,
+  syncFromRemote: false,
+  migrations: [
+    function (data: UserHistoryModel | IHistoryStorageItem[]): UserHistoryModel {
+      if (Array.isArray(data)) {
+        return {
+          items: data,
+          resourceVersion: 1,
+        };
+      }
+      return data;
+    }
+  ],
+  onRemoteUpdate(update: UserHistoryModel) {
+    const current = historyStorage.get();
+    if (update.resourceVersion > current.resourceVersion) {
+      historyStorage.set(update);
+    }
+  },
+});
+
 @autobind()
 export class UserHistoryStore {
-  private storage = createStorage<UserHistoryModel>("history", { items: [] }, {
-    autoLoad: false, // loading data handled manually on demand
-    sync: false, // skip auto-merging changes from chrome.storage / avoid possible race conditions (e.g: fast removing items from UI)
-  });
+  private storage = historyStorage;
 
   async preload() {
-    this.storage.init({ migrate });
+    this.storage.init();
     await this.storage.whenReady;
   }
 
   @computed get isReady(): boolean {
-    return [
-      this.storage.loaded,
-      settingsStorage.loaded,
-    ].every(Boolean);
+    return this.storage.loaded && settingsStorage.loaded;
   }
 
   @computed get rawItems(): IHistoryStorageItem[] {
-    return Object.values(this.storage.get()?.items) ?? [];
+    return Object.values(this.storage.get().items) ?? [];
   }
 
   @computed get items(): IHistoryItem[] {
@@ -38,29 +59,29 @@ export class UserHistoryStore {
   }
 
   @action
-  async importItems(items: IHistoryStorageItem[], { replace = false } = {}): Promise<number> {
+  async importItems(newItems: IHistoryStorageItem[], { replace = false } = {}): Promise<number> {
     await this.preload();
     const countBeforeUpdate = this.items.length;
 
-    let allItems: IHistoryItem[] = [
-      ...items.map(toHistoryItem),
+    let items: IHistoryItem[] = [
+      ...newItems.map(toHistoryItem),
       ...(replace ? [] : this.items),
     ];
 
     // remove duplicates of the same translations
     if (settingsStore.data.historyAvoidDuplicates) {
-      allItems = uniqBy(allItems, item => {
+      items = uniqBy(items, item => {
         const { vendor, from, to, text } = item;
         return [vendor, from, to, text].join();
       });
     }
 
-    // update items
-    this.storage.merge({
-      items: allItems.map(toStorageItem)
+    this.storage.merge(draft => {
+      draft.resourceVersion++;
+      draft.items = items.map(toStorageItem);
     });
 
-    return allItems.length - countBeforeUpdate;
+    return items.length - countBeforeUpdate;
   }
 
   @action
@@ -107,23 +128,10 @@ export class UserHistoryStore {
         if (typeof idOrInvertedFilter === "function") return !idOrInvertedFilter(item);
         return item.id != idOrInvertedFilter;
       };
-      this.storage.merge({
-        items: this.items.filter(filter).map(toStorageItem),
-      });
+      const newItems = this.items.filter(filter).map(toStorageItem);
+      this.importItems(newItems, { replace: true });
     }
   }
-}
-
-export function migrate(data: UserHistoryModel | IHistoryStorageItem[]): UserHistoryModel {
-  // migrate to latest storage format with plain-object as root
-  if (Array.isArray(data)) {
-    return {
-      items: Object.fromEntries(
-        data.map((item: IHistoryStorageItem) => [item[0], item])
-      )
-    };
-  }
-  return data;
 }
 
 export function toStorageItem(data: ITranslationResult | IHistoryItem): IHistoryStorageItem {

@@ -24,10 +24,6 @@ export function isExtensionPage(): boolean {
   return location.href.startsWith(getURL());
 }
 
-export function isBackgroundPage(): boolean {
-  return isExtensionPage() && location.href.endsWith("generated_background_page.html");
-}
-
 export function getStyleUrl() {
   var manifest = getManifest();
   var filePath = manifest.content_scripts.map(script => script.css)[0][0];
@@ -36,7 +32,7 @@ export function getStyleUrl() {
 
 export function getBackgroundPage(): Promise<Window> {
   return new Promise(resolve => {
-    chrome.runtime.getBackgroundPage(bgcPage => resolve(runtimeErrorCheck(bgcPage)))
+    chrome.runtime.getBackgroundPage(bgcPage => resolve(checkErrors(bgcPage)))
   })
 }
 
@@ -100,7 +96,7 @@ export async function promisifyMessage<P = any, R = any>({ tabId, ...message }: 
   });
 }
 
-export async function runtimeErrorCheck<T>(data?: T): Promise<T> {
+export async function checkErrors<T>(data?: T): Promise<T> {
   const error = chrome.runtime.lastError;
   if (error) throw String(error);
   return data;

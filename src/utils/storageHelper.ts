@@ -17,6 +17,7 @@ export interface StorageAdapter<T> {
 }
 
 export type StorageObservableOptions = CreateObservableOptions;
+export type StorageMigrationCallback<T> = (data: T | any) => T;
 
 export interface StorageHelperOptions<T> {
   autoInit?: boolean; // start preloading data immediately, default: true
@@ -24,11 +25,7 @@ export interface StorageHelperOptions<T> {
   defaultValue?: T;
   storage: StorageAdapter<T>;
   observable?: StorageObservableOptions;
-}
-
-export interface StorageHelperPreloadOptions<T> {
-  // customize data import on first loading, useful for updating storage with a new model type
-  migrate?: (data: T) => T;
+  migrations?: StorageMigrationCallback<T>[]; // handle storage model upgrades
 }
 
 export class StorageHelper<T> {
@@ -39,7 +36,7 @@ export class StorageHelper<T> {
     autoInit: true,
     autoSave: true,
     observable: {
-      deep: true, // deep observable tree
+      deep: true,
       equals: comparer.shallow,
     },
   };
@@ -69,29 +66,41 @@ export class StorageHelper<T> {
   }
 
   @action
-  init(opts?: StorageHelperPreloadOptions<T>) {
+  init() {
     if (this.initialized) return;
     this.initialized = true;
-    this.load(opts);
+    this.load();
+
+    this.onChange(value => {
+      if (!this.loaded) return;
+
+      this.logger.info(`data changed for "${this.key}"`, value);
+      if (this.options.autoSave) {
+        this.saveToStorage(value);
+      }
+      if (this.storage.onChange) {
+        this.storage.onChange({ value, key: this.key });
+      }
+    });
   }
 
   @action
-  load({ migrate }: StorageHelperPreloadOptions<T> = {}) {
+  load() {
     this.loading = true;
 
     this.loadFromStorage({
       onData: (data: T) => {
         const notEmpty = data != null;
-        const notDefault = !this.isDefault(data);
-
-        if (notEmpty && notDefault) {
-          if (migrate) data = migrate(data);
-          this.set(data);
+        if (notEmpty) {
+          if (this.options.migrations) {
+            data = this.options.migrations.reduce((data, migrate) => migrate(data), data);
+          }
+          if (!this.isDefault(data)) {
+            this.set(data);
+          }
         }
-
         this.loaded = true;
         this.loading = false;
-        this.onChange(value => this.onDataChange(value));
       },
       onError: (error?: any) => {
         this.loading = false;
@@ -100,23 +109,27 @@ export class StorageHelper<T> {
     });
   }
 
-  protected loadFromStorage(opts: { onData?(data: T): void, onError?(error?: any): void } = {}) {
-    let data: T | Promise<T>;
+  saveToStorage(value: T) {
+    if (value == null) {
+      this.storage.removeItem(this.key);
+    } else {
+      this.storage.setItem(this.key, value);
+    }
+  }
 
+  loadFromStorage(opts: { onData?(data: T): void, onError?(error?: any): void } = {}) {
     try {
-      data = this.storage.getItem(this.key); // sync reading from storage when exposed
-
+      const data = this.storage.getItem(this.key);
       if (data instanceof Promise) {
         data.then(opts.onData, opts.onError);
       } else {
         opts?.onData(data);
       }
+      return data;
     } catch (error) {
       this.logger.error(`[load]: ${error}`, this);
       opts?.onError(error);
     }
-
-    return data;
   }
 
   isEqual(value: T): boolean {
@@ -129,26 +142,6 @@ export class StorageHelper<T> {
 
   public onChange(callback: (value: T) => void, { deep, ...options } = this.options.observable) {
     return reaction(() => this.toJS({ deep }), callback, options);
-  }
-
-  private onDataChange(value: T) {
-    if (!this.loaded) return; // skip
-
-    try {
-      this.logger.info(`data changed for "${this.key}"`, value);
-
-      if (this.options.autoSave) {
-        if (value == null) {
-          this.storage.removeItem(this.key);
-        } else {
-          this.storage.setItem(this.key, value);
-        }
-      }
-
-      this.storage.onChange?.({ value, key: this.key });
-    } catch (error) {
-      this.logger.error(`changed ${error}`, value, this);
-    }
   }
 
   get(): T {

@@ -7,7 +7,7 @@ import { Dialog } from "../dialog";
 import { Button } from "../button";
 import { Icon } from "../icon";
 import { __i18n } from "../../extension";
-import { createStorage } from "../../storages";
+import { createStorage } from "../../storage-factory";
 import { extensionUrl } from "../../common";
 
 export const rateButtonClicked = createStorage("rate_btn_click", false);

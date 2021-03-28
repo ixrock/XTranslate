@@ -18,7 +18,7 @@ import { Tab } from "../tabs";
 import { Icon } from "../icon";
 import { Tooltip } from "../tooltip";
 import { navigate } from "../../navigation";
-import { createStorage } from "../../storages";
+import { createStorage } from "../../storage-factory";
 
 // TODO: group same input translations with different vendors
 
