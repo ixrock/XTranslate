@@ -1,6 +1,6 @@
 import "./radio.scss";
 import * as React from "react";
-import { autobind, cssNames, IClassName } from "../../utils";
+import { cssNames, IClassName } from "../../utils";
 import { Checkbox, CheckboxProps } from "../checkbox";
 
 const RadioGroupContext = React.createContext<RadioGroup>(null);
@@ -40,8 +40,7 @@ export class Radio extends React.Component<RadioProps> {
     return value === this.context.props.value;
   }
 
-  @autobind()
-  onChange(checked: boolean, value: any) {
+  onChange = (checked: boolean, value: any) => {
     if (this.isChecked) return;
     var { onChange } = this.context.props;
     if (onChange) onChange(value);
@@ -51,11 +50,11 @@ export class Radio extends React.Component<RadioProps> {
   }
 
   render() {
-    var { autoFocus, disabled } = this.context.props;
+    const parentGroup = this.context.props;
     var {
       className,
-      autoFocus = autoFocus,
-      disabled = disabled,
+      autoFocus = parentGroup.autoFocus, // fixme: multiple focuses within radio-group not supported
+      disabled = parentGroup.disabled,
       ...checkboxProps
     } = this.props;
     return (

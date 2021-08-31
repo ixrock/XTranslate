@@ -26,7 +26,7 @@ export = () => {
     },
 
     mode: isProduction ? "production" : "development",
-    devtool: isProduction ? false : "eval-cheap-module-source-map",
+    devtool: isProduction ? false : "eval-source-map",
 
     optimization: {
       minimize: true,

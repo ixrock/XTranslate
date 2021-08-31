@@ -2,9 +2,9 @@ import './tooltip.scss'
 
 import React from "react"
 import { observer } from "mobx-react";
-import { observable } from "mobx";
+import { makeObservable, observable } from "mobx";
 import { createPortal } from "react-dom"
-import { autobind, cssNames } from "../../utils";
+import { autoBind, cssNames } from "../../utils";
 import { Animate } from "../animate";
 
 export interface TooltipProps {
@@ -41,8 +41,14 @@ export class Tooltip extends React.Component<TooltipProps> {
   public anchor: HTMLElement;
   public elem: HTMLElement;
   public lastMousePos = { x: 0, y: 0 };
-
   @observable isVisible = false;
+
+  constructor(props: TooltipProps) {
+    super(props);
+
+    autoBind(this);
+    makeObservable(this);
+  }
 
   componentDidMount() {
     var { htmlFor } = this.props;
@@ -65,18 +71,15 @@ export class Tooltip extends React.Component<TooltipProps> {
     }
   }
 
-  @autobind()
   onMouseEnter(evt: MouseEvent) {
     this.isVisible = true;
     this.onMouseMove(evt);
   }
 
-  @autobind()
   onMouseLeave(evt: MouseEvent) {
     this.isVisible = false;
   }
 
-  @autobind()
   onMouseMove(evt: MouseEvent) {
     if (!this.props.following) return;
     this.lastMousePos.x = evt.clientX;
@@ -109,7 +112,6 @@ export class Tooltip extends React.Component<TooltipProps> {
     }
   }
 
-  @autobind()
   bindRef(elem: HTMLElement) {
     this.elem = elem;
   }
@@ -130,8 +132,7 @@ export class Tooltip extends React.Component<TooltipProps> {
           {content}
         </Animate>
       )
-    }
-    else if (!isVisible) {
+    } else if (!isVisible) {
       return null;
     }
     if (following) {

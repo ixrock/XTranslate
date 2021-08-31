@@ -1,6 +1,6 @@
 // Base class for translation vendor
 import { observable } from "mobx";
-import { autobind } from "../utils/autobind";
+import { autoBind } from "../utils/autobind";
 import { PlayTextToSpeechPayload } from "../extension/messages";
 import { settingsStore } from "../components/settings/settings.storage";
 
@@ -47,7 +47,6 @@ export interface ITranslationError {
   parseError?: string;
 }
 
-@autobind()
 export abstract class Translator {
   static readonly vendors = observable.map<string, Translator>();
 
@@ -74,6 +73,8 @@ export abstract class Translator {
   protected autoSwapUsed = false;
 
   constructor(protected params: ITranslatorParams) {
+    autoBind(this);
+
     var { from: langFrom, to: langTo } = params.languages;
     var { auto, ...langToFallback } = langFrom;
     this.langFrom = langFrom;

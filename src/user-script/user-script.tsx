@@ -1,11 +1,12 @@
 //-- User script app (page context)
 
+import "../packages.setup";
 import React from "react";
 import { render } from "react-dom";
-import { computed, observable, toJS } from "mobx";
+import { computed, makeObservable, observable, toJS } from "mobx";
 import { observer } from "mobx-react";
 import { debounce, isEqual } from "lodash"
-import { autobind, cssNames, getHotkey } from "../utils";
+import { autoBind, cssNames, getHotkey } from "../utils";
 import { getManifest, getStyleUrl, MenuTranslateFavoritePayload, MenuTranslateVendorPayload, Message, MessageType, onMessageType, TranslatePayload } from "../extension";
 import { translateText, ttsPlay, ttsStop } from "../extension/actions";
 import { getNextTranslator, ITranslationError, ITranslationResult } from "../vendors";
@@ -13,6 +14,8 @@ import { XTranslateIcon } from "./xtranslate-icon";
 import { Popup } from "../components/popup/popup";
 import { settingsStore } from "../components/settings/settings.storage";
 import { themeStore } from "../components/theme-manager/theme.storage";
+
+export type CustomDomRect = PartialWriteable<DOMRect>;
 
 const rootElem = document.createElement("div");
 const isPdf = document.contentType === "application/pdf";
@@ -29,6 +32,13 @@ class App extends React.Component {
     render(<App/>, shadowRoot as any);
   }
 
+  constructor(props: object) {
+    super(props);
+
+    makeObservable(this);
+    autoBind(this);
+  }
+
   public appName = getManifest().name;
   private selection = window.getSelection();
   private popup: Popup;
@@ -40,8 +50,8 @@ class App extends React.Component {
 
   @observable.ref translation: ITranslationResult;
   @observable.ref error: ITranslationError;
-  @observable.ref selectionRects: ClientRect[];
-  @observable position: Partial<ClientRect> = {};
+  @observable.ref selectionRects: CustomDomRect[];
+  @observable position: CustomDomRect = {};
   @observable selectedText = "";
   @observable isRtlSelection = false;
   @observable isIconShown = false;
@@ -101,7 +111,6 @@ class App extends React.Component {
 
   translateLazy = debounce(this.translate, 250);
 
-  @autobind()
   async translate(initParams?: Partial<TranslatePayload>) {
     var { vendor, langFrom, langTo } = settingsStore.data;
     var params = Object.assign({
@@ -128,7 +137,6 @@ class App extends React.Component {
     this.refreshPosition();
   }
 
-  @autobind()
   translateNext(reverse = false) {
     if (!this.lastParams) return;
     var { vendor, from, to, text } = this.lastParams;
@@ -139,7 +147,6 @@ class App extends React.Component {
     });
   }
 
-  @autobind()
   playText() {
     if (!this.translation) return;
     ttsPlay(this.translation);
@@ -183,7 +190,7 @@ class App extends React.Component {
     }
   }
 
-  normalizeRect(rect: ClientRect, withScroll = true): ClientRect {
+  normalizeRect(rect: DOMRect, withScroll = true): CustomDomRect {
     var { left, top, width, height } = rect;
     if (withScroll) {
       left += window.pageXOffset;
@@ -233,7 +240,7 @@ class App extends React.Component {
     var viewPort = this.getViewportSize();
 
     // available position
-    var positions: Partial<ClientRect>[] = [
+    var positions: CustomDomRect[] = [
       { left: left, top: bottom },
       { right: viewPort.width - right, bottom: -top }
     ];
@@ -285,14 +292,12 @@ class App extends React.Component {
     }
   }, 250);
 
-  @autobind()
   onIconClick(evt: React.MouseEvent) {
     this.hideIcon();
     this.translate();
     evt.stopPropagation();
   }
 
-  @autobind()
   onMouseMove({ clientX, clientY, pageX, pageY }: MouseEvent) {
     this.mousePos.x = clientX; // relative to viewport
     this.mousePos.y = clientY;
@@ -300,7 +305,6 @@ class App extends React.Component {
     this.mousePos.pageY = pageY;
   }
 
-  @autobind()
   onMouseDown(evt: MouseEvent) {
     var clickedElem = evt.target as HTMLElement;
     var rightBtnClick = evt.button === 2;
@@ -320,14 +324,12 @@ class App extends React.Component {
     }
   }
 
-  @autobind()
   onDoubleClick(evt: MouseEvent) {
     if (settingsStore.data.showPopupOnDoubleClick) {
       this.isDblClicked = true;
     }
   }
 
-  @autobind()
   onContextMenu(message: Message) {
     var { type } = message;
     if (type === MessageType.MENU_TRANSLATE_WITH_VENDOR) {
@@ -342,8 +344,7 @@ class App extends React.Component {
     }
   }
 
-  @autobind()
-  onKeyDown(evt: KeyboardEvent) {
+  onKeyDown = (evt: KeyboardEvent) => {
     if (!this.isPopupHidden) {
       switch (evt.code) {
         case "Escape":

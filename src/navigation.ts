@@ -2,25 +2,23 @@ import { createObservableHistory } from "mobx-observable-history";
 import { createTab, getManifest, getURL } from "./extension";
 import { PageId } from "./components/app/views-manager";
 
-export interface PageParams {
+export interface NavigationSearchParams {
+  [pageId: string]: string;
   page?: PageId;
 }
 
 export const navigation = createObservableHistory();
 export const defaultPageId: PageId = "settings";
 
-export function navigate(params: PageParams = {}) {
+export function navigate(params: NavigationSearchParams = {}) {
   const absPageUrl = getURL(getManifest().options_page); // starts with chrome://%extension-id/options.html
   const isLocalRoute = document.location.href.startsWith(absPageUrl);
-
-  const urlParams = navigation.searchParams
-    .copyWith(params)
-    .toString({ withPrefix: true });
+  const searchParams = `?${navigation.searchParams.normalize(params)}`;
 
   if (isLocalRoute) {
-    navigation.push(urlParams);
+    navigation.push(searchParams);
   } else {
-    return createTab(absPageUrl + urlParams);
+    return createTab(absPageUrl + searchParams);
   }
 }
 

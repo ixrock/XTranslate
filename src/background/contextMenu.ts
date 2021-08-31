@@ -14,18 +14,20 @@ Promise.all([settingsStore.ready, favoritesStore.ready]).then(() => {
 });
 
 export function initMenus() {
-  var menuName = getManifest().name;
+  var appName = getManifest().name;
   var selectionContext = ['selection'];
   var pageContext = [...selectionContext, 'page'];
   var translators = getTranslators();
 
-  chrome.contextMenus.removeAll();
+  chrome.contextMenus.removeAll(); // clean up before reassign
   chrome.contextMenus.onClicked.addListener(onClickMenuItem);
 
   if (settingsStore.data.showInContextMenu) {
-    var topMenu = chrome.contextMenus.create({
-      id: menuName,
-      title: menuName,
+    var appMenuId = appName;
+
+    chrome.contextMenus.create({
+      id: appMenuId,
+      title: appName,
       contexts: pageContext,
     });
 
@@ -34,14 +36,14 @@ export function initMenus() {
       chrome.contextMenus.create({
         id: [MessageType.MENU_TRANSLATE_FULL_PAGE, vendor.name].join("-"),
         title: __i18n("context_menu_translate_full_page", [vendor.title]).join(""),
-        parentId: topMenu,
+        parentId: appMenuId,
         contexts: pageContext,
       });
     });
 
     chrome.contextMenus.create({
       id: Math.random().toString(),
-      parentId: topMenu,
+      parentId: appMenuId,
       type: "separator",
       contexts: selectionContext,
     });
@@ -51,7 +53,7 @@ export function initMenus() {
       chrome.contextMenus.create({
         id: [MessageType.MENU_TRANSLATE_WITH_VENDOR, vendor.name].join("-"),
         title: __i18n("context_menu_translate_selection", ['"%s"', vendor.title]).join(""),
-        parentId: topMenu,
+        parentId: appMenuId,
         contexts: selectionContext,
       });
     });
@@ -60,7 +62,7 @@ export function initMenus() {
     if (favoritesStore.getCount() > 0) {
       chrome.contextMenus.create({
         id: Math.random().toString(),
-        parentId: topMenu,
+        parentId: appMenuId,
         type: "separator",
         contexts: selectionContext,
       });
@@ -71,7 +73,7 @@ export function initMenus() {
           chrome.contextMenus.create({
             id: id,
             title: title,
-            parentId: topMenu,
+            parentId: appMenuId,
             contexts: selectionContext,
           });
         })

@@ -1,6 +1,7 @@
 //-- Main window app (options page)
-import './app.scss'
 
+import "./app.scss";
+import "../../packages.setup";
 import * as React from 'react';
 import { render } from 'react-dom'
 import { reaction } from "mobx";

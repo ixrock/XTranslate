@@ -1,6 +1,6 @@
 import * as React from "react";
 import { action, observable } from "mobx"
-import { autobind } from "../../utils";
+import { autoBind } from "../../utils";
 import isObject from "lodash/isObject"
 import uniqueId from "lodash/uniqueId";
 
@@ -14,11 +14,13 @@ export interface INotification {
   timeout?: number // auto-hiding timeout in milliseconds, 0 = no hide
 }
 
-@autobind()
 export class NotificationsStore {
-  public notifications = observable<INotification>([], { deep: false });
-
+  public notifications = observable.array<INotification>([], { deep: false });
   protected autoHideTimers = new Map<IMessageId, number>();
+
+  constructor() {
+    autoBind(this);
+  }
 
   addAutoHideTimer(notification: INotification) {
     this.removeAutoHideTimer(notification);

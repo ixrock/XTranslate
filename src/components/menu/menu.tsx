@@ -1,7 +1,7 @@
 import './menu.scss'
 import React, { Fragment, ReactElement, ReactNode } from "react";
 import { createPortal } from "react-dom";
-import { autobind, cssNames, noop } from "../../utils";
+import { autoBind, cssNames, noop } from "../../utils";
 import { Animate } from "../animate";
 import { Icon, IconProps } from "../icon";
 
@@ -34,7 +34,6 @@ interface MenuState {
   autoPosition?: MenuPosition;
 }
 
-@autobind()
 export class Menu extends React.Component<MenuProps, MenuState> {
   static defaultProps: MenuProps = {
     position: { left: true, bottom: true },
@@ -46,6 +45,11 @@ export class Menu extends React.Component<MenuProps, MenuState> {
     onOpen: noop,
     onClose: noop,
   };
+
+  constructor(props: MenuProps) {
+    super(props);
+    autoBind(this);
+  }
 
   public opener: HTMLElement;
   public elem: HTMLUListElement;
@@ -64,8 +68,7 @@ export class Menu extends React.Component<MenuProps, MenuState> {
       var parent = this.elem.parentElement;
       var position = window.getComputedStyle(parent).position;
       if (position === 'static') parent.style.position = 'relative';
-    }
-    else if (this.isOpen) {
+    } else if (this.isOpen) {
       requestAnimationFrame(() => setTimeout(this.refreshPosition));
     }
     this.opener = document.getElementById(this.props.htmlFor); // might not exist in sub-menus
@@ -108,8 +111,7 @@ export class Menu extends React.Component<MenuProps, MenuState> {
       var nextItem = reverse ? items[activeIndex - 1] : items[activeIndex + 1];
       if (!nextItem) nextItem = items[activeIndex];
       nextItem.elem.focus();
-    }
-    else {
+    } else {
       items[0].elem.focus();
     }
   }
@@ -276,7 +278,6 @@ export interface MenuItemProps extends React.HTMLProps<any> {
   href?: string;
 }
 
-@autobind()
 export class MenuItem extends React.Component<MenuItemProps> {
   static contextType = MenuContext;
   public context: Menu;
@@ -284,6 +285,11 @@ export class MenuItem extends React.Component<MenuItemProps> {
 
   static defaultProps: Partial<MenuItemProps> = {
     onClick: noop,
+  }
+
+  constructor(props: MenuItemProps) {
+    super(props);
+    autoBind(this);
   }
 
   get isFocusable() {

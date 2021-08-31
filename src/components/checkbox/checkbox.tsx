@@ -1,6 +1,6 @@
 import './checkbox.scss'
 import React, { DOMAttributes } from 'react'
-import { autobind, cssNames, IClassName } from "../../utils";
+import { cssNames, IClassName } from "../../utils";
 import { TooltipDecoratorProps, withTooltip } from "../tooltip";
 
 export type CheckboxProps<D = any> = Omit<DOMAttributes<any>, "onChange"> & TooltipDecoratorProps & {
@@ -37,16 +37,14 @@ export class Checkbox extends React.Component<CheckboxProps> {
     }
   }
 
-  @autobind()
-  onClick(evt: React.MouseEvent<any>) {
+  onClick = (evt: React.MouseEvent<HTMLLabelElement>) => {
     this.toggle();
     if (this.props.onClick) {
       this.props.onClick(evt);
     }
   }
 
-  @autobind()
-  onKeyDown(evt: React.KeyboardEvent<any>) {
+  onKeyDown = (evt: React.KeyboardEvent<any>) => {
     switch (evt.nativeEvent.code) {
       case "Enter":
       case "Space":
@@ -59,8 +57,7 @@ export class Checkbox extends React.Component<CheckboxProps> {
     }
   }
 
-  @autobind()
-  bindRef(elem: HTMLLabelElement) {
+  bindRef = (elem: HTMLLabelElement) => {
     this.elem = elem;
   }
 

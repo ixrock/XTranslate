@@ -1,8 +1,9 @@
 //-- Background page
 
 // import "crx-hotreload"
+import "../packages.setup";
 import "./contextMenu"
-import { isProduction } from "../common";
+import { isProduction } from "../common-vars";
 import { MessageType, onAppInstall, onMessageType, PlayTextToSpeechPayload, TranslatePayload, TranslatePayloadResult } from '../extension'
 import { getTranslator, ITranslationResult, playText, stopPlayingAll } from "../vendors";
 import { rateLastTimestamp } from "../components/app/app-rate.dialog";

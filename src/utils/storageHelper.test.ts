@@ -194,7 +194,10 @@ describe("renderer/utils/StorageHelper", () => {
 
       storageHelper.merge({ lastName: "Black" });
       storageHelper.set("whatever");
-      expect(observedChanges).toEqual([{ ...defaultValue, lastName: "Black" }, "whatever",]);
+      storageHelper.set(["other-data", 123]);
+
+      expect(observedChanges[0]).toEqual({ ...defaultValue, lastName: "Black" });
+      expect(observedChanges[2][0]).toBe("other-data");
     });
   });
 

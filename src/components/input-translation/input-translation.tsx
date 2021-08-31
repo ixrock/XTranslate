@@ -1,7 +1,7 @@
 import "./input-translation.scss";
 
 import React, { Fragment } from "react";
-import { action, computed, observable, reaction, toJS } from "mobx";
+import { action, computed, makeObservable, observable, reaction, toJS } from "mobx";
 import { disposeOnUnmount, observer } from "mobx-react";
 import { getTranslator, getTranslators, isRTL, ITranslationError, ITranslationResult } from "../../vendors";
 import { __i18n } from "../../extension";
@@ -20,7 +20,10 @@ import { Tooltip } from "../tooltip";
 import { navigate } from "../../navigation";
 import { createStorage } from "../../storage-factory";
 
-// TODO: group same input translations with different vendors
+// FIXME: bing-api broken again
+// TODO: integrate with https://www.deepl.com/pro-account/summary (free subscription >up to 500_000 chars)
+// TODO: allow custom fonts (?) https://github.com/ixrock/XTranslate/issues/32
+// TODO: support multi-translation results (multi-selector from-to + favorites-list?)
 
 export const lastInputText = createStorage("last_input_text", "");
 
@@ -33,8 +36,12 @@ interface TranslateParams {
 @observer
 export class InputTranslation extends React.Component {
   public input: Input;
-  public loadingTimer;
   public translateTimer;
+
+  constructor(props: object) {
+    super(props);
+    makeObservable(this);
+  }
 
   @observable isLoading = false;
   @observable text = "";
@@ -59,23 +66,21 @@ export class InputTranslation extends React.Component {
     return getTranslator(name)
   }
 
-  @action
+  // TODO: extract things to separated methods
   async componentDidMount() {
-    // restore last input text if enabled in options
-    if (settingsStore.data.rememberLastText) {
-      await lastInputText.whenReady;
-      this.text = lastInputText.get();
-    }
-
-    if (this.text) this.translate();
     this.input.focus();
 
     // auto-translate text when input params has changed
     disposeOnUnmount(this, [
-      reaction(() => toJS([this.params, this.favorite], {
-        recurseEverything: true,
-      }), () => this.translate())
+      reaction(() => toJS(this.params), this.translate),
+      reaction(() => toJS(this.favorite), this.translate),
     ]);
+
+    // restore last input text if enabled in options
+    if (settingsStore.data.rememberLastText) {
+      await lastInputText.whenReady;
+      this.translateText(lastInputText.get() ?? "");
+    }
 
     // auto-translate selected text from active tab
     var selectedText = await getActiveTabText();
@@ -117,24 +122,27 @@ export class InputTranslation extends React.Component {
     ttsPlay(this.translation);
   }
 
-  translate = async (text = this.text.trim()) => {
-    var { vendor, langFrom, langTo } = this.favorite || this.params;
+  @action
+  translate = async () => {
+    const text = this.text.trim();
     if (!text) return;
+    var { vendor, langFrom, langTo } = this.favorite || this.params;
     try {
       this.error = null;
-      this.loadingTimer = setTimeout(() => this.isLoading = true, 1000);
+      this.isLoading = true;
       this.translation = await translateText({
         from: langFrom,
         to: langTo,
         vendor, text,
-      })
+      });
     } catch (err) {
       this.error = err;
+    } finally {
+      this.isLoading = false;
     }
-    clearTimeout(this.loadingTimer);
-    this.isLoading = false;
   }
 
+  @action
   translateText = (text: string) => {
     this.input.focus();
     this.text = text;
@@ -146,6 +154,7 @@ export class InputTranslation extends React.Component {
     this.translate();
   }
 
+  @action
   onTextChange = (text: string) => {
     this.text = text;
     var { rememberLastText, textInputTranslateDelayMs } = settingsStore.data;

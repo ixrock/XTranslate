@@ -1,5 +1,5 @@
 import { checkErrors, isExtensionPage, onMessageType, runtimeLogger } from "./extension/runtime";
-import { StorageAdapter, StorageHelper, StorageMigrationCallback, StorageObservableOptions } from "./utils/storageHelper";
+import { StorageAdapter, StorageHelper, StorageMigrationCallback } from "./utils/storageHelper";
 import { MessageType, StoragePayload } from "./extension";
 import { broadcastStorage } from "./extension/actions";
 
@@ -10,7 +10,6 @@ export interface CreateStorageOptions<T> {
   syncToRemote?: boolean; // send local data changes to remote storage, default: true
   syncFromRemote?: boolean; // merge updates from remote storage, default: true
   area?: StorageArea; // corresponding chrome.storage[area], default: "local"
-  observableOptions?: StorageObservableOptions;
   migrations?: StorageMigrationCallback<T>[];
   onRemoteUpdate?(data: T): void;
 }
@@ -37,7 +36,6 @@ export function createStorage<T>(key: string, defaultValue?: T, init: CreateStor
     autoInit: autoLoad,
     autoSave: syncToRemote,
     defaultValue: defaultValue,
-    observable: init.observableOptions,
     storage: createStorageAdapter<T>(area),
     migrations: migrations.concat(init.migrations ?? []),
   });

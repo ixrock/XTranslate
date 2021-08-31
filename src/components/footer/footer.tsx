@@ -1,9 +1,9 @@
 import './footer.scss'
 
 import * as React from 'react';
-import { autobind, prevDefault } from '../../utils'
+import { prevDefault } from '../../utils'
 import { __i18n, getManifest } from '../../extension'
-import { extensionUrl } from "../../common";
+import { extensionUrl } from "../../common-vars";
 
 interface ShareIcon {
   title: string
@@ -38,8 +38,7 @@ export class Footer extends React.Component {
     },
   ];
 
-  @autobind()
-  share(url: string) {
+  shareUrl(url: string) {
     window.open(url, "share", "width=550,height=300,resizable=1");
   }
 
@@ -49,7 +48,7 @@ export class Footer extends React.Component {
         {__i18n("footer")}
         <span className="social-icons">
             {this.shareIcons.map((share, i) =>
-              <a key={i} href={share.url} onClick={prevDefault(() => this.share(share.url))}>
+              <a key={i} href={share.url} onClick={prevDefault(() => this.shareUrl(share.url))}>
                 <img src={share.icon} title={share.title}/>
               </a>
             )}

@@ -1,7 +1,7 @@
 import "./input.scss";
 
 import React, { DOMAttributes, InputHTMLAttributes, TextareaHTMLAttributes } from "react";
-import { autobind, cssNames, debouncePromise } from "../../utils";
+import { cssNames, debouncePromise } from "../../utils";
 import { Icon } from "../icon";
 import { conditionalValidators, Validator } from "./input.validators";
 import isString from "lodash/isString"
@@ -123,8 +123,7 @@ export class Input extends React.Component<InputProps, State> {
       var result = validator.validate(value, this.props);
       if (isBoolean(result) && !result) {
         errors.push(this.getValidatorError(value, validator));
-      }
-      else if (result instanceof Promise) {
+      } else if (result instanceof Promise) {
         if (!validationId) {
           this.validationId = validationId = uniqueId("validation_id_");
         }
@@ -187,8 +186,7 @@ export class Input extends React.Component<InputProps, State> {
     this.setState({ dirty });
   }
 
-  @autobind()
-  onFocus(evt: React.FocusEvent<InputElement>) {
+  onFocus = (evt: React.FocusEvent<InputElement>) => {
     var { onFocus, onBlurChanged, restoreInvalidOnBlur } = this.props;
     if (onBlurChanged || restoreInvalidOnBlur) {
       this.focusValue = this.getValue();
@@ -199,8 +197,7 @@ export class Input extends React.Component<InputProps, State> {
     this.setState({ focused: true });
   }
 
-  @autobind()
-  onBlur(evt: React.FocusEvent<InputElement>) {
+  onBlur = (evt: React.FocusEvent<InputElement>) => {
     var { onBlurChanged, onBlur, restoreInvalidOnBlur } = this.props;
     var focusValue = this.focusValue;
     var value = this.getValue();
@@ -221,8 +218,7 @@ export class Input extends React.Component<InputProps, State> {
     this.setState({ focused: false });
   }
 
-  @autobind()
-  onChange(evt: React.ChangeEvent<any>) {
+  onChange = (evt: React.ChangeEvent<any>) => {
     if (this.props.onChange) {
       this.props.onChange(evt.currentTarget.value, evt);
     }
@@ -270,8 +266,7 @@ export class Input extends React.Component<InputProps, State> {
     }
   }
 
-  @autobind()
-  bindRef(elem: InputElement) {
+  bindRef = (elem: InputElement) => {
     this.input = elem;
   }
 

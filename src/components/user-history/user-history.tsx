@@ -2,7 +2,7 @@ import "./user-history.scss";
 
 import React from "react";
 import { debounce, groupBy } from "lodash";
-import { computed, observable } from "mobx";
+import { computed, makeObservable, observable } from "mobx";
 import { observer } from "mobx-react";
 import { __i18n } from "../../extension/i18n";
 import { ttsPlay } from "../../extension/actions";
@@ -34,6 +34,11 @@ export class UserHistory extends React.Component {
   private store = historyStore;
   private itemDetailsEnabled = observable.map<IHistoryItemId, boolean>();
   public searchInput: Input;
+
+  constructor(props: object) {
+    super(props);
+    makeObservable(this);
+  }
 
   @observable page = 1;
   @observable showSettings = false;
@@ -196,7 +201,7 @@ export class UserHistory extends React.Component {
             <div key={wordType} className={cssNames("dictionary", rtlClass)}>
               <b className="word-type">{wordType}</b>
               <div className="translations">
-                {dict.translation.join(", ")}
+                {dict.translation?.join?.(", ")}
               </div>
             </div>
           )

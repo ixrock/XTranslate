@@ -1,7 +1,7 @@
 import "./select.scss";
 
 import * as React from "react";
-import { autobind, cssNames } from "../../utils";
+import { cssNames } from "../../utils";
 import { Icon } from "../icon";
 
 const SelectContext = React.createContext<Select>(null);
@@ -25,8 +25,7 @@ export class Select extends React.Component<SelectProps> {
 
   public optionValues = new Map<string, any>();
 
-  @autobind()
-  onChange(evt: React.ChangeEvent<HTMLSelectElement>) {
+  onChange = (evt: React.ChangeEvent<HTMLSelectElement>) => {
     var value = this.optionValues.get(evt.target.value);
     if (this.props.onChange) {
       this.props.onChange(value, evt);
@@ -72,7 +71,11 @@ export class Option extends React.Component<OptionProps> {
   public context: Select;
   public elem: HTMLOptionElement;
 
-  @autobind()
+  constructor(props: OptionProps) {
+    super(props);
+    this.bindRef = this.bindRef.bind(this);
+  }
+
   bindRef(elem: HTMLOptionElement) {
     var { value } = this.props;
     var { getOptionValue } = this.context.props;

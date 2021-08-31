@@ -1,6 +1,7 @@
 import { autorun } from "mobx";
 import { Color } from "react-color"
 import { getURL } from "../../extension";
+import { createLogger } from "../../utils";
 import { createSyncStorage } from "../../storage-factory";
 
 export const themeStorage = createSyncStorage("theme", {
@@ -33,6 +34,8 @@ export interface IThemeFont {
 }
 
 export class ThemeStore {
+  private logger = createLogger({ systemPrefix: `[THEME]` });
+
   private storage = themeStorage;
   public ready = themeStorage.whenReady;
 
@@ -71,7 +74,7 @@ export class ThemeStore {
   }
 
   protected isFontLoaded(fontFamily: string) {
-    var pageFonts = Array.from(document.fonts);
+    var pageFonts = Array.from(document.fonts as unknown as FontFace[]);
     return pageFonts.some(font => font.family === fontFamily);
   }
 
@@ -82,22 +85,23 @@ export class ThemeStore {
     return font;
   }
 
-  getFontUrl(font: string | IThemeFont) {
-    font = this.getFont(font);
-    return getURL(`assets/fonts/${font?.fileName}`)
-  }
-
   async loadFont(font: string | IThemeFont) {
     var { fileName, familyName } = this.getFont(font);
-    if (!fileName || this.isFontLoaded(familyName)) {
+    if (this.isFontLoaded(familyName)) {
       return;
     }
-    var fontFace = new FontFace(familyName, `url(${this.getFontUrl(font)})`);
-    await fontFace.load();
-    document.fonts.add(fontFace);
+    try {
+      const fontUrl = getURL(`assets/fonts/${fileName}`);
+      const font = new FontFace(familyName, `url(${fontUrl})`);
+      await font.load();
+      // @ts-ignore -- document.fonts.add() is missing from current "lib.dom.d.ts"
+      await document.fonts.add(font);
+    } catch (error) {
+      this.logger.error(`loading font "${familyName}" from file "${fileName}" has failed`);
+    }
   }
 
-  reset(){
+  reset() {
     this.storage.reset();
   }
 }

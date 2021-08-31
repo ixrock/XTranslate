@@ -1,5 +1,5 @@
 // Basic logger for outputting system logs to console or other source
-import { isProduction } from "../common";
+import { isProduction } from "../common-vars";
 
 export interface CreateLoggerOptions {
   systemPrefix?: string; // system part logger with own prefix

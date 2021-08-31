@@ -1,20 +1,25 @@
 import "./app-rate.dialog.scss";
 
 import React from "react";
-import { observable } from "mobx";
+import { makeObservable, observable } from "mobx";
 import { observer } from "mobx-react";
 import { Dialog } from "../dialog";
 import { Button } from "../button";
 import { Icon } from "../icon";
 import { __i18n } from "../../extension";
 import { createStorage } from "../../storage-factory";
-import { extensionUrl } from "../../common";
+import { extensionUrl } from "../../common-vars";
 
 export const rateButtonClicked = createStorage("rate_btn_click", false);
 export const rateLastTimestamp = createStorage("rate_delay_last", 0);
 
 @observer
 export class AppRateDialog extends React.Component {
+  constructor(props: object) {
+    super(props);
+    makeObservable(this);
+  }
+
   @observable isOpen = false;
 
   ready = Promise.allSettled([
@@ -30,7 +35,7 @@ export class AppRateDialog extends React.Component {
   visibilityCheck() {
     var isRated = rateButtonClicked.get();
     var delayLastTime = rateLastTimestamp.get();
-    var delayDuration = 1000 * 60 * 60 * 24 * 30; // 1 month
+    var delayDuration = 1000 * 60 * 60 * 24 * 30 * 3; // 3 months
     var isHidden = isRated || (delayLastTime + delayDuration > Date.now());
     this.isOpen = !isHidden;
   }

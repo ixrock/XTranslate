@@ -1,8 +1,8 @@
 import "./animate.scss";
 import * as React from "react";
-import { observable, reaction } from "mobx";
+import { makeObservable, observable, reaction } from "mobx";
 import { disposeOnUnmount, observer } from "mobx-react";
-import { autobind, cssNames, noop } from "../../utils";
+import { cssNames, noop } from "../../utils";
 
 export type AnimateName = "opacity" | "slide-right" | "opacity-scale" | string;
 
@@ -23,6 +23,11 @@ export class Animate extends React.Component<AnimateProps> {
     onEnter: noop,
     onLeave: noop,
   };
+
+  constructor(props: AnimateProps) {
+    super(props);
+    makeObservable(this);
+  }
 
   @observable isVisible = !!this.props.enter;
   @observable statusClassName = {
@@ -66,8 +71,7 @@ export class Animate extends React.Component<AnimateProps> {
     this.statusClassName.leave = false;
   }
 
-  @autobind()
-  onTransitionEnd(evt: React.TransitionEvent) {
+  onTransitionEnd = (evt: React.TransitionEvent) => {
     var { enter, leave } = this.statusClassName;
     var { onTransitionEnd } = this.contentElem.props;
     if (onTransitionEnd) onTransitionEnd(evt);

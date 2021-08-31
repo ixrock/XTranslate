@@ -3,7 +3,7 @@ import "./number-input.scss";
 import React from "react";
 import { Input, InputProps } from "./input";
 import { Icon } from "../icon";
-import { autobind, cssNames } from "../../utils";
+import { autoBind, cssNames } from "../../utils";
 
 interface Props extends InputProps<number> {
 }
@@ -11,21 +11,23 @@ interface Props extends InputProps<number> {
 export class NumberInput extends React.Component<Props> {
   public input: Input;
 
-  @autobind()
+  constructor(props: Props) {
+    super(props);
+    autoBind(this);
+  }
+
   increment() {
     var inputElem = this.input.input as HTMLInputElement;
     inputElem.stepUp();
     this.input.setValue(inputElem.valueAsNumber);
   }
 
-  @autobind()
   decrement() {
     var inputElem = this.input.input as HTMLInputElement;
     inputElem.stepDown();
     this.input.setValue(inputElem.valueAsNumber);
   }
 
-  @autobind()
   bindRef(input: Input) {
     this.input = input;
   }

@@ -1,6 +1,6 @@
 import { action, computed, } from "mobx";
 import { orderBy, uniqBy } from "lodash";
-import { autobind } from "../../utils/autobind";
+import { autoBind } from "../../utils/autobind";
 import { createStorage } from "../../storage-factory";
 import { ITranslationResult } from "../../vendors/translator";
 import { settingsStorage, settingsStore } from "../settings/settings.storage";
@@ -8,6 +8,13 @@ import { settingsStorage, settingsStore } from "../settings/settings.storage";
 export interface UserHistoryModel {
   resourceVersion: number;
   items: IHistoryStorageItem[];
+}
+
+// TODO: simplify history storage model
+export interface UserHistoryModelNew {
+  translations: {
+    [text: string]: IHistoryStorageItem[];
+  }
 }
 
 export const historyStorage = createStorage<UserHistoryModel>("history", {
@@ -36,9 +43,12 @@ export const historyStorage = createStorage<UserHistoryModel>("history", {
   },
 });
 
-@autobind()
 export class UserHistoryStore {
   private storage = historyStorage;
+
+  constructor() {
+    autoBind(this);
+  }
 
   async preload() {
     this.storage.init();
@@ -122,7 +132,7 @@ export class UserHistoryStore {
   @action
   remove(idOrInvertedFilter?: IHistoryItemId | ((item: IHistoryItem) => boolean)) {
     if (!idOrInvertedFilter) {
-      this.storage.clear(); // delete all
+      this.storage.reset(); // reset to default value
     } else {
       const filter = (item: IHistoryItem): boolean => {
         if (typeof idOrInvertedFilter === "function") return !idOrInvertedFilter(item);

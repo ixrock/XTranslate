@@ -1,6 +1,6 @@
 import "./slider.scss";
 import * as React from 'react'
-import { autobind, cssNames } from "../../utils";
+import { cssNames } from "../../utils";
 
 type Props = React.HTMLProps<any> & {
   value?: number;
@@ -18,8 +18,7 @@ export class Slider extends React.Component<Props> {
     this.input.focus();
   }
 
-  @autobind()
-  onChange(evt: React.ChangeEvent<HTMLInputElement>) {
+  onChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
     var value = evt.target.valueAsNumber;
     var onChange = this.props.onChange;
     if (onChange) {

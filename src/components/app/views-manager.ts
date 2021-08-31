@@ -9,7 +9,9 @@ export interface PageComponents {
   Page?: React.ComponentType<any>;
 }
 
-const viewsRegistry = observable.map<PageId, PageComponents>();
+const viewsRegistry = observable.map<PageId, PageComponents>([], {
+  deep: false, // avoid modifying components with mobx-stuff
+});
 
 export const viewsManager = {
   getPageById(pageId: PageId): PageComponents {

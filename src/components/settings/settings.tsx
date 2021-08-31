@@ -2,10 +2,10 @@ import "./settings.scss";
 
 import * as React from "react";
 import { observer } from "mobx-react";
-import { observable } from "mobx";
+import { makeObservable, observable } from "mobx";
 import { getTranslators } from "../../vendors";
 import { __i18n, createTab, Permission, requestPermissions } from "../../extension";
-import { autobind, getHotkey, parseHotkey, prevDefault } from "../../utils";
+import { getHotkey, parseHotkey, prevDefault } from "../../utils";
 import { XTranslateIcon } from "../../user-script/xtranslate-icon";
 import { SelectLanguage } from "../select-language";
 import { Input, NumberInput } from "../input";
@@ -22,6 +22,11 @@ import { viewsManager } from "../app/views-manager";
 
 @observer
 export class Settings extends React.Component {
+  constructor(props: object) {
+    super(props);
+    makeObservable(this);
+  }
+
   @observable appWindowCmd = "";
 
   componentDidMount() {
@@ -33,8 +38,7 @@ export class Settings extends React.Component {
     })
   }
 
-  @autobind()
-  saveHotkey(evt: React.KeyboardEvent) {
+  onSaveHotkey = (evt: React.KeyboardEvent) => {
     var nativeEvent = evt.nativeEvent;
     var hotkey = parseHotkey(nativeEvent);
     if (hotkey.code) {
@@ -172,7 +176,7 @@ export class Settings extends React.Component {
                   readOnly={true}
                   className="hotkey"
                   value={hotKey.value}
-                  onKeyDown={prevDefault(this.saveHotkey)}
+                  onKeyDown={prevDefault(this.onSaveHotkey)}
                 />
               </label>
             </div>

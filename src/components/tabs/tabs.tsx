@@ -1,6 +1,6 @@
 import "./tabs.scss";
 import * as React from "react";
-import { autobind, cssNames } from "../../utils";
+import { cssNames } from "../../utils";
 import { Icon } from "../icon";
 
 const TabsContext = React.createContext<TabsContextValue>(null);
@@ -19,8 +19,7 @@ export interface TabsProps<D = any> extends Omit<React.DOMAttributes<HTMLElement
 export class Tabs extends React.Component<TabsProps> {
   public elem: HTMLElement;
 
-  @autobind()
-  protected bindRef(elem: HTMLElement) {
+  protected bindRef = (elem: HTMLElement) => {
     this.elem = elem;
   }
 
@@ -52,6 +51,13 @@ export class Tab extends React.PureComponent<TabProps> {
   public context: TabsContextValue;
   public elem: HTMLElement;
 
+  componentDidMount() {
+    var { autoFocus } = this.context;
+    if (this.isActive && autoFocus) {
+      this.focus();
+    }
+  }
+
   get isActive() {
     var { active, value } = this.props;
     return typeof active === "boolean" ? active : this.context.value === value;
@@ -68,8 +74,7 @@ export class Tab extends React.PureComponent<TabProps> {
     });
   }
 
-  @autobind()
-  onClick(evt: React.MouseEvent<HTMLElement>) {
+  onClick = (evt: React.MouseEvent<HTMLElement>) => {
     var { value, active, disabled, onClick } = this.props;
     var { onChange } = this.context;
     if (disabled || active) return;
@@ -77,16 +82,14 @@ export class Tab extends React.PureComponent<TabProps> {
     if (onChange) onChange(value);
   }
 
-  @autobind()
-  onFocus(evt: React.FocusEvent<HTMLElement>) {
+  onFocus = (evt: React.FocusEvent<HTMLElement>) => {
     var { scrollable } = this.context;
     var { onFocus } = this.props;
     if (onFocus) onFocus(evt);
     if (scrollable) this.scrollIntoView();
   }
 
-  @autobind()
-  onKeyDown(evt: React.KeyboardEvent<HTMLElement>) {
+  onKeyDown = (evt: React.KeyboardEvent<HTMLElement>) => {
     switch (evt.nativeEvent.code) {
       case "Enter":
       case "Space":
@@ -99,15 +102,7 @@ export class Tab extends React.PureComponent<TabProps> {
     }
   }
 
-  componentDidMount() {
-    var { autoFocus } = this.context;
-    if (this.isActive && autoFocus) {
-      this.focus();
-    }
-  }
-
-  @autobind()
-  protected bindRef(elem: HTMLElement) {
+  protected bindRef = (elem: HTMLElement) => {
     this.elem = elem;
   }
 

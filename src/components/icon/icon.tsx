@@ -2,7 +2,7 @@ import './icon.scss'
 
 import React, { ReactNode } from "react";
 import { findDOMNode } from "react-dom";
-import { autobind, cssNames } from "../../utils";
+import { autoBind, cssNames } from "../../utils";
 import { TooltipDecoratorProps, withTooltip } from "../tooltip";
 import isNumber from "lodash/isNumber"
 
@@ -27,12 +27,16 @@ export class Icon extends React.PureComponent<IconProps> {
     focusable: true,
   };
 
+  constructor(props: IconProps) {
+    super(props);
+    autoBind(this);
+  }
+
   get isInteractive() {
     var { interactive, onClick, href } = this.props;
     return interactive || !!(onClick || href);
   }
 
-  @autobind()
   onClick(evt: React.MouseEvent) {
     if (this.props.disabled) {
       return;
@@ -42,7 +46,6 @@ export class Icon extends React.PureComponent<IconProps> {
     }
   }
 
-  @autobind()
   onKeyDown(evt: React.KeyboardEvent<any>) {
     switch (evt.nativeEvent.code) {
       case "Space":

@@ -1,5 +1,5 @@
 import { find, flatten, orderBy, remove } from "lodash"
-import { autobind } from "../../utils";
+import { autoBind } from "../../utils";
 import { getTranslators } from "../../vendors";
 import { createSyncStorage } from "../../storage-factory";
 
@@ -14,10 +14,13 @@ export interface FavoriteLangPair {
 
 export const favoritesStorage = createSyncStorage<FavoritesStorage>("favorites", {});
 
-@autobind()
 export class FavoritesStore {
   private storage = favoritesStorage;
   ready = favoritesStorage.whenReady;
+
+  constructor() {
+    autoBind(this);
+  }
 
   get data() {
     return this.storage.get();

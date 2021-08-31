@@ -2,7 +2,7 @@ import "./color-picker.scss";
 
 import * as React from 'react'
 import { ChromePicker, Color, ColorResult } from "react-color"
-import { autobind, cssNames, toCssColor, noop } from "../../utils";
+import { cssNames, noop, toCssColor } from "../../utils";
 
 interface Props {
   className?: string
@@ -38,8 +38,7 @@ export class ColorPicker extends React.Component<Props, State> {
     window.removeEventListener('click', this.onClickOutside);
   }
 
-  @autobind()
-  onClickOutside(evt: MouseEvent) {
+  onClickOutside = (evt: MouseEvent) => {
     if (!this.state.open) {
       return;
     }
@@ -49,8 +48,7 @@ export class ColorPicker extends React.Component<Props, State> {
     }
   }
 
-  @autobind()
-  onChange(color: ColorResult) {
+  onChange = (color: ColorResult) => {
     if (this.props.onChange) {
       this.props.onChange(color.rgb);
     }
@@ -64,8 +62,7 @@ export class ColorPicker extends React.Component<Props, State> {
     this.setState({ open: false })
   }
 
-  @autobind()
-  toggle() {
+  toggle = () => {
     if (this.state.open) this.hide();
     else this.show();
   }
