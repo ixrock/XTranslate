@@ -25,6 +25,10 @@
     list-style: none;
     min-height: 50px;
 
+    &:empty {
+      display: none;
+    }
+
     .rtl {
       direction: rtl;
       text-align: right;
@@ -51,18 +55,18 @@
       }
     }
 
-    .history-item {
-      padding: $padding / 2;
+    .history-items {
+      border: 1px solid transparent;
+      border-radius: $radius;
       white-space: pre-line;
+      padding: $padding / 3;
 
-      &.open {
-        border: 1px solid $color-primary;
-        border-radius: $radius;
-        padding: $padding;
+      &:not(:last-child) {
+        margin-top: -1px;
+      }
 
-        + .open {
-          margin-top: -1px;
-        }
+      &.isOpened {
+        border-color: $color-primary;
       }
 
       &:hover {
@@ -70,12 +74,26 @@
         color: var(--theme-contast-color, black);
         border-color: currentColor;
 
-        &:not(.open) {
-          background: var(--theme-contast-color-invert, #eee);
-        }
-
         * {
           color: inherit;
+        }
+      }
+
+      .history-item {
+        padding: $padding / 2;
+
+        &.showDetails {
+          padding: $padding;
+
+          &:nth-child(2n) {
+            border-top: 1px dotted; // adds line between translation results
+          }
+        }
+
+        &.showDetails, &:hover {
+          .icons {
+            visibility: visible;
+          }
         }
       }
 
@@ -83,14 +101,17 @@
         color: silver;
       }
 
-      &.open, &:hover {
-        .remove-icon {
-          visibility: visible;
-        }
-      }
-
-      .remove-icon {
+      .icons {
         visibility: hidden;
+
+        &.remove-icon {
+        }
+
+        &.translation-info {
+          cursor: default;
+          margin: 0;
+          opacity: .5;
+        }
       }
 
       .Icon {

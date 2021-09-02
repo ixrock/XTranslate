@@ -1,7 +1,7 @@
 import GoogleTranslateParams from "./google.json"
 import { ITranslationError, ITranslationResult, Translator } from "./translator";
 import { delay } from "../utils";
-import { createStorage } from "../storage-factory";
+import { createStorageHelper } from "../extension/storage";
 
 class Google extends Translator {
   public name = 'google';
@@ -12,7 +12,9 @@ class Google extends Translator {
   public ttsMaxLength = 187;
 
   protected apiClients = ["gtx", "dict-chrome-ex"];
-  protected apiClient = createStorage<string>("google_api_client", this.apiClients[0]);
+  protected apiClient = createStorageHelper<string>("google_api_client", {
+    defaultValue: this.apiClients[0],
+  });
   protected apiClientSwitched = false;
 
   constructor() {
@@ -31,7 +33,6 @@ class Google extends Translator {
     this.apiClient.set(nextApiClient);
   }
 
-  // todo: split long texts to queue of chunks with ttsMaxLenght and play one by one
   getAudioUrl(lang, text) {
     if (text.length > this.ttsMaxLength) return;
     var textEncoded = encodeURIComponent(text);

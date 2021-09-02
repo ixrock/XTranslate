@@ -7,11 +7,11 @@ import { Dialog } from "../dialog";
 import { Button } from "../button";
 import { Icon } from "../icon";
 import { __i18n } from "../../extension";
-import { createStorage } from "../../storage-factory";
+import { createStorageHelper } from "../../extension/storage";
 import { extensionUrl } from "../../common-vars";
 
-export const rateButtonClicked = createStorage("rate_btn_click", false);
-export const rateLastTimestamp = createStorage("rate_delay_last", 0);
+export const rateButtonClicked = createStorageHelper("rate_btn_click", { defaultValue: false });
+export const rateLastTimestamp = createStorageHelper("rate_delay_last", { defaultValue: 0 });
 
 @observer
 export class AppRateDialog extends React.Component {

@@ -1,36 +1,38 @@
 import { Hotkey } from "../../utils/parseHotkey";
 import { getTranslator } from "../../vendors";
-import { createSyncStorage } from "../../storage-factory";
+import { createStorageHelper } from "../../extension/storage";
 
-export const settingsStorage = createSyncStorage("settings", {
-  autoPlayText: false,
-  useChromeTtsEngine: false,
-  showTextToSpeechIcon: true,
-  showNextVendorIcon: true,
-  showCopyTranslationIcon: true,
-  useDarkTheme: false,
-  showInContextMenu: false,
-  showIconNearSelection: true,
-  showPopupAfterSelection: false,
-  showPopupOnClickBySelection: false,
-  showPopupOnDoubleClick: true,
-  showPopupOnHotkey: true,
-  showTranslatedFrom: false,
-  rememberLastText: false,
-  textInputTranslateDelayMs: 750,
-  vendor: "google",
-  langFrom: "auto",
-  langTo: navigator.language.split('-')[0],
-  historyEnabled: false,
-  historySaveWordsOnly: true,
-  historyAvoidDuplicates: true,
-  historyPageSize: 100,
-  popupFixedPos: "", // possible values defined as css-classes in popup.scss
-  hotkey: {
-    altKey: true,
-    shiftKey: true,
-    code: "X"
-  } as Hotkey,
+export const settingsStorage = createStorageHelper("settings", {
+  area: "sync", // sync data via user's google account across devices (chrome)
+  defaultValue: {
+    autoPlayText: false,
+    useChromeTtsEngine: false,
+    showTextToSpeechIcon: true,
+    showNextVendorIcon: true,
+    showCopyTranslationIcon: true,
+    useDarkTheme: false,
+    showInContextMenu: false,
+    showIconNearSelection: true,
+    showPopupAfterSelection: false,
+    showPopupOnClickBySelection: false,
+    showPopupOnDoubleClick: true,
+    showPopupOnHotkey: true,
+    showTranslatedFrom: false,
+    rememberLastText: false,
+    textInputTranslateDelayMs: 750,
+    vendor: "google",
+    langFrom: "auto",
+    langTo: navigator.language.split('-')[0],
+    historyEnabled: false,
+    historySaveWordsOnly: true,
+    historyPageSize: 50,
+    popupFixedPos: "", // possible values defined as css-classes in popup.scss
+    hotkey: {
+      altKey: true,
+      shiftKey: true,
+      code: "X"
+    } as Hotkey,
+  }
 });
 
 export class SettingsStore {

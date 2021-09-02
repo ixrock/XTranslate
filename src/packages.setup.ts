@@ -5,7 +5,7 @@ import * as Immer from "immer";
 Mobx.configure({
   enforceActions: "never",
   isolateGlobalState: true,
-  // computedRequiresReaction: true, // todo: enable later
+  // computedRequiresReaction: true,
   // reactionRequiresObservable: true,
   // observableRequiresReaction: true,
 });

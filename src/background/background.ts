@@ -8,7 +8,7 @@ import { MessageType, onAppInstall, onMessageType, PlayTextToSpeechPayload, Tran
 import { getTranslator, ITranslationResult, playText, stopPlayingAll } from "../vendors";
 import { rateLastTimestamp } from "../components/app/app-rate.dialog";
 import { settingsStore } from "../components/settings/settings.storage";
-import { historyStore } from "../components/user-history/history.storage";
+import { importHistory } from "../components/user-history/history.storage";
 import { defaultPageId, navigate } from "../navigation";
 
 onAppInstall(reason => {
@@ -27,14 +27,14 @@ onMessageType<TranslatePayload>(MessageType.TRANSLATE_TEXT, async (message, send
     .then(data => ({ data }))
     .catch(error => ({ error }));
 
-  request.then((translation: ITranslationResult) => {
+  request.then(async (translation: ITranslationResult) => {
     var { autoPlayText, historyEnabled } = settingsStore.data;
     if (autoPlayText) {
       let { vendor, originalText, langFrom, langDetected = langFrom } = translation;
-      playText({ vendor, text: originalText, lang: langDetected })
+      playText({ vendor, text: originalText, lang: langDetected });
     }
     if (historyEnabled) {
-      historyStore.saveTranslation(translation);
+      await importHistory(translation);
     }
   });
 

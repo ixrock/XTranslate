@@ -1,12 +1,7 @@
 // Chrome extension's runtime api helpers
 import InstalledDetails = chrome.runtime.InstalledDetails;
 import { Message, MessageType } from './messages'
-import { sendTabMessage } from "./tabs";
-import { createLogger } from "../utils/createLogger";
-
-export const runtimeLogger = createLogger({
-  systemPrefix: "[RUNTIME]",
-});
+import { sendMessageToAllTabs, sendMessageToTab } from "./tabs";
 
 export function getAppId(): string {
   return chrome.runtime.id; // e.g. "ifnohffoaebldaeimggnfadhfmlfgmie"
@@ -40,6 +35,11 @@ export function sendMessage<P>(message: Message<P>) {
   chrome.runtime.sendMessage(message)
 }
 
+export function broadcastMessage<P>(message: Message<P>) {
+  sendMessage<P>(message); // send from chrome.runtime to background-process/options pages
+  sendMessageToAllTabs<P>(message); // chrome.tabs -> content pages (user-script pages)
+}
+
 export type OnMessageCallback<P = any> = (
   message: Message<P>,
   sender: chrome.runtime.MessageSender,
@@ -66,7 +66,7 @@ export function onMessage<P = any>(callback: OnMessageCallback<P>) {
         payload: payload,
       }
       if (sender.tab) {
-        sendTabMessage(sender.tab.id, responseMsg);
+        sendMessageToTab(sender.tab.id, responseMsg);
       } else {
         // e.g. browser action window could catch response in this way
         sendMessage(responseMsg);
@@ -82,7 +82,7 @@ export async function promisifyMessage<P = any, R = any>({ tabId, ...message }: 
   if (!message.id) {
     message.id = Number(Date.now() * Math.random()).toString(16);
   }
-  if (tabId) sendTabMessage(tabId, message);
+  if (tabId) sendMessageToTab(tabId, message);
   else {
     sendMessage(message);
   }

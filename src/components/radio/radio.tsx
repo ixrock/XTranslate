@@ -53,7 +53,7 @@ export class Radio extends React.Component<RadioProps> {
     const parentGroup = this.context.props;
     var {
       className,
-      autoFocus = parentGroup.autoFocus, // fixme: multiple focuses within radio-group not supported
+      autoFocus = parentGroup.autoFocus,
       disabled = parentGroup.disabled,
       ...checkboxProps
     } = this.props;

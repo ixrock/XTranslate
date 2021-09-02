@@ -18,14 +18,16 @@ import { Tab } from "../tabs";
 import { Icon } from "../icon";
 import { Tooltip } from "../tooltip";
 import { navigate } from "../../navigation";
-import { createStorage } from "../../storage-factory";
+import { createStorageHelper } from "../../extension/storage";
 
-// FIXME: bing-api broken again
+// FIXME: material-icons conflict with https://fonts.google.com/icons?selected=Material+Icons&icon.query=remove
+// FIXME: bing-api broken
 // TODO: integrate with https://www.deepl.com/pro-account/summary (free subscription >up to 500_000 chars)
-// TODO: allow custom fonts (?) https://github.com/ixrock/XTranslate/issues/32
 // TODO: support multi-translation results (multi-selector from-to + favorites-list?)
 
-export const lastInputText = createStorage("last_input_text", "");
+export const lastInputText = createStorageHelper("last_input_text", {
+  defaultValue: "",
+});
 
 interface TranslateParams {
   vendor: string;
@@ -66,7 +68,6 @@ export class InputTranslation extends React.Component {
     return getTranslator(name)
   }
 
-  // TODO: extract things to separated methods
   async componentDidMount() {
     this.input.focus();
 

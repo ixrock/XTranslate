@@ -7,13 +7,13 @@ export function createTab(url: string, active = true): Promise<chrome.tabs.Tab> 
   });
 }
 
-export function sendTabMessage<T>(tabId: number, message: Message<T>) {
+export function sendMessageToTab<T>(tabId: number, message: Message<T>) {
   chrome.tabs.sendMessage(tabId, message);
 }
 
-export function broadcastMessage<P>(message: Message<P>) {
+export function sendMessageToAllTabs<P>(message: Message<P>) {
   chrome.tabs.query({}, tabs => {
-    tabs.forEach(tab => sendTabMessage(tab.id, message));
+    tabs.forEach(tab => sendMessageToTab(tab.id, message));
   });
 }
 

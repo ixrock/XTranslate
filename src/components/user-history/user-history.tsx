@@ -1,12 +1,12 @@
 import "./user-history.scss";
 
 import React from "react";
-import { debounce, groupBy } from "lodash";
-import { computed, makeObservable, observable } from "mobx";
-import { observer } from "mobx-react";
+import { groupBy, orderBy } from "lodash";
+import { action, computed, makeObservable, observable, reaction, runInAction } from "mobx";
+import { disposeOnUnmount, observer } from "mobx-react";
 import { __i18n } from "../../extension/i18n";
 import { ttsPlay } from "../../extension/actions";
-import { cssNames, download, prevDefault } from "../../utils";
+import { cssNames, prevDefault } from "../../utils";
 import { getTranslator, isRTL } from "../../vendors";
 import { Checkbox } from "../checkbox";
 import { MenuActions, MenuItem } from "../menu";
@@ -15,197 +15,284 @@ import { Option, Select } from "../select";
 import { Button } from "../button";
 import { settingsStore } from "../settings/settings.storage";
 import { viewsManager } from "../app/views-manager";
-import { historyStore, IHistoryItem, IHistoryItemId, IHistoryStorageItem, toStorageItem } from "./history.storage";
-import { Notifications } from "../notifications";
+import { clearHistoryItem, exportHistory, historyStorage, HistoryTranslation, HistoryTranslations, IHistoryItem, IHistoryItemId, IHistoryStorageItem, importHistory, loadHistory, toHistoryItem } from "./history.storage";
 import { Icon } from "../icon";
 import { Tab } from "../tabs";
 import { Spinner } from "../spinner";
+import { Notifications } from "../notifications";
 
 enum HistoryTimeFrame {
-  HOUR,
-  DAY,
-  MONTH,
-  YEAR,
-  ALL,
+  HOUR = "hour",
+  DAY = "day",
+  MONTH = "month",
+  YEAR = "year",
+  ALL = "all",
 }
 
 @observer
 export class UserHistory extends React.Component {
-  private store = historyStore;
-  private itemDetailsEnabled = observable.map<IHistoryItemId, boolean>();
-  public searchInput: Input;
-
   constructor(props: object) {
     super(props);
     makeObservable(this);
+    this.bindSearchResultsHandler();
   }
 
   @observable page = 1;
-  @observable showSettings = false;
-  @observable showSearch = false;
-  @observable showImportExport = false;
-  @observable clearTimeFrame = HistoryTimeFrame.DAY;
   @observable searchText = "";
+  @observable searchResults = observable.set<IHistoryItemId>();
+  @observable detailsVisible = observable.set<IHistoryItemId>();
+  @observable showSearch = false;
+  @observable showSettings = false;
+  @observable showImportExport = false;
+  @observable clearTimeFrame = HistoryTimeFrame.HOUR;
+  @observable isLoaded = false;
 
   async componentDidMount() {
-    await this.store.preload();
+    await loadHistory();
+    this.isLoaded = true;
   }
 
   @computed get pageSize() {
     return this.page * settingsStore.data.historyPageSize;
   }
 
-  @computed get items(): IHistoryItem[] {
-    if (this.searchText) return this.searchedItems;
-    return Object.values(this.store.items);
+  @computed get itemsListSorted(): HistoryTranslation[] {
+    let items: HistoryTranslation[] = Object.values(this.items)
+      // has at least one result from translation vendor
+      .filter(translation => Object.values(translation).length > 0);
+
+    // handle search-results for render() & exporting data flow
+    if (this.searchText) {
+      items = Array.from(this.searchResults).map(id => this.items[id]);
+    }
+
+    return orderBy(
+      items,
+      translation => Math.max(...Object.values(translation).map(item => item.date)),
+      "desc", // latest on top
+    )
   }
 
-  @computed get searchedItems() {
-    return this.store.searchItems(this.searchText);
+  @computed get items(): HistoryTranslations {
+    const items: HistoryTranslations = {};
+    const { translations } = historyStorage.toJS();
+
+    // convert history items to runtime format (instead of more compressed storage-type format)
+    Object.entries(translations).forEach(([itemId, translationsByVendor]) => {
+      items[itemId] = Object.fromEntries(
+        Object.entries(translationsByVendor)
+          .map(([vendor, storageItem]) => [vendor, toHistoryItem(storageItem)])
+      );
+    });
+
+    return items;
   }
 
-  @computed get groupedItems(): Record<string, IHistoryItem[]> {
-    var pageItems = this.items.slice(0, this.pageSize);
-    return groupBy(pageItems, item => new Date(item.date).toLocaleDateString());
+  @computed get itemsGroupedByDay(): Map<number/*day*/, { [vendor: string]: IHistoryItem }[]> {
+    var items = this.itemsListSorted
+      .slice(0, this.pageSize)
+      // skip: might be empty after manual removing (to avoid invalid-date in lodash.groupBy)
+      .filter(translations => Object.values(translations).length > 0);
+
+    // group items per day
+    var itemsPerDay = groupBy(items, translations => {
+      const creationTimes = Object.values(translations).map(item => item.date);
+      if (!creationTimes.length) return;
+      const latestTime = Math.max(...creationTimes);
+      return new Date(new Date(latestTime).toDateString()).getTime(); // reset to beginning of the day
+    });
+
+    return new Map(
+      Object.entries(itemsPerDay).map(([date, translations]) => [+date, translations])
+    );
   }
 
   @computed get hasMore(): boolean {
-    return this.items.length > this.pageSize;
+    if (this.searchText && !this.searchResults.size) {
+      return; // searching just started or results are empty, nothing to show more..
+    }
+    return this.itemsListSorted.length > this.pageSize;
   }
 
-  protected onSearchChange = debounce((searchQuery: string) => {
-    this.searchText = searchQuery.trim();
-  }, 500);
+  protected bindSearchResultsHandler() {
+    disposeOnUnmount(this, [
+      reaction(() => this.searchText, async (searchText) => {
+        if (!searchText) {
+          this.searchResults.clear();
+        } else {
+          console.info(`[USER-HISTORY]: searching.. ${searchText}`)
+          const searchResults: IHistoryItemId[] = await this.search(searchText);
+          this.searchResults.replace(searchResults);
+        }
+      }, {
+        name: "history-search",
+        delay: 500,
+      }),
+    ]);
+  }
+
+  protected async search(searchText: string): Promise<IHistoryItemId[]> {
+    searchText = searchText.toLowerCase().trim();
+
+    const searchResults = Object
+      .entries(this.items)
+      .filter(([itemId, translations]) => {
+        return Object.values(translations).some(({ text, translation }: IHistoryItem) => {
+          return (
+            text.toLowerCase().includes(searchText) || // original text
+            translation.toLowerCase().includes(searchText) // result text
+          );
+        });
+      });
+
+    return searchResults.map(([itemId]) => itemId);
+  }
+
+  exportHistory(format: "json" | "csv") {
+    const itemsFlat = this.itemsListSorted.map(results => Object.values(results)).flat();
+
+    exportHistory(format, itemsFlat);
+  }
 
   toggleDetails(itemId: IHistoryItemId) {
-    var { itemDetailsEnabled: map } = this;
+    var { detailsVisible: map } = this;
     if (map.has(itemId)) {
       map.delete(itemId);
     } else {
-      map.set(itemId, true)
+      map.add(itemId);
     }
   }
 
-  exportHistory(type: "json" | "csv") {
-    var date = new Date().toISOString().replace(/:/g, "_");
-    var filename = `xtranslate-history-${date}.${type}`;
-    var { items } = this;
-    switch (type) {
-      case "json":
-        download.json(filename, items.map(toStorageItem));
+  @action
+  clearItemsByTimeFrame = () => {
+    let items: { id: IHistoryItemId, date: number }[] = this.itemsListSorted
+      .map((translation: HistoryTranslation) => ({
+        id: Object.values(translation)[0].id,
+        date: Math.max(...Object.values(translation).map(item => item.date)),
+      }));
+
+    const latestEntryTime = new Date(Math.max(...items.map(({ date }) => date)));
+    const { translations } = historyStorage.get();
+
+    switch (this.clearTimeFrame) {
+      case HistoryTimeFrame.ALL:
+        return historyStorage.reset();
+
+      case HistoryTimeFrame.HOUR:
+        latestEntryTime.setHours(latestEntryTime.getHours(), 0, 0); // reset minutes and seconds
         break;
 
-      case "csv":
-        var csvRows = [
-          ["Date", "Translator", "Language", "Text", "Translation", "Transcription", "Dictionary"]
-        ];
-        items.forEach(item => {
-          csvRows.push([
-            new Date(item.date).toLocaleString(),
-            getTranslator(item.vendor).title,
-            item.from + "-" + item.to,
-            item.text,
-            item.translation,
-            item.transcription || "",
-            item.dictionary.map(({ wordType, translation }) => {
-              return wordType + ": " + translation.join(", ")
-            }).join("\n")
-          ]);
-        });
-        download.csv(filename, csvRows);
+      case HistoryTimeFrame.DAY:
+        latestEntryTime.setHours(0, 0, 0);
+        break;
+
+      case HistoryTimeFrame.MONTH:
+        latestEntryTime.setHours(0, 0, 0);
+        latestEntryTime.setDate(1); // set first day of the month
+        break;
+
+      case HistoryTimeFrame.YEAR:
+        latestEntryTime.setHours(0, 0, 0);
+        latestEntryTime.setMonth(0, 1);
         break;
     }
-  }
 
-  clearById = (id?: IHistoryItemId) => {
-    this.store.remove(id);
-  }
-
-  clearByTimeFrame = () => {
-    var { clearTimeFrame } = this;
-    var getTimeFrame = (timestamp: number, frame?: HistoryTimeFrame) => {
-      var d = new Date(timestamp);
-      var date = [d.getFullYear(), d.getMonth(), d.getDate()];
-      var time = [d.getHours(), d.getMinutes(), d.getSeconds()];
-      if (frame === HistoryTimeFrame.HOUR) date = date.concat(time[0]);
-      if (frame === HistoryTimeFrame.MONTH) date = date.slice(0, 2);
-      if (frame === HistoryTimeFrame.YEAR) date = date.slice(0, 1);
-      return date.join("-");
-    }
-    var clearAll = clearTimeFrame === HistoryTimeFrame.ALL;
-    var latestFrame = getTimeFrame(this.store.getLatestTimestamp(), clearTimeFrame);
-    var clearFilter = (item: IHistoryItem) => latestFrame === getTimeFrame(item.date, clearTimeFrame);
-    historyStore.remove(clearAll ? null : clearFilter);
+    items.forEach(item => {
+      if (new Date(item.date).getTime() >= latestEntryTime.getTime()) {
+        delete translations[item.id];
+      }
+    });
   }
 
   renderHistory() {
-    var { groupedItems, itemDetailsEnabled } = this;
+    if (!this.isLoaded) {
+      return <Spinner center/>;
+    }
+
     return (
-      <ul className="history">
-        {!this.store.isReady && <Spinner center/>}
-        {Object.keys(groupedItems).map(date => {
+      <div className="history">
+        {Array.from(this.itemsGroupedByDay).map(([dayTime, translations]) => {
           return (
-            <React.Fragment key={date}>
-              <li className="history-date">{date}</li>
-              {groupedItems[date].map(item => {
-                var { date, vendor, from, to, text, translation, transcription } = item;
-                var itemId = date; // timestamp considered as unique ID
-                var showDetails = itemDetailsEnabled.has(itemId);
-                var translatedWith = __i18n("translated_with", [
-                  vendor[0].toUpperCase() + vendor.substr(1),
-                  [from, to].join(" → ").toUpperCase()
-                ]).join("");
-                var rtlClass = { rtl: isRTL(to) };
+            <React.Fragment key={dayTime}>
+              <div className="history-date">
+                {new Date(dayTime).toDateString()}
+              </div>
+              {translations.map((translation: HistoryTranslation) => {
+                const items = Object.values(translation);
+                if (!items.length) return; // might be empty group after manual item remove
+                const itemGroupId = items[0]?.id; // ID is the same for whole group
+                const className = cssNames("history-items", {
+                  isOpened: this.detailsVisible.has(itemGroupId),
+                });
                 return (
-                  <li key={itemId}
-                      title={translatedWith}
-                      className={cssNames("history-item", { open: showDetails })}
-                      onClick={() => this.toggleDetails(itemId)}>
-                    <div className="main-info flex gaps">
-                    <span className="text box grow flex gaps align-center">
-                      {showDetails && (
-                        <Icon
-                          material="play_circle_outline"
-                          onClick={prevDefault(() => ttsPlay({ vendor, text, lang: from }))}
-                        />
-                      )}
-                      <span className="text">{text}</span>
-                      {transcription ? <span className="transcription">({transcription})</span> : null}
-                    </span>
-                      <span className={cssNames("translation box grow", rtlClass)}>{translation}</span>
-                      <Icon
-                        className="remove-icon"
-                        material="remove_circle_outline"
-                        onClick={prevDefault(() => this.clearById(itemId))}
-                      />
-                    </div>
-                    {showDetails ? this.renderDetails(item, rtlClass) : null}
-                  </li>
-                );
+                  <div
+                    key={itemGroupId}
+                    className={className}
+                    onClick={() => this.toggleDetails(itemGroupId)}
+                  >
+                    {items.map(item =>
+                      <React.Fragment key={item.vendor}>
+                        {this.renderHistoryItem(item)}
+                      </React.Fragment>)
+                    }
+                  </div>
+                )
               })}
             </React.Fragment>
           )
         })}
-      </ul>
+      </div>
     );
   }
 
-  renderDetails(item: IHistoryItem, rtlClass?: object) {
-    var dict = item.dictionary;
-    if (!dict.length) return null;
+  renderHistoryItem(item: IHistoryItem): React.ReactNode {
+    var { id: itemId, vendor, from, to, text, translation, transcription, dictionary } = item;
+    var showDetails = this.detailsVisible.has(itemId);
+    var service = getTranslator(vendor);
+    var serviceInfo = `${service.title} (${service.langFrom[from]} → ${service.langTo[to]})`;
     return (
-      <div className="details flex gaps auto">
-        {dict.map(dict => {
-          var wordType = dict.wordType;
-          return (
-            <div key={wordType} className={cssNames("dictionary", rtlClass)}>
-              <b className="word-type">{wordType}</b>
-              <div className="translations">
-                {dict.translation?.join?.(", ")}
-              </div>
-            </div>
-          )
-        })}
+      <div className={cssNames("history-item", { showDetails })}>
+        {showDetails && (
+          <small className="translation-service-info">
+            {serviceInfo}
+          </small>
+        )}
+        <div className="main-info flex gaps">
+          <div className="text box grow flex gaps align-center">
+            {showDetails && (
+              <Icon
+                material="play_circle_outline"
+                onClick={prevDefault(() => ttsPlay({ vendor, text, lang: from }))}
+              />
+            )}
+            <span className="text">{text}</span>
+            {transcription ? <span className="transcription">({transcription})</span> : null}
+          </div>
+          <div className={cssNames("translation box grow", { rtl: isRTL(to) })}>
+            {translation}
+          </div>
+          <Icon
+            material="remove_circle_outline"
+            className="icons remove-icon"
+            onClick={prevDefault(() => clearHistoryItem(itemId, vendor))}
+          />
+        </div>
+
+        {showDetails && dictionary.length > 0 && (
+          <div className="details flex gaps auto">
+            {dictionary.map(dict => {
+              var wordType = dict.wordType;
+              return (
+                <div key={wordType} className={cssNames("dictionary", { rtl: isRTL(item.to) })}>
+                  <b className="word-type">{wordType}</b>
+                  <div className="translations">
+                    {dict.translation?.join?.(", ")}
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        )}
       </div>
     );
   }
@@ -225,13 +312,15 @@ export class UserHistory extends React.Component {
         console.error(`Parsing "${file.name}" has failed:`, err);
       }
     });
-    var count = await historyStore.importItems(items);
-    Notifications.ok(__i18n("history_import_success", count));
+    runInAction(() => {
+      items.forEach(storageItem => importHistory(storageItem));
+    });
+    Notifications.ok(__i18n("history_import_success", items.length));
   }
 
   renderHeader() {
-    var { clearTimeFrame, showSettings, showSearch, showImportExport, clearByTimeFrame } = this;
-    var { historyEnabled, historyAvoidDuplicates, historySaveWordsOnly, historyPageSize } = settingsStore.data;
+    var { clearTimeFrame, showSettings, showSearch, showImportExport, clearItemsByTimeFrame } = this;
+    var { historyEnabled, historySaveWordsOnly, historyPageSize } = settingsStore.data;
     return (
       <>
         <div className="settings flex gaps align-center justify-center">
@@ -279,8 +368,8 @@ export class UserHistory extends React.Component {
             <Input
               autoFocus
               placeholder={__i18n("history_search_input_placeholder")}
-              onChange={this.onSearchChange}
-              ref={elem => this.searchInput = elem}
+              value={this.searchText}
+              onChange={v => this.searchText = v}
             />
           )}
           {showSettings && (
@@ -290,20 +379,20 @@ export class UserHistory extends React.Component {
                   <Option value={HistoryTimeFrame.HOUR} label={__i18n("history_clear_period_hour")}/>
                   <Option value={HistoryTimeFrame.DAY} label={__i18n("history_clear_period_day")}/>
                   <Option value={HistoryTimeFrame.MONTH} label={__i18n("history_clear_period_month")}/>
+                  <Option value={HistoryTimeFrame.YEAR} label={__i18n("history_clear_period_year")}/>
                   <Option value={HistoryTimeFrame.ALL} label={__i18n("history_clear_period_all")}/>
                 </Select>
-                <Button accent label={__i18n("history_button_clear")} onClick={clearByTimeFrame}/>
+                <Button
+                  accent label={__i18n("history_button_clear")}
+                  onClick={clearItemsByTimeFrame}
+                />
               </div>
-              <div className="box flex gaps auto align-center">
+              <div className="box flex gaps align-center">
                 <Checkbox
+                  className="dictionary-only box grow"
                   label={__i18n("history_settings_save_words_only")}
                   checked={historySaveWordsOnly}
                   onChange={v => settingsStore.data.historySaveWordsOnly = v}
-                />
-                <Checkbox
-                  label={__i18n("history_settings_avoid_duplicates")}
-                  checked={historyAvoidDuplicates}
-                  onChange={v => settingsStore.data.historyAvoidDuplicates = v}
                 />
                 <div className="page-size flex gaps align-center">
                   <span className="box grow">{__i18n("history_page_size")}</span>

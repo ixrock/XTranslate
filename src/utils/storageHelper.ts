@@ -1,33 +1,35 @@
 // Helper for working with persistent storages (e.g. WebStorage API, NodeJS file-system api, etc.)
 
-import { action, IReactionOptions, makeObservable, observable, reaction, toJS, when } from "mobx";
+import { action, makeObservable, observable, reaction, toJS, when } from "mobx";
 import produce, { Draft } from "immer";
-import { isEqual, isPlainObject } from "lodash";
+import { isEqual, isPlainObject, merge } from "lodash";
 import { createLogger } from "./createLogger";
+import { delay } from "./delay";
 
 export interface StorageHelperOptions<T> {
   autoInit?: boolean; // start preloading data immediately, default: true
-  autoSave?: boolean; // auto-save data-changes to underlying storage, default: true
-  defaultValue?: T;
+  autoSync?: boolean; // auto-save data-changes to underlying chrome.storage, default: true
+  autoSyncDelayMs?: number; // default: 200ms, applicable only with {autoSync: true}
+  migrations?: StorageMigrationCallback<T>[]; // handle model upgrades during app's lifetime
   storage: StorageAdapter<T>;
-  migrations?: StorageMigrationCallback<T>[]; // handle storage model upgrades during the time
+  defaultValue?: T;
 }
 
-export type StorageMigrationCallback<T> = (data: T | any) => T;
+export type StorageMigrationCallback<T> = (data: T | any) => T | void;
 
 export interface StorageAdapter<T> {
   getItem(key: string): T | Promise<T>;
   setItem(key: string, value: T): void;
   removeItem(key: string): void;
-  onChange?(change: { key: string, value: T }): void;
 }
 
 export class StorageHelper<T> {
-  protected logger = createLogger({ systemPrefix: "[STORAGE]" });
+  protected logger = createLogger({ systemPrefix: `[StorageHelper](${this.key})` });
   protected storage: StorageAdapter<T> = this.options.storage;
-  protected data = observable.box<T>();
 
+  @observable data = observable.box<T>();
   @observable initialized = false;
+  @observable saving = false;
   @observable loading = false;
   @observable loaded = false;
 
@@ -42,119 +44,110 @@ export class StorageHelper<T> {
   constructor(readonly key: string, private options: StorageHelperOptions<T>) {
     makeObservable(this);
 
-    this.options = { autoInit: true, autoSave: true, ...options }; // setup defaults
+    // setup default options
+    this.options = {
+      autoInit: true,
+      autoSync: true,
+      autoSyncDelayMs: 200,
+      ...options
+    };
     this.reset();
 
     if (this.options.autoInit) {
-      this.init();
+      this.load();
+    }
+    if (this.options.autoSync) {
+      reaction(() => this.toJS(), data => this.save(data), {
+        name: `[STORAGE-HELPER]: auto-sync, key=${key}`,
+        delay: this.options.autoSyncDelayMs,
+      });
     }
   }
 
   @action
-  init() {
-    if (this.initialized) return;
+  load({ force = false } = {}) {
+    if (this.initialized && !force) return;
     this.initialized = true;
-    this.load();
-
-    this.onChange(value => {
-      if (!this.loaded) return;
-
-      this.logger.info(`data changed for "${this.key}"`, value);
-      if (this.options.autoSave) {
-        this.saveToStorage(value);
-      }
-      if (this.storage.onChange) {
-        this.storage.onChange({ value, key: this.key });
-      }
-    });
+    try {
+      this.loading = true;
+      const data = this.storage.getItem(this.key);
+      if (data instanceof Promise) data.then(this.onData, this.onError);
+      else this.onData(data);
+    } catch (error) {
+      this.logger.error("loading failed", error);
+      this.onError(error);
+    } finally {
+      this.loading = false;
+    }
   }
 
   @action
-  load() {
-    this.loading = true;
-
-    this.loadFromStorage({
-      onData: (data: T) => {
-        const notEmpty = data != null;
-        if (notEmpty) {
-          if (this.options.migrations) {
-            data = this.options.migrations.reduce((data, migrate) => migrate(data), data);
-          }
-          if (!this.isDefault(data)) {
-            this.set(data);
-          }
-        }
-        this.loaded = true;
-        this.loading = false;
-      },
-      onError: (error?: any) => {
-        this.loading = false;
-        this.logger.error(`[init]: ${error}`, this);
-      },
-    });
-  }
-
-  saveToStorage(value: T) {
-    if (value == null) {
-      this.storage.removeItem(this.key);
-    } else {
-      this.storage.setItem(this.key, value);
-    }
-  }
-
-  loadFromStorage(opts: { onData?(data: T): void, onError?(error?: any): void } = {}) {
+  async save(data: T): Promise<void> {
     try {
-      const data = this.storage.getItem(this.key);
-      if (data instanceof Promise) {
-        data.then(opts.onData, opts.onError);
-      } else {
-        opts?.onData(data);
-      }
-      return data;
+      this.logger.info("saving data to external storage", data);
+      this.saving = true;
+      await this.storage.setItem(this.key, data);
     } catch (error) {
-      this.logger.error(`[load]: ${error}`, this);
-      opts?.onError(error);
+      this.logger.error("saving data has failed", error);
+    } finally {
+      this.saving = false;
     }
   }
+
+  @action
+  protected onData = (data: T) => {
+    this.logger.info("data received", data);
+    const notEmpty = data != null;
+    if (notEmpty) {
+      for (let callback of this.options.migrations ?? []) {
+        let migratedData = callback(data);
+        if (migratedData !== undefined) data = migratedData as T;
+      }
+      if (!this.isDefault(data)) {
+        this.set(data);
+      }
+    }
+    this.loaded = true;
+    this.loading = false;
+  };
+
+  @action
+  protected onError = (error?: any) => {
+    this.loading = false;
+    this.logger.error("loading failed", error, this);
+  };
 
   isEqual(value: T): boolean {
-    return isEqual(this.get(), value);
+    return isEqual(this.toJS(), value);
   }
 
   isDefault(value: T): boolean {
     return isEqual(this.defaultValue, value);
   }
 
-  public onChange(callback: (value: T) => void, opts?: IReactionOptions) {
-    return reaction(() => this.toJS(), callback, opts);
-  }
-
   get(): T {
     return this.data.get();
   }
 
-  set(value: T) {
+  async set(value: T) {
     this.data.set(value);
+    await delay(this.options.autoSyncDelayMs);
   }
 
-  reset() {
-    this.set(this.defaultValue);
-  }
-
-  clear() {
-    this.data.set(null);
+  async reset() {
+    await this.set(this.defaultValue);
   }
 
   merge(value: Partial<T> | ((draft: Draft<T>) => Partial<T> | void)) {
-    const nextValue = produce(this.get(), (state: Draft<T>) => {
+    const nextValue = produce(this.toJS(), (state: Draft<T>) => {
       const newValue = typeof value === "function" ? value(state) : value;
 
       return isPlainObject(newValue)
-        ? Object.assign({}, state, newValue) as any // partial updates for returned plain objects
+        ? merge(state, newValue) as any // partial updates for plain objects
         : newValue;
     });
 
-    this.set(nextValue as T);
+    return this.set(nextValue as T);
   }
 
   toJS() {

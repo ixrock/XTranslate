@@ -1,5 +1,4 @@
 // Messages for communication btw background process and other extension parts
-import type { StorageArea } from "../storage-factory";
 import type { ITranslationError, ITranslationResult } from "../vendors/translator";
 
 export enum MessageType {
@@ -10,7 +9,6 @@ export enum MessageType {
   TTS_STOP = "TTS_STOP",
   GET_SELECTED_TEXT = "GET_SELECTED_TEXT",
   TRANSLATE_TEXT = "TRANSLATE_TEXT",
-  STORAGE_UPDATE = "STORAGE_UPDATE",
 }
 
 export interface Message<D = any> {
@@ -45,10 +43,4 @@ export interface TranslatePayload {
 export interface TranslatePayloadResult {
   data?: ITranslationResult;
   error?: ITranslationError;
-}
-
-export interface StoragePayload<S = any /* json-serializable */> {
-  key: string;
-  state: S;
-  storageArea: StorageArea;
 }

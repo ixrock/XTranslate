@@ -12,7 +12,7 @@ export interface Logger {
 }
 
 export function createLogger({ systemPrefix = "app", outputSource = console }: CreateLoggerOptions): Logger {
-  const prefix = systemPrefix.toUpperCase() + `:`;
+  const prefix = systemPrefix + `:`;
   const console = Object.create(outputSource) as typeof outputSource;
 
   // logs are shown only in development/debug mode

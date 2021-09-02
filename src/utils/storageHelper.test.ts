@@ -26,7 +26,7 @@ describe("renderer/utils/StorageHelper", () => {
       expect(storageHelper.defaultValue).toBe("test");
       expect(storageHelper.get()).toBe("test");
 
-      await storageHelper.init();
+      await storageHelper.load();
 
       expect(storageHelper.key).toBe(storageKey);
       expect(storageHelper.defaultValue).toBe("test");
@@ -34,13 +34,13 @@ describe("renderer/utils/StorageHelper", () => {
     });
 
     it("updates storage", async () => {
-      storageHelper.init();
+      storageHelper.load();
 
-      storageHelper.set("test2");
+      await storageHelper.set("test2");
       expect(localStorage.getItem(storageKey)).toBe("test2");
 
       localStorage.setItem(storageKey, "test3");
-      storageHelper.load(); // reload from underlying storage and merge
+      storageHelper.load({ force: true }); // reload from underlying storage and merge
       expect(storageHelper.get()).toBe("test3");
     });
   });
@@ -66,7 +66,6 @@ describe("renderer/utils/StorageHelper", () => {
 
     beforeEach(() => {
       storageAdapter = {
-        onChange: jest.fn(),
         getItem: jest.fn((key: string) => {
           return {
             ...defaultValue,
@@ -103,7 +102,7 @@ describe("renderer/utils/StorageHelper", () => {
 
     it("loads data from storage with fallback to default-value", () => {
       expect(storageHelper.get()).toEqual(defaultValue);
-      storageHelper.init();
+      storageHelper.load();
 
       expect(storageHelper.get().message).toBe("saved-before");
       expect(storageAdapter.getItem).toHaveBeenCalledWith(storageHelper.key);
@@ -111,7 +110,7 @@ describe("renderer/utils/StorageHelper", () => {
 
     it("async loading from storage supported too", async () => {
       expect(storageHelperAsync.initialized).toBeFalsy();
-      storageHelperAsync.init();
+      storageHelperAsync.load();
       await delay(300);
       expect(storageHelperAsync.loaded).toBeFalsy();
       expect(storageHelperAsync.get()).toEqual(defaultValue);
@@ -120,18 +119,18 @@ describe("renderer/utils/StorageHelper", () => {
       expect(storageHelperAsync.get().message).toBe("saved-before");
     });
 
-    it("set() fully replaces data in storage", () => {
-      storageHelper.init();
-      storageHelper.set({ message: "test2" } as any);
+    it("set() fully replaces data in storage", async () => {
+      storageHelper.load();
+      await storageHelper.set({ message: "test2" } as any);
       expect(storageHelper.get()).toEqual({ message: "test2" });
       expect(storageMock[storageKey]).toEqual({ message: "test2" });
     });
 
-    it("merge() does partial data tree updates", () => {
+    it("merge() does partial data tree updates", async () => {
       expect(storageHelper.get()).toEqual(defaultValue);
-      storageHelper.init();
-      storageHelper.merge({ message: "updated" });
 
+      storageHelper.load();
+      await storageHelper.merge({ message: "updated" });
       expect(storageHelper.get()).toEqual({ ...defaultValue, message: "updated" });
       expect(storageAdapter.setItem).toHaveBeenCalledWith(storageHelper.key, { ...defaultValue, message: "updated" });
 
@@ -153,17 +152,6 @@ describe("renderer/utils/StorageHelper", () => {
       }));
       expect(storageHelper.get().message).toEqual("updated-updated");
     });
-
-    it("clears data in storage", () => {
-      storageHelper.init();
-
-      expect(storageHelper.get()).toBeTruthy();
-      storageHelper.clear();
-      expect(storageHelper.get()).toBeFalsy();
-      expect(storageMock[storageKey]).toBeUndefined();
-      expect(storageAdapter.removeItem).toHaveBeenCalledWith(storageHelper.key);
-    });
-
   });
 
   describe("data in storage-helper is observable (mobx)", () => {

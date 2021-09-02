@@ -2,30 +2,33 @@ import { autorun } from "mobx";
 import { Color } from "react-color"
 import { getURL } from "../../extension";
 import { createLogger } from "../../utils";
-import { createSyncStorage } from "../../storage-factory";
+import { createStorageHelper } from "../../extension/storage";
 
-export const themeStorage = createSyncStorage("theme", {
-  bgcMain: "#000" as Color,
-  bgcSecondary: { r: 98, g: 101, b: 101, a: .95 } as Color,
-  bgcLinear: true,
-  fontSize: 15,
-  fontFamily: "Open Sans",
-  textColor: { r: 255, g: 255, b: 255, a: .85 } as Color,
-  textShadowRadius: 0,
-  textShadowOffsetX: 0,
-  textShadowOffsetY: 0,
-  textShadowColor: "#ffffff" as Color,
-  borderColor: { r: 135, g: 144, b: 156, a: .5 } as Color,
-  borderWidth: 2,
-  borderStyle: "solid",
-  borderRadius: 5,
-  maxWidth: 500,
-  maxHeight: 250,
-  minWidth: 0,
-  minHeight: 0,
-  boxShadowBlur: 10,
-  boxShadowColor: { r: 102, g: 102, b: 102, a: .5 } as Color,
-  boxShadowInner: false,
+export const themeStorage = createStorageHelper("theme", {
+  area: "sync",
+  defaultValue: {
+    bgcMain: "#000" as Color,
+    bgcSecondary: { r: 98, g: 101, b: 101, a: .95 } as Color,
+    bgcLinear: true,
+    fontSize: 15,
+    fontFamily: "Open Sans",
+    textColor: { r: 255, g: 255, b: 255, a: .85 } as Color,
+    textShadowRadius: 0,
+    textShadowOffsetX: 0,
+    textShadowOffsetY: 0,
+    textShadowColor: "#ffffff" as Color,
+    borderColor: { r: 135, g: 144, b: 156, a: .5 } as Color,
+    borderWidth: 2,
+    borderStyle: "solid",
+    borderRadius: 5,
+    maxWidth: 500,
+    maxHeight: 250,
+    minWidth: 0,
+    minHeight: 0,
+    boxShadowBlur: 10,
+    boxShadowColor: { r: 102, g: 102, b: 102, a: .5 } as Color,
+    boxShadowInner: false,
+  }
 });
 
 export interface IThemeFont {

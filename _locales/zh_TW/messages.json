@@ -64,7 +64,6 @@
   "___________history_______________": {"message": "----------------------------------------------"},
   "history_enabled_flag"             : {"message": "已啟用"},
   "history_settings_save_words_only" : {"message": "僅儲存詞典文字"},
-  "history_settings_avoid_duplicates": {"message": "避免重覆"},
   "history_search_input_placeholder" : {"message": "在歷史中搜尋"},
   "history_clear_period_hour"        : {"message": "前一小時"},
   "history_clear_period_day"         : {"message": "前一天"},

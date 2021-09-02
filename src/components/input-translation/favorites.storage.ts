@@ -1,7 +1,7 @@
 import { find, flatten, orderBy, remove } from "lodash"
 import { autoBind } from "../../utils";
 import { getTranslators } from "../../vendors";
-import { createSyncStorage } from "../../storage-factory";
+import { createStorageHelper } from "../../extension/storage";
 
 export type FavoritesStorage = {
   [vendor: string]: FavoriteLangPair[];
@@ -12,7 +12,10 @@ export interface FavoriteLangPair {
   to: string
 }
 
-export const favoritesStorage = createSyncStorage<FavoritesStorage>("favorites", {});
+export const favoritesStorage = createStorageHelper<FavoritesStorage>("favorites", {
+  area: "sync",
+  defaultValue: {},
+});
 
 export class FavoritesStore {
   private storage = favoritesStorage;

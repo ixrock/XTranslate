@@ -1,7 +1,7 @@
 // Extension's context menu
 
 import { autorun } from "mobx";
-import { __i18n, createTab, getActiveTab, getManifest, MenuTranslateFavoritePayload, MenuTranslateVendorPayload, MessageType, onPermissionActivated, Permission, sendTabMessage } from "../extension";
+import { __i18n, createTab, getActiveTab, getManifest, MenuTranslateFavoritePayload, MenuTranslateVendorPayload, MessageType, onPermissionActivated, Permission, sendMessageToTab } from "../extension";
 import { settingsStore } from "../components/settings/settings.storage";
 import { FavoriteLangPair, favoritesStore } from "../components/input-translation/favorites.storage";
 import { getTranslator, getTranslators } from "../vendors";
@@ -97,7 +97,7 @@ async function onClickMenuItem(info: chrome.contextMenus.OnClickData) {
 
     case MessageType.MENU_TRANSLATE_WITH_VENDOR: {
       const tab = await getActiveTab();
-      sendTabMessage<MenuTranslateVendorPayload>(tab.id, {
+      sendMessageToTab<MenuTranslateVendorPayload>(tab.id, {
         type: MessageType.MENU_TRANSLATE_WITH_VENDOR,
         payload: {
           vendor, selectedText,
@@ -108,7 +108,7 @@ async function onClickMenuItem(info: chrome.contextMenus.OnClickData) {
 
     case MessageType.MENU_TRANSLATE_FAVORITE: {
       const tab = await getActiveTab();
-      sendTabMessage<MenuTranslateFavoritePayload>(tab.id, {
+      sendMessageToTab<MenuTranslateFavoritePayload>(tab.id, {
         type: MessageType.MENU_TRANSLATE_FAVORITE,
         payload: {
           vendor, from, to, selectedText

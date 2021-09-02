@@ -85,7 +85,6 @@
   "___________history_______________": {"message": "----------------------------------------------"},
   "history_enabled_flag"             : {"message": "Aktiviert"},
   "history_settings_save_words_only" : {"message": "Nur Wörterbucheinträge merken"},
-  "history_settings_avoid_duplicates": {"message": "Duplikate vermeiden"},
   "history_search_input_placeholder" : {"message": "Suche im Verlauf"},
   "history_clear_period_hour"        : {"message": "Letzte Stunde"},
   "history_clear_period_day"         : {"message": "Letzten Tag"},
