@@ -1,10 +1,9 @@
 // Helper for working with persistent storages (e.g. WebStorage API, NodeJS file-system api, etc.)
 
-import { action, makeObservable, observable, reaction, toJS, when } from "mobx";
+import { action, IReactionDisposer, IReactionOptions, makeObservable, observable, reaction, toJS, when } from "mobx";
 import produce, { Draft } from "immer";
 import { isEqual, isPlainObject, merge } from "lodash";
 import { createLogger } from "./createLogger";
-import { delay } from "./delay";
 
 export interface StorageHelperOptions<T> {
   autoInit?: boolean; // start preloading data immediately, default: true
@@ -57,11 +56,18 @@ export class StorageHelper<T> {
       this.load();
     }
     if (this.options.autoSync) {
-      reaction(() => this.toJS(), data => this.save(data), {
-        name: `[STORAGE-HELPER]: auto-sync, key=${key}`,
-        delay: this.options.autoSyncDelayMs,
-      });
+      this.bindAutoSync();
     }
+  }
+
+  public unbindAutoSync?: IReactionDisposer;
+
+  public bindAutoSync(opts: IReactionOptions = {}) {
+    this.unbindAutoSync?.();
+    this.unbindAutoSync = reaction(() => this.toJS(), data => this.save(data), {
+      delay: this.options.autoSyncDelayMs,
+      ...opts,
+    });
   }
 
   @action
@@ -86,7 +92,7 @@ export class StorageHelper<T> {
     try {
       this.logger.info("saving data to external storage", data);
       this.saving = true;
-      await this.storage.setItem(this.key, data);
+      this.storage.setItem(this.key, data);
     } catch (error) {
       this.logger.error("saving data has failed", error);
     } finally {
@@ -117,10 +123,6 @@ export class StorageHelper<T> {
     this.logger.error("loading failed", error, this);
   };
 
-  isEqual(value: T): boolean {
-    return isEqual(this.toJS(), value);
-  }
-
   isDefault(value: T): boolean {
     return isEqual(this.defaultValue, value);
   }
@@ -129,13 +131,18 @@ export class StorageHelper<T> {
     return this.data.get();
   }
 
-  async set(value: T) {
-    this.data.set(value);
-    await delay(this.options.autoSyncDelayMs);
+  set(value: T, silent = false) {
+    if (silent && this.options.autoSync) {
+      this.unbindAutoSync();
+      this.data.set(value);
+      this.bindAutoSync();
+    } else {
+      this.data.set(value);
+    }
   }
 
-  async reset() {
-    await this.set(this.defaultValue);
+  reset() {
+    this.set(this.defaultValue);
   }
 
   merge(value: Partial<T> | ((draft: Draft<T>) => Partial<T> | void)) {

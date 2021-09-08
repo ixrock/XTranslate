@@ -1,4 +1,5 @@
 // Chrome storages api helper
+import { isEqual } from "lodash";
 import { checkErrors } from "./runtime";
 import { StorageHelper, StorageMigrationCallback } from "../utils/storageHelper";
 import { createLogger } from "../utils/createLogger";
@@ -55,11 +56,11 @@ export function createStorageHelper<T>(key: string, options: ChromeStorageHelper
   chrome.storage.onChanged.addListener((changes, areaName: StorageArea) => {
     if (area !== areaName || !changes[key] || !storageHelper.loaded) return;
     const { newValue: storageState } = changes[key];
-    const isUpdateRequired = !storageHelper.isEqual(storageState);
+    const isUpdateRequired = !isEqual(storageState, storageHelper.toJS());
 
     logger.info(`received update`, { isUpdateRequired, ...changes });
     if (isUpdateRequired) {
-      storageHelper.set(storageState);
+      storageHelper.set(storageState, true);
     }
   });
 
