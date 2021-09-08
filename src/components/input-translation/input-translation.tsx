@@ -20,10 +20,6 @@ import { Tooltip } from "../tooltip";
 import { navigate } from "../../navigation";
 import { createStorageHelper } from "../../extension/storage";
 
-// FIXME: bing-api broken
-// TODO: integrate with https://www.deepl.com/pro-account/summary (free subscription >up to 500_000 chars)
-// TODO: support multi-translation results (multi-selector from-to + favorites-list?)
-
 export const lastInputText = createStorageHelper("last_input_text", {
   defaultValue: "",
 });

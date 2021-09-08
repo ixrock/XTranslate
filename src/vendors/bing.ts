@@ -1,6 +1,8 @@
+import { groupBy } from "lodash";
 import BingTranslateParams from "./bing.json"
-import { ITranslationResult, Translator } from "./translator";
-import groupBy from "lodash/groupBy";
+import { ITranslationError, ITranslationResult, Translator } from "./translator";
+import { createStorageHelper } from "../extension/storage";
+import { createLogger } from "../utils";
 
 class Bing extends Translator {
   public name = 'bing';
@@ -13,24 +15,40 @@ class Bing extends Translator {
     super(BingTranslateParams);
   }
 
+  protected logger = createLogger({ systemPrefix: "[BING]" });
+  protected apiClient = createStorageHelper<{ key?: string, token?: string }>("bing_api_client", {
+    defaultValue: {},
+  });
+
   getFullPageTranslationUrl(pageUrl: string, lang: string): string {
     return `https://www.microsofttranslator.com/bv.aspx?to=${lang}&a=${pageUrl}`
   }
 
-  refreshCookie() {
-    console.log('refreshing cookies..');
-    return fetch(this.publicUrl, { credentials: 'include' });
+  protected async refreshApiClient() {
+    this.logger.info('refreshing api client..', {
+      oldValue: this.apiClient.toJS(),
+    });
+    try {
+      const servicePage = await fetch(this.publicUrl, { credentials: 'include' }).then(res => res.text());
+      const matchedParams = /params_RichTranslateHelper\s*=\s*\[(\d+),"(\w+)",\d+,.*?\]/.exec(servicePage);
+      if (matchedParams) {
+        const [pageText, key, token] = matchedParams;
+        this.logger.info(`api client updated`, { key, token });
+        await this.apiClient.set({ key, token });
+      }
+    } catch (error) {
+      this.logger.error('refreshing api error', error);
+    }
   }
 
   protected translate(langFrom, langTo, text): Promise<ITranslationResult> {
     var reqInitBase: RequestInit = {
-      method: 'post',
-      credentials: 'include',
+      method: "POST",
+      credentials: "include",
       headers: {
         "content-type": "application/x-www-form-urlencoded"
       }
     }
-
     var translationReq = (langFrom: string): Promise<BingTranslation[]> => {
       var url = this.apiUrl + "/ttranslatev3";
       return fetch(url, {
@@ -39,6 +57,7 @@ class Bing extends Translator {
           fromLang: langFrom === "auto" ? "auto-detect" : langFrom,
           to: langTo,
           text: text,
+          ...this.apiClient.get(),
         }),
       }).then(this.parseJson);
     };
@@ -47,14 +66,18 @@ class Bing extends Translator {
       var url = this.apiUrl + '/tlookupv3';
       return fetch(url, {
         ...reqInitBase,
-        body: new URLSearchParams({ from: langFrom, to: langTo, text }),
+        body: new URLSearchParams({
+          from: langFrom,
+          to: langTo,
+          text: text,
+          ...this.apiClient.get(),
+        }),
       }).then(this.parseJson);
     };
 
-    var refreshCookie = false;
+    var apiClientRefreshed = false;
     var request = async () => {
       try {
-        // base translation results
         var transRes = await translationReq(langFrom);
         var { translations, detectedLanguage } = transRes[0];
         var result: ITranslationResult = {
@@ -81,18 +104,19 @@ class Bing extends Translator {
         }
         return result;
       } catch (error) {
-        if (!refreshCookie) {
-          refreshCookie = true;
-          return this.refreshCookie().then(request);
+        if (!apiClientRefreshed) {
+          apiClientRefreshed = true;
+          return this.refreshApiClient().then(request);
         }
         throw error;
       }
     };
+
     return request();
   }
 }
 
-interface BingTranslation {
+export interface BingTranslation {
   detectedLanguage: {
     language: string;
     score: number;
@@ -100,13 +124,21 @@ interface BingTranslation {
   translations: {
     text: string;
     to: string;
+    transliteration?: {
+      script?: string;
+      text?: string
+    }
   }[];
 }
 
-interface BingDictionary {
+export interface BingDictionary {
   displaySource: string
   normalizedSource: string
   translations: DictTranslation[]
+}
+
+export interface BingTranslationError extends ITranslationError {
+  errorMessage?: string;
 }
 
 interface DictTranslation {

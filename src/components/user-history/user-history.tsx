@@ -7,7 +7,7 @@ import { disposeOnUnmount, observer } from "mobx-react";
 import { __i18n } from "../../extension/i18n";
 import { ttsPlay } from "../../extension/actions";
 import { cssNames, prevDefault } from "../../utils";
-import { getTranslator, isRTL } from "../../vendors";
+import { getTranslator, getTranslators, isRTL } from "../../vendors";
 import { Checkbox } from "../checkbox";
 import { MenuActions, MenuItem } from "../menu";
 import { FileInput, ImportingFile, Input, NumberInput } from "../input";
@@ -225,16 +225,12 @@ export class UserHistory extends React.Component {
                   isOpened: this.detailsVisible.has(itemGroupId),
                 });
                 return (
-                  <div
-                    key={itemGroupId}
-                    className={className}
-                    onClick={() => this.toggleDetails(itemGroupId)}
-                  >
-                    {items.map(item =>
-                      <React.Fragment key={item.vendor}>
-                        {this.renderHistoryItem(item)}
-                      </React.Fragment>)
-                    }
+                  <div key={itemGroupId} className={className} onClick={() => this.toggleDetails(itemGroupId)}>
+                    {getTranslators().map(vendor => {
+                      const item = translation[vendor.name];
+                      if (!item) return; // no results for this translation service yet
+                      return <React.Fragment key={item.vendor}>{this.renderHistoryItem(item)}</React.Fragment>
+                    })}
                   </div>
                 )
               })}
@@ -248,13 +244,13 @@ export class UserHistory extends React.Component {
   renderHistoryItem(item: IHistoryItem): React.ReactNode {
     var { id: itemId, vendor, from, to, text, translation, transcription, dictionary } = item;
     var showDetails = this.detailsVisible.has(itemId);
-    var service = getTranslator(vendor);
-    var serviceInfo = `${service.title} (${service.langFrom[from]} → ${service.langTo[to]})`;
+    var translator = getTranslator(vendor);
     return (
       <div className={cssNames("history-item", { showDetails })}>
         {showDetails && (
           <small className="translation-service-info">
-            {serviceInfo}
+            <span className="translation-vendor">{translator.title} </span>
+            <span className="translation-direction">({translator.langFrom[from]} → {translator.langTo[to]})</span>
           </small>
         )}
         <div className="main-info flex gaps">

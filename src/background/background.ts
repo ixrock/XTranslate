@@ -11,6 +11,9 @@ import { settingsStore } from "../components/settings/settings.storage";
 import { importHistory } from "../components/user-history/history.storage";
 import { defaultPageId, navigate } from "../navigation";
 
+// TODO: integrate with https://www.deepl.com/pro-account/summary (free subscription >up to 500_000 chars)
+// TODO: multi language-selector + favorites list (?)
+
 onAppInstall(reason => {
   if (reason === "install" || !isProduction) {
     rateLastTimestamp.set(Date.now());
