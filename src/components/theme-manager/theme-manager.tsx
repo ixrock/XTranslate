@@ -88,7 +88,7 @@ export class ThemeManager extends React.Component {
             />
             <span className="heading">{__i18n("text_font_family")}</span>
             <Select className="box grow" value={theme.fontFamily} onChange={v => theme.fontFamily = v}>
-              {themeStore.fonts.map(({ familyName }) => (
+              {themeStore.availableFonts.map(({ familyName }) => (
                 <Option key={familyName} value={familyName}/>
               ))}
             </Select>

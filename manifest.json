@@ -35,7 +35,7 @@
   "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
   "content_scripts": [
     {
-      "run_at": "document_end",
+      "run_at": "document_idle",
       "all_frames": true,
       "matches": [
         "http://*/*",

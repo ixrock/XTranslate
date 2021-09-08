@@ -1,11 +1,12 @@
 import { autorun } from "mobx";
 import { Color } from "react-color"
-import { getURL } from "../../extension";
+import { getURL, isExtensionPage } from "../../extension";
 import { createLogger } from "../../utils";
 import { createStorageHelper } from "../../extension/storage";
 
 export const themeStorage = createStorageHelper("theme", {
   area: "sync",
+  autoLoad: true,
   defaultValue: {
     bgcMain: "#000" as Color,
     bgcSecondary: { r: 98, g: 101, b: 101, a: .95 } as Color,
@@ -51,7 +52,7 @@ export class ThemeStore {
     fileName: "MaterialIcons-Regular.ttf",
   };
 
-  public fonts: IThemeFont[] = [
+  public availableFonts: IThemeFont[] = [
     { familyName: "Roboto", fileName: "Roboto-Regular.ttf" },
     { familyName: "Lato", fileName: "Lato-Regular.ttf" },
     { familyName: "Open Sans", fileName: "OpenSans-Regular.ttf" },
@@ -67,38 +68,45 @@ export class ThemeStore {
   ];
 
   constructor() {
-    this.initFonts();
+    if (isExtensionPage()) {
+      this.init(); // app's system page (options.html)
+    } else {
+      // delayed init for content-pages: wait document readiness, otherwise might mess up page fonts.
+      // e.g. https://fonts.google.com/icons?selected=Material+Icons
+      document.addEventListener("readystatechange", () => {
+        if (document.readyState === "complete") this.init();
+      });
+    }
   }
 
-  protected async initFonts() {
+  init = async () => {
     await this.ready;
     await this.loadFont(this.iconsFont);
     autorun(() => this.loadFont(this.data.fontFamily));
   }
 
-  protected isFontLoaded(fontFamily: string) {
-    var pageFonts = Array.from(document.fonts as unknown as FontFace[]);
-    return pageFonts.some(font => font.family === fontFamily);
-  }
-
   getFont(font: string | IThemeFont) {
     if (typeof font == "string") {
-      return this.fonts.find(({ familyName }) => font === familyName);
+      return this.availableFonts.find(({ familyName }) => font === familyName);
     }
     return font;
   }
 
   async loadFont(font: string | IThemeFont) {
+    await document.fonts.ready;
+
     var { fileName, familyName } = this.getFont(font);
-    if (this.isFontLoaded(familyName)) {
-      return;
-    }
+    var preloadedFonts = Array.from(document.fonts as any as FontFace[]);
+    var isLoaded = preloadedFonts.some(fontFace => fontFace.family === familyName);
+    if (isLoaded) return; // skip if exists, font is loaded by content-page
+
     try {
       const fontUrl = getURL(`assets/fonts/${fileName}`);
+      this.logger.info(`loading font "${familyName}" from ${fontUrl}`);
       const font = new FontFace(familyName, `url(${fontUrl})`);
       await font.load();
       // @ts-ignore -- document.fonts.add() is missing from current "lib.dom.d.ts"
-      await document.fonts.add(font);
+      document.fonts.add(font);
     } catch (error) {
       this.logger.error(`loading font "${familyName}" from file "${fileName}" has failed`);
     }

@@ -20,7 +20,6 @@ import { Tooltip } from "../tooltip";
 import { navigate } from "../../navigation";
 import { createStorageHelper } from "../../extension/storage";
 
-// FIXME: material-icons conflict with https://fonts.google.com/icons?selected=Material+Icons&icon.query=remove
 // FIXME: bing-api broken
 // TODO: integrate with https://www.deepl.com/pro-account/summary (free subscription >up to 500_000 chars)
 // TODO: support multi-translation results (multi-selector from-to + favorites-list?)
