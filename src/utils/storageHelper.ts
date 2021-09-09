@@ -43,14 +43,13 @@ export class StorageHelper<T> {
   constructor(readonly key: string, private options: StorageHelperOptions<T>) {
     makeObservable(this);
 
-    // setup default options
     this.options = {
       autoInit: true,
       autoSync: true,
       autoSyncDelayMs: 200,
       ...options
     };
-    this.reset();
+    this.data.set(this.defaultValue);
 
     if (this.options.autoInit) {
       this.load();
@@ -62,7 +61,8 @@ export class StorageHelper<T> {
 
   public unbindAutoSync?: IReactionDisposer;
 
-  public bindAutoSync(opts: IReactionOptions = {}) {
+  public async bindAutoSync(opts: IReactionOptions = {}) {
+    await this.whenReady;
     this.unbindAutoSync?.();
     this.unbindAutoSync = reaction(() => this.toJS(), data => this.save(data), {
       delay: this.options.autoSyncDelayMs,
@@ -109,7 +109,7 @@ export class StorageHelper<T> {
         let migratedData = callback(data);
         if (migratedData !== undefined) data = migratedData as T;
       }
-      if (!this.isDefault(data)) {
+      if (!this.isDefaultValue(data)) {
         this.set(data);
       }
     }
@@ -123,7 +123,7 @@ export class StorageHelper<T> {
     this.logger.error("loading failed", error, this);
   };
 
-  isDefault(value: T): boolean {
+  isDefaultValue(value: T): boolean {
     return isEqual(this.defaultValue, value);
   }
 
@@ -131,7 +131,7 @@ export class StorageHelper<T> {
     return this.data.get();
   }
 
-  set(value: T, silent = false) {
+  set(value: T, { silent = false } = {}) {
     if (silent && this.options.autoSync) {
       this.unbindAutoSync();
       this.data.set(value);

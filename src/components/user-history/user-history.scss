@@ -84,9 +84,10 @@
 
         &.showDetails {
           padding: $padding;
+          border-top: 1px dotted; // adds line between vendor translations
 
-          &:nth-child(2n) {
-            border-top: 1px dotted; // adds line between translation results
+          &:first-child {
+            border-top: none;
           }
         }
 

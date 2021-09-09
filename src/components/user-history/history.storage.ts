@@ -65,9 +65,7 @@ export async function loadHistory() {
   await settingsStorage.whenReady;
 }
 
-export async function importHistory(data: ITranslationResult | IHistoryItem | IHistoryStorageItem) {
-  await loadHistory();
-
+export function importHistory(data: ITranslationResult | IHistoryItem | IHistoryStorageItem) {
   if (isTranslation(data) && data.langFrom === "auto") {
     data.langFrom = data.langDetected; // always save detected language from "auto"
   }

@@ -1,5 +1,4 @@
 // Chrome storages api helper
-import { isEqual } from "lodash";
 import { checkErrors } from "./runtime";
 import { StorageHelper, StorageMigrationCallback } from "../utils/storageHelper";
 import { createLogger } from "../utils/createLogger";
@@ -27,7 +26,9 @@ export function createStorageHelper<T>(key: string, options: ChromeStorageHelper
     systemPrefix: `[${area.toUpperCase()}]: chrome.storage["${key}"]`,
   });
 
+  let storageResourceVersion = 1;
   const chromeStorage = chrome.storage[area];
+  const metadataVersionKey = `${key}@version`;
 
   const storageHelper = new StorageHelper<T>(key, {
     autoInit: autoLoad,
@@ -37,30 +38,44 @@ export function createStorageHelper<T>(key: string, options: ChromeStorageHelper
     storage: {
       async setItem(key: string, value: T) {
         return new Promise(resolve => {
-          chromeStorage.set({ [key]: value }, () => resolve(checkErrors()))
+          chromeStorage.set({
+            [key]: value,
+            [metadataVersionKey]: ++storageResourceVersion,
+          }, () => resolve(checkErrors()))
         })
       },
       async getItem(key: string): Promise<T> {
         return new Promise(resolve => {
-          chromeStorage.get(key, items => resolve(checkErrors(items[key])))
+          chromeStorage.get([key, metadataVersionKey], items => {
+            storageResourceVersion = Math.max(storageResourceVersion, items[metadataVersionKey] ?? 0);
+            resolve(checkErrors(items[key]));
+          })
         });
       },
       async removeItem(key: string) {
         return new Promise(resolve => {
-          chromeStorage.remove(key, () => resolve(checkErrors()));
+          chromeStorage.remove([key, metadataVersionKey], () => resolve(checkErrors()));
         })
       },
     },
   });
 
+  // sync storage updates from other processes (e.g. background-page)
   chrome.storage.onChanged.addListener((changes, areaName: StorageArea) => {
     if (area !== areaName || !changes[key] || !storageHelper.loaded) return;
     const { newValue: storageState } = changes[key];
-    const isUpdateRequired = !isEqual(storageState, storageHelper.toJS());
+    const resourceVersion = changes[metadataVersionKey]?.newValue;
+    const isUpdateRequired = resourceVersion > storageResourceVersion;
 
-    logger.info(`received update`, { isUpdateRequired, ...changes });
+    logger.info(`received update`, {
+      isUpdateRequired,
+      ...changes
+    });
     if (isUpdateRequired) {
-      storageHelper.set(storageState, true);
+      storageResourceVersion = resourceVersion; // refresh
+      storageHelper.set(storageState, {
+        silent: true, // skip auto-saving back to chrome.storage
+      });
     }
   });
 

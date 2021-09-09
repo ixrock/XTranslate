@@ -20,7 +20,7 @@ export class ThemeManager extends React.Component {
 
   render() {
     var theme = themeStore.data;
-    var isDefault = themeStorage.isDefault(theme);
+    var isDefault = themeStorage.isDefaultValue(theme);
     return (
       <div className="ThemeManager flex column gaps">
         <Popup preview className="box center"/>
@@ -88,7 +88,7 @@ export class ThemeManager extends React.Component {
             />
             <span className="heading">{__i18n("text_font_family")}</span>
             <Select className="box grow" value={theme.fontFamily} onChange={v => theme.fontFamily = v}>
-              {themeStore.availableFonts.map(({ familyName }) => (
+              {themeStore.bundledFonts.map(({ familyName }) => (
                 <Option key={familyName} value={familyName}/>
               ))}
             </Select>

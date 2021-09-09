@@ -25,19 +25,17 @@ class Bing extends Translator {
   }
 
   protected async refreshApiClient() {
-    this.logger.info('refreshing api client..', {
-      oldValue: this.apiClient.toJS(),
-    });
+    this.logger.info('refreshing api client..', this.apiClient.toJS());
     try {
-      const servicePage = await fetch(this.publicUrl, { credentials: 'include' }).then(res => res.text());
-      const matchedParams = /params_RichTranslateHelper\s*=\s*\[(\d+),"(\w+)",\d+,.*?\]/.exec(servicePage);
+      const servicePage = await fetch(this.publicUrl, { credentials: "include" }).then(res => res.text());
+      const matchedParams = /params_RichTranslateHelper\s*=\s*\[(\d+),"(.*?)",.*?\]/.exec(servicePage);
       if (matchedParams) {
-        const [pageText, key, token] = matchedParams;
+        const [page, key, token] = matchedParams;
         this.logger.info(`api client updated`, { key, token });
         await this.apiClient.set({ key, token });
       }
     } catch (error) {
-      this.logger.error('refreshing api error', error);
+      this.logger.error('refreshing api failed', error);
     }
   }
 

@@ -8,7 +8,7 @@ import { MessageType, onAppInstall, onMessageType, PlayTextToSpeechPayload, Tran
 import { getTranslator, ITranslationResult, playText, stopPlayingAll } from "../vendors";
 import { rateLastTimestamp } from "../components/app/app-rate.dialog";
 import { settingsStore } from "../components/settings/settings.storage";
-import { importHistory } from "../components/user-history/history.storage";
+import { importHistory, loadHistory } from "../components/user-history/history.storage";
 import { defaultPageId, navigate } from "../navigation";
 
 // TODO: integrate with https://www.deepl.com/pro-account/summary (free subscription >up to 500_000 chars)
@@ -37,7 +37,8 @@ onMessageType<TranslatePayload>(MessageType.TRANSLATE_TEXT, async (message, send
       playText({ vendor, text: originalText, lang: langDetected });
     }
     if (historyEnabled) {
-      await importHistory(translation);
+      await loadHistory();
+      importHistory(translation);
     }
   });
 

@@ -1,6 +1,6 @@
-import { autorun } from "mobx";
+import { reaction } from "mobx";
 import { Color } from "react-color"
-import { getURL, isExtensionPage } from "../../extension";
+import { getURL } from "../../extension";
 import { createLogger } from "../../utils";
 import { createStorageHelper } from "../../extension/storage";
 
@@ -52,7 +52,7 @@ export class ThemeStore {
     fileName: "MaterialIcons-Regular.ttf",
   };
 
-  public availableFonts: IThemeFont[] = [
+  public bundledFonts: IThemeFont[] = [
     { familyName: "Roboto", fileName: "Roboto-Regular.ttf" },
     { familyName: "Lato", fileName: "Lato-Regular.ttf" },
     { familyName: "Open Sans", fileName: "OpenSans-Regular.ttf" },
@@ -68,44 +68,40 @@ export class ThemeStore {
   ];
 
   constructor() {
-    if (isExtensionPage()) {
-      this.init(); // app's system page (options.html)
-    } else {
-      // delayed init for content-pages: wait document readiness, otherwise might mess up page fonts.
-      // e.g. https://fonts.google.com/icons?selected=Material+Icons
-      document.addEventListener("readystatechange", () => {
-        if (document.readyState === "complete") this.init();
-      });
-    }
+    this.init();
   }
 
-  init = async () => {
+  private async init() {
     await this.ready;
-    await this.loadFont(this.iconsFont);
-    autorun(() => this.loadFont(this.data.fontFamily));
+    await document.fonts.ready;
+
+    this.loadFont(this.iconsFont);
+
+    reaction(() => this.data.fontFamily, font => this.loadFont(font), {
+      name: "theme-font-loader",
+      fireImmediately: true,
+    });
   }
 
-  getFont(font: string | IThemeFont) {
+  getBundledFont(font: string | IThemeFont): IThemeFont {
     if (typeof font == "string") {
-      return this.availableFonts.find(({ familyName }) => font === familyName);
+      return this.bundledFonts.find(({ familyName }) => font === familyName);
     }
     return font;
   }
 
   async loadFont(font: string | IThemeFont) {
-    await document.fonts.ready;
-
-    var { fileName, familyName } = this.getFont(font);
-    var preloadedFonts = Array.from(document.fonts as any as FontFace[]);
-    var isLoaded = preloadedFonts.some(fontFace => fontFace.family === familyName);
-    if (isLoaded) return; // skip if exists, font is loaded by content-page
-
+    const { fileName, familyName } = this.getBundledFont(font);
+    const isExists = document.fonts.check(`10px "${familyName}"`);
+    if (isExists) return; // font is already available in content-page
+    if (!fileName) return; // system font is selected by user, e.g. "Arial"
     try {
       const fontUrl = getURL(`assets/fonts/${fileName}`);
       this.logger.info(`loading font "${familyName}" from ${fontUrl}`);
       const font = new FontFace(familyName, `url(${fontUrl})`);
+      font.display = "swap"; // https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display
       await font.load();
-      // @ts-ignore -- document.fonts.add() is missing from current "lib.dom.d.ts"
+      // @ts-ignore - api is missing from *.d.ts specs
       document.fonts.add(font);
     } catch (error) {
       this.logger.error(`loading font "${familyName}" from file "${fileName}" has failed`);
