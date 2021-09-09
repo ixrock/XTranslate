@@ -2,6 +2,7 @@ import { reaction } from "mobx";
 import { StorageAdapter, StorageHelper } from "./storageHelper";
 import { delay } from "./delay";
 
+// TODO: write more tests
 describe("renderer/utils/StorageHelper", () => {
   describe("window.localStorage might be used as StorageAdapter", () => {
     type StorageModel = string;
@@ -13,9 +14,10 @@ describe("renderer/utils/StorageHelper", () => {
       localStorage.clear();
 
       storageHelper = new StorageHelper<StorageModel>(storageKey, {
-        autoInit: false,
         storage: localStorage,
         defaultValue: "test",
+        autoSync: true,
+        autoLoad: false,
       });
     });
 
@@ -36,7 +38,7 @@ describe("renderer/utils/StorageHelper", () => {
     it("updates storage", async () => {
       storageHelper.load();
 
-      await storageHelper.set("test2");
+      storageHelper.set("test2");
       expect(localStorage.getItem(storageKey)).toBe("test2");
 
       localStorage.setItem(storageKey, "test3");
@@ -50,12 +52,6 @@ describe("renderer/utils/StorageHelper", () => {
     const storageMock = {
       [storageKey]: undefined,
     };
-
-    type StorageModel = typeof defaultValue;
-    let storageHelper: StorageHelper<StorageModel>;
-    let storageHelperAsync: StorageHelper<StorageModel>;
-    let storageAdapter: StorageAdapter<StorageModel>;
-
     const defaultValue = {
       message: "hello-world",
       deepDataTree: {
@@ -63,6 +59,11 @@ describe("renderer/utils/StorageHelper", () => {
         some: "thing",
       }
     };
+
+    type StorageModel = Partial<typeof defaultValue>;
+    let storageHelper: StorageHelper<StorageModel>;
+    let storageHelperAsync: StorageHelper<StorageModel>;
+    let storageAdapter: StorageAdapter<StorageModel>;
 
     beforeEach(() => {
       storageAdapter = {
@@ -81,13 +82,13 @@ describe("renderer/utils/StorageHelper", () => {
       };
 
       storageHelper = new StorageHelper(storageKey, {
-        autoInit: false,
+        autoLoad: false,
         defaultValue: defaultValue,
         storage: storageAdapter,
       });
 
       storageHelperAsync = new StorageHelper(storageKey, {
-        autoInit: false,
+        autoLoad: false,
         defaultValue: defaultValue,
         storage: {
           ...storageAdapter,
@@ -121,7 +122,7 @@ describe("renderer/utils/StorageHelper", () => {
 
     it("set() fully replaces data in storage", async () => {
       storageHelper.load();
-      await storageHelper.set({ message: "test2" } as any);
+      storageHelper.set({ message: "test2" });
       expect(storageHelper.get()).toEqual({ message: "test2" });
       expect(storageMock[storageKey]).toEqual({ message: "test2" });
     });
@@ -130,9 +131,8 @@ describe("renderer/utils/StorageHelper", () => {
       expect(storageHelper.get()).toEqual(defaultValue);
 
       storageHelper.load();
-      await storageHelper.merge({ message: "updated" });
+      storageHelper.merge({ message: "updated" });
       expect(storageHelper.get()).toEqual({ ...defaultValue, message: "updated" });
-      expect(storageAdapter.setItem).toHaveBeenCalledWith(storageHelper.key, { ...defaultValue, message: "updated" });
 
       // deep store updates
       storageHelper.merge(draft => {
@@ -163,7 +163,7 @@ describe("renderer/utils/StorageHelper", () => {
       observedChanges.length = 0;
 
       storageHelper = new StorageHelper<typeof defaultValue>("some-key", {
-        autoInit: true,
+        autoLoad: true,
         defaultValue,
         storage: {
           getItem: jest.fn(),

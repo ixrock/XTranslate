@@ -6,12 +6,11 @@ import { isEqual, isPlainObject, merge } from "lodash";
 import { createLogger } from "./createLogger";
 
 export interface StorageHelperOptions<T> {
-  autoInit?: boolean; // start preloading data immediately, default: true
-  autoSync?: boolean; // auto-save data-changes to underlying chrome.storage, default: true
-  autoSyncDelayMs?: number; // default: 200ms, applicable only with {autoSync: true}
+  defaultValue?: T;
+  autoLoad?: boolean; // preload data immediately, default: true
+  autoSync?: boolean | IReactionOptions; // auto-save changes to remote storage, default: true
   migrations?: StorageMigrationCallback<T>[]; // handle model upgrades during app's lifetime
   storage: StorageAdapter<T>;
-  defaultValue?: T;
 }
 
 export type StorageMigrationCallback<T> = (data: T | any) => T | void;
@@ -31,6 +30,7 @@ export class StorageHelper<T> {
   @observable saving = false;
   @observable loading = false;
   @observable loaded = false;
+  @observable.ref unbindAutoSync?: IReactionDisposer;
 
   get whenReady() {
     return when(() => this.initialized && this.loaded);
@@ -43,15 +43,15 @@ export class StorageHelper<T> {
   constructor(readonly key: string, private options: StorageHelperOptions<T>) {
     makeObservable(this);
 
+    // setup default options
     this.options = {
-      autoInit: true,
+      autoLoad: true,
       autoSync: true,
-      autoSyncDelayMs: 200,
       ...options
     };
     this.data.set(this.defaultValue);
 
-    if (this.options.autoInit) {
+    if (this.options.autoLoad) {
       this.load();
     }
     if (this.options.autoSync) {
@@ -59,15 +59,21 @@ export class StorageHelper<T> {
     }
   }
 
-  public unbindAutoSync?: IReactionDisposer;
+  public bindAutoSync(opts: IReactionOptions = {}) {
+    const { autoSync } = this.options;
+    const syncOptions: IReactionOptions = typeof autoSync === "boolean" ? {} : autoSync;
+    Object.assign(syncOptions, opts);
 
-  public async bindAutoSync(opts: IReactionOptions = {}) {
-    await this.whenReady;
-    this.unbindAutoSync?.();
-    this.unbindAutoSync = reaction(() => this.toJS(), data => this.save(data), {
-      delay: this.options.autoSyncDelayMs,
-      ...opts,
-    });
+    const bindAutoSync = () => {
+      this.unbindAutoSync?.(); // reset previous
+      this.unbindAutoSync = reaction(() => this.toJS(), this.save, syncOptions);
+    };
+
+    if (syncOptions.delay > 0) {
+      this.whenReady.then(bindAutoSync);
+    } else {
+      bindAutoSync();
+    }
   }
 
   @action
@@ -87,7 +93,7 @@ export class StorageHelper<T> {
     }
   }
 
-  @action
+  @action.bound
   async save(data: T): Promise<void> {
     try {
       this.logger.info("saving data to external storage", data);

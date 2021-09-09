@@ -101,7 +101,6 @@
   "footer"                           : {"message": "Wenn Sie diese App mögen, teilen Sie es gerne mit Ihren Freunden:"},
   "footer_leave_review_and_donate"   : {"message": "Sie können auch %leave a review% oder %make a donation%, um diese Erweiterung zu unterstützen."},
   "translation_data_failed"          : {"message": "Fehler beim Laden der Daten"},
-  "translation_data_failed_check_url": {"message": "Prüfen Sie den Antwort-Link"},
   "rate_app_info1"                   : {"message": "Finden Sie diese App gut? Bitte bewerten Sie uns mit 5 Sternen!"},
   "rate_app_info2"                   : {"message": "Es wird den anderen Nutzern helfen, diese Erweiterung zu finden und Sie unterstützen dabei etwas Gutes."},
   "rate_app_button"                  : {"message": "Im Chrome-Web-Store bewerten"},

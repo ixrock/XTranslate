@@ -96,10 +96,15 @@
             visibility: visible;
           }
         }
+
+        .translation-service-info {
+          opacity: .7;
+        }
       }
 
       .transcription {
         color: silver;
+        font-style: italic;
       }
 
       .icons {

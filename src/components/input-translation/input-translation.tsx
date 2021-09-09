@@ -42,9 +42,9 @@ export class InputTranslation extends React.Component {
 
   @observable isLoading = false;
   @observable text = "";
-  @observable translation: ITranslationResult;
-  @observable error: ITranslationError;
-  @observable favorite: TranslateParams = null;
+  @observable translation?: ITranslationResult;
+  @observable error?: ITranslationError;
+  @observable favorite?: TranslateParams;
 
   @observable params: TranslateParams = {
     vendor: settingsStore.data.vendor,
@@ -132,6 +132,7 @@ export class InputTranslation extends React.Component {
         vendor, text,
       });
     } catch (err) {
+      this.translation = null;
       this.error = err;
     } finally {
       this.isLoading = false;
@@ -342,10 +343,11 @@ export class InputTranslation extends React.Component {
   }
 
   renderError() {
-    var { statusCode, statusText } = this.error;
+    var { statusCode, message } = this.error;
     return (
-      <div className="translation-error">
-        {statusCode} - {statusText}
+      <div className="translation-error flex column gaps">
+        <p>{statusCode}: {__i18n("translation_data_failed")}</p>
+        <p>{message}</p>
       </div>
     );
   }

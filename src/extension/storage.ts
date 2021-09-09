@@ -1,23 +1,16 @@
 // Chrome storages api helper
 import { checkErrors } from "./runtime";
-import { StorageHelper, StorageMigrationCallback } from "../utils/storageHelper";
-import { createLogger } from "../utils/createLogger";
+import { createLogger, StorageHelper, StorageHelperOptions } from "../utils";
 
-export type StorageArea = "local" | "sync";
-
-export interface ChromeStorageHelperOptions<T> {
-  defaultValue?: T;
-  area?: StorageArea; // corresponding chrome.storage[area], default: "local"
-  autoLoad?: boolean; // preload data from storage immediately, default: true
-  autoSync?: boolean; // sync data changes to chrome.storage[area], default: true
-  migrations?: StorageMigrationCallback<T>[];
+export interface ChromeStorageHelperOptions<T> extends Partial<StorageHelperOptions<T>> {
+  area?: chrome.storage.AreaName; // default: "local"
 }
 
-export function createStorageHelper<T>(key: string, options: ChromeStorageHelperOptions<T> = {}) {
+export function createStorageHelper<T>(key: string, options: ChromeStorageHelperOptions<T>) {
   const {
-    autoLoad = true,
-    autoSync = true,
     area = "local",
+    autoLoad = true,
+    autoSync = { delay: 250 },
     defaultValue,
     migrations,
   } = options;
@@ -31,8 +24,8 @@ export function createStorageHelper<T>(key: string, options: ChromeStorageHelper
   const metadataVersionKey = `${key}@version`;
 
   const storageHelper = new StorageHelper<T>(key, {
-    autoInit: autoLoad,
-    autoSync: autoSync,
+    autoLoad,
+    autoSync,
     defaultValue,
     migrations,
     storage: {
@@ -61,7 +54,7 @@ export function createStorageHelper<T>(key: string, options: ChromeStorageHelper
   });
 
   // sync storage updates from other processes (e.g. background-page)
-  chrome.storage.onChanged.addListener((changes, areaName: StorageArea) => {
+  chrome.storage.onChanged.addListener((changes, areaName) => {
     if (area !== areaName || !changes[key] || !storageHelper.loaded) return;
     const { newValue: storageState } = changes[key];
     const resourceVersion = changes[metadataVersionKey]?.newValue;

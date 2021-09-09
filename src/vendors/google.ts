@@ -1,7 +1,7 @@
 import GoogleTranslateParams from "./google.json"
-import { ITranslationError, ITranslationResult, Translator } from "./translator";
-import { delay } from "../utils";
 import { createStorageHelper } from "../extension/storage";
+import { ITranslationError, ITranslationResult, Translator } from "./translator";
+import { createLogger, delay } from "../utils";
 
 class Google extends Translator {
   public name = 'google';
@@ -11,11 +11,11 @@ class Google extends Translator {
   public textMaxLength = 5000;
   public ttsMaxLength = 187;
 
+  protected logger = createLogger({ systemPrefix: "[GOOGLE]" });
   protected apiClients = ["gtx", "dict-chrome-ex"];
   protected apiClient = createStorageHelper<string>("google_api_client", {
     defaultValue: this.apiClients[0],
   });
-  protected apiClientSwitched = false;
 
   constructor() {
     super(GoogleTranslateParams);
@@ -25,12 +25,19 @@ class Google extends Translator {
     return `https://translate.google.com/translate?tl=${lang}&u=${pageUrl}`
   }
 
-  // try to use next available api-client id if google has blocked the traffic
-  protected useNextApiClient() {
+  // try to use next available api-client if google has blocked the traffic
+  protected async refreshApiClient() {
+    await delay(1000);
+
     var apiClient = this.apiClient.get();
     var index = this.apiClients.findIndex(client => client === apiClient);
     var nextApiClient = this.apiClients[index + 1] ?? this.apiClients[0];
     this.apiClient.set(nextApiClient);
+
+    this.logger.info("api client refreshed", {
+      oldValue: apiClient,
+      newValue: nextApiClient,
+    });
   }
 
   getAudioUrl(lang, text) {
@@ -40,8 +47,9 @@ class Google extends Translator {
     return this.apiUrl + `/translate_tts?client=${apiClient}&ie=UTF-8&tl=${lang}&q=${textEncoded}`;
   }
 
-  protected translate(langFrom, langTo, text): Promise<ITranslationResult> {
+  protected async translate(langFrom, langTo, text): Promise<ITranslationResult> {
     var reqParams: RequestInit = {};
+    var apiClientRefreshed = false;
 
     var getApiUrl = ({ query = text } = {}) => {
       return this.apiUrl + '/translate_a/single?' + new URLSearchParams([
@@ -71,8 +79,9 @@ class Google extends Translator {
       };
     }
 
-    return fetch(url, reqParams).then(this.parseJson).then((res: GoogleTranslation) => {
-      var { src, ld_result, sentences, dict, spell } = res;
+    var request = async (): Promise<ITranslationResult> => {
+      var result: GoogleTranslation = await fetch(url, reqParams).then(this.parseJson);
+      var { src, ld_result, sentences, dict, spell } = result;
       var detectedLang = src || ld_result ? ld_result.srclangs[0] : "";
       var translation: ITranslationResult = {
         langDetected: detectedLang,
@@ -97,18 +106,18 @@ class Google extends Translator {
         });
       }
       return translation;
-    }).catch(async (error: ITranslationError) => {
-      var { statusCode } = error;
-      if (statusCode === 503 && !this.apiClientSwitched) {
-        await delay(1000);
-        this.useNextApiClient();
-        this.apiClientSwitched = true;
-        return this.translate(langFrom, langTo, text).finally(() => {
-          this.apiClientSwitched = false;
-        });
+    }
+
+    try {
+      return await request(); // waiting for response to handle error locally
+    } catch (error) {
+      var { statusCode } = error as ITranslationError;
+      if (statusCode === 503 && !apiClientRefreshed) {
+        apiClientRefreshed = true;
+        return this.refreshApiClient().then(request);
       }
       throw error;
-    });
+    }
   }
 }
 

@@ -24,6 +24,15 @@ class Bing extends Translator {
     return `https://www.microsofttranslator.com/bv.aspx?to=${lang}&a=${pageUrl}`
   }
 
+  // bing errors comes with normal status response (200)
+  async parseJson(res: Response) {
+    const data = await super.parseJson(res);
+    const status = (data as ITranslationError)?.statusCode;
+    const isError = Number.isInteger(status) && status !== res.status;
+    if (isError) throw data;
+    return data;
+  }
+
   protected async refreshApiClient() {
     this.logger.info('refreshing api client..', this.apiClient.toJS());
     try {
@@ -40,6 +49,7 @@ class Bing extends Translator {
   }
 
   protected translate(langFrom, langTo, text): Promise<ITranslationResult> {
+    var apiClientRefreshed = false;
     var reqInitBase: RequestInit = {
       method: "POST",
       credentials: "include",
@@ -73,7 +83,6 @@ class Bing extends Translator {
       }).then(this.parseJson);
     };
 
-    var apiClientRefreshed = false;
     var request = async () => {
       try {
         var transRes = await translationReq(langFrom);
@@ -136,7 +145,8 @@ export interface BingDictionary {
 }
 
 export interface BingTranslationError extends ITranslationError {
-  errorMessage?: string;
+  statusCode: number;
+  errorMessage: string;
 }
 
 interface DictTranslation {

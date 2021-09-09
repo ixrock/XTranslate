@@ -1,5 +1,6 @@
 // Base class for translation vendor
 import { observable } from "mobx";
+import { isPlainObject } from "lodash";
 import { autoBind } from "../utils/autobind";
 import { PlayTextToSpeechPayload } from "../extension/messages";
 import { settingsStore } from "../components/settings/settings.storage";
@@ -40,11 +41,8 @@ export interface ITranslationResult {
 }
 
 export interface ITranslationError {
-  url: string
-  statusCode: number
-  statusText: string;
-  responseText?: string
-  parseError?: string;
+  statusCode: number; // http response code (e.g. 400)
+  message?: string; // error explanation
 }
 
 export abstract class Translator {
@@ -85,20 +83,23 @@ export abstract class Translator {
     return null; // should be overridden in sub-classes if supported
   }
 
-  protected parseJson<T = any>(res: Response): Promise<T> {
-    var { status, statusText, url, ok } = res;
-    var error: ITranslationError = { statusCode: status, statusText, url };
-    return res.text().then(text => {
-      error.responseText = text;
-      var json = null;
-      try {
-        json = JSON.parse(text);
-        if (ok) return json;
-      } catch (err) {
-        error.parseError = err;
+  async parseJson(res: Response): Promise<any> {
+    try {
+      var data = await res.json();
+      if (res.ok) { // status-code >= 200 < 300
+        return data;
       }
-      throw error;
-    });
+    } catch (error) {
+      const jsonError: ITranslationError = {
+        statusCode: res.status,
+        message: res.statusText,
+      };
+      // extend with possible detailed error message from json-response
+      if (isPlainObject(error)) {
+        Object.assign(jsonError, error);
+      }
+      throw jsonError;
+    }
   }
 
   async getTranslation(from: string, to: string, text: string): Promise<ITranslationResult> {

@@ -6,7 +6,7 @@ import { __i18n } from "../../extension";
 import { cssNames, noop, prevDefault, toCssColor } from "../../utils";
 import { getNextTranslator, getTranslator, isRTL, ITranslationError, ITranslationResult } from "../../vendors";
 import { Icon } from "../icon";
-import { settingsStore, settingsStorage } from "../settings/settings.storage";
+import { settingsStorage, settingsStore } from "../settings/settings.storage";
 import { themeStore } from "../theme-manager/theme.storage";
 
 interface Props extends React.HTMLProps<any> {
@@ -193,19 +193,17 @@ export class Popup extends React.Component<Props> {
   renderError() {
     var { error } = this.props;
     if (!error) return;
-    var { statusCode, url } = error;
+    var { statusCode, message } = error;
     return (
       <div className="translation-error">
         <div className="title flex gaps align-center">
           <Icon material="error_outline" className="info"/>
           <div className="box grow">
-            {statusCode}: {__i18n("translation_data_failed")}
+            <p>{statusCode}: {__i18n("translation_data_failed")}</p>
+            <p>{message}</p>
           </div>
           {this.renderNextTranslationIcon()}
         </div>
-        <a href={url} target="_blank">
-          {__i18n("translation_data_failed_check_url")}
-        </a>
       </div>
     )
   }
