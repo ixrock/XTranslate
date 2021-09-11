@@ -2,7 +2,6 @@ import { reaction } from "mobx";
 import { StorageAdapter, StorageHelper } from "./storageHelper";
 import { delay } from "./delay";
 
-// TODO: write more tests
 describe("renderer/utils/StorageHelper", () => {
   describe("window.localStorage might be used as StorageAdapter", () => {
     type StorageModel = string;

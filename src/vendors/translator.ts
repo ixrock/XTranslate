@@ -6,18 +6,15 @@ import { PlayTextToSpeechPayload } from "../extension/messages";
 import { settingsStore } from "../components/settings/settings.storage";
 
 export interface ITranslatorParams {
-  apiKeys?: string[]
-  dictionary?: string[]
-  tts?: ILanguages
   languages: {
-    from: ILanguages
-    to?: ILanguages
+    from: ILanguages;
+    to?: ILanguages;
   }
 }
 
-interface ILanguages {
+export interface ILanguages {
   auto?: string;
-  [lang: string]: string
+  [langCode: string]: string;
 }
 
 export interface ITranslationResult {
@@ -63,11 +60,11 @@ export abstract class Translator {
   public lastError: ITranslationError;
   public lastAudioUrl: string;
   public ttsAudio: HTMLAudioElement;
-  public ttsFormat = 'audio/mp3';
   public langFrom: ILanguages = {};
   public langTo: ILanguages = {};
   public maxUrlLength = 2048; // max length of the url for GET/POST requests
-  public textMaxLength = Number.MAX_SAFE_INTEGER;
+  public textMaxLength = 10000;
+  public reqMaxSizeInBytes = 1024 * 10; // 10 kB
   protected autoSwapUsed = false;
 
   constructor(protected params: ITranslatorParams) {
@@ -76,7 +73,7 @@ export abstract class Translator {
     var { from: langFrom, to: langTo } = params.languages;
     var { auto, ...langToFallback } = langFrom;
     this.langFrom = langFrom;
-    this.langTo = langTo || langToFallback;
+    this.langTo = langTo ?? langToFallback;
   }
 
   getFullPageTranslationUrl(pageUrl: string, lang: string): string {
@@ -86,9 +83,8 @@ export abstract class Translator {
   async parseJson(res: Response): Promise<any> {
     try {
       var data = await res.json();
-      if (res.ok) { // status-code >= 200 < 300
-        return data;
-      }
+      if (res.ok) return data; // status-code >= 200 < 300
+      else throw data; // json-error response
     } catch (error) {
       const jsonError: ITranslationError = {
         statusCode: res.status,
@@ -152,12 +148,8 @@ export abstract class Translator {
     var audioUrl = this.getAudioUrl(lang, text);
     if (settingsStore.data.useChromeTtsEngine || !audioUrl) {
       if (!chrome.tts) return;
-      if (lang === "en") lang = "en-GB";
-      chrome.tts.speak(text, {
-          lang: lang,
-          rate: 1.0
-        }
-      );
+      if (lang === "en") lang = "en-US";
+      chrome.tts.speak(text, { lang, rate: 1.0 });
     } else if (audioUrl !== this.lastAudioUrl) {
       this.lastAudioUrl = audioUrl;
       var audio = this.ttsAudio = document.createElement('audio');
@@ -204,7 +196,7 @@ export function isRTL(lang: string) {
 }
 
 export function getTranslators(): Translator[] {
-  return [...Translator.vendors.values()];
+  return Array.from(Translator.vendors.values());
 }
 
 export function getTranslator(name: string) {
