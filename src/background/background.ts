@@ -11,8 +11,6 @@ import { settingsStore } from "../components/settings/settings.storage";
 import { importHistory, loadHistory } from "../components/user-history/history.storage";
 import { defaultPageId, navigate } from "../navigation";
 
-// TODO: multi language-selector + favorites list (?)
-
 onAppInstall(reason => {
   if (reason === "install" || !isProduction) {
     rateLastTimestamp.set(Date.now());

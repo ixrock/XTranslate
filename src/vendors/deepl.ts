@@ -1,13 +1,15 @@
 import DeeplTranslateParams from "./deepl.json"
 import { ITranslationError, ITranslationResult, ITranslatorParams, Translator } from "./translator";
+import { __i18n } from "../extension";
 
 class Deepl extends Translator {
   public name = "deepl";
   public title = "Deepl";
   public publicUrl = "https://www.deepl.com/translator";
   public apiUrl = "https://api-free.deepl.com/v2";
-  public authKey = "b05afc95-d4ea-2bee-07e6-e81469c588f2:fx"; // free subscription: 500_000 chars/month
+  public authKey = "b05afc95-d4ea-2bee-07e6-e81469c588f2:fx"; // free subscription key
   public reqMaxSizeInBytes = 1024 * 30; // 30 kB
+  public info = __i18n("deepl_free_subscription_limits");
 
   constructor() {
     super(DeeplTranslateParams);

@@ -15,7 +15,7 @@ import { Popup } from "../components/popup/popup";
 import { settingsStore } from "../components/settings/settings.storage";
 import { themeStore } from "../components/theme-manager/theme.storage";
 
-export type CustomDomRect = PartialWriteable<DOMRect>;
+export type CustomDomRect = Partial<Writeable<DOMRect>>;
 
 const rootElem = document.createElement("div");
 const isPdf = document.contentType === "application/pdf";

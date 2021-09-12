@@ -53,6 +53,7 @@ export abstract class Translator {
   abstract title: string; // human readable name, e.g. "Google"
   abstract publicUrl: string; // for opening url from settings
   abstract apiUrl: string;
+  public info?: string; // some important info to be shown in the settings, e.g. monthly limits
 
   protected abstract translate(from: string, to: string, text: string): Promise<ITranslationResult>;
 

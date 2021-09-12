@@ -108,8 +108,10 @@
   "footer"                           : {"message": "If you like the app share it with your friends:"},
   "footer_leave_review_and_donate"   : {"message": "Also you can %leave a review% or %make a donation% for extension's support."},
   "translation_data_failed"          : {"message": "Data loading failed"},
+  "____________other________________": {"message": "----------------------------------------------"},
   "rate_app_info1"                   : {"message": "Enjoy using the app? Please rate us with 5 stars!"},
   "rate_app_info2"                   : {"message": "It will help other users to find extension and spread the goodies."},
   "rate_app_button"                  : {"message": "Rate in extensions store"},
-  "rate_app_button_later"            : {"message": "Remind me later"}
+  "rate_app_button_later"            : {"message": "Remind me later"},
+  "deepl_free_subscription_limits"   : {"message": "Free subscription limits: up to 500 000 chars/month"}
 }

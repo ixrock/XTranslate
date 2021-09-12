@@ -24,7 +24,7 @@ export interface HistoryTranslation<HistoryItem = IHistoryItem> {
 
 export const historyStorage = createStorageHelper<HistoryStorageModel>("history", {
   area: "local",
-  autoLoad: false, // turning off to avoid loading in content-pages (user-scripts)
+  autoLoad: false, // manual loading: before saving data and viewing history items
   defaultValue: {
     translations: {},
   },

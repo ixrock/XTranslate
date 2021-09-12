@@ -3,5 +3,6 @@
 export {}
 
 declare global {
-  export type PartialWriteable<T> = Partial<{ -readonly [P in keyof T]: T[P]; }>;
+  // removes "readonly" modifiers from all fields
+  export type Writeable<T> = { -readonly [P in keyof T]: T[P] };
 }

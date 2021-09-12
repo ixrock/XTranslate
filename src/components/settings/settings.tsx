@@ -1,3 +1,4 @@
+// TODO: multi language-selector + favorites list (?)
 import "./settings.scss";
 
 import * as React from "react";
@@ -103,7 +104,7 @@ export class Settings extends React.Component {
             value={settings.vendor}
             onChange={v => settingsStore.setVendor(v)}
           >
-            {getTranslators().map(({ name, title, publicUrl }) => {
+            {getTranslators().map(({ name, title, publicUrl, info }) => {
               var domain = publicUrl.match(/https?:\/\/(.*?)(?:\/\w*|$)/i)[1];
               return (
                 <div key={name} className="vendor flex gaps">
@@ -111,6 +112,7 @@ export class Settings extends React.Component {
                   <a href={publicUrl} target="_blank" tabIndex={-1}>
                     {domain.split('.').slice(-2).join('.')}
                   </a>
+                  {info && <Icon small material="info_outline" className="vendor-info" tooltip={info}/>}
                 </div>
               )
             })}
