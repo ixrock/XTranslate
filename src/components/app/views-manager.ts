@@ -1,8 +1,7 @@
-import type { TabProps } from "../tabs";
-import type React from "react";
 import { observable } from "mobx";
-
-export type PageId = "settings" | "theme" | "popup" | "history";
+import type React from "react";
+import type { TabProps } from "../tabs";
+import type { PageId } from "../../navigation";
 
 export interface PageComponents {
   Tab?: React.ComponentType<TabProps>;
@@ -10,7 +9,7 @@ export interface PageComponents {
 }
 
 const viewsRegistry = observable.map<PageId, PageComponents>([], {
-  deep: false, // avoid modifying components with mobx-stuff
+  deep: false, // avoid modifying react components with mobx-stuff
 });
 
 export const viewsManager = {

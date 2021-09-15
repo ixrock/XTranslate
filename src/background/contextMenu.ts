@@ -1,17 +1,12 @@
 // Extension's context menu
 
 import { autorun } from "mobx";
-import { __i18n, createTab, getActiveTab, getManifest, MenuTranslateFavoritePayload, MenuTranslateVendorPayload, MessageType, onPermissionActivated, Permission, sendMessageToTab } from "../extension";
+import { createTab, getActiveTab, getManifest, MenuTranslateVendorPayload, MessageType, sendMessageToTab } from "../extension";
 import { settingsStore } from "../components/settings/settings.storage";
-import { FavoriteLangPair, favoritesStore } from "../components/input-translation/favorites.storage";
 import { getTranslator, getTranslators } from "../vendors";
+import { getMessage, i18nInit } from "../i18n";
 
-// Prefetch menu-dependent data from the storages first
-Promise.all([settingsStore.ready, favoritesStore.ready]).then(() => {
-  onPermissionActivated([Permission.ContextMenus], () => {
-    return autorun(initMenus, { delay: 250 });
-  });
-});
+i18nInit().then(() => autorun(initMenus));
 
 export function initMenus() {
   var appName = getManifest().name;
@@ -21,65 +16,48 @@ export function initMenus() {
 
   chrome.contextMenus.removeAll(); // clean up before reassign
   chrome.contextMenus.onClicked.addListener(onClickMenuItem);
+  if (!settingsStore.data.showInContextMenu) return; // skip re-creating
 
-  if (settingsStore.data.showInContextMenu) {
-    var appMenuId = appName;
+  chrome.contextMenus.create({
+    id: appName,
+    title: appName,
+    contexts: pageContext,
+  });
 
-    chrome.contextMenus.create({
-      id: appMenuId,
-      title: appName,
-      contexts: pageContext,
-    });
-
-    // translate active page in new tab
-    translators.forEach(vendor => {
-      chrome.contextMenus.create({
-        id: [MessageType.MENU_TRANSLATE_FULL_PAGE, vendor.name].join("-"),
-        title: __i18n("context_menu_translate_full_page", [vendor.title]).join(""),
-        parentId: appMenuId,
-        contexts: pageContext,
-      });
-    });
-
-    chrome.contextMenus.create({
-      id: Math.random().toString(),
-      parentId: appMenuId,
-      type: "separator",
-      contexts: selectionContext,
-    });
-
-    // translate with current language set from settings
-    translators.forEach(vendor => {
-      chrome.contextMenus.create({
-        id: [MessageType.MENU_TRANSLATE_WITH_VENDOR, vendor.name].join("-"),
-        title: __i18n("context_menu_translate_selection", ['"%s"', vendor.title]).join(""),
-        parentId: appMenuId,
-        contexts: selectionContext,
-      });
-    });
-
-    // translate from favorites
-    if (favoritesStore.getCount() > 0) {
-      chrome.contextMenus.create({
-        id: Math.random().toString(),
-        parentId: appMenuId,
-        type: "separator",
-        contexts: selectionContext,
-      });
-      favoritesStore.getFavorites().forEach(({ vendor, favorites }) => {
-        favorites.forEach((fav: FavoriteLangPair) => {
-          var id = [MessageType.MENU_TRANSLATE_FAVORITE, vendor.name, fav.from, fav.to].join('-');
-          var title = `${vendor.title} (${[vendor.langFrom[fav.from], vendor.langTo[fav.to]].join(' → ')})`;
-          chrome.contextMenus.create({
-            id: id,
-            title: title,
-            parentId: appMenuId,
-            contexts: selectionContext,
-          });
-        })
-      });
+  // translate full page in new tab
+  translators.forEach(vendor => {
+    if (!vendor.getFullPageTranslationUrl("url://", "")) {
+      return; // skip, doesn't support webpage translation
     }
-  }
+    chrome.contextMenus.create({
+      id: [MessageType.MENU_TRANSLATE_FULL_PAGE, vendor.name].join("-"),
+      parentId: appName,
+      contexts: pageContext,
+      title: getMessage("context_menu_translate_full_page", {
+        translator: vendor.title,
+      }) as string,
+    });
+  });
+
+  chrome.contextMenus.create({
+    id: Math.random().toString(),
+    parentId: appName,
+    type: "separator",
+    contexts: selectionContext,
+  });
+
+  // translate with current language set from settings
+  translators.forEach(vendor => {
+    chrome.contextMenus.create({
+      id: [MessageType.MENU_TRANSLATE_WITH_VENDOR, vendor.name].join("-"),
+      parentId: appName,
+      contexts: selectionContext,
+      title: getMessage("context_menu_translate_selection", {
+        selection: '"%s"',
+        translator: vendor.title,
+      }) as string,
+    });
+  });
 }
 
 // Handle menu clicks from web content pages
@@ -101,17 +79,6 @@ async function onClickMenuItem(info: chrome.contextMenus.OnClickData) {
         type: MessageType.MENU_TRANSLATE_WITH_VENDOR,
         payload: {
           vendor, selectedText,
-        }
-      });
-      break;
-    }
-
-    case MessageType.MENU_TRANSLATE_FAVORITE: {
-      const tab = await getActiveTab();
-      sendMessageToTab<MenuTranslateFavoritePayload>(tab.id, {
-        type: MessageType.MENU_TRANSLATE_FAVORITE,
-        payload: {
-          vendor, from, to, selectedText
         }
       });
       break;

@@ -1,28 +1,30 @@
 import { createObservableHistory } from "mobx-observable-history";
-import { createTab, getManifest, getURL } from "./extension";
-import { PageId } from "./components/app/views-manager";
+import { createTab, getManifest, getURL, isBackgroundPage } from "./extension";
 
-export interface NavigationSearchParams {
-  [pageId: string]: string;
+export type PageId = "settings" | "theme" | "translate" | "history";
+export const defaultPageId: PageId = "settings";
+
+export interface NavigationParams {
   page?: PageId;
 }
 
-export const navigation = createObservableHistory();
-export const defaultPageId: PageId = "settings";
+// not available in service-worker env (aka "background page")
+export const navigation = !isBackgroundPage() && createObservableHistory();
 
-export function navigate(params: NavigationSearchParams = {}) {
-  const absPageUrl = getURL(getManifest().options_page); // starts with chrome://%extension-id/options.html
-  const isLocalRoute = document.location.href.startsWith(absPageUrl);
-  const searchParams = `?${navigation.searchParams.normalize(params)}`;
-
-  if (isLocalRoute) {
+export async function navigate(params: NavigationParams = {}) {
+  const searchParams = `?${new URLSearchParams(Object.entries(params))}`;
+  if (navigation) {
     navigation.push(searchParams);
   } else {
-    return createTab(absPageUrl + searchParams);
+    const optionsPage = getURL(getManifest().options_ui.page); // chrome://%extension-id/options.html
+    return createTab(optionsPage + searchParams);
   }
 }
 
-export function getCurrentPageId(): PageId {
-  const urlParam = navigation.searchParams.get("page") as PageId;
-  return urlParam ?? defaultPageId;
+export function getParam(name: keyof NavigationParams): string {
+  return navigation.searchParams.get(name);
+}
+
+export function getParams(name: keyof NavigationParams): string[] {
+  return navigation.searchParams.getAll(name);
 }

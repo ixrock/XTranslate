@@ -3,7 +3,6 @@ import type { ITranslationError, ITranslationResult } from "../vendors/translato
 
 export enum MessageType {
   MENU_TRANSLATE_WITH_VENDOR = "MENU_TRANSLATE_WITH_VENDOR",
-  MENU_TRANSLATE_FAVORITE = "MENU_TRANSLATE_FAVORITE",
   MENU_TRANSLATE_FULL_PAGE = "MENU_TRANSLATE_FULL_PAGE",
   TTS_PLAY = "TTS_PLAY",
   TTS_STOP = "TTS_STOP",
@@ -20,11 +19,6 @@ export interface Message<D = any> {
 export interface MenuTranslateVendorPayload {
   vendor: string
   selectedText: string
-}
-
-export interface MenuTranslateFavoritePayload extends MenuTranslateVendorPayload {
-  from: string;
-  to: string;
 }
 
 export interface PlayTextToSpeechPayload {

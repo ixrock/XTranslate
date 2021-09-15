@@ -1,57 +1,65 @@
 {
   "name": "XTranslate",
   "description": "__MSG_description__",
-  "version": "2.54.0",
-  "manifest_version": 2,
+  "version": "2.54.1",
+  "manifest_version": 3,
   "default_locale": "en",
-  "minimum_chrome_version": "53",
   "icons": {
     "16": "assets/icons/16.png",
     "48": "assets/icons/48.png",
     "128": "assets/icons/128.png"
   },
-  "options_page": "options.html",
-  "browser_action": {
-    "default_popup": "options.html?page=popup",
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": true
+  },
+  "action": {
+    "default_popup": "options.html?page=translate",
     "default_icon": {
       "19": "assets/icons/48.png",
       "38": "assets/icons/48.png"
     }
   },
   "commands": {
-    "_execute_browser_action": {
+    "_execute_action": {
       "suggested_key": {
         "default": "Alt+X"
       }
     }
   },
   "background": {
-    "persistent": false,
-    "scripts": [
-      "background.js"
-    ]
+    "service_worker": "background.js"
   },
-  "web_accessible_resources": ["*"],
-  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
-  "content_scripts": [
+  "web_accessible_resources": [
     {
-      "run_at": "document_idle",
-      "all_frames": true,
+      "resources": ["*.png", "*.svg", "*.ttf", "*.css", "*.json"],
       "matches": [
         "http://*/*",
         "https://*/*",
         "file://*/*"
-      ],
+      ]
+    }
+  ],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
+  },
+  "content_scripts": [
+    {
+      "all_frames": true,
+      "run_at": "document_idle",
       "js": ["pageScript.js"],
-      "css": ["pageStyle.css"]
+      "css": ["pageStyle.css"],
+      "matches": [
+        "http://*/*",
+        "https://*/*",
+        "file://*/*"
+      ]
     }
   ],
   "permissions": [
     "tts",
     "storage",
-    "unlimitedStorage"
-  ],
-  "optional_permissions": [
+    "unlimitedStorage",
     "contextMenus"
   ]
 }

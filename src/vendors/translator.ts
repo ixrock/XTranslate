@@ -1,4 +1,5 @@
-// Base class for translation vendor
+// Base class for all translation vendors
+
 import { observable } from "mobx";
 import { isPlainObject } from "lodash";
 import { autoBind } from "../utils/autobind";
@@ -53,7 +54,7 @@ export abstract class Translator {
   abstract title: string; // human readable name, e.g. "Google"
   abstract publicUrl: string; // for opening url from settings
   abstract apiUrl: string;
-  public info?: string; // some important info to be shown in the settings, e.g. monthly limits
+  public infoKey?: string; // some info, e.g. monthly limits (shown in the settings)
 
   protected abstract translate(from: string, to: string, text: string): Promise<ITranslationResult>;
 
@@ -68,7 +69,7 @@ export abstract class Translator {
   public reqMaxSizeInBytes = 1024 * 10; // 10 kB
   protected autoSwapUsed = false;
 
-  constructor(protected params: ITranslatorParams) {
+  protected constructor(protected params: ITranslatorParams) {
     autoBind(this);
 
     var { from: langFrom, to: langTo } = params.languages;

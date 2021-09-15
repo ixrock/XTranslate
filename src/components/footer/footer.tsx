@@ -1,9 +1,9 @@
 import './footer.scss'
-
-import * as React from 'react';
-import { prevDefault } from '../../utils'
-import { __i18n, getManifest } from '../../extension'
+import React from 'react';
 import { extensionUrl } from "../../common-vars";
+import { prevDefault } from '../../utils'
+import { getManifest } from '../../extension'
+import { getMessage } from "../../i18n";
 
 interface ShareIcon {
   title: string
@@ -32,7 +32,7 @@ export class Footer extends React.Component {
       url: [
         `https://twitter.com/intent/tweet?source=webclient`,
         `url=${extensionUrl}`,
-        `text=${[this.manifest.name, __i18n("short_description")].join(' - ')}`,
+        `text=${[this.manifest.name, getMessage("short_description")].join(' - ')}`,
         `hashtags=${this.shareTags.join(',')}`
       ].join("&")
     },
@@ -45,11 +45,11 @@ export class Footer extends React.Component {
   render() {
     return (
       <div className="Footer">
-        {__i18n("footer")}
+        {getMessage("footer")}
         <span className="social-icons">
             {this.shareIcons.map((share, i) =>
               <a key={i} href={share.url} onClick={prevDefault(() => this.shareUrl(share.url))}>
-                <img src={share.icon} title={share.title}/>
+                <img src={share.icon} title={share.title} alt=""/>
               </a>
             )}
           </span>

@@ -1,34 +1,34 @@
-//-- Background page
+//-- Background page (service-worker)
 
-// import "crx-hotreload"
 import "../packages.setup";
 import "./contextMenu"
-import { isProduction } from "../common-vars";
-import { MessageType, onAppInstall, onMessageType, PlayTextToSpeechPayload, TranslatePayload, TranslatePayloadResult } from '../extension'
+import { isDevelopment } from "../common-vars";
+import { MessageType, onInstall, onMessageType, PlayTextToSpeechPayload, TranslatePayload, TranslatePayloadResult } from '../extension'
 import { getTranslator, ITranslationResult, playText, stopPlayingAll } from "../vendors";
 import { rateLastTimestamp } from "../components/app/app-rate.dialog";
 import { settingsStore } from "../components/settings/settings.storage";
 import { importHistory, loadHistory } from "../components/user-history/history.storage";
 import { defaultPageId, navigate } from "../navigation";
 
-onAppInstall(reason => {
-  if (reason === "install" || !isProduction) {
+// FIXME: text-to-speech is broken (google/manifest v3)
+// TODO: deepl: allow to enter own auth-key
+// TODO: calculate allowed text buffer for translation input in bytes
+// TODO: allow to use custom fonts
+// TODO: add multi language/vendor selector + remove favorites (broken atm)
+
+onInstall(reason => {
+  if (reason === "install" || isDevelopment) {
     rateLastTimestamp.set(Date.now());
-    navigate({ page: defaultPageId }).catch(Function);
+    navigate({ page: defaultPageId });
   }
 });
 
 // Handle IPC for background process <-> options-page <-> content-script (browser pages)
 onMessageType<TranslatePayload>(MessageType.TRANSLATE_TEXT, async (message, sender, sendResponse) => {
-  const { vendor, from, to, text } = message.payload;
-  const request = getTranslator(vendor).getTranslation(from, to, text);
-
-  const response: TranslatePayloadResult = await request
-    .then(data => ({ data }))
-    .catch(error => ({ error }));
-
-  request.then(async (translation: ITranslationResult) => {
-    var { autoPlayText, historyEnabled } = settingsStore.data;
+  try {
+    const { vendor, from, to, text } = message.payload;
+    const translation: ITranslationResult = await getTranslator(vendor).getTranslation(from, to, text);
+    const { autoPlayText, historyEnabled } = settingsStore.data;
     if (autoPlayText) {
       let { vendor, originalText, langFrom, langDetected = langFrom } = translation;
       playText({ vendor, text: originalText, lang: langDetected });
@@ -37,9 +37,10 @@ onMessageType<TranslatePayload>(MessageType.TRANSLATE_TEXT, async (message, send
       await loadHistory();
       importHistory(translation);
     }
-  });
-
-  sendResponse<TranslatePayloadResult>(response);
+    sendResponse<TranslatePayloadResult>({ data: translation });
+  } catch (error) {
+    sendResponse<TranslatePayloadResult>({ error });
+  }
 });
 
 onMessageType<PlayTextToSpeechPayload>(MessageType.TTS_PLAY, ({ payload }) => {

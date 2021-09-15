@@ -2,12 +2,12 @@ import "./select-language.scss";
 
 import * as React from 'react';
 import { observer } from "mobx-react";
-import { __i18n } from "../../extension/i18n";
 import { getTranslator } from "../../vendors";
 import { cssNames } from "../../utils";
 import { Option, Select } from "../select";
 import { Icon } from "../icon";
 import { settingsStore } from "../settings/settings.storage";
+import { getMessage } from "../../i18n";
 
 interface Props {
   className?: string;
@@ -43,8 +43,7 @@ export class SelectLanguage extends React.Component<Props> {
     var { onChange } = this.props;
     if (onChange) {
       onChange(langFrom, langTo)
-    }
-    else {
+    } else {
       settingsStore.data.langFrom = langFrom;
       settingsStore.data.langTo = langTo;
     }
@@ -64,7 +63,7 @@ export class SelectLanguage extends React.Component<Props> {
         <Icon
           material="swap_horiz"
           className="swap-icon"
-          title={__i18n("swap_languages")}
+          title={getMessage("swap_languages")}
           onClick={this.swap}
         />
         <Select value={langTo} onChange={v => onChange(langFrom, v)}>

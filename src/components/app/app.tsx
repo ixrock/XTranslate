@@ -7,7 +7,7 @@ import { render } from 'react-dom'
 import { reaction } from "mobx";
 import { observer } from "mobx-react";
 import { cssNames } from "../../utils/cssNames";
-import { __i18n, getManifest } from "../../extension";
+import { getManifest } from "../../extension";
 import { settingsStore } from '../settings/settings.storage'
 import { themeStore } from "../theme-manager/theme.storage";
 import { Footer } from '../footer'
@@ -16,18 +16,26 @@ import { Tab, Tabs } from "../tabs";
 import { Icon } from "../icon";
 import { AppRateDialog } from "./app-rate.dialog";
 import { Notifications } from "../notifications";
-import { getCurrentPageId, navigate } from "../../navigation";
-import { PageId, viewsManager } from "./views-manager";
+import { defaultPageId, getParam, navigate, PageId } from "../../navigation";
+import { viewsManager } from "./views-manager";
+import { getMessage, i18nInit } from "../../i18n";
 
 @observer
 export class App extends React.Component {
   static manifest = getManifest();
-  static pages: PageId[] = ["settings", "theme", "popup", "history"];
+  static pages: PageId[] = ["settings", "theme", "translate", "history"];
 
   static async init() {
     var appRootElem = document.getElementById('app');
     render(<Spinner center/>, appRootElem); // show loading indicator
-    await Promise.allSettled([settingsStore.ready, themeStore.ready]); // wait stores initialization
+
+    // wait for dependent data before render
+    await Promise.all([
+      i18nInit(),
+      settingsStore.ready,
+      themeStore.ready,
+    ]);
+
     render(<App/>, appRootElem);
   }
 
@@ -61,7 +69,7 @@ export class App extends React.Component {
   render() {
     const { name, version } = App.manifest;
     const { useDarkTheme } = settingsStore.data;
-    const pageId = getCurrentPageId();
+    const pageId = getParam("page") as PageId ?? defaultPageId;
     const { Page: TabContent } = viewsManager.getPageById(pageId);
     return (
       <div className="App">
@@ -71,13 +79,13 @@ export class App extends React.Component {
           </div>
           <Icon
             svg="moon"
-            tooltip={{ nowrap: true, children: __i18n("use_dark_theme") }}
+            tooltip={{ nowrap: true, children: getMessage("use_dark_theme") }}
             className={cssNames("dark-theme-icon", { active: useDarkTheme })}
             onClick={() => settingsStore.data.useDarkTheme = !useDarkTheme}
           />
           <Icon
             material="open_in_new"
-            tooltip={{ nowrap: true, children: __i18n("open_in_window") }}
+            tooltip={{ nowrap: true, children: getMessage("open_in_window") }}
             onClick={this.detachWindow}
           />
         </header>

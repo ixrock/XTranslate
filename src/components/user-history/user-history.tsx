@@ -4,7 +4,6 @@ import React from "react";
 import { groupBy, orderBy } from "lodash";
 import { action, computed, makeObservable, observable, reaction, runInAction } from "mobx";
 import { disposeOnUnmount, observer } from "mobx-react";
-import { __i18n } from "../../extension/i18n";
 import { ttsPlay } from "../../extension/actions";
 import { cssNames, prevDefault } from "../../utils";
 import { getTranslator, getTranslators, isRTL } from "../../vendors";
@@ -20,6 +19,7 @@ import { Icon } from "../icon";
 import { Tab } from "../tabs";
 import { Spinner } from "../spinner";
 import { Notifications } from "../notifications";
+import { getMessage } from "../../i18n";
 
 enum HistoryTimeFrame {
   HOUR = "hour",
@@ -297,10 +297,10 @@ export class UserHistory extends React.Component {
     var items: IHistoryStorageItem[] = [];
     files.forEach(({ file, data, error }) => {
       if (error) {
-        Notifications.error(__i18n("history_import_file_error", [
-          file.name, error
-        ]));
-        return;
+        return Notifications.error(getMessage("history_import_file_error", {
+          fileName: file.name,
+          errorInfo: error,
+        }));
       }
       try {
         items.push(...JSON.parse(data));
@@ -311,7 +311,7 @@ export class UserHistory extends React.Component {
     runInAction(() => {
       items.forEach(storageItem => importHistory(storageItem));
     });
-    Notifications.ok(__i18n("history_import_success", items.length));
+    Notifications.ok(getMessage("history_import_success", { itemsCount: items.length }));
   }
 
   renderHeader() {
@@ -321,14 +321,14 @@ export class UserHistory extends React.Component {
       <>
         <div className="settings flex gaps align-center justify-center">
           <Checkbox
-            label={__i18n("history_enabled_flag")}
+            label={getMessage("history_enabled_flag")}
             checked={historyEnabled}
             onChange={v => settingsStore.data.historyEnabled = v}
           />
           <div className="actions">
             <Icon
               material="search"
-              tooltip={!showSearch ? __i18n("history_icon_tooltip_search") : undefined}
+              tooltip={!showSearch ? getMessage("history_icon_tooltip_search") : undefined}
               className={cssNames({ active: showSearch })}
               onClick={() => this.showSearch = !showSearch}
             />
@@ -337,23 +337,23 @@ export class UserHistory extends React.Component {
               onClose={() => this.showImportExport = false}
               triggerIcon={{
                 material: "import_export",
-                tooltip: !showImportExport ? __i18n("history_icon_tooltip_imp_exp") : undefined,
+                tooltip: !showImportExport ? getMessage("history_icon_tooltip_imp_exp") : undefined,
               }}
             >
               <MenuItem htmlFor="import-history">
-                {__i18n("history_import_entries", ["JSON"])}
+                {getMessage("history_import_entries", { format: "JSON" })}
               </MenuItem>
               <MenuItem spacer/>
               <MenuItem onClick={() => this.exportHistory("json")}>
-                {__i18n("history_export_entries", ["JSON"])}
+                {getMessage("history_export_entries", { format: "JSON" })}
               </MenuItem>
               <MenuItem onClick={() => this.exportHistory("csv")}>
-                {__i18n("history_export_entries", ["CSV"])}
+                {getMessage("history_export_entries", { format: "CSV" })}
               </MenuItem>
             </MenuActions>
             <Icon
               material="settings"
-              tooltip={!showSettings ? __i18n("history_icon_tooltip_settings") : undefined}
+              tooltip={!showSettings ? getMessage("history_icon_tooltip_settings") : undefined}
               className={cssNames({ active: showSettings })}
               onClick={() => this.showSettings = !showSettings}
             />
@@ -363,7 +363,7 @@ export class UserHistory extends React.Component {
           {showSearch && (
             <Input
               autoFocus
-              placeholder={__i18n("history_search_input_placeholder")}
+              placeholder={getMessage("history_search_input_placeholder")}
               value={this.searchText}
               onChange={v => this.searchText = v}
             />
@@ -372,26 +372,26 @@ export class UserHistory extends React.Component {
             <div className="flex column gaps">
               <div className="flex gaps align-center">
                 <Select className="box grow" value={clearTimeFrame} onChange={v => this.clearTimeFrame = v}>
-                  <Option value={HistoryTimeFrame.HOUR} label={__i18n("history_clear_period_hour")}/>
-                  <Option value={HistoryTimeFrame.DAY} label={__i18n("history_clear_period_day")}/>
-                  <Option value={HistoryTimeFrame.MONTH} label={__i18n("history_clear_period_month")}/>
-                  <Option value={HistoryTimeFrame.YEAR} label={__i18n("history_clear_period_year")}/>
-                  <Option value={HistoryTimeFrame.ALL} label={__i18n("history_clear_period_all")}/>
+                  <Option value={HistoryTimeFrame.HOUR} label={getMessage("history_clear_period_hour")}/>
+                  <Option value={HistoryTimeFrame.DAY} label={getMessage("history_clear_period_day")}/>
+                  <Option value={HistoryTimeFrame.MONTH} label={getMessage("history_clear_period_month")}/>
+                  <Option value={HistoryTimeFrame.YEAR} label={getMessage("history_clear_period_year")}/>
+                  <Option value={HistoryTimeFrame.ALL} label={getMessage("history_clear_period_all")}/>
                 </Select>
                 <Button
-                  accent label={__i18n("history_button_clear")}
+                  accent label={getMessage("history_button_clear")}
                   onClick={clearItemsByTimeFrame}
                 />
               </div>
               <div className="box flex gaps align-center">
                 <Checkbox
                   className="dictionary-only box grow"
-                  label={__i18n("history_settings_save_words_only")}
+                  label={getMessage("history_settings_save_words_only")}
                   checked={historySaveWordsOnly}
                   onChange={v => settingsStore.data.historySaveWordsOnly = v}
                 />
                 <div className="page-size flex gaps align-center">
-                  <span className="box grow">{__i18n("history_page_size")}</span>
+                  <span className="box grow">{getMessage("history_page_size")}</span>
                   <NumberInput
                     step={10} min={10} max={100000}
                     value={historyPageSize}
@@ -419,7 +419,7 @@ export class UserHistory extends React.Component {
         {this.hasMore && (
           <div className="load-more flex center">
             <Button
-              primary label={__i18n("history_button_show_more")}
+              primary label={getMessage("history_button_show_more")}
               onClick={() => this.page++}
             />
           </div>
@@ -430,6 +430,6 @@ export class UserHistory extends React.Component {
 }
 
 viewsManager.registerPages("history", {
-  Tab: props => <Tab {...props} label={__i18n("tab_history")} icon="history"/>,
+  Tab: props => <Tab {...props} label={getMessage("tab_history")} icon="history"/>,
   Page: UserHistory,
 });

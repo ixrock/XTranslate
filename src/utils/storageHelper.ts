@@ -24,8 +24,8 @@ export interface StorageAdapter<T> {
 export class StorageHelper<T> {
   protected logger = createLogger({ systemPrefix: `[StorageHelper](${this.key})` });
   protected storage: StorageAdapter<T> = this.options.storage;
+  protected data = observable.box<T>();
 
-  @observable data = observable.box<T>();
   @observable initialized = false;
   @observable saving = false;
   @observable loading = false;
@@ -66,7 +66,7 @@ export class StorageHelper<T> {
 
     const bindAutoSync = () => {
       this.unbindAutoSync?.(); // reset previous
-      this.unbindAutoSync = reaction(() => this.toJS(), this.save, syncOptions);
+      this.unbindAutoSync = reaction(() => this.toJS(), state => this.save(state), syncOptions);
     };
 
     if (syncOptions.delay > 0) {
@@ -93,8 +93,8 @@ export class StorageHelper<T> {
     }
   }
 
-  @action.bound
-  async save(data: T): Promise<void> {
+  @action
+  protected save(data: T) {
     try {
       this.logger.info("saving data to external storage", data);
       this.saving = true;

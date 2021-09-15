@@ -1,13 +1,14 @@
 import "./popup.scss"
 
 import React, { CSSProperties } from "react";
-import { observer } from "mobx-react";
-import { __i18n } from "../../extension";
+import { makeObservable, observable, reaction } from "mobx";
+import { disposeOnUnmount, observer } from "mobx-react";
 import { cssNames, noop, prevDefault, toCssColor } from "../../utils";
 import { getNextTranslator, getTranslator, isRTL, ITranslationError, ITranslationResult } from "../../vendors";
 import { Icon } from "../icon";
 import { settingsStorage, settingsStore } from "../settings/settings.storage";
 import { themeStore } from "../theme-manager/theme.storage";
+import { getMessage } from "../../i18n";
 
 interface Props extends React.HTMLProps<any> {
   preview?: boolean;
@@ -21,33 +22,47 @@ interface Props extends React.HTMLProps<any> {
 @observer
 export class Popup extends React.Component<Props> {
   public elem: HTMLElement;
+  @observable copied = false;
+
+  constructor(props: Props) {
+    super(props);
+    makeObservable(this);
+
+    disposeOnUnmount(this, [
+      reaction(() => this.props.translation, () => {
+        this.copied = false;
+      }),
+    ]);
+  }
 
   static defaultProps: Partial<Props> = {
     onPlayText: noop,
     onTranslateNext: noop,
   };
 
-  static demoTranslation: ITranslationResult = {
-    vendor: settingsStorage.defaultValue.vendor,
-    langFrom: "en",
-    langTo: navigator.language.split("-")[0],
-    translation: __i18n("popup_demo_translation"),
-    dictionary: [
-      {
-        wordType: __i18n("popup_demo_dictionary_noun"),
-        meanings: [
-          {
-            word: __i18n("popup_demo_dictionary_values"),
-            translation: []
-          }
-        ]
-      }
-    ]
-  };
+  static get translationMock(): ITranslationResult {
+    return {
+      vendor: settingsStorage.defaultValue.vendor,
+      langFrom: "en",
+      langTo: navigator.language.split("-")[0],
+      translation: getMessage("popup_demo_translation"),
+      dictionary: [
+        {
+          wordType: getMessage("popup_demo_dictionary_noun"),
+          meanings: [
+            {
+              word: getMessage("popup_demo_dictionary_values"),
+              translation: []
+            }
+          ]
+        }
+      ]
+    }
+  }
 
   get translation() {
     var { preview, translation } = this.props;
-    return translation || (preview ? Popup.demoTranslation : null);
+    return translation || (preview ? Popup.translationMock : null);
   }
 
   getPopupStyle(): CSSProperties {
@@ -95,9 +110,26 @@ export class Popup extends React.Component<Props> {
     }
   }
 
-  copyToClipboard = () => {
-    window.getSelection().selectAllChildren(this.elem);
-    document.execCommand("copy");
+  copyToClipboard = async () => {
+    const { translation, transcription, langFrom, langTo, vendor, dictionary, originalText } = this.translation;
+    const translator = getTranslator(vendor);
+
+    const texts = [
+      originalText,
+      `${translation}${transcription ? `(${transcription})` : ""}`,
+
+      ...dictionary.map(({ wordType, meanings }) => {
+        return `${wordType}: ${meanings.map(({ word }) => word).join(", ")}`;
+      }),
+
+      getMessage("translated_with", {
+        translator: translator.title,
+        lang: [translator.langFrom[langFrom], translator.langTo[langTo]].join(' → '),
+      }) as string,
+    ];
+
+    await navigator.clipboard.writeText(texts.join("\n"));
+    this.copied = true;
   }
 
   renderCopyTranslationIcon() {
@@ -106,8 +138,8 @@ export class Popup extends React.Component<Props> {
     }
     return (
       <Icon
-        material="content_copy"
-        title={__i18n("popup_copy_translation_title")}
+        material={this.copied ? "task_alt" : "content_copy"}
+        title={getMessage("popup_copy_translation_title")}
         onClick={this.copyToClipboard}
       />
     )
@@ -120,7 +152,7 @@ export class Popup extends React.Component<Props> {
     return (
       <Icon
         material="play_circle_outline"
-        title={__i18n("popup_play_icon_title")}
+        title={getMessage("popup_play_icon_title")}
         onClick={prevDefault(this.props.onPlayText)}
       />
     );
@@ -132,7 +164,9 @@ export class Popup extends React.Component<Props> {
     }
     var { vendor, langFrom, langTo } = this.translation;
     var nextVendor = getNextTranslator(vendor, langFrom, langTo);
-    var iconTitle = __i18n("popup_next_vendor_icon_title", [nextVendor.title]).join("");
+    var iconTitle = getMessage("popup_next_vendor_icon_title", {
+      translator: nextVendor.title
+    }) as string;
     return (
       <Icon
         material="arrow_forward"
@@ -163,8 +197,8 @@ export class Popup extends React.Component<Props> {
             {this.renderNextTranslationIcon()}
           </div>
         </div>
-        {dictionary.map(({ wordType, meanings }, index) =>
-          <div key={index} className={cssNames("dictionary", rtlClass)}>
+        {dictionary.map(({ wordType, meanings }) =>
+          <div key={wordType} className={cssNames("dictionary", rtlClass)}>
             <div className="word-type">{wordType}</div>
             <div className="word-meanings">
               {meanings.map((meaning, i, list) => {
@@ -181,7 +215,7 @@ export class Popup extends React.Component<Props> {
         {
           settingsStore.data.showTranslatedFrom && (
             <div className="translated-from">
-              {__i18n("translated_from", [translator.langFrom[langFrom]]).join("")}
+              {getMessage("translated_from", { lang: translator.langFrom[langFrom] })}
               {` (${translator.title})`}
             </div>
           )
@@ -199,7 +233,7 @@ export class Popup extends React.Component<Props> {
         <div className="title flex gaps align-center">
           <Icon material="error_outline" className="info"/>
           <div className="box grow">
-            <p>{statusCode}: {__i18n("translation_data_failed")}</p>
+            <p>{statusCode}: {getMessage("translation_data_failed")}</p>
             <p>{message}</p>
           </div>
           {this.renderNextTranslationIcon()}

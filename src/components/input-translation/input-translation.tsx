@@ -4,7 +4,6 @@ import React, { Fragment } from "react";
 import { action, computed, makeObservable, observable, reaction, toJS } from "mobx";
 import { disposeOnUnmount, observer } from "mobx-react";
 import { getTranslator, getTranslators, isRTL, ITranslationError, ITranslationResult } from "../../vendors";
-import { __i18n } from "../../extension";
 import { getActiveTabText, translateText, ttsPlay, ttsStop } from "../../extension/actions";
 import { cssNames, isMac } from "../../utils";
 import { SelectLanguage } from "../select-language";
@@ -19,6 +18,7 @@ import { Icon } from "../icon";
 import { Tooltip } from "../tooltip";
 import { navigate } from "../../navigation";
 import { createStorageHelper } from "../../extension/storage";
+import { getMessage } from "../../i18n";
 
 export const lastInputText = createStorageHelper("last_input_text", {
   defaultValue: "",
@@ -211,14 +211,14 @@ export class InputTranslation extends React.Component {
         {isFavorite && (
           <Icon
             material="favorite"
-            tooltip={{ nowrap: true, children: __i18n("favorites_remove_item") }}
+            tooltip={{ nowrap: true, children: getMessage("favorites_remove_item") }}
             onClick={this.removeFavorite}
           />
         )}
         {!isFavorite ?
           <Icon
             material="favorite_border"
-            tooltip={{ nowrap: true, children: __i18n("favorites_add_item") }}
+            tooltip={{ nowrap: true, children: getMessage("favorites_add_item") }}
             onClick={this.addFavorite}/>
           : null}
       </div>
@@ -235,7 +235,7 @@ export class InputTranslation extends React.Component {
           value={this.favorite}
           onChange={(v: TranslateParams) => this.favorite = v}
         >
-          <Option value="" label={`${__i18n("favorites_translate_with")}`}/>
+          <Option value="" label={`${getMessage("favorites_translate_with")}`}/>
           {getFavorites().map(({ vendor, favorites }) => {
             return (
               <OptionsGroup key={vendor.name} label={vendor.title}>
@@ -260,7 +260,7 @@ export class InputTranslation extends React.Component {
         </Select>
         <Icon
           material="clear"
-          tooltip={{ nowrap: true, children: __i18n("favorites_clear_all") }}
+          tooltip={{ nowrap: true, children: getMessage("favorites_clear_all") }}
           onClick={this.removeAllFavorites}
         />
       </div>
@@ -279,7 +279,7 @@ export class InputTranslation extends React.Component {
           <div className="translation flex gaps align-flex-start">
             <Icon
               material="play_circle_outline"
-              title={__i18n("popup_play_icon_title")}
+              title={getMessage("popup_play_icon_title")}
               onClick={this.playText}
             />
             <div className="value box grow">
@@ -289,18 +289,18 @@ export class InputTranslation extends React.Component {
             <span className="lang" id="translated_with">
               {langPair}
               <Tooltip htmlFor="translated_with" following nowrap>
-                {__i18n("translated_with", [vendor.title, langPairFull]).join("")}
+                {getMessage("translated_with", { translator: vendor.title, lang: langPairFull })}
               </Tooltip>
             </span>
           </div>
           : null}
         {spellCorrection ? (
           <div className="spell-correction">
-            {__i18n("spell_correction", React.Children.toArray([
-              <b className="link" onClick={() => this.translateText(spellCorrection)}>
+            {getMessage("spell_correction", {
+              suggestion: <b className="link" onClick={() => this.translateText(spellCorrection)}>
                 {spellCorrection}
               </b>
-            ]))}
+            })}
           </div>
         ) : null}
         <table className="dictionary">
@@ -346,7 +346,7 @@ export class InputTranslation extends React.Component {
     var { statusCode, message } = this.error;
     return (
       <div className="translation-error flex column gaps">
-        <p>{statusCode}: {__i18n("translation_data_failed")}</p>
+        <p>{statusCode}: {getMessage("translation_data_failed")}</p>
         <p>{message}</p>
       </div>
     );
@@ -362,7 +362,7 @@ export class InputTranslation extends React.Component {
 
   render() {
     var { textMaxLength } = this.activeVendor;
-    var { textInputTranslateDelayMs } = settingsStore.data;
+    var { textInputTranslateDelayMs: delayMs } = settingsStore.data;
     return (
       <div className="InputTranslation flex column gaps">
         {this.renderHeader()}
@@ -370,7 +370,7 @@ export class InputTranslation extends React.Component {
         <Input
           autoFocus
           multiLine rows={2} tabIndex={1}
-          placeholder={__i18n("text_field_placeholder")}
+          placeholder={getMessage("text_field_placeholder")}
           maxLength={textMaxLength}
           value={this.text}
           onChange={this.onTextChange}
@@ -378,14 +378,10 @@ export class InputTranslation extends React.Component {
           ref={e => this.input = e}
           infoContent={(
             <small className="hint">
-              {__i18n("text_input_translation_hint", [
-                `${isMac ? "Cmd" : "Ctrl"}+Enter`,
-                delayMs => (
-                  <a onClick={() => navigate({ page: "settings" })} key="delay">
-                    {textInputTranslateDelayMs}{delayMs}
-                  </a>
-                )
-              ])}
+              {getMessage("text_input_translation_hint", {
+                hotkey: `${isMac ? "Cmd" : "Ctrl"}+Enter`,
+                timeout: <a onClick={() => navigate({ page: "settings" })}>{delayMs}</a>,
+              })}
             </small>
           )}
         />
@@ -395,7 +391,7 @@ export class InputTranslation extends React.Component {
   }
 }
 
-viewsManager.registerPages("popup", {
-  Tab: props => <Tab {...props} label={__i18n("tab_text_input")} icon="translate"/>,
+viewsManager.registerPages("translate", {
+  Tab: props => <Tab {...props} label={getMessage("tab_text_input")} icon="translate"/>,
   Page: InputTranslation,
 });

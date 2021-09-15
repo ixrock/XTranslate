@@ -1,21 +1,27 @@
 import DeeplTranslateParams from "./deepl.json"
 import { ITranslationError, ITranslationResult, ITranslatorParams, Translator } from "./translator";
-import { __i18n } from "../extension";
+import { createStorageHelper } from "../extension/storage";
 
 class Deepl extends Translator {
   public name = "deepl";
   public title = "Deepl";
   public publicUrl = "https://www.deepl.com/translator";
   public apiUrl = "https://api-free.deepl.com/v2";
-  public authKey = "b05afc95-d4ea-2bee-07e6-e81469c588f2:fx"; // free subscription key
+  public infoKey = "deepl_free_subscription_limits";
   public reqMaxSizeInBytes = 1024 * 30; // 30 kB
-  public info = __i18n("deepl_free_subscription_limits");
 
   constructor() {
     super(DeeplTranslateParams);
   }
 
+  protected apiClient = createStorageHelper("deepl_api_client", {
+    defaultValue: {
+      authKey: "b05afc95-d4ea-2bee-07e6-e81469c588f2:fx", // free subscription key
+    },
+  });
+
   protected async translate(langFrom, langTo, text): Promise<ITranslationResult> {
+    const { authKey } = this.apiClient.get();
     var payload: DeeplTranslationRequestParams = {
       text,
       source_lang: langFrom == "auto" ? "" : langFrom,
@@ -25,7 +31,7 @@ class Deepl extends Translator {
     var reqInit: RequestInit = {
       method: "POST",
       headers: {
-        "Authorization": `DeepL-Auth-Key ${this.authKey}`,
+        "Authorization": `DeepL-Auth-Key ${authKey}`,
         "Content-type": "application/x-www-form-urlencoded",
       },
       body: new URLSearchParams(payload),
@@ -48,11 +54,13 @@ class Deepl extends Translator {
   }
 
   async getDataUsage(): Promise<DeeplUsageResponse> {
-    return fetch(`${this.apiUrl}/usage?auth_key=${this.authKey}`).then(this.parseJson);
+    const { authKey } = this.apiClient.get();
+    return fetch(`${this.apiUrl}/usage?auth_key=${authKey}`).then(this.parseJson);
   }
 
   async getSupportedLanguages(type: "source" | "target"): Promise<DeeplSupportedLanguage[]> {
-    return fetch(`${this.apiUrl}/languages?auth_key=${this.authKey}&type=${type}`).then(this.parseJson)
+    const { authKey } = this.apiClient.get();
+    return fetch(`${this.apiUrl}/languages?auth_key=${authKey}&type=${type}`).then(this.parseJson)
   }
 }
 

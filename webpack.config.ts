@@ -26,10 +26,10 @@ export = () => {
     },
 
     mode: isProduction ? "production" : "development",
-    devtool: isProduction ? false : "eval-source-map",
+    devtool: isProduction ? false : "inline-source-map",
 
     optimization: {
-      minimize: true,
+      minimize: isProduction,
     },
 
     resolve: {

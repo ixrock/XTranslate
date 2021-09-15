@@ -7,16 +7,22 @@ export function getAppId(): string {
   return chrome.runtime.id; // e.g. "ifnohffoaebldaeimggnfadhfmlfgmie"
 }
 
-export function getManifest() {
-  return chrome.runtime.getManifest();
+export function getManifest(): chrome.runtime.ManifestV3 {
+  return chrome.runtime.getManifest() as any;
 }
 
-export function getURL(path = "") {
+export function getURL(path = ""): string {
   return chrome.runtime.getURL(path);
 }
 
-export function isExtensionPage(): boolean {
-  return location.href.startsWith(getURL());
+export function isBackgroundPage(): boolean {
+  const serviceWorkerScript = getManifest().background.service_worker;
+  return location.href.startsWith(getURL(serviceWorkerScript));
+}
+
+export function isOptionsPage(): boolean {
+  const optionsHtmlPage = getManifest().options_ui.page;
+  return location.href.startsWith(getURL(optionsHtmlPage));
 }
 
 export function getStyleUrl() {
@@ -102,7 +108,7 @@ export async function checkErrors<T>(data?: T): Promise<T> {
   return data;
 }
 
-export function onAppInstall(callback: (reason: "install" | "update" | "chrome_update", details: InstalledDetails) => void) {
+export function onInstall(callback: (reason: "install" | "update" | "chrome_update", details: InstalledDetails) => void) {
   const callbackWrapper = (event: InstalledDetails) => {
     callback(event.reason as any, event);
   };

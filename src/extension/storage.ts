@@ -2,7 +2,7 @@
 import { checkErrors } from "./runtime";
 import { createLogger, StorageHelper, StorageHelperOptions } from "../utils";
 
-export interface ChromeStorageHelperOptions<T> extends Partial<StorageHelperOptions<T>> {
+export interface ChromeStorageHelperOptions<T> extends Omit<StorageHelperOptions<T>, "storage"> {
   area?: chrome.storage.AreaName; // default: "local"
 }
 
@@ -65,7 +65,7 @@ export function createStorageHelper<T>(key: string, options: ChromeStorageHelper
       ...changes
     });
     if (isUpdateRequired) {
-      storageResourceVersion = resourceVersion; // refresh
+      storageResourceVersion = resourceVersion; // refresh to latest version
       storageHelper.set(storageState, {
         silent: true, // skip auto-saving back to chrome.storage
       });

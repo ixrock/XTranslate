@@ -7,13 +7,14 @@ import { computed, makeObservable, observable, toJS } from "mobx";
 import { observer } from "mobx-react";
 import { debounce, isEqual } from "lodash"
 import { autoBind, cssNames, getHotkey } from "../utils";
-import { getManifest, getStyleUrl, MenuTranslateFavoritePayload, MenuTranslateVendorPayload, Message, MessageType, onMessageType, TranslatePayload } from "../extension";
+import { getManifest, getStyleUrl, MenuTranslateVendorPayload, MessageType, onMessageType, TranslatePayload } from "../extension";
 import { translateText, ttsPlay, ttsStop } from "../extension/actions";
 import { getNextTranslator, ITranslationError, ITranslationResult } from "../vendors";
 import { XTranslateIcon } from "./xtranslate-icon";
 import { Popup } from "../components/popup/popup";
 import { settingsStore } from "../components/settings/settings.storage";
 import { themeStore } from "../components/theme-manager/theme.storage";
+import { i18nInit } from "../i18n";
 
 export type CustomDomRect = Partial<Writeable<DOMRect>>;
 
@@ -26,9 +27,15 @@ class App extends React.Component {
     rootElem.className = "XTranslate";
     document.documentElement.appendChild(rootElem);
 
+    // wait for dependent data before render
+    await Promise.all([
+      i18nInit(),
+      settingsStore.ready,
+      themeStore.ready,
+    ]);
+
     // render app inside the shadow-dom to avoid collisions with page styles
     var shadowRoot = rootElem.attachShadow({ mode: "open" });
-    await Promise.allSettled([settingsStore.ready, themeStore.ready]);
     render(<App/>, shadowRoot as any);
   }
 
@@ -58,7 +65,15 @@ class App extends React.Component {
   @observable isLoading = false;
 
   componentDidMount() {
-    // bind extension runtime events
+    // bind dom events
+    document.addEventListener("selectionchange", this.onSelectionChange);
+    document.addEventListener("mousemove", this.onMouseMove, true);
+    document.addEventListener("mousedown", this.onMouseDown, true);
+    document.addEventListener("dblclick", this.onDoubleClick, true);
+    document.addEventListener("keydown", this.onKeyDown, true);
+    window.addEventListener("resize", this.onResizeWindow);
+
+    // bind extension ipc events
     onMessageType<string>(MessageType.GET_SELECTED_TEXT, (message, sender, sendResponse) => {
       sendResponse(this.selectedText);
     });
@@ -67,19 +82,6 @@ class App extends React.Component {
       this.hideIcon();
       this.translate({ vendor, text: selectedText });
     });
-    onMessageType<MenuTranslateFavoritePayload>(MessageType.MENU_TRANSLATE_FAVORITE, ({ payload }) => {
-      const { vendor, from, to, selectedText } = payload;
-      this.hideIcon();
-      this.translate({ vendor, from, to, text: selectedText });
-    });
-
-    // bind dom events
-    document.addEventListener("selectionchange", this.onSelectionChange);
-    document.addEventListener("mousemove", this.onMouseMove, true);
-    document.addEventListener("mousedown", this.onMouseDown, true);
-    document.addEventListener("dblclick", this.onDoubleClick, true);
-    document.addEventListener("keydown", this.onKeyDown, true);
-    window.addEventListener("resize", this.onResizeWindow);
   }
 
   @computed get isPopupHidden() {
@@ -327,20 +329,6 @@ class App extends React.Component {
   onDoubleClick(evt: MouseEvent) {
     if (settingsStore.data.showPopupOnDoubleClick) {
       this.isDblClicked = true;
-    }
-  }
-
-  onContextMenu(message: Message) {
-    var { type } = message;
-    if (type === MessageType.MENU_TRANSLATE_WITH_VENDOR) {
-      this.hideIcon();
-      let { vendor, selectedText } = message.payload as MenuTranslateVendorPayload;
-      this.translate({ vendor, text: selectedText });
-    }
-    if (type === MessageType.MENU_TRANSLATE_FAVORITE) {
-      this.hideIcon();
-      let { vendor, from, to, selectedText } = message.payload as MenuTranslateFavoritePayload;
-      this.translate({ vendor, from, to, text: selectedText });
     }
   }
 
