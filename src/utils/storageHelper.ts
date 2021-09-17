@@ -2,7 +2,7 @@
 
 import { action, IReactionDisposer, IReactionOptions, makeObservable, observable, reaction, toJS, when } from "mobx";
 import produce, { Draft } from "immer";
-import { isEqual, isPlainObject, merge } from "lodash";
+import { isEqual, merge } from "lodash";
 import { createLogger } from "./createLogger";
 
 export interface StorageHelperOptions<T> {
@@ -151,19 +151,23 @@ export class StorageHelper<T> {
     this.set(this.defaultValue);
   }
 
-  merge(value: Partial<T> | ((draft: Draft<T>) => Partial<T> | void)) {
-    const nextValue = produce(this.toJS(), (state: Draft<T>) => {
-      const newValue = typeof value === "function" ? value(state) : value;
+  merge(state: Partial<T> | ((draft: Draft<T>) => Draft<T> | void)) {
+    let value = this.toJS();
+    let nextValue: T;
 
-      return isPlainObject(newValue)
-        ? merge(state, newValue) as any // partial updates for plain objects
-        : newValue;
-    });
+    if (typeof state === "function") {
+      nextValue = produce(value, state);
+    } else {
+      nextValue = produce(value, (draft: Draft<T>) => {
+        if (typeof state === "object") return merge(draft, state); // partial updates for plain objects
+        return state;
+      });
+    }
 
-    return this.set(nextValue as T);
+    this.set(nextValue);
   }
 
-  toJS() {
+  toJS(): T {
     return toJS(this.get());
   }
 }

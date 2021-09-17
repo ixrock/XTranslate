@@ -11,7 +11,7 @@ export interface Logger {
   error(...data: any[]): void
 }
 
-export function createLogger({ systemPrefix = "app", outputSource = console }: CreateLoggerOptions): Logger {
+export function createLogger({ systemPrefix = "[APP]", outputSource = console }: CreateLoggerOptions = {}): Logger {
   const prefix = systemPrefix + `:`;
   const console = Object.create(outputSource) as typeof outputSource;
 

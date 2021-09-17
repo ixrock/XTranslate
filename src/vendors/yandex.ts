@@ -1,48 +1,41 @@
-import YandexTranslateParams from "./yandex.json"
-import { ITranslationResult, Translator } from "./translator";
+import YandexLanguages from "./yandex.json"
+import { ITranslationDictionaryMeaning, ITranslationResult, TranslateParams, Translator } from "./translator";
 
 class Yandex extends Translator {
   public name = 'yandex';
   public title = 'Yandex';
   public apiUrl = 'https://translate.yandex.net';
   public publicUrl = 'https://translate.yandex.com';
-  public textMaxLength = 10000;
 
   constructor() {
-    super(YandexTranslateParams);
+    super(YandexLanguages);
   }
 
-  getFullPageTranslationUrl(pageUrl: string, lang: string): string {
-    return `https://translate.yandex.com/translate?lang=${lang}&url=${pageUrl}`
-  }
+  // TODO: check new api for migration https://yandex.com/dev/translate/
+  async translate(params: TranslateParams): Promise<ITranslationResult> {
+    var { from: langFrom, to: langTo, text } = params;
 
-  isDictionarySupported(langFrom: string, langTo: string): boolean {
-    return !!supportedDictionary[langFrom]?.includes(langTo);
-  }
-
-  protected async translate(langFrom, langTo, text): Promise<ITranslationResult> {
     var translationReq = (): Promise<YandexTranslation> => {
-      var apiUrl = this.apiUrl + '/api/v1/tr.json/translate?' +
+      var url = this.apiUrl + '/api/v1/tr.json/translate?' +
         new URLSearchParams({
           srv: "yawidget",
           options: "1", // add detected language to response
           lang: langFrom === "auto" ? langTo : [langFrom, langTo].join('-'),
           text: text,
         });
-      return fetch(apiUrl).then(this.parseJson);
+      return this.request({ url });
     };
 
     var dictReq = async (from = langFrom, to = langTo): Promise<YandexDictionary> => {
-      var apiUrl = 'https://dictionary.yandex.net/dicservice.json/lookup?' +
+      var url = 'https://dictionary.yandex.net/dicservice.json/lookup?' +
         new URLSearchParams({
           ui: to,
           text: text,
           lang: [from, to].join('-'),
         });
       var canUseDictionary = this.isDictionarySupported(from, to);
-      var tooBigUrl = apiUrl.length >= this.maxUrlLength;
-      if (tooBigUrl || !canUseDictionary) return;
-      return fetch(apiUrl).then(this.parseJson).catch(Function); // ignore errors
+      if (!canUseDictionary) return;
+      return this.request({ url }).catch(Function); // ignore errors
     };
 
     // main translation
@@ -50,7 +43,6 @@ class Yandex extends Translator {
     var translation: ITranslationResult = {
       langDetected: translationRes.detected.lang,
       translation: translationRes.text.join(' '),
-      dictionary: []
     };
 
     // dictionary translations
@@ -64,7 +56,7 @@ class Yandex extends Translator {
           wordType: dict.pos,
           transcription: dict.ts,
           meanings: dict.tr.map(item => {
-            var meaning = {
+            var meaning: ITranslationDictionaryMeaning = {
               word: item.text,
               translation: [],
               examples: []
@@ -84,6 +76,14 @@ class Yandex extends Translator {
     }
 
     return translation;
+  }
+
+  getFullPageTranslationUrl(pageUrl: string, lang: string): string {
+    return `https://translate.yandex.com/translate?lang=${lang}&url=${pageUrl}`
+  }
+
+  isDictionarySupported(langFrom: string, langTo: string): boolean {
+    return !!supportedDictionary[langFrom]?.includes(langTo);
   }
 }
 
@@ -146,4 +146,4 @@ export const supportedDictionary: Record<string, string[]> = {
 };
 
 const yandex = new Yandex();
-Translator.register(yandex.name, yandex);
+Translator.vendors.set(yandex.name, yandex);

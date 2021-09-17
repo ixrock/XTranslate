@@ -111,9 +111,9 @@ export class Popup extends React.Component<Props> {
   }
 
   copyToClipboard = async () => {
-    const { translation, transcription, langFrom, langTo, vendor, dictionary, originalText } = this.translation;
-    const translator = getTranslator(vendor);
+    const { translation, transcription, langTo, langDetected, vendor, dictionary, originalText, } = this.translation;
 
+    const translator = getTranslator(vendor);
     const texts = [
       originalText,
       `${translation}${transcription ? `(${transcription})` : ""}`,
@@ -124,12 +124,16 @@ export class Popup extends React.Component<Props> {
 
       getMessage("translated_with", {
         translator: translator.title,
-        lang: [translator.langFrom[langFrom], translator.langTo[langTo]].join(' → '),
+        lang: translator.getLangPairTitle(langDetected, langTo),
       }) as string,
     ];
 
-    await navigator.clipboard.writeText(texts.join("\n"));
-    this.copied = true;
+    try {
+      await navigator.clipboard.writeText(texts.join("\n"));
+      this.copied = true;
+    } catch (error) {
+      console.error(`failed to copy text to clipboard: ${error}`);
+    }
   }
 
   renderCopyTranslationIcon() {

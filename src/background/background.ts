@@ -1,52 +1,82 @@
-//-- Background page (service-worker)
+//-- Background service worker
 
 import "../packages.setup";
 import "./contextMenu"
-import { isDevelopment } from "../common-vars";
-import { MessageType, onInstall, onMessageType, PlayTextToSpeechPayload, TranslatePayload, TranslatePayloadResult } from '../extension'
-import { getTranslator, ITranslationResult, playText, stopPlayingAll } from "../vendors";
-import { rateLastTimestamp } from "../components/app/app-rate.dialog";
-import { settingsStore } from "../components/settings/settings.storage";
-import { importHistory, loadHistory } from "../components/user-history/history.storage";
-import { defaultPageId, navigate } from "../navigation";
+import { isPlainObject } from "lodash"
+import { isProduction } from "../common-vars";
+import { blobToBase64, createLogger, parseJson } from "../utils";
+import { Message, MessageType, onInstall, onMessageType, openOptionsPage, ProxyRequestPayload, ProxyRequestResponse, SaveToHistoryPayload } from '../extension'
+import { rateLastTimestamp } from "../components/app/app-rate.storage";
+import { importHistory, loadHistory, toStorageItem } from "../components/user-history/history.storage";
 
-// FIXME: text-to-speech is broken (google/manifest v3)
+// FIXME: text-to-speech
 // TODO: deepl: allow to enter own auth-key
 // TODO: calculate allowed text buffer for translation input in bytes
 // TODO: allow to use custom fonts
-// TODO: add multi language/vendor selector + remove favorites (broken atm)
+// TODO: add multi language/vendor selector
 
-onInstall(reason => {
-  if (reason === "install" || isDevelopment) {
+const logger = createLogger({ systemPrefix: "[BACKGROUND]" });
+
+onInstall((reason) => {
+  if (reason === "install" || !isProduction) {
     rateLastTimestamp.set(Date.now());
-    navigate({ page: defaultPageId });
+    openOptionsPage();
   }
 });
 
-// Handle IPC for background process <-> options-page <-> content-script (browser pages)
-onMessageType<TranslatePayload>(MessageType.TRANSLATE_TEXT, async (message, sender, sendResponse) => {
+/**
+ * Network proxy for `options` and `content-script` pages (to avoid CORS, etc.)
+ */
+onMessageType<ProxyRequestPayload, ProxyRequestResponse>(MessageType.PROXY_REQUEST, async (message, sender, sendResponse) => {
+  const { url, responseType, requestInit } = message.payload;
+  const proxyResult: ProxyRequestResponse = {
+    messageId: message.id,
+    url: url,
+    data: undefined,
+    error: undefined,
+  };
+
   try {
-    const { vendor, from, to, text } = message.payload;
-    const translation: ITranslationResult = await getTranslator(vendor).getTranslation(from, to, text);
-    const { autoPlayText, historyEnabled } = settingsStore.data;
-    if (autoPlayText) {
-      let { vendor, originalText, langFrom, langDetected = langFrom } = translation;
-      playText({ vendor, text: originalText, lang: langDetected });
+    logger.info(`proxy request`, message.payload);
+    const httpResponse = await fetch(url, requestInit);
+    switch (responseType) {
+      case "text":
+        proxyResult.data = await httpResponse.text();
+        break;
+
+      case "json":
+        proxyResult.data = await parseJson(httpResponse);
+        break;
+
+      case "data-uri": // https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/Data_URIs
+        const binaryData = await httpResponse.blob();
+        const base64Data = await blobToBase64(binaryData);
+        proxyResult.data = `data:${binaryData.type};base64,${base64Data}`;
+        break;
     }
-    if (historyEnabled) {
-      await loadHistory();
-      importHistory(translation);
-    }
-    sendResponse<TranslatePayloadResult>({ data: translation });
   } catch (error) {
-    sendResponse<TranslatePayloadResult>({ error });
+    logger.error(`proxy error: ${error?.message}`, { error, message });
+    proxyResult.error = isPlainObject(error) ? error : { message: String(error) };
+  }
+
+  // response api delay simulation
+  // const delayMs = Math.round(Math.random() * 2500) + 2000 /*min-delay: 2s*/;
+  // console.log(`DELAY: ${delayMs} before response for result`, proxyResult);
+  // await delay(delayMs);
+  sendResponse(proxyResult);
+});
+
+/**
+ * Saving translation result to history
+ */
+onMessageType(MessageType.SAVE_TO_HISTORY, async (message: Message<SaveToHistoryPayload>) => {
+  try {
+    const { translation } = message.payload;
+    const storageItem = toStorageItem(translation);
+    await loadHistory();
+    importHistory(storageItem);
+  } catch (error) {
+    logger.error(`saving item to history has failed: ${error}`, message);
   }
 });
 
-onMessageType<PlayTextToSpeechPayload>(MessageType.TTS_PLAY, ({ payload }) => {
-  playText(payload);
-});
-
-onMessageType(MessageType.TTS_STOP, () => {
-  stopPlayingAll();
-});

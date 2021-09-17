@@ -61,6 +61,7 @@ export function createStorageHelper<T>(key: string, options: ChromeStorageHelper
     const isUpdateRequired = resourceVersion > storageResourceVersion;
 
     logger.info(`received update`, {
+      origin: location.href,
       isUpdateRequired,
       ...changes
     });

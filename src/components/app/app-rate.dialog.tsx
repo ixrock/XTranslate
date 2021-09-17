@@ -6,34 +6,24 @@ import { observer } from "mobx-react";
 import { Dialog } from "../dialog";
 import { Button } from "../button";
 import { Icon } from "../icon";
-import { createStorageHelper } from "../../extension/storage";
-import { extensionUrl } from "../../common-vars";
 import { getMessage } from "../../i18n";
-
-export const rateButtonClicked = createStorageHelper<boolean>("rate_btn_click", {
-  defaultValue: false,
-});
-
-export const rateLastTimestamp = createStorageHelper<number>("rate_delay_last", {
-  defaultValue: 0,
-});
+import { extensionUrl } from "../../common-vars";
+import { rateButtonClicked, rateLastTimestamp } from "./app-rate.storage";
 
 @observer
 export class AppRateDialog extends React.Component {
+  @observable isOpen = false;
+
   constructor(props: object) {
     super(props);
     makeObservable(this);
   }
 
-  @observable isOpen = false;
-
-  ready = Promise.allSettled([
-    rateButtonClicked.whenReady,
-    rateLastTimestamp.whenReady,
-  ]);
-
   async componentDidMount() {
-    await this.ready;
+    await Promise.all([
+      rateButtonClicked.whenReady,
+      rateLastTimestamp.whenReady,
+    ]);
     this.visibilityCheck();
   }
 

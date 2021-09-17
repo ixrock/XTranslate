@@ -3,13 +3,12 @@
 import "../packages.setup";
 import React from "react";
 import { render } from "react-dom";
-import { computed, makeObservable, observable, toJS } from "mobx";
+import { action, computed, makeObservable, observable, toJS } from "mobx";
 import { observer } from "mobx-react";
 import { debounce, isEqual } from "lodash"
 import { autoBind, cssNames, getHotkey } from "../utils";
-import { getManifest, getStyleUrl, MenuTranslateVendorPayload, MessageType, onMessageType, TranslatePayload } from "../extension";
-import { translateText, ttsPlay, ttsStop } from "../extension/actions";
-import { getNextTranslator, ITranslationError, ITranslationResult } from "../vendors";
+import { getManifest, getStyleUrl, MessageType, onMessageType, TranslateWithVendorPayload } from "../extension";
+import { getNextTranslator, getTranslator, ITranslationError, ITranslationResult, TranslatePayload } from "../vendors";
 import { XTranslateIcon } from "./xtranslate-icon";
 import { Popup } from "../components/popup/popup";
 import { settingsStore } from "../components/settings/settings.storage";
@@ -50,7 +49,6 @@ class App extends React.Component {
   private selection = window.getSelection();
   private popup: Popup;
   private icon: XTranslateIcon;
-  private lastParams: TranslatePayload;
   private isDblClicked = false;
   private isHotkeyActivated = false;
   private mousePos = { x: 0, y: 0, pageX: 0, pageY: 0 };
@@ -65,23 +63,23 @@ class App extends React.Component {
   @observable isLoading = false;
 
   componentDidMount() {
-    // bind dom events
+    // Bind extension's runtime IPC events
+    onMessageType<string>(MessageType.GET_SELECTED_TEXT, (message, sender, sendResponse) => {
+      sendResponse(this.selectedText);
+    });
+    onMessageType<TranslateWithVendorPayload>(MessageType.TRANSLATE_WITH_VENDOR, ({ payload }) => {
+      const { vendor, text } = payload;
+      this.hideIcon();
+      this.translate({ vendor, text });
+    });
+
+    // Bind DOM events
     document.addEventListener("selectionchange", this.onSelectionChange);
     document.addEventListener("mousemove", this.onMouseMove, true);
     document.addEventListener("mousedown", this.onMouseDown, true);
     document.addEventListener("dblclick", this.onDoubleClick, true);
     document.addEventListener("keydown", this.onKeyDown, true);
     window.addEventListener("resize", this.onResizeWindow);
-
-    // bind extension ipc events
-    onMessageType<string>(MessageType.GET_SELECTED_TEXT, (message, sender, sendResponse) => {
-      sendResponse(this.selectedText);
-    });
-    onMessageType<MenuTranslateVendorPayload>(MessageType.MENU_TRANSLATE_WITH_VENDOR, ({ payload }) => {
-      const { vendor, selectedText } = payload;
-      this.hideIcon();
-      this.translate({ vendor, text: selectedText });
-    });
   }
 
   @computed get isPopupHidden() {
@@ -113,35 +111,36 @@ class App extends React.Component {
 
   translateLazy = debounce(this.translate, 250);
 
-  async translate(initParams?: Partial<TranslatePayload>) {
-    var { vendor, langFrom, langTo } = settingsStore.data;
-    var params = Object.assign({
-      vendor: vendor,
-      from: langFrom,
-      to: langTo,
-      text: this.selectedText,
-    }, initParams);
-    if (!params.text || isEqual(params, this.lastParams)) {
-      return;
-    }
+  @action
+  async translate(initParams: Partial<TranslatePayload> = {}) {
+    const params: TranslatePayload = {
+      vendor: settingsStore.data.vendor,
+      from: settingsStore.data.langFrom,
+      to: settingsStore.data.langTo,
+      text: this.selectedText.trim(),
+      ...initParams,
+    };
+
+    // reset previous result first (if any)
+    this.isLoading = true;
+    this.translation = null;
+    this.error = null;
+
     try {
-      this.isLoading = true;
-      this.lastParams = params;
-      var translation = await translateText(params);
-      if (params === this.lastParams) {
-        this.translation = translation;
-        this.error = null;
-      }
+      this.translation = await getTranslator(params.vendor).translate(params);
     } catch (err) {
       this.error = err;
+    } finally {
+      this.isLoading = false;
+      this.refreshPosition();
     }
-    this.isLoading = false;
-    this.refreshPosition();
   }
 
   translateNext(reverse = false) {
-    if (!this.lastParams) return;
-    var { vendor, from, to, text } = this.lastParams;
+    if (!this.translation) {
+      return;
+    }
+    var { vendor, langFrom: from, langTo: to, originalText: text } = this.translation;
     var nextVendor = getNextTranslator(vendor, from, to, reverse);
     return this.translate({
       vendor: nextVendor.name,
@@ -149,9 +148,9 @@ class App extends React.Component {
     });
   }
 
-  playText() {
-    if (!this.translation) return;
-    ttsPlay(this.translation);
+  playText = () => {
+    const { vendor, langDetected, originalText } = this.translation;
+    getTranslator(vendor).speak(langDetected, originalText);
   }
 
   showIcon() {
@@ -163,16 +162,19 @@ class App extends React.Component {
   }
 
   hidePopup() {
-    if (this.isPopupHidden) return;
+    if (this.isPopupHidden) {
+      return;
+    }
+    if (this.translation) {
+      getTranslator(this.translation.vendor).stopSpeaking();
+    }
     this.translation = null;
     this.error = null;
     this.position = null;
-    this.lastParams = null;
     this.selectionRects = null;
     this.isDblClicked = false;
     this.isHotkeyActivated = false;
     this.selection.removeAllRanges();
-    ttsStop();
   }
 
   isEditable(elem: Element) {
@@ -232,9 +234,11 @@ class App extends React.Component {
     }
   }
 
+  @action
   refreshPosition() {
-    var { popupFixedPos } = settingsStore.data;
-    if (popupFixedPos || !this.selectionRects) return;
+    if (settingsStore.data.popupFixedPos || !this.selectionRects) {
+      return; // skip: no position refining is needed
+    }
     var { top } = this.selectionRects[0];
     var { bottom } = this.selectionRects.slice(-1)[0];
     var left = Math.min(...this.selectionRects.map(({ left }) => left));
@@ -397,7 +401,8 @@ class App extends React.Component {
 
   render() {
     var { translation, error, playText, translateNext, position, onIconClick } = this;
-    var { langFrom, langTo } = settingsStore.data;
+    var { langFrom, langTo, vendor } = settingsStore.data;
+    var translator = getTranslator(vendor);
     return (
       <>
         <link rel="stylesheet" href={getStyleUrl()}/>
@@ -408,12 +413,12 @@ class App extends React.Component {
           error={error}
           onPlayText={playText}
           onTranslateNext={() => translateNext()}
-          ref={e => this.popup = e}
+          ref={(ref: Popup) => this.popup = ref}
         />
         <XTranslateIcon
           style={this.iconPosition}
           onMouseDown={onIconClick}
-          title={`${this.appName}: ${[langFrom, langTo].join(' → ').toUpperCase()}`}
+          title={`${this.appName}: ${translator.getLangPairTitle(langFrom, langTo)}`}
           ref={e => this.icon = e}
         />
       </>

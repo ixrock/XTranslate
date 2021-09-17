@@ -1,7 +1,7 @@
 import MD5 from "crypto-js/md5";
 import { download } from "../../utils/downloadFile";
 import { createStorageHelper } from "../../extension/storage";
-import { getTranslator, isTranslation, ITranslationResult } from "../../vendors/translator";
+import { getTranslator, ITranslationResult } from "../../vendors/translator";
 import { settingsStorage, settingsStore } from "../settings/settings.storage";
 
 export type IHistoryItemId = string;
@@ -23,8 +23,8 @@ export interface HistoryTranslation<HistoryItem = IHistoryItem> {
 }
 
 export const historyStorage = createStorageHelper<HistoryStorageModel>("history", {
-  area: "local",
-  autoLoad: false, // manual loading: before saving data and viewing history items
+  area: "local", // keep in chrome.storage.local
+  autoLoad: false, // manual loading: before saving data or listing items
   defaultValue: {
     translations: {},
   },
@@ -65,11 +65,7 @@ export async function loadHistory() {
   await settingsStorage.whenReady;
 }
 
-export function importHistory(data: ITranslationResult | IHistoryItem | IHistoryStorageItem) {
-  if (isTranslation(data) && data.langFrom === "auto") {
-    data.langFrom = data.langDetected; // always save detected language from "auto"
-  }
-
+export function importHistory(data: IHistoryItem | IHistoryStorageItem) {
   const storageItem = isStorageItem(data) ? data : toStorageItem(data);
   const item = toHistoryItem(storageItem);
 
@@ -113,7 +109,7 @@ export function toStorageItem(data: ITranslationResult | IHistoryItem): IHistory
     return [
       Date.now(),
       vendor,
-      data.langFrom,
+      data.langDetected || data.langFrom,
       data.langTo,
       data.originalText,
       translation,

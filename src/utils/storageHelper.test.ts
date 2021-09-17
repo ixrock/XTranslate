@@ -48,7 +48,7 @@ describe("renderer/utils/StorageHelper", () => {
 
   describe("Using custom StorageAdapter", () => {
     const storageKey = "mySettings";
-    const storageMock = {
+    const storageMock: Record<string, any> = {
       [storageKey]: undefined,
     };
     const defaultValue = {

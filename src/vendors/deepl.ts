@@ -1,6 +1,7 @@
-import DeeplTranslateParams from "./deepl.json"
-import { ITranslationError, ITranslationResult, ITranslatorParams, Translator } from "./translator";
+import DeeplLanguages from "./deepl.json"
+import { ITranslationError, ITranslationResult, TranslateParams, Translator, TranslatorLanguages } from "./translator";
 import { createStorageHelper } from "../extension/storage";
+import { ProxyRequestInit } from "../extension";
 
 class Deepl extends Translator {
   public name = "deepl";
@@ -11,7 +12,7 @@ class Deepl extends Translator {
   public reqMaxSizeInBytes = 1024 * 30; // 30 kB
 
   constructor() {
-    super(DeeplTranslateParams);
+    super(DeeplLanguages);
   }
 
   protected apiClient = createStorageHelper("deepl_api_client", {
@@ -20,29 +21,30 @@ class Deepl extends Translator {
     },
   });
 
-  protected async translate(langFrom, langTo, text): Promise<ITranslationResult> {
+  async translate(params: TranslateParams): Promise<ITranslationResult> {
+    const { from: langFrom, to: langTo, text } = params;
     const { authKey } = this.apiClient.get();
-    var payload: DeeplTranslationRequestParams = {
-      text,
-      source_lang: langFrom == "auto" ? "" : langFrom,
-      target_lang: langTo,
-    };
-
-    var reqInit: RequestInit = {
+    const reqInit: ProxyRequestInit = {
       method: "POST",
       headers: {
         "Authorization": `DeepL-Auth-Key ${authKey}`,
         "Content-type": "application/x-www-form-urlencoded",
       },
-      body: new URLSearchParams(payload),
+      body: new URLSearchParams({
+        text,
+        source_lang: langFrom == "auto" ? "" : langFrom,
+        target_lang: langTo,
+      } as DeeplTranslationRequestParams).toString(),
     };
 
     try {
-      const res: DeeplTranslationResponse = await fetch(`${this.apiUrl}/translate`, reqInit).then(this.parseJson);
+      const { translations }: DeeplTranslationResponse = await this.request({
+        url: `${this.apiUrl}/translate`,
+        requestInit: reqInit,
+      });
       return {
-        langDetected: res.translations[0].detected_source_language.toLowerCase(),
-        translation: res.translations[0].text,
-        dictionary: [],
+        langDetected: translations[0].detected_source_language.toLowerCase(),
+        translation: translations[0].text,
       };
     } catch (error) {
       const { message }: DeeplErrorResponse = error;
@@ -55,12 +57,14 @@ class Deepl extends Translator {
 
   async getDataUsage(): Promise<DeeplUsageResponse> {
     const { authKey } = this.apiClient.get();
-    return fetch(`${this.apiUrl}/usage?auth_key=${authKey}`).then(this.parseJson);
+    const url = `${this.apiUrl}/usage?auth_key=${authKey}`;
+    return this.request({ url });
   }
 
   async getSupportedLanguages(type: "source" | "target"): Promise<DeeplSupportedLanguage[]> {
     const { authKey } = this.apiClient.get();
-    return fetch(`${this.apiUrl}/languages?auth_key=${authKey}&type=${type}`).then(this.parseJson)
+    const url = `${this.apiUrl}/languages?auth_key=${authKey}&type=${type}`;
+    return this.request({ url });
   }
 }
 
@@ -132,20 +136,18 @@ export interface DeeplSupportedLanguage {
   supports_formality?: boolean; // Only included for target languages
 }
 
-export async function dumpAvailableLanguages() {
-  const params: ITranslatorParams = {
-    languages: {
-      from: { "auto": "Auto-detect" },
-      to: {},
-    },
+export async function dump_deepl_json() {
+  const supportedLanguages: TranslatorLanguages = {
+    from: { "auto": "Auto-detect" },
+    to: {},
   };
 
   const from = await deepl.getSupportedLanguages("source");
   const to = await deepl.getSupportedLanguages("target");
-  from.forEach(({ name, language }) => params.languages.from[language.toLowerCase()] = name);
-  to.forEach(({ name, language }) => params.languages.to[language.toLowerCase()] = name);
-  console.log(JSON.stringify(params));
+  from.forEach(({ name, language }) => supportedLanguages.from[language.toLowerCase()] = name);
+  to.forEach(({ name, language }) => supportedLanguages.to[language.toLowerCase()] = name);
+  console.log(JSON.stringify(supportedLanguages));
 }
 
 const deepl = new Deepl();
-Translator.register(deepl.name, deepl);
+Translator.vendors.set(deepl.name, deepl);

@@ -1,17 +1,17 @@
 import "./input-translation.scss";
 
+import { debounce } from "lodash";
 import React, { Fragment } from "react";
-import { action, computed, makeObservable, observable, reaction, toJS } from "mobx";
+import { action, comparer, makeObservable, observable, reaction } from "mobx";
 import { disposeOnUnmount, observer } from "mobx-react";
 import { getTranslator, getTranslators, isRTL, ITranslationError, ITranslationResult } from "../../vendors";
-import { getActiveTabText, translateText, ttsPlay, ttsStop } from "../../extension/actions";
-import { cssNames, isMac } from "../../utils";
+import { getSelectedText } from "../../extension/actions";
+import { createLogger, cssNames, isMac } from "../../utils";
 import { SelectLanguage } from "../select-language";
 import { Input } from "../input";
-import { Option, OptionsGroup, Select } from "../select";
+import { Option, Select } from "../select";
 import { Spinner } from "../spinner";
 import { settingsStore } from "../settings/settings.storage";
-import { favoritesStore } from "./favorites.storage";
 import { viewsManager } from "../app/views-manager";
 import { Tab } from "../tabs";
 import { Icon } from "../icon";
@@ -24,255 +24,140 @@ export const lastInputText = createStorageHelper("last_input_text", {
   defaultValue: "",
 });
 
-interface TranslateParams {
-  vendor: string;
-  langFrom: string;
-  langTo: string;
-}
-
 @observer
 export class InputTranslation extends React.Component {
-  public input: Input;
-  public translateTimer;
+  private logger = createLogger();
+  private inputRef = React.createRef<Input>();
+
+  @observable vendor: string = settingsStore.data.vendor;
+  @observable langFrom: string = settingsStore.data.langFrom;
+  @observable langTo: string = settingsStore.data.langTo;
+  @observable text = "";
+  @observable isLoading = false;
+  @observable translation?: ITranslationResult;
+  @observable error?: ITranslationError;
 
   constructor(props: object) {
     super(props);
     makeObservable(this);
   }
 
-  @observable isLoading = false;
-  @observable text = "";
-  @observable translation?: ITranslationResult;
-  @observable error?: ITranslationError;
-  @observable favorite?: TranslateParams;
-
-  @observable params: TranslateParams = {
-    vendor: settingsStore.data.vendor,
-    langFrom: settingsStore.data.langFrom,
-    langTo: settingsStore.data.langTo,
-  };
-
-  @computed get isFavorite() {
-    if (this.favorite) return true;
-    var { vendor, langFrom, langTo } = this.params;
-    return favoritesStore.isFavorite(vendor, langFrom, langTo);
+  get input(): Input {
+    return this.inputRef.current;
   }
 
-  get activeVendor() {
-    var name = this.favorite ? this.favorite.vendor : this.params.vendor;
-    return getTranslator(name)
-  }
-
-  async componentDidMount() {
+  componentDidMount() {
     this.input.focus();
 
     // auto-translate text when input params has changed
     disposeOnUnmount(this, [
-      reaction(() => toJS(this.params), this.translate),
-      reaction(() => toJS(this.favorite), this.translate),
+      reaction(() => [this.text, this.vendor, this.langTo, this.langFrom],
+        this.onTranslationParamsChange, {
+          equals: comparer.structural,
+        })
     ]);
 
     // restore last input text if enabled in options
     if (settingsStore.data.rememberLastText) {
-      await lastInputText.whenReady;
-      this.translateText(lastInputText.get() ?? "");
+      lastInputText.whenReady.then(() => {
+        this.translateText(lastInputText.get());
+      });
     }
 
     // auto-translate selected text from active tab
-    var selectedText = await getActiveTabText();
-    if (selectedText) this.translateText(selectedText);
-  }
-
-  componentWillUnmount() {
-    ttsStop();
-  }
-
-  addFavorite = () => {
-    var { langFrom, langTo, vendor } = this.params;
-    favoritesStore.addFavorite(vendor, {
-      from: langFrom,
-      to: langTo
-    });
-  }
-
-  removeFavorite = () => {
-    var { vendor, langFrom, langTo } = this.favorite || this.params;
-    favoritesStore.removeFavorite(vendor, {
-      from: langFrom,
-      to: langTo
-    });
-    this.clearFavorite();
-  }
-
-  removeAllFavorites = () => {
-    favoritesStore.reset();
-    this.clearFavorite();
-  }
-
-  clearFavorite = () => {
-    this.favorite = null;
+    getSelectedText().then(this.translateText);
   }
 
   playText = () => {
-    if (!this.translation) return;
-    ttsPlay(this.translation);
-  }
-
-  @action
-  translate = async () => {
-    const text = this.text.trim();
-    if (!text) return;
-    var { vendor, langFrom, langTo } = this.favorite || this.params;
-    try {
-      this.error = null;
-      this.isLoading = true;
-      this.translation = await translateText({
-        from: langFrom,
-        to: langTo,
-        vendor, text,
-      });
-    } catch (err) {
-      this.translation = null;
-      this.error = err;
-    } finally {
-      this.isLoading = false;
-    }
+    const { vendor, langDetected, originalText } = this.translation;
+    getTranslator(vendor).speak(langDetected, originalText);
   }
 
   @action
   translateText = (text: string) => {
     this.input.focus();
     this.text = text;
-    this.translate();
+    this.input.setValue(text); // update input value manually since @defaultValue is utilized
   }
 
-  translateImmediate = () => {
-    clearTimeout(this.translateTimer);
-    this.translate();
-  }
+  @action.bound
+  async onTranslationParamsChange() {
+    let { text, vendor, langFrom, langTo } = this;
 
-  @action
-  onTextChange = (text: string) => {
-    this.text = text;
-    var { rememberLastText, textInputTranslateDelayMs } = settingsStore.data;
-    if (rememberLastText) {
+    // save latest user text-input if settings options is enabled
+    if (settingsStore.data.rememberLastText && lastInputText.get() !== text) {
       lastInputText.set(text);
     }
-    if (!text) {
-      ttsStop();
-      this.translation = null;
-      this.error = null;
+
+    if (!text) return;
+    this.logger.info("translating..", { text, vendor, langFrom, langTo });
+    this.translation = null; // clear previous results immediately (if any)
+    this.error = null;
+    this.isLoading = true;
+
+    try {
+      this.translation = await getTranslator(vendor).translate({
+        to: langTo,
+        from: langFrom,
+        text: text,
+      })
+    } catch (error) {
+      this.error = error;
+    } finally {
+      this.isLoading = false;
     }
-    clearTimeout(this.translateTimer);
-    this.translateTimer = setTimeout(this.translate, textInputTranslateDelayMs);
   }
+
+  onInputChange = debounce(
+    (text: string) => this.text = text.trim(),
+    settingsStore.data.textInputTranslateDelayMs,
+  );
 
   onKeyDown = (evt: React.KeyboardEvent<HTMLInputElement>) => {
     var isCmdEnter = (evt.metaKey || evt.ctrlKey) && evt.keyCode === 13;
     if (isCmdEnter) {
-      this.translateImmediate();
+      this.onInputChange.flush();
     }
   }
 
+  @action
   onLangChange = (from: string, to: string) => {
-    this.params.langFrom = from;
-    this.params.langTo = to;
-    this.clearFavorite();
+    this.langFrom = from;
+    this.langTo = to;
   }
 
-  onVendorChange = (vendorName: string) => {
-    var vendor = getTranslator(vendorName);
-    var { langFrom, langTo } = this.params;
-    if (!vendor.langFrom[langFrom]) {
-      this.params.langFrom = "auto";
+  @action
+  onVendorChange = (name: string) => {
+    var vendor = getTranslator(name);
+    this.vendor = name;
+
+    if (!vendor.langFrom[this.langFrom]) {
+      this.langFrom = "auto";
     }
-    if (!vendor.langTo[langTo]) {
-      var navLang = navigator.language.split("-")[0];
-      this.params.langTo = vendor.langTo[navLang] ? navLang : "en";
+    if (!vendor.langTo[this.langTo]) {
+      const navLang = navigator.language.split("-");
+      if (vendor.langTo[navLang.join("-")]) this.langTo = navLang.join("-");
+      else if (vendor.langTo[navLang[0]]) this.langTo = navLang[0];
+      else this.langTo = "en";
     }
-    this.params.vendor = vendorName;
-    this.clearFavorite();
+    this.input.focus();
   }
 
   renderHeader() {
-    var { isFavorite } = this;
-    var { vendor, langFrom, langTo } = this.params;
+    var { vendor, langFrom, langTo } = this;
     return (
       <div className="language flex gaps">
-        <SelectLanguage
-          vendor={vendor}
-          from={langFrom}
-          to={langTo}
-          onChange={this.onLangChange}
-        />
+        <SelectLanguage vendor={vendor} from={langFrom} to={langTo} onChange={this.onLangChange}/>
         <Select value={vendor} onChange={this.onVendorChange}>
           {getTranslators().map(v => <Option key={v.name} value={v.name} label={v.title}/>)}
         </Select>
-        {isFavorite && (
-          <Icon
-            material="favorite"
-            tooltip={{ nowrap: true, children: getMessage("favorites_remove_item") }}
-            onClick={this.removeFavorite}
-          />
-        )}
-        {!isFavorite ?
-          <Icon
-            material="favorite_border"
-            tooltip={{ nowrap: true, children: getMessage("favorites_add_item") }}
-            onClick={this.addFavorite}/>
-          : null}
       </div>
     )
   }
 
-  renderFavorites() {
-    var { getCount, getFavorites } = favoritesStore;
-    if (!getCount()) return;
-    return (
-      <div className="favorites flex gaps">
-        <Select
-          className="box grow"
-          value={this.favorite}
-          onChange={(v: TranslateParams) => this.favorite = v}
-        >
-          <Option value="" label={`${getMessage("favorites_translate_with")}`}/>
-          {getFavorites().map(({ vendor, favorites }) => {
-            return (
-              <OptionsGroup key={vendor.name} label={vendor.title}>
-                {favorites.map(fav => {
-                  var { from, to } = fav;
-                  var value: TranslateParams = {
-                    vendor: vendor.name,
-                    langFrom: from,
-                    langTo: to,
-                  };
-                  return (
-                    <Option
-                      key={[vendor.name, from, to].join("-")}
-                      value={value}
-                      label={`${vendor.langFrom[from]} → ${vendor.langTo[to]} (${vendor.title})`}
-                    />
-                  )
-                })}
-              </OptionsGroup>
-            )
-          })}
-        </Select>
-        <Icon
-          material="clear"
-          tooltip={{ nowrap: true, children: getMessage("favorites_clear_all") }}
-          onClick={this.removeAllFavorites}
-        />
-      </div>
-    );
-  }
-
-  renderResult() {
-    var { langFrom, langTo, langDetected, translation, transcription, dictionary, spellCorrection } = this.translation;
-    var vendor = getTranslator(this.translation.vendor);
-    if (langDetected) langFrom = langDetected;
-    var langPair = [langFrom, langTo].join(' → ').toUpperCase();
-    var langPairFull = [vendor.langFrom[langFrom], vendor.langTo[langTo]].join(' → ');
+  renderTranslationResult() {
+    var { langTo, langDetected, translation, transcription, dictionary, spellCorrection, vendor } = this.translation;
+    var translator = getTranslator(vendor);
     return (
       <div className={cssNames("translation-results", { rtl: isRTL(langTo) })}>
         {translation ?
@@ -287,9 +172,12 @@ export class InputTranslation extends React.Component {
               {transcription ? <i className="transcription">[{transcription}]</i> : null}
             </div>
             <span className="lang" id="translated_with">
-              {langPair}
+              {translator.getLangPairShortTitle(langDetected, langTo)}
               <Tooltip htmlFor="translated_with" following nowrap>
-                {getMessage("translated_with", { translator: vendor.title, lang: langPairFull })}
+                {getMessage("translated_with", {
+                  translator: translator.title,
+                  lang: translator.getLangPairTitle(langDetected, langTo),
+                })}
               </Tooltip>
             </span>
           </div>
@@ -342,7 +230,7 @@ export class InputTranslation extends React.Component {
     )
   }
 
-  renderError() {
+  renderTranslationError() {
     var { statusCode, message } = this.error;
     return (
       <div className="translation-error flex column gaps">
@@ -356,26 +244,25 @@ export class InputTranslation extends React.Component {
     var { text, isLoading, translation, error } = this;
     if (!text) return;
     if (isLoading) return <Spinner center/>;
-    if (translation) return this.renderResult();
-    if (error) return this.renderError();
+    if (translation) return this.renderTranslationResult();
+    if (error) return this.renderTranslationError();
   }
 
   render() {
-    var { textMaxLength } = this.activeVendor;
     var { textInputTranslateDelayMs: delayMs } = settingsStore.data;
     return (
       <div className="InputTranslation flex column gaps">
         {this.renderHeader()}
-        {this.renderFavorites()}
         <Input
-          autoFocus
-          multiLine rows={2} tabIndex={1}
+          autoFocus={true}
+          multiLine={true}
+          rows={2}
+          tabIndex={1}
           placeholder={getMessage("text_field_placeholder")}
-          maxLength={textMaxLength}
-          value={this.text}
-          onChange={this.onTextChange}
+          defaultValue={this.text}
+          onChange={(text: string) => this.onInputChange(text)}
           onKeyDown={this.onKeyDown}
-          ref={e => this.input = e}
+          ref={this.inputRef}
           infoContent={(
             <small className="hint">
               {getMessage("text_input_translation_hint", {

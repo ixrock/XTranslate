@@ -68,7 +68,7 @@ interface OptionProps {
 
 export class Option extends React.Component<OptionProps> {
   static contextType = SelectContext;
-  public context: Select;
+  declare context: Select;
   public elem: HTMLOptionElement;
 
   constructor(props: OptionProps) {

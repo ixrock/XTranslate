@@ -3,17 +3,18 @@
     "rootDir": "./",
     "outDir": "./dist/",
     "jsx": "react",
-    "target": "es6",
-    "lib": ["dom", "esnext"],
-    "module": "commonjs",
+    "target": "ES2017",
+    "lib": ["ESNext", "DOM", "DOM.Iterable"],
+    "module": "CommonJS",
     "moduleResolution": "node",
     "allowJs": true,
     "sourceMap": true,
-    "noImplicitAny": false,
+    "noImplicitAny": true,
     "esModuleInterop": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "useDefineForClassFields": true
   },
   "include": [
     "src/**/*"

@@ -33,7 +33,7 @@ interface RadioProps extends Omit<CheckboxProps, "checked"> {
 
 export class Radio extends React.Component<RadioProps> {
   static contextType = RadioGroupContext;
-  public context: RadioGroup;
+  declare context: RadioGroup;
 
   get isChecked() {
     var { value } = this.props;

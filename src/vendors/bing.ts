@@ -1,7 +1,7 @@
+import BingLanguages from "./bing.json"
 import { groupBy } from "lodash";
-import BingTranslateParams from "./bing.json"
-import { ITranslationError, ITranslationResult, Translator } from "./translator";
-import { createStorageHelper } from "../extension/storage";
+import { createStorageHelper, ProxyRequestInit } from "../extension";
+import { isTranslationError, ITranslationError, ITranslationResult, TranslateParams, Translator } from "./translator";
 import { createLogger } from "../utils";
 
 class Bing extends Translator {
@@ -9,10 +9,9 @@ class Bing extends Translator {
   public title = 'Bing';
   public apiUrl = 'https://www.bing.com';
   public publicUrl = `${this.apiUrl}/translator`;
-  public textMaxLength = 5000;
 
   constructor() {
-    super(BingTranslateParams);
+    super(BingLanguages);
   }
 
   protected logger = createLogger({ systemPrefix: "[BING]" });
@@ -24,99 +23,106 @@ class Bing extends Translator {
     return `https://www.microsofttranslator.com/bv.aspx?to=${lang}&a=${pageUrl}`
   }
 
-  // bing errors comes with normal status response (200)
-  async parseJson(res: Response) {
-    const data = await super.parseJson(res);
-    const status = (data as ITranslationError)?.statusCode;
-    const isError = Number.isInteger(status) && status !== res.status;
-    if (isError) throw data;
-    return data;
-  }
-
   protected async refreshApiClient() {
-    this.logger.info('refreshing api client..', this.apiClient.toJS());
+    this.logger.info('refreshing api client..', {
+      current: this.apiClient.toJS()
+    });
     try {
-      const servicePage = await fetch(this.publicUrl, { credentials: "include" }).then(res => res.text());
-      const matchedParams = /params_RichTranslateHelper\s*=\s*\[(\d+),"(.*?)",.*?\]/.exec(servicePage);
+      const servicePageText = await this.request({
+        url: this.publicUrl,
+        responseType: "text",
+        requestInit: {},
+      });
+      const matchedParams = /params_RichTranslateHelper\s*=\s*\[(\d+),"(.*?)",.*?\]/.exec(servicePageText);
       if (matchedParams) {
         const [page, key, token] = matchedParams;
         this.logger.info(`api client updated`, { key, token });
-        await this.apiClient.set({ key, token });
+        this.apiClient.set({ key, token });
       }
     } catch (error) {
       this.logger.error('refreshing api failed', error);
     }
   }
 
-  protected translate(langFrom, langTo, text): Promise<ITranslationResult> {
+  async translate(params: TranslateParams): Promise<ITranslationResult> {
+    var { from: langFrom, to: langTo, text } = params;
     var apiClientRefreshed = false;
-    var reqInitBase: RequestInit = {
+
+    var reqInitCommon: ProxyRequestInit = {
       method: "POST",
       credentials: "include",
       headers: {
-        "content-type": "application/x-www-form-urlencoded"
+        "Content-type": "application/x-www-form-urlencoded"
       }
     }
     var translationReq = (langFrom: string): Promise<BingTranslation[]> => {
-      var url = this.apiUrl + "/ttranslatev3";
-      return fetch(url, {
-        ...reqInitBase,
-        body: new URLSearchParams({
-          fromLang: langFrom === "auto" ? "auto-detect" : langFrom,
-          to: langTo,
-          text: text,
-          ...this.apiClient.get(),
-        }),
-      }).then(this.parseJson);
+      return this.request({
+        url: this.apiUrl + "/ttranslatev3",
+        requestInit: {
+          ...reqInitCommon,
+          body: new URLSearchParams({
+            fromLang: langFrom === "auto" ? "auto-detect" : langFrom,
+            to: langTo,
+            text: text,
+            ...this.apiClient.get(),
+          }).toString(),
+        }
+      });
     };
 
     var dictionaryReq = (langFrom: string): Promise<BingDictionary[]> => {
       var url = this.apiUrl + '/tlookupv3';
-      return fetch(url, {
-        ...reqInitBase,
-        body: new URLSearchParams({
-          from: langFrom,
-          to: langTo,
-          text: text,
-          ...this.apiClient.get(),
-        }),
-      }).then(this.parseJson);
+      return this.request({
+        url: url,
+        requestInit: {
+          ...reqInitCommon,
+          body: new URLSearchParams({
+            from: langFrom,
+            to: langTo,
+            text: text,
+            ...this.apiClient.get(),
+          }).toString(),
+        }
+      });
     };
 
-    var request = async () => {
-      try {
-        var transRes = await translationReq(langFrom);
-        var { translations, detectedLanguage } = transRes[0];
-        var result: ITranslationResult = {
-          langDetected: detectedLanguage.language,
-          translation: translations.length ? translations[0].text : "",
-          dictionary: []
-        };
+    var request = async (): Promise<ITranslationResult> => {
+      var response = await translationReq(langFrom);
 
-        // dictionary results
-        var dictRes = await dictionaryReq(result.langDetected).catch(() => null);
-        if (dictRes) {
-          var dictGroups = groupBy<DictTranslation>(dictRes[0].translations, trans => trans.posTag)
-          result.dictionary = Object.keys(dictGroups).map(wordType => {
-            return {
-              wordType: wordType.toLowerCase(),
-              meanings: dictGroups[wordType].map(trans => {
-                return {
-                  word: trans.displayTarget,
-                  translation: trans.backTranslations.map(item => item.displayText),
-                }
-              })
-            }
-          });
-        }
-        return result;
-      } catch (error) {
-        if (!apiClientRefreshed) {
+      // bing errors comes with normal http-status == 200 via proxy fetch
+      if (isTranslationError(response)) {
+        if (response.statusCode === 400 && !apiClientRefreshed) {
           apiClientRefreshed = true;
           return this.refreshApiClient().then(request);
         }
-        throw error;
+        this.logger.error(response);
+        throw response;
       }
+
+      var { translations, detectedLanguage } = response[0];
+      var result: ITranslationResult = {
+        langDetected: detectedLanguage.language,
+        translation: translations.length ? translations[0].text : "",
+      };
+
+      // dictionary results
+      var dictRes = await dictionaryReq(result.langDetected).catch(() => null);
+      if (dictRes) {
+        var dictGroups = groupBy<DictTranslation>(dictRes[0].translations, trans => trans.posTag)
+        result.dictionary = Object.keys(dictGroups).map(wordType => {
+          return {
+            wordType: wordType.toLowerCase(),
+            meanings: dictGroups[wordType].map(trans => {
+              return {
+                word: trans.displayTarget,
+                translation: trans.backTranslations.map(item => item.displayText),
+              }
+            })
+          }
+        });
+      }
+
+      return result;
     };
 
     return request();
@@ -164,4 +170,4 @@ interface DictTranslation {
 }
 
 const bing = new Bing();
-Translator.register(bing.name, bing);
+Translator.vendors.set(bing.name, bing);

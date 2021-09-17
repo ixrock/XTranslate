@@ -4,7 +4,6 @@ import React from "react";
 import { groupBy, orderBy } from "lodash";
 import { action, computed, makeObservable, observable, reaction, runInAction } from "mobx";
 import { disposeOnUnmount, observer } from "mobx-react";
-import { ttsPlay } from "../../extension/actions";
 import { cssNames, prevDefault } from "../../utils";
 import { getTranslator, getTranslators, isRTL } from "../../vendors";
 import { Checkbox } from "../checkbox";
@@ -242,7 +241,7 @@ export class UserHistory extends React.Component {
   }
 
   renderHistoryItem(item: IHistoryItem): React.ReactNode {
-    var { id: itemId, vendor, from, to, text, translation, transcription, dictionary } = item;
+    var { id: itemId, vendor, from: langFrom, to: langTo, text, translation, transcription, dictionary } = item;
     var showDetails = this.detailsVisible.has(itemId);
     var translator = getTranslator(vendor);
     return (
@@ -250,7 +249,7 @@ export class UserHistory extends React.Component {
         {showDetails && (
           <small className="translation-service-info">
             <span className="translation-vendor">{translator.title} </span>
-            <span className="translation-direction">({translator.langFrom[from]} → {translator.langTo[to]})</span>
+            <span className="translation-direction">{translator.getLangPairTitle(langFrom, langTo)}</span>
           </small>
         )}
         <div className="main-info flex gaps">
@@ -258,13 +257,13 @@ export class UserHistory extends React.Component {
             {showDetails && (
               <Icon
                 material="play_circle_outline"
-                onClick={prevDefault(() => ttsPlay({ vendor, text, lang: from }))}
+                onClick={prevDefault(() => translator.speak(langFrom, text))}
               />
             )}
             <span className="text">{text}</span>
             {transcription ? <span className="transcription">({transcription})</span> : null}
           </div>
-          <div className={cssNames("translation box grow", { rtl: isRTL(to) })}>
+          <div className={cssNames("translation box grow", { rtl: isRTL(langTo) })}>
             {translation}
           </div>
           <Icon
@@ -308,9 +307,7 @@ export class UserHistory extends React.Component {
         console.error(`Parsing "${file.name}" has failed:`, err);
       }
     });
-    runInAction(() => {
-      items.forEach(storageItem => importHistory(storageItem));
-    });
+    runInAction(() => items.forEach(importHistory));
     Notifications.ok(getMessage("history_import_success", { itemsCount: items.length }));
   }
 

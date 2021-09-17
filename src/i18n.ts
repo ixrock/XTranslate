@@ -4,7 +4,15 @@ import { createStorageHelper } from "./extension/storage";
 import { getURL } from "./extension";
 import { createLogger } from "./utils";
 
-export type Locale = keyof typeof locales;
+export type Locale = "en" | "de" | "ru" | "sr" | "zh_TW";
+
+export const supportedLocales: Record<Locale, string> = {
+  en: "English",
+  de: "German",
+  ru: "Russian",
+  sr: "Serbian",
+  zh_TW: "Chinese (Taiwan)",
+};
 
 export interface Messages {
   [key: string]: {
@@ -13,15 +21,7 @@ export interface Messages {
 }
 
 export const logger = createLogger({ systemPrefix: "[I18n]" });
-export const messages = observable.map<string /*locale*/, Messages>({}, { deep: false });
-
-export const locales = {
-  en: "English",
-  de: "German",
-  ru: "Russian",
-  sr: "Serbian",
-  zh_TW: "Chinese (Taiwan)",
-};
+export const messages = observable.map<Locale, Messages>({}, { deep: false });
 
 const storage = createStorageHelper("i18n", {
   area: "sync",
@@ -32,7 +32,7 @@ const storage = createStorageHelper("i18n", {
 });
 
 async function loadMessages(lang: Locale) {
-  if (messages.has(lang) || !locales[lang]) {
+  if (messages.has(lang) || !supportedLocales[lang]) {
     return; // skip, already loaded or doesn't exist
   }
   try {
@@ -78,11 +78,11 @@ export function getLocale(): Locale {
 }
 
 export function getSystemLocale(): Locale {
-  const locale = navigator.language;
-  if (locales[locale]) return locale as Locale;
+  const locale = navigator.language as Locale;
+  if (supportedLocales[locale]) return locale;
 
-  const [lang] = locale.split(/_-/); // handle "en-GB", etc.
-  return locale[lang] || "en";
+  const lang = locale.split(/_-/)[0] as Locale; // handle "en-GB", etc.
+  return supportedLocales[lang] ? lang : "en";
 }
 
 export async function detectLanguage(text: string): Promise<chrome.i18n.LanguageDetectionResult> {
@@ -91,6 +91,6 @@ export async function detectLanguage(text: string): Promise<chrome.i18n.Language
 
 export async function i18nInit() {
   await storage.whenReady;
-  await loadMessages("en"); // always preload english as fallback locale
+  await loadMessages("en"); // preload english as fallback locale
   await loadMessages(getLocale()); // load current locale
 }

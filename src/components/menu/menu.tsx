@@ -280,7 +280,7 @@ export interface MenuItemProps extends React.HTMLProps<any> {
 
 export class MenuItem extends React.Component<MenuItemProps> {
   static contextType = MenuContext;
-  public context: Menu;
+  declare context: Menu;
   public elem: HTMLElement;
 
   static defaultProps: Partial<MenuItemProps> = {

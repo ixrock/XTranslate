@@ -1,7 +1,7 @@
 {
   "name": "XTranslate",
   "description": "__MSG_description__",
-  "version": "2.54.1",
+  "version": "2.54.2",
   "manifest_version": 3,
   "default_locale": "en",
   "icons": {
@@ -60,6 +60,7 @@
     "tts",
     "storage",
     "unlimitedStorage",
-    "contextMenus"
+    "contextMenus",
+    "activeTab"
   ]
 }

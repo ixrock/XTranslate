@@ -1,7 +1,7 @@
 // Extension's context menu
 
 import { autorun } from "mobx";
-import { createTab, getActiveTab, getManifest, MenuTranslateVendorPayload, MessageType, sendMessageToTab } from "../extension";
+import { createTab, getActiveTab, getManifest, MessageType, sendMessageToTab, TranslateWithVendorPayload } from "../extension";
 import { settingsStore } from "../components/settings/settings.storage";
 import { getTranslator, getTranslators } from "../vendors";
 import { getMessage, i18nInit } from "../i18n";
@@ -26,11 +26,9 @@ export function initMenus() {
 
   // translate full page in new tab
   translators.forEach(vendor => {
-    if (!vendor.getFullPageTranslationUrl("url://", "")) {
-      return; // skip, doesn't support webpage translation
-    }
+    if (!vendor.getFullPageTranslationUrl("", "")) return; // skip, doesn't supported
     chrome.contextMenus.create({
-      id: [MessageType.MENU_TRANSLATE_FULL_PAGE, vendor.name].join("-"),
+      id: [MessageType.TRANSLATE_FULL_PAGE, vendor.name].join("-"),
       parentId: appName,
       contexts: pageContext,
       title: getMessage("context_menu_translate_full_page", {
@@ -39,6 +37,7 @@ export function initMenus() {
     });
   });
 
+  //--------------------------
   chrome.contextMenus.create({
     id: Math.random().toString(),
     parentId: appName,
@@ -46,10 +45,10 @@ export function initMenus() {
     contexts: selectionContext,
   });
 
-  // translate with current language set from settings
+  // translate with specific vendor
   translators.forEach(vendor => {
     chrome.contextMenus.create({
-      id: [MessageType.MENU_TRANSLATE_WITH_VENDOR, vendor.name].join("-"),
+      id: [MessageType.TRANSLATE_WITH_VENDOR, vendor.name].join("-"),
       parentId: appName,
       contexts: selectionContext,
       title: getMessage("context_menu_translate_selection", {
@@ -62,23 +61,24 @@ export function initMenus() {
 
 // Handle menu clicks from web content pages
 async function onClickMenuItem(info: chrome.contextMenus.OnClickData) {
-  var { selectionText: selectedText, frameUrl, pageUrl = frameUrl } = info;
-  var [type, vendor, from, to] = String(info.menuItemId).split("-");
+  var { selectionText, frameUrl, pageUrl = frameUrl } = info;
+  var [type, vendor] = String(info.menuItemId).split("-");
 
   switch (type) {
-    case MessageType.MENU_TRANSLATE_FULL_PAGE: {
+    case MessageType.TRANSLATE_FULL_PAGE: {
       const { langTo } = settingsStore.data;
       const url = getTranslator(vendor).getFullPageTranslationUrl(pageUrl, langTo);
       if (url) createTab(url);
       break;
     }
 
-    case MessageType.MENU_TRANSLATE_WITH_VENDOR: {
+    case MessageType.TRANSLATE_WITH_VENDOR: {
       const tab = await getActiveTab();
-      sendMessageToTab<MenuTranslateVendorPayload>(tab.id, {
-        type: MessageType.MENU_TRANSLATE_WITH_VENDOR,
+      sendMessageToTab<TranslateWithVendorPayload>(tab.id, {
+        type: MessageType.TRANSLATE_WITH_VENDOR,
         payload: {
-          vendor, selectedText,
+          vendor: vendor,
+          text: selectionText,
         }
       });
       break;

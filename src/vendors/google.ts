@@ -1,6 +1,6 @@
-import GoogleTranslateParams from "./google.json"
-import { createStorageHelper } from "../extension/storage";
-import { ITranslationError, ITranslationResult, Translator } from "./translator";
+import GoogleLanguages from "./google.json"
+import { createStorageHelper, ProxyRequestInit } from "../extension";
+import { isTranslationError, ITranslationResult, TranslateParams, Translator } from "./translator";
 import { createLogger, delay } from "../utils";
 
 class Google extends Translator {
@@ -8,7 +8,6 @@ class Google extends Translator {
   public title = 'Google';
   public apiUrl = 'https://translate.googleapis.com';
   public publicUrl = 'https://translate.google.com';
-  public textMaxLength = 5000;
   public ttsMaxLength = 187;
 
   protected logger = createLogger({ systemPrefix: "[GOOGLE]" });
@@ -18,7 +17,7 @@ class Google extends Translator {
   });
 
   constructor() {
-    super(GoogleTranslateParams);
+    super(GoogleLanguages);
   }
 
   getFullPageTranslationUrl(pageUrl: string, lang: string): string {
@@ -40,23 +39,26 @@ class Google extends Translator {
     });
   }
 
-  getAudioUrl(lang, text) {
+  getAudioUrl(lang: string, text: string) {
     if (text.length > this.ttsMaxLength) return;
     var textEncoded = encodeURIComponent(text);
     var apiClient = this.apiClient.get();
     return this.apiUrl + `/translate_tts?client=${apiClient}&ie=UTF-8&tl=${lang}&q=${textEncoded}`;
   }
 
-  protected async translate(langFrom, langTo, text): Promise<ITranslationResult> {
-    var reqParams: RequestInit = {};
+  async translate(params: TranslateParams): Promise<ITranslationResult> {
+    var { from: langFrom, to: langTo, text } = params;
     var apiClientRefreshed = false;
-
-    var getApiUrl = ({ query = text } = {}) => {
-      return this.apiUrl + '/translate_a/single?' + new URLSearchParams([
+    var requestInit: ProxyRequestInit = {
+      method: "POST",
+      headers: {
+        "Content-type": "application/x-www-form-urlencoded"
+      },
+      body: new URLSearchParams([
         ["client", this.apiClient.get()],
         ["source", "input"],
         ["dj", "1"],
-        ["q", query],
+        ["q", text],
         ["sl", langFrom],
         ["tl", langTo],
         ["hl", langTo], // header in dictionary for part of speech
@@ -65,28 +67,16 @@ class Google extends Translator {
         ["dt", "rm"],   // translit (?)
         ["dt", "rw"],   // related words
         ["dt", "qca"],  // spelling correction
-      ])
-    }
-
-    var url = getApiUrl();
-    if (url.length >= this.maxUrlLength) {
-      url = getApiUrl({ query: "" }); // skip text in url and send with POST body payload
-
-      reqParams.method = 'POST';
-      reqParams.body = 'q=' + text;
-      reqParams.headers = {
-        'Content-type': 'application/x-www-form-urlencoded'
-      };
-    }
-
+      ]).toString(),
+    };
     var request = async (): Promise<ITranslationResult> => {
-      var result: GoogleTranslation = await fetch(url, reqParams).then(this.parseJson);
+      var url = `${this.apiUrl}/translate_a/single`;
+      var result: GoogleTranslation = await this.request({ url, requestInit });
       var { src, ld_result, sentences, dict, spell } = result;
       var detectedLang = src || ld_result ? ld_result.srclangs[0] : "";
       var translation: ITranslationResult = {
         langDetected: detectedLang,
         translation: sentences.map(sentence => sentence.trans).join(''),
-        dictionary: []
       };
       if (spell) {
         translation.spellCorrection = spell.spell_res;
@@ -111,11 +101,13 @@ class Google extends Translator {
     try {
       return await request(); // waiting for response to handle error locally
     } catch (error) {
-      var { statusCode } = error as ITranslationError;
-      if (statusCode === 503 && !apiClientRefreshed) {
-        apiClientRefreshed = true;
-        return this.refreshApiClient().then(request);
+      if (isTranslationError(error)) {
+        if (error.statusCode === 503 && !apiClientRefreshed) {
+          apiClientRefreshed = true;
+          return this.refreshApiClient().then(request);
+        }
       }
+      if (error) this.logger.error(error);
       throw error;
     }
   }
@@ -187,4 +179,4 @@ interface GoogleTranslation {
 }
 
 const google = new Google();
-Translator.register(google.name, google);
+Translator.vendors.set(google.name, google);

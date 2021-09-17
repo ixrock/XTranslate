@@ -2,7 +2,7 @@ import "./slider.scss";
 import * as React from 'react'
 import { cssNames } from "../../utils";
 
-type Props = React.HTMLProps<any> & {
+export interface Props extends Omit<React.HTMLProps<HTMLInputElement>, "onChange"> {
   value?: number;
   min?: number;
   max?: number;
