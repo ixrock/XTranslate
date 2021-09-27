@@ -25,12 +25,14 @@ export class StorageHelper<T> {
   protected logger = createLogger({ systemPrefix: `[StorageHelper](${this.key})` });
   protected storage: StorageAdapter<T> = this.options.storage;
   protected data = observable.box<T>();
-
   @observable initialized = false;
   @observable saving = false;
   @observable loading = false;
   @observable loaded = false;
-  @observable.ref unbindAutoSync?: IReactionDisposer;
+
+  protected disposers = {
+    unbindAutoSync: null as IReactionDisposer,
+  };
 
   get whenReady() {
     return when(() => this.initialized && this.loaded);
@@ -65,8 +67,8 @@ export class StorageHelper<T> {
     Object.assign(syncOptions, opts);
 
     const bindAutoSync = () => {
-      this.unbindAutoSync?.(); // reset previous
-      this.unbindAutoSync = reaction(() => this.toJS(), state => this.save(state), syncOptions);
+      this.disposers.unbindAutoSync?.(); // reset previous
+      this.disposers.unbindAutoSync = reaction(() => this.toJS(), state => this.save(state), syncOptions);
     };
 
     if (syncOptions.delay > 0) {
@@ -139,7 +141,7 @@ export class StorageHelper<T> {
 
   set(value: T, { silent = false } = {}) {
     if (silent && this.options.autoSync) {
-      this.unbindAutoSync();
+      this.disposers?.unbindAutoSync();
       this.data.set(value);
       this.bindAutoSync();
     } else {

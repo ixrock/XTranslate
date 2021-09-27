@@ -17,9 +17,15 @@ export interface Message<Payload = any /*json-serializable*/> {
   payload?: Payload;
 }
 
+export const enum ProxyResponseType {
+  JSON = "json",
+  TEXT = "text",
+  DATA_URI = "data-uri", // https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/Data_URIs
+}
+
 export interface ProxyRequestPayload {
   url: string;
-  responseType?: "json" /*default*/ | "text" | "data-uri";
+  responseType?: ProxyResponseType;
   requestInit?: ProxyRequestInit;
 }
 

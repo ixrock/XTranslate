@@ -5,14 +5,14 @@ import "./contextMenu"
 import { isPlainObject } from "lodash"
 import { isProduction } from "../common-vars";
 import { blobToBase64, createLogger, parseJson } from "../utils";
-import { Message, MessageType, onInstall, onMessageType, openOptionsPage, ProxyRequestPayload, ProxyRequestResponse, SaveToHistoryPayload } from '../extension'
+import { Message, MessageType, onInstall, onMessageType, openOptionsPage, ProxyRequestPayload, ProxyRequestResponse, ProxyResponseType, SaveToHistoryPayload } from '../extension'
 import { rateLastTimestamp } from "../components/app/app-rate.storage";
 import { importHistory, loadHistory, toStorageItem } from "../components/user-history/history.storage";
 
-// FIXME: text-to-speech
+// FIXME: material-icons fuckup page issue (#25)
+// FIXME: bing borken again
 // TODO: deepl: allow to enter own auth-key
-// TODO: calculate allowed text buffer for translation input in bytes
-// TODO: allow to use custom fonts
+// TODO: allow to use custom fonts (#32)
 // TODO: add multi language/vendor selector
 
 const logger = createLogger({ systemPrefix: "[BACKGROUND]" });
@@ -40,18 +40,17 @@ onMessageType<ProxyRequestPayload, ProxyRequestResponse>(MessageType.PROXY_REQUE
     logger.info(`proxy request`, message.payload);
     const httpResponse = await fetch(url, requestInit);
     switch (responseType) {
-      case "text":
-        proxyResult.data = await httpResponse.text();
-        break;
-
-      case "json":
+      case ProxyResponseType.JSON:
         proxyResult.data = await parseJson(httpResponse);
         break;
 
-      case "data-uri": // https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/Data_URIs
+      case ProxyResponseType.TEXT:
+        proxyResult.data = await httpResponse.text();
+        break;
+
+      case ProxyResponseType.DATA_URI:
         const binaryData = await httpResponse.blob();
-        const base64Data = await blobToBase64(binaryData);
-        proxyResult.data = `data:${binaryData.type};base64,${base64Data}`;
+        proxyResult.data = await blobToBase64(binaryData);
         break;
     }
   } catch (error) {

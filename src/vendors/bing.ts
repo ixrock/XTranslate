@@ -1,6 +1,6 @@
 import BingLanguages from "./bing.json"
 import { groupBy } from "lodash";
-import { createStorageHelper, ProxyRequestInit } from "../extension";
+import { createStorageHelper, ProxyRequestInit, ProxyResponseType } from "../extension";
 import { isTranslationError, ITranslationError, ITranslationResult, TranslateParams, Translator } from "./translator";
 import { createLogger } from "../utils";
 
@@ -30,7 +30,7 @@ class Bing extends Translator {
     try {
       const servicePageText = await this.request({
         url: this.publicUrl,
-        responseType: "text",
+        responseType: ProxyResponseType.TEXT,
         requestInit: {},
       });
       const matchedParams = /params_RichTranslateHelper\s*=\s*\[(\d+),"(.*?)",.*?\]/.exec(servicePageText);

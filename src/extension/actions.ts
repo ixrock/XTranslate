@@ -1,5 +1,5 @@
 import type { ITranslationResult } from "../vendors";
-import { MessageId, MessageType, ProxyRequestPayload, ProxyRequestResponse, SaveToHistoryPayload } from "./messages";
+import { MessageId, MessageType, ProxyRequestPayload, ProxyRequestResponse, ProxyResponseType, SaveToHistoryPayload } from "./messages";
 import { getActiveTab, promisifyMessage } from "./index";
 
 export async function getSelectedText() {
@@ -15,7 +15,7 @@ export async function proxyRequest(payload: ProxyRequestPayload, messageId?: Mes
     id: messageId,
     type: MessageType.PROXY_REQUEST,
     payload: {
-      responseType: "json",
+      responseType: ProxyResponseType.JSON, /*default*/
       ...payload,
     },
   });

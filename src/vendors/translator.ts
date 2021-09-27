@@ -2,8 +2,8 @@
 
 import { observable } from "mobx";
 import { isProduction } from "../common-vars";
-import { autoBind, JsonResponseError } from "../utils";
-import { MessageId, ProxyRequestPayload } from "../extension";
+import { autoBind, createLogger, JsonResponseError } from "../utils";
+import { MessageId, ProxyRequestPayload, ProxyResponseType } from "../extension";
 import { proxyRequest, saveToHistory } from "../extension/actions";
 import { settingsStore } from "../components/settings/settings.storage";
 
@@ -24,6 +24,7 @@ export interface TranslatePayload extends TranslateParams {
 
 export abstract class Translator {
   static readonly vendors = observable.map<string, Translator>();
+  static readonly logger = createLogger({ systemPrefix: "[TRANSLATOR]" });
 
   abstract name: string; // code name, e.g. "google"
   abstract title: string; // human readable name, e.g. "Google"
@@ -33,7 +34,6 @@ export abstract class Translator {
   public langFrom: Record<string, string> = {};
   public langTo: Record<string, string> = {};
   public audio: HTMLAudioElement;
-  public reqMaxSizeInBytes = 1024 * 10/*Kb*/; // TODO: implement me
 
   constructor({ from: langFrom, to: langTo }: TranslatorLanguages) {
     autoBind(this);
@@ -80,7 +80,7 @@ export abstract class Translator {
   static latestRequestId: MessageId;
 
   protected async request(payload: ProxyRequestPayload): Promise<any> {
-    const messageId = Translator.latestRequestId = Math.random() * Date.now();
+    const messageId = Translator.latestRequestId = Math.random() * Date.now(); // generating message-id
     const response = await proxyRequest(payload, messageId);
     const isLatest = Translator.latestRequestId === response.messageId;
 
@@ -104,7 +104,7 @@ export abstract class Translator {
     return null; // should be overridden in sub-classes if supported
   }
 
-  // TODO
+  // FIXME
   private invertLangDirection(result: ITranslationResult) {
     console.log('TODO: swap languages check', result);
     // try {
@@ -127,27 +127,39 @@ export abstract class Translator {
   };
 
   async speak(lang: string, text: string) {
-    this.stopSpeaking();
-    console.log(`TODO: tts play, lang: ${lang}`, text)
-    // var audioUrl = this.getAudioUrl(lang, text);
-    // if (settingsStore.data.useChromeTtsEngine || !audioUrl) {
-    //   if (lang === "en") lang = "en-US";
-    //   chrome.tts.speak(text, { lang, rate: 1.0, });
-    // } else if (!this.audio) {
-    //   this.audio = document.createElement('audio');
-    //   this.audio.autoplay = true;
-    //   this.audio.src = audioUrl;
-    // } else {
-    //   await this.audio.play();
-    // }
+    this.stopSpeaking(); // stop previous if any
+
+    const audioUrl = this.getAudioUrl(lang, text);
+    const useChromeTtsEngine = Boolean(settingsStore.data.useChromeTtsEngine || !audioUrl);
+
+    Translator.logger.info(`[TTS]: speaking in lang="${lang}" text="${text}"`, {
+      useChromeTtsEngine,
+    });
+
+    if (useChromeTtsEngine) {
+      if (lang === "en") lang = "en-US";
+      chrome.tts.speak(text, { lang, rate: 1.0, });
+    } else if (audioUrl) {
+      try {
+        this.audio = document.createElement("audio");
+        this.audio.src = await this.request({
+          url: audioUrl,
+          responseType: ProxyResponseType.DATA_URI,
+          requestInit: {
+            credentials: "include",
+          },
+        });
+        await this.audio.play();
+      } catch (error) {
+        Translator.logger.error(`[TTS]: failed to play: ${error}`, { lang, text });
+      }
+    }
   }
 
   stopSpeaking() {
-    console.log('TODO: tts stop')
-    // chrome.tts && chrome.tts.stop();
-    // if (!this.audio) return;
-    // this.audio.pause();
-    // URL.revokeObjectURL(this.audio.src);
+    Translator.logger.info(`[TTS]: stop speaking`);
+    chrome.tts?.stop();
+    this.audio?.pause();
   }
 
   getAudioUrl(lang: string, text: string): string {
