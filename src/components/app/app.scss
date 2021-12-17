@@ -46,6 +46,10 @@ a {
   }
 }
 
+ol, ul {
+  list-style-position: inside;
+}
+
 hr {
   height: 1px;
   background: $border-color;

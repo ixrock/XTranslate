@@ -1,5 +1,6 @@
 // Base class for all translation vendors
 
+import type React from "react";
 import { observable } from "mobx";
 import { isProduction } from "../common-vars";
 import { autoBind, createLogger, JsonResponseError } from "../utils";
@@ -30,7 +31,6 @@ export abstract class Translator {
   abstract title: string; // human readable name, e.g. "Google"
   abstract publicUrl: string; // public translation service page
   abstract apiUrl: string; // service api url
-  public infoKey?: string; // some info, e.g. monthly limits (shown in the settings)
   public langFrom: Record<string, string> = {};
   public langTo: Record<string, string> = {};
   public audio: HTMLAudioElement;
@@ -62,6 +62,10 @@ export abstract class Translator {
   }
 
   abstract translate(params: TranslateParams): Promise<ITranslationResult>;
+
+  renderSettingsListWidget(): React.ReactNode {
+    return null;
+  }
 
   protected normalize(result: ITranslationResult, initParams: TranslateParams): ITranslationResult {
     const { from: langFrom, to: langTo, text: originalText } = initParams;

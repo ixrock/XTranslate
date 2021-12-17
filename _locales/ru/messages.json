@@ -108,5 +108,6 @@
   "rate_app_info2"                   : {"message": "Это поможет другим пользователям быстрее найти расширение в магазине хром."},
   "rate_app_button"                  : {"message": "Оценить в магазине расширений"},
   "rate_app_button_later"            : {"message": "Напомнить позже"},
-  "deepl_free_subscription_limits"   : {"message": "Лимит бесплатной подписки: до 500 000 символов/мес."}
+  "deepl_get_own_key_info"           : {"message": "Войдите в аккаунт на www.deepl.com и получите личный ключ доступа к данным DeepL API."},
+  "deepl_insert_auth_key"            : {"message": "Добавить личный ключ для DeepL API."}
 }

@@ -69,9 +69,11 @@ export class Settings extends React.Component {
         </div>
 
         <p className="sub-title">{getMessage("setting_title_translator_service")}</p>
-        <div className="translator-settings flex">
+        <div className="translator-settings flex gaps column">
+          <SelectLanguage/>
           <RadioGroup className="vendors flex gaps column" value={settings.vendor} onChange={v => settingsStore.setVendor(v)}>
-            {getTranslators().map(({ name, title, publicUrl, infoKey }) => {
+            {getTranslators().map(vendor => {
+              const { name, title, publicUrl } = vendor;
               var domain = publicUrl.match(/https?:\/\/(.*?)(?:\/\w*|$)/i)[1];
               return (
                 <div key={name} className="vendor flex gaps">
@@ -79,18 +81,13 @@ export class Settings extends React.Component {
                   <a href={publicUrl} target="_blank" tabIndex={-1}>
                     {domain.split('.').slice(-2).join('.')}
                   </a>
-                  {infoKey && (
-                    <Icon
-                      small material="info_outline"
-                      className="vendor-info"
-                      tooltip={getMessage(infoKey)}
-                    />
-                  )}
+                  <div className="vendor-settings-widget flex gaps align-center">
+                    {vendor?.renderSettingsListWidget()}
+                  </div>
                 </div>
               )
             })}
           </RadioGroup>
-          <SelectLanguage/>
         </div>
 
         <p className="sub-title">{getMessage("setting_title_popup")}</p>

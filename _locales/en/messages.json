@@ -108,5 +108,6 @@
   "rate_app_info2"                   : {"message": "It will help other users to find extension and spread the goodies."},
   "rate_app_button"                  : {"message": "Rate in extensions store"},
   "rate_app_button_later"            : {"message": "Remind me later"},
-  "deepl_free_subscription_limits"   : {"message": "Free subscription limits: up to 500 000 chars/month"}
+  "deepl_get_own_key_info"           : {"message": "Register at www.deepl.com and get own free authentication key for DeepL API."},
+  "deepl_insert_auth_key"            : {"message": "Setup auth-key for DeepL API."}
 }

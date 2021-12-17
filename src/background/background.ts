@@ -9,11 +9,6 @@ import { Message, MessageType, onInstall, onMessageType, openOptionsPage, ProxyR
 import { rateLastTimestamp } from "../components/app/app-rate.storage";
 import { importHistory, loadHistory, toStorageItem } from "../components/user-history/history.storage";
 
-// TODO: deepl: allow to enter own auth-key
-// FIXME: bing borken again
-// TODO: allow to use custom fonts (#32)
-// TODO: add multi language/vendor selector
-
 const logger = createLogger({ systemPrefix: "[BACKGROUND]" });
 
 onInstall((reason) => {
