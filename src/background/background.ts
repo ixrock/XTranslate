@@ -5,7 +5,7 @@ import "./contextMenu"
 import { isPlainObject } from "lodash"
 import { isProduction } from "../common-vars";
 import { blobToBase64, createLogger, parseJson } from "../utils";
-import { Message, MessageType, onInstall, onMessageType, openOptionsPage, ProxyRequestPayload, ProxyRequestResponse, ProxyResponseType, SaveToHistoryPayload } from '../extension'
+import { ChromeTtsPayload, Message, MessageType, onInstall, onMessageType, openOptionsPage, ProxyRequestPayload, ProxyRequestResponse, ProxyResponseType, SaveToHistoryPayload } from '../extension'
 import { rateLastTimestamp } from "../components/app/app-rate.storage";
 import { importHistory, loadHistory, toStorageItem } from "../components/user-history/history.storage";
 
@@ -52,7 +52,9 @@ onMessageType<ProxyRequestPayload, ProxyRequestResponse>(MessageType.PROXY_REQUE
     proxyResult.error = isPlainObject(error) ? error : { message: String(error) };
   }
 
-  // response api delay simulation
+  /**
+   * Response api delay simulation
+   */
   // const delayMs = Math.round(Math.random() * 2500) + 2000 /*min-delay: 2s*/;
   // console.log(`DELAY: ${delayMs} before response for result`, proxyResult);
   // await delay(delayMs);
@@ -60,7 +62,7 @@ onMessageType<ProxyRequestPayload, ProxyRequestResponse>(MessageType.PROXY_REQUE
 });
 
 /**
- * Saving translation result to history
+ * Saving history of translations
  */
 onMessageType(MessageType.SAVE_TO_HISTORY, async (message: Message<SaveToHistoryPayload>) => {
   try {
@@ -71,5 +73,17 @@ onMessageType(MessageType.SAVE_TO_HISTORY, async (message: Message<SaveToHistory
   } catch (error) {
     logger.error(`saving item to history has failed: ${error}`, message);
   }
+});
+
+/**
+ * Handling chrome.tts apis for user-script pages and options (app) page
+ */
+onMessageType(MessageType.CHROME_TTS_PLAY, async (message: Message<ChromeTtsPayload>) => {
+  const { text, lang, rate = 1.0 } = message.payload;
+  chrome.tts.speak(text, { lang, rate, });
+});
+
+onMessageType(MessageType.CHROME_TTS_STOP, async () => {
+  chrome.tts.stop();
 });
 

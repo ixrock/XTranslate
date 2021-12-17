@@ -7,6 +7,8 @@ export const enum MessageType {
   TRANSLATE_WITH_VENDOR = "TRANSLATE_WITH_VENDOR",
   TRANSLATE_FULL_PAGE = "TRANSLATE_FULL_PAGE",
   SAVE_TO_HISTORY = "SAVE_TO_HISTORY",
+  CHROME_TTS_PLAY = "TEXT_TO_SPEECH_PLAY",
+  CHROME_TTS_STOP = "TEXT_TO_SPEECH_STOP",
 }
 
 export type MessageId = string | number;
@@ -49,4 +51,10 @@ export interface TranslateWithVendorPayload {
 
 export interface SaveToHistoryPayload {
   translation: ITranslationResult;
+}
+
+export interface ChromeTtsPayload {
+  text: string;
+  lang: string;
+  rate?: number; // default: 1.0
 }

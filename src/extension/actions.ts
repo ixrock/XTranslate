@@ -1,6 +1,6 @@
 import type { ITranslationResult } from "../vendors";
-import { MessageId, MessageType, ProxyRequestPayload, ProxyRequestResponse, ProxyResponseType, SaveToHistoryPayload } from "./messages";
-import { getActiveTab, promisifyMessage } from "./index";
+import { ChromeTtsPayload, MessageId, MessageType, ProxyRequestPayload, ProxyRequestResponse, ProxyResponseType, SaveToHistoryPayload } from "./messages";
+import { getActiveTab, promisifyMessage, sendMessage } from "./index";
 
 export async function getSelectedText() {
   var activeTab = await getActiveTab();
@@ -27,5 +27,18 @@ export function saveToHistory(translation: ITranslationResult) {
     payload: {
       translation,
     },
+  });
+}
+
+export function chromeTtsPlay<D extends ChromeTtsPayload>(data: D) {
+  sendMessage<D>({
+    type: MessageType.CHROME_TTS_PLAY,
+    payload: data,
+  });
+}
+
+export function chromeTtsStop() {
+  sendMessage({
+    type: MessageType.CHROME_TTS_STOP,
   });
 }

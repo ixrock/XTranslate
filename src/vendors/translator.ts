@@ -5,7 +5,7 @@ import { observable } from "mobx";
 import { isProduction } from "../common-vars";
 import { autoBind, createLogger, JsonResponseError } from "../utils";
 import { MessageId, ProxyRequestPayload, ProxyResponseType } from "../extension";
-import { proxyRequest, saveToHistory } from "../extension/actions";
+import { chromeTtsPlay, chromeTtsStop, proxyRequest, saveToHistory } from "../extension/actions";
 import { settingsStore } from "../components/settings/settings.storage";
 
 export interface TranslatorLanguages {
@@ -142,7 +142,7 @@ export abstract class Translator {
 
     if (useChromeTtsEngine) {
       if (lang === "en") lang = "en-US";
-      chrome.tts.speak(text, { lang, rate: 1.0, });
+      chromeTtsPlay({ lang, text });
     } else if (audioUrl) {
       try {
         this.audio = document.createElement("audio");
@@ -160,10 +160,15 @@ export abstract class Translator {
     }
   }
 
-  stopSpeaking() {
+  static stopSpeaking() {
     Translator.logger.info(`[TTS]: stop speaking`);
-    chrome.tts?.stop();
+    getTranslators().forEach(vendor => vendor.audio?.pause());
+    chromeTtsStop();
+  }
+
+  stopSpeaking() {
     this.audio?.pause();
+    Translator.stopSpeaking();
   }
 
   getAudioUrl(lang: string, text: string): string {
