@@ -48,7 +48,7 @@ export class ThemeStore {
   }
 
   public iconsFont: IThemeFont = {
-    familyName: "Material Icons",
+    familyName: "Material Icons (XTranslate)", // must be the same as defined for <Icon material="">, see: icon.scss
     fileName: "MaterialIcons-Regular.ttf",
   };
 
