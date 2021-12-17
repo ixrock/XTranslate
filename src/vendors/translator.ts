@@ -44,24 +44,39 @@ export abstract class Translator {
 
     this.translate = new Proxy(this.translate, {
       apply: async (translate, callContext, [params]: [TranslateParams]): Promise<ITranslationResult> => {
-        const result: ITranslationResult = await Reflect.apply(translate, this, [params]);
-        const translation = this.normalize(result, params);
-        const { langDetected, originalText } = translation;
-
-        // handle side-effects
-        if (settingsStore.data.autoPlayText) {
-          this.speak(langDetected, originalText);
-        }
-        if (settingsStore.data.historyEnabled) {
-          saveToHistory(translation);
-        }
-
-        return translation;
+        return this.#handleTranslation(translate, params);
       }
     });
   }
 
   abstract translate(params: TranslateParams): Promise<ITranslationResult>;
+
+  async #handleTranslation(
+    originalTranslate: (params: TranslateParams) => Promise<ITranslationResult>,
+    params: TranslateParams,
+  ): Promise<ITranslationResult> {
+    const getResult = async (customParams: Partial<TranslateParams> = {}) => {
+      const customizedParams = { ...params, ...customParams };
+      const result: ITranslationResult = await Reflect.apply(originalTranslate, this, [customizedParams]);
+      return this.normalize(result, customizedParams);
+    };
+
+    // getting translation
+    let translation = await getResult();
+    const swapLangParams = this.swapLangCheck(translation);
+    if (swapLangParams) {
+      translation = await getResult(swapLangParams);
+    }
+
+    // handle side-effects
+    const { langDetected, originalText } = translation;
+    const { autoPlayText, historyEnabled } = settingsStore.data;
+
+    if (autoPlayText) this.speak(langDetected, originalText);
+    if (historyEnabled) saveToHistory(translation);
+
+    return translation;
+  }
 
   renderSettingsListWidget(): React.ReactNode {
     return null;
@@ -69,7 +84,9 @@ export abstract class Translator {
 
   protected normalize(result: ITranslationResult, initParams: TranslateParams): ITranslationResult {
     const { from: langFrom, to: langTo, text: originalText } = initParams;
-    const langDetected = result.langDetected ?? langFrom;
+    const langDetected = result.langDetected ?? (
+      langFrom !== "auto" ? langFrom : null
+    );
     return {
       ...result,
       vendor: this.name,
@@ -80,6 +97,18 @@ export abstract class Translator {
       originalText,
     };
   }
+
+  protected swapLangCheck(normalizedResult: ITranslationResult): Partial<TranslateParams> | undefined {
+    var { langTo, langFrom, langDetected, originalText, translation } = normalizedResult;
+    var sameTextResult = originalText.trim().toLowerCase() === translation.toLowerCase().trim();
+
+    if (sameTextResult && langDetected === langTo) {
+      return {
+        from: langDetected,
+        to: langFrom !== "auto" ? langFrom : "en",
+      };
+    }
+  };
 
   static latestRequestId: MessageId;
 
@@ -107,28 +136,6 @@ export abstract class Translator {
   getFullPageTranslationUrl(pageUrl: string, lang: string): string {
     return null; // should be overridden in sub-classes if supported
   }
-
-  // FIXME
-  private invertLangDirection(result: ITranslationResult) {
-    console.log('TODO: swap languages check', result);
-    // try {
-    //   var { langTo, langFrom, langDetected, originalText, translation } = result;
-    //   var autoDetect = langFrom === "auto";
-    //   var sameText = originalText.trim().toLowerCase() === translation.toLowerCase().trim();
-    //   if (!this.autoSwapUsed && sameText) {
-    //     this.autoSwapUsed = true;
-    //     var navLang = navigator.language.split('-')[0];
-    //     if (langDetected === langTo) langTo = autoDetect ? navLang : langFrom;
-    //     langFrom = langDetected || navLang;
-    //     return this.getTranslation(langFrom, langTo, originalText).finally(() => {
-    //       this.autoSwapUsed = false;
-    //     });
-    //   }
-    // } catch (err) {
-    //   console.log("auto-swap failed", this.name, { result, err });
-    // }
-    return result;
-  };
 
   async speak(lang: string, text: string) {
     this.stopSpeaking(); // stop previous if any
