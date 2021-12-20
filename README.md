@@ -48,5 +48,6 @@ Available translation vendors:
 * [Google](http://translate.google.com/)
 * [Yandex](http://translate.yandex.com/)
 * [Bing](http://bing.com/translator/)
+* [DeepL](https://www.deepl.com/)
 
 Powered by typescript, react, mobx, webpack, sass, lodash and some others. Made with ♥
