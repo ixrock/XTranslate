@@ -101,7 +101,6 @@ export class ThemeStore {
       const font = new FontFace(familyName, `url(${fontUrl})`);
       font.display = "swap"; // https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display
       await font.load();
-      // @ts-ignore - api is missing from *.d.ts specs
       document.fonts.add(font);
     } catch (error) {
       this.logger.error(`loading font "${familyName}" from file "${fileName}" has failed`);

@@ -8,7 +8,8 @@ import { createLogger } from "./createLogger";
 export interface StorageHelperOptions<T> {
   defaultValue?: T;
   autoLoad?: boolean; // preload data immediately, default: true
-  autoSync?: boolean | IReactionOptions; // auto-save changes to remote storage, default: true
+  autoSync?: boolean; // auto-save changes to remote storage, default: true
+  autoSyncDelay?: number; // delay for reaction to save data to external storage
   migrations?: StorageMigrationCallback<T>[]; // handle model upgrades during app's lifetime
   storage: StorageAdapter<T>;
 }
@@ -61,17 +62,19 @@ export class StorageHelper<T> {
     }
   }
 
-  public bindAutoSync(opts: IReactionOptions = {}) {
-    const { autoSync } = this.options;
-    const syncOptions: IReactionOptions = typeof autoSync === "boolean" ? {} : autoSync;
-    Object.assign(syncOptions, opts);
+  public bindAutoSync() {
+    const { autoSyncDelay } = this.options;
 
     const bindAutoSync = () => {
       this.disposers.unbindAutoSync?.(); // reset previous
-      this.disposers.unbindAutoSync = reaction(() => this.toJS(), state => this.save(state), syncOptions);
+      this.disposers.unbindAutoSync = reaction(
+        () => this.toJS(),
+        state => this.save(state),
+        autoSyncDelay ? { delay: autoSyncDelay } : {},
+      );
     };
 
-    if (syncOptions.delay > 0) {
+    if (autoSyncDelay > 0) {
       this.whenReady.then(bindAutoSync);
     } else {
       bindAutoSync();

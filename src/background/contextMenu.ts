@@ -5,13 +5,14 @@ import { createTab, getActiveTab, getManifest, MessageType, sendMessageToTab, Tr
 import { settingsStore } from "../components/settings/settings.storage";
 import { getTranslator, getTranslators } from "../vendors";
 import { getMessage, i18nInit } from "../i18n";
+import ContextType = chrome.contextMenus.ContextType;
 
 i18nInit().then(() => autorun(initMenus));
 
 export function initMenus() {
   var appName = getManifest().name;
-  var selectionContext = ['selection'];
-  var pageContext = [...selectionContext, 'page'];
+  var selectionContext: ContextType[] = ['selection'];
+  var pageContext: ContextType[] = [...selectionContext, 'page'];
   var translators = getTranslators();
 
   chrome.contextMenus.removeAll(); // clean up before reassign

@@ -10,7 +10,7 @@ export function createStorageHelper<T>(key: string, options: ChromeStorageHelper
   const {
     area = "local",
     autoLoad = true,
-    autoSync = { delay: 250 },
+    autoSyncDelay = 250,
     defaultValue,
     migrations,
   } = options;
@@ -25,7 +25,7 @@ export function createStorageHelper<T>(key: string, options: ChromeStorageHelper
 
   const storageHelper = new StorageHelper<T>(key, {
     autoLoad,
-    autoSync,
+    autoSyncDelay,
     defaultValue,
     migrations,
     storage: {
