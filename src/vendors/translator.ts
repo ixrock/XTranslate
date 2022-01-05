@@ -4,8 +4,8 @@ import type React from "react";
 import { observable } from "mobx";
 import { isProduction } from "../common-vars";
 import { autoBind, createLogger, JsonResponseError } from "../utils";
-import { MessageId, ProxyRequestPayload, ProxyResponseType } from "../extension";
-import { chromeTtsPlay, chromeTtsStop, proxyRequest, saveToHistory } from "../extension/actions";
+import { MessageId, ProxyRequestPayload, ProxyResponseType } from "../extension/messages";
+import { chromeTtsPlay, chromeTtsStop, getTranslationFromHistory, proxyRequest, saveToHistory } from "../extension/actions";
 import { settingsStore } from "../components/settings/settings.storage";
 
 export interface TranslatorLanguages {
@@ -55,20 +55,41 @@ export abstract class Translator {
     originalTranslate: (params: TranslateParams) => Promise<ITranslationResult>,
     params: TranslateParams,
   ): Promise<ITranslationResult> {
-    const getResult = async (customParams: Partial<TranslateParams> = {}) => {
-      const customizedParams = { ...params, ...customParams };
-      const result: ITranslationResult = await Reflect.apply(originalTranslate, this, [customizedParams]);
-      return this.normalize(result, customizedParams);
-    };
-
-    // getting translation
-    let translation = await getResult();
-    const swapLangParams = this.swapLangCheck(translation);
-    if (swapLangParams) {
-      translation = await getResult(swapLangParams);
+    let translation = await this.searchResultInHistory({ vendor: this.name, ...params });
+    if (translation) {
+      Translator.logger.info(`serving result from history`, params);
     }
 
-    // handle side-effects
+    if (!translation) {
+      const getResult = async (customParams: Partial<TranslateParams> = {}) => {
+        const customizedParams = { ...params, ...customParams };
+        const result: ITranslationResult = await Reflect.apply(originalTranslate, this, [customizedParams]);
+        return this.normalize(result, customizedParams);
+      };
+
+      // getting translation via network
+      translation = await getResult();
+      const swapLangParams = this.swapLangCheck(translation);
+      if (swapLangParams) {
+        translation = await getResult(swapLangParams);
+      }
+    }
+
+    return this.handleSideEffects(translation);
+  }
+
+  protected async searchResultInHistory(params: TranslatePayload): Promise<ITranslationResult | undefined> {
+    if (params.from === "auto") {
+      return; // always get fresh result for auto-detecting languages
+    }
+
+    const cachedResult = await getTranslationFromHistory(params);
+    if (cachedResult) {
+      return this.normalize(cachedResult, params);
+    }
+  }
+
+  protected handleSideEffects(translation: ITranslationResult): ITranslationResult {
     const { langDetected, originalText } = translation;
     const { autoPlayText, historyEnabled } = settingsStore.data;
 
@@ -76,10 +97,6 @@ export abstract class Translator {
     if (historyEnabled) saveToHistory(translation);
 
     return translation;
-  }
-
-  renderSettingsListWidget(): React.ReactNode {
-    return null;
   }
 
   protected normalize(result: ITranslationResult, initParams: TranslateParams): ITranslationResult {
@@ -185,6 +202,10 @@ export abstract class Translator {
   canTranslate(langFrom: string, langTo: string) {
     return !!(this.langFrom[langFrom] && this.langTo[langTo]);
   }
+
+  renderSettingsListWidget(): React.ReactNode {
+    return null;
+  }
 }
 
 export interface ITranslationResult {
@@ -209,9 +230,9 @@ export interface ITranslationDictionary {
 }
 
 export interface ITranslationDictionaryMeaning {
-  word: string
-  translation: string[]
-  examples?: string[][]
+  word: string // translation
+  translation: string[] // similar words in source lang
+  examples?: string[][] // examples in source lang
 }
 
 export interface ITranslationError extends JsonResponseError {

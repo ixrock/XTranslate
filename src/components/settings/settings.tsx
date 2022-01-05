@@ -82,7 +82,7 @@ export class Settings extends React.Component {
                     {domain.split('.').slice(-2).join('.')}
                   </a>
                   <div className="vendor-settings-widget flex gaps align-center">
-                    {vendor?.renderSettingsListWidget()}
+                    {vendor.renderSettingsListWidget()}
                   </div>
                 </div>
               )

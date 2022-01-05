@@ -7,7 +7,11 @@ import { isProduction } from "../common-vars";
 import { blobToBase64, createLogger, parseJson } from "../utils";
 import { ChromeTtsPayload, Message, MessageType, onInstall, onMessageType, openOptionsPage, ProxyRequestPayload, ProxyRequestResponse, ProxyResponseType, SaveToHistoryPayload } from '../extension'
 import { rateLastTimestamp } from "../components/app/app-rate.storage";
-import { importHistory, loadHistory, toStorageItem } from "../components/user-history/history.storage";
+import { generateId, historyStorage, IHistoryStorageItem, importHistory, loadHistory, toStorageItem, toTranslationResult } from "../components/user-history/history.storage";
+import type { TranslatePayload } from "../vendors/translator";
+
+// TODO: provide fallback-translation on error from another available vendor on the-fly/transparent
+// TODO: allow to sort vendors in the settings (via D&D), this will affect actions for next/prev/fallback translator
 
 const logger = createLogger({ systemPrefix: "[BACKGROUND]" });
 
@@ -72,6 +76,21 @@ onMessageType(MessageType.SAVE_TO_HISTORY, async (message: Message<SaveToHistory
     importHistory(storageItem);
   } catch (error) {
     logger.error(`saving item to history has failed: ${error}`, message);
+  }
+});
+
+/**
+ * Handling saved translations from history without http-traffic
+ */
+onMessageType(MessageType.GET_FROM_HISTORY, async (message: Message<TranslatePayload>, sender, sendResponse) => {
+  try {
+    await loadHistory(); // preload once
+    const { text, from, to, vendor } = message.payload;
+    const translationId = generateId(text, from, to);
+    const storageItem: IHistoryStorageItem = historyStorage.toJS().translations[translationId]?.[vendor];
+    sendResponse(toTranslationResult(storageItem));
+  } catch (error) {
+    logger.error(`lookup translation result in history failed: ${error}`, message);
   }
 });
 

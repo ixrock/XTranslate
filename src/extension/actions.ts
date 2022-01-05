@@ -1,4 +1,4 @@
-import type { ITranslationResult } from "../vendors";
+import type { ITranslationResult, TranslatePayload } from "../vendors";
 import { ChromeTtsPayload, MessageId, MessageType, ProxyRequestPayload, ProxyRequestResponse, ProxyResponseType, SaveToHistoryPayload } from "./messages";
 import { getActiveTab, promisifyMessage, sendMessage } from "./index";
 
@@ -27,6 +27,13 @@ export function saveToHistory(translation: ITranslationResult) {
     payload: {
       translation,
     },
+  });
+}
+
+export function getTranslationFromHistory(payload: TranslatePayload) {
+  return promisifyMessage<TranslatePayload, ITranslationResult | undefined>({
+    type: MessageType.GET_FROM_HISTORY,
+    payload,
   });
 }
 

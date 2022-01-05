@@ -89,6 +89,37 @@ export async function clearHistoryItem(id: IHistoryItemId, vendor?: string) {
   }
 }
 
+export function toTranslationResult(data: IHistoryStorageItem): ITranslationResult {
+  if (!data) {
+    return;
+  }
+  const {
+    translation, transcription, dictionary, vendor,
+    text: originalText,
+    from: langFrom,
+    to: langTo,
+  } = toHistoryItem(data);
+
+  return {
+    vendor,
+    originalText,
+    translation,
+    transcription,
+    langFrom,
+    langTo,
+    dictionary: dictionary.map(({ translation, wordType, similarReverseWords }) => ({
+      wordType,
+      meanings: translation.map((wordMeaning, index) => {
+        console.info(`[${wordType}]: ${wordMeaning} -- ${similarReverseWords?.[index]}`)
+        return {
+          word: wordMeaning,
+          translation: similarReverseWords?.[index] || [],
+        };
+      }),
+    })),
+  }
+}
+
 export function toStorageItem(data: ITranslationResult | IHistoryItem): IHistoryStorageItem {
   var { vendor, transcription, translation } = data;
   if (isHistoryItem(data)) {
@@ -103,11 +134,12 @@ export function toStorageItem(data: ITranslationResult | IHistoryItem): IHistory
       data.dictionary.map(dict => [
         dict.wordType,
         dict.translation,
+        dict.similarReverseWords ?? [],
       ])
     ]
   } else {
     return [
-      Date.now(),
+      Date.now(), // new history-item, saving with just made translation's time
       vendor,
       data.langDetected || data.langFrom,
       data.langTo,
@@ -116,7 +148,8 @@ export function toStorageItem(data: ITranslationResult | IHistoryItem): IHistory
       transcription,
       data.dictionary.map(dict => [
         dict.wordType,
-        dict.meanings.map(mean => mean.word)
+        dict.meanings.map(mean => mean.word),
+        dict.meanings.map(mean => mean.translation),
       ])
     ]
   }
@@ -130,7 +163,8 @@ export function toHistoryItem(data: IHistoryStorageItem): IHistoryItem {
       date, vendor, from, to, text, translation, transcription,
       dictionary: dict.map(dict => ({
         wordType: dict[0],
-        translation: dict[1]
+        translation: dict[1],
+        similarReverseWords: dict[2] ?? [],
       }))
     };
   } else {
@@ -142,8 +176,9 @@ export function toHistoryItem(data: IHistoryStorageItem): IHistoryItem {
       transcription: ts,
       dictionary: dictionary.map(dict => ({
         wordType: dict.w,
-        translation: dict.tr
-      }))
+        translation: dict.tr,
+        similarReverseWords: [],
+      })),
     }
   }
 }
@@ -168,6 +203,7 @@ export interface IHistoryItem {
   dictionary: {
     wordType: string
     translation: string[]
+    similarReverseWords: string[][]
   }[]
 }
 
@@ -199,7 +235,8 @@ export type IHistoryStorageItemVersion2 = [
   [
     // 7 - dictionary
     string, /*word type*/
-    string[] /*translations*/
+    string[], /*translations*/
+    string[][], /* similar word groups (reverse translated) per translation */
   ][]
 ];
 
