@@ -1,7 +1,33 @@
 .SelectLanguage {
   flex: 1;
 
-  .Select {
+  > .Select {
     flex: 1 0;
+
+    [class*="-indicatorContainer"] {
+      padding: $padding / 2;
+    }
+
+    [class*="-control"] {
+      min-height: 32px;
+      box-shadow: none;
+      background: none;
+
+      [class*="-singleValue"] {
+        color: $color-primary;
+      }
+
+      &:focus-within {
+        border-color: $bgc-primary !important;
+      }
+    }
+  }
+}
+
+@include theme-dark {
+  .Select {
+    [class$="-menu"] {
+      filter: invert(.8);
+    }
   }
 }

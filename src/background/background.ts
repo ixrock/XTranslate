@@ -10,8 +10,11 @@ import { rateLastTimestamp } from "../components/app/app-rate.storage";
 import { generateId, historyStorage, IHistoryStorageItem, importHistory, loadHistory, toStorageItem, toTranslationResult } from "../components/user-history/history.storage";
 import type { TranslatePayload } from "../vendors/translator";
 
+// FIXME: check proper stopping of TTS (on closing popup, etc?)
 // TODO: provide fallback-translation on error from another available vendor on the-fly/transparent
 // TODO: allow to sort vendors in the settings (via D&D), this will affect actions for next/prev/fallback translator
+// TODO: update styles to (s)css-modules
+// TODO: input-translation page: keep changes in URL and allow navigation back & forward
 
 const logger = createLogger({ systemPrefix: "[BACKGROUND]" });
 

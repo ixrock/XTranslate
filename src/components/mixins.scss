@@ -48,25 +48,6 @@
   -ms-overflow-style: none; // IE (10,11?), Edge(?)
 }
 
-// Cross-browser hacks
-@mixin safariOnly {
-  @media not all and (min-resolution: .001dpcm) {
-    @content;
-  }
-}
-
-@mixin firefoxOnly {
-  @-moz-document url-prefix() {
-    @content;
-  }
-}
-
-@mixin edgeOnly {
-  @supports (-ms-accelerator: true) {
-    @content;
-  }
-}
-
 @mixin stripeLinesAnimation($color1: #ccc, $color2: transparent, $spacing: 1rem) {
   background: repeating-linear-gradient(-45deg, $color2, $color2, $spacing, $color1 $spacing, $color1 $spacing * 2);
   background-size: 200% 200%;
@@ -76,5 +57,25 @@
     100% {
       background-position: 100% 100%;
     }
+  }
+}
+
+@mixin set-draggable($is-draggable: true) {
+  @if ($is-draggable) {
+    -webkit-user-select: none;
+    -webkit-app-region: drag;
+  } @else {
+    -webkit-app-region: no-drag;
+  }
+}
+
+@mixin theme-dark() {
+  $className: "theme-dark";
+
+  body.#{$className} {
+    @content;
+  }
+  :global(body.#{$className}) {
+    @content; // css-modules (*.module.scss)
   }
 }

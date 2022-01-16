@@ -147,7 +147,10 @@ export class InputTranslation extends React.Component {
     var { vendor, langFrom, langTo } = this;
     return (
       <div className="language flex gaps">
-        <SelectLanguage vendor={vendor} from={langFrom} to={langTo} onChange={this.onLangChange}/>
+        <SelectLanguage
+          vendor={vendor} from={langFrom} to={langTo}
+          onChange={({ langTo, langFrom }) => this.onLangChange(langFrom, langTo)}
+        />
         <Select value={vendor} onChange={this.onVendorChange}>
           {getTranslators().map(v => <Option key={v.name} value={v.name} label={v.title}/>)}
         </Select>

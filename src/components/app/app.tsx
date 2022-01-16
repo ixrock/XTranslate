@@ -26,6 +26,8 @@ export class App extends React.Component {
   static pages: PageId[] = ["settings", "theme", "translate", "history"];
 
   static async init() {
+    document.title = App.manifest.name;
+
     var appRootElem = document.getElementById('app');
     render(<Spinner center/>, appRootElem); // show loading indicator
 
@@ -36,17 +38,15 @@ export class App extends React.Component {
       themeStore.ready,
     ]);
 
+    reaction(() => settingsStore.data.useDarkTheme, App.switchTheme, {
+      fireImmediately: true,
+    });
+
     render(<App/>, appRootElem);
   }
 
-  componentDidMount() {
-    this.setUpTheme();
-    reaction(() => settingsStore.data.useDarkTheme, this.setUpTheme);
-    document.title = App.manifest.name;
-  }
-
-  setUpTheme = () => {
-    document.body.classList.toggle('theme-dark', settingsStore.data.useDarkTheme);
+  static switchTheme(isDark: boolean) {
+    document.body.classList.toggle("theme-dark", isDark);
   }
 
   detachWindow = () => {
