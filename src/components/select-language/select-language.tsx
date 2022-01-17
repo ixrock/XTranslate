@@ -93,11 +93,26 @@ export class SelectLanguage extends React.Component<Props> {
     );
   }
 
-  private formatLanguageLabel(lang: string, title: string): React.ReactNode {
+  // TODO: save favorites to settings storage
+  toggleFavorite = (evt: React.MouseEvent, opts: { lang: string, sourceType: "source" | "target" }) => {
+    console.log('CLICKED', {
+      event: evt,
+      vendor: this.vendor, // save favorites per service-provider
+    });
+
+    if (evt.metaKey || (evt.altKey && evt.shiftKey)) {
+      console.log(`TOGGLE FAVORITE: ${opts.lang} (${opts.sourceType} languages list)`);
+    }
+  }
+
+  formatLanguageLabel(opts: { lang: string, title: string, sourceType: "source" | "target" }): React.ReactNode {
     return (
-      <div className={`source language ${lang} flex gaps align-center`}>
-        {this.renderIcon(lang)}
-        <span>{title}</span>
+      <div
+        className={cssNames("language flex gaps align-center", opts.lang)}
+        onClick={evt => this.toggleFavorite(evt, opts)}
+      >
+        {this.renderIcon(opts.lang)}
+        <span>{opts.title}</span>
       </div>
     )
   }
@@ -114,7 +129,9 @@ export class SelectLanguage extends React.Component<Props> {
           value={this.sourceLanguageOptions.find(opt => opt.value == langFrom)}
           options={this.sourceLanguageOptions}
           onChange={opt => this.onChange({ sourceLang: opt.value })}
-          formatOptionLabel={({ label, value: lang }) => this.formatLanguageLabel(lang, label)}
+          formatOptionLabel={({ label, value: lang }) => this.formatLanguageLabel({
+            lang, sourceType: "source", title: label,
+          })}
         />
         <Icon
           material="swap_horiz"
@@ -128,7 +145,9 @@ export class SelectLanguage extends React.Component<Props> {
           value={this.targetLanguageOptions.find(opt => opt.value == langTo)}
           options={this.targetLanguageOptions}
           onChange={opt => this.onChange({ targetLang: opt.value })}
-          formatOptionLabel={({ label, value: lang }) => this.formatLanguageLabel(lang, label)}
+          formatOptionLabel={({ label, value: lang }) => this.formatLanguageLabel({
+            lang, sourceType: "target", title: label,
+          })}
         />
       </div>
     );
