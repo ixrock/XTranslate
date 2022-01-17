@@ -12,7 +12,8 @@ import type { TranslatePayload } from "../vendors/translator";
 
 // TODO: provide fallback-translation on error from another available vendor on the-fly/transparent
 // TODO: allow to sort vendors in the settings (via D&D), this will affect actions for next/prev/fallback translator
-// TODO: update styles to (s)css-modules
+// --
+// TODO: update styles to (s)css-modules + better dark/light theme support
 // TODO: input-translation page: keep changes in URL and allow navigation back & forward
 
 const logger = createLogger({ systemPrefix: "[BACKGROUND]" });

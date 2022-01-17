@@ -6,6 +6,7 @@ import { autoBind, cssNames } from "../../utils";
 import { TooltipDecoratorProps, withTooltip } from "../tooltip";
 import isNumber from "lodash/isNumber"
 
+// TODO: support props.svg={} with custom/any path to icon
 export interface IconProps extends React.HTMLAttributes<any>, TooltipDecoratorProps {
   material?: string;          // material-icon, see available names at https://material.io/icons/
   svg?: string;               // svg-filename without extension in current folder

@@ -8,6 +8,10 @@
       padding: $padding / 2;
     }
 
+    [class*="-option"] {
+      padding: $padding / 2;
+    }
+
     [class*="-control"] {
       min-height: 32px;
       box-shadow: none;
@@ -21,6 +25,20 @@
         border-color: $bgc-primary !important;
       }
     }
+  }
+
+  .language {
+    padding: $padding / 2;
+
+    &.auto {
+      user-select: none;
+      font-style: italic;
+    }
+  }
+
+  .country-icon {
+    width: 20px;
+    border: 1px solid currentColor;
   }
 }
 

@@ -2185,6 +2185,11 @@ find-up@^4.0.0, find-up@^4.1.0:
     locate-path "^5.0.0"
     path-exists "^4.0.0"
 
+flag-icons@^6.0.3:
+  version "6.0.3"
+  resolved "https://registry.yarnpkg.com/flag-icons/-/flag-icons-6.0.3.tgz#424834c5867d9443cd3902a258430166b5749cca"
+  integrity sha512-nirBQ1xEeBNHmpPEUe9RDS11Y7reIeqxXgQlOFTHlYd/dJXVznBR5t7t2x2s+CPmstTzIyJ3xEHdM4+7MAML+A==
+
 flex.box@^3.4.4:
   version "3.4.4"
   resolved "https://registry.yarnpkg.com/flex.box/-/flex.box-3.4.4.tgz#cef28a542458f4668c5d499bcd7fa97aa82b8413"

@@ -43,8 +43,8 @@ export class SelectLanguage extends React.Component<Props> {
 
     return Object.keys(sourceLangList).map(lang => ({
       value: lang,
-      label: sourceLangList[lang],
       isDisabled: lang == this.langTo,
+      label: sourceLangList[lang],
     }));
   }
 
@@ -53,8 +53,8 @@ export class SelectLanguage extends React.Component<Props> {
 
     return Object.keys(targetLangList).map(lang => ({
       value: lang,
-      label: targetLangList[lang],
       isDisabled: lang == this.langFrom,
+      label: targetLangList[lang],
     }));
   }
 
@@ -70,7 +70,7 @@ export class SelectLanguage extends React.Component<Props> {
   private onChange = (update: { sourceLang?: string, targetLang?: string } = {}) => {
     const {
       sourceLang = this.langFrom,
-      targetLang = this.langFrom,
+      targetLang = this.langTo,
     } = update;
 
     if (this.props.onChange) {
@@ -81,17 +81,40 @@ export class SelectLanguage extends React.Component<Props> {
     }
   }
 
+  renderIcon(countryCode: string): React.ReactNode {
+    let flagIconPath: string;
+    try {
+      flagIconPath = require(`flag-icons/flags/4x3/${countryCode}.svg`);
+    } catch (e) {
+      return null;
+    }
+    return (
+      <img className="country-icon" src={flagIconPath} alt=""/>
+    );
+  }
+
+  private formatLanguageLabel(lang: string, title: string): React.ReactNode {
+    return (
+      <div className={`source language ${lang} flex gaps align-center`}>
+        {this.renderIcon(lang)}
+        <span>{title}</span>
+      </div>
+    )
+  }
+
   render() {
     var { langFrom, langTo } = this;
     var className = cssNames("SelectLanguage flex gaps align-center", this.props.className);
     return (
       <div className={className}>
         <ReactSelect
+          // menuIsOpen={true}
           placeholder="Source language"
           className="Select"
           value={this.sourceLanguageOptions.find(opt => opt.value == langFrom)}
           options={this.sourceLanguageOptions}
           onChange={opt => this.onChange({ sourceLang: opt.value })}
+          formatOptionLabel={({ label, value: lang }) => this.formatLanguageLabel(lang, label)}
         />
         <Icon
           material="swap_horiz"
@@ -105,6 +128,7 @@ export class SelectLanguage extends React.Component<Props> {
           value={this.targetLanguageOptions.find(opt => opt.value == langTo)}
           options={this.targetLanguageOptions}
           onChange={opt => this.onChange({ targetLang: opt.value })}
+          formatOptionLabel={({ label, value: lang }) => this.formatLanguageLabel(lang, label)}
         />
       </div>
     );
