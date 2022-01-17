@@ -102,6 +102,14 @@ class Google extends Translator {
       return await request(); // waiting for response to handle error locally
     } catch (error) {
       if (isTranslationError(error)) {
+        // TODO: handle 429 header "Retry-After" from response if provided
+        // overwrite proxy error about invalid json-response (google returns html-page in that case)
+        // SyntaxError: Unexpected token < in JSON at position 0
+        const invalidJsonResponse = [400, 429].includes(error.statusCode);
+        if (invalidJsonResponse) {
+          error.message = `Service unavailable. Try again after 5-30 minutes.`;
+        }
+
         if (error.statusCode === 503 && !apiClientRefreshed) {
           apiClientRefreshed = true;
           return this.refreshApiClient().then(request);
