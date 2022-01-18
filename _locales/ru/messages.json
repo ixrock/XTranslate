@@ -109,5 +109,9 @@
   "rate_app_button"                  : {"message": "Оценить в магазине расширений"},
   "rate_app_button_later"            : {"message": "Напомнить позже"},
   "deepl_get_own_key_info"           : {"message": "Войдите в аккаунт на www.deepl.com и получите личный ключ доступа к данным DeepL API."},
-  "deepl_insert_auth_key"            : {"message": "Добавить личный ключ для DeepL API."}
+  "deepl_insert_auth_key"            : {"message": "Добавить личный ключ для DeepL API."},
+  "target_lang_placeholder"          : {"message": "Целевой язык"},
+  "source_lang_placeholder"          : {"message": "Исходный язык"},
+  "favorites_lang_title"             : {"message": "Избранное"},
+  "favorites_info_tooltip"           : {"message": "Чтобы добавить язык в избранное (список отображается сверху), используйте Cmd/Ctrl+Alt + Клик"}
 }

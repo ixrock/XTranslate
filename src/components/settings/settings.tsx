@@ -70,7 +70,7 @@ export class Settings extends React.Component {
 
         <p className="sub-title">{getMessage("setting_title_translator_service")}</p>
         <div className="translator-settings flex gaps column">
-          <SelectLanguage/>
+          <SelectLanguage showInfoIcon/>
           <RadioGroup className="vendors flex gaps column" value={settings.vendor} onChange={v => settingsStore.setVendor(v)}>
             {getTranslators().map(vendor => {
               const { name, title, publicUrl } = vendor;

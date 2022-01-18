@@ -1,9 +1,10 @@
+import { action } from "mobx";
 import { Hotkey } from "../../utils/parseHotkey";
 import { getTranslator } from "../../vendors";
 import { createStorageHelper } from "../../extension/storage";
 
 export const settingsStorage = createStorageHelper("settings", {
-  area: "sync", // sync data via user's google account across devices (chrome)
+  area: "sync", // share user-data via google account (chrome.storage.sync)
   defaultValue: {
     autoPlayText: false,
     useChromeTtsEngine: false,
@@ -26,6 +27,7 @@ export const settingsStorage = createStorageHelper("settings", {
     historyEnabled: false,
     historySaveWordsOnly: true,
     historyPageSize: 50,
+    favorites: {} as FavoritesList,
     popupFixedPos: "", // possible values defined as css-classes in popup.scss
     hotkey: {
       altKey: true,
@@ -35,11 +37,46 @@ export const settingsStorage = createStorageHelper("settings", {
   }
 });
 
+/**
+ * Favorites are shown on top of language-select list.
+ */
+export interface FavoritesList {
+  [vendor: string]: Record<FavoriteLangDirection, string[]>;
+}
+
+export type FavoriteLangDirection = "source" | "target";
+
 export class SettingsStore {
   ready = settingsStorage.whenReady;
 
   get data() {
     return settingsStorage.get();
+  }
+
+  getFavorites(vendor: string, sourceType: FavoriteLangDirection): string[] {
+    return this.data.favorites?.[vendor]?.[sourceType] ?? [];
+  }
+
+  @action
+  toggleFavorite(params: { vendor: string, sourceType: FavoriteLangDirection, lang: string }) {
+    console.info("[SETTINGS-STORAGE]: updating favorite lang", params);
+    const { vendor, sourceType, lang } = params;
+
+    this.data.favorites ??= {};
+    this.data.favorites[vendor] ??= {
+      source: [],
+      target: [],
+    };
+
+    const favorites = new Set(this.data.favorites[vendor][sourceType]);
+    if (favorites.has(lang)) {
+      favorites.delete(lang)
+    } else {
+      favorites.add(lang);
+    }
+
+    // save update to storage
+    this.data.favorites[vendor][sourceType] = Array.from(favorites);
   }
 
   setVendor(name: string) {

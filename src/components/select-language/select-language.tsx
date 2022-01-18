@@ -8,13 +8,14 @@ import { cssNames } from "../../utils";
 import { getTranslator } from "../../vendors";
 import { getMessage } from "../../i18n";
 import { Icon } from "../icon";
-import { settingsStore } from "../settings/settings.storage";
+import { FavoriteLangDirection, settingsStore } from "../settings/settings.storage";
 
 export interface Props extends Omit<ReactSelectProps, "onChange"> {
   className?: string;
   vendor?: string;
   from?: string;
   to?: string;
+  showInfoIcon?: boolean;
   onChange?(update: { langFrom: string, langTo: string }): void;
   onSwap?(update: { langFrom: string, langTo: string }): void;
 }
@@ -38,24 +39,62 @@ export class SelectLanguage extends React.Component<Props> {
     return this.props.vendor ?? settingsStore.data.vendor;
   }
 
+  @computed get sourceFavorites(): string[] {
+    return settingsStore.getFavorites(this.vendor, "source")
+  }
+
+  @computed get targetFavorites(): string[] {
+    return settingsStore.getFavorites(this.vendor, "target")
+  }
+
   @computed get sourceLanguageOptions() {
     var { langFrom: sourceLangList } = getTranslator(this.vendor);
 
-    return Object.keys(sourceLangList).map(lang => ({
+    var getOption = (lang: string) => ({
       value: lang,
       isDisabled: lang == this.langTo,
-      label: sourceLangList[lang],
-    }));
+      isSelected: lang == this.langFrom,
+      label: sourceLangList[lang as keyof typeof sourceLangList],
+    });
+
+    const sourceLanguageOptions = Object.keys(sourceLangList).map(getOption);
+
+    // return groups with favorites if exists
+    if (this.sourceFavorites.length > 0) {
+      return [
+        { options: this.sourceFavorites.map(getOption), label: getMessage("favorites_lang_title") },
+        { options: sourceLanguageOptions, label: getMessage("source_lang_placeholder") },
+      ]
+    }
+
+    return [
+      { options: sourceLanguageOptions }
+    ];
   }
 
   @computed get targetLanguageOptions() {
     var { langTo: targetLangList } = getTranslator(this.vendor);
 
-    return Object.keys(targetLangList).map(lang => ({
+    var getOption = (lang: string) => ({
       value: lang,
       isDisabled: lang == this.langFrom,
-      label: targetLangList[lang],
-    }));
+      isSelected: lang == this.langTo,
+      label: targetLangList[lang as keyof typeof targetLangList],
+    });
+
+    const targetLanguageOptions = Object.keys(targetLangList).map(getOption);
+
+    // return multiple groups when favorites list not empty
+    if (this.targetFavorites.length > 0) {
+      return [
+        { options: this.targetFavorites.map(getOption), label: getMessage("favorites_lang_title") },
+        { options: targetLanguageOptions, label: getMessage("target_lang_placeholder") },
+      ]
+    }
+
+    return [
+      { options: targetLanguageOptions },
+    ];
   }
 
   @action
@@ -81,24 +120,29 @@ export class SelectLanguage extends React.Component<Props> {
     }
   }
 
-  // TODO: save favorites to settings storage
-  toggleFavorite = (evt: React.MouseEvent, opts: { lang: string, sourceType: "source" | "target" }) => {
-    console.log('CLICKED', {
-      event: evt,
-      vendor: this.vendor, // save favorites per service-provider
+  @action
+  toggleFavorite = (evt: React.MouseEvent, lang: string, sourceType: FavoriteLangDirection) => {
+    const isAutoDetect = lang == "auto"
+    const isToggleAction = evt.metaKey || (evt.altKey && evt.shiftKey);
+    if (isAutoDetect || !isToggleAction) return; // skip: normal select
+
+    // save updated favorite to storage
+    settingsStore.toggleFavorite({
+      vendor: this.vendor,
+      sourceType, lang
     });
 
-    if (evt.metaKey || (evt.altKey && evt.shiftKey)) {
-      console.log(`TOGGLE FAVORITE: ${opts.lang} (${opts.sourceType} languages list)`);
-    }
+    // skip selecting new language (hopefully)
+    evt.stopPropagation();
+    evt.preventDefault();
   }
 
-  formatLanguageLabel(opts: { lang: string, title: string, sourceType: "source" | "target" }): React.ReactNode {
+  formatLanguageLabel(opts: { lang: string, title: string, sourceType: FavoriteLangDirection }): React.ReactNode {
     const flagIcon = getFlagIcon(opts.lang);
     return (
       <div
         className={cssNames("language flex gaps align-center", opts.lang)}
-        onClick={evt => this.toggleFavorite(evt, opts)}
+        onClick={evt => this.toggleFavorite(evt, opts.lang, opts.sourceType)}
       >
         {flagIcon && <img className="country-icon" src={flagIcon} alt=""/>}
         <span>{opts.title}</span>
@@ -108,14 +152,23 @@ export class SelectLanguage extends React.Component<Props> {
 
   render() {
     var { langFrom, langTo } = this;
-    var className = cssNames("SelectLanguage flex gaps align-center", this.props.className);
+    var { className, showInfoIcon } = this.props;
+
+    const sourceLang = this.sourceLanguageOptions
+      .flatMap(group => group.options)
+      .find(({ value: lang }) => lang == langFrom);
+
+    const targetLang = this.targetLanguageOptions
+      .flatMap(group => group.options)
+      .find(({ value: lang }) => lang == langTo);
+
     return (
-      <div className={className}>
+      <div className={cssNames("SelectLanguage flex gaps align-center", className)}>
         <ReactSelect
           // menuIsOpen={true}
-          placeholder="Source language"
+          placeholder={getMessage("source_lang_placeholder")}
           className="Select"
-          value={this.sourceLanguageOptions.find(opt => opt.value == langFrom)}
+          value={sourceLang}
           options={this.sourceLanguageOptions}
           onChange={opt => this.onChange({ sourceLang: opt.value })}
           formatOptionLabel={({ label, value: lang }) => this.formatLanguageLabel({
@@ -129,15 +182,18 @@ export class SelectLanguage extends React.Component<Props> {
           onClick={this.onSwap}
         />
         <ReactSelect
-          placeholder="Target language"
+          placeholder={getMessage("target_lang_placeholder")}
           className="Select"
-          value={this.targetLanguageOptions.find(opt => opt.value == langTo)}
+          value={targetLang}
           options={this.targetLanguageOptions}
           onChange={opt => this.onChange({ targetLang: opt.value })}
           formatOptionLabel={({ label, value: lang }) => this.formatLanguageLabel({
             lang, sourceType: "target", title: label,
           })}
         />
+        {showInfoIcon && (
+          <Icon small material="info_outline" tooltip={getMessage("favorites_info_tooltip")}/>
+        )}
       </div>
     );
   }

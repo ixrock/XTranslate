@@ -32,12 +32,12 @@
 
     &.auto {
       user-select: none;
-      font-style: italic;
     }
   }
 
   .country-icon {
-    width: 20px;
+    width: 20px; // 4x3
+    height: 15px;
     border: 1px solid currentColor;
   }
 }
