@@ -81,18 +81,6 @@ export class SelectLanguage extends React.Component<Props> {
     }
   }
 
-  renderIcon(countryCode: string): React.ReactNode {
-    let flagIconPath: string;
-    try {
-      flagIconPath = require(`flag-icons/flags/4x3/${countryCode}.svg`);
-    } catch (e) {
-      return null;
-    }
-    return (
-      <img className="country-icon" src={flagIconPath} alt=""/>
-    );
-  }
-
   // TODO: save favorites to settings storage
   toggleFavorite = (evt: React.MouseEvent, opts: { lang: string, sourceType: "source" | "target" }) => {
     console.log('CLICKED', {
@@ -106,12 +94,13 @@ export class SelectLanguage extends React.Component<Props> {
   }
 
   formatLanguageLabel(opts: { lang: string, title: string, sourceType: "source" | "target" }): React.ReactNode {
+    const flagIcon = getFlagIcon(opts.lang);
     return (
       <div
         className={cssNames("language flex gaps align-center", opts.lang)}
         onClick={evt => this.toggleFavorite(evt, opts)}
       >
-        {this.renderIcon(opts.lang)}
+        {flagIcon && <img className="country-icon" src={flagIcon} alt=""/>}
         <span>{opts.title}</span>
       </div>
     )
@@ -151,5 +140,44 @@ export class SelectLanguage extends React.Component<Props> {
         />
       </div>
     );
+  }
+}
+
+export const langToFlagIconMap: Record<string, string> = {
+  "sq": "al", // Albanian
+  "hy": "am", // Armenian
+  "ce": "ph", // Cebuano (Philippines)
+  "ny": "mw", // Malawi, Zambia, Mozambique, Zimbabwe
+  "cs": "cz", // Czech Republic
+  "da": "dk", // Danish
+  "en": "gb", // English
+  "el": "gr", // Greek
+  "ka": "ge", // Georgian
+  "ha": "ne", // Hausa (West Africa)
+  "haw": "hm", // Hawaiian
+  "hi": "in", // Hindi (India)
+  "te": "in", // Telugu (India)
+  "ur": "pk", // Urdu (Pakistan)
+  "ja": "jp", // Japanese
+  "ko": "kr", // Korean
+  "lo": "la", // Laos
+  "uk": "ua", // Ukrainian
+  "fa": "ir", // Iran (Persian)
+  "ku": "iq", // Iraq, Kurdistan Region
+  "ma": "nz", // Maori (New Zealand)
+  "sw": "ke", // Swahili (Kenya, Rwanda, Tanzania, Uganda)
+  "zh-CN": "cn", // Chinese (Simplified)
+  "zh-TW": "tw", // Chinese (Taiwan)
+  "yo": "ng", // Yoruba (Nigeria)
+  "zu": "za", // Zulu (South Africa)
+  "xh": "za", // Xhosa (South Africa)
+};
+
+export function getFlagIcon(locale: string): string | undefined {
+  try {
+    const langIconFile = langToFlagIconMap[locale] ?? locale;
+    return require(`flag-icons/flags/4x3/${langIconFile}.svg`);
+  } catch (error) {
+    return undefined; // noop
   }
 }
