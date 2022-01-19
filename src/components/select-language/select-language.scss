@@ -44,8 +44,13 @@
 
 @include theme-dark {
   .Select {
+    [class$="-option"]:hover {
+      background: $color-primary;
+    }
+
     [class$="-menu"] {
-      filter: invert(.8);
+      background: invert($bgc-dark, .75);
+      border: 1px solid currentColor;
     }
   }
 }

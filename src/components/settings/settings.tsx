@@ -40,7 +40,10 @@ export class Settings extends React.Component {
     return (
       <div className="Settings flex column gaps">
         <div className="common-settings flex gaps auto">
-          <div className="checkbox-group">
+          <div className="checkbox-group flex column">
+            <p className="sub-title">
+              {getMessage("settings_title_tts")}
+            </p>
             <Checkbox
               label={getMessage("auto_play_tts")}
               checked={settings.autoPlayText}
@@ -53,7 +56,8 @@ export class Settings extends React.Component {
               tooltip={getMessage("use_chrome_tts_tooltip_info")}
             />
           </div>
-          <div className="checkbox-group">
+          <div className="checkbox-group flex column">
+            <p className="sub-title">{getMessage("settings_title_appearance")}</p>
             <Checkbox
               label={getMessage("show_context_menu")}
               checked={settings.showInContextMenu}
@@ -68,10 +72,16 @@ export class Settings extends React.Component {
           </div>
         </div>
 
-        <p className="sub-title">{getMessage("setting_title_translator_service")}</p>
+        <p className="sub-title">
+          {getMessage("setting_title_translator_service")}
+        </p>
         <div className="translator-settings flex gaps column">
           <SelectLanguage showInfoIcon/>
-          <RadioGroup className="vendors flex gaps column" value={settings.vendor} onChange={v => settingsStore.setVendor(v)}>
+          <RadioGroup
+            className="vendors flex column gaps"
+            value={settings.vendor}
+            onChange={v => settingsStore.setVendor(v)}
+          >
             {getTranslators().map(vendor => {
               const { name, title, publicUrl } = vendor;
               var domain = publicUrl.match(/https?:\/\/(.*?)(?:\/\w*|$)/i)[1];
