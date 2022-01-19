@@ -20,7 +20,7 @@ export interface Messages {
   }
 }
 
-export const logger = createLogger({ systemPrefix: "[I18n]" });
+export const logger = createLogger({ systemPrefix: "[I18N-LOCALE]" });
 export const messages = observable.map<Locale, Messages>({}, { deep: false });
 
 const storage = createStorageHelper("i18n", {
@@ -35,12 +35,12 @@ async function loadMessages(lang: Locale) {
   if (messages.has(lang) || !supportedLocales[lang]) {
     return; // skip, already loaded or doesn't exist
   }
+  const localizationFile = getURL(`_locales/${lang}/messages.json`);
   try {
-    const localizationFile = getURL(`_locales/${lang}/messages.json`);
     const data: Messages = await fetch(localizationFile).then(res => res.json());
     messages.set(lang, data);
   } catch (error) {
-    logger.error(`loading locale "${lang}" has failed`, error);
+    logger.error(`loading locale "${lang}" has failed (file: ${localizationFile})`);
   }
 }
 

@@ -13,6 +13,7 @@ import { getMessage } from "../../i18n";
 interface Props extends React.HTMLProps<any> {
   preview?: boolean;
   className?: string;
+  initParams?: Partial<ITranslationResult>;
   translation?: ITranslationResult
   error?: ITranslationError
   onPlayText?: () => void;
@@ -60,9 +61,9 @@ export class Popup extends React.Component<Props> {
     }
   }
 
-  get translation() {
+  get translation(): Partial<ITranslationResult | undefined> {
     var { preview, translation } = this.props;
-    return translation || (preview ? Popup.translationMock : null);
+    return translation || (preview ? Popup.translationMock : undefined);
   }
 
   getPopupStyle(): CSSProperties {
@@ -163,10 +164,10 @@ export class Popup extends React.Component<Props> {
   }
 
   renderNextTranslationIcon() {
-    if (!settingsStore.data.showNextVendorIcon) {
+    if (!settingsStore.data.showNextVendorIcon || !this.props.preview) {
       return;
     }
-    var { vendor, langFrom, langTo } = this.translation;
+    var { vendor, langFrom, langTo } = this.translation ?? this.props.initParams ?? {};
     var nextVendor = getNextTranslator(vendor, langFrom, langTo);
     var iconTitle = getMessage("popup_next_vendor_icon_title", {
       translator: nextVendor.title

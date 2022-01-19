@@ -13,6 +13,7 @@
     }
 
     [class*="-control"] {
+      border: 1px solid currentColor;
       min-height: 32px;
       box-shadow: none;
       background: none;

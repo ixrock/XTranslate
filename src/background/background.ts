@@ -10,7 +10,6 @@ import { rateLastTimestamp } from "../components/app/app-rate.storage";
 import { generateId, historyStorage, IHistoryStorageItem, importHistory, loadHistory, toStorageItem, toTranslationResult } from "../components/user-history/history.storage";
 import type { TranslatePayload } from "../vendors/translator";
 
-// FIXME: Getting translations in text and PDF files are broken, fix #36
 // TODO: provide fallback-translation on error from another available vendor on the-fly/transparent
 // TODO: update styles to (s)css-modules + better dark/light theme support
 // TODO: input-translation page: keep changes in URL and allow navigation back & forward

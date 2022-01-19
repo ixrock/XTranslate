@@ -56,6 +56,7 @@ class App extends React.Component {
   @observable.ref translation: ITranslationResult;
   @observable.ref error: ITranslationError;
   @observable.ref selectionRects: CustomDomRect[];
+  @observable lastParams: Partial<ITranslationResult> = {}; // last used params in getting translation attempt
   @observable position: CustomDomRect = {};
   @observable selectedText = "";
   @observable isRtlSelection = false;
@@ -113,21 +114,20 @@ class App extends React.Component {
 
   @action
   async translate(initParams: Partial<TranslatePayload> = {}) {
-    const params: TranslatePayload = {
+    this.lastParams = {
       vendor: settingsStore.data.vendor,
-      from: settingsStore.data.langFrom,
-      to: settingsStore.data.langTo,
-      text: this.selectedText.trim(),
+      langFrom: settingsStore.data.langFrom,
+      langTo: settingsStore.data.langTo,
+      originalText: this.selectedText.trim(),
       ...initParams,
     };
 
-    // reset previous result first (if any)
-    this.isLoading = true;
-    this.translation = null;
-    this.error = null;
-
     try {
-      this.translation = await getTranslator(params.vendor).translate(params);
+      const { vendor, langTo: to, langFrom: from, originalText: text } = this.lastParams;
+      this.isLoading = true;
+      this.translation = null;
+      this.error = null;
+      this.translation = await getTranslator(vendor).translate({ to, from, text });
     } catch (err) {
       this.error = err;
     } finally {
@@ -137,20 +137,24 @@ class App extends React.Component {
   }
 
   translateNext(reverse = false) {
-    if (!this.translation) {
-      return;
-    }
-    var { vendor, langFrom: from, langTo: to, originalText: text } = this.translation;
-    var nextVendor = getNextTranslator(vendor, from, to, reverse);
+    var { vendor, langFrom, langTo, originalText } = this.lastParams;
+
+    var nextVendor = getNextTranslator(vendor, langFrom, langTo, reverse);
     return this.translate({
       vendor: nextVendor.name,
-      from, to, text,
+      from: langFrom,
+      to: langTo,
+      text: originalText,
     });
   }
 
-  playText = () => {
-    const { vendor, langDetected, originalText } = this.translation;
-    getTranslator(vendor).speak(langDetected, originalText);
+  playText() {
+    const {
+      vendor, originalText,
+      langDetected = this.lastParams.langFrom,
+    } = this.translation ?? this.lastParams;
+
+    return getTranslator(vendor).speak(langDetected, originalText);
   }
 
   showIcon() {
@@ -400,15 +404,16 @@ class App extends React.Component {
   }, 250)
 
   render() {
-    var { translation, error, playText, translateNext, position, onIconClick } = this;
+    var { lastParams, translation, error, playText, translateNext, position, onIconClick } = this;
     var { langFrom, langTo, vendor } = settingsStore.data;
     var translator = getTranslator(vendor);
     return (
       <>
         <link rel="stylesheet" href={getStyleUrl()}/>
         <Popup
-          className={cssNames({ showInPdf: isPdf })}
           style={position}
+          className={cssNames({ showInPdf: isPdf })}
+          initParams={lastParams}
           translation={translation}
           error={error}
           onPlayText={playText}

@@ -129,6 +129,7 @@ export abstract class Translator {
 
   static latestRequestId: MessageId;
 
+  // FIXME: most probably should not use state/latestRequestId
   protected async request(payload: ProxyRequestPayload): Promise<any> {
     const messageId = Translator.latestRequestId = Math.random() * Date.now(); // generating message-id
     const response = await proxyRequest(payload, messageId);
@@ -211,9 +212,9 @@ export abstract class Translator {
 export interface ITranslationResult {
   // auto-added normalized fields
   vendor?: string
-  originalText?: string
   langFrom?: string
   langTo?: string
+  originalText?: string
 
   // should be provided from api response in `translate(params)`
   translation: string

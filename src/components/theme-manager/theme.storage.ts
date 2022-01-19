@@ -38,7 +38,7 @@ export interface IThemeFont {
 }
 
 export class ThemeStore {
-  private logger = createLogger({ systemPrefix: `[THEME]` });
+  private logger = createLogger({ systemPrefix: `[THEME-STORE]` });
 
   private storage = themeStorage;
   public ready = themeStorage.whenReady;
@@ -97,7 +97,6 @@ export class ThemeStore {
     if (!fileName) return; // system font is selected by user, e.g. "Arial"
     try {
       const fontUrl = getURL(`assets/fonts/${fileName}`);
-      this.logger.info(`loading font "${familyName}" from ${fontUrl}`);
       const font = new FontFace(familyName, `url(${fontUrl})`);
       font.display = "swap"; // https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display
       await font.load();
