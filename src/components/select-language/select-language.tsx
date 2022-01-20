@@ -192,7 +192,9 @@ export class SelectLanguage extends React.Component<Props> {
           })}
         />
         {showInfoIcon && (
-          <Icon small material="info_outline" tooltip={getMessage("favorites_info_tooltip")}/>
+          <Icon small material="info_outline" tooltip={
+            getMessage("favorites_info_tooltip", { hotkey: "Cmd / Alt+Shift" })
+          }/>
         )}
       </div>
     );

@@ -115,5 +115,5 @@
   "target_lang_placeholder"          : {"message": "Target languages"},
   "source_lang_placeholder"          : {"message": "Source languages"},
   "favorites_lang_title"             : {"message": "Favorites"},
-  "favorites_info_tooltip"           : {"message": "To mark/unmark language as favorite (list is shown on the top), use Cmd/Ctrl+Alt + Click"}
+  "favorites_info_tooltip"           : {"message": "To mark/unmark language as favorite (list is shown on the top), use %hotkey% + click"}
 }

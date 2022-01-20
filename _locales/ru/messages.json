@@ -115,5 +115,5 @@
   "target_lang_placeholder"          : {"message": "Целевой язык"},
   "source_lang_placeholder"          : {"message": "Исходный язык"},
   "favorites_lang_title"             : {"message": "Избранное"},
-  "favorites_info_tooltip"           : {"message": "Чтобы добавить язык в избранное (список отображается сверху), используйте Cmd/Ctrl+Alt + Клик"}
+  "favorites_info_tooltip"           : {"message": "Чтобы добавить язык в избранное (список отображается сверху), используйте %hotkey% + клик"}
 }
