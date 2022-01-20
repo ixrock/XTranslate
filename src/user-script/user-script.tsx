@@ -113,13 +113,12 @@ class App extends React.Component {
   translateLazy = debounce(this.translate, 250);
 
   @action
-  async translate(initParams: Partial<TranslatePayload> = {}) {
+  async translate({ vendor, from, to, text }: Partial<TranslatePayload> = {}) {
     this.lastParams = {
-      vendor: settingsStore.data.vendor,
-      langFrom: settingsStore.data.langFrom,
-      langTo: settingsStore.data.langTo,
-      originalText: this.selectedText.trim(),
-      ...initParams,
+      vendor: vendor ?? settingsStore.data.vendor,
+      langFrom: from ?? settingsStore.data.langFrom,
+      langTo: to ?? settingsStore.data.langTo,
+      originalText: text ?? this.selectedText.trim(),
     };
 
     try {
@@ -393,7 +392,7 @@ class App extends React.Component {
         }
       }
       if (text) {
-        this.translate({ text });
+        this.translateLazy({ text });
       }
     }
   }
