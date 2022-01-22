@@ -2,9 +2,7 @@
 import { Message } from './messages'
 
 export function createTab(url: string, active = true): Promise<chrome.tabs.Tab> {
-  return new Promise((resolve) => {
-    chrome.tabs.create({ url, active }, resolve);
-  });
+  return chrome.tabs.create({ url, active });
 }
 
 export function sendMessageToTab<T>(tabId: number, message: Message<T>) {

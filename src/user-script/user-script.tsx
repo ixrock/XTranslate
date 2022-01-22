@@ -6,7 +6,7 @@ import { render } from "react-dom";
 import { action, computed, makeObservable, observable, toJS } from "mobx";
 import { observer } from "mobx-react";
 import { debounce, isEqual } from "lodash"
-import { autoBind, cssNames, getHotkey } from "../utils";
+import { autoBind, getHotkey } from "../utils";
 import { getManifest, getStyleUrl, MessageType, onMessageType, TranslateWithVendorPayload } from "../extension";
 import { getNextTranslator, getTranslator, ITranslationError, ITranslationResult, TranslatePayload } from "../vendors";
 import { XTranslateIcon } from "./xtranslate-icon";
@@ -17,16 +17,15 @@ import { i18nInit } from "../i18n";
 
 export type CustomDomRect = Partial<Writeable<DOMRect>>;
 
-const rootElem = document.createElement("div");
-const isPdf = document.contentType === "application/pdf";
-
 @observer
 class App extends React.Component {
-  static async init() {
-    rootElem.className = "XTranslate";
-    document.documentElement.appendChild(rootElem);
+  static rootElem = document.createElement("div");
 
-    // wait for dependent data before render
+  static async init() {
+    App.rootElem.className = "XTranslate";
+    document.documentElement.appendChild(App.rootElem);
+
+    // wait for dependent data before first render
     await Promise.all([
       i18nInit(),
       settingsStore.ready,
@@ -34,7 +33,7 @@ class App extends React.Component {
     ]);
 
     // render app inside the shadow-dom to avoid collisions with page styles
-    var shadowRoot = rootElem.attachShadow({ mode: "open" });
+    var shadowRoot = App.rootElem.attachShadow({ mode: "open" });
     render(<App/>, shadowRoot as any);
   }
 
@@ -187,7 +186,7 @@ class App extends React.Component {
   }
 
   isOutside(elem: HTMLElement) {
-    return !rootElem.contains(elem);
+    return !App.rootElem.contains(elem);
   }
 
   getViewportSize() {
@@ -400,18 +399,26 @@ class App extends React.Component {
   onResizeWindow = debounce(() => {
     if (!this.isPopupHidden) this.saveSelectionRects();
     this.refreshPosition();
-  }, 250)
+  }, 250);
+
+  @computed get popupPosition(): React.CSSProperties {
+    // handle position in PDF-files
+    if (document.contentType === "application/pdf") {
+      return { margin: 20 };
+    }
+
+    return this.position;
+  }
 
   render() {
-    var { lastParams, translation, error, playText, translateNext, position, onIconClick } = this;
+    var { lastParams, translation, error, popupPosition, playText, translateNext, onIconClick } = this;
     var { langFrom, langTo, vendor } = settingsStore.data;
     var translator = getTranslator(vendor);
     return (
       <>
         <link rel="stylesheet" href={getStyleUrl()}/>
         <Popup
-          style={position}
-          className={cssNames({ showInPdf: isPdf })}
+          style={popupPosition}
           initParams={lastParams}
           translation={translation}
           error={error}
