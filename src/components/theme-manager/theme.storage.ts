@@ -38,7 +38,7 @@ export interface IThemeFont {
 }
 
 export class ThemeStore {
-  private logger = createLogger({ systemPrefix: `[THEME-STORE]` });
+  private logger = createLogger({ systemPrefix: `[THEME]` });
 
   private storage = themeStorage;
   public ready = themeStorage.whenReady;

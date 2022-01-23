@@ -34,7 +34,7 @@ class App extends React.Component {
 
     // render app inside the shadow-dom to avoid collisions with page styles
     var shadowRoot = App.rootElem.attachShadow({ mode: "open" });
-    render(<App/>, shadowRoot as any);
+    render(<App/>, shadowRoot);
   }
 
   constructor(props: object) {

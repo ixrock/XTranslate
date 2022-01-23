@@ -32,10 +32,9 @@
   },
   "web_accessible_resources": [
     {
-      "resources": ["*.png", "*.svg", "*.ttf", "*.css", "*.json"],
+      "resources": ["*.*"],
       "matches": [
-        "http://*/*",
-        "https://*/*",
+        "*://*/*",
         "file://*/*"
       ]
     }
@@ -50,8 +49,7 @@
       "js": ["pageScript.js"],
       "css": ["pageStyle.css"],
       "matches": [
-        "http://*/*",
-        "https://*/*",
+        "*://*/*",
         "file://*/*"
       ]
     }

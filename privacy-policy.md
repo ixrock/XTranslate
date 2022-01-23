@@ -2,7 +2,7 @@
 
 ## Your consent
 
-By using chrome extension "XTranslate" you consent to this privacy policy and terms of use.
+By using Chrome or Edge browser extension "XTranslate" you consent to this privacy policy and terms of use.
 
 ## Collecting, storing & sharing user data
 
