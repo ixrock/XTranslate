@@ -78,8 +78,10 @@ export function getLocale(): Locale {
 }
 
 export function getSystemLocale(): Locale {
-  const locale = chrome.i18n.getUILanguage() as Locale;
-  if (supportedLocales[locale]) return locale;
+  const locale = (chrome.i18n.getUILanguage?.() ?? navigator.language) as Locale;
+  if (supportedLocales[locale]) {
+    return locale;
+  }
 
   const lang = locale.split(/_-/)[0] as Locale; // handle "en-GB", etc.
   return supportedLocales[lang] ? lang : "en";
