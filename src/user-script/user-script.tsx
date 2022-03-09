@@ -47,7 +47,7 @@ class App extends React.Component {
   public appName = getManifest().name;
   private selection = window.getSelection();
   private popup: Popup;
-  private icon: XTranslateIcon;
+  private icon: XTranslateIcon | null;
   private isDblClicked = false;
   private isHotkeyActivated = false;
   private mousePos = { x: 0, y: 0, pageX: 0, pageY: 0 };
@@ -319,7 +319,7 @@ class App extends React.Component {
     if (rightBtnClick) {
       return;
     }
-    if (!this.icon.elem.contains(clickedElem)) {
+    if (this.icon && !this.icon.elem.contains(clickedElem)) {
       this.hideIcon();
     }
     if (this.isOutside(clickedElem)) {
