@@ -3,7 +3,7 @@ import { createStorageHelper, ProxyRequestInit } from "../extension";
 import { isTranslationError, ITranslationResult, TranslateParams, Translator } from "./translator";
 import { createLogger, delay } from "../utils";
 
-class Google extends Translator {
+export class Google extends Translator {
   public name = 'google';
   public title = 'Google';
   public apiUrl = 'https://translate.googleapis.com';
@@ -89,7 +89,7 @@ class Google extends Translator {
             meanings: dict.entry.map(entry => {
               return {
                 word: entry.word,
-                translation: entry.reverse_translation,
+                translation: entry.reverse_translation ?? [],
               }
             })
           }
@@ -121,7 +121,7 @@ class Google extends Translator {
   }
 }
 
-interface GoogleTranslation {
+export interface GoogleTranslation {
   src: string // lang detected
   sentences: {
     orig: string // issue (EN-RU)
@@ -137,7 +137,7 @@ interface GoogleTranslation {
     entry: {
       score: number
       word: string // single translation
-      reverse_translation: string[] // in source lang
+      reverse_translation?: string[] // in source lang
     }[]
   }[]
   spell?: {
