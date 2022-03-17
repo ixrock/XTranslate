@@ -35,7 +35,7 @@ class Yandex extends Translator {
         });
       var canUseDictionary = this.isDictionarySupported(from, to);
       if (!canUseDictionary) return;
-      return this.request({ url }).catch(Function); // ignore errors
+      return this.request<YandexDictionary>({ url }).catch(() => null); // ignore errors
     };
 
     // main translation

@@ -1,18 +1,16 @@
 import type { ITranslationResult, TranslatePayload } from "../vendors";
-import { ChromeTtsPayload, MessageId, MessageType, ProxyRequestPayload, ProxyRequestResponse, ProxyResponseType, SaveToHistoryPayload } from "./messages";
-import { getActiveTab, promisifyMessage, sendMessage } from "./index";
+import { ChromeTtsPayload, MessageType, ProxyRequestPayload, ProxyResponseType, SaveToHistoryPayload } from "./messages";
+import { getActiveTab, sendMessage } from "./index";
 
 export async function getSelectedText() {
-  var activeTab = await getActiveTab();
-  return promisifyMessage<void, string>({
-    tabId: activeTab.id,
-    type: MessageType.GET_SELECTED_TEXT
+  return sendMessage<void, string>({
+    type: MessageType.GET_SELECTED_TEXT,
+    tabId: (await getActiveTab()).id,
   });
 }
 
-export async function proxyRequest(payload: ProxyRequestPayload, messageId?: MessageId) {
-  return promisifyMessage<ProxyRequestPayload, ProxyRequestResponse>({
-    id: messageId,
+export async function proxyRequest<Response>(payload: ProxyRequestPayload) {
+  return sendMessage<ProxyRequestPayload, Response>({
     type: MessageType.PROXY_REQUEST,
     payload: {
       responseType: ProxyResponseType.JSON, /*default*/
@@ -22,7 +20,7 @@ export async function proxyRequest(payload: ProxyRequestPayload, messageId?: Mes
 }
 
 export function saveToHistory(translation: ITranslationResult) {
-  return promisifyMessage<SaveToHistoryPayload>({
+  return sendMessage<SaveToHistoryPayload, ITranslationResult>({
     type: MessageType.SAVE_TO_HISTORY,
     payload: {
       translation,
@@ -31,21 +29,21 @@ export function saveToHistory(translation: ITranslationResult) {
 }
 
 export function getTranslationFromHistory(payload: TranslatePayload) {
-  return promisifyMessage<TranslatePayload, ITranslationResult | undefined>({
+  return sendMessage<TranslatePayload, ITranslationResult | void>({
     type: MessageType.GET_FROM_HISTORY,
     payload,
   });
 }
 
-export function chromeTtsPlay<D extends ChromeTtsPayload>(data: D) {
-  sendMessage<D>({
+export function chromeTtsPlay(data: ChromeTtsPayload) {
+  return sendMessage<ChromeTtsPayload>({
     type: MessageType.CHROME_TTS_PLAY,
     payload: data,
   });
 }
 
 export function chromeTtsStop() {
-  sendMessage({
+  return sendMessage({
     type: MessageType.CHROME_TTS_STOP,
   });
 }

@@ -1,7 +1,7 @@
 // Chrome extension's runtime api helpers
 import InstalledDetails = chrome.runtime.InstalledDetails;
 import { Message, MessageType } from './messages'
-import { sendMessageToAllTabs, sendMessageToTab } from "./tabs";
+import { sendMessageToTab } from "./tabs";
 
 export function getManifest(): chrome.runtime.ManifestV3 {
   return chrome.runtime.getManifest() as any;
@@ -9,11 +9,6 @@ export function getManifest(): chrome.runtime.ManifestV3 {
 
 export function getURL(path = ""): string {
   return chrome.runtime.getURL(path);
-}
-
-export function isBackgroundPage(): boolean {
-  const serviceWorkerScript = getManifest().background.service_worker;
-  return location.href.startsWith(getURL(serviceWorkerScript));
 }
 
 export function isOptionsPage(): boolean {
@@ -27,69 +22,52 @@ export function getStyleUrl() {
   return getURL(filePath);
 }
 
-export function sendMessage<P>(message: Message<P>) {
-  chrome.runtime.sendMessage(message)
-}
+export async function sendMessage<Request, Response = any, Error = any>({ tabId, ...message }: Message<Request> & { tabId?: number }): Promise<Response> {
+  let resolve: (data: Response) => void;
+  let reject: (error: Error) => void;
 
-export function broadcastMessage<P>(message: Message<P>) {
-  sendMessage<P>(message); // send from chrome.runtime to background-process/options pages
-  sendMessageToAllTabs<P>(message); // chrome.tabs -> content pages (user-script pages)
-}
-
-export type OnMessageCallback<P = any, R = any> = (
-  message: Message<P>,
-  sender: chrome.runtime.MessageSender,
-  sendResponse: (payload: R) => void,
-) => void;
-
-export function onMessage<P = any, R = any>(callback: OnMessageCallback<P, R>) {
-  var listener: OnMessageCallback = (message, sender) => {
-    var sendResponse = (payload: R) => {
-      var response: Message<R> = {
-        id: message.id,
-        type: message.type,
-        payload: payload,
-      }
-      if (sender.tab) {
-        sendMessageToTab(sender.tab.id, response);
-      } else {
-        sendMessage(response);
-      }
-    };
-    callback(message, sender, sendResponse);
-  };
-
-  chrome.runtime.onMessage.addListener(listener);
-  return () => {
-    return chrome.runtime.onMessage.removeListener(listener);
-  };
-}
-
-export function onMessageType<P = any, R = any>(type: MessageType, callback: OnMessageCallback<P, R>) {
-  return onMessage((message, sender, sendResponse) => {
-    if (message.type === type) {
-      callback(message, sender, sendResponse);
-    }
-  });
-}
-
-export async function promisifyMessage<P = any, R = any>({ tabId, ...message }: Message<P> & { tabId?: number }): Promise<R> {
-  if (!message.id) {
-    message.id = Math.round(Date.now() * Math.random());
-  }
   if (tabId) {
-    sendMessageToTab(tabId, message);
+    sendMessageToTab(tabId, message, responseCallback);
   } else {
-    sendMessage(message);
+    chrome.runtime.sendMessage(message, responseCallback);
   }
-  return new Promise(resolve => {
-    var stopListen = onMessage<R>(({ type, payload, id }) => {
-      if (type === message.type && id === message.id) {
-        stopListen();
-        resolve(payload);
-      }
-    });
+
+  function responseCallback(res: { data?: Response, error?: Error } = {}) {
+    if (res.data) resolve(res.data);
+    else if(res.error) reject(res.error);
+  }
+
+  return new Promise((res, rej) => {
+    resolve = res;
+    reject = rej;
   });
+}
+
+export interface OnMessageCallback<Request, Response> {
+  (req: Request): Promise<Response> | Response;
+}
+
+export function onMessage<Request, Response = unknown>(type: MessageType, getResult: OnMessageCallback<Request, Response>) {
+  let _listener: (...args: any) => any;
+
+  chrome.runtime.onMessage.addListener(function listener(message: Message<Request>, sender, sendResponse) {
+    _listener = listener;
+
+    if (message.type === type) {
+      Promise.resolve(getResult(message.payload))
+        .then(data => sendResponse({ data }))
+        .catch(error => sendResponse({ error }));
+    }
+
+    // wait for async response
+    // read more: https://developer.chrome.com/docs/extensions/mv3/messaging/
+    return true;
+  });
+
+  // unsubscribe disposer
+  return () => {
+    chrome.runtime.onMessage.removeListener(_listener);
+  };
 }
 
 export function openOptionsPage() {
@@ -98,9 +76,9 @@ export function openOptionsPage() {
   });
 }
 
-export async function checkErrors<T>(data?: T): Promise<T> {
+export function checkErrors<T>(data?: T): T {
   const error = chrome.runtime.lastError;
-  if (error) throw String(error);
+  if (error) throw error;
   return data;
 }
 

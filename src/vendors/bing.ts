@@ -28,7 +28,7 @@ class Bing extends Translator {
       current: this.apiClient.toJS()
     });
     try {
-      const servicePageText = await this.request({
+      const servicePageText = await this.request<string>({
         url: this.publicUrl,
         responseType: ProxyResponseType.TEXT,
         requestInit: {},

@@ -1,5 +1,5 @@
 // [IPC]: inter-process communications (background <-> options-page <-> content-pages)
-import { ITranslationResult } from "../vendors";
+import type { ITranslationResult } from "../vendors";
 
 export const enum MessageType {
   PROXY_REQUEST = "PROXY_REQUEST",
@@ -12,10 +12,7 @@ export const enum MessageType {
   CHROME_TTS_STOP = "TEXT_TO_SPEECH_STOP",
 }
 
-export type MessageId = string | number;
-
 export interface Message<Payload = any /*json-serializable*/> {
-  id?: MessageId;
   type: MessageType;
   payload?: Payload;
 }
@@ -35,13 +32,6 @@ export interface ProxyRequestPayload {
 export type ProxyRequestInit = Omit<RequestInit, "window" | "signal" | "body"> & {
   body?: string;
 };
-
-export interface ProxyRequestResponse<Data = any, Error = any> {
-  messageId: MessageId;
-  url: string;
-  data?: Data;
-  error?: Error;
-}
 
 export interface TranslateWithVendorPayload {
   vendor: string;

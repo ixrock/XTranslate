@@ -2,9 +2,8 @@
 
 import type React from "react";
 import { observable } from "mobx";
-import { isProduction } from "../common-vars";
 import { autoBind, createLogger, JsonResponseError } from "../utils";
-import { MessageId, ProxyRequestPayload, ProxyResponseType } from "../extension/messages";
+import { ProxyRequestPayload, ProxyResponseType } from "../extension/messages";
 import { chromeTtsPlay, chromeTtsStop, getTranslationFromHistory, proxyRequest, saveToHistory } from "../extension/actions";
 import { settingsStore } from "../components/settings/settings.storage";
 
@@ -78,6 +77,10 @@ export abstract class Translator {
     return this.handleSideEffects(translation);
   }
 
+  protected request<Response>(payload: ProxyRequestPayload): Promise<Response> {
+    return proxyRequest(payload);
+  }
+
   protected async searchResultInHistory(params: TranslatePayload): Promise<ITranslationResult | undefined> {
     if (params.from === "auto") {
       return; // always get fresh result for auto-detecting languages
@@ -126,22 +129,6 @@ export abstract class Translator {
       };
     }
   };
-
-  static latestRequestId: MessageId;
-
-  // FIXME: most probably should not use state/latestRequestId
-  protected async request(payload: ProxyRequestPayload): Promise<any> {
-    const messageId = Translator.latestRequestId = Math.random() * Date.now(); // generating message-id
-    const response = await proxyRequest(payload, messageId);
-    const isLatest = Translator.latestRequestId === response.messageId;
-
-    if (!isProduction) {
-      console.log('[REQUEST]:', { payload, response, isLatest });
-    }
-    if (!isLatest) throw null; // skip error as is, result response is outdated
-    if (response.data) return response.data;
-    throw response.error;
-  }
 
   getLangPairShortTitle(langFrom: string, langTo: string) {
     return [langFrom, langTo].join(' → ').toUpperCase();

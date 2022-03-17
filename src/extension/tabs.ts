@@ -1,12 +1,16 @@
 // Chrome tabs apis
-import { Message } from './messages'
+import type { Message } from './messages'
 
 export function createTab(url: string, active = true): Promise<chrome.tabs.Tab> {
   return chrome.tabs.create({ url, active });
 }
 
-export function sendMessageToTab<T>(tabId: number, message: Message<T>) {
-  chrome.tabs.sendMessage(tabId, message);
+export function sendMessageToTab<Request, Response = unknown>(
+  tabId: number,
+  message: Message<Request>,
+  responseCallback?: (res: Response) => void,
+) {
+  chrome.tabs.sendMessage(tabId, message, responseCallback);
 }
 
 export function sendMessageToAllTabs<P>(message: Message<P>) {

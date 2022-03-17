@@ -73,8 +73,8 @@ export class InputTranslation extends React.Component {
     getTranslator(vendor).speak(langDetected, originalText);
   }
 
-  @action
-  translateText = (text: string) => {
+  @action.bound
+  translateText(text: string) {
     this.input.focus();
     this.text = text;
     this.input.setValue(text); // update input value manually since @defaultValue is utilized

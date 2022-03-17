@@ -7,7 +7,7 @@ import { action, computed, makeObservable, observable, toJS } from "mobx";
 import { observer } from "mobx-react";
 import { debounce, isEqual } from "lodash"
 import { autoBind, getHotkey } from "../utils";
-import { getManifest, getStyleUrl, MessageType, onMessageType, TranslateWithVendorPayload } from "../extension";
+import { getManifest, getStyleUrl, MessageType, onMessage, TranslateWithVendorPayload } from "../extension";
 import { getNextTranslator, getTranslator, ITranslationError, ITranslationResult, TranslatePayload } from "../vendors";
 import { XTranslateIcon } from "./xtranslate-icon";
 import { Popup } from "../components/popup/popup";
@@ -64,11 +64,9 @@ class App extends React.Component {
 
   componentDidMount() {
     // Bind extension's runtime IPC events
-    onMessageType<string>(MessageType.GET_SELECTED_TEXT, (message, sender, sendResponse) => {
-      sendResponse(this.selectedText);
-    });
-    onMessageType<TranslateWithVendorPayload>(MessageType.TRANSLATE_WITH_VENDOR, ({ payload }) => {
-      const { vendor, text } = payload;
+    onMessage<void, string>(MessageType.GET_SELECTED_TEXT, () => this.selectedText);
+
+    onMessage(MessageType.TRANSLATE_WITH_VENDOR, ({ vendor, text }: TranslateWithVendorPayload) => {
       this.hideIcon();
       this.translate({ vendor, text });
     });
