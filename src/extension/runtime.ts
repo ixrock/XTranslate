@@ -32,9 +32,10 @@ export async function sendMessage<Request, Response = any, Error = any>({ tabId,
     chrome.runtime.sendMessage(message, responseCallback);
   }
 
-  function responseCallback(res: { data?: Response, error?: Error } = {}) {
+  function responseCallback(res: { data?: Response, error?: Error }) {
+    if (!res) return resolve(null);
     if (res.data) resolve(res.data);
-    else if(res.error) reject(res.error);
+    if (res.error) reject(res.error);
   }
 
   return new Promise((res, rej) => {
