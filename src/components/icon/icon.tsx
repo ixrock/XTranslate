@@ -1,19 +1,15 @@
-import './icon.scss'
-
-import React, { ReactNode } from "react";
-import { findDOMNode } from "react-dom";
-import { autoBind, cssNames } from "../../utils";
+import "./icon.scss";
+import React, { createRef, ReactNode } from "react";
+import { base64, cssNames } from "../../utils";
 import { TooltipDecoratorProps, withTooltip } from "../tooltip";
-import isNumber from "lodash/isNumber"
 
-// TODO: support props.svg={} with custom/any path to icon
 export interface IconProps extends React.HTMLAttributes<any>, TooltipDecoratorProps {
   material?: string;          // material-icon, see available names at https://material.io/icons/
   svg?: string;               // svg-filename without extension in current folder
-  colorful?: boolean;         // has effect only for svg icons: don't fill internal elements to current css-color
   href?: string;              // render icon as hyperlink
   size?: string | number;     // icon-size
   small?: boolean;            // pre-defined icon-size
+  smallest?: boolean;            // pre-defined icon-size
   big?: boolean;              // pre-defined icon-size
   active?: boolean;           // apply active-state styles
   interactive?: boolean;      // indicates that icon is interactive and highlight it on focus/hover
@@ -24,94 +20,102 @@ export interface IconProps extends React.HTMLAttributes<any>, TooltipDecoratorPr
 
 @withTooltip
 export class Icon extends React.PureComponent<IconProps> {
+  private readonly ref = createRef<HTMLAnchorElement>();
+
   static defaultProps: IconProps = {
     focusable: true,
   };
 
-  constructor(props: IconProps) {
-    super(props);
-    autoBind(this);
+  static isSvg(content: string) {
+    return String(content).includes("svg+xml"); // data-url for raw svg-icon
   }
 
   get isInteractive() {
-    var { interactive, onClick, href } = this.props;
-    return interactive || !!(onClick || href);
+    const { interactive, onClick, href } = this.props;
+
+    return interactive ?? !!(onClick || href);
   }
 
-  onClick(evt: React.MouseEvent) {
+  onClick = (evt: React.MouseEvent) => {
     if (this.props.disabled) {
       return;
     }
+
     if (this.props.onClick) {
       this.props.onClick(evt);
     }
   }
 
-  onKeyDown(evt: React.KeyboardEvent<any>) {
+  onKeyDown = (evt: React.KeyboardEvent<any>) => {
     switch (evt.nativeEvent.code) {
       case "Space":
-      case "Enter":
-        var icon = findDOMNode(this) as HTMLElement;
-        setTimeout(() => icon.click());
+
+      // fallthrough
+      case "Enter": {
+        this.ref.current?.click();
         evt.preventDefault();
         break;
+      }
     }
+
     if (this.props.onKeyDown) {
       this.props.onKeyDown(evt);
     }
   }
 
   render() {
-    var { isInteractive } = this;
-    var {
+    const { isInteractive } = this;
+    const {
       // skip passing props to icon's html element
-      className, href, colorful, material, svg, size, small, big,
-      disabled, sticker, active, focusable, children, tooltip,
+      className, href, material, svg, size, smallest, small, big,
+      disabled, sticker, active, focusable, children,
       interactive: _interactive,
       onClick: _onClick,
       onKeyDown: _onKeyDown,
       ...elemProps
     } = this.props;
 
-    var iconContent: ReactNode;
-    var iconProps: Partial<IconProps> = {
-      className: cssNames("Icon", {
-          svg, material, disabled, sticker, active, focusable, colorful,
-          interactive: isInteractive,
-        },
-        !size ? { small, big } : {},
-        className, // keep it last to allow overriding
+    let iconContent: ReactNode;
+    const iconProps: Partial<IconProps> = {
+      className: cssNames("Icon", className,
+        { svg, material, interactive: isInteractive, disabled, sticker, active, focusable },
+        !size ? { smallest, small, big } : {},
       ),
       onClick: isInteractive ? this.onClick : undefined,
       onKeyDown: isInteractive ? this.onKeyDown : undefined,
       tabIndex: isInteractive && focusable && !disabled ? 0 : undefined,
-      style: size ? { "--size": size + (isNumber(size) ? "px" : "") } as React.CSSProperties : undefined,
+      style: size ? { "--size": size + (+size ? "px" : "") } as React.CSSProperties : undefined,
       ...elemProps,
     };
 
     // render as inline svg-icon
-    if (svg) {
-      var svgIconText = require("!!raw-loader!./" + svg + ".svg").default;
-      iconContent = <span dangerouslySetInnerHTML={{ __html: svgIconText }}/>;
+    if (typeof svg === "string") {
+      const dataUrlPrefix = "data:image/svg+xml;base64,";
+      const svgIconDataUrl = svg.startsWith(dataUrlPrefix) ? svg : require(`./${svg}.svg`);
+      const svgIconText = typeof svgIconDataUrl == "string" // decode xml from data-url
+        ? base64.decode(svgIconDataUrl.replace(dataUrlPrefix, "")) : "";
+
+      iconContent = <span className="icon" dangerouslySetInnerHTML={{ __html: svgIconText }}/>;
     }
 
     // render as material-icon
-    if (material) {
-      iconContent = <span className="material-icons">{material}</span>;
+    if (typeof material === "string") {
+      iconContent = <span className="icon" data-icon-name={material}>{material}</span>;
     }
 
     // wrap icon's content passed from decorator
     iconProps.children = (
       <>
-        {tooltip}
         {iconContent}
+        {children}
       </>
     );
 
     // render icon type
     if (href) {
-      return <a {...iconProps} href={href}/>
+      return <a {...iconProps} href={href} ref={this.ref}/>;
     }
-    return <i {...iconProps}/>
+
+    return <i {...iconProps} ref={this.ref}/>;
   }
 }

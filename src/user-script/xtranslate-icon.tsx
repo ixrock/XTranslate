@@ -18,10 +18,9 @@ export class XTranslateIcon extends React.Component<Props> {
     var { className, preview, ...iconProps } = this.props;
     return (
       <Icon
-        className={cssNames("XTranslateIcon", className, { preview })}
+        className={cssNames("XTranslateIcon colorful", className, { preview })}
         svg="logo"
         interactive={true}
-        colorful={true}
         {...iconProps}
       />
     )

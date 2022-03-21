@@ -17,16 +17,6 @@ export class Footer extends React.Component {
 
   private shareIcons: ShareIcon[] = [
     {
-      title: "VK.com",
-      icon: require('../icon/vk.svg'),
-      url: `http://vkontakte.ru/share.php?url=${extensionUrl}`,
-    },
-    {
-      title: "Facebook",
-      icon: require('../icon/facebook.svg'),
-      url: `https://www.facebook.com/sharer/sharer.php?u=${extensionUrl}`,
-    },
-    {
       title: "Twitter",
       icon: require('../icon/twitter.svg'),
       url: [

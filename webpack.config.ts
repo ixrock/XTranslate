@@ -1,35 +1,37 @@
 import path from 'path'
-import webpack from 'webpack'
-import HtmlWebpackPlugin from 'html-webpack-plugin';
-import CopyWebpackPlugin from 'copy-webpack-plugin';
-import MiniCssExtractPlugin from 'mini-css-extract-plugin';
+import HtmlWebpackPlugin from 'html-webpack-plugin'
+import CopyWebpackPlugin from 'copy-webpack-plugin'
+import MiniCssExtractPlugin from 'mini-css-extract-plugin'
 
 export = () => {
-  var isProduction = process.env.NODE_ENV === "production";
-  var srcPath = path.resolve(__dirname, 'src');
-  var distPath = path.resolve(__dirname, 'dist');
+  var isDevelopment = process.env.NODE_ENV !== "production";
+  var srcPath = path.resolve(__dirname, "src");
+  var distPath = path.resolve(__dirname, "dist");
   var optionsPage = path.resolve(__dirname, "options.html");
-  var componentsDir = path.resolve(srcPath, 'components');
+  var componentsDir = path.resolve(srcPath, "components");
 
   return {
-    context: srcPath,
+    target: "web", // https://webpack.js.org/configuration/target/
+    devtool: "source-map", // https://webpack.js.org/configuration/devtool/
+    mode: isDevelopment ? 'development' : 'production',
+    cache: isDevelopment,
+
     entry: {
       app: path.resolve(componentsDir, "app/index.tsx"),
       background: path.resolve(srcPath, "background/background.ts"),
       pageScript: path.resolve(srcPath, "user-script/user-script.tsx"),
       pageStyle: path.resolve(srcPath, "user-script/user-script.scss"),
     },
+
     output: {
       path: distPath,
-      publicPath: './',
-      filename: '[name].js'
+      filename: '[name].js',
+      chunkFilename: 'chunks/[name].js',
+      assetModuleFilename: `assets/[name][ext][query]`
     },
 
-    mode: isProduction ? "production" : "development",
-    devtool: isProduction ? false : "inline-source-map",
-
     optimization: {
-      minimize: isProduction,
+      minimize: false
     },
 
     resolve: {
@@ -43,19 +45,18 @@ export = () => {
       rules: [
         {
           test: /\.tsx?$/,
-          use: [
-            {
-              loader: 'ts-loader',
-              options: {
-                compilerOptions: {
-                  // allow to use dynamic import(),
-                  // https://webpack.js.org/guides/code-splitting/#dynamic-imports
-                  module: "esnext"
-                }
-              }
+          use: {
+            loader: 'ts-loader',
+            options: {
+              transpileOnly: false
             }
-          ]
+          }
         },
+
+        /**
+         * Import CSS or SASS styles with modules support (*.module.scss)
+         * @param {string} styleLoader
+         */
         {
           test: /\.s?css$/,
           use: [
@@ -63,44 +64,47 @@ export = () => {
             {
               loader: "css-loader",
               options: {
-                sourceMap: true
+                sourceMap: isDevelopment,
+                modules: {
+                  auto: /\.module\./i, // https://github.com/webpack-contrib/css-loader#auto
+                  mode: 'local', // :local(.selector) by default
+                  localIdentName: '[name]__[local]--[hash:base64:5]'
+                }
               }
             },
             {
-              loader: "sass-loader",
+              loader: 'sass-loader',
               options: {
-                additionalData: `@import "vars";`,
+                sourceMap: isDevelopment,
+                additionalData: `@import "vars";`, // TODO: move to css-vars only
                 sassOptions: {
                   includePaths: [componentsDir]
                 },
               }
-            },
+            }
           ]
         },
+
+        /**
+         * Import icons and image files.
+         * Read more about asset types: https://webpack.js.org/guides/asset-modules/
+         */
         {
-          test: /\.(txt|log)$/,
-          use: 'raw-loader'
+          test: /\.svg$/,
+          type: "asset/inline" // data:image/svg+xml;base64,...
         },
         {
-          test: /\.(jpg|png|svg|map|ico)$/,
-          use: {
-            loader: 'file-loader',
-            options: {
-              name: "assets/[name]-[hash:6].[ext]",
-              esModule: false,
-            },
-          }
+          test: /\.(jpg|png|ico)$/,
+          type: "asset/resource" // path to file, e.g. "/build/assets/*"
         },
+
+        /**
+         * Import custom fonts as URL.
+         */
         {
           test: /\.(ttf|eot|woff2?)$/,
-          use: {
-            loader: 'file-loader',
-            options: {
-              name: "assets/[name].[ext]",
-              esModule: false,
-            },
-          },
-        },
+          type: "asset/resource"
+        }
       ]
     },
 
@@ -108,25 +112,21 @@ export = () => {
       new HtmlWebpackPlugin({
         inject: true,
         hash: true,
-        chunks: ["common", "app"],
         filename: path.basename(optionsPage),
-        template: optionsPage
+        template: optionsPage,
       }),
+
       new MiniCssExtractPlugin({
-        filename: "[name].css",
+        filename: '[name].css'
       }),
-      new webpack.DefinePlugin({
-        'process.env': {
-          NODE_ENV: JSON.stringify(isProduction ? "production" : "development"),
-        }
-      }),
+
       new CopyWebpackPlugin({
         patterns: [
-          { from: "../manifest.json" },
-          { from: "../_locales", to: "_locales" },
-          { from: "../assets", to: "assets" },
+          { from: "manifest.json" },
+          { from: "_locales", to: "_locales" },
+          { from: "assets", to: "assets" },
         ]
-      }),
-    ],
-  };
+      })
+    ]
+  }
 };
