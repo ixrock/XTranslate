@@ -90,9 +90,6 @@ export async function clearHistoryItem(id: IHistoryItemId, vendor?: string) {
 }
 
 export function toTranslationResult(data: IHistoryStorageItem): ITranslationResult {
-  if (!data) {
-    return;
-  }
   const {
     translation, transcription, dictionary, vendor,
     text: originalText,

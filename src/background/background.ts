@@ -3,11 +3,13 @@
 import "../packages.setup";
 import "./contextMenu"
 import { isProduction } from "../common-vars";
-import { blobToBase64, parseJson } from "../utils";
+import { blobToBase64, createLogger, parseJson } from "../utils";
 import { ChromeTtsPayload, MessageType, onInstall, onMessage, openOptionsPage, ProxyRequestPayload, ProxyResponseType, SaveToHistoryPayload } from '../extension'
 import { rateLastTimestamp } from "../components/app/app-rate.storage";
 import { generateId, historyStorage, IHistoryStorageItem, importHistory, loadHistory, toStorageItem, toTranslationResult } from "../components/user-history/history.storage";
 import type { TranslatePayload } from "../vendors/translator";
+
+const logger = createLogger({ systemPrefix: '[BACKGROUND]' });
 
 // TODO: provide fallback-translation on error from another available vendor on the-fly/transparent
 // TODO: update styles to (s)css-modules + better dark/light theme support
@@ -45,6 +47,8 @@ onMessage(MessageType.PROXY_REQUEST, async ({ url, responseType, requestInit }: 
 onMessage(MessageType.SAVE_TO_HISTORY, async (payload: SaveToHistoryPayload) => {
   await loadHistory();
   const storageItem = toStorageItem(payload.translation);
+
+  logger.info("saving item to history", storageItem);
   importHistory(storageItem);
 });
 
@@ -52,13 +56,17 @@ onMessage(MessageType.SAVE_TO_HISTORY, async (payload: SaveToHistoryPayload) => 
  * Handling saved translations from history without http-traffic
  */
 onMessage(MessageType.GET_FROM_HISTORY, async (payload: TranslatePayload) => {
-  await loadHistory(); // preload once
+  await loadHistory();
 
   const { text, from, to, vendor } = payload;
   const translationId = generateId(text, from, to);
   const storageItem: IHistoryStorageItem = historyStorage.toJS().translations[translationId]?.[vendor];
 
-  return toTranslationResult(storageItem);
+  if (storageItem) {
+    const result = toTranslationResult(storageItem);
+    logger.info("handling translation from history item lookup", { result, payload });
+    return result;
+  }
 });
 
 /**

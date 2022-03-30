@@ -39,6 +39,10 @@ export function saveToHistory(translation: ITranslationResult) {
 }
 
 export function getTranslationFromHistory(payload: TranslatePayload) {
+  if (payload.from === "auto") {
+    return; // skip: source-language always saved as detected-language in history
+  }
+
   return sendMessage<TranslatePayload, ITranslationResult | void>({
     type: MessageType.GET_FROM_HISTORY,
     payload,

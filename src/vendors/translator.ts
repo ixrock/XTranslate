@@ -50,15 +50,18 @@ export abstract class Translator {
 
   abstract translate(params: TranslateParams): Promise<ITranslationResult>;
 
+  protected request<Response>(payload: ProxyRequestPayload): Promise<Response> {
+    return proxyRequest(payload);
+  }
+
   async #handleTranslation(
     originalTranslate: (params: TranslateParams) => Promise<ITranslationResult>,
     params: TranslateParams,
   ): Promise<ITranslationResult> {
-    let translation = await this.searchResultInHistory({ vendor: this.name, ...params });
-    if (translation) {
-      Translator.logger.info(`serving result from history`, params);
-    }
+    let translation = await getTranslationFromHistory({ vendor: this.name, ...params }) as ITranslationResult;
+    if (translation) translation = this.normalize(translation, params);
 
+    // get result via network
     if (!translation) {
       const getResult = async (customParams: Partial<TranslateParams> = {}) => {
         const customizedParams = { ...params, ...customParams };
@@ -66,30 +69,16 @@ export abstract class Translator {
         return this.normalize(result, customizedParams);
       };
 
-      // getting translation via network
       translation = await getResult();
-      const swapLangParams = this.swapLangCheck(translation);
-      if (swapLangParams) {
-        translation = await getResult(swapLangParams);
+      const swappedLangParams = this.swapLangCheck(translation);
+      if (swappedLangParams) {
+        translation = await getResult(swappedLangParams);
       }
     }
 
-    return this.handleSideEffects(translation);
-  }
-
-  protected request<Response>(payload: ProxyRequestPayload): Promise<Response> {
-    return proxyRequest(payload);
-  }
-
-  protected async searchResultInHistory(params: TranslatePayload): Promise<ITranslationResult | undefined> {
-    if (params.from === "auto") {
-      return; // always get fresh result for auto-detecting languages
-    }
-
-    const cachedResult = await getTranslationFromHistory(params);
-    if (cachedResult) {
-      return this.normalize(cachedResult, params);
-    }
+    // handle final output
+    requestIdleCallback(() => this.handleSideEffects(translation));
+    return translation;
   }
 
   protected handleSideEffects(translation: ITranslationResult): ITranslationResult {

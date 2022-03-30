@@ -32,10 +32,12 @@ export async function sendMessage<Request, Response = any, Error = any>({ tabId,
     chrome.runtime.sendMessage(message, responseCallback);
   }
 
-  function responseCallback(res: { data?: Response, error?: Error }) {
-    if (!res) return resolve(null);
-    if (res.data) resolve(res.data);
-    if (res.error) reject(res.error);
+  function responseCallback(res: { data?: Response, error?: Error } = {}) {
+    const resultFields = Object.getOwnPropertyNames(res) as (keyof typeof res)[];
+
+    if (resultFields.includes("data")) resolve(res.data);
+    else if (resultFields.includes("error")) reject(res.error);
+    else resolve(null); // sent "res.data" with undefined value
   }
 
   return new Promise((res, rej) => {
