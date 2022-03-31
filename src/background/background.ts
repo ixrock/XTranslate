@@ -3,8 +3,8 @@
 import "../packages.setup";
 import "./contextMenu"
 import { isProduction } from "../common-vars";
-import { blobToBase64, createLogger, parseJson } from "../utils";
-import { ChromeTtsPayload, MessageType, onInstall, onMessage, openOptionsPage, ProxyRequestPayload, ProxyResponseType, SaveToHistoryPayload } from '../extension'
+import { blobToBase64DataUrl, createLogger, parseJson } from "../utils";
+import { ChromeTtsPayload, MessageType, onInstall, onMessage, openOptionsPage, ProxyRequestPayload, ProxyResponsePayload, ProxyResponseType, SaveToHistoryPayload } from '../extension'
 import { rateLastTimestamp } from "../components/app/app-rate.storage";
 import { generateId, historyStorage, IHistoryStorageItem, importHistory, loadHistory, toStorageItem, toTranslationResult } from "../components/user-history/history.storage";
 import type { TranslatePayload } from "../vendors/translator";
@@ -26,19 +26,37 @@ onInstall((reason) => {
  * Network proxy for `options` and `content-script` pages (to avoid CORS, etc.)
  */
 onMessage(MessageType.PROXY_REQUEST, async ({ url, responseType, requestInit }: ProxyRequestPayload) => {
+  logger.info(`proxying request (${responseType}): ${url}`);
+
   const httpResponse = await fetch(url, requestInit);
+  const payload: ProxyResponsePayload<any> = {
+    url,
+    headers: Object.fromEntries(httpResponse.headers),
+    data: undefined,
+  };
 
   switch (responseType) {
     case ProxyResponseType.JSON:
-      return parseJson(httpResponse);
+      payload.data = await parseJson(httpResponse);
+      break;
 
     case ProxyResponseType.TEXT:
-      return httpResponse.text();
+      payload.data = await httpResponse.text();
+      break;
 
-    case ProxyResponseType.DATA_URI:
-      const binaryData = await httpResponse.blob();
-      return blobToBase64(binaryData);
+    case ProxyResponseType.DATA_URL:
+      const blob = await httpResponse.blob();
+      payload.data = await blobToBase64DataUrl(blob);
+      break;
+
+    case ProxyResponseType.BLOB:
+      const buffer = await httpResponse.arrayBuffer();
+      const transferableDataContainer = new Uint8Array(buffer);
+      payload.data = Array.from(transferableDataContainer);
+      break;
   }
+
+  return payload;
 });
 
 /**

@@ -1,5 +1,5 @@
 import type { ITranslationResult, TranslatePayload } from "../vendors";
-import { ChromeTtsPayload, MessageType, ProxyRequestPayload, ProxyResponseType, SaveToHistoryPayload } from "./messages";
+import { ChromeTtsPayload, MessageType, ProxyRequestPayload, ProxyResponsePayload, ProxyResponseType, SaveToHistoryPayload } from "./messages";
 import { getActiveTab, sendMessage } from "./index";
 
 export async function getSelectedText(): Promise<string> {
@@ -19,14 +19,24 @@ export async function getSelectedText(): Promise<string> {
   });
 }
 
-export async function proxyRequest<Response>(payload: ProxyRequestPayload) {
-  return sendMessage<ProxyRequestPayload, Response>({
+export async function proxyRequest<Response>(payload: ProxyRequestPayload): Promise<Response> {
+  const response: ProxyResponsePayload<Response> = await sendMessage<ProxyRequestPayload>({
     type: MessageType.PROXY_REQUEST,
     payload: {
       responseType: ProxyResponseType.JSON, /*default*/
       ...payload,
     },
   });
+
+  if (payload.responseType === ProxyResponseType.BLOB) {
+    const arrayBuffer = Uint8Array.from(response.data as unknown as number[]).buffer;
+
+    return new Blob([arrayBuffer], {
+      type: response.headers["content-type"]
+    }) as any as Response;
+  }
+
+  return response.data;
 }
 
 export function saveToHistory(translation: ITranslationResult) {

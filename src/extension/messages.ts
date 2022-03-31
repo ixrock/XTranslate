@@ -20,7 +20,8 @@ export interface Message<Payload = any /*json-serializable*/> {
 export const enum ProxyResponseType {
   JSON = "json",
   TEXT = "text",
-  DATA_URI = "data-uri", // https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/Data_URIs
+  DATA_URL = "data-url", // https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/Data_URIs
+  BLOB = "binary-data",
 }
 
 export interface ProxyRequestPayload {
@@ -32,6 +33,12 @@ export interface ProxyRequestPayload {
 export type ProxyRequestInit = Omit<RequestInit, "window" | "signal" | "body"> & {
   body?: string;
 };
+
+export interface ProxyResponsePayload<Data> {
+  url: string;
+  headers: { [header: string]: string; "content-type"?: string };
+  data: Data;
+}
 
 export interface TranslateWithVendorPayload {
   vendor: string;

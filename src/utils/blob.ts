@@ -1,6 +1,6 @@
-// Converts binary data (blob) to base64 string
+// Converts binary raw data (Blob) to other transferable formats
 
-export function blobToBase64(data: Blob): Promise<string> {
+export function blobToBase64DataUrl(data: Blob): Promise<string> {
   return new Promise<string>((resolve, reject) => {
     const fileReader = new FileReader();
     fileReader.readAsDataURL(data);

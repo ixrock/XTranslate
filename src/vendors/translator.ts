@@ -149,7 +149,7 @@ export abstract class Translator {
         this.audio = document.createElement("audio");
         this.audio.src = await this.request({
           url: audioUrl,
-          responseType: ProxyResponseType.DATA_URI,
+          responseType: ProxyResponseType.DATA_URL,
           requestInit: {
             credentials: "include",
           },
