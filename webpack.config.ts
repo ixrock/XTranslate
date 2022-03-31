@@ -24,6 +24,7 @@ export = () => {
     },
 
     output: {
+      publicPath: "auto",
       path: distPath,
       filename: '[name].js',
       chunkFilename: 'chunks/[name].js',
@@ -111,7 +112,7 @@ export = () => {
     plugins: [
       new HtmlWebpackPlugin({
         inject: true,
-        hash: true,
+        chunks: ["app"],
         filename: path.basename(optionsPage),
         template: optionsPage,
       }),
