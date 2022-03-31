@@ -18,7 +18,7 @@ export const settingsStorage = createStorageHelper("settings", {
     showPopupOnClickBySelection: false,
     showPopupOnDoubleClick: true,
     showPopupOnHotkey: true,
-    showTranslatedFrom: false,
+    showTranslatedFrom: true,
     rememberLastText: false,
     textInputTranslateDelayMs: 750,
     vendor: "google",

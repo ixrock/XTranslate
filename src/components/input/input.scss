@@ -18,7 +18,7 @@
   &.validatingLine {
     label:after {
       width: 100%;
-      @include stripeLinesAnimation;
+      @include stripe-lines-animation;
     }
   }
 

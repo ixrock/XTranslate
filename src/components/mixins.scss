@@ -48,7 +48,7 @@
   -ms-overflow-style: none; // IE (10,11?), Edge(?)
 }
 
-@mixin stripeLinesAnimation($color1: #ccc, $color2: transparent, $spacing: 1rem) {
+@mixin stripe-lines-animation($color1: #ccc, $color2: transparent, $spacing: 1rem) {
   background: repeating-linear-gradient(-45deg, $color2, $color2, $spacing, $color1 $spacing, $color1 $spacing * 2);
   background-size: 200% 200%;
   animation: stripeLines 10s linear infinite;
@@ -77,5 +77,22 @@
   }
   :global(body.#{$className}) {
     @content; // css-modules (*.module.scss)
+  }
+}
+
+// Makes custom @font-family available at earlier stages
+// Element must exist in DOM as soon as possible to initiate preloading
+@mixin font-preload($fontFamily) {
+  position: absolute;
+  visibility: hidden;
+  height: 0;
+
+  &:before {
+    width: 0;
+    display: block;
+    overflow: hidden;
+    content: "x"; // some text required to start applying font in document
+    font-family: $fontFamily; // imported name in @font-face declaration
+    @content;
   }
 }

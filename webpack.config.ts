@@ -12,7 +12,7 @@ export = () => {
 
   return {
     target: "web", // https://webpack.js.org/configuration/target/
-    devtool: "source-map", // https://webpack.js.org/configuration/devtool/
+    devtool: isDevelopment ? "source-map" : undefined, // https://webpack.js.org/configuration/devtool/
     mode: isDevelopment ? 'development' : 'production',
     cache: isDevelopment,
 
@@ -65,7 +65,7 @@ export = () => {
             {
               loader: "css-loader",
               options: {
-                sourceMap: isDevelopment,
+                sourceMap: false,
                 modules: {
                   auto: /\.module\./i, // https://github.com/webpack-contrib/css-loader#auto
                   mode: 'local', // :local(.selector) by default
@@ -76,8 +76,8 @@ export = () => {
             {
               loader: 'sass-loader',
               options: {
-                sourceMap: isDevelopment,
-                additionalData: `@import "vars";`, // TODO: move to css-vars only
+                sourceMap: false,
+                additionalData: `@import "vars";`,
                 sassOptions: {
                   includePaths: [componentsDir]
                 },

@@ -1,6 +1,7 @@
 @import "~flex.box";
 @import "theme-dark";
 @import "../mixins";
+@import "../fonts";
 
 *, *:before, *:after {
   box-sizing: border-box;
@@ -18,14 +19,18 @@ html {
 }
 
 body {
-  --flex-gap: #{$margin * 1.2};
   @include custom-scrollbar($theme: dark);
+
+  --flex-gap: #{$margin * 1.2};
+  $font-size: 1rem * 1.5;
+  $font-main: Helvetica Neue, Roboto, sans-serif !default;
+
   font: $font-size $font-main;
   height: inherit;
 }
 
 code {
-  font-family: $font-monospace;
+  font-family: Lucida Console, Monaco, Consolas, monospace;
 }
 
 input, select, textarea {

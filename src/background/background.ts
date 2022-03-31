@@ -11,10 +11,6 @@ import type { TranslatePayload } from "../vendors/translator";
 
 const logger = createLogger({ systemPrefix: '[BACKGROUND]' });
 
-// TODO: provide fallback-translation on error from another available vendor on the-fly/transparent
-// TODO: update styles to (s)css-modules + better dark/light theme support
-// TODO: input-translation page: keep changes in URL and allow navigation back & forward
-
 onInstall((reason) => {
   if (reason === "install" || !isProduction) {
     rateLastTimestamp.set(Date.now());

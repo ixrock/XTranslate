@@ -1,0 +1,11 @@
+// Extension's custom fonts
+
+$assetsPath: "chrome-extension://__MSG_@@extension_id__/assets";
+
+// Material Design Icons (see also: icon.tsx)
+// Latest version: https://github.com/google/material-design-icons/tree/master/font
+@font-face {
+  font-family: "Material Icons (XTranslate)";
+  font-display: block;
+  src: local("Material Icons"), url("#{$assetsPath}/fonts/MaterialIcons-Regular.ttf") format("truetype");
+}
