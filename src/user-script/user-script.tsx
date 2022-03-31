@@ -7,7 +7,7 @@ import { action, computed, makeObservable, observable, toJS } from "mobx";
 import { observer } from "mobx-react";
 import { debounce, isEqual } from "lodash"
 import { autoBind, getHotkey } from "../utils";
-import { getManifest, getStyleUrl, MessageType, onMessage, TranslateWithVendorPayload } from "../extension";
+import { getManifest, getStyleUrl, MessageType, onMessage, proxyRequest, ProxyResponseType, TranslateWithVendorPayload } from "../extension";
 import { getNextTranslator, getTranslator, ITranslationError, ITranslationResult, TranslatePayload } from "../vendors";
 import { XTranslateIcon } from "./xtranslate-icon";
 import { Popup } from "../components/popup/popup";
@@ -61,8 +61,19 @@ class App extends React.Component {
   @observable isRtlSelection = false;
   @observable isIconShown = false;
   @observable isLoading = false;
+  @observable cssText: string;
+
+  @action
+  async preloadCss() {
+    this.cssText = await proxyRequest<string>({
+      url: getStyleUrl(),
+      responseType: ProxyResponseType.TEXT,
+    });
+  }
 
   componentDidMount() {
+    this.preloadCss();
+
     // Bind extension's runtime IPC events
     onMessage<void, string>(MessageType.GET_SELECTED_TEXT, () => this.selectedText);
 
@@ -414,7 +425,7 @@ class App extends React.Component {
     var translator = getTranslator(vendor);
     return (
       <>
-        <link rel="stylesheet" href={getStyleUrl()}/>
+        <style type="text/css">{this.cssText}</style>
         <Popup
           style={popupPosition}
           initParams={lastParams}

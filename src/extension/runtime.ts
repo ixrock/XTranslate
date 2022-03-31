@@ -3,12 +3,17 @@ import InstalledDetails = chrome.runtime.InstalledDetails;
 import { Message, MessageType } from './messages'
 import { sendMessageToTab } from "./tabs";
 
-export function getManifest(): chrome.runtime.ManifestV3 {
-  return chrome.runtime.getManifest() as any;
+export function getManifest() {
+  return chrome.runtime.getManifest() as chrome.runtime.ManifestV3;
 }
 
 export function getURL(path = ""): string {
   return chrome.runtime.getURL(path);
+}
+
+export function isBackgroundPage(): boolean {
+  const serviceWorkerScript = getManifest().background.service_worker;
+  return location.href.startsWith(getURL(serviceWorkerScript));
 }
 
 export function isOptionsPage(): boolean {

@@ -1,6 +1,6 @@
 import { reaction } from "mobx";
 import { Color } from "react-color"
-import { getURL } from "../../extension";
+import { getURL, proxyRequest, ProxyResponseType } from "../../extension";
 import { createLogger } from "../../utils";
 import { createStorageHelper } from "../../extension/storage";
 
@@ -73,9 +73,7 @@ export class ThemeStore {
 
   private async init() {
     await this.ready;
-    await document.fonts.ready;
-
-    this.loadFont(this.iconsFont);
+    await this.loadFont(this.iconsFont);
 
     reaction(() => this.data.fontFamily, font => this.loadFont(font), {
       name: "theme-font-loader",
@@ -91,14 +89,20 @@ export class ThemeStore {
   }
 
   async loadFont(font: string | IThemeFont) {
+    await document.fonts.ready;
+
     const { fileName, familyName } = this.getBundledFont(font);
     const isExists = document.fonts.check(`10px "${familyName}"`);
     if (isExists) return; // font is already available in content-page
     if (!fileName) return; // system font is selected by user, e.g. "Arial"
+
     try {
-      const fontUrl = getURL(`assets/fonts/${fileName}`);
-      const font = new FontFace(familyName, `url(${fontUrl})`);
-      font.display = "swap"; // https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display
+      const fontBlob = await proxyRequest<Blob>({
+        url: getURL(`assets/fonts/${fileName}`),
+        responseType: ProxyResponseType.BLOB,
+      });
+      const font = new FontFace(familyName, await fontBlob.arrayBuffer());
+      font.display = "swap";
       await font.load();
       document.fonts.add(font);
     } catch (error) {

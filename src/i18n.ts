@@ -1,7 +1,6 @@
 import React from "react";
 import { observable } from "mobx";
-import { createStorageHelper } from "./extension/storage";
-import { getURL } from "./extension";
+import { createStorageHelper, getURL, isBackgroundPage, proxyRequest } from "./extension";
 import { createLogger } from "./utils";
 
 export type Locale = "en" | "de" | "ru" | "sr" | "zh_TW";
@@ -37,7 +36,10 @@ async function loadMessages(lang: Locale) {
   }
   const localizationFile = getURL(`_locales/${lang}/messages.json`);
   try {
-    const data: Messages = await fetch(localizationFile).then(res => res.json());
+    const data: Messages = isBackgroundPage()
+      ? await fetch(localizationFile).then(res => res.json()) // required in context-menus
+      : await proxyRequest({ url: localizationFile })
+
     messages.set(lang, data);
   } catch (error) {
     logger.error(`loading locale "${lang}" has failed (file: ${localizationFile})`);
@@ -90,5 +92,9 @@ export function getSystemLocale(): Locale {
 export async function i18nInit() {
   await storage.whenReady;
   await loadMessages("en"); // preload english as fallback locale
-  await loadMessages(getLocale()); // load current locale
+
+  const userLocale = getLocale();
+  if (userLocale !== "en") {
+    await loadMessages(getLocale());
+  }
 }

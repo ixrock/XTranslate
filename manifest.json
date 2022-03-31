@@ -45,7 +45,7 @@
   "content_scripts": [
     {
       "all_frames": true,
-      "run_at": "document_idle",
+      "run_at": "document_end",
       "js": ["pageScript.js"],
       "css": ["pageStyle.css"],
       "matches": [
