@@ -205,6 +205,7 @@ export const langToFlagIconMap: Record<string, string> = {
   "sq": "al", // Albanian
   "hy": "am", // Armenian
   "ce": "ph", // Cebuano (Philippines)
+  "bn": "bd", // Bengali (Bangladesh)
   "ny": "mw", // Malawi, Zambia, Mozambique, Zimbabwe
   "cs": "cz", // Czech Republic
   "da": "dk", // Danish

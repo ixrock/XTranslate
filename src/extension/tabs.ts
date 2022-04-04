@@ -19,6 +19,9 @@ export function sendMessageToAllTabs<P>(message: Message<P>) {
   });
 }
 
+// Works differently than `chrome.tabs.getCurrent()`
+// Only "activeTab" permission is enabled in manifest.json
+// e.g. show translation in extension's window when some text selected at webpage
 export function getActiveTab(): Promise<chrome.tabs.Tab> {
   return new Promise(resolve => {
     chrome.tabs.query({ active: true }, function (tabs) {

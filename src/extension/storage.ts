@@ -1,6 +1,6 @@
 // Chrome storages api helper
-import { checkErrors } from "./runtime";
-import { createLogger, StorageHelper, StorageHelperOptions } from "../utils";
+import { createLogger } from "../utils/createLogger";
+import { StorageHelper, StorageHelperOptions } from "../utils/storageHelper";
 
 export interface ChromeStorageHelperOptions<T> extends Omit<StorageHelperOptions<T>, "storage"> {
   area?: chrome.storage.AreaName; // default: "local"
@@ -34,20 +34,20 @@ export function createStorageHelper<T>(key: string, options: ChromeStorageHelper
           chromeStorage.set({
             [key]: value,
             [metadataVersionKey]: ++storageResourceVersion,
-          }, () => resolve(checkErrors()))
+          }, resolve)
         })
       },
       async getItem(key: string): Promise<T> {
         return new Promise(resolve => {
           chromeStorage.get([key, metadataVersionKey], items => {
             storageResourceVersion = Math.max(storageResourceVersion, items[metadataVersionKey] ?? 0);
-            resolve(checkErrors(items[key]));
+            resolve(items[key]);
           })
         });
       },
       async removeItem(key: string) {
         return new Promise(resolve => {
-          chromeStorage.remove([key, metadataVersionKey], () => resolve(checkErrors()));
+          chromeStorage.remove([key, metadataVersionKey], resolve);
         })
       },
     },

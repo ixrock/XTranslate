@@ -41,8 +41,13 @@ export async function sendMessage<Request, Response = any, Error = any>({ tabId,
     const resultFields = Object.getOwnPropertyNames(res) as (keyof typeof res)[];
 
     if (resultFields.includes("data")) resolve(res.data);
-    else if (resultFields.includes("error")) reject(res.error);
-    else resolve(null); // sent "res.data" with undefined value
+    if (resultFields.includes("error")) reject(res.error);
+    else resolve(null); // called in case `onMessage(() => undefined)`
+
+    // fix: "Could not establish connection. Receiving end does not exist."
+    if (chrome.runtime.lastError) {
+      // do nothing
+    }
   }
 
   return new Promise((res, rej) => {
@@ -80,14 +85,8 @@ export function onMessage<Request, Response = unknown>(type: MessageType, getRes
 
 export function openOptionsPage() {
   return new Promise(resolve => {
-    chrome.runtime.openOptionsPage(() => resolve(checkErrors()));
+    chrome.runtime.openOptionsPage(() => resolve(null));
   });
-}
-
-export function checkErrors<T>(data?: T): T {
-  const error = chrome.runtime.lastError;
-  if (error) throw error;
-  return data;
 }
 
 export function onInstall(callback: (reason: "install" | "update" | "chrome_update", details: InstalledDetails) => void) {

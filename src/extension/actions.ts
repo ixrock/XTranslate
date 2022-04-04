@@ -3,15 +3,7 @@ import { ChromeTtsPayload, MessageType, ProxyRequestPayload, ProxyResponsePayloa
 import { getActiveTab, sendMessage } from "./index";
 
 export async function getSelectedText(): Promise<string> {
-  // Receiving selected text via IPC doesn't work with that browser's system pages.
-  // Otherwise it gets non-critical error:
-  // "Unchecked runtime.lastError: Could not establish connection. Receiving end does not exist."
-  const excludedSystemPages = ["chrome-extension://", "chrome://"];
-
-  const activeTab = await getActiveTab(); // permissions.activeTab probably required too
-  const tabUrl = activeTab.url; // to get access to tab URL extra `permissions.tabs` is required in `manifest.json`
-  const skip = excludedSystemPages.some(baseUrl => tabUrl.startsWith(baseUrl));
-  if (skip) return "";
+  const activeTab = await getActiveTab();
 
   return sendMessage<void, string>({
     type: MessageType.GET_SELECTED_TEXT,
