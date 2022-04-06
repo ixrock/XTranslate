@@ -14,10 +14,16 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "resolveJsonModule": true,
-    "useDefineForClassFields": true
+    "useDefineForClassFields": true,
+  },
+  "ts-node": {
+    "transpileOnly": true,
+    "compilerOptions": {
+      "module": "CommonJS"
+    }
   },
   "include": [
-    "src/**/*"
+    "src"
   ],
   "exclude": [
     "node_modules"

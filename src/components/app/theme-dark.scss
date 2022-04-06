@@ -1,3 +1,4 @@
+// FIXME: refactor & move parts to proper places
 body {
   &.theme-dark {
     --theme-contast-color: white;
@@ -44,7 +45,6 @@ body {
     .Dialog {
       > .box {
         background: var(--theme-contast-color-invert);
-        border: 1px solid #ffffff15;
       }
     }
   }

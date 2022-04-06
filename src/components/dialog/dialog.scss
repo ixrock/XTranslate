@@ -1,14 +1,25 @@
 
 .Dialog {
   @include custom-scrollbar;
+
+  --dialog-bgc: rgba(0, 0, 0, .5);
+  --dialog-padding: 0;
+  --dialog-border: 1px solid #ffffff15;
+
   position: fixed;
   overflow: auto;
   left: 0;
   top: 0;
   width: 100%;
   height: 100%;
-  padding: $unit * 5;
+  padding: 0;
   z-index: 100;
+
+  > .box {
+    border: var(--dialog-border);
+    background-color: var(--dialog-bgc) !important;
+    padding: var(--dialog-padding) !important;
+  }
 
   &.modal {
     background: transparentize(#222, .5);

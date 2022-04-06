@@ -36,7 +36,7 @@ export = () => {
     },
 
     resolve: {
-      extensions: ['.ts', '.tsx', '.js', '.json'],
+      extensions: ['.ts', '.tsx', '.js', '.json', ".scss", ".css"],
       fallback: {
         crypto: false // ignore browser polyfill warnings from "crypto-js" package
       }
@@ -96,7 +96,7 @@ export = () => {
         },
         {
           test: /\.(jpg|png|ico)$/,
-          type: "asset/resource" // path to file, e.g. "/build/assets/*"
+          type: "asset/resource" // path to bundled file, e.g. "/assets/*"
         },
 
         /**

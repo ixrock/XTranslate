@@ -1,0 +1,15 @@
+.ExportSettingsDialog {
+  --dialog-bgc: rgba(255, 255, 255, .95);
+  --dialog-padding: 20px;
+
+  .error {
+    font-style: italic;
+    color: $red-a100;
+  }
+}
+
+@include theme-dark {
+  .ExportSettingsDialog {
+    --dialog-bgc: #{$bgc-dark};
+  }
+}

@@ -3,10 +3,10 @@ import "./dialog.scss";
 import * as React from "react";
 import { createPortal, findDOMNode } from "react-dom";
 import { Animate } from "../animate";
-import { cssNames, noop, stopPropagation } from "../../utils";
+import { cssNames, IClassName, noop, stopPropagation } from "../../utils";
 
 export interface DialogProps {
-  className?: string
+  className?: IClassName;
   contentClassName?: string
   isOpen?: boolean
   open?: () => void
@@ -109,9 +109,11 @@ export class Dialog extends React.Component<DialogProps, DialogState> {
 
   render() {
     if (!this.isOpen) return null;
+
     var { className, modal, animated, pinned, contentClassName } = this.props;
     className = cssNames("Dialog flex center", className, { modal, pinned });
     contentClassName = cssNames("box", contentClassName)
+
     var dialog = (
       <div className={className} onClick={stopPropagation}>
         <div className={contentClassName} ref={e => this.contentElem = e}>
@@ -119,9 +121,11 @@ export class Dialog extends React.Component<DialogProps, DialogState> {
         </div>
       </div>
     );
+
     if (animated) {
       dialog = <Animate name="opacity-scale">{dialog}</Animate>;
     }
+
     return createPortal(dialog, document.body);
   }
 }

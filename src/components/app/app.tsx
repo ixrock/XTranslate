@@ -4,7 +4,7 @@ import "./app.scss";
 import "../../packages.setup";
 import * as React from 'react';
 import { render } from 'react-dom'
-import { reaction } from "mobx";
+import { action, makeObservable, observable, reaction } from "mobx";
 import { observer } from "mobx-react";
 import { cssNames } from "../../utils/cssNames";
 import { getManifest } from "../../extension";
@@ -16,6 +16,7 @@ import { Tab, Tabs } from "../tabs";
 import { Icon } from "../icon";
 import { AppRateDialog } from "./app-rate.dialog";
 import { Notifications } from "../notifications";
+import { ExportImportSettingsDialog } from "../export-settings";
 import { defaultPageId, getParam, navigate, PageId } from "../../navigation";
 import { viewsManager } from "./views-manager";
 import { getMessage, i18nInit } from "../../i18n";
@@ -24,6 +25,13 @@ import { getMessage, i18nInit } from "../../i18n";
 export class App extends React.Component {
   static manifest = getManifest();
   static pages: PageId[] = ["settings", "theme", "translate", "history"];
+
+  @observable showImportExportDialog = false;
+
+  constructor(props: object) {
+    super(props);
+    makeObservable(this);
+  }
 
   static async init() {
     document.title = App.manifest.name;
@@ -69,8 +77,9 @@ export class App extends React.Component {
   render() {
     const { name, version } = App.manifest;
     const { useDarkTheme } = settingsStore.data;
-    const pageId = getParam("page") as PageId ?? defaultPageId;
-    const { Page: TabContent } = viewsManager.getPageById(pageId);
+    const pageId = getParam("page", defaultPageId);
+    const { Page } = viewsManager.getPageById(pageId);
+
     return (
       <div className="App">
         <header className="flex gaps">
@@ -88,6 +97,11 @@ export class App extends React.Component {
             tooltip={{ nowrap: true, children: getMessage("open_in_window") }}
             onClick={this.detachWindow}
           />
+          <Icon
+            material="import_export"
+            tooltip={{ nowrap: true, children: getMessage("import_export_settings") }}
+            onClick={() => this.showImportExportDialog = true}
+          />
         </header>
         <Tabs center value={pageId} onChange={this.onTabsChange}>
           {App.pages.map(pageId => {
@@ -96,12 +110,16 @@ export class App extends React.Component {
           })}
         </Tabs>
         <div className="tab-content flex column">
-          {TabContent && <TabContent/>}
-          {!TabContent && <p className="box center">Page not found</p>}
+          {Page && <Page/>}
+          {!Page && <p className="box center">Page not found</p>}
         </div>
         <Footer/>
         <Notifications/>
         <AppRateDialog/>
+        <ExportImportSettingsDialog
+          isOpen={this.showImportExportDialog}
+          onClose={action(() => this.showImportExportDialog = false)}
+        />
       </div>
     );
   }

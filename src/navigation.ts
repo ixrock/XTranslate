@@ -20,8 +20,8 @@ export async function navigate(params: NavigationParams = {}) {
   }
 }
 
-export function getParam(name: keyof NavigationParams): string {
-  return navigation.searchParams.get(name);
+export function getParam(name: keyof NavigationParams, defaultPageId?: PageId): PageId {
+  return navigation.searchParams.get(name) as PageId ?? defaultPageId;
 }
 
 export function getParams(name: keyof NavigationParams): string[] {
