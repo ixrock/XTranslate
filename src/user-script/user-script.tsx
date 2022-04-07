@@ -2,7 +2,7 @@
 
 import "../packages.setup";
 import React from "react";
-import { render } from "react-dom";
+import { createRoot } from "react-dom/client";
 import { action, computed, makeObservable, observable, toJS } from "mobx";
 import { observer } from "mobx-react";
 import { debounce, isEqual } from "lodash"
@@ -19,11 +19,17 @@ export type CustomDomRect = Partial<Writeable<DOMRect>>;
 
 @observer
 class App extends React.Component {
-  static rootElem = document.createElement("div");
+  static rootElem: HTMLElement;
 
   static async init() {
-    App.rootElem.className = "XTranslate";
-    document.documentElement.appendChild(App.rootElem);
+    // render app inside shadow-dom to avoid collisions with current webpage styles
+    // this will go away after migrating all files to css-modules (#issues/43)
+    const appRootElem = App.rootElem = document.createElement("div");
+    const shadowRoot = appRootElem.attachShadow({ mode: "open" });
+    const rootNode = createRoot(shadowRoot);
+
+    appRootElem.classList.add("XTranslate");
+    document.documentElement.appendChild(appRootElem);
 
     // wait for dependent data before first render
     await Promise.all([
@@ -32,14 +38,11 @@ class App extends React.Component {
       themeStore.ready,
     ]);
 
-    // render app inside the shadow-dom to avoid collisions with page styles
-    var shadowRoot = App.rootElem.attachShadow({ mode: "open" });
-    render(<App/>, shadowRoot);
+    rootNode.render(<App/>);
   }
 
   constructor(props: object) {
     super(props);
-
     makeObservable(this);
     autoBind(this);
   }
@@ -194,8 +197,8 @@ class App extends React.Component {
       || (elem as HTMLElement).isContentEditable;
   }
 
-  isOutside(elem: HTMLElement) {
-    return !App.rootElem.contains(elem);
+  isOutside(elem: HTMLElement): boolean {
+    return !App.rootElem?.contains(elem) ?? false;
   }
 
   getViewportSize() {
@@ -350,10 +353,6 @@ class App extends React.Component {
   onKeyDown = (evt: KeyboardEvent) => {
     if (!this.isPopupHidden) {
       switch (evt.code) {
-        case "Escape":
-          this.hidePopup();
-          evt.stopPropagation();
-          break;
         case "ArrowLeft":
           this.translateNext(true);
           evt.stopImmediatePropagation();
@@ -364,6 +363,10 @@ class App extends React.Component {
           evt.stopImmediatePropagation();
           evt.preventDefault();
           break;
+        default:
+          this.hidePopup();
+          break;
+
       }
     }
     // handle text translation by hotkey

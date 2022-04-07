@@ -3,7 +3,7 @@
 import "./app.scss";
 import "../../packages.setup";
 import * as React from 'react';
-import { render } from 'react-dom'
+import { createRoot } from "react-dom/client"
 import { action, makeObservable, observable, reaction } from "mobx";
 import { observer } from "mobx-react";
 import { cssNames } from "../../utils/cssNames";
@@ -36,8 +36,9 @@ export class App extends React.Component {
   static async init() {
     document.title = App.manifest.name;
 
-    var appRootElem = document.getElementById('app');
-    render(<Spinner center/>, appRootElem); // show loading indicator
+    var rootElem = document.getElementById('app');
+    var rootNode = createRoot(rootElem);
+    rootNode.render(<Spinner center/>); // show loading indicator
 
     // wait for dependent data before render
     await Promise.all([
@@ -50,7 +51,7 @@ export class App extends React.Component {
       fireImmediately: true,
     });
 
-    render(<App/>, appRootElem);
+    rootNode.render(<App/>);
   }
 
   static switchTheme(isDark: boolean) {
