@@ -1,0 +1,57 @@
+.Menu {
+  --bgc: white;
+  --bgc-active: #fafafa;
+
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  background: var(--bgc);
+  list-style: none;
+  border: 1px solid $border-color;
+  border-radius: $radius;
+  z-index: 100;
+
+  &.portal {
+    left: -1000px;
+    top: -1000px;
+
+    &.top {
+      margin-top: -$margin;
+    }
+
+    &.bottom {
+      margin-top: $margin;
+    }
+  }
+
+  &:not(.portal) {
+    margin: $margin / 2 0;
+
+    &.left {
+      left: 0;
+    }
+
+    &.right {
+      right: 0;
+    }
+
+    &.top {
+      bottom: 100%;
+    }
+
+    &.bottom {
+      top: 100%;
+    }
+  }
+
+  &:empty {
+    display: none;
+  }
+}
+
+@include theme-dark {
+  .Menu {
+    --bgc: #{$bgc-dark};
+    --bgc-active: #{darken($bgc-dark, 2.5%)};
+  }
+}

@@ -1,13 +1,12 @@
-import './menu.scss'
+import styles from './menu.module.scss'
 import React, { Fragment, ReactElement, ReactNode } from "react";
 import { createPortal } from "react-dom";
 import { autoBind, cssNames, noop } from "../../utils";
 import { Animate } from "../animate";
-import { Icon, IconProps } from "../icon";
+import { MenuContext } from './menu-context';
+import { MenuItem, MenuItemProps } from './menu-item';
 
-export const MenuContext = React.createContext<Menu>(null);
-
-interface MenuPosition {
+export interface MenuPosition {
   left?: boolean;
   top?: boolean;
   right?: boolean;
@@ -29,7 +28,7 @@ export interface MenuProps {
   onClose?(): void;
 }
 
-interface MenuState {
+export interface MenuState {
   open: boolean;
   autoPosition?: MenuPosition;
 }
@@ -151,16 +150,10 @@ export class Menu extends React.Component<MenuProps, MenuState> {
     });
   }
 
-  setOpenerActiveState(active = true) {
-    if (!this.opener) return;
-    this.opener.classList.toggle("active", active);
-  }
-
   open() {
     if (this.isOpen) return;
     this.setState({ open: true }, () => {
       this.refreshPosition();
-      this.setOpenerActiveState();
       if (this.props.autoFocus) this.focusNextItem();
       this.props.onOpen();
     });
@@ -169,7 +162,6 @@ export class Menu extends React.Component<MenuProps, MenuState> {
   close() {
     if (!this.isOpen) return;
     this.setState({ open: false }, () => {
-      this.setOpenerActiveState(false);
       this.props.onClose();
     });
   }
@@ -238,9 +230,13 @@ export class Menu extends React.Component<MenuProps, MenuState> {
 
   render() {
     var { className, usePortal, position } = this.props;
-    var { autoPosition } = this.state;
-    className = cssNames('Menu', className, autoPosition || position, {
-      portal: usePortal,
+    var { left, top, bottom, right } = this.state.autoPosition ?? position;
+    className = cssNames(styles.Menu, className, {
+      [styles.portal]: usePortal,
+      [styles.left]: left,
+      [styles.right]: right,
+      [styles.top]: top,
+      [styles.bottom]: bottom,
     });
 
     var children = this.props.children as ReactElement<any>;
@@ -267,71 +263,5 @@ export class Menu extends React.Component<MenuProps, MenuState> {
     );
     if (usePortal === true) usePortal = document.body;
     return usePortal instanceof HTMLElement ? createPortal(menu, usePortal) : menu;
-  }
-}
-
-export interface MenuItemProps extends React.HTMLProps<any> {
-  icon?: string | Partial<IconProps>;
-  disabled?: boolean
-  active?: boolean
-  spacer?: boolean;
-  href?: string;
-}
-
-export class MenuItem extends React.Component<MenuItemProps> {
-  static contextType = MenuContext;
-  declare context: Menu;
-  public elem: HTMLElement;
-
-  static defaultProps: Partial<MenuItemProps> = {
-    onClick: noop,
-  }
-
-  constructor(props: MenuItemProps) {
-    super(props);
-    autoBind(this);
-  }
-
-  get isFocusable() {
-    var { disabled, spacer } = this.props;
-    return !(disabled || spacer);
-  }
-
-  onClick(evt: React.MouseEvent) {
-    var menu = this.context;
-    var { spacer, onClick } = this.props;
-    if (spacer) return;
-    onClick(evt);
-    if (menu && menu.props.closeOnClick) {
-      menu.close();
-    }
-  }
-
-  protected bindRef(elem: HTMLElement) {
-    this.elem = elem;
-  }
-
-  render() {
-    var { className, disabled, active, spacer, icon, children, ...props } = this.props;
-    if (icon) {
-      var iconProps: Partial<IconProps> = {};
-      if (typeof icon === "string") iconProps.material = icon;
-      else Object.assign(iconProps, icon);
-    }
-    var elemProps: React.HTMLProps<any> = {
-      tabIndex: this.isFocusable ? 0 : -1,
-      ...props,
-      className: cssNames("MenuItem", className, { disabled, active, spacer }),
-      onClick: this.onClick,
-      children: icon ? <><Icon {...iconProps}/> {children}</> : children,
-      ref: this.bindRef,
-    }
-    if (elemProps.href) {
-      return <a {...elemProps}/>
-    }
-    if (elemProps.htmlFor) {
-      return <label {...elemProps}/>
-    }
-    return <li {...elemProps}/>
   }
 }

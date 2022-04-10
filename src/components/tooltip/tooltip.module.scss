@@ -45,3 +45,10 @@
     }
   }
 }
+
+@include theme-dark {
+  .Tooltip {
+    background: white; // todo: use from global project css-variable
+    color: #{darken($bgc-dark, 2.5%)};
+  }
+}

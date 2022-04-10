@@ -7,7 +7,14 @@ export interface ImportingFile<T = string> {
 }
 
 interface Props extends InputHTMLAttributes<any> {
-  id?: string; // could be used with <label htmlFor={id}/> to open filesystem dialog
+  /**
+   * Could be used with <label htmlFor={id}/> to open filesystem dialog.
+   * Otherwise recommended usage for opening files dialog:
+   * let fileInput: FileInput;
+   * <FileInput ref={e => fileInput = e}>
+   * <button onClick={() => fileInput.selectFiles()}>Open files</button>
+   */
+  id?: string;
   accept?: string; // allowed file types to select, e.g. "application/json"
   multiple?: boolean;
   onImport(data: ImportingFile[]): void;
@@ -21,9 +28,11 @@ export class FileInput extends React.Component<Props> {
     display: "none",
   };
 
-  selectFiles = () => {
-    this.input.click();
-  }
+  /**
+   * Opens select-file dialog.
+   * Should be attached to user's event-click or similar event when used.
+   */
+  selectFiles = () => this.input.click();
 
   protected onChange = async (evt: React.ChangeEvent<HTMLInputElement>) => {
     var fileList = Array.from(evt.target.files);

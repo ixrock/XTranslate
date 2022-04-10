@@ -2,12 +2,20 @@
 .InputTranslation {
   --flex-gap: #{$margin};
 
-  .Input {
-    label {
-      padding-bottom: $padding / 2;
+  .input-area {
+    .Input {
+      flex: 1;
+
+      label {
+        padding-bottom: $padding / 2;
+      }
+      a {
+        cursor: pointer;
+      }
     }
-    a {
-      cursor: pointer;
+
+    .Icon.active {
+      opacity: .5;
     }
   }
 

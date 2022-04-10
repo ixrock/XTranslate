@@ -181,23 +181,16 @@ export class Settings extends React.Component {
         </div>
 
         <p className="sub-title">{getMessage("setting_title_text_input")}</p>
-        <div className="flex gaps auto">
-          <div className="translate-settings">
-            <Checkbox
-              label={getMessage("remember_last_typed_text")}
-              checked={settings.rememberLastText}
-              onChange={v => settings.rememberLastText = v}
-            />
-            <Button
-              outline
-              className="box flex gaps"
-              onClick={() => createTab("chrome://extensions/shortcuts")}
-              tooltip={getMessage("quick_access_configure_link")}
-              children={getMessage("sub_header_quick_access_hotkey")}
-            />
-          </div>
-          <div className="translate-delay">
-            <div className="flex gaps align-baseline">
+        <div className="flex gaps align-baseline">
+          <Button
+            outline
+            className="box flex gaps"
+            onClick={() => createTab("chrome://extensions/shortcuts")}
+            tooltip={getMessage("quick_access_configure_link")}
+            children={getMessage("sub_header_quick_access_hotkey")}
+          />
+          <div className="flex column gaps">
+            <div className="flex gaps align-center">
               <p>{getMessage("translation_delay")}</p>
               <NumberInput
                 className="box grow"

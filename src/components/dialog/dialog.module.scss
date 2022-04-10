@@ -16,10 +16,14 @@
   padding: 0;
   z-index: 100;
 
-  > .box {
+  .box {
     border: var(--dialog-border);
     background-color: var(--dialog-bgc) !important;
     padding: var(--dialog-padding) !important;
+  }
+
+  &.pinned {
+    pointer-events: none;
   }
 
   &.modal {

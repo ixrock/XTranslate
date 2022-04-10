@@ -7,7 +7,7 @@ import { disposeOnUnmount, observer } from "mobx-react";
 import { cssNames, prevDefault } from "../../utils";
 import { getTranslator, getTranslators, isRTL } from "../../vendors";
 import { Checkbox } from "../checkbox";
-import { MenuActions, MenuItem } from "../menu";
+import { Menu, MenuItem } from "../menu";
 import { FileInput, ImportingFile, Input, NumberInput } from "../input";
 import { Option, Select } from "../select";
 import { Button } from "../button";
@@ -329,14 +329,14 @@ export class UserHistory extends React.Component {
               className={cssNames({ active: showSearch })}
               onClick={() => this.showSearch = !showSearch}
             />
-            <MenuActions
-              onOpen={() => this.showImportExport = true}
-              onClose={() => this.showImportExport = false}
-              triggerIcon={{
-                material: "import_export",
-                tooltip: !showImportExport ? getMessage("history_icon_tooltip_imp_exp") : undefined,
-              }}
-            >
+            <Icon
+              id="import_export_menu_icon_trigger"
+              material="import_export"
+              tooltip={!showImportExport ? getMessage("history_icon_tooltip_imp_exp") : undefined}
+              className={cssNames({ active: showSearch })}
+              onClick={action(() => this.showImportExport = !this.showImportExport)}
+            />
+            <Menu htmlFor="import_export_menu_icon_trigger">
               <MenuItem htmlFor="import-history">
                 {getMessage("history_import_entries", { format: "JSON" })}
               </MenuItem>
@@ -347,7 +347,7 @@ export class UserHistory extends React.Component {
               <MenuItem onClick={() => this.exportHistory("csv")}>
                 {getMessage("history_export_entries", { format: "CSV" })}
               </MenuItem>
-            </MenuActions>
+            </Menu>
             <Icon
               material="settings"
               tooltip={!showSettings ? getMessage("history_icon_tooltip_settings") : undefined}

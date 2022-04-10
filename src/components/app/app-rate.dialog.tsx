@@ -1,5 +1,4 @@
-import "./app-rate.dialog.scss";
-
+import styles from "./app-rate.module.scss";
 import React from "react";
 import { makeObservable, observable } from "mobx";
 import { observer } from "mobx-react";
@@ -52,7 +51,7 @@ export class AppRateDialog extends React.Component {
 
   render() {
     return (
-      <Dialog pinned className="AppRateDialog" isOpen={this.isOpen}>
+      <Dialog pinned className={styles.AppRateDialog} isOpen={this.isOpen}>
         <h4>{getMessage("rate_app_info1")}</h4>
         <p>{getMessage("rate_app_info2")}</p>
 

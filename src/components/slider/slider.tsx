@@ -1,5 +1,5 @@
-import "./slider.scss";
-import * as React from 'react'
+import styles from "./slider.module.scss";
+import React from "react"
 import { cssNames } from "../../utils";
 
 export interface Props extends Omit<React.HTMLProps<HTMLInputElement>, "onChange"> {
@@ -29,13 +29,13 @@ export class Slider extends React.Component<Props> {
   render() {
     var value = this.props.value;
     var { className, formatTitle, children, ...inputProps } = this.props;
-    var componentClass = cssNames("Slider", className, {
-      disabled: this.props.disabled,
+    var componentClass = cssNames(styles.Slider, className, {
+      [styles.disabled]: this.props.disabled,
     });
     return (
       <div className={componentClass}>
         <input {...inputProps} type="range" onChange={this.onChange} ref={e => this.input = e}/>
-        <span className="title">
+        <span className={styles.title}>
           {formatTitle ? formatTitle(value) : value}
         </span>
       </div>

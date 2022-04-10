@@ -1,4 +1,4 @@
-import './checkbox.scss'
+import styles from "./checkbox.module.scss"
 import React, { DOMAttributes } from 'react'
 import { cssNames, IClassName } from "../../utils";
 import { TooltipDecoratorProps, withTooltip } from "../tooltip";
@@ -63,8 +63,10 @@ export class Checkbox extends React.Component<CheckboxProps> {
 
   render() {
     var { id, label, inline, className, checked, disabled, tooltip, children } = this.props;
-    className = cssNames('Checkbox flex gaps align-center', className, {
-      inline, checked, disabled
+    className = cssNames(`${styles.Checkbox} flex gaps align-center`, className, {
+      [styles.inline]: inline,
+      [styles.checked]: checked,
+      [styles.disabled]: disabled,
     });
     return (
       <label
@@ -75,8 +77,8 @@ export class Checkbox extends React.Component<CheckboxProps> {
         onKeyDown={this.onKeyDown}
         ref={this.bindRef}
       >
-        <i className="box tick"/>
-        {label && <div className="label">{label}</div>}
+        <i className={`${styles.box} box tick`}/>
+        {label && <div className={styles.label}>{label}</div>}
         {children}
       </label>
     );

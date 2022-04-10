@@ -1,8 +1,7 @@
-import './tooltip.scss'
-
+import styles from './tooltip.module.scss'
 import React from "react"
 import { observer } from "mobx-react";
-import { makeObservable, observable } from "mobx";
+import { action, makeObservable, observable } from "mobx";
 import { createPortal } from "react-dom"
 import { autoBind, cssNames } from "../../utils";
 import { Animate } from "../animate";
@@ -87,7 +86,7 @@ export class Tooltip extends React.Component<TooltipProps> {
     this.refreshPosition();
   }
 
-  refreshPosition({ x = 0, y = 0 } = this.lastMousePos) {
+  refreshPosition = () => requestAnimationFrame(action(() => {
     if (!this.props.following) {
       return;
     }
@@ -96,6 +95,7 @@ export class Tooltip extends React.Component<TooltipProps> {
     var viewportHeight = document.documentElement.clientHeight;
 
     var style = this.elem.style;
+    var { x = 0, y = 0 } = this.lastMousePos;
     style.left = x + offset + "px"
     style.top = y + offset + "px"
 
@@ -110,7 +110,7 @@ export class Tooltip extends React.Component<TooltipProps> {
     if (bottom > viewportHeight) {
       style.top = topMirrorPos + "px";
     }
-  }
+  }));
 
   bindRef(elem: HTMLElement) {
     this.elem = elem;
@@ -119,7 +119,14 @@ export class Tooltip extends React.Component<TooltipProps> {
   render() {
     var { isVisible } = this;
     var { className, useAnimation, position, following, nowrap, style, children } = this.props;
-    className = cssNames('Tooltip', position, { following, nowrap }, className);
+    className = cssNames(styles.Tooltip, {
+      [styles.left]: position.left,
+      [styles.top]: position.top,
+      [styles.right]: position.right,
+      [styles.bottom]: position.bottom,
+      [styles.following]: following,
+      [styles.nowrap]: nowrap,
+    }, className);
     var content = (
       <div className={className} ref={this.bindRef} style={style}>
         {children}

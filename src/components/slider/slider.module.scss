@@ -9,6 +9,8 @@
   --slider-thumb-size: 15px;
   --slider-track-height: 3px;
 
+  &.disabled {}
+
   .title {
     position: absolute;
     border-radius: $radius;
@@ -89,5 +91,13 @@
     @include getThumbStyles('-ms-thumb') {
       transform: translateY(calc(.5rem - 50%));
     }
+  }
+}
+
+@include theme-dark {
+  .Slider {
+    --slider-track-color: gray;
+    --slider-thumb-color: #444;
+    --slider-thumb-color-active: white;
   }
 }

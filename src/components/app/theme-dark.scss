@@ -12,29 +12,9 @@ body {
       color: #cccccc;
     }
 
-    .Tooltip {
-      background: var(--theme-contast-color);
-      color: var(--theme-contast-color-invert);
-    }
-
     .sub-title,
     .Tabs {
       color: lighten($color-primary, 10%);
-    }
-
-    .Slider {
-      --slider-track-color: gray;
-      --slider-thumb-color: #444;
-      --slider-thumb-color-active: white;
-    }
-
-    .Checkbox {
-      --color-hover: var(--theme-contast-color);
-    }
-
-    .Menu {
-      --bgc: #{$bgc-dark};
-      --bgc-active: var(--theme-contast-color-invert);
     }
 
     .Icon {

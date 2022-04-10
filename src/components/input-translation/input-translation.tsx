@@ -46,26 +46,48 @@ export class InputTranslation extends React.Component {
     return this.inputRef.current;
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     this.input.focus();
-
-    // auto-translate text when input params has changed
-    disposeOnUnmount(this, [
-      reaction(() => [this.text, this.vendor, this.langTo, this.langFrom],
-        this.onTranslationParamsChange, {
-          equals: comparer.structural,
-        })
-    ]);
-
-    // restore last input text if enabled in options
-    if (settingsStore.data.rememberLastText) {
-      lastInputText.whenReady.then(() => {
-        this.translateText(lastInputText.get());
-      });
-    }
+    this.bindAutoTranslateOnParamsChange();
+    this.bindAutoSaveLatestUserInputText();
 
     // auto-translate selected text from active tab
-    getSelectedText().then(this.translateText);
+    const selectedText = await getSelectedText();
+    if (selectedText) this.translateText(selectedText);
+  }
+
+  bindAutoTranslateOnParamsChange = () => {
+    return disposeOnUnmount(this, [
+      reaction(() => [this.text, this.vendor, this.langTo, this.langFrom], this.translate, {
+        equals: comparer.structural,
+      }),
+    ]);
+  };
+
+  bindAutoSaveLatestUserInputText = () => {
+    return disposeOnUnmount(this, [
+      reaction(() => this.text, (text: string) => {
+        if (!settingsStore.data.rememberLastText) {
+          return; // exit: option is not enabled in the settings
+        }
+
+        if (lastInputText.get() !== text) {
+          this.logger.info("saving last user input", { input: text });
+          lastInputText.set(text);
+        }
+      }, {
+        delay: 250, // reduce excessive writings to underlying storage
+      }),
+
+      reaction(() => settingsStore.data.rememberLastText, rememberText => {
+        if (rememberText) {
+          const savedUserText = lastInputText.get();
+          this.translateText(savedUserText);
+        }
+      }, {
+        fireImmediately: true, // translate previously saved input's text asap
+      }),
+    ])
   }
 
   playText = () => {
@@ -80,16 +102,11 @@ export class InputTranslation extends React.Component {
     this.input.setValue(text); // update input value manually since @defaultValue is utilized
   }
 
-  @action.bound
-  async onTranslationParamsChange() {
+  @action
+  translate = async () => {
     let { text, vendor, langFrom, langTo } = this;
-
-    // save latest user text-input if settings options is enabled
-    if (settingsStore.data.rememberLastText && lastInputText.get() !== text) {
-      lastInputText.set(text);
-    }
-
     if (!text) return;
+
     this.logger.info("translating..", { text, vendor, langFrom, langTo });
     this.translation = null; // clear previous results immediately (if any)
     this.error = null;
@@ -106,7 +123,7 @@ export class InputTranslation extends React.Component {
     } finally {
       this.isLoading = false;
     }
-  }
+  };
 
   onInputChange = debounce(
     (text: string) => this.text = text.trim(),
@@ -141,21 +158,6 @@ export class InputTranslation extends React.Component {
       else this.langTo = "en";
     }
     this.input.focus();
-  }
-
-  renderHeader() {
-    var { vendor, langFrom, langTo } = this;
-    return (
-      <div className="language flex gaps">
-        <SelectLanguage
-          vendor={vendor} from={langFrom} to={langTo}
-          onChange={({ langTo, langFrom }) => this.onLangChange(langFrom, langTo)}
-        />
-        <Select value={vendor} onChange={this.onVendorChange}>
-          {getTranslators().map(v => <Option key={v.name} value={v.name} label={v.title}/>)}
-        </Select>
-      </div>
-    )
   }
 
   renderTranslationResult() {
@@ -252,29 +254,47 @@ export class InputTranslation extends React.Component {
   }
 
   render() {
-    var { textInputTranslateDelayMs: delayMs } = settingsStore.data;
+    var { textInputTranslateDelayMs: delayMs, rememberLastText } = settingsStore.data;
+    var { vendor, langFrom, langTo } = this;
+
     return (
       <div className="InputTranslation flex column gaps">
-        {this.renderHeader()}
-        <Input
-          autoFocus={true}
-          multiLine={true}
-          rows={2}
-          tabIndex={1}
-          placeholder={getMessage("text_field_placeholder")}
-          defaultValue={this.text}
-          onChange={(text: string) => this.onInputChange(text)}
-          onKeyDown={this.onKeyDown}
-          ref={this.inputRef}
-          infoContent={(
-            <small className="hint">
-              {getMessage("text_input_translation_hint", {
-                hotkey: `${isMac ? "Cmd" : "Ctrl"}+Enter`,
-                timeout: <a onClick={() => navigate({ page: "settings" })}>{delayMs}</a>,
-              })}
-            </small>
-          )}
-        />
+        <div className="language flex gaps">
+          <SelectLanguage
+            vendor={vendor} from={langFrom} to={langTo}
+            onChange={({ langTo, langFrom }) => this.onLangChange(langFrom, langTo)}
+          />
+          <Select value={vendor} onChange={this.onVendorChange}>
+            {getTranslators().map(v => <Option key={v.name} value={v.name} label={v.title}/>)}
+          </Select>
+        </div>
+        <div className="input-area flex gaps align-center">
+          <Input
+            autoFocus={true}
+            multiLine={true}
+            rows={2}
+            tabIndex={1}
+            placeholder={getMessage("text_field_placeholder")}
+            defaultValue={this.text}
+            onChange={(text: string) => this.onInputChange(text)}
+            onKeyDown={this.onKeyDown}
+            ref={this.inputRef}
+            infoContent={(
+              <small className="hint">
+                {getMessage("text_input_translation_hint", {
+                  hotkey: `${isMac ? "Cmd" : "Ctrl"}+Enter`,
+                  timeout: <a onClick={() => navigate({ page: "settings" })}>{delayMs}</a>,
+                })}
+              </small>
+            )}
+          />
+          <Icon
+            material={rememberLastText ? "bookmark" : "bookmark_border"}
+            active={rememberLastText}
+            tooltip={{ nowrap: true, children: getMessage("remember_last_typed_text") }}
+            onClick={action(() => settingsStore.data.rememberLastText = !rememberLastText)}
+          />
+        </div>
         {this.renderTranslation()}
       </div>
     );

@@ -17,6 +17,10 @@
     cursor: pointer;
   }
 
+  &.inline {}
+
+  .label {}
+
   &.disabled {
     color: var(--color);
     opacity: .5 !important;
@@ -53,5 +57,11 @@
       transform: rotate(-45deg);
       opacity: 0;
     }
+  }
+}
+
+@include theme-dark {
+  .Checkbox {
+    --color-hover: white;
   }
 }

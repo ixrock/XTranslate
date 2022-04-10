@@ -1,5 +1,4 @@
-import "./dialog.scss";
-
+import styles from "./dialog.module.scss";
 import * as React from "react";
 import { createPortal, findDOMNode } from "react-dom";
 import { Animate } from "../animate";
@@ -108,11 +107,14 @@ export class Dialog extends React.Component<DialogProps, DialogState> {
   }
 
   render() {
-    if (!this.isOpen) return null;
+    if (!this.isOpen) return;
 
     var { className, modal, animated, pinned, contentClassName } = this.props;
-    className = cssNames("Dialog flex center", className, { modal, pinned });
-    contentClassName = cssNames("box", contentClassName)
+    className = cssNames(`${styles.Dialog} flex center`, className, {
+      [styles.modal]: modal,
+      [styles.pinned]: pinned,
+    });
+    contentClassName = cssNames(`${styles.box} box`, contentClassName);
 
     var dialog = (
       <div className={className} onClick={stopPropagation}>
