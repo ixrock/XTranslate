@@ -2,8 +2,9 @@
 .Dialog {
   @include custom-scrollbar;
 
-  --dialog-bgc: rgba(0, 0, 0, .5);
-  --dialog-padding: 0;
+  --flex-gap: #{$margin};
+  --dialog-bgc: white;
+  --dialog-padding: #{$margin * 2};
   --dialog-border: 1px solid #ffffff15;
 
   position: fixed;
@@ -23,5 +24,11 @@
 
   &.modal {
     background: transparentize(#222, .5);
+  }
+}
+
+@include theme-dark {
+  .Dialog {
+    --dialog-bgc: #{darken($bgc-dark, 2.5%)};
   }
 }

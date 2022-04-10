@@ -41,11 +41,5 @@ body {
       --bgc-active: none;
       --color-active: var(--theme-contast-color);
     }
-
-    .Dialog {
-      > .box {
-        background: var(--theme-contast-color-invert);
-      }
-    }
   }
 }

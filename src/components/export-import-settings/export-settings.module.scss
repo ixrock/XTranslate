@@ -1,7 +1,4 @@
 .ExportSettingsDialog {
-  --dialog-bgc: white;
-  --dialog-padding: #{$padding * 2};
-
   .error {
     font-style: italic;
     color: $red-a100;

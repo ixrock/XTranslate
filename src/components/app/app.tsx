@@ -16,7 +16,7 @@ import { Tab, Tabs } from "../tabs";
 import { Icon } from "../icon";
 import { AppRateDialog } from "./app-rate.dialog";
 import { Notifications } from "../notifications";
-import { ExportImportSettingsDialog } from "../export-settings";
+import { ExportImportSettingsDialog } from "../export-import-settings";
 import { defaultPageId, getParam, navigate, PageId } from "../../navigation";
 import { viewsManager } from "./views-manager";
 import { getMessage, i18nInit } from "../../i18n";

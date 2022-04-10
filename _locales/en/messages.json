@@ -21,6 +21,8 @@
   "import_export_settings"           : {"message": "Import or export settings"},
   "export_settings_button_label"     : {"message": "Export settings"},
   "import_settings_button_label"     : {"message": "Import settings"},
+  "import_incorrect_file_format"     : {"message": "Incorrect file format (should be probably %fileNameJson%)"},
+  "imported_setting_successful"      : {"message": "Settings under the key '%key%' imported successful"},
   "show_context_menu"                : {"message": "Show in page context menu"},
   "display_icon_near_selection"      : {"message": "Show translate-icon near selected text"},
   "show_tts_icon_inside_popup"       : {"message": "Display text-to-speech icon"},
