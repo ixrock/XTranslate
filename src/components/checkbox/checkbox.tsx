@@ -77,7 +77,7 @@ export class Checkbox extends React.Component<CheckboxProps> {
         onKeyDown={this.onKeyDown}
         ref={this.bindRef}
       >
-        <i className={`${styles.box} box tick`}/>
+        <i className={`${styles.box} box`}/>
         {label && <div className={styles.label}>{label}</div>}
         {children}
       </label>

@@ -3,7 +3,7 @@
   --small-size: 20px;
   --big-size: 32px;
   --color-active: black;
-  --bgc-active: #ffffff22;
+  --bgc-active: transparent;
 
   display: inline-flex;
   flex-shrink: 0;
@@ -112,5 +112,11 @@
     &:hover {
       @extend .active;
     }
+  }
+}
+
+@include theme-dark {
+  .Icon {
+    --color-active: white;
   }
 }

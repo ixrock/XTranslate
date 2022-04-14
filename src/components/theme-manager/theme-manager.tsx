@@ -3,7 +3,7 @@ import "./theme-manager.scss";
 import React from "react";
 import { observer } from "mobx-react";
 import { themeStorage, themeStore } from "./theme.storage";
-import { viewsManager } from "../app/views-manager";
+import { pageManager } from "../app/page-manager";
 import { Popup } from "../popup";
 import { NumberInput } from "../input";
 import { Checkbox } from "../checkbox";
@@ -199,7 +199,7 @@ export class ThemeManager extends React.Component {
   }
 }
 
-viewsManager.registerPages("theme", {
+pageManager.registerComponents("theme", {
   Tab: props => <Tab {...props} label={getMessage("tab_theme")} icon="color_lens"/>,
   Page: ThemeManager,
 });

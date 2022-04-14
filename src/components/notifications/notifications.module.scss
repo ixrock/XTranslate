@@ -2,6 +2,9 @@
   @include hidden-scrollbar;
 
   position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-content: flex-end;
   right: 0;
   bottom: 0;
   padding: $padding * 2;
@@ -13,35 +16,47 @@
   }
 
   .notification {
-    flex: 0 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     padding: $padding;
     border-radius: 3px;
     min-width: 350px;
     max-width: 35vw;
     word-break: break-word;
+    color: white;
+
+    $statusColors: (
+      ok: #4caf50,
+      error: #ce3933,
+      info: #3d90ce,
+    );
+
+    @each $statusName, $color in $statusColors {
+      &:global(.#{$statusName}) {
+        background: $color;
+      }
+    }
 
     &:not(:last-child) {
       margin-bottom: $margin * 2;
     }
 
-    .close-icon {
+    .infoIcon {
+    }
+
+    .closeIcon {
       --color-active: inherit;
     }
 
-    > .message {
+    .message {
+      flex: 1;
       white-space: pre-line;
       padding-left: $padding;
       padding-right: $padding * 2;
 
       a {
         color: inherit;
-      }
-    }
-
-    @each $status, $color in (ok: #4caf50, error: #ce3933, info: #3d90ce) {
-      &.#{$status} {
-        background: $color;
-        color: $color-white;
       }
     }
   }

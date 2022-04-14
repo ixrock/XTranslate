@@ -5,7 +5,7 @@
   --flex-gap: #{$margin};
   --dialog-bgc: white;
   --dialog-padding: #{$margin * 2};
-  --dialog-border: 1px solid #ffffff15;
+  --dialog-border: 1px solid currentColor;
 
   position: fixed;
   overflow: auto;

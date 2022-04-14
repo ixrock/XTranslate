@@ -12,12 +12,12 @@ const viewsRegistry = observable.map<PageId, PageComponents>([], {
   deep: false, // avoid modifying react components with mobx-stuff
 });
 
-export const viewsManager = {
-  getPageById(pageId: PageId): PageComponents {
+export const pageManager = {
+  getComponents(pageId: PageId): PageComponents {
     return viewsRegistry.get(pageId) ?? {};
   },
 
-  registerPages(pageId: PageId, views: PageComponents) {
+  registerComponents(pageId: PageId, views: PageComponents) {
     viewsRegistry.set(pageId, {
       ...(viewsRegistry.get(pageId) ?? {}),
       ...views,

@@ -1,5 +1,4 @@
-import "./number-input.scss";
-
+import styles from "./number-input.module.scss";
 import React from "react";
 import { Input, InputProps } from "./input";
 import { Icon } from "../icon";
@@ -34,22 +33,22 @@ export class NumberInput extends React.Component<Props> {
 
   render() {
     var { className, ...inputProps } = this.props;
-    className = cssNames("NumberInput", className);
+    className = cssNames(styles.NumberInput, className);
     return (
       <Input
         {...inputProps}
         type="number"
         className={className}
         labelContent={(
-          <div className="arrow-icons">
+          <div className={styles.arrowIcons}>
             <Icon
               material="arrow_drop_up"
-              className="arrow-up"
+              className={styles.Icon}
               onClick={this.increment}
             />
             <Icon
               material="arrow_drop_down"
-              className="arrow-down"
+              className={styles.Icon}
               onClick={this.decrement}
             />
           </div>

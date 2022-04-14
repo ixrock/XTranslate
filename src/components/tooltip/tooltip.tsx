@@ -124,6 +124,7 @@ export class Tooltip extends React.Component<TooltipProps> {
       [styles.top]: position.top,
       [styles.right]: position.right,
       [styles.bottom]: position.bottom,
+      [styles.center]: position.center,
       [styles.following]: following,
       [styles.nowrap]: nowrap,
     }, className);
@@ -135,7 +136,7 @@ export class Tooltip extends React.Component<TooltipProps> {
     var tooltip = content;
     if (useAnimation) {
       tooltip = (
-        <Animate enter={isVisible} onEnter={() => this.refreshPosition()}>
+        <Animate enter={isVisible} onEnter={this.refreshPosition}>
           {content}
         </Animate>
       )

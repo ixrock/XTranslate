@@ -6,11 +6,12 @@ import uniqueId from "lodash/uniqueId";
 
 export type IMessageId = string | number;
 export type IMessage = React.ReactNode;
+export type IMessageStatus = "ok" | "error" | "info";
 
 export interface INotification {
   id?: IMessageId
   message: IMessage
-  status?: "ok" | "error" | "info"
+  status?: IMessageStatus
   timeout?: number // auto-hiding timeout in milliseconds, 0 = no hide
 }
 

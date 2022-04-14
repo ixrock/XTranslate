@@ -1,5 +1,4 @@
-import './notifications.scss';
-
+import styles from './notifications.module.scss';
 import React from 'react'
 import { reaction } from "mobx";
 import { disposeOnUnmount, observer } from "mobx-react"
@@ -60,28 +59,32 @@ export class Notifications extends React.Component {
 
   render() {
     var { notifications, remove, addAutoHideTimer, removeAutoHideTimer } = notificationsStore;
+
     return (
-      <div className="Notifications flex column align-flex-end" ref={e => this.elem = e}>
+      <div className={styles.Notifications} ref={e => this.elem = e}>
         {notifications.map(notification => {
           var { id, status } = notification;
           var msgText = this.getMessage(notification);
+          var removeNotification = prevDefault(() => remove(notification));
           return (
             <Animate key={id}>
               <div
-                className={cssNames("notification flex align-center", status)}
+                className={cssNames(styles.notification, status)}
                 onMouseLeave={() => addAutoHideTimer(notification)}
-                onMouseEnter={() => removeAutoHideTimer(notification)}>
-                <div className="box center">
-                  <Icon material="info_outline"/>
+                onMouseEnter={() => removeAutoHideTimer(notification)}
+              >
+                <Icon
+                  className={styles.infoIcon}
+                  material="info_outline"
+                />
+                <div className={styles.message}>
+                  {msgText}
                 </div>
-                <div className="message box grow">{msgText}</div>
-                <div className="box center">
-                  <Icon
-                    className="close-icon"
-                    material="close"
-                    onClick={prevDefault(() => remove(notification))}
-                  />
-                </div>
+                <Icon
+                  className={styles.closeIcon}
+                  material="close"
+                  onClick={removeNotification}
+                />
               </div>
             </Animate>
           )

@@ -70,13 +70,8 @@
 }
 
 @mixin theme-dark() {
-  $className: "theme-dark";
-
-  body.#{$className} {
+  :root[data-theme="dark"] {
     @content;
-  }
-  :global(body.#{$className}) {
-    @content; // css-modules (*.module.scss)
   }
 }
 

@@ -12,7 +12,7 @@ import { Input } from "../input";
 import { Option, Select } from "../select";
 import { Spinner } from "../spinner";
 import { settingsStore } from "../settings/settings.storage";
-import { viewsManager } from "../app/views-manager";
+import { pageManager } from "../app/page-manager";
 import { Tab } from "../tabs";
 import { Icon } from "../icon";
 import { Tooltip } from "../tooltip";
@@ -301,7 +301,7 @@ export class InputTranslation extends React.Component {
   }
 }
 
-viewsManager.registerPages("translate", {
+pageManager.registerComponents("translate", {
   Tab: props => <Tab {...props} label={getMessage("tab_text_input")} icon="translate"/>,
   Page: InputTranslation,
 });

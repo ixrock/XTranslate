@@ -19,8 +19,6 @@
 
   &.inline {}
 
-  .label {}
-
   &.disabled {
     color: var(--color);
     opacity: .5 !important;
@@ -32,6 +30,8 @@
       opacity: inherit;
     }
   }
+
+  .label {}
 
   > .box {
     position: relative;

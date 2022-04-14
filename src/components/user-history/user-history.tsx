@@ -12,7 +12,7 @@ import { FileInput, ImportingFile, Input, NumberInput } from "../input";
 import { Option, Select } from "../select";
 import { Button } from "../button";
 import { settingsStore } from "../settings/settings.storage";
-import { viewsManager } from "../app/views-manager";
+import { pageManager } from "../app/page-manager";
 import { clearHistoryItem, exportHistory, historyStorage, HistoryTranslation, HistoryTranslations, IHistoryItem, IHistoryItemId, IHistoryStorageItem, importHistory, loadHistory, toHistoryItem } from "./history.storage";
 import { Icon } from "../icon";
 import { Tab } from "../tabs";
@@ -426,7 +426,7 @@ export class UserHistory extends React.Component {
   }
 }
 
-viewsManager.registerPages("history", {
+pageManager.registerComponents("history", {
   Tab: props => <Tab {...props} label={getMessage("tab_history")} icon="history"/>,
   Page: UserHistory,
 });

@@ -18,7 +18,7 @@ import { AppRateDialog } from "./app-rate.dialog";
 import { Notifications } from "../notifications";
 import { ExportImportSettingsDialog } from "../export-import-settings";
 import { defaultPageId, getParam, navigate, PageId } from "../../navigation";
-import { viewsManager } from "./views-manager";
+import { pageManager } from "./page-manager";
 import { getMessage, i18nInit } from "../../i18n";
 
 @observer
@@ -55,7 +55,7 @@ export class App extends React.Component {
   }
 
   static switchTheme(isDark: boolean) {
-    document.body.classList.toggle("theme-dark", isDark);
+    document.documentElement.dataset.theme = isDark ? "dark" : "light";
   }
 
   detachWindow = () => {
@@ -79,7 +79,7 @@ export class App extends React.Component {
     const { name, version } = App.manifest;
     const { useDarkTheme } = settingsStore.data;
     const pageId = getParam("page", defaultPageId);
-    const { Page } = viewsManager.getPageById(pageId);
+    const { Page } = pageManager.getComponents(pageId);
 
     return (
       <div className="App">
@@ -106,7 +106,7 @@ export class App extends React.Component {
         </header>
         <Tabs center value={pageId} onChange={this.onTabsChange}>
           {App.pages.map(pageId => {
-            var { Tab } = viewsManager.getPageById(pageId);
+            var { Tab } = pageManager.getComponents(pageId);
             if (Tab) return <Tab key={pageId} value={pageId}/>
           })}
         </Tabs>

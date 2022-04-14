@@ -71,7 +71,7 @@
 
       &:hover {
         cursor: pointer;
-        color: var(--theme-contast-color, black);
+        color: var(--theme-color-contrast);
         border-color: currentColor;
 
         * {

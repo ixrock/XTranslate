@@ -1,4 +1,4 @@
-import './footer.scss'
+import styles from './footer.module.scss'
 import React from 'react';
 import { extensionUrl } from "../../common-vars";
 import { prevDefault } from '../../utils'
@@ -34,9 +34,9 @@ export class Footer extends React.Component {
 
   render() {
     return (
-      <div className="Footer">
+      <div className={styles.Footer}>
         {getMessage("footer")}
-        <span className="social-icons">
+        <span className={styles.socialIcons}>
             {this.shareIcons.map((share, i) =>
               <a key={i} href={share.url} onClick={prevDefault(() => this.shareUrl(share.url))}>
                 <img src={share.icon} title={share.title} alt=""/>

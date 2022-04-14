@@ -9,11 +9,11 @@
     }
   }
 
-  .arrow-icons {
+  .arrowIcons {
     display: flex;
     flex-direction: column;
 
-    .Icon {
+    > .Icon {
       --size: 22px;
       --bgc-active: none;
       --color-active: #{$bgc-primary};

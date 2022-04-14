@@ -17,7 +17,7 @@ import { Popup } from "../popup";
 import { TooltipProps } from "../tooltip";
 import { Tab } from "../tabs";
 import { settingsStore } from "./settings.storage";
-import { viewsManager } from "../app/views-manager";
+import { pageManager } from "../app/page-manager";
 import { getMessage } from "../../i18n";
 
 @observer
@@ -207,7 +207,7 @@ export class Settings extends React.Component {
   }
 }
 
-viewsManager.registerPages("settings", {
+pageManager.registerComponents("settings", {
   Tab: props => <Tab {...props} label={getMessage("tab_settings")} icon="settings"/>,
   Page: Settings,
 });

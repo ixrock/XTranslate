@@ -1,6 +1,5 @@
-import './spinner.scss'
-
-import * as React from 'react'
+import styles from './spinner.module.scss'
+import React from 'react'
 import { cssNames } from "../../utils";
 
 interface Props extends React.HTMLProps<any> {
@@ -17,10 +16,10 @@ export class Spinner extends React.Component<Props, {}> {
   };
 
   render() {
-    var { className, center, singleColor, ...props } = this.props;
-    var className = cssNames('Spinner', className, {
-      singleColor: singleColor,
-      center: center,
+    var { center, singleColor, ...props } = this.props;
+    var className = cssNames(styles.Spinner, this.props.className, {
+      [styles.singleColor]: singleColor,
+      [styles.center]: center,
     });
     return <div {...props} className={className} ref={e => this.elem = e}/>;
   }
