@@ -1,31 +1,27 @@
 .MenuItem {
   --color: inherit;
-  --color-active: #{$color-secondary};
-  --spacing: #{$padding};
 
   position: relative;
   display: flex;
   align-items: center;
-  color: var(--color);
-  padding: var(--spacing);
+  padding: var(--theme-spacing);
+  color: var(--theme-color-text);
   white-space: nowrap;
   transition: 250ms background;
   text-decoration: none;
   text-overflow: ellipsis;
 
-  &:hover:not(.disabled) {
-    color: var(--color-active);
-    background: var(--bgc-active);
+  &:focus {
+    outline: 1px solid var(--theme-color-primary);
+  }
+
+  &:hover:not(.disabled),
+  &.active {
+    color: var(--theme-color-text2);
     cursor: pointer;
   }
 
-  &:focus {
-    outline: 1px solid $bgc-primary;
-  }
-
   &.active {
-    color: var(--color-active);
-    background-color: var(--bgc-active);
     cursor: default;
   }
 
@@ -38,14 +34,14 @@
     padding: 0;
     height: 0;
     overflow: hidden;
-    border-top: 1px solid $border-color;
+    border-top: 1px solid var(--theme-border-color);
     pointer-events: none;
   }
 
   .Icon {
     &:first-child {
       margin-left: 0;
-      margin-right: $padding;
+      margin-right: var(--theme-spacing);
     }
   }
 }

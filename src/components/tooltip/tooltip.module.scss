@@ -1,11 +1,10 @@
 .Tooltip {
   position: absolute;
-  background: rgba(45, 48, 53, 0.94);
+  background: var(--theme-bgc-invert);
+  color: var(--theme-bgc);
+  border-radius: var(--theme-border-radius);
   font-size: small;
   font-weight: normal;
-  border-radius: $radius;
-  color: gainsboro;
-  margin: #{$padding / 2 $padding / 3};
   padding: .5em;
   pointer-events: none;
   z-index: 1000;
@@ -43,12 +42,5 @@
       left: 50%;
       transform: translateX(-50%);
     }
-  }
-}
-
-@include theme-dark {
-  .Tooltip {
-    background: white; // todo: use from global project css-variable
-    color: #{darken($bgc-dark, 2.5%)};
   }
 }

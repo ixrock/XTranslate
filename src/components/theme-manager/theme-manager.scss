@@ -1,14 +1,14 @@
 
 .ThemeManager {
   .theme {
-    margin: $margin 0;
-    margin-bottom: $margin * 2 !important;
-    padding: $padding 0;
-    border-top: 1px solid $border-color;
-    border-bottom: 1px solid $border-color;
+    margin: var(--theme-spacing) 0;
+    margin-bottom: var(--theme-spacing-double) !important;
+    padding: var(--theme-spacing) 0;
+    border-top: 1px solid var(--theme-border-color);
+    border-bottom: 1px solid var(--theme-border-color);
 
     > .flex {
-      padding: $padding;
+      padding: var(--theme-spacing);
       padding-top: 0;
 
       &.auto {
@@ -17,7 +17,7 @@
     }
 
     .ColorPicker + .ColorPicker {
-      margin-left: $padding / 2;
+      margin-left: var(--theme-spacing-half);
     }
   }
 }

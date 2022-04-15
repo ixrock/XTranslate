@@ -95,7 +95,7 @@
   }
 
   .translation-result {
-    --flex-gap: 5px;
+    --flex-gap: var(--theme-spacing-half);
 
     @include customScroll;
 
@@ -109,14 +109,14 @@
     }
 
     .dictionary {
-      margin-top: $spacing /2;
+      margin-top: var(--theme-spacing-half);
 
       .word-type {
         font-weight: bold;
       }
 
       .word-meanings {
-        padding-left: $padding;
+        padding-left: var(--theme-spacing);
 
         .word[title] {
           cursor: help;
@@ -126,8 +126,6 @@
   }
 
   .translation-error {
-    --flex-gap: #{$padding};
-
     .Icon.info {
       pointer-events: none;
     }
@@ -143,7 +141,7 @@
 
   .translated-from {
     font-style: italic;
-    margin-top: $margin;
+    margin-top: var(--theme-spacing);
     opacity: .75;
   }
 }

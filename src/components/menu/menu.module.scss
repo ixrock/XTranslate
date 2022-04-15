@@ -1,14 +1,11 @@
 .Menu {
-  --bgc: white;
-  --bgc-active: #fafafa;
-
   position: absolute;
   display: flex;
   flex-direction: column;
-  background: var(--bgc);
   list-style: none;
-  border: 1px solid $border-color;
-  border-radius: $radius;
+  background: var(--theme-bgc);
+  border: 1px solid var(--theme-border-color);
+  border-radius: var(--theme-border-radius);
   z-index: 100;
 
   &.portal {
@@ -46,12 +43,5 @@
 
   &:empty {
     display: none;
-  }
-}
-
-@include theme-dark {
-  .Menu {
-    --bgc: #{$bgc-dark};
-    --bgc-active: #{darken($bgc-dark, 2.5%)};
   }
 }

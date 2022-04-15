@@ -1,10 +1,10 @@
+@import "../mixins";
 
 .Dialog {
-  @include custom-scrollbar;
+  @include hidden-scrollbar;
 
-  --flex-gap: #{$margin};
-  --dialog-bgc: white;
-  --dialog-padding: #{$margin * 2};
+  --dialog-bgc: var(--theme-bgc);
+  --dialog-padding: var(--theme-spacing-double);
   --dialog-border: 1px solid currentColor;
 
   position: fixed;
@@ -17,9 +17,10 @@
   z-index: 100;
 
   .box {
+    z-index: 1; // show on top of .modal
     border: var(--dialog-border);
-    background-color: var(--dialog-bgc) !important;
-    padding: var(--dialog-padding) !important;
+    background-color: var(--dialog-bgc);
+    padding: var(--dialog-padding);
   }
 
   &.pinned {
@@ -27,12 +28,15 @@
   }
 
   &.modal {
-    background: transparentize(#222, .5);
-  }
-}
-
-@include theme-dark {
-  .Dialog {
-    --dialog-bgc: #{darken($bgc-dark, 2.5%)};
+    &:before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      opacity: .5;
+      background: var(--theme-bgc-invert);
+    }
   }
 }

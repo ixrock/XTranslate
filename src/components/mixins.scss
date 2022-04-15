@@ -1,13 +1,14 @@
 //-- Mixins
 
-@mixin custom-scrollbar($theme: light, $size: 7px, $spaceAround: 5px) {
-  $themes: (
-    light: rgba(255, 255, 255, .25),
-    dark: rgba(0, 0, 0, .25),
-  );
+@mixin theme-dark() {
+  :root[data-theme="dark"] {
+    @content;
+  }
+}
 
-  $scrollBarColor: if(map_has_key($themes, $theme), map_get($themes, $theme), none);
-  $scrollBarSize: calc(#{$size} + #{$spaceAround} * 2);
+@mixin custom-scrollbar($size: 7px, $spaceAround: 5px) {
+  $scrollBarColor: var(--theme-scrollbar-bgc, silver);
+  $scrollBarSize: calc(var(--theme-scrollbar-size, #{$size}) + #{$spaceAround * 2});
 
   overflow: auto; // allow scrolling for container
   //overscroll-behavior: contain;
@@ -20,7 +21,7 @@
   }
 
   &::-webkit-scrollbar-thumb {
-    background: $scrollBarColor;
+    background: var(--scrollbar-bgc, #{$scrollBarColor});
     background-clip: padding-box;
     border: $spaceAround solid transparent;
     border-radius: $scrollBarSize;
@@ -57,21 +58,6 @@
     100% {
       background-position: 100% 100%;
     }
-  }
-}
-
-@mixin set-draggable($is-draggable: true) {
-  @if ($is-draggable) {
-    -webkit-user-select: none;
-    -webkit-app-region: drag;
-  } @else {
-    -webkit-app-region: no-drag;
-  }
-}
-
-@mixin theme-dark() {
-  :root[data-theme="dark"] {
-    @content;
   }
 }
 

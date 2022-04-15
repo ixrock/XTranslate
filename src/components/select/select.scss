@@ -1,7 +1,7 @@
 .Select {
   --icon-size: 24px; // .Icon > --size
-  --line-color: #{$border-color};
-  --line-color-active: #{$bgc-primary};
+  --line-color: var(--theme-border-color);
+  --line-color-active: var(--theme-color-primary);
 
   position: relative;
 

@@ -9,19 +9,19 @@
   flex-shrink: 0;
   line-height: 1;
   font: inherit;
-  border-radius: $radius;
-  padding: round($padding * .9) $padding * 1.5;
+  border-radius: var(--theme-border-radius);
+  padding: var(--theme-spacing) calc(var(--theme-spacing) * 1.5);
 
   &[href] {
     display: inline-block;
   }
 
   &.primary {
-    background: $bgc-primary;
+    background: var(--theme-color-primary);
   }
 
   &.accent {
-    background: $bgc-accent;
+    background: var(--theme-color-accent);
   }
 
   &.outline {
@@ -42,7 +42,7 @@
   }
 
   &.big {
-    font-size: 2.2 * $unit;
+    font-size: 22px;
     border-radius: 50px;
     padding: .75em 1em;
   }

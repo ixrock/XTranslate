@@ -7,6 +7,7 @@ import { Icon } from "../icon";
 const SelectContext = React.createContext<Select>(null);
 
 export interface SelectProps<T = any> {
+  id?: string;
   className?: string;
   autoFocus?: boolean;
   disabled?: boolean;

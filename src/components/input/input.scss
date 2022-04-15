@@ -1,3 +1,5 @@
+@import "../mixins";
+
 .Input {
   position: relative;
   text-align: left;
@@ -5,7 +7,7 @@
   &.invalid.dirty:not(.validating) {
     label:after {
       width: 100%;
-      background: $color-error;
+      background: var(--theme-color-error);
     }
   }
 
@@ -23,10 +25,8 @@
   }
 
   label {
-    --flex-gap: #{$padding / 1.5};
-
     position: relative;
-    border-bottom: 1px solid #{$border-color};
+    border-bottom: 1px solid var(--theme-border-color);
 
     &:after {
       content: "";
@@ -36,7 +36,7 @@
       transform: translateX(-50%);
       width: 0;
       height: 2px;
-      background: $bgc-primary;
+      background: var(--theme-color-primary);
       transition: width 250ms;
     }
   }
@@ -74,14 +74,14 @@
 
   .input-info {
     .errors {
-      color: $color-error;
+      color: var(--theme-color-error);
       font-size: small;
     }
 
     .maxLengthIndicator {
       text-align: right;
       font-size: 80%;
-      padding: $padding / 3;
+      padding: calc(var(--theme-spacing) / 3);
     }
   }
 }

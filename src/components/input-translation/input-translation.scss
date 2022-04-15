@@ -1,13 +1,11 @@
 
 .InputTranslation {
-  --flex-gap: #{$margin};
-
   .input-area {
     .Input {
       flex: 1;
 
       label {
-        padding-bottom: $padding / 2;
+        padding-bottom: var(--theme-spacing-half);
       }
       a {
         cursor: pointer;
@@ -32,13 +30,13 @@
       }
 
       .transcription {
-        margin-left: $margin / 2;
+        margin-left: var(--theme-spacing-half);
         opacity: .75;
       }
     }
 
     .lang {
-      padding-left: $padding;
+      padding-left: var(--theme-spacing);
       white-space: nowrap;
       line-height: 2;
       opacity: .5;
@@ -55,7 +53,7 @@
     }
 
     .dictionary {
-      margin-top: $margin;
+      margin-top: var(--theme-spacing);
 
       * {
         vertical-align: top;
@@ -63,11 +61,11 @@
 
       .word-type {
         font-weight: bold;
-        padding: $padding / 2;
+        padding: var(--theme-spacing-half);
       }
 
       .word {
-        padding: 0 $padding * 2;
+        padding: 0 var(--theme-spacing-double);
       }
 
       .word-meanings {

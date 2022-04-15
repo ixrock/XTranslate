@@ -6,7 +6,7 @@
 
     .Icon {
       &.active {
-        color: $bgc-primary;
+        color: var(--theme-color-primary);
       }
     }
   }
@@ -43,7 +43,7 @@
         content: '';
         flex: 1;
         height: 1px;
-        background: $border-color;
+        background: var(--theme-border-color);
       }
 
       &:before {
@@ -57,7 +57,7 @@
 
     .history-items {
       border: 1px solid transparent;
-      border-radius: $radius;
+      border-radius: var(--theme-border-radius);
       white-space: pre-line;
       padding: $padding / 3;
 
@@ -66,7 +66,7 @@
       }
 
       &.isOpened {
-        border-color: $color-primary;
+        border-color: var(--theme-color-text);
       }
 
       &:hover {

@@ -9,6 +9,8 @@ export = () => {
   var distPath = path.resolve(__dirname, "dist");
   var optionsPage = path.resolve(__dirname, "options.html");
   var componentsDir = path.resolve(srcPath, "components");
+  // var sassVariablesImport = `@import "mixins", "colors";`
+  var sassVariablesImport = `@import "theme-vars";`
 
   return {
     target: "web", // https://webpack.js.org/configuration/target/
@@ -77,7 +79,7 @@ export = () => {
               loader: 'sass-loader',
               options: {
                 sourceMap: false,
-                additionalData: `@import "vars";`,
+                additionalData: sassVariablesImport,
                 sassOptions: {
                   includePaths: [componentsDir]
                 },

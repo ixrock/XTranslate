@@ -10,6 +10,7 @@ import { Checkbox } from "../checkbox";
 import { Option, Select } from "../select";
 import { Slider } from "../slider";
 import { Button } from "../button";
+import { SubTitle } from "../sub-title";
 import { ColorPicker } from "../color-picker";
 import { Tab } from "../tabs";
 import { getMessage } from "../../i18n";
@@ -27,7 +28,7 @@ export class ThemeManager extends React.Component {
         <div className="theme">
           <div className="flex gaps auto">
             <div className="box">
-              <span className="sub-title">{getMessage("sub_header_background")}</span>
+              <SubTitle>{getMessage("sub_header_background")}</SubTitle>
               <div className="flex gaps align-center">
                 <span className="heading">{getMessage("background_color")}</span>
                 <div className="flex align-center">
@@ -49,7 +50,7 @@ export class ThemeManager extends React.Component {
               </div>
             </div>
             <div className="box">
-              <span className="sub-title">{getMessage("sub_header_box_shadow")}</span>
+              <SubTitle>{getMessage("sub_header_box_shadow")}</SubTitle>
               <div className="flex gaps align-center">
                 <NumberInput
                   className="box grow"
@@ -72,7 +73,8 @@ export class ThemeManager extends React.Component {
             </div>
           </div>
 
-          <span className="sub-title">{getMessage("sub_header_text")}</span>
+          <SubTitle>{getMessage("sub_header_text")}</SubTitle>
+
           <div className="flex gaps align-center">
             <span className="heading">{getMessage("text_color")}</span>
             <ColorPicker
@@ -118,7 +120,8 @@ export class ThemeManager extends React.Component {
             />
           </div>
 
-          <span className="sub-title">{getMessage("sub_header_border")}</span>
+          <SubTitle>{getMessage("sub_header_border")}</SubTitle>
+
           <div className="flex gaps align-center">
             <span className="heading">{getMessage("border_width")}</span>
             <NumberInput
@@ -147,7 +150,8 @@ export class ThemeManager extends React.Component {
             />
           </div>
 
-          <span className="sub-title">{getMessage("sub_header_box_size")}</span>
+          <SubTitle>{getMessage("sub_header_box_size")}</SubTitle>
+
           <div className="flex gaps align-center">
             <span className="heading">{getMessage("box_size_min_width")}</span>
             <Slider

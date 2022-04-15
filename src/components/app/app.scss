@@ -1,4 +1,4 @@
-@import "~flex.box"; // TODO: remove in favour plain css
+@import "~flex.box";
 @import "../mixins";
 @import "../fonts";
 
@@ -12,23 +12,16 @@
 }
 
 html {
-  font-size: 62.5%; // 1 rem == 10px
-  color: $color-primary;
   height: 100%;
 }
 
 body {
-  @include custom-scrollbar($theme: dark);
-  font: 150% Helvetica Neue, Roboto, sans-serif;
-  height: inherit;
-}
-
-@include theme-dark {
-  body {
-    @include custom-scrollbar($theme: light);
-    background: $bgc-dark;
-    color: lighten($color-secondary, 2.5%);
-  }
+  @include custom-scrollbar;
+  overflow: overlay; // cover scrollbar area with <Dialog modal/>
+  font: 15px Helvetica Neue, Roboto, sans-serif;
+  background: var(--theme-bgc);
+  color: var(--theme-color-text);
+  height: 100%;
 }
 
 code {
@@ -44,11 +37,11 @@ input, select, textarea {
 }
 
 a {
-  color: $color-secondary;
+  color: var(--theme-color-text2);
 
   &:focus,
   &:hover {
-    color: $bgc-primary;
+    color: var(--theme-color-primary);
     text-decoration: none;
   }
 }
@@ -59,34 +52,23 @@ ol, ul {
 
 hr {
   height: 1px;
-  background: $border-color;
+  background: var(--theme-border-color);
 }
 
 #app {
-  $width: 550px;
-  $height: 599px; // max-height for chrome extensions
-
-  max-width: 700px;
-  min-width: $width;
-  min-height: $height;
-  padding: $padding * 2 $padding * 3;
   margin: auto;
-}
-
-.sub-title {
-  text-transform: uppercase;
-  font-weight: bold;
-  padding-bottom: $padding;
-  color: $color-secondary;
-  display: block;
+  max-width: 700px;
+  min-width: 560px;
+  min-height: 599px; // max allowed height in chrome's extension window
+  padding: var(--theme-spacing-double) calc(var(--theme-spacing) * 3);
 }
 
 header {
-  --flex-gap: #{$padding / 2};
   text-transform: uppercase;
   font-weight: bold;
   text-align: left;
-  color: #666;
+  color: var(--theme-color-header);
+  padding-bottom: var(--theme-spacing-half);
 
   .app-version {
     font-weight: normal;
@@ -94,28 +76,19 @@ header {
   }
 }
 
-@include theme-dark {
-  header {
-    color: #cccccc;
-  }
-}
-
 .Tabs {
-  overflow: initial !important;
-  border-bottom: 1px solid $border-color;
-
   .Tab {
     position: relative;
     top: 1px;
     flex-direction: column;
 
     &.active {
-      color: $bgc-primary;
+      color: var(--theme-color-primary);
     }
   }
 
   + .tab-content {
-    padding: $padding * 2 0;
+    padding: calc(var(--theme-spacing) * 2) 0;
   }
 }
 

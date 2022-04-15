@@ -1,8 +1,10 @@
+@import "../mixins";
+
 .Tabs {
   display: flex;
   user-select: none;
-  -webkit-user-select: none; /* safari */
-  -moz-user-select: none; /* firefox */
+  border-bottom: 1px solid var(--theme-border-color);
+  color: var(--theme-color-text);
 
   &.wrap {
     flex-wrap: wrap;
@@ -26,7 +28,7 @@
 
 .Tab {
   position: relative;
-  padding: $padding $padding * 2;
+  padding: var(--theme-spacing) calc(var(--theme-spacing) * 2);
   white-space: nowrap;
   text-transform: uppercase;
   font-weight: bold;
@@ -45,7 +47,7 @@
       right: 0;
       bottom: 0;
       width: 0;
-      height: $unit /2;
+      height: 5px;
       transition: width 250ms;
       background: currentColor;
     }
@@ -65,13 +67,7 @@
 
     &.active:after {
       @include isActive;
-      color: $bgc-primary;
+      color: var(--theme-color-primary);
     }
-  }
-}
-
-@include theme-dark {
-  .Tabs {
-    color: lighten($color-primary, 10%);
   }
 }

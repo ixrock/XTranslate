@@ -1,5 +1,3 @@
-@import "../vars";
-
 .Slider {
   position: relative;
 
@@ -13,7 +11,7 @@
 
   .title {
     position: absolute;
-    border-radius: $radius;
+    border-radius: var(--theme-border-radius);
     bottom: 100%;
     left: 50%;
     transform: translateX(-50%);

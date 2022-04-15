@@ -1,6 +1,6 @@
 .Footer {
-  padding-top: $margin;
-  border-top: 1px solid $border-color;
+  padding-top: var(--theme-spacing);
+  border-top: 1px solid var(--theme-border-color);
 
   .socialIcons {
     display: inline-block;
@@ -12,7 +12,7 @@
 
     img {
       height: 25px;
-      margin-left: $margin / 2;
+      margin-left: var(--theme-spacing-half);
       filter: grayscale(100%);
       opacity: .75;
 

@@ -1,12 +1,8 @@
 .ExportSettingsDialog {
-  .error {
-    font-style: italic;
-    color: $red-a100;
-  }
+  --dialog-padding: calc(var(--theme-spacing) * 3);
 }
 
-@include theme-dark {
-  .ExportSettingsDialog {
-    --dialog-bgc: #{$bgc-dark};
-  }
+.error {
+  font-style: italic;
+  color: var(--theme-color-error);
 }

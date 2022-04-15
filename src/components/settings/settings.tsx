@@ -15,6 +15,7 @@ import { Icon } from "../icon";
 import { Button } from "../button";
 import { Popup } from "../popup";
 import { TooltipProps } from "../tooltip";
+import { SubTitle } from "../sub-title";
 import { Tab } from "../tabs";
 import { settingsStore } from "./settings.storage";
 import { pageManager } from "../app/page-manager";
@@ -41,9 +42,7 @@ export class Settings extends React.Component {
       <div className="Settings flex column gaps">
         <div className="common-settings flex gaps auto">
           <div className="checkbox-group flex column">
-            <p className="sub-title">
-              {getMessage("settings_title_tts")}
-            </p>
+            <SubTitle>{getMessage("settings_title_tts")}</SubTitle>
             <Checkbox
               label={getMessage("auto_play_tts")}
               checked={settings.autoPlayText}
@@ -57,7 +56,7 @@ export class Settings extends React.Component {
             />
           </div>
           <div className="checkbox-group flex column">
-            <p className="sub-title">{getMessage("settings_title_appearance")}</p>
+            <SubTitle>{getMessage("settings_title_appearance")}</SubTitle>
             <Checkbox
               label={getMessage("show_context_menu")}
               checked={settings.showInContextMenu}
@@ -72,9 +71,8 @@ export class Settings extends React.Component {
           </div>
         </div>
 
-        <p className="sub-title">
-          {getMessage("setting_title_translator_service")}
-        </p>
+        <SubTitle>{getMessage("setting_title_translator_service")}</SubTitle>
+
         <div className="translator-settings flex gaps column">
           <SelectLanguage showInfoIcon/>
           <RadioGroup
@@ -100,8 +98,9 @@ export class Settings extends React.Component {
           </RadioGroup>
         </div>
 
-        <p className="sub-title">{getMessage("setting_title_popup")}</p>
-        <div className="popup-settings flex gaps auto">
+        <SubTitle>{getMessage("setting_title_popup")}</SubTitle>
+
+        <div className="popup-settings flex auto">
           <div className="checkbox-group">
             <Checkbox
               label={getMessage("show_tts_icon_inside_popup")}
@@ -127,6 +126,25 @@ export class Settings extends React.Component {
               onChange={v => settings.showTranslatedFrom = v}
               tooltip={popupTooltip}
             />
+            <div className="flex gaps align-center">
+              <Icon
+                htmlFor="select_popup_position"
+                material="display_settings"
+                tooltip={getMessage("popup_position_title")}
+              />
+              <Select
+                id="select_popup_position"
+                className="box grow"
+                value={settings.popupFixedPos}
+                onChange={v => settings.popupFixedPos = v}
+              >
+                <Option value="" label={getMessage("popup_position_auto")}/>
+                <Option value="leftTop" label={getMessage("popup_position_left_top")}/>
+                <Option value="rightTop" label={getMessage("popup_position_right_top")}/>
+                <Option value="leftBottom" label={getMessage("popup_position_left_bottom")}/>
+                <Option value="rightBottom" label={getMessage("popup_position_right_bottom")}/>
+              </Select>
+            </div>
           </div>
           <div className="checkbox-group">
             <Checkbox
@@ -144,44 +162,28 @@ export class Settings extends React.Component {
               checked={settings.showPopupOnDoubleClick}
               onChange={v => settings.showPopupOnDoubleClick = v}
             />
-            <div className="use-hotkey flex gaps">
-              <Checkbox
-                className="box grow"
-                label={getMessage("display_popup_on_hotkey")}
-                checked={settings.showPopupOnHotkey}
-                onChange={v => settings.showPopupOnHotkey = v}
-                tooltip={hotKey.title}
+            <Checkbox
+              className="box grow"
+              label={getMessage("display_popup_on_hotkey") + ":"}
+              checked={settings.showPopupOnHotkey}
+              onChange={v => settings.showPopupOnHotkey = v}
+              tooltip={hotKey.title}
+            />
+            <label className="flex">
+              <Icon material="keyboard"/>
+              <Input
+                readOnly
+                className="hotkey box grow"
+                value={hotKey.value}
+                onKeyDown={prevDefault(this.onSaveHotkey)}
               />
-              <label className="flex gaps">
-                <Icon material="keyboard"/>
-                <Input
-                  readOnly={true}
-                  className="hotkey"
-                  value={hotKey.value}
-                  onKeyDown={prevDefault(this.onSaveHotkey)}
-                />
-              </label>
-            </div>
+            </label>
           </div>
         </div>
 
-        <div className="flex gaps align-center">
-          <p>{getMessage("popup_position_title")}</p>
-          <Select
-            className="box grow"
-            value={settings.popupFixedPos}
-            onChange={v => settings.popupFixedPos = v}
-          >
-            <Option value="" label={getMessage("popup_position_auto")}/>
-            <Option value="leftTop" label={getMessage("popup_position_left_top")}/>
-            <Option value="rightTop" label={getMessage("popup_position_right_top")}/>
-            <Option value="leftBottom" label={getMessage("popup_position_left_bottom")}/>
-            <Option value="rightBottom" label={getMessage("popup_position_right_bottom")}/>
-          </Select>
-        </div>
+        <SubTitle>{getMessage("setting_title_text_input")}</SubTitle>
 
-        <p className="sub-title">{getMessage("setting_title_text_input")}</p>
-        <div className="flex gaps align-baseline">
+        <div className="flex gaps align-center">
           <Button
             outline
             className="box flex gaps"

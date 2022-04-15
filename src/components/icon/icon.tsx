@@ -1,12 +1,13 @@
 import "./icon.scss";
-import React, { createRef, ReactNode } from "react";
+import React, { ReactNode } from "react";
 import { base64, cssNames } from "../../utils";
 import { TooltipDecoratorProps, withTooltip } from "../tooltip";
 
 export interface IconProps extends React.HTMLAttributes<any>, TooltipDecoratorProps {
   material?: string;          // material-icon, see available names at https://material.io/icons/
   svg?: string;               // svg-filename without extension in current folder
-  href?: string;              // render icon as hyperlink
+  htmlFor?: string;           // render icon as <label htmlFor="id">
+  href?: string;              // render icon as a link <a href="">
   size?: string | number;     // icon-size
   small?: boolean;            // pre-defined icon-size
   smallest?: boolean;            // pre-defined icon-size
@@ -20,7 +21,7 @@ export interface IconProps extends React.HTMLAttributes<any>, TooltipDecoratorPr
 
 @withTooltip
 export class Icon extends React.PureComponent<IconProps> {
-  private readonly ref = createRef<HTMLAnchorElement>();
+  private elem: HTMLElement;
 
   static defaultProps: IconProps = {
     focusable: true,
@@ -52,7 +53,7 @@ export class Icon extends React.PureComponent<IconProps> {
 
       // fallthrough
       case "Enter": {
-        this.ref.current?.click();
+        this.elem?.click();
         evt.preventDefault();
         break;
       }
@@ -63,12 +64,16 @@ export class Icon extends React.PureComponent<IconProps> {
     }
   }
 
+  protected bindRef = (elem: HTMLElement) => {
+    this.elem = elem;
+  }
+
   render() {
     const { isInteractive } = this;
     const {
       // skip passing props to icon's html element
       className, href, material, svg, size, smallest, small, big,
-      disabled, sticker, active, focusable, children,
+      disabled, sticker, active, focusable, children, tooltip, htmlFor,
       interactive: _interactive,
       onClick: _onClick,
       onKeyDown: _onKeyDown,
@@ -76,7 +81,7 @@ export class Icon extends React.PureComponent<IconProps> {
     } = this.props;
 
     let iconContent: ReactNode;
-    const iconProps: Partial<IconProps> = {
+    const iconProps: Partial<IconProps & { ref?: React.Ref<any> }> = {
       className: cssNames("Icon", className,
         { svg, material, interactive: isInteractive, disabled, sticker, active, focusable },
         !size ? { smallest, small, big } : {},
@@ -85,6 +90,7 @@ export class Icon extends React.PureComponent<IconProps> {
       onKeyDown: isInteractive ? this.onKeyDown : undefined,
       tabIndex: isInteractive && focusable && !disabled ? 0 : undefined,
       style: size ? { "--size": size + (+size ? "px" : "") } as React.CSSProperties : undefined,
+      ref: this.bindRef,
       ...elemProps,
     };
 
@@ -113,9 +119,12 @@ export class Icon extends React.PureComponent<IconProps> {
 
     // render icon type
     if (href) {
-      return <a {...iconProps} href={href} ref={this.ref}/>;
+      return <a href={href} {...iconProps}/>;
+    }
+    if (htmlFor) {
+      return <label htmlFor={htmlFor} {...iconProps} />;
     }
 
-    return <i {...iconProps} ref={this.ref}/>;
+    return <i {...iconProps}/>;
   }
 }

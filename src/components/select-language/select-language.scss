@@ -4,12 +4,9 @@
   > .Select {
     flex: 1 0;
 
+    [class*="-option"],
     [class*="-indicatorContainer"] {
-      padding: $padding / 2;
-    }
-
-    [class*="-option"] {
-      padding: $padding / 2;
+      padding: var(--theme-spacing-half);
     }
 
     [class*="-control"] {
@@ -19,17 +16,17 @@
       background: none;
 
       [class*="-singleValue"] {
-        color: $color-primary;
+        color: var(--theme-color-text);
       }
 
       &:focus-within {
-        border-color: $bgc-primary !important;
+        border-color: var(--theme-color-primary) !important;
       }
     }
   }
 
   .language {
-    padding: $padding / 2;
+    padding: var(--theme-spacing-half);
 
     &.auto {
       user-select: none;
@@ -46,11 +43,11 @@
 @include theme-dark {
   .Select {
     [class$="-option"]:hover {
-      background: $color-primary;
+      background: var(--theme-color-primary);
     }
 
     [class$="-menu"] {
-      background: invert($bgc-dark, .75);
+      background: var(--theme-bgc);
       border: 1px solid currentColor;
     }
   }

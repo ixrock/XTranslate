@@ -1,15 +1,15 @@
 .Settings {
-  .sub-title {
-    padding: 0;
+  .popup-settings {
+    display: flex;
   }
 
   .checkbox-group {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
+    gap: 7px;
 
-    > :not(:last-child) {
-      margin-bottom: $padding /2;
+    &:first-child {
+      padding-right: var(--theme-spacing-double);
     }
   }
 
@@ -19,11 +19,11 @@
   }
 
   small {
-    color: $color-secondary;
+    color: var(--theme-color-text2);
   }
 
   .vendors {
-    --flex-gap: #{$margin /2};
-    margin-right: $margin * 2;
+    --flex-gap: var(--theme-spacing-half);
+    margin-right: var(--theme-spacing-double);
   }
 }

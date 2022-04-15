@@ -13,6 +13,7 @@ import { getMessage } from "../../i18n";
 import { Icon } from "../icon";
 import { FileInput, ImportingFile } from "../input";
 import { Notifications } from "../notifications";
+import { SubTitle } from "../sub-title";
 
 export interface StorableSettings<Data> {
   version: number;
@@ -93,10 +94,10 @@ export class ExportImportSettingsDialog extends React.Component<Props> {
     return (
       <Dialog className={dialogClass} {...dialogProps} ref={elem => this.dialog = elem}>
         <div className="flex column gaps">
-          <p className="sub-title">
+          <SubTitle>
             <Icon material="import_export"/>
             <span>{getMessage("import_export_settings")}</span>
-          </p>
+          </SubTitle>
           <div className="flex gaps">
             <FileInput
               accept="application/json"
@@ -112,9 +113,7 @@ export class ExportImportSettingsDialog extends React.Component<Props> {
               <span>{getMessage("import_settings_button_label")}</span>
             </Button>
           </div>
-          <p className={styles.error}>
-            {this.error}
-          </p>
+          {this.error && <p className={styles.error}>{this.error}</p>}
         </div>
       </Dialog>
     )

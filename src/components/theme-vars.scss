@@ -1,0 +1,38 @@
+@import "colors";
+@import "mixins";
+
+// TODO: remove + replace with css-vars
+$unit: 10px !default;
+$padding: $unit !default;
+$margin: $unit !default;
+
+:root {
+  $textColorMain: #87909c;
+  --flex-gap: var(--theme-spacing);
+
+  --theme-color-contrast: black;
+  --theme-bgc: white;
+  --theme-bgc-invert: #36393e;
+  --theme-color-primary: #3d90ce;
+  --theme-color-accent: #e85555;
+  --theme-color-header: #666;
+  --theme-color-text: #{$textColorMain};
+  --theme-color-text2: #a0a0a0;
+  --theme-color-success: #{$green-600};
+  --theme-color-error: #{$red-500};
+  --theme-border-color: #{transparentize($textColorMain, .5)};
+  --theme-border-radius: 3px;
+  --theme-spacing: 10px;
+  --theme-spacing-half: calc(var(--theme-spacing) / 2);
+  --theme-spacing-double: calc(var(--theme-spacing) * 2);
+  --theme-scrollbar-bgc: rgba(0, 0, 0, .25);
+}
+
+@include theme-dark {
+  --theme-color-contrast: white;
+  --theme-bgc: #36393e;
+  --theme-bgc-invert: white;
+  --theme-color-text: #{lighten(#a0a0a0, 2.5%)};
+  --theme-color-header: #ccc;
+  --theme-scrollbar-bgc: rgba(255, 255, 255, .25);
+}

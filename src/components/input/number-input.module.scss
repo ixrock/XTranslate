@@ -16,7 +16,7 @@
     > .Icon {
       --size: 22px;
       --bgc-active: none;
-      --color-active: #{$bgc-primary};
+      --color-active: var(--theme-color-primary);
 
       position: relative;
       flex: 1;
