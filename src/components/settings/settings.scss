@@ -1,6 +1,10 @@
 .Settings {
   .popup-settings {
     display: flex;
+
+    .Icon {
+      margin-left: -2px;
+    }
   }
 
   .checkbox-group {

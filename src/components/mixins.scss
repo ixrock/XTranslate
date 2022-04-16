@@ -1,10 +1,5 @@
 //-- Mixins
-
-@mixin theme-dark() {
-  :root[data-theme="dark"] {
-    @content;
-  }
-}
+@import "theme-vars";
 
 @mixin custom-scrollbar($size: 7px, $spaceAround: 5px) {
   $scrollBarColor: var(--theme-scrollbar-bgc, silver);

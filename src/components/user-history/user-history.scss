@@ -1,8 +1,6 @@
 .UserHistory {
-  $spacing: $margin * 2;
-
   .settings {
-    margin-bottom: $margin /2;
+    margin-bottom: var(--theme-spacing-half);
 
     .Icon {
       &.active {
@@ -12,12 +10,12 @@
   }
 
   .loading {
-    padding: $padding;
+    padding: var(--theme-spacing);
     text-align: center;
   }
 
   .load-more {
-    margin-top: $margin;
+    margin-top: var(--theme-spacing);
   }
 
   .history {
@@ -37,7 +35,7 @@
     .history-date {
       display: flex;
       align-items: center;
-      margin: $margin 0;
+      margin: var(--theme-spacing) 0;
 
       &:after, &:before {
         content: '';
@@ -47,11 +45,11 @@
       }
 
       &:before {
-        margin-right: $spacing;
+        margin-right: var(--theme-spacing);
       }
 
       &:after {
-        margin-left: $spacing;
+        margin-left: var(--theme-spacing);
       }
     }
 
@@ -59,7 +57,7 @@
       border: 1px solid transparent;
       border-radius: var(--theme-border-radius);
       white-space: pre-line;
-      padding: $padding / 3;
+      padding: calc(var(--theme-spacing) / 3);
 
       &:not(:last-child) {
         margin-top: -1px;
@@ -80,10 +78,10 @@
       }
 
       .history-item {
-        padding: $padding / 2;
+        padding: var(--theme-spacing-half);
 
         &.showDetails {
-          padding: $padding;
+          padding: var(--theme-spacing);
           border-top: 1px dotted; // adds line between vendor translations
 
           &:first-child {

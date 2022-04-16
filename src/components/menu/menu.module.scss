@@ -13,16 +13,16 @@
     top: -1000px;
 
     &.top {
-      margin-top: -$margin;
+      margin-top: calc(var(--theme-spacing) * -1);
     }
 
     &.bottom {
-      margin-top: $margin;
+      margin-top: var(--theme-spacing);
     }
   }
 
   &:not(.portal) {
-    margin: $margin / 2 0;
+    margin: var(--theme-spacing-half) 0;
 
     &.left {
       left: 0;

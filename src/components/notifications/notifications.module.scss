@@ -9,7 +9,7 @@
   align-content: flex-end;
   right: 0;
   bottom: 0;
-  padding: $padding * 2;
+  padding: var(--theme-spacing-double);
   max-height: 100vh;
   z-index: 100000;
 
@@ -21,7 +21,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: $padding;
+    padding: var(--theme-spacing);
     border-radius: 3px;
     min-width: 350px;
     max-width: 35vw;
@@ -41,7 +41,7 @@
     }
 
     &:not(:last-child) {
-      margin-bottom: $margin * 2;
+      margin-bottom: var(--theme-spacing-double);
     }
 
     .infoIcon {
@@ -54,8 +54,8 @@
     .message {
       flex: 1;
       white-space: pre-line;
-      padding-left: $padding;
-      padding-right: $padding * 2;
+      padding-left: var(--theme-spacing);
+      padding-right: var(--theme-spacing-double);
 
       a {
         color: inherit;

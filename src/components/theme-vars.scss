@@ -1,12 +1,6 @@
-@import "colors";
-@import "mixins";
+// Themes customization (dark/light)
 
-// TODO: remove + replace with css-vars
-$unit: 10px !default;
-$padding: $unit !default;
-$margin: $unit !default;
-
-:root {
+@mixin theme-vars() {
   $textColorMain: #87909c;
   --flex-gap: var(--theme-spacing);
 
@@ -28,11 +22,27 @@ $margin: $unit !default;
   --theme-scrollbar-bgc: rgba(0, 0, 0, .25);
 }
 
-@include theme-dark {
+@mixin theme-vars-dark {
   --theme-color-contrast: white;
   --theme-bgc: #36393e;
   --theme-bgc-invert: white;
   --theme-color-text: #{lighten(#a0a0a0, 2.5%)};
   --theme-color-header: #ccc;
   --theme-scrollbar-bgc: rgba(255, 255, 255, .25);
+}
+
+@mixin theme-dark($selector: ":root") {
+  #{$selector}[data-theme="dark"] {
+    @content;
+  }
+}
+
+@mixin theme-setup($selector: ":root") {
+  #{$selector} {
+    @include theme-vars;
+  }
+
+  @include theme-dark($selector) {
+    @include theme-vars-dark;
+  }
 }

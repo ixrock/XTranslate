@@ -1,6 +1,7 @@
 @import "~flex.box";
-@import "../mixins";
 @import "../fonts";
+@import "../mixins";
+@include theme-setup;
 
 *, *:before, *:after {
   box-sizing: border-box;
@@ -59,7 +60,7 @@ hr {
   margin: auto;
   max-width: 700px;
   min-width: 560px;
-  min-height: 599px; // max allowed height in chrome's extension window
+  min-height: 599px; // max allowed height within chrome's extension window
   padding: var(--theme-spacing-double) calc(var(--theme-spacing) * 3);
 }
 

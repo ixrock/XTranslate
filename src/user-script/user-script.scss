@@ -12,6 +12,7 @@
   @import "../components/popup/popup";
   @import "../components/icon/icon";
   @import "./xtranslate-icon";
+  @include theme-vars;
 
   *, *:after, *:before {
     box-sizing: border-box;
