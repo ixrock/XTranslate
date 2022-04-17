@@ -1,14 +1,19 @@
 //-- Mixins
 @import "theme-vars";
 
-@mixin custom-scrollbar($size: 7px, $spaceAround: 5px) {
+@mixin custom-scrollbar($size: 7px, $spaceAround: 5px, $overlay: false) {
   $scrollBarColor: var(--theme-scrollbar-bgc, silver);
   $scrollBarSize: calc(var(--theme-scrollbar-size, #{$size}) + #{$spaceAround * 2});
 
-  overflow: auto; // allow scrolling for container
-  //overscroll-behavior: contain;
+  @if ($overlay) {
+    overflow: overlay; // cover scrollbar area with <Dialog modal/>
+  } @else {
+    overflow: auto;
+  }
 
-  // Webkit
+  // https://developer.mozilla.org/en-US/docs/Web/CSS/overscroll-behavior
+  overscroll-behavior: contain;
+
   &::-webkit-scrollbar {
     width: $scrollBarSize;
     height: $scrollBarSize;
@@ -25,23 +30,17 @@
   &::-webkit-scrollbar-corner {
     background-color: transparent;
   }
-
-  // Firefox
-  scrollbar-color: $scrollBarColor transparent;
-  scrollbar-width: thin;
 }
 
 // Hide scrollbar but keep the element scrollable
 @mixin hidden-scrollbar {
   overflow: auto;
-  // Chrome, Safari
+
   &::-webkit-scrollbar {
     width: 0;
     height: 0;
     background: transparent;
   }
-  scrollbar-width: none; // Firefox 65+
-  -ms-overflow-style: none; // IE (10,11?), Edge(?)
 }
 
 @mixin stripe-lines-animation($color1: #ccc, $color2: transparent, $spacing: 1rem) {

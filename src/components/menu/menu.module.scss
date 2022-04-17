@@ -1,4 +1,6 @@
 .Menu {
+  @include custom-scrollbar;
+
   position: absolute;
   display: flex;
   flex-direction: column;
@@ -6,39 +8,17 @@
   background: var(--theme-bgc);
   border: 1px solid var(--theme-border-color);
   border-radius: var(--theme-border-radius);
+  left: -1000px;
+  top: -1000px;
   z-index: 100;
+  max-height: 300px;
 
-  &.portal {
-    left: -1000px;
-    top: -1000px;
-
-    &.top {
-      margin-top: calc(var(--theme-spacing) * -1);
-    }
-
-    &.bottom {
-      margin-top: var(--theme-spacing);
-    }
+  &.top {
+    margin-top: calc(var(--theme-spacing) * -1);
   }
 
-  &:not(.portal) {
-    margin: var(--theme-spacing-half) 0;
-
-    &.left {
-      left: 0;
-    }
-
-    &.right {
-      right: 0;
-    }
-
-    &.top {
-      bottom: 100%;
-    }
-
-    &.bottom {
-      top: 100%;
-    }
+  &.bottom {
+    margin-top: var(--theme-spacing);
   }
 
   &:empty {

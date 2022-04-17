@@ -4,7 +4,7 @@ import "./app.scss";
 import "../../packages.setup";
 import * as React from 'react';
 import { createRoot } from "react-dom/client"
-import { action, makeObservable, observable, reaction } from "mobx";
+import { makeObservable, observable, reaction } from "mobx";
 import { observer } from "mobx-react";
 import { cssNames } from "../../utils/cssNames";
 import { getManifest } from "../../extension";
@@ -119,7 +119,7 @@ export class App extends React.Component {
         <AppRateDialog/>
         <ExportImportSettingsDialog
           isOpen={this.showImportExportDialog}
-          onClose={action(() => this.showImportExportDialog = false)}
+          onClose={() => this.showImportExportDialog = false}
         />
       </div>
     );

@@ -27,7 +27,6 @@ export interface ImportExportSettings {
 }
 
 export interface Props extends DialogProps {
-  isOpen: boolean;
 }
 
 @observer
@@ -41,7 +40,8 @@ export class ExportImportSettingsDialog extends React.Component<Props> {
     makeObservable(this);
   }
 
-  importSettings = action(async ([{ file }]: ImportingFile<string>[]) => {
+  @action
+  importSettings = async ([{ file }]: ImportingFile<string>[]) => {
     this.error = "";
     try {
       const jsonSettings: ImportExportSettings = JSON.parse(await file.text());
@@ -61,14 +61,14 @@ export class ExportImportSettingsDialog extends React.Component<Props> {
           themeStorage.set(theme.data);
           Notifications.ok(getMessage("imported_setting_successful", { key: "theme" }));
         }
-        this.dialog?.close();
+        this.dialog.close();
       }
     } catch (error) {
       console.error(`[SETTINGS-IMPORT]: import failed due: ${error}`);
       this.error = String(error);
       Notifications.error(this.error);
     }
-  });
+  };
 
   exportSettings = () => {
     const appSettings: ImportExportSettings = {
@@ -92,29 +92,36 @@ export class ExportImportSettingsDialog extends React.Component<Props> {
     const dialogClass = cssNames(styles.ExportSettingsDialog, className);
 
     return (
-      <Dialog className={dialogClass} {...dialogProps} ref={elem => this.dialog = elem}>
-        <div className="flex column gaps">
-          <SubTitle>
-            <Icon material="import_export"/>
-            <span>{getMessage("import_export_settings")}</span>
-          </SubTitle>
-          <div className="flex gaps">
-            <FileInput
-              accept="application/json"
-              onImport={this.importSettings}
-              ref={elem => fileInput = elem}
-            />
-            <Button outline className="flex gaps align-center" onClick={this.exportSettings}>
-              <Icon material="save" small/>
-              <span>{getMessage("export_settings_button_label")}</span>
-            </Button>
-            <Button outline className="flex gaps align-center" onClick={() => fileInput.selectFiles()}>
-              <Icon material="tune" small/>
-              <span>{getMessage("import_settings_button_label")}</span>
-            </Button>
-          </div>
-          {this.error && <p className={styles.error}>{this.error}</p>}
+      <Dialog
+        {...dialogProps}
+        className={dialogClass}
+        contentClassName="flex gaps column"
+        ref={elem => this.dialog = elem}
+      >
+        <SubTitle>
+          <Icon material="import_export"/>
+          <span>{getMessage("import_export_settings")}</span>
+        </SubTitle>
+
+        <div className="flex gaps">
+          <FileInput
+            accept="application/json"
+            onImport={this.importSettings}
+            ref={elem => fileInput = elem}
+          />
+          <Button outline className="flex gaps align-center" onClick={this.exportSettings}>
+            <Icon material="save" small/>
+            <span>{getMessage("export_settings_button_label")}</span>
+          </Button>
+          <Button outline className="flex gaps align-center" onClick={() => fileInput.selectFiles()}>
+            <Icon material="tune" small/>
+            <span>{getMessage("import_settings_button_label")}</span>
+          </Button>
         </div>
+
+        {this.error && (
+          <p className={styles.error}>{this.error}</p>
+        )}
       </Dialog>
     )
   }

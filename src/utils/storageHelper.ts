@@ -1,6 +1,6 @@
 // Helper for working with persistent storages (e.g. WebStorage API, NodeJS file-system api, etc.)
 
-import { action, IReactionDisposer, IReactionOptions, makeObservable, observable, reaction, toJS, when } from "mobx";
+import { action, IReactionDisposer, makeObservable, observable, reaction, toJS, when } from "mobx";
 import produce, { Draft } from "immer";
 import { isEqual, merge } from "lodash";
 import { createLogger } from "./createLogger";

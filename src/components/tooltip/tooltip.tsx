@@ -1,7 +1,7 @@
 import styles from './tooltip.module.scss'
 import React from "react"
 import { observer } from "mobx-react";
-import { action, makeObservable, observable } from "mobx";
+import { makeObservable, observable } from "mobx";
 import { createPortal } from "react-dom"
 import { autoBind, cssNames } from "../../utils";
 import { Animate } from "../animate";
@@ -10,7 +10,6 @@ export interface TooltipProps {
   htmlFor: string
   className?: string;
   position?: Position;
-  useAnimation?: boolean;
   following?: boolean; // tooltip is following mouse position
   nowrap?: boolean; // css-shortcut for style={{whiteSpace: "nowrap"}}
   children?: React.ReactNode;
@@ -26,7 +25,6 @@ interface Position {
 }
 
 const defaultProps: Partial<TooltipProps> = {
-  useAnimation: true,
   position: {
     center: true,
     bottom: true,
@@ -37,37 +35,38 @@ const defaultProps: Partial<TooltipProps> = {
 export class Tooltip extends React.Component<TooltipProps> {
   static defaultProps = defaultProps as object;
 
-  public anchor: HTMLElement;
-  public elem: HTMLElement;
+  public elem: HTMLElement | undefined;
   public lastMousePos = { x: 0, y: 0 };
   @observable isVisible = false;
 
   constructor(props: TooltipProps) {
     super(props);
-
-    autoBind(this);
     makeObservable(this);
+    autoBind(this);
+  }
+
+  get anchor(): HTMLElement | undefined {
+    var { htmlFor } = this.props;
+    return htmlFor ? document.getElementById(htmlFor) : this.elem?.parentElement;
   }
 
   componentDidMount() {
-    var { htmlFor } = this.props;
-    this.anchor = htmlFor ? document.getElementById(htmlFor) : this.elem.parentElement;
-    if (this.anchor) {
-      if (window.getComputedStyle(this.anchor).position === "static") {
-        this.anchor.style.position = "relative"
-      }
-      this.anchor.addEventListener("mouseenter", this.onMouseEnter);
-      this.anchor.addEventListener("mouseleave", this.onMouseLeave);
-      this.anchor.addEventListener("mousemove", this.onMouseMove);
+    if (!this.anchor) return;
+
+    if (window.getComputedStyle(this.anchor).position === "static") {
+      this.anchor.style.position = "relative"
     }
+    this.anchor.addEventListener("mouseenter", this.onMouseEnter);
+    this.anchor.addEventListener("mouseleave", this.onMouseLeave);
+    this.anchor.addEventListener("mousemove", this.onMouseMove);
   }
 
   componentWillUnmount() {
-    if (this.anchor) {
-      this.anchor.removeEventListener("mouseenter", this.onMouseEnter);
-      this.anchor.removeEventListener("mouseleave", this.onMouseLeave);
-      this.anchor.removeEventListener("mousemove", this.onMouseMove);
-    }
+    if (!this.anchor) return;
+
+    this.anchor.removeEventListener("mouseenter", this.onMouseEnter);
+    this.anchor.removeEventListener("mouseleave", this.onMouseLeave);
+    this.anchor.removeEventListener("mousemove", this.onMouseMove);
   }
 
   onMouseEnter(evt: MouseEvent) {
@@ -86,10 +85,9 @@ export class Tooltip extends React.Component<TooltipProps> {
     this.refreshPosition();
   }
 
-  refreshPosition = () => requestAnimationFrame(action(() => {
-    if (!this.props.following) {
-      return;
-    }
+  refreshPosition = () => requestAnimationFrame(() => {
+    if (!this.props.following || !this.elem) return;
+
     var offset = 10;
     var viewportWidth = document.documentElement.clientWidth;
     var viewportHeight = document.documentElement.clientHeight;
@@ -110,15 +108,15 @@ export class Tooltip extends React.Component<TooltipProps> {
     if (bottom > viewportHeight) {
       style.top = topMirrorPos + "px";
     }
-  }));
+  });
 
   bindRef(elem: HTMLElement) {
     this.elem = elem;
   }
 
   render() {
-    var { isVisible } = this;
-    var { className, useAnimation, position, following, nowrap, style, children } = this.props;
+    var { className, position, following, nowrap, style, children } = this.props;
+
     className = cssNames(styles.Tooltip, {
       [styles.left]: position.left,
       [styles.top]: position.top,
@@ -128,21 +126,15 @@ export class Tooltip extends React.Component<TooltipProps> {
       [styles.following]: following,
       [styles.nowrap]: nowrap,
     }, className);
-    var content = (
-      <div className={className} ref={this.bindRef} style={style}>
-        {children}
-      </div>
+
+    var tooltip = (
+      <Animate enter={this.isVisible} onEnter={this.refreshPosition}>
+        <div className={className} ref={this.bindRef} style={style}>
+          {children}
+        </div>
+      </Animate>
     );
-    var tooltip = content;
-    if (useAnimation) {
-      tooltip = (
-        <Animate enter={isVisible} onEnter={this.refreshPosition}>
-          {content}
-        </Animate>
-      )
-    } else if (!isVisible) {
-      return null;
-    }
+
     if (following) {
       return createPortal(tooltip, document.body);
     }

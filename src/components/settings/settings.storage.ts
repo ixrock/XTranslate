@@ -47,7 +47,9 @@ export interface FavoritesList {
 export type FavoriteLangDirection = "source" | "target";
 
 export class SettingsStore {
-  ready = settingsStorage.whenReady;
+  get ready() {
+    return settingsStorage.whenReady;
+  }
 
   get data() {
     return settingsStorage.get();

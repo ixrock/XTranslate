@@ -166,8 +166,9 @@ export class SelectLanguage extends React.Component<Props> {
       <div className={cssNames("SelectLanguage flex gaps align-center", className)}>
         <ReactSelect
           // menuIsOpen={true}
-          placeholder={getMessage("source_lang_placeholder")}
           className="Select"
+          classNamePrefix="ReactSelect"
+          placeholder={getMessage("source_lang_placeholder")}
           value={sourceLang}
           options={this.sourceLanguageOptions}
           onChange={opt => this.onChange({ sourceLang: opt.value })}
@@ -182,8 +183,9 @@ export class SelectLanguage extends React.Component<Props> {
           onClick={this.onSwap}
         />
         <ReactSelect
-          placeholder={getMessage("target_lang_placeholder")}
           className="Select"
+          classNamePrefix="ReactSelect"
+          placeholder={getMessage("target_lang_placeholder")}
           value={targetLang}
           options={this.targetLanguageOptions}
           onChange={opt => this.onChange({ targetLang: opt.value })}

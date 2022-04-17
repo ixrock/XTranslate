@@ -1,6 +1,6 @@
 import styles from './menu-item.module.scss'
 import React from "react";
-import { autoBind, cssNames, noop } from "../../utils";
+import { autoBind, cssNames } from "../../utils";
 import { Icon } from "../icon";
 import { MenuContext, MenuContextValue } from "./menu-context";
 
@@ -17,10 +17,6 @@ export class MenuItem extends React.Component<MenuItemProps> {
   declare context: MenuContextValue;
   public elem: HTMLElement;
 
-  static defaultProps: Partial<MenuItemProps> = {
-    onClick: noop,
-  }
-
   constructor(props: MenuItemProps) {
     super(props);
     autoBind(this);
@@ -32,11 +28,11 @@ export class MenuItem extends React.Component<MenuItemProps> {
   }
 
   onClick(evt: React.MouseEvent) {
+    if (this.props.spacer) return;
+    this.props.onClick?.(evt);
+
     var menu = this.context;
-    var { spacer, onClick } = this.props;
-    if (spacer) return;
-    onClick(evt);
-    if (menu && menu.props.closeOnClick) {
+    if (menu && menu.props.closeOnItemClick) {
       menu.close();
     }
   }

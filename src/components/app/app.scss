@@ -17,8 +17,7 @@ html {
 }
 
 body {
-  @include custom-scrollbar;
-  overflow: overlay; // cover scrollbar area with <Dialog modal/>
+  @include custom-scrollbar($overlay: true);
   font: 15px Helvetica Neue, Roboto, sans-serif;
   background: var(--theme-bgc);
   color: var(--theme-color-text);

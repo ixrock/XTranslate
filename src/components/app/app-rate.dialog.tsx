@@ -51,7 +51,12 @@ export class AppRateDialog extends React.Component {
 
   render() {
     return (
-      <Dialog pinned className={styles.AppRateDialog} isOpen={this.isOpen}>
+      <Dialog
+        pinned={true}
+        isOpen={this.isOpen}
+        className={styles.AppRateDialog}
+        contentClassName="flex gaps column"
+      >
         <h4>{getMessage("rate_app_info1")}</h4>
         <p>{getMessage("rate_app_info2")}</p>
 

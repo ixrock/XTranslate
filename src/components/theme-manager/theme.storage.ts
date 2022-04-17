@@ -38,10 +38,12 @@ export interface IThemeFont {
 }
 
 export class ThemeStore {
+  private storage = themeStorage;
   private logger = createLogger({ systemPrefix: `[THEME]` });
 
-  private storage = themeStorage;
-  public ready = themeStorage.whenReady;
+  get ready() {
+    return themeStorage.whenReady;
+  }
 
   get data() {
     return this.storage.get();

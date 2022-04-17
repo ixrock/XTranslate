@@ -3,24 +3,52 @@
 
   > .Select {
     flex: 1 0;
+  }
 
-    [class*="-option"],
-    [class*="-indicatorContainer"] {
+  .ReactSelect {
+    &__menu-list {
+      @include custom-scrollbar($overlay: true);
+    }
+
+    &__dropdown-indicator {
       padding: var(--theme-spacing-half);
     }
 
-    [class*="-control"] {
+    &__input-container,
+    &__single-value {
+      color: var(--theme-color-text);
+    }
+
+    &__control {
       border: 1px solid currentColor;
       min-height: 32px;
       box-shadow: none;
       background: none;
 
-      [class*="-singleValue"] {
-        color: var(--theme-color-text);
-      }
-
       &:focus-within {
         border-color: var(--theme-color-primary) !important;
+      }
+    }
+
+    &__menu {
+      background: var(--theme-bgc);
+      border: 1px solid var(--theme-border-color);
+    }
+
+    &__option {
+      color: var(--theme-color-text);
+      padding: var(--theme-spacing-half);
+
+      &:active, &:hover,
+      &--is-selected,
+      &--is-focused {
+        color: white;
+        background: var(--theme-color-primary);
+      }
+
+      &--is-disabled {
+        opacity: .75;
+        cursor: not-allowed;
       }
     }
   }
@@ -37,18 +65,5 @@
     width: 20px; // 4x3
     height: 15px;
     border: 1px solid currentColor;
-  }
-}
-
-@include theme-dark {
-  .Select {
-    [class$="-option"]:hover {
-      background: var(--theme-color-primary);
-    }
-
-    [class$="-menu"] {
-      background: var(--theme-bgc);
-      border: 1px solid currentColor;
-    }
   }
 }

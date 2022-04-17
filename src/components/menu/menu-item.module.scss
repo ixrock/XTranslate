@@ -7,17 +7,15 @@
   padding: var(--theme-spacing);
   color: var(--theme-color-text);
   white-space: nowrap;
-  transition: 250ms background;
+  transition: 150ms background-color;
   text-decoration: none;
   text-overflow: ellipsis;
 
-  &:focus {
-    outline: 1px solid var(--theme-color-primary);
-  }
-
+  &:focus,
   &:hover:not(.disabled),
   &.active {
-    color: var(--theme-color-text2);
+    background: var(--theme-color-primary);
+    color: white;
     cursor: pointer;
   }
 

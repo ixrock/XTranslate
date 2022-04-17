@@ -1,13 +1,13 @@
 import "./animate.scss";
 import * as React from "react";
-import { makeObservable, observable, reaction } from "mobx";
+import { action, makeObservable, observable, reaction } from "mobx";
 import { disposeOnUnmount, observer } from "mobx-react";
-import { cssNames, noop } from "../../utils";
+import { autoBind, cssNames, noop } from "../../utils";
 
-export type AnimateName = "opacity" | "slide-right" | "opacity-scale" | string;
+export type AnimateName = "opacity" | "slide-right" | "opacity-scale"; // predefined classnames in css
 
 export interface AnimateProps {
-  name?: AnimateName; // predefined names in css
+  name?: AnimateName;
   enter?: boolean;
   onEnter?: () => void;
   onLeave?: () => void;
@@ -15,8 +15,6 @@ export interface AnimateProps {
 
 @observer
 export class Animate extends React.Component<AnimateProps> {
-  static VISIBILITY_DELAY_MS = 100;
-
   static defaultProps: AnimateProps = {
     name: "opacity",
     enter: true,
@@ -27,52 +25,54 @@ export class Animate extends React.Component<AnimateProps> {
   constructor(props: AnimateProps) {
     super(props);
     makeObservable(this);
-  }
+    autoBind(this);
 
-  @observable isVisible = !!this.props.enter;
-  @observable statusClassName = {
-    enter: false,
-    leave: false
-  };
-
-  get contentElem() {
-    return React.Children.only(this.props.children) as React.ReactElement<React.HTMLAttributes<any>>;
-  }
-
-  componentDidMount() {
     disposeOnUnmount(this, [
-      reaction(() => this.props.enter, enter => {
-        if (enter) this.enter();
-        else this.leave();
-      }, {
-        delay: Animate.VISIBILITY_DELAY_MS,
+      reaction(() => this.props.enter, this.toggle, {
         fireImmediately: true,
       })
-    ])
+    ]);
   }
 
+  @observable isVisible = Boolean(this.props.enter);
+  @observable className = { enter: false, leave: false };
+
+  get contentElem(): React.ReactElement<React.HTMLProps<any>> {
+    return React.Children.only(this.props.children) as React.ReactElement;
+  }
+
+  toggle(enter?: boolean) {
+    if (enter) this.enter();
+    else this.leave();
+  }
+
+  @action
   enter() {
     this.isVisible = true; // triggers render() to apply css-animation in existing dom
+    this.className.leave = false;
+
     requestAnimationFrame(() => {
-      this.statusClassName.enter = true;
+      this.className.enter = true;
       this.props.onEnter();
     });
   }
 
+  @action
   leave() {
     if (!this.isVisible) return;
-    this.statusClassName.leave = true;
+    this.className.leave = true;
     this.props.onLeave();
   }
 
+  @action
   reset() {
     this.isVisible = false;
-    this.statusClassName.enter = false;
-    this.statusClassName.leave = false;
+    this.className.enter = false;
+    this.className.leave = false;
   }
 
-  onTransitionEnd = (evt: React.TransitionEvent) => {
-    var { enter, leave } = this.statusClassName;
+  onTransitionEnd(evt: React.TransitionEvent) {
+    var { enter, leave } = this.className;
     var { onTransitionEnd } = this.contentElem.props;
     if (onTransitionEnd) onTransitionEnd(evt);
     if (enter && leave) {
@@ -81,11 +81,14 @@ export class Animate extends React.Component<AnimateProps> {
   }
 
   render() {
-    var { name } = this.props;
-    var contentElem = this.contentElem;
+    var { contentElem, isVisible, className } = this;
+    if (!isVisible && !className.leave) {
+      return null;
+    }
+
     return React.cloneElement(contentElem, {
-      className: cssNames("Animate", name, contentElem.props.className, this.statusClassName),
-      children: this.isVisible ? contentElem.props.children : null,
+      className: cssNames("Animate", this.props.name, contentElem.props.className, className),
+      children: contentElem.props.children,
       onTransitionEnd: this.onTransitionEnd,
     });
   }
