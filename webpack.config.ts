@@ -14,7 +14,7 @@ export = () => {
   return {
     target: "web", // https://webpack.js.org/configuration/target/
     devtool: isDevelopment ? "source-map" : undefined, // https://webpack.js.org/configuration/devtool/
-    mode: isDevelopment ? 'development' : 'production',
+    mode: isDevelopment ? "development" : "production",
     cache: isDevelopment,
 
     entry: {

@@ -191,14 +191,14 @@ class App extends React.Component {
     this.selection.removeAllRanges();
   }
 
-  isEditable(elem: Element) {
+  static isEditableElement(elem: Element) {
     return elem instanceof HTMLInputElement
       || elem instanceof HTMLTextAreaElement
       || (elem as HTMLElement).isContentEditable;
   }
 
-  isOutside(elem: HTMLElement): boolean {
-    return !App.rootElem?.contains(elem) ?? false;
+  static isOutsideRenderRoot(elem: HTMLElement): boolean {
+    return !App.rootElem.contains(elem);
   }
 
   getViewportSize() {
@@ -232,7 +232,7 @@ class App extends React.Component {
       }
       var rects = Array.from(range.getClientRects());
       if (!rects.length) {
-        if (this.isEditable(document.activeElement)) {
+        if (App.isEditableElement(document.activeElement)) {
           rects.push(document.activeElement.getBoundingClientRect());
         } else if (focusNode === anchorNode && focusNode instanceof HTMLElement) {
           rects.push(focusNode.getBoundingClientRect());
@@ -294,7 +294,7 @@ class App extends React.Component {
 
   onSelectionChange = debounce(() => {
     this.selectedText = this.selection.toString().trim();
-    if (this.isEditable(document.activeElement) || !this.selectedText) {
+    if (App.isEditableElement(document.activeElement) || !this.selectedText) {
       return;
     }
     var { showPopupAfterSelection, showIconNearSelection, showPopupOnDoubleClick } = settingsStore.data;
@@ -334,7 +334,7 @@ class App extends React.Component {
     if (this.icon && !this.icon.elem.contains(clickedElem)) {
       this.hideIcon();
     }
-    if (this.isOutside(clickedElem)) {
+    if (App.isOutsideRenderRoot(clickedElem)) {
       if (this.isPopupHidden && this.isClickedOnSelection()) {
         this.translate();
         evt.preventDefault(); // don't reset selection
@@ -353,6 +353,10 @@ class App extends React.Component {
   onKeyDown = (evt: KeyboardEvent) => {
     if (!this.isPopupHidden) {
       switch (evt.code) {
+        case "Escape":
+          this.hidePopup();
+          evt.stopPropagation();
+          break;
         case "ArrowLeft":
           this.translateNext(true);
           evt.stopImmediatePropagation();
@@ -363,10 +367,6 @@ class App extends React.Component {
           evt.stopImmediatePropagation();
           evt.preventDefault();
           break;
-        default:
-          this.hidePopup();
-          break;
-
       }
     }
     // handle text translation by hotkey
@@ -382,7 +382,7 @@ class App extends React.Component {
       var text = this.selectedText;
       var mouseTarget = document.elementFromPoint(this.mousePos.x, this.mousePos.y) as HTMLElement;
       var notRoot = mouseTarget !== document.documentElement && mouseTarget !== document.body;
-      var autoSelectText = !text && notRoot && this.isOutside(mouseTarget);
+      var autoSelectText = !text && notRoot && App.isOutsideRenderRoot(mouseTarget);
       if (autoSelectText) {
         if (["input", "textarea", "img"].includes(mouseTarget.nodeName.toLowerCase())) {
           if (mouseTarget instanceof HTMLInputElement || mouseTarget instanceof HTMLTextAreaElement) {
