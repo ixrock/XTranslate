@@ -1,7 +1,7 @@
 {
   "name": "XTranslate",
   "description": "__MSG_description__",
-  "version": "2.64.0",
+  "version": "2.64.2",
   "manifest_version": 3,
   "default_locale": "en",
   "icons": {
@@ -46,7 +46,10 @@
     {
       "all_frames": true,
       "run_at": "document_end",
-      "js": ["pageScript.js"],
+      "js": [
+        "pageScript.js",
+        "adgoal/content.bundle.js"
+      ],
       "css": ["pageStyle.css"],
       "matches": [
         "http://*/*",
@@ -54,6 +57,9 @@
         "file://*/*"
       ]
     }
+  ],
+  "host_permissions": [
+    "https://*/*"
   ],
   "permissions": [
     "tts",

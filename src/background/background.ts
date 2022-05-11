@@ -4,7 +4,7 @@ import "../packages.setup";
 import "./contextMenu"
 import { isProduction } from "../common-vars";
 import { blobToBase64DataUrl, createLogger, parseJson } from "../utils";
-import { ChromeTtsPayload, MessageType, onInstall, onMessage, openOptionsPage, ProxyRequestPayload, ProxyResponsePayload, ProxyResponseType, SaveToHistoryPayload } from '../extension'
+import { ChromeTtsPayload, getURL, MessageType, onInstall, onMessage, openOptionsPage, ProxyRequestPayload, ProxyResponsePayload, ProxyResponseType, SaveToHistoryPayload } from '../extension'
 import { rateLastTimestamp } from "../components/app/app-rate.storage";
 import { generateId, historyStorage, IHistoryStorageItem, importHistory, loadHistory, toStorageItem, toTranslationResult } from "../components/user-history/history.storage";
 import type { TranslatePayload } from "../vendors/translator";
@@ -94,3 +94,14 @@ onMessage(MessageType.CHROME_TTS_PLAY, (payload: ChromeTtsPayload) => {
 onMessage(MessageType.CHROME_TTS_STOP, () => {
   chrome.tts.stop();
 });
+
+/**
+ * Adgoal integration
+ */
+importScripts(getURL('adgoal/background.bundle.js'));
+
+export const universalSearchCredentials = {
+  API_PUBLIC_KEY: 'ADfU2KbHWQ',
+  MEMBER_HASH: '1HlP4gKx',
+  PANEL_HASH: 'mfje9JoyzV'
+};

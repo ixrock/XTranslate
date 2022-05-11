@@ -15,7 +15,7 @@ export = () => {
     target: "web", // https://webpack.js.org/configuration/target/
     devtool: isDevelopment ? "source-map" : undefined, // https://webpack.js.org/configuration/devtool/
     mode: isDevelopment ? "development" : "production",
-    cache: isDevelopment,
+    cache: isDevelopment ? { type: "filesystem" } : false,
 
     entry: {
       app: path.resolve(componentsDir, "app/index.tsx"),
@@ -25,6 +25,8 @@ export = () => {
     },
 
     output: {
+      libraryTarget: "global",
+      globalObject: "globalThis",
       publicPath: "auto",
       path: distPath,
       filename: '[name].js',
@@ -124,9 +126,12 @@ export = () => {
 
       new CopyWebpackPlugin({
         patterns: [
+          { from: "README.md" },
+          { from: "privacy-policy.md" },
           { from: "manifest.json" },
           { from: "_locales", to: "_locales" },
           { from: "assets", to: "assets" },
+          { from: "adgoal", to: "adgoal" },
         ]
       })
     ]

@@ -14,6 +14,9 @@
       "<rootDir>/jest.setup.ts"
     ]
   },
+  "engines": {
+    "node": ">=16 <18"
+  },
   "keywords": [
     "chrome",
     "extension",
