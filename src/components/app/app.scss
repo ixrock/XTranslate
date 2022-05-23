@@ -1,6 +1,7 @@
 @import "~flex.box";
 @import "../fonts";
 @import "../mixins";
+
 @include theme-setup;
 
 *, *:before, *:after {
@@ -76,19 +77,13 @@ header {
   }
 }
 
-.Tabs {
-  .Tab {
-    position: relative;
-    top: 1px;
-    flex-direction: column;
+.TabContent {
+  display: flex;
+  flex-direction: column;
+  padding: calc(var(--theme-spacing) * 2) 0;
 
-    &.active {
-      color: var(--theme-color-primary);
-    }
-  }
-
-  + .tab-content {
-    padding: calc(var(--theme-spacing) * 2) 0;
+  .not-found {
+    text-align: center;
   }
 }
 

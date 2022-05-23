@@ -10,7 +10,7 @@
   }
 
   &.leave {
-    transition-duration: $leaveDuration;
+    transition-duration: #{$leaveDuration};
     transition-timing-function: ease-out;
     opacity: 0;
   }
@@ -49,20 +49,18 @@
 }
 
 .Animate {
-  &:empty {
-    display: none;
-  }
-
   // Animation name
-  &.opacity {
-    @include animate-opacity;
-  }
+  &:global {
+    &.opacity {
+      @include animate-opacity;
+    }
 
-  &.slide-right {
-    @include animate-slide-right;
-  }
+    &.slide-right {
+      @include animate-slide-right;
+    }
 
-  &.opacity-scale {
-    @include animate-opacity-scale;
+    &.opacity-scale {
+      @include animate-opacity-scale;
+    }
   }
 }

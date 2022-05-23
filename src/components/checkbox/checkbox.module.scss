@@ -5,6 +5,10 @@
   --color-focus: var(--theme-color-primary);
   --flex-gap: calc(var(--theme-spacing) / 1.5);
 
+  display: flex;
+  align-items: center;
+  gap: var(--flex-gap);
+
   &:hover {
     color: var(--color-hover);
   }
@@ -27,15 +31,12 @@
   }
 
   &.checked {
-    > .box:after {
+    .tickBox:after {
       opacity: inherit;
     }
   }
 
-  .label {
-  }
-
-  > .box {
+  .tickBox {
     position: relative;
     width: var(--size);
     height: var(--size);

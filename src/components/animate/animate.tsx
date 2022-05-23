@@ -1,5 +1,5 @@
-import "./animate.scss";
-import * as React from "react";
+import styles from "./animate.module.scss";
+import React from "react";
 import { action, makeObservable, observable, reaction } from "mobx";
 import { disposeOnUnmount, observer } from "mobx-react";
 import { autoBind, cssNames, noop } from "../../utils";
@@ -82,12 +82,14 @@ export class Animate extends React.Component<AnimateProps> {
 
   render() {
     var { contentElem, isVisible, className } = this;
+    const animationType = this.props.name;
+
     if (!isVisible && !className.leave) {
-      return null;
+      return null; // exit
     }
 
     return React.cloneElement(contentElem, {
-      className: cssNames("Animate", this.props.name, contentElem.props.className, className),
+      className: cssNames(styles.Animate, animationType, contentElem.props.className, className),
       children: contentElem.props.children,
       onTransitionEnd: this.onTransitionEnd,
     });

@@ -32,6 +32,11 @@
   white-space: nowrap;
   text-transform: uppercase;
   font-weight: bold;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: calc(var(--flex-gap) / 2, 0);
+  top: 1px;
 
   &.disabled {
     pointer-events: none;
@@ -58,8 +63,7 @@
       right: auto;
     }
 
-    &:focus,
-    &:hover {
+    &:focus, &:hover {
       &:after {
         @include isActive;
       }

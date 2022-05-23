@@ -7,6 +7,8 @@ export type CheckboxProps<D = any> = Omit<DOMAttributes<any>, "onChange"> & Tool
   id?: string;
   checked: boolean;
   className?: IClassName;
+  tickBoxClass?: IClassName;
+  labelClass?: IClassName;
   autoFocus?: boolean
   label?: string
   inline?: boolean
@@ -62,8 +64,11 @@ export class Checkbox extends React.Component<CheckboxProps> {
   }
 
   render() {
-    var { id, label, inline, className, checked, disabled, tooltip, children } = this.props;
-    className = cssNames(`${styles.Checkbox} flex gaps align-center`, className, {
+    var {
+      id, label, inline, className, checked, disabled, tooltip, children,
+      tickBoxClass, labelClass,
+    } = this.props;
+    className = cssNames(`${styles.Checkbox} align-center`, className, {
       [styles.inline]: inline,
       [styles.checked]: checked,
       [styles.disabled]: disabled,
@@ -77,8 +82,8 @@ export class Checkbox extends React.Component<CheckboxProps> {
         onKeyDown={this.onKeyDown}
         ref={this.bindRef}
       >
-        <i className={`${styles.box} box`}/>
-        {label && <div className={styles.label}>{label}</div>}
+        <i className={cssNames(styles.tickBox, tickBoxClass)}/>
+        {label && <div className={cssNames(labelClass)}>{label}</div>}
         {children}
       </label>
     );

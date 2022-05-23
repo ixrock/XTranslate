@@ -1,4 +1,4 @@
-import "./radio.scss";
+import styles from "./radio.module.scss";
 import * as React from "react";
 import { cssNames, IClassName } from "../../utils";
 import { Checkbox, CheckboxProps } from "../checkbox";
@@ -18,7 +18,7 @@ export class RadioGroup extends React.Component<RadioGroupProps> {
     var { className, children } = this.props;
     return (
       <RadioGroupContext.Provider value={this}>
-        <div className={cssNames("RadioGroup", className)}>
+        <div className={cssNames(styles.RadioGroup, className)}>
           {children}
         </div>
       </RadioGroupContext.Provider>
@@ -62,7 +62,8 @@ export class Radio extends React.Component<RadioProps> {
         {...checkboxProps}
         autoFocus={autoFocus}
         disabled={disabled}
-        className={cssNames("Radio", className)}
+        className={cssNames(styles.Radio, className)}
+        tickBoxClass={styles.tickBox}
         checked={this.isChecked}
         onChange={this.onChange}
       />

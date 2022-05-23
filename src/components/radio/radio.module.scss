@@ -1,5 +1,8 @@
-.Checkbox.Radio {
-  > .box {
+.RadioGroup {
+}
+
+.Radio {
+  .tickBox {
     border-radius: 50%;
 
     &:after {

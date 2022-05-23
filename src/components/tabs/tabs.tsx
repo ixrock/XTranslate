@@ -1,6 +1,6 @@
-import "./tabs.scss";
+import styles from "./tabs.module.scss";
 import * as React from "react";
-import { cssNames } from "../../utils";
+import { cssNames, IClassName } from "../../utils";
 import { Icon } from "../icon";
 
 const TabsContext = React.createContext<TabsContextValue>(null);
@@ -29,7 +29,11 @@ export class Tabs extends React.Component<TabsProps> {
       <TabsContext.Provider value={this.props}>
         <div
           {...elemProps}
-          className={cssNames("Tabs", className, { center, wrap, scrollable })}
+          className={cssNames(styles.Tabs, className, {
+            [styles.center]: center,
+            [styles.wrap]: wrap,
+            [styles.scrollable]: scrollable,
+          })}
           ref={this.bindRef}
         />
       </TabsContext.Provider>
@@ -43,6 +47,7 @@ export interface TabProps<D = any> extends React.DOMAttributes<HTMLElement> {
   disabled?: boolean;
   icon?: React.ReactNode | string; // material-ui name or custom icon
   label?: React.ReactNode;
+  labelClass?: IClassName;
   value: D;
 }
 
@@ -107,23 +112,23 @@ export class Tab extends React.PureComponent<TabProps> {
   }
 
   render() {
-    var { className, active, icon, disabled, label, value, ...elemProps } = this.props;
-    className = cssNames("Tab flex gaps align-center", className, {
-      active: this.isActive,
-      disabled: disabled,
+    var { className, active, icon, disabled, label, labelClass, value, ...elemProps } = this.props;
+    const tabClass = cssNames(styles.Tab, className, {
+      [styles.active]: this.isActive,
+      [styles.disabled]: disabled,
     });
     return (
       <div
         {...elemProps}
-        className={className}
-        tabIndex={0}
+        className={tabClass}
+        tabIndex={0} // make focusable
         onClick={this.onClick}
         onFocus={this.onFocus}
         onKeyDown={this.onKeyDown}
         ref={this.bindRef}
       >
         {typeof icon === "string" ? <Icon small material={icon}/> : icon}
-        <div className="label">{label}</div>
+        <div className={cssNames(labelClass)}>{label}</div>
       </div>
     )
   }

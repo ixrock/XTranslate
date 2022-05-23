@@ -110,9 +110,9 @@ export class App extends React.Component {
             if (Tab) return <Tab key={pageId} value={pageId}/>
           })}
         </Tabs>
-        <div className="tab-content flex column">
+        <div className="TabContent">
           {Page && <Page/>}
-          {!Page && <p className="box center">Page not found</p>}
+          {!Page && <p className="not-found">Page not found</p>}
         </div>
         <Footer/>
         <Notifications/>
