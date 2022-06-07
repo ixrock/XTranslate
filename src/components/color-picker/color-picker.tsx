@@ -1,16 +1,22 @@
-import "./color-picker.scss";
-
-import * as React from 'react'
+import styles from "./color-picker.module.scss";
+import React from "react"
 import { ChromePicker, Color, ColorResult } from "react-color"
-import { cssNames, noop, toCssColor } from "../../utils";
+import { cssNames, IClassName, noop, toCssColor } from "../../utils";
 
-interface Props {
-  className?: string
+export interface Props {
+  className?: IClassName;
   disabled?: boolean
   defaultOpen?: boolean;
-  position?: { left?: boolean, right?: boolean, top?: boolean, bottom?: boolean }
+  position?: Position;
   value?: Color
   onChange?(color: Color): void;
+}
+
+export interface Position {
+  left?: boolean;
+  right?: boolean;
+  top?: boolean;
+  bottom?: boolean;
 }
 
 interface State {
@@ -43,7 +49,7 @@ export class ColorPicker extends React.Component<Props, State> {
       return;
     }
     var target = evt.target as HTMLElement;
-    if (target !== this.opener && !target.closest('.chrome-picker')) {
+    if (target !== this.opener && !target.closest(`.${styles.ColorPicker}`)) {
       this.hide();
     }
   }
@@ -68,17 +74,27 @@ export class ColorPicker extends React.Component<Props, State> {
   }
 
   render() {
-    var { open } = this.state;
+    var { open: isOpen } = this.state;
     var { className, value, disabled, position } = this.props;
     var color = toCssColor(value);
     return (
-      <div className={cssNames("ColorPicker", className, position, { disabled })}>
+      <div className={cssNames(styles.ColorPicker, className, {
+        [styles.disabled]: disabled,
+        [styles.top]: position?.top,
+        [styles.left]: position?.left,
+        [styles.right]: position?.right,
+        [styles.bottom]: position?.bottom,
+      })}>
         <input type="color" disabled={disabled} hidden/>
-        {open && (
-          <ChromePicker color={value} onChange={this.onChange}/>
+        {isOpen && (
+          <ChromePicker
+            className={styles.ChromePicker}
+            color={value}
+            onChange={this.onChange}
+          />
         )}
         <span
-          className="value"
+          className={styles.value}
           style={{ color }}
           onClick={this.toggle}
           ref={e => this.opener = e}

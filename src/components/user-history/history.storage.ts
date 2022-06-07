@@ -2,7 +2,6 @@ import MD5 from "crypto-js/md5";
 import { download } from "../../utils/downloadFile";
 import { createStorageHelper } from "../../extension/storage";
 import { getTranslator, ITranslationResult } from "../../vendors/translator";
-import { settingsStorage, settingsStore } from "../settings/settings.storage";
 
 export type IHistoryItemId = string;
 
@@ -59,20 +58,9 @@ export function toStorageModel(items: IHistoryStorageItem[]): HistoryStorageMode
   return model;
 }
 
-export async function loadHistory() {
-  historyStorage.load();
-  await historyStorage.whenReady;
-  await settingsStorage.whenReady;
-}
-
 export function importHistory(data: IHistoryItem | IHistoryStorageItem) {
   const storageItem = isStorageItem(data) ? data : toStorageItem(data);
   const item = toHistoryItem(storageItem);
-
-  if (settingsStore.data.historySaveWordsOnly && !item.dictionary?.length) {
-    return; // save dictionary words only
-  }
-
   const itemId = generateId(item.text, item.from, item.to);
   const { translations } = historyStorage.get();
   translations[itemId] ??= {};

@@ -13,7 +13,7 @@ import { Option, Select } from "../select";
 import { Button } from "../button";
 import { settingsStore } from "../settings/settings.storage";
 import { pageManager } from "../app/page-manager";
-import { clearHistoryItem, exportHistory, historyStorage, HistoryTranslation, HistoryTranslations, IHistoryItem, IHistoryItemId, IHistoryStorageItem, importHistory, loadHistory, toHistoryItem } from "./history.storage";
+import { clearHistoryItem, exportHistory, historyStorage, HistoryTranslation, HistoryTranslations, IHistoryItem, IHistoryItemId, IHistoryStorageItem, importHistory, toHistoryItem } from "./history.storage";
 import { Icon } from "../icon";
 import { Tab } from "../tabs";
 import { Spinner } from "../spinner";
@@ -47,7 +47,7 @@ export class UserHistory extends React.Component {
   @observable isLoaded = false;
 
   async componentDidMount() {
-    await loadHistory();
+    await historyStorage.load();
     this.isLoaded = true;
   }
 
@@ -113,7 +113,7 @@ export class UserHistory extends React.Component {
     return this.itemsListSorted.length > this.pageSize;
   }
 
-  protected bindSearchResultsHandler() {
+  bindSearchResultsHandler() {
     disposeOnUnmount(this, [
       reaction(() => this.searchText, async (searchText) => {
         if (!searchText) {
@@ -130,7 +130,7 @@ export class UserHistory extends React.Component {
     ]);
   }
 
-  protected async search(searchText: string): Promise<IHistoryItemId[]> {
+  async search(searchText: string): Promise<IHistoryItemId[]> {
     searchText = searchText.toLowerCase().trim();
 
     const searchResults = Object

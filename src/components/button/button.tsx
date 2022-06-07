@@ -1,4 +1,4 @@
-import "./button.scss";
+import styles from "./button.module.scss";
 import React, { ButtonHTMLAttributes, ReactNode } from "react";
 import { cssNames } from "../../utils";
 import { TooltipDecoratorProps, withTooltip } from "../tooltip";
@@ -25,10 +25,16 @@ export class Button extends React.PureComponent<ButtonProps, {}> {
   render() {
     var { className, waiting, label, primary, accent, outline, hidden, active, big, round, tooltip, children, ...props } = this.props;
     var btnProps = props as Partial<ButtonProps>;
-    if (hidden) return null;
+    if (hidden) return;
 
-    btnProps.className = cssNames('Button', className, {
-      waiting, primary, accent, outline, active, big, round,
+    btnProps.className = cssNames(styles.Button, className, {
+      [styles.waiting]: waiting,
+      [styles.primary]: primary,
+      [styles.accent]: accent,
+      [styles.outline]: outline,
+      [styles.active]: active,
+      [styles.big]: big,
+      [styles.round]: round,
     });
 
     var btnContent: ReactNode = (

@@ -1,7 +1,6 @@
-import "./input.scss";
-
+import styles from "./input.module.scss";
 import React, { DOMAttributes, InputHTMLAttributes, TextareaHTMLAttributes } from "react";
-import { cssNames, debouncePromise } from "../../utils";
+import { cssNames, debouncePromise, IClassName } from "../../utils";
 import { Icon } from "../icon";
 import { conditionalValidators, Validator } from "./input.validators";
 import isString from "lodash/isString"
@@ -13,7 +12,7 @@ type InputElement = HTMLInputElement | HTMLTextAreaElement;
 type InputElementProps = InputHTMLAttributes<InputElement> & TextareaHTMLAttributes<InputElement> & DOMAttributes<InputElement>;
 
 export type InputProps<T = any> = Omit<InputElementProps, "onChange"> & {
-  className?: string;
+  className?: IClassName;
   value?: T;
   multiLine?: boolean; // use text-area as input field
   maxRows?: number; // when multiLine={true} define max rows size
@@ -280,22 +279,12 @@ export class Input extends React.Component<InputProps, State> {
     var { maxLength, rows, disabled } = this.props;
     var { focused, dirty, valid, validating, errors } = this.state;
 
-    className = cssNames("Input", className, {
-      focused: focused,
-      disabled: disabled,
-      invalid: !valid,
-      dirty: dirty,
-      validating: validating,
-      validatingLine: validating && showValidationLine,
-    });
-
     // normalize icons
     if (isString(iconLeft)) iconLeft = <Icon material={iconLeft}/>
     if (isString(iconRight)) iconRight = <Icon material={iconRight}/>
 
     // prepare input props
     Object.assign(inputProps, {
-      className: "input box grow",
       onFocus: this.onFocus,
       onBlur: this.onBlur,
       onChange: this.onChange,
@@ -304,22 +293,29 @@ export class Input extends React.Component<InputProps, State> {
     });
 
     return (
-      <div className={className}>
-        <label className="input-area flex gaps align-center">
+      <div className={cssNames(styles.Input, className, {
+        [styles.focused]: focused,
+        [styles.disabled]: disabled,
+        [styles.invalid]: !valid,
+        [styles.dirty]: dirty,
+        [styles.validating]: validating,
+        [styles.validatingLine]: validating && showValidationLine,
+      })}>
+        <label>
           {iconLeft}
           {multiLine ? <textarea {...inputProps as any}/> : <input {...inputProps as any}/>}
           {iconRight}
           {labelContent}
         </label>
-        <div className="input-info flex gaps">
+        <div className={styles.inputInfo}>
           {infoContent}
           {showErrors && !valid && dirty && (
-            <div className="errors box grow">
+            <div className={styles.errors}>
               {errors.map((error, i) => <p key={i}>{error}</p>)}
             </div>
           )}
           {this.showMaxLenIndicator && (
-            <div className="maxLengthIndicator box right">
+            <div className={styles.maxLengthIndicator}>
               {this.getValue().length} / {maxLength}
             </div>
           )}

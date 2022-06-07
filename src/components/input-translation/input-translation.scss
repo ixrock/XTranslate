@@ -1,18 +1,19 @@
 
 .InputTranslation {
-  .input-area {
-    .Input {
-      flex: 1;
+  .input {
+    flex: 1;
 
-      label {
-        padding-bottom: var(--theme-spacing-half);
-      }
-      a {
-        cursor: pointer;
-      }
+    label {
+      padding-bottom: var(--theme-spacing-half);
     }
 
-    .Icon.active {
+    a {
+      cursor: pointer;
+    }
+  }
+
+  .rememberTextIcon {
+    &.active {
       opacity: .5;
     }
   }

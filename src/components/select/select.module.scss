@@ -4,10 +4,10 @@
   --line-color-active: var(--theme-color-primary);
 
   position: relative;
+  display: flex;
 
   select {
-    -webkit-appearance: none;
-    -moz-appearance: none;
+    appearance: none;
     width: 100%;
     text-overflow: ellipsis;
     background: none;
@@ -20,19 +20,19 @@
     &:focus {
       box-shadow: 0 2px var(--line-color-active);
 
-      ~ .arrow-icon {
+      ~ .arrowIcon {
         color: var(--line-color-active);
       }
     }
 
     &:disabled {
-      &, ~ .arrow-icon {
+      &, ~ .arrowIcon {
         opacity: .7;
       }
     }
   }
 
-  .arrow-icon {
+  .arrowIcon {
     --size: var(--icon-size);
     position: absolute;
     right: 0;

@@ -4,6 +4,9 @@
   position: relative;
   text-align: left;
 
+  &.validating {
+  }
+
   &.invalid.dirty:not(.validating) {
     label:after {
       width: 100%;
@@ -27,6 +30,9 @@
   label {
     position: relative;
     border-bottom: 1px solid var(--theme-border-color);
+    display: flex;
+    gap: var(--flex-gap);
+    align-items: center;
 
     &:after {
       content: "";
@@ -42,6 +48,7 @@
   }
 
   input, textarea {
+    flex: 1;
     background: none;
     color: inherit;
     font: inherit;
@@ -72,13 +79,18 @@
     pointer-events: none;
   }
 
-  .input-info {
+  .inputInfo {
+    display: flex;
+    gap: var(--flex-gap);
+
     .errors {
+      flex: 1;
       color: var(--theme-color-error);
       font-size: small;
     }
 
     .maxLengthIndicator {
+      margin-left: auto;
       text-align: right;
       font-size: 80%;
       padding: calc(var(--theme-spacing) / 3);

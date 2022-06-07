@@ -41,7 +41,7 @@ export class Settings extends React.Component {
     return (
       <div className="Settings flex column gaps">
         <div className="common-settings flex gaps auto">
-          <div className="checkbox-group flex column">
+          <div className="checkboxGroup flex column">
             <SubTitle>{getMessage("settings_title_tts")}</SubTitle>
             <Checkbox
               label={getMessage("auto_play_tts")}
@@ -55,7 +55,7 @@ export class Settings extends React.Component {
               tooltip={getMessage("use_chrome_tts_tooltip_info")}
             />
           </div>
-          <div className="checkbox-group flex column">
+          <div className="checkboxGroup flex column">
             <SubTitle>{getMessage("settings_title_appearance")}</SubTitle>
             <Checkbox
               label={getMessage("show_context_menu")}
@@ -100,8 +100,8 @@ export class Settings extends React.Component {
 
         <SubTitle>{getMessage("setting_title_popup")}</SubTitle>
 
-        <div className="popup-settings flex auto">
-          <div className="checkbox-group">
+        <div className="popupSettings flex auto">
+          <div className="checkboxGroup">
             <Checkbox
               label={getMessage("show_tts_icon_inside_popup")}
               checked={settings.showTextToSpeechIcon}
@@ -146,7 +146,7 @@ export class Settings extends React.Component {
               </Select>
             </div>
           </div>
-          <div className="checkbox-group">
+          <div className="checkboxGroup">
             <Checkbox
               label={getMessage("display_popup_after_text_selected")}
               checked={settings.showPopupAfterSelection}

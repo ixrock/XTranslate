@@ -33,12 +33,11 @@ export class NumberInput extends React.Component<Props> {
 
   render() {
     var { className, ...inputProps } = this.props;
-    className = cssNames(styles.NumberInput, className);
     return (
       <Input
         {...inputProps}
         type="number"
-        className={className}
+        className={cssNames(styles.NumberInput, className)}
         labelContent={(
           <div className={styles.arrowIcons}>
             <Icon

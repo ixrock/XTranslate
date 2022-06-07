@@ -3,7 +3,7 @@ import HtmlWebpackPlugin from 'html-webpack-plugin'
 import CopyWebpackPlugin from 'copy-webpack-plugin'
 import MiniCssExtractPlugin from 'mini-css-extract-plugin'
 
-export = () => {
+export default () => {
   var isDevelopment = process.env.NODE_ENV !== "production";
   var srcPath = path.resolve(__dirname, "src");
   var distPath = path.resolve(__dirname, "dist");
@@ -32,6 +32,10 @@ export = () => {
       filename: '[name].js',
       chunkFilename: 'chunks/[name].js',
       assetModuleFilename: `assets/[name][ext][query]`
+    },
+
+    experiments: {
+      topLevelAwait: true,
     },
 
     optimization: {

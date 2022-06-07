@@ -5,7 +5,7 @@
     "jsx": "react",
     "target": "ES2020",
     "lib": ["ESNext", "DOM", "DOM.Iterable", "WebWorker"],
-    "module": "CommonJS",
+    "module": "ESNext",
     "moduleResolution": "node",
     "allowJs": true,
     "sourceMap": true,

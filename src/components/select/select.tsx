@@ -1,14 +1,14 @@
-import "./select.scss";
+import styles from "./select.module.scss";
 
 import * as React from "react";
-import { cssNames } from "../../utils";
+import { cssNames, IClassName } from "../../utils";
 import { Icon } from "../icon";
 
 const SelectContext = React.createContext<Select>(null);
 
 export interface SelectProps<T = any> {
   id?: string;
-  className?: string;
+  className?: IClassName;
   autoFocus?: boolean;
   disabled?: boolean;
   required?: boolean;
@@ -37,27 +37,16 @@ export class Select extends React.Component<SelectProps> {
     var { className, value, getOptionValue, getOptionLabel, ...selectProps } = this.props;
     return (
       <SelectContext.Provider value={this}>
-        <div className={cssNames("Select flex", className)}>
+        <div className={cssNames(styles.Select, className)}>
           <select
             {...selectProps}
             value={getOptionValue(value)}
             onChange={this.onChange}
           />
-          <Icon material="keyboard_arrow_down" className="arrow-icon"/>
+          <Icon material="keyboard_arrow_down" className={styles.arrowIcon}/>
         </div>
       </SelectContext.Provider>
     );
-  }
-}
-
-interface OptionsGroupProps extends React.HTMLProps<HTMLOptGroupElement> {
-  label?: string;
-  disabled?: boolean
-}
-
-export class OptionsGroup extends React.Component<OptionsGroupProps> {
-  render() {
-    return <optgroup {...this.props}/>
   }
 }
 

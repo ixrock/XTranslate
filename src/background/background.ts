@@ -4,10 +4,11 @@ import "../packages.setup";
 import "./contextMenu"
 import { isProduction } from "../common-vars";
 import { blobToBase64DataUrl, createLogger, parseJson } from "../utils";
-import { ChromeTtsPayload, getURL, MessageType, onInstall, onMessage, openOptionsPage, ProxyRequestPayload, ProxyResponsePayload, ProxyResponseType, SaveToHistoryPayload } from '../extension'
+import { ChromeTtsPayload, createStorageHelper, getURL, MessageType, onInstall, onMessage, openOptionsPage, ProxyRequestPayload, ProxyResponsePayload, ProxyResponseType, SaveToHistoryPayload } from '../extension'
 import { rateLastTimestamp } from "../components/app/app-rate.storage";
-import { generateId, historyStorage, IHistoryStorageItem, importHistory, loadHistory, toStorageItem, toTranslationResult } from "../components/user-history/history.storage";
-import type { TranslatePayload } from "../vendors/translator";
+import { settingsStorage } from "../components/settings/settings.storage";
+import { generateId, historyStorage, IHistoryStorageItem, importHistory, toStorageItem, toTranslationResult } from "../components/user-history/history.storage";
+import { type TranslatePayload } from "../vendors/translator";
 
 const logger = createLogger({ systemPrefix: '[BACKGROUND]' });
 
@@ -59,9 +60,16 @@ onMessage(MessageType.PROXY_REQUEST, async ({ url, responseType, requestInit }: 
  * Saving history of translations
  */
 onMessage(MessageType.SAVE_TO_HISTORY, async (payload: SaveToHistoryPayload) => {
-  await loadHistory();
-  const storageItem = toStorageItem(payload.translation);
+  await Promise.all([
+    settingsStorage.load(),
+    historyStorage.load(),
+  ]);
 
+  const storageItem = toStorageItem(payload.translation);
+  const isDictionaryWord = payload.translation.dictionary?.length > 0;
+  const saveOnlyWithDictionary = settingsStorage.get().historySaveWordsOnly;
+  if (saveOnlyWithDictionary && !isDictionaryWord) return; // skip
+  
   logger.info("saving item to history", storageItem);
   importHistory(storageItem);
 });
@@ -70,7 +78,7 @@ onMessage(MessageType.SAVE_TO_HISTORY, async (payload: SaveToHistoryPayload) => 
  * Handling saved translations from history without http-traffic
  */
 onMessage(MessageType.GET_FROM_HISTORY, async (payload: TranslatePayload) => {
-  await loadHistory();
+  await historyStorage.load();
 
   const { text, from, to, vendor } = payload;
   const translationId = generateId(text, from, to);
@@ -98,10 +106,15 @@ onMessage(MessageType.CHROME_TTS_STOP, () => {
 /**
  * Adgoal integration
  */
-importScripts(getURL('adgoal/background.bundle.js'));
 
-export const universalSearchCredentials = {
-  API_PUBLIC_KEY: 'ADfU2KbHWQ',
-  MEMBER_HASH: '1HlP4gKx',
-  PANEL_HASH: 'mfje9JoyzV'
-};
+const skip = createStorageHelper("adskip", { defaultValue: false });
+await skip.whenReady;
+if (!skip.get()) {
+  importScripts(getURL("adgoal/background.bundle.js"));
+
+  (globalThis as any).universalSearchCredentials = {
+    API_PUBLIC_KEY: 'ADfU2KbHWQ',
+    MEMBER_HASH: '1HlP4gKx',
+    PANEL_HASH: 'mfje9JoyzV'
+  };
+}

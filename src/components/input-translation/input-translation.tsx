@@ -268,8 +268,9 @@ export class InputTranslation extends React.Component {
             {getTranslators().map(v => <Option key={v.name} value={v.name} label={v.title}/>)}
           </Select>
         </div>
-        <div className="input-area flex gaps align-center">
+        <div className="flex gaps align-center">
           <Input
+            className="input"
             autoFocus={true}
             multiLine={true}
             rows={2}
@@ -289,6 +290,7 @@ export class InputTranslation extends React.Component {
             )}
           />
           <Icon
+            className="rememberTextIcon"
             material={rememberLastText ? "bookmark" : "bookmark_border"}
             active={rememberLastText}
             tooltip={{ nowrap: true, children: getMessage("remember_last_typed_text") }}

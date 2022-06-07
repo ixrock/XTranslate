@@ -84,6 +84,7 @@ export class StorageHelper<T> {
   @action
   load({ force = false } = {}) {
     if (this.initialized && !force) return;
+
     this.initialized = true;
     try {
       this.loading = true;
@@ -96,6 +97,8 @@ export class StorageHelper<T> {
     } finally {
       this.loading = false;
     }
+
+    return this.whenReady;
   }
 
   @action

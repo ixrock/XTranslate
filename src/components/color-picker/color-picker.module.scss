@@ -2,7 +2,7 @@
   position: relative;
   display: inline-block;
 
-  .chrome-picker {
+  .ChromePicker {
     position: absolute;
     margin: 5px 0;
     z-index: 100;
@@ -12,19 +12,19 @@
     }
   }
 
-  &.bottom .chrome-picker {
+  &.bottom .ChromePicker {
     top: 100%;
   }
 
-  &.top .chrome-picker {
+  &.top .ChromePicker {
     bottom: 100%;
   }
 
-  &.left .chrome-picker {
+  &.left .ChromePicker {
     left: 0;
   }
 
-  &.right .chrome-picker {
+  &.right .ChromePicker {
     right: 0;
   }
 
@@ -37,7 +37,7 @@
         cursor: pointer;
 
         &:hover:after {
-          border-style: dotted;
+          border-style: dashed;
         }
       }
     }
