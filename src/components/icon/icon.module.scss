@@ -1,5 +1,5 @@
 .Icon {
-  --size: 24px;
+  $defaultSize: 24px;
   --small-size: 20px;
   --big-size: 32px;
   --color-active: black;
@@ -14,29 +14,30 @@
   text-decoration: none;
   user-select: none;
   box-sizing: content-box; // allow to use padding for outer spacing
-  -webkit-user-select: none; /* safari */
-  -moz-user-select: none; /* firefox */
 
-  font-size: var(--size);
-  width: var(--size);
-  height: var(--size);
+  font-size: var(--size, #{$defaultSize});
+  width: var(--size, #{$defaultSize});
+  height: var(--size, #{$defaultSize});
 
   &.small {
-    font-size: var(--small-size);
-    width: var(--small-size);
-    height: var(--small-size);
+    font-size: var(--size, var(--small-size));
+    width: var(--size, var(--small-size));
+    height: var(--size, var(--small-size));
   }
 
   &.big {
-    font-size: var(--big-size);
-    width: var(--big-size);
-    height: var(--big-size);
+    font-size: var(--size, var(--big-size));
+    width: var(--size, var(--big-size));
+    height: var(--size, var(--big-size));
   }
 
   > span {
     width: 100%;
     height: 100%;
     display: inherit;
+  }
+
+  &.colorful {
   }
 
   // material-icon

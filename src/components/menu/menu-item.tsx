@@ -44,7 +44,7 @@ export class MenuItem extends React.Component<MenuItemProps> {
   render() {
     var { className, disabled, active, spacer, icon, children, ...props } = this.props;
     if (typeof icon === "string") {
-      icon = <Icon className={styles.Icon} material={icon}/>;
+      icon = <Icon className={styles.icon} material={icon}/>;
     }
     var elemProps: React.HTMLProps<any> = {
       tabIndex: this.isFocusable ? 0 : -1,

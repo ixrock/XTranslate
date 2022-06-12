@@ -1,5 +1,6 @@
 //-- User script app (page context)
 
+import styles from "./user-script.module.scss";
 import "../packages.setup";
 import React from "react";
 import { createRoot } from "react-dom/client";
@@ -7,7 +8,7 @@ import { action, computed, makeObservable, observable, toJS } from "mobx";
 import { observer } from "mobx-react";
 import { debounce, isEqual } from "lodash"
 import { autoBind, getHotkey } from "../utils";
-import { getManifest, getStyleUrl, MessageType, onMessage, proxyRequest, ProxyResponseType, TranslateWithVendorPayload } from "../extension";
+import { getManifest, MessageType, onMessage, TranslateWithVendorPayload } from "../extension";
 import { getNextTranslator, getTranslator, ITranslationError, ITranslationResult, TranslatePayload } from "../vendors";
 import { XTranslateIcon } from "./xtranslate-icon";
 import { Popup } from "../components/popup/popup";
@@ -22,14 +23,11 @@ class App extends React.Component {
   static rootElem: HTMLElement;
 
   static async init() {
-    // render app inside shadow-dom to avoid collisions with current webpage styles
-    // this will go away after migrating all files to css-modules (#issues/43)
-    const appRootElem = App.rootElem = document.createElement("div");
-    const shadowRoot = appRootElem.attachShadow({ mode: "open" });
-    const rootNode = createRoot(shadowRoot);
+    const rootElem = App.rootElem = document.createElement("div");
+    const rootNode = createRoot(rootElem);
 
-    appRootElem.classList.add("XTranslate");
-    document.documentElement.appendChild(appRootElem);
+    rootElem.classList.add(styles.XTranslate);
+    document.documentElement.appendChild(rootElem);
 
     // wait for dependent data before first render
     await Promise.all([
@@ -64,19 +62,8 @@ class App extends React.Component {
   @observable isRtlSelection = false;
   @observable isIconShown = false;
   @observable isLoading = false;
-  @observable cssText: string;
-
-  @action
-  async preloadCss() {
-    this.cssText = await proxyRequest<string>({
-      url: getStyleUrl(),
-      responseType: ProxyResponseType.TEXT,
-    });
-  }
 
   componentDidMount() {
-    this.preloadCss();
-
     // Bind extension's runtime IPC events
     onMessage<void, string>(MessageType.GET_SELECTED_TEXT, () => this.selectedText);
 
@@ -419,7 +406,7 @@ class App extends React.Component {
       return { margin: 20 };
     }
 
-    return this.position;
+    return toJS(this.position);
   }
 
   render() {
@@ -428,7 +415,12 @@ class App extends React.Component {
     var translator = getTranslator(vendor);
     return (
       <>
-        <style type="text/css">{this.cssText}</style>
+        <XTranslateIcon
+          style={this.iconPosition}
+          onMouseDown={onIconClick}
+          title={`${this.appName}: ${translator.getLangPairTitle(langFrom, langTo)}`}
+          ref={e => this.icon = e}
+        />
         <Popup
           style={popupPosition}
           initParams={lastParams}
@@ -437,12 +429,6 @@ class App extends React.Component {
           onPlayText={playText}
           onTranslateNext={() => translateNext()}
           ref={(ref: Popup) => this.popup = ref}
-        />
-        <XTranslateIcon
-          style={this.iconPosition}
-          onMouseDown={onIconClick}
-          title={`${this.appName}: ${translator.getLangPairTitle(langFrom, langTo)}`}
-          ref={e => this.icon = e}
         />
       </>
     )

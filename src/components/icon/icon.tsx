@@ -1,5 +1,5 @@
-import "./icon.scss";
-import React, { ReactNode } from "react";
+import styles from "./icon.module.scss";
+import React, { type ReactNode } from "react";
 import { base64, cssNames } from "../../utils";
 import { TooltipDecoratorProps, withTooltip } from "../tooltip";
 
@@ -10,12 +10,11 @@ export interface IconProps extends React.HTMLAttributes<any>, TooltipDecoratorPr
   href?: string;              // render icon as a link <a href="">
   size?: string | number;     // icon-size
   small?: boolean;            // pre-defined icon-size
-  smallest?: boolean;            // pre-defined icon-size
   big?: boolean;              // pre-defined icon-size
   active?: boolean;           // apply active-state styles
   interactive?: boolean;      // indicates that icon is interactive and highlight it on focus/hover
   focusable?: boolean;        // allow focus to the icon + show .active styles (default: "true", when icon is interactive)
-  sticker?: boolean;
+  colorful?: boolean;          // applicable only for svg-icons
   disabled?: boolean;
 }
 
@@ -72,8 +71,8 @@ export class Icon extends React.PureComponent<IconProps> {
     const { isInteractive } = this;
     const {
       // skip passing props to icon's html element
-      className, href, material, svg, size, smallest, small, big,
-      disabled, sticker, active, focusable, children, tooltip, htmlFor,
+      className, href, material, svg, size, small, big, disabled, active, focusable, colorful,
+      children, tooltip, htmlFor,
       interactive: _interactive,
       onClick: _onClick,
       onKeyDown: _onKeyDown,
@@ -81,15 +80,22 @@ export class Icon extends React.PureComponent<IconProps> {
     } = this.props;
 
     let iconContent: ReactNode;
-    const iconProps: Partial<IconProps & { ref?: React.Ref<any> }> = {
-      className: cssNames("Icon", className,
-        { svg, material, interactive: isInteractive, disabled, sticker, active, focusable },
-        !size ? { smallest, small, big } : {},
-      ),
+    const iconProps: Partial<IconProps & { ref?: React.Ref<HTMLElement | any> }> = {
+      className: cssNames(styles.Icon, className, {
+        [styles.svg]: svg,
+        [styles.material]: material,
+        [styles.interactive]: isInteractive,
+        [styles.disabled]: disabled,
+        [styles.active]: active,
+        [styles.focusable]: focusable,
+        [styles.small]: small,
+        [styles.big]: big,
+        [styles.colorful]: colorful,
+      }),
       onClick: isInteractive ? this.onClick : undefined,
       onKeyDown: isInteractive ? this.onKeyDown : undefined,
       tabIndex: isInteractive && focusable && !disabled ? 0 : undefined,
-      style: size ? { "--size": size + (+size ? "px" : "") } as React.CSSProperties : undefined,
+      style: size ? { "--size": `${size}${typeof size === "number" ? "px" : ""}` } as React.CSSProperties : undefined,
       ref: this.bindRef,
       ...elemProps,
     };
@@ -101,12 +107,12 @@ export class Icon extends React.PureComponent<IconProps> {
       const svgIconText = typeof svgIconDataUrl == "string" // decode xml from data-url
         ? base64.decode(svgIconDataUrl.replace(dataUrlPrefix, "")) : "";
 
-      iconContent = <span className="icon" dangerouslySetInnerHTML={{ __html: svgIconText }}/>;
+      iconContent = <span dangerouslySetInnerHTML={{ __html: svgIconText }}/>;
     }
 
     // render as material-icon
     if (typeof material === "string") {
-      iconContent = <span className="icon" data-icon-name={material}>{material}</span>;
+      iconContent = <span data-icon-name={material}>{material}</span>;
     }
 
     // wrap icon's content passed from decorator

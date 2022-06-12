@@ -28,7 +28,7 @@ export const settingsStorage = createStorageHelper("settings", {
     historySaveWordsOnly: true,
     historyPageSize: 50,
     favorites: {} as FavoritesList,
-    popupFixedPos: "", // possible values defined as css-classes in popup.scss
+    popupFixedPos: "",
     hotkey: {
       altKey: true,
       shiftKey: true,

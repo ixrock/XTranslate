@@ -40,16 +40,8 @@ export class NumberInput extends React.Component<Props> {
         className={cssNames(styles.NumberInput, className)}
         labelContent={(
           <div className={styles.arrowIcons}>
-            <Icon
-              material="arrow_drop_up"
-              className={styles.Icon}
-              onClick={this.increment}
-            />
-            <Icon
-              material="arrow_drop_down"
-              className={styles.Icon}
-              onClick={this.decrement}
-            />
+            <Icon material="arrow_drop_up" onClick={this.increment}/>
+            <Icon material="arrow_drop_down" onClick={this.decrement}/>
           </div>
         )}
         ref={this.bindRef}

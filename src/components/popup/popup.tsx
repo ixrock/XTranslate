@@ -1,18 +1,17 @@
-import "./popup.scss"
-
+import styles from "./popup.module.scss"
 import React, { CSSProperties } from "react";
-import { makeObservable, observable, reaction } from "mobx";
+import { computed, makeObservable, observable, reaction } from "mobx";
 import { disposeOnUnmount, observer } from "mobx-react";
-import { cssNames, noop, prevDefault, toCssColor } from "../../utils";
+import { cssNames, IClassName, noop, prevDefault, toCssColor } from "../../utils";
 import { getNextTranslator, getTranslator, isRTL, ITranslationError, ITranslationResult } from "../../vendors";
 import { Icon } from "../icon";
 import { settingsStorage, settingsStore } from "../settings/settings.storage";
 import { themeStore } from "../theme-manager/theme.storage";
 import { getMessage } from "../../i18n";
 
-interface Props extends React.HTMLProps<any> {
+interface Props extends Omit<React.HTMLProps<any>, "className"> {
   preview?: boolean;
-  className?: string;
+  className?: IClassName;
   initParams?: Partial<ITranslationResult>;
   translation?: ITranslationResult
   error?: ITranslationError
@@ -61,12 +60,12 @@ export class Popup extends React.Component<Props> {
     }
   }
 
-  get translation(): Partial<ITranslationResult | undefined> {
+  @computed get translation(): Partial<ITranslationResult | undefined> {
     var { preview, translation } = this.props;
     return translation || (preview ? Popup.translationMock : undefined);
   }
 
-  getPopupStyle(): CSSProperties {
+  @computed get popupStyle(): CSSProperties {
     var {
       bgcMain, bgcLinear, bgcSecondary,
       borderRadius, fontFamily, fontSize, textColor,
@@ -74,6 +73,7 @@ export class Popup extends React.Component<Props> {
       textShadowRadius, textShadowColor, textShadowOffsetX, textShadowOffsetY,
       boxShadowColor, boxShadowBlur, boxShadowInner
     } = themeStore.data;
+
     return {
       background: bgcLinear
         ? `linear-gradient(180deg, ${toCssColor(bgcMain)}, ${toCssColor(bgcSecondary)})`
@@ -101,7 +101,7 @@ export class Popup extends React.Component<Props> {
     };
   }
 
-  getTranslationStyle(): CSSProperties {
+  @computed get settingsStyle(): CSSProperties {
     var { maxHeight, maxWidth, minHeight, minWidth } = themeStore.data;
     return {
       maxWidth: !maxWidth ? "" : Math.max(maxWidth, minWidth),
@@ -143,6 +143,7 @@ export class Popup extends React.Component<Props> {
     }
     return (
       <Icon
+        className={styles.icon}
         material={this.copied ? "task_alt" : "content_copy"}
         title={getMessage("popup_copy_translation_title")}
         onClick={this.copyToClipboard}
@@ -156,6 +157,7 @@ export class Popup extends React.Component<Props> {
     }
     return (
       <Icon
+        className={styles.icon}
         material="play_circle_outline"
         title={getMessage("popup_play_icon_title")}
         onClick={prevDefault(this.props.onPlayText)}
@@ -174,6 +176,7 @@ export class Popup extends React.Component<Props> {
     }) as string;
     return (
       <Icon
+        className={styles.icon}
         material="arrow_forward"
         title={iconTitle}
         onClick={prevDefault(this.props.onTranslateNext)}
@@ -188,29 +191,29 @@ export class Popup extends React.Component<Props> {
     var { translation, transcription, dictionary, vendor, langFrom, langTo, langDetected } = this.translation;
     if (langDetected) langFrom = langDetected;
     const translator = getTranslator(vendor);
-    const rtlClass = { rtl: isRTL(langTo) };
+    const rtlClass = { [styles.rtl]: isRTL(langTo) };
     return (
-      <div className="translation-result" style={this.getTranslationStyle()}>
-        <div className="translation flex gaps">
+      <div className={styles.translationResult} style={this.settingsStyle}>
+        <div className={styles.translation}>
           {this.renderPlayTextIcon()}
-          <div className={cssNames("value box grow", rtlClass)}>
+          <div className={cssNames(styles.value, rtlClass)}>
             <span>{translation}</span>
-            {transcription ? <i className="transcription">{" "}[{transcription}]</i> : null}
+            {transcription ? <i className={styles.transcription}>{" "}[{transcription}]</i> : null}
           </div>
-          <div className="icons">
+          <div className={styles.icons}>
             {this.renderCopyTranslationIcon()}
             {this.renderNextTranslationIcon()}
           </div>
         </div>
         {dictionary.map(({ wordType, meanings }) =>
-          <div key={wordType} className={cssNames("dictionary", rtlClass)}>
-            <div className="word-type">{wordType}</div>
-            <div className="word-meanings">
+          <div key={wordType} className={cssNames(styles.dictionary, rtlClass)}>
+            <div className={styles.wordType}>{wordType}</div>
+            <div className={styles.wordMeanings}>
               {meanings.map((meaning, i, list) => {
                 var last = i === list.length - 1;
                 var title = meaning.translation.join(", ") || null;
                 return [
-                  <span key={i} className="word" title={title}>{meaning.word}</span>,
+                  <span key={i} className={styles.word} title={title}>{meaning.word}</span>,
                   !last ? ", " : null
                 ]
               })}
@@ -219,7 +222,7 @@ export class Popup extends React.Component<Props> {
         )}
         {
           settingsStore.data.showTranslatedFrom && (
-            <div className="translated-from">
+            <div className={styles.translatedFrom}>
               {getMessage("translated_from", { lang: translator.langFrom[langFrom] })}
               {` (${translator.title})`}
             </div>
@@ -234,31 +237,32 @@ export class Popup extends React.Component<Props> {
     if (!error) return;
     var { statusCode, message } = error;
     return (
-      <div className="translation-error">
-        <div className="title flex gaps align-center">
-          <Icon material="error_outline" className="info"/>
-          <div className="box grow">
-            <p>{statusCode}: {getMessage("translation_data_failed")}</p>
-            <p>{message}</p>
-          </div>
-          {this.renderNextTranslationIcon()}
+      <div className={styles.translationError}>
+        <Icon material="error_outline" className={styles.errorIcon}/>
+        <div className={styles.errorInfo}>
+          <p>{statusCode}: {getMessage("translation_data_failed")}</p>
+          <p>{message}</p>
         </div>
+        {this.renderNextTranslationIcon()}
       </div>
     )
   }
 
   render() {
     var { popupFixedPos } = settingsStore.data;
-    var { error, className, style, preview } = this.props;
+    var { error, className, style: customStyle, preview } = this.props;
     var isVisible = !!(this.translation || error);
-    var popupClass = cssNames("Popup", className, {
-      preview: preview,
-      visible: isVisible,
-      ["fixedPos " + popupFixedPos]: popupFixedPos && !preview
+    var popupClass = cssNames(styles.Popup, className, {
+      [styles.preview]: preview,
+      [styles.visible]: isVisible,
+      [`${styles.fixedPos} ${popupFixedPos}`]: Boolean(popupFixedPos && !preview)
     });
-    style = Object.assign(this.getPopupStyle(), style);
     return (
-      <div className={popupClass} style={style} tabIndex={-1} ref={e => this.elem = e}>
+      <div
+        className={popupClass} tabIndex={-1}
+        style={{ ...this.popupStyle, ...(customStyle ?? {}) }}
+        ref={e => this.elem = e}
+      >
         {error ? this.renderError() : this.renderResult()}
       </div>
     );

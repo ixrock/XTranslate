@@ -11,25 +11,6 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
 
-  @mixin customScroll {
-    $scrollSize: .6em;
-    overflow: auto;
-
-    &::-webkit-scrollbar {
-      width: $scrollSize;
-      height: $scrollSize;
-    }
-
-    &::-webkit-scrollbar-thumb {
-      border: 1px solid;
-      border-radius: $scrollSize / 2;
-    }
-
-    &::-webkit-scrollbar-corner {
-      background: none;
-    }
-  }
-
   &.preview {
     text-align: left;
   }
@@ -40,7 +21,8 @@
       margin: $spacing 0;
     }
 
-    &.fixedPos {
+    // FIXME
+    .fixedPos {
       position: fixed;
       margin: $spacing;
 
@@ -75,7 +57,7 @@
     direction: rtl;
   }
 
-  .Icon {
+  .icon {
     --size: 1.6em;
     --bgc-active: none;
 
@@ -86,36 +68,47 @@
     user-select: none;
     color: inherit !important;
     border-radius: 0 !important;
-    overflow: hidden; // avoid jumping scrollbar on first show (due .Icon's size based on material-icons font)
+    overflow: hidden; // avoid jumping scrollbar on first show (due <Icon> size based on material-icons font)
 
-    &:focus,
-    &:hover {
+    &:focus, &:hover {
       opacity: 1;
     }
   }
 
-  .translation-result {
+  .translationResult {
     --flex-gap: var(--theme-spacing-half);
 
-    @include customScroll;
-
-    .value {
-      padding: 2px 0;
+    @include custom-scrollbar($size: .5em, $spaceAround: 1px) {
+      --scrollbar-bgc: none;
+      border: 1px solid;
     }
 
-    .transcription {
-      opacity: .75;
-      font-style: normal;
+    .translation {
+      display: flex;
+      gap: var(--flex-gap);
+
+      .value {
+        padding: 2px 0;
+        flex: 1 0;
+      }
+
+      .transcription {
+        opacity: .75;
+        font-style: normal;
+      }
+
+      .icons {
+      }
     }
 
     .dictionary {
       margin-top: var(--theme-spacing-half);
 
-      .word-type {
+      .wordType {
         font-weight: bold;
       }
 
-      .word-meanings {
+      .wordMeanings {
         padding-left: var(--theme-spacing);
 
         .word[title] {
@@ -125,8 +118,16 @@
     }
   }
 
-  .translation-error {
-    .Icon.info {
+  .translationError {
+    display: flex;
+    align-content: center;
+    gap: var(--flex-gap);
+
+    .errorInfo {
+      flex: 1;
+    }
+
+    .errorIcon {
       pointer-events: none;
     }
 
@@ -139,7 +140,7 @@
     color: inherit;
   }
 
-  .translated-from {
+  .translatedFrom {
     font-style: italic;
     margin-top: var(--theme-spacing);
     opacity: .75;

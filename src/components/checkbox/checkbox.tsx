@@ -73,6 +73,7 @@ export class Checkbox extends React.Component<CheckboxProps> {
       [styles.checked]: checked,
       [styles.disabled]: disabled,
     });
+    
     return (
       <label
         id={id}

@@ -1,12 +1,6 @@
 .UserHistory {
   .settings {
     margin-bottom: var(--theme-spacing-half);
-
-    .Icon {
-      &.active {
-        color: var(--theme-color-primary);
-      }
-    }
   }
 
   .loading {
@@ -107,18 +101,6 @@
 
       .icons {
         visibility: hidden;
-
-        &.remove-icon {
-        }
-
-        &.translation-info {
-          cursor: default;
-          margin: 0;
-          opacity: .5;
-        }
-      }
-
-      .Icon {
         opacity: .5;
 
         &:hover {

@@ -25,6 +25,7 @@
     background-clip: padding-box;
     border: $spaceAround solid transparent;
     border-radius: $scrollBarSize;
+    @content;
   }
 
   &::-webkit-scrollbar-corner {

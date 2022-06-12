@@ -1,18 +1,12 @@
 .XTranslate {
+  @include theme-vars;
+
   all: initial; // reset all due possible leaking of inherited props (color, font, line-height, etc.)
   position: absolute !important;
   width: 100% !important;
   left: 0 !important;
   top: 0 !important;
   z-index: 1000000000 !important;
-}
-
-:host {
-  @import "~flex.box";
-  @import "../components/popup/popup";
-  @import "../components/icon/icon";
-  @import "./xtranslate-icon";
-  @include theme-vars;
 
   *, *:after, *:before {
     box-sizing: border-box;

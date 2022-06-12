@@ -10,6 +10,9 @@ export interface TooltipDecoratorProps {
   tooltip?: ReactNode | Omit<TooltipProps, "htmlFor">;
 }
 
+/**
+ * @deprecated
+ */
 export function withTooltip<T extends React.ComponentType<any>>(Target: T): T {
   var DecoratedComponent = class extends React.Component<HTMLAttributes<any> & TooltipDecoratorProps> {
     static displayName = `withTooltip(${Target.displayName || Target.name})`;

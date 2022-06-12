@@ -1,6 +1,6 @@
-import "./settings.scss";
-
-import * as React from "react";
+import styles from "./settings.module.scss";
+import popupStyle from "../popup/popup.module.scss";
+import React from "react";
 import { observer } from "mobx-react";
 import { getTranslators } from "../../vendors";
 import { createTab } from "../../extension";
@@ -39,9 +39,9 @@ export class Settings extends React.Component {
       children: <Popup preview/>
     };
     return (
-      <div className="Settings flex column gaps">
-        <div className="common-settings flex gaps auto">
-          <div className="checkboxGroup flex column">
+      <div className={styles.Settings}>
+        <div className="flex gaps auto">
+          <div className={styles.checkboxGroup}>
             <SubTitle>{getMessage("settings_title_tts")}</SubTitle>
             <Checkbox
               label={getMessage("auto_play_tts")}
@@ -55,7 +55,7 @@ export class Settings extends React.Component {
               tooltip={getMessage("use_chrome_tts_tooltip_info")}
             />
           </div>
-          <div className="checkboxGroup flex column">
+          <div className={styles.checkboxGroup}>
             <SubTitle>{getMessage("settings_title_appearance")}</SubTitle>
             <Checkbox
               label={getMessage("show_context_menu")}
@@ -66,17 +66,17 @@ export class Settings extends React.Component {
               label={getMessage("display_icon_near_selection")}
               checked={settings.showIconNearSelection}
               onChange={v => settings.showIconNearSelection = v}
-              tooltip={<XTranslateIcon preview/>}
+              tooltip={<XTranslateIcon style={{ position: "unset" }}/>}
             />
           </div>
         </div>
 
         <SubTitle>{getMessage("setting_title_translator_service")}</SubTitle>
 
-        <div className="translator-settings flex gaps column">
+        <div className="flex gaps column">
           <SelectLanguage showInfoIcon/>
           <RadioGroup
-            className="vendors flex column gaps"
+            className={styles.vendors}
             value={settings.vendor}
             onChange={v => settingsStore.setVendor(v)}
           >
@@ -84,12 +84,12 @@ export class Settings extends React.Component {
               const { name, title, publicUrl } = vendor;
               var domain = publicUrl.match(/https?:\/\/(.*?)(?:\/\w*|$)/i)[1];
               return (
-                <div key={name} className="vendor flex gaps">
+                <div key={name} className="flex gaps">
                   <Radio value={name} label={title}/>
                   <a href={publicUrl} target="_blank" tabIndex={-1}>
                     {domain.split('.').slice(-2).join('.')}
                   </a>
-                  <div className="vendor-settings-widget flex gaps align-center">
+                  <div className="flex gaps align-center">
                     {vendor.renderSettingsListWidget()}
                   </div>
                 </div>
@@ -100,8 +100,8 @@ export class Settings extends React.Component {
 
         <SubTitle>{getMessage("setting_title_popup")}</SubTitle>
 
-        <div className="popupSettings flex auto">
-          <div className="checkboxGroup">
+        <div className={styles.popupSettings}>
+          <div className={styles.checkboxGroup}>
             <Checkbox
               label={getMessage("show_tts_icon_inside_popup")}
               checked={settings.showTextToSpeechIcon}
@@ -139,14 +139,14 @@ export class Settings extends React.Component {
                 onChange={v => settings.popupFixedPos = v}
               >
                 <Option value="" label={getMessage("popup_position_auto")}/>
-                <Option value="leftTop" label={getMessage("popup_position_left_top")}/>
-                <Option value="rightTop" label={getMessage("popup_position_right_top")}/>
-                <Option value="leftBottom" label={getMessage("popup_position_left_bottom")}/>
-                <Option value="rightBottom" label={getMessage("popup_position_right_bottom")}/>
+                <Option value={popupStyle.leftTop} label={getMessage("popup_position_left_top")}/>
+                <Option value={popupStyle.rightTop} label={getMessage("popup_position_right_top")}/>
+                <Option value={popupStyle.leftBottom} label={getMessage("popup_position_left_bottom")}/>
+                <Option value={popupStyle.rightBottom} label={getMessage("popup_position_right_bottom")}/>
               </Select>
             </div>
           </div>
-          <div className="checkboxGroup">
+          <div className={styles.checkboxGroup}>
             <Checkbox
               label={getMessage("display_popup_after_text_selected")}
               checked={settings.showPopupAfterSelection}
@@ -173,7 +173,7 @@ export class Settings extends React.Component {
               <Icon material="keyboard"/>
               <Input
                 readOnly
-                className="hotkey box grow"
+                className={`${styles.hotkey} box grow`}
                 value={hotKey.value}
                 onKeyDown={prevDefault(this.onSaveHotkey)}
               />

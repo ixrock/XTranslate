@@ -13,7 +13,7 @@
     display: flex;
     flex-direction: column;
 
-    > .Icon {
+    > * {
       --size: 22px;
       --bgc-active: none;
       --color-active: var(--theme-color-primary);

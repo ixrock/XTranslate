@@ -256,6 +256,7 @@ export class UserHistory extends React.Component {
           <div className="text box grow flex gaps align-center">
             {showDetails && (
               <Icon
+                className="icons tts"
                 material="play_circle_outline"
                 onClick={prevDefault(() => translator.speak(langFrom, text))}
               />
@@ -325,16 +326,16 @@ export class UserHistory extends React.Component {
           <div className="actions">
             <Icon
               material="search"
+              active={showSearch}
               tooltip={!showSearch ? getMessage("history_icon_tooltip_search") : undefined}
-              className={cssNames({ active: showSearch })}
               onClick={() => this.showSearch = !showSearch}
             />
             <Icon
               id="import_export_menu_icon_trigger"
               material="import_export"
+              active={showImportExport}
               tooltip={!showImportExport ? getMessage("history_icon_tooltip_imp_exp") : undefined}
-              className={cssNames({ active: showSearch })}
-              onClick={action(() => this.showImportExport = !this.showImportExport)}
+              onClick={action(() => this.showImportExport = !showImportExport)}
             />
             <Menu htmlFor="import_export_menu_icon_trigger">
               <MenuItem htmlFor="import-history">
@@ -350,8 +351,8 @@ export class UserHistory extends React.Component {
             </Menu>
             <Icon
               material="settings"
+              active={showSettings}
               tooltip={!showSettings ? getMessage("history_icon_tooltip_settings") : undefined}
-              className={cssNames({ active: showSettings })}
               onClick={() => this.showSettings = !showSettings}
             />
           </div>

@@ -18,10 +18,10 @@ export default () => {
     cache: isDevelopment ? { type: "filesystem" } : false,
 
     entry: {
-      app: path.resolve(componentsDir, "app/index.tsx"),
-      background: path.resolve(srcPath, "background/background.ts"),
-      pageScript: path.resolve(srcPath, "user-script/user-script.tsx"),
-      pageStyle: path.resolve(srcPath, "user-script/user-script.scss"),
+      // generated output files (*.js, *.css)
+      "app": path.resolve(componentsDir, "app/index.tsx"),
+      "background": path.resolve(srcPath, "background/background.ts"),
+      "user-script": path.resolve(srcPath, "user-script/user-script.tsx")
     },
 
     output: {

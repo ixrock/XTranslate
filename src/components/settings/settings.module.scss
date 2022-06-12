@@ -1,9 +1,13 @@
 .Settings {
+  display: flex;
+  flex-direction: column;
+  gap: var(--flex-gap);
+
   .popupSettings {
     display: flex;
 
-    .Icon {
-      margin-left: -2px;
+    > * {
+      flex: 1;
     }
   }
 
@@ -29,5 +33,8 @@
   .vendors {
     --flex-gap: var(--theme-spacing-half);
     margin-right: var(--theme-spacing-double);
+    display: flex;
+    flex-direction: column;
+    gap: var(--flex-gap);
   }
 }

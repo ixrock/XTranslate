@@ -1,10 +1,7 @@
-.Icon.XTranslateIcon {
+.XTranslateIcon {
   --size: 16px;
 
-  &:not(.preview) {
-    position: absolute;
-  }
-
+  position: absolute;
   box-shadow: 0 0 5px -1px black !important;
   background: white !important;
   padding: 5px;
