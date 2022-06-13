@@ -156,6 +156,8 @@ export abstract class Translator {
         });
         await this.audio.play();
       } catch (error) {
+        // FIXME: it might fall due CORS in some sites (e.g. github)
+        // so we have to do some workaround with new background 1x1 window (due manifest@3.0 limitations currently)
         Translator.logger.error(`[TTS]: failed to play: ${error}`, { lang, text });
       }
     }

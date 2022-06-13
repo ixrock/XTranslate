@@ -1,6 +1,6 @@
 //-- User script app (page context)
 
-import styles from "./user-script.module.scss";
+import "./user-script.scss";
 import "../packages.setup";
 import React from "react";
 import { createRoot } from "react-dom/client";
@@ -8,7 +8,7 @@ import { action, computed, makeObservable, observable, toJS } from "mobx";
 import { observer } from "mobx-react";
 import { debounce, isEqual } from "lodash"
 import { autoBind, getHotkey } from "../utils";
-import { getManifest, MessageType, onMessage, TranslateWithVendorPayload } from "../extension";
+import { getManifest, getURL, MessageType, onMessage, TranslateWithVendorPayload } from "../extension";
 import { getNextTranslator, getTranslator, ITranslationError, ITranslationResult, TranslatePayload } from "../vendors";
 import { XTranslateIcon } from "./xtranslate-icon";
 import { Popup } from "../components/popup/popup";
@@ -23,11 +23,12 @@ class App extends React.Component {
   static rootElem: HTMLElement;
 
   static async init() {
-    const rootElem = App.rootElem = document.createElement("div");
-    const rootNode = createRoot(rootElem);
+    const appElem = App.rootElem = document.createElement("div");
+    appElem.attachShadow({ mode: "open" });
+    appElem.classList.add("XTranslate");
+    const rootNode = createRoot(appElem.shadowRoot);
 
-    rootElem.classList.add(styles.XTranslate);
-    document.documentElement.appendChild(rootElem);
+    document.documentElement.appendChild(appElem);
 
     // wait for dependent data before first render
     await Promise.all([
@@ -415,6 +416,7 @@ class App extends React.Component {
     var translator = getTranslator(vendor);
     return (
       <>
+        <link rel="stylesheet" href={getURL("user-script.css")} crossOrigin="true"/>
         <XTranslateIcon
           style={this.iconPosition}
           onMouseDown={onIconClick}

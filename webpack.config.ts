@@ -9,7 +9,7 @@ export default () => {
   var distPath = path.resolve(__dirname, "dist");
   var optionsPage = path.resolve(__dirname, "options.html");
   var componentsDir = path.resolve(srcPath, "components");
-  var sassVariablesImport = `@import "mixins", "colors";`; // sass-variables & mixins only
+  var sassCommonVarsImport = `@import "mixins", "colors";`; // sass-constants & mixins only
 
   return {
     target: "web", // https://webpack.js.org/configuration/target/
@@ -84,7 +84,7 @@ export default () => {
               loader: 'sass-loader',
               options: {
                 sourceMap: false,
-                additionalData: sassVariablesImport,
+                additionalData: sassCommonVarsImport,
                 sassOptions: {
                   includePaths: [componentsDir]
                 },

@@ -21,12 +21,6 @@ export function isOptionsPage(): boolean {
   return location.href.startsWith(getURL(optionsHtmlPage));
 }
 
-export function getStyleUrl() {
-  var manifest = getManifest();
-  var filePath = manifest.content_scripts.map(script => script.css)[0][0];
-  return getURL(filePath);
-}
-
 export async function sendMessage<Request, Response = any, Error = any>({ tabId, ...message }: Message<Request> & { tabId?: number }): Promise<Response> {
   let resolve: (data: Response) => void;
   let reject: (error: Error) => void;

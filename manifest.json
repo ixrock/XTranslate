@@ -50,7 +50,6 @@
         "user-script.js",
         "adgoal/content.bundle.js"
       ],
-      "css": ["user-script.css"],
       "matches": [
         "http://*/*",
         "https://*/*",

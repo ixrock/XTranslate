@@ -1,8 +1,8 @@
 .Popup {
-  $spacing: .6em;
+  --theme-spacing: .6em;
 
   position: relative;
-  padding: $spacing;
+  padding: var(--theme-spacing);
   visibility: hidden;
   opacity: 0;
   transition: opacity 100ms ease-out;
@@ -16,41 +16,40 @@
   }
 
   &:not(.preview) {
-    &:not(.fixedPos) {
-      position: absolute;
-      margin: $spacing 0;
-    }
+    position: absolute;
+    margin: var(--theme-spacing) 0;
 
     // FIXME
-    .fixedPos {
-      position: fixed;
-      margin: $spacing;
-
-      &.leftTop {
-        left: 0;
-        top: 0;
-      }
-
-      &.leftBottom {
-        left: 0;
-        bottom: 0;
-      }
-
-      &.rightTop {
-        right: 0;
-        top: 0;
-      }
-
-      &.rightBottom {
-        right: 0;
-        bottom: 0;
-      }
-    }
+    //.fixedPos {
+    //  position: fixed;
+    //  margin: var(--theme-spacing);
+    //
+    //  &.leftTop {
+    //    left: 0;
+    //    top: 0;
+    //  }
+    //
+    //  &.leftBottom {
+    //    left: 0;
+    //    bottom: 0;
+    //  }
+    //
+    //  &.rightTop {
+    //    right: 0;
+    //    top: 0;
+    //  }
+    //
+    //  &.rightBottom {
+    //    right: 0;
+    //    bottom: 0;
+    //  }
+    //}
   }
 
   &.visible {
     visibility: visible;
     opacity: 1;
+    z-index: 10000 !important;
   }
 
   .rtl {
@@ -120,7 +119,7 @@
 
   .translationError {
     display: flex;
-    align-content: center;
+    align-items: center;
     gap: var(--flex-gap);
 
     .errorInfo {
