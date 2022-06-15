@@ -18,32 +18,31 @@
   &:not(.preview) {
     position: absolute;
     margin: var(--theme-spacing) 0;
+  }
 
-    // FIXME
-    //.fixedPos {
-    //  position: fixed;
-    //  margin: var(--theme-spacing);
-    //
-    //  &.leftTop {
-    //    left: 0;
-    //    top: 0;
-    //  }
-    //
-    //  &.leftBottom {
-    //    left: 0;
-    //    bottom: 0;
-    //  }
-    //
-    //  &.rightTop {
-    //    right: 0;
-    //    top: 0;
-    //  }
-    //
-    //  &.rightBottom {
-    //    right: 0;
-    //    bottom: 0;
-    //  }
-    //}
+  &.fixedPos {
+    position: fixed;
+    margin: var(--theme-spacing);
+
+    &.leftTop {
+      left: 0;
+      top: 0;
+    }
+
+    &.leftBottom {
+      left: 0;
+      bottom: 0;
+    }
+
+    &.rightTop {
+      right: 0;
+      top: 0;
+    }
+
+    &.rightBottom {
+      right: 0;
+      bottom: 0;
+    }
   }
 
   &.visible {
