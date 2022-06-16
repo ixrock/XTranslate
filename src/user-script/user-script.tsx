@@ -24,9 +24,10 @@ class App extends React.Component {
 
   static async init() {
     const appElem = App.rootElem = document.createElement("div");
-    appElem.attachShadow({ mode: "open" });
     appElem.classList.add("XTranslate");
-    const rootNode = createRoot(appElem.shadowRoot);
+
+    const shadowRoot = appElem.attachShadow({ mode: "closed" });
+    const rootNode = createRoot(shadowRoot);
 
     document.documentElement.appendChild(appElem);
 
