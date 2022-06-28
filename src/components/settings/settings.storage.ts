@@ -1,7 +1,41 @@
-import { action } from "mobx";
+import { action, makeObservable } from "mobx";
 import { Hotkey } from "../../utils/parseHotkey";
 import { getTranslator } from "../../vendors";
 import { createStorageHelper } from "../../extension/storage";
+
+export type ISettingsDefaultStorageValue = Partial<typeof settingsDefaultStorageValue>;
+
+export const settingsDefaultStorageValue = {
+  autoPlayText: false,
+  useChromeTtsEngine: false,
+  showTextToSpeechIcon: true,
+  showNextVendorIcon: true,
+  showClosePopupIcon: true,
+  showCopyTranslationIcon: true,
+  useDarkTheme: false,
+  showInContextMenu: false,
+  showIconNearSelection: true,
+  showPopupAfterSelection: false,
+  showPopupOnClickBySelection: false,
+  showPopupOnDoubleClick: true,
+  showPopupOnHotkey: true,
+  showTranslatedFrom: true,
+  rememberLastText: false,
+  textInputTranslateDelayMs: 750,
+  vendor: "google",
+  langFrom: "auto",
+  langTo: navigator.language.split('-')[0],
+  historyEnabled: false,
+  historySaveWordsOnly: true,
+  historyPageSize: 50,
+  favorites: {} as FavoritesList,
+  popupFixedPos: "",
+  hotkey: {
+    altKey: true,
+    shiftKey: true,
+    code: "X"
+  } as Hotkey,
+};
 
 export const settingsStorage = createStorageHelper("settings", {
   area: "sync", // share user-data via google account (chrome.storage.sync)
@@ -10,6 +44,7 @@ export const settingsStorage = createStorageHelper("settings", {
     useChromeTtsEngine: false,
     showTextToSpeechIcon: true,
     showNextVendorIcon: true,
+    showClosePopupIcon: true,
     showCopyTranslationIcon: true,
     useDarkTheme: false,
     showInContextMenu: false,
@@ -47,6 +82,10 @@ export interface FavoritesList {
 export type FavoriteLangDirection = "source" | "target";
 
 export class SettingsStore {
+  constructor() {
+    makeObservable(this);
+  }
+
   get ready() {
     return settingsStorage.whenReady;
   }

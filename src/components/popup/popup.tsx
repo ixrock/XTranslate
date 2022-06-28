@@ -1,4 +1,5 @@
 import styles from "./popup.module.scss"
+
 import React, { CSSProperties } from "react";
 import { computed, makeObservable, observable, reaction } from "mobx";
 import { disposeOnUnmount, observer } from "mobx-react";
@@ -15,8 +16,10 @@ interface Props extends Omit<React.HTMLProps<any>, "className"> {
   initParams?: Partial<ITranslationResult>;
   translation?: ITranslationResult
   error?: ITranslationError
-  onPlayText?: () => void;
-  onTranslateNext?: () => void;
+  tooltipsRoot?: HTMLElement; // where to render tooltips with "fixed" (aka following) "position"
+  onPlayText?(): void;
+  onTranslateNext?(): void;
+  onClose?(): void;
 }
 
 @observer
@@ -145,7 +148,11 @@ export class Popup extends React.Component<Props> {
       <Icon
         className={styles.icon}
         material={this.copied ? "task_alt" : "content_copy"}
-        title={getMessage("popup_copy_translation_title")}
+        tooltip={{
+          className: styles.iconTooltip,
+          children: getMessage("popup_copy_translation_title"),
+          portalRootElement: this.props.tooltipsRoot,
+        }}
         onClick={this.copyToClipboard}
       />
     )
@@ -159,7 +166,11 @@ export class Popup extends React.Component<Props> {
       <Icon
         className={styles.icon}
         material="play_circle_outline"
-        title={getMessage("popup_play_icon_title")}
+        tooltip={{
+          className: styles.iconTooltip,
+          children: getMessage("popup_play_icon_title"),
+          portalRootElement: this.props.tooltipsRoot,
+        }}
         onClick={prevDefault(this.props.onPlayText)}
       />
     );
@@ -178,8 +189,28 @@ export class Popup extends React.Component<Props> {
       <Icon
         className={styles.icon}
         material="arrow_forward"
-        title={iconTitle}
+        tooltip={{
+          className: styles.iconTooltip,
+          children: iconTitle,
+          portalRootElement: this.props.tooltipsRoot,
+        }}
         onClick={prevDefault(this.props.onTranslateNext)}
+      />
+    )
+  }
+
+  renderClosePopupIcon() {
+    if (!settingsStore.data.showClosePopupIcon) return;
+
+    return (
+      <Icon
+        material="close"
+        className={styles.icon}
+        tooltip={{
+          className: styles.iconTooltip,
+          children: getMessage("show_close_popup_button_title"),
+        }}
+        onClick={this.props.onClose}
       />
     )
   }
@@ -203,6 +234,7 @@ export class Popup extends React.Component<Props> {
           <div className={styles.icons}>
             {this.renderCopyTranslationIcon()}
             {this.renderNextTranslationIcon()}
+            {this.renderClosePopupIcon()}
           </div>
         </div>
         {dictionary.map(({ wordType, meanings }) =>

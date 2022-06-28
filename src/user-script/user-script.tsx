@@ -8,7 +8,7 @@ import { action, computed, makeObservable, observable, toJS } from "mobx";
 import { observer } from "mobx-react";
 import { debounce, isEqual } from "lodash"
 import { autoBind, getHotkey } from "../utils";
-import { getManifest, getURL, MessageType, onMessage, TranslateWithVendorPayload } from "../extension";
+import { getManifest, getURL, MessageType, onMessage, proxyRequest, ProxyResponseType, TranslateWithVendorPayload } from "../extension";
 import { getNextTranslator, getTranslator, ITranslationError, ITranslationResult, TranslatePayload } from "../vendors";
 import { XTranslateIcon } from "./xtranslate-icon";
 import { Popup } from "../components/popup/popup";
@@ -64,8 +64,18 @@ class App extends React.Component {
   @observable isRtlSelection = false;
   @observable isIconShown = false;
   @observable isLoading = false;
+  @observable userStyle = "";
 
-  componentDidMount() {
+  async preloadCss() {
+    this.userStyle = await proxyRequest({
+      url: getURL("user-script.css"),
+      responseType: ProxyResponseType.TEXT,
+    });
+  }
+
+  async componentDidMount() {
+    await this.preloadCss(); // fix: <link rel crossOrigin/> is failed for opened local files
+
     // Bind extension's runtime IPC events
     onMessage<void, string>(MessageType.GET_SELECTED_TEXT, () => this.selectedText);
 
@@ -412,12 +422,12 @@ class App extends React.Component {
   }
 
   render() {
-    var { lastParams, translation, error, popupPosition, playText, translateNext, onIconClick } = this;
+    var { lastParams, translation, error, popupPosition, playText, translateNext, onIconClick, hidePopup } = this;
     var { langFrom, langTo, vendor } = settingsStore.data;
     var translator = getTranslator(vendor);
     return (
       <>
-        <link rel="stylesheet" href={getURL("user-script.css")} crossOrigin="true"/>
+        <style type="text/css">{this.userStyle}</style>
         <XTranslateIcon
           style={this.iconPosition}
           onMouseDown={onIconClick}
@@ -431,6 +441,8 @@ class App extends React.Component {
           error={error}
           onPlayText={playText}
           onTranslateNext={() => translateNext()}
+          onClose={hidePopup}
+          tooltipsRoot={App.rootElem}
           ref={(ref: Popup) => this.popup = ref}
         />
       </>

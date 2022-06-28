@@ -4,7 +4,7 @@ import React from "react";
 import { observer } from "mobx-react";
 import { getTranslators } from "../../vendors";
 import { createTab } from "../../extension";
-import { getHotkey, parseHotkey, prevDefault } from "../../utils";
+import { cssNames, getHotkey, parseHotkey, prevDefault } from "../../utils";
 import { XTranslateIcon } from "../../user-script/xtranslate-icon";
 import { SelectLanguage } from "../select-language";
 import { Input, NumberInput } from "../input";
@@ -39,41 +39,8 @@ export class Settings extends React.Component {
       children: <Popup preview/>
     };
     return (
-      <div className={styles.Settings}>
-        <div className="flex gaps auto">
-          <div className={styles.checkboxGroup}>
-            <SubTitle>{getMessage("settings_title_tts")}</SubTitle>
-            <Checkbox
-              label={getMessage("auto_play_tts")}
-              checked={settings.autoPlayText}
-              onChange={v => settings.autoPlayText = v}
-            />
-            <Checkbox
-              label={getMessage("use_chrome_tts")}
-              checked={settings.useChromeTtsEngine}
-              onChange={v => settings.useChromeTtsEngine = v}
-              tooltip={getMessage("use_chrome_tts_tooltip_info")}
-            />
-          </div>
-          <div className={styles.checkboxGroup}>
-            <SubTitle>{getMessage("settings_title_appearance")}</SubTitle>
-            <Checkbox
-              label={getMessage("show_context_menu")}
-              checked={settings.showInContextMenu}
-              onChange={v => settingsStore.data.showInContextMenu = v}
-            />
-            <Checkbox
-              label={getMessage("display_icon_near_selection")}
-              checked={settings.showIconNearSelection}
-              onChange={v => settings.showIconNearSelection = v}
-              tooltip={<XTranslateIcon style={{ position: "unset" }}/>}
-            />
-          </div>
-        </div>
-
-        <SubTitle>{getMessage("setting_title_translator_service")}</SubTitle>
-
-        <div className="flex gaps column">
+      <main className={styles.Settings}>
+        <article className={styles.service}>
           <SelectLanguage showInfoIcon/>
           <RadioGroup
             className={styles.vendors}
@@ -96,94 +63,124 @@ export class Settings extends React.Component {
               )
             })}
           </RadioGroup>
-        </div>
+        </article>
+
+        <SubTitle>{getMessage("settings_title_tts")} & {getMessage("settings_title_appearance")}</SubTitle>
+
+        <article>
+          <Checkbox
+            label={getMessage("auto_play_tts")}
+            checked={settings.autoPlayText}
+            onChange={v => settings.autoPlayText = v}
+          />
+          <Checkbox
+            label={getMessage("use_chrome_tts")}
+            checked={settings.useChromeTtsEngine}
+            onChange={v => settings.useChromeTtsEngine = v}
+            tooltip={getMessage("use_chrome_tts_tooltip_info")}
+          />
+
+          <Checkbox
+            label={getMessage("show_context_menu")}
+            checked={settings.showInContextMenu}
+            onChange={v => settingsStore.data.showInContextMenu = v}
+          />
+          <Checkbox
+            label={getMessage("display_icon_near_selection")}
+            checked={settings.showIconNearSelection}
+            onChange={v => settings.showIconNearSelection = v}
+            tooltip={<XTranslateIcon style={{ position: "unset" }}/>}
+          />
+        </article>
 
         <SubTitle>{getMessage("setting_title_popup")}</SubTitle>
 
-        <div className={styles.popupSettings}>
-          <div className={styles.checkboxGroup}>
-            <Checkbox
-              label={getMessage("show_tts_icon_inside_popup")}
-              checked={settings.showTextToSpeechIcon}
-              onChange={v => settings.showTextToSpeechIcon = v}
-              tooltip={popupTooltip}
+        <article>
+          <Checkbox
+            label={getMessage("show_tts_icon_inside_popup")}
+            checked={settings.showTextToSpeechIcon}
+            onChange={v => settings.showTextToSpeechIcon = v}
+            tooltip={popupTooltip}
+          />
+          <Checkbox
+            label={getMessage("show_next_vendor_icon_in_popup")}
+            checked={settings.showNextVendorIcon}
+            onChange={v => settings.showNextVendorIcon = v}
+            tooltip={popupTooltip}
+          />
+          <Checkbox
+            label={getMessage("show_copy_translation_icon")}
+            checked={settings.showCopyTranslationIcon}
+            onChange={v => settings.showCopyTranslationIcon = v}
+            tooltip={popupTooltip}
+          />
+          <Checkbox
+            label={getMessage("show_close_popup_button")}
+            checked={settings.showClosePopupIcon}
+            onChange={v => settings.showClosePopupIcon = v}
+            tooltip={popupTooltip}
+          />
+          <Checkbox
+            label={getMessage("show_detected_language_block")}
+            checked={settings.showTranslatedFrom}
+            onChange={v => settings.showTranslatedFrom = v}
+            tooltip={popupTooltip}
+          />
+          <Checkbox
+            label={getMessage("display_popup_after_text_selected")}
+            checked={settings.showPopupAfterSelection}
+            onChange={v => settings.showPopupAfterSelection = v}
+          />
+          <Checkbox
+            label={getMessage("display_on_click_by_selected_text")}
+            checked={settings.showPopupOnClickBySelection}
+            onChange={v => settings.showPopupOnClickBySelection = v}
+          />
+          <Checkbox
+            label={getMessage("display_popup_on_double_click")}
+            checked={settings.showPopupOnDoubleClick}
+            onChange={v => settings.showPopupOnDoubleClick = v}
+          />
+          <Checkbox
+            className="box grow"
+            label={getMessage("display_popup_on_hotkey") + ":"}
+            checked={settings.showPopupOnHotkey}
+            onChange={v => settings.showPopupOnHotkey = v}
+            tooltip={hotKey.title}
+          />
+          <label className="flex">
+            <Icon material="keyboard"/>
+            <Input
+              readOnly
+              className={`${styles.hotkey} box grow`}
+              value={hotKey.value}
+              onKeyDown={prevDefault(this.onSaveHotkey)}
             />
-            <Checkbox
-              label={getMessage("show_next_vendor_icon_in_popup")}
-              checked={settings.showNextVendorIcon}
-              onChange={v => settings.showNextVendorIcon = v}
-              tooltip={popupTooltip}
+          </label>
+          <div className="flex gaps align-center">
+            <Icon
+              htmlFor="select_popup_position"
+              material="display_settings"
+              tooltip={getMessage("popup_position_title")}
             />
-            <Checkbox
-              label={getMessage("show_copy_translation_icon")}
-              checked={settings.showCopyTranslationIcon}
-              onChange={v => settings.showCopyTranslationIcon = v}
-              tooltip={popupTooltip}
-            />
-            <Checkbox
-              label={getMessage("show_detected_language_block")}
-              checked={settings.showTranslatedFrom}
-              onChange={v => settings.showTranslatedFrom = v}
-              tooltip={popupTooltip}
-            />
-            <div className="flex gaps align-center">
-              <Icon
-                htmlFor="select_popup_position"
-                material="display_settings"
-                tooltip={getMessage("popup_position_title")}
-              />
-              <Select
-                id="select_popup_position"
-                className="box grow"
-                value={settings.popupFixedPos}
-                onChange={v => settings.popupFixedPos = v}
-              >
-                <Option value="" label={getMessage("popup_position_auto")}/>
-                <Option value={popupStyle.leftTop} label={getMessage("popup_position_left_top")}/>
-                <Option value={popupStyle.rightTop} label={getMessage("popup_position_right_top")}/>
-                <Option value={popupStyle.leftBottom} label={getMessage("popup_position_left_bottom")}/>
-                <Option value={popupStyle.rightBottom} label={getMessage("popup_position_right_bottom")}/>
-              </Select>
-            </div>
-          </div>
-          <div className={styles.checkboxGroup}>
-            <Checkbox
-              label={getMessage("display_popup_after_text_selected")}
-              checked={settings.showPopupAfterSelection}
-              onChange={v => settings.showPopupAfterSelection = v}
-            />
-            <Checkbox
-              label={getMessage("display_on_click_by_selected_text")}
-              checked={settings.showPopupOnClickBySelection}
-              onChange={v => settings.showPopupOnClickBySelection = v}
-            />
-            <Checkbox
-              label={getMessage("display_popup_on_double_click")}
-              checked={settings.showPopupOnDoubleClick}
-              onChange={v => settings.showPopupOnDoubleClick = v}
-            />
-            <Checkbox
+            <Select
+              id="select_popup_position"
               className="box grow"
-              label={getMessage("display_popup_on_hotkey") + ":"}
-              checked={settings.showPopupOnHotkey}
-              onChange={v => settings.showPopupOnHotkey = v}
-              tooltip={hotKey.title}
-            />
-            <label className="flex">
-              <Icon material="keyboard"/>
-              <Input
-                readOnly
-                className={`${styles.hotkey} box grow`}
-                value={hotKey.value}
-                onKeyDown={prevDefault(this.onSaveHotkey)}
-              />
-            </label>
+              value={settings.popupFixedPos}
+              onChange={v => settings.popupFixedPos = v}
+            >
+              <Option value="" label={getMessage("popup_position_auto")}/>
+              <Option value={popupStyle.leftTop} label={getMessage("popup_position_left_top")}/>
+              <Option value={popupStyle.rightTop} label={getMessage("popup_position_right_top")}/>
+              <Option value={popupStyle.leftBottom} label={getMessage("popup_position_left_bottom")}/>
+              <Option value={popupStyle.rightBottom} label={getMessage("popup_position_right_bottom")}/>
+            </Select>
           </div>
-        </div>
+        </article>
 
-        <SubTitle>{getMessage("setting_title_text_input")}</SubTitle>
+        <article className={cssNames(styles.bottomBar, "flex gaps align-center")}>
+          <SubTitle>{getMessage("setting_title_text_input")}</SubTitle>
 
-        <div className="flex gaps align-center">
           <Button
             outline
             className="box flex gaps"
@@ -203,8 +200,8 @@ export class Settings extends React.Component {
             </div>
             <small>{getMessage("translation_delay_info")}</small>
           </div>
-        </div>
-      </div>
+        </article>
+      </main>
     );
   }
 }

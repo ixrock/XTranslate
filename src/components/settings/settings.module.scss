@@ -1,20 +1,17 @@
 .Settings {
-  display: flex;
-  flex-direction: column;
-  gap: var(--flex-gap);
-
-  .popupSettings {
-    display: flex;
-
-    > * {
-      flex: 1;
-    }
-  }
-
-  .checkboxGroup {
+  &, .service {
     display: flex;
     flex-direction: column;
-    gap: 7px;
+    gap: calc(var(--flex-gap) * 1.5);
+  }
+
+  .bottomBar {
+  }
+
+  article:not(.service):not(.bottomBar) {
+    display: grid;
+    gap: var(--flex-gap);
+    grid-template-columns: 1fr 1fr;
 
     &:first-child {
       padding-right: var(--theme-spacing-double);
