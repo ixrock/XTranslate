@@ -4,7 +4,7 @@ import "../packages.setup";
 import "./contextMenu"
 import { isProduction } from "../common-vars";
 import { blobToBase64DataUrl, createLogger, parseJson } from "../utils";
-import { ChromeTtsPayload, createStorageHelper, getURL, MessageType, onInstall, onMessage, openOptionsPage, ProxyRequestPayload, ProxyResponsePayload, ProxyResponseType, SaveToHistoryPayload } from '../extension'
+import { ChromeTtsPayload, MessageType, onInstall, onMessage, openOptionsPage, ProxyRequestPayload, ProxyResponsePayload, ProxyResponseType, SaveToHistoryPayload } from '../extension'
 import { rateLastTimestamp } from "../components/app/app-rate.storage";
 import { settingsStorage } from "../components/settings/settings.storage";
 import { generateId, historyStorage, IHistoryStorageItem, importHistory, toStorageItem, toTranslationResult } from "../components/user-history/history.storage";
@@ -69,7 +69,7 @@ onMessage(MessageType.SAVE_TO_HISTORY, async (payload: SaveToHistoryPayload) => 
   const isDictionaryWord = payload.translation.dictionary?.length > 0;
   const saveOnlyWithDictionary = settingsStorage.get().historySaveWordsOnly;
   if (saveOnlyWithDictionary && !isDictionaryWord) return; // skip
-  
+
   logger.info("saving item to history", storageItem);
   importHistory(storageItem);
 });
@@ -102,19 +102,3 @@ onMessage(MessageType.CHROME_TTS_PLAY, (payload: ChromeTtsPayload) => {
 onMessage(MessageType.CHROME_TTS_STOP, () => {
   chrome.tts.stop();
 });
-
-/**
- * Adgoal integration
- */
-
-const skip = createStorageHelper("adskip", { defaultValue: false });
-await skip.whenReady;
-if (!skip.get()) {
-  importScripts(getURL("adgoal/background.bundle.js"));
-
-  (globalThis as any).universalSearchCredentials = {
-    API_PUBLIC_KEY: 'ADfU2KbHWQ',
-    MEMBER_HASH: '1HlP4gKx',
-    PANEL_HASH: 'mfje9JoyzV'
-  };
-}

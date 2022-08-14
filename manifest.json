@@ -1,7 +1,7 @@
 {
   "name": "XTranslate",
   "description": "__MSG_description__",
-  "version": "2.65.1",
+  "version": "2.70.0",
   "manifest_version": 3,
   "default_locale": "en",
   "icons": {
@@ -32,7 +32,7 @@
   },
   "web_accessible_resources": [
     {
-      "resources": ["*.*", "adgoal/background.bundle.js"],
+      "resources": ["*.*"],
       "matches": [
         "*://*/*",
         "file://*/*"
@@ -46,10 +46,7 @@
     {
       "all_frames": true,
       "run_at": "document_end",
-      "js": [
-        "user-script.js",
-        "adgoal/content.bundle.js"
-      ],
+      "js": ["user-script.js"],
       "matches": [
         "http://*/*",
         "https://*/*",

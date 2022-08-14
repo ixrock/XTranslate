@@ -135,7 +135,6 @@ export default () => {
           { from: "manifest.json" },
           { from: "_locales", to: "_locales" },
           { from: "assets", to: "assets" },
-          { from: "adgoal", to: "adgoal" },
         ]
       })
     ]
