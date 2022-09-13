@@ -1,7 +1,7 @@
 {
   "name": "XTranslate",
   "description": "__MSG_description__",
-  "version": "2.70.0",
+  "version": "2.71.0",
   "manifest_version": 3,
   "default_locale": "en",
   "icons": {
@@ -45,7 +45,7 @@
   "content_scripts": [
     {
       "all_frames": true,
-      "run_at": "document_end",
+      "run_at": "document_start",
       "js": ["user-script.js"],
       "matches": [
         "http://*/*",

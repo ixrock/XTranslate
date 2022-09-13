@@ -450,5 +450,8 @@ class App extends React.Component {
   }
 }
 
+// preload refs
+import "../../refs";
+
 // run
 App.init();

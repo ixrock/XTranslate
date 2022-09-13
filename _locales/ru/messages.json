@@ -122,5 +122,8 @@
   "target_lang_placeholder"          : {"message": "Целевой язык"},
   "source_lang_placeholder"          : {"message": "Исходный язык"},
   "favorites_lang_title"             : {"message": "Избранное"},
-  "favorites_info_tooltip"           : {"message": "Чтобы добавить язык в избранное (список отображается сверху), используйте %hotkey% + клик"}
+  "favorites_info_tooltip"           : {"message": "Чтобы добавить язык в избранное (список отображается сверху), используйте %hotkey% + клик"},
+  "donate_title"                     : {"message": "Пожертвовать"},
+  "donate_via"                       : {"message": "Пожертвовать через"},
+  "donate_description"               : {"message": "Если вам нравится приложение, то рассмотрите возможность пожертвования разработчикам в виде криптовалюты или через PayPal. Спасибо!"}
 }

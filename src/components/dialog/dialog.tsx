@@ -16,17 +16,19 @@ export interface DialogProps {
   onClose?(): void
 }
 
+const defaultProps: Partial<DialogProps> = {
+  isOpen: false,
+  onOpen: noop,
+  onClose: noop,
+  modal: true,
+  pinned: false,
+};
+
 @observer
 export class Dialog extends React.Component<DialogProps> {
-  public contentElem: HTMLElement;
+  static defaultProps = defaultProps as object;
 
-  static defaultProps: DialogProps = {
-    isOpen: false,
-    onOpen: noop,
-    onClose: noop,
-    modal: true,
-    pinned: false,
-  };
+  public contentElem: HTMLElement;
 
   get elem() {
     return findDOMNode(this) as HTMLElement;

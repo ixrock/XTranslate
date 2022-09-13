@@ -20,6 +20,7 @@ import { ExportImportSettingsDialog } from "../export-import-settings";
 import { defaultPageId, getParam, navigate, PageId } from "../../navigation";
 import { pageManager } from "./page-manager";
 import { getMessage, i18nInit } from "../../i18n";
+import { DonationDialog } from "./donation-dialog";
 
 @observer
 export class App extends React.Component {
@@ -27,6 +28,7 @@ export class App extends React.Component {
   static pages: PageId[] = ["settings", "theme", "translate", "history"];
 
   @observable showImportExportDialog = false;
+  @observable showDonationDialog = false;
 
   constructor(props: object) {
     super(props);
@@ -103,6 +105,11 @@ export class App extends React.Component {
             tooltip={{ nowrap: true, children: getMessage("import_export_settings") }}
             onClick={() => this.showImportExportDialog = true}
           />
+          <Icon
+            material="monetization_on"
+            tooltip={{ children: getMessage("donate_title") }}
+            onClick={() => this.showDonationDialog = true}
+          />
         </header>
         <Tabs center value={pageId} onChange={this.onTabsChange}>
           {App.pages.map(pageId => {
@@ -117,6 +124,10 @@ export class App extends React.Component {
         <Footer/>
         <Notifications/>
         <AppRateDialog/>
+        <DonationDialog
+          isOpen={this.showDonationDialog}
+          onClose={() => this.showDonationDialog = false}
+        />
         <ExportImportSettingsDialog
           isOpen={this.showImportExportDialog}
           onClose={() => this.showImportExportDialog = false}
