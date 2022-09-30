@@ -22,9 +22,8 @@ export interface Messages {
 export const logger = createLogger({ systemPrefix: "[I18N-LOCALE]" });
 export const messages = observable.map<Locale, Messages>({}, { deep: false });
 
-const storage = createStorageHelper("i18n", {
+export const i18nStorage = createStorageHelper("i18n", {
   area: "sync",
-  autoLoad: true,
   defaultValue: {
     lang: getSystemLocale(),
   },
@@ -36,13 +35,13 @@ async function loadMessages(lang: Locale) {
   }
   const localizationFile = getURL(`_locales/${lang}/messages.json`);
   try {
-    const data: Messages = isBackgroundPage()
-      ? await fetch(localizationFile).then(res => res.json()) // required in context-menus
-      : await proxyRequest({ url: localizationFile })
+    const localizedMessages = isBackgroundPage()
+      ? await fetch(localizationFile).then(res => res.json()) // required for background / service worker (e.g. context menus)
+      : await proxyRequest<Messages>({ url: localizationFile })
 
-    messages.set(lang, data);
+    messages.set(lang, localizedMessages);
   } catch (error) {
-    logger.error(`loading locale "${lang}" has failed (file: ${localizationFile})`);
+    logger.error(`loading locale "${lang}" has failed (file: ${localizationFile})`, error);
   }
 }
 
@@ -72,11 +71,11 @@ export function getMessage(key: string, placeholders?: Record<string, React.Reac
 
 export async function setLocale(lang: Locale) {
   await loadMessages(lang); // preload first for smooth UI switching
-  storage.merge({ lang });
+  i18nStorage.merge({ lang });
 }
 
 export function getLocale(): Locale {
-  return storage.get().lang;
+  return i18nStorage.get().lang;
 }
 
 export function getSystemLocale(): Locale {
@@ -90,8 +89,8 @@ export function getSystemLocale(): Locale {
 }
 
 export async function i18nInit() {
-  await storage.whenReady;
-  await loadMessages("en"); // preload english as fallback locale
+  await i18nStorage.load() // load current i18n settings
+  await loadMessages("en") // always preload english as fallback locale
 
   const userLocale = getLocale();
   if (userLocale !== "en") {

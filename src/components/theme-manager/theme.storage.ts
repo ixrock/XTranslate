@@ -41,16 +41,12 @@ export class ThemeStore {
   private storage = themeStorage;
   private logger = createLogger({ systemPrefix: `[THEME]` });
 
-  get ready() {
-    return themeStorage.whenReady;
-  }
-
   get data() {
     return this.storage.get();
   }
 
   public iconsFont: IThemeFont = {
-    familyName: "Material Icons (XTranslate)", // must be the same as defined for <Icon material="">, see: icon.scss
+    familyName: "MaterialIcons-XTranslate", // must be the same as defined for <Icon material="">, see: icon.scss
     fileName: "MaterialIcons-Regular.ttf",
   };
 
@@ -69,14 +65,15 @@ export class ThemeStore {
     "solid", "dotted", "dashed", "double", "groove", "ridge", "inset", "outset"
   ];
 
-  constructor() {
-    this.init();
-  }
+  async load() {
+    if (themeStorage.loading) {
+      return themeStorage.whenReady;
+    }
 
-  private async init() {
-    await this.ready;
     await this.loadFont(this.iconsFont);
+    await themeStorage.load();
 
+    // refresh active font when changed in the settings
     reaction(() => this.data.fontFamily, font => this.loadFont(font), {
       name: "theme-font-loader",
       fireImmediately: true,
@@ -91,11 +88,9 @@ export class ThemeStore {
   }
 
   async loadFont(font: string | IThemeFont) {
-    await document.fonts.ready;
+    await document.fonts.ready
 
     const { fileName, familyName } = this.getBundledFont(font);
-    const isExists = document.fonts.check(`10px "${familyName}"`);
-    if (isExists) return; // font is already available in content-page
     if (!fileName) return; // system font is selected by user, e.g. "Arial"
 
     try {
@@ -108,7 +103,7 @@ export class ThemeStore {
       await font.load();
       document.fonts.add(font);
     } catch (error) {
-      this.logger.error(`loading font "${familyName}" from file "${fileName}" has failed`);
+      this.logger.error(`loading font "${familyName}" from file "${fileName}" has failed`, error);
     }
   }
 

@@ -1,6 +1,6 @@
 //-- Background service worker
 
-import "../packages.setup";
+import "../setup";
 import "./contextMenu"
 import { isProduction } from "../common-vars";
 import { blobToBase64DataUrl, createLogger, parseJson } from "../utils";
@@ -8,6 +8,7 @@ import { ChromeTtsPayload, MessageType, onInstall, onMessage, openOptionsPage, P
 import { rateLastTimestamp } from "../components/app/app-rate.storage";
 import { settingsStorage } from "../components/settings/settings.storage";
 import { generateId, historyStorage, IHistoryStorageItem, importHistory, toStorageItem, toTranslationResult } from "../components/user-history/history.storage";
+import { initContextMenus } from "./contextMenu";
 import { type TranslatePayload } from "../vendors/translator";
 
 const logger = createLogger({ systemPrefix: '[BACKGROUND]' });
@@ -18,6 +19,11 @@ onInstall((reason) => {
     openOptionsPage();
   }
 });
+
+/**
+ * Create browser's context menu item (if enabled in extension settings)
+ */
+initContextMenus();
 
 /**
  * Network proxy for `options` and `content-script` pages (to avoid CORS, etc.)

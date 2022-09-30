@@ -3,51 +3,17 @@ import { Hotkey } from "../../utils/parseHotkey";
 import { getTranslator } from "../../vendors";
 import { createStorageHelper } from "../../extension/storage";
 
-export type ISettingsDefaultStorageValue = Partial<typeof settingsDefaultStorageValue>;
-
-export const settingsDefaultStorageValue = {
-  autoPlayText: false,
-  useChromeTtsEngine: false,
-  showTextToSpeechIcon: true,
-  showNextVendorIcon: true,
-  showClosePopupIcon: true,
-  showCopyTranslationIcon: true,
-  useDarkTheme: false,
-  showInContextMenu: false,
-  showIconNearSelection: true,
-  showPopupAfterSelection: false,
-  showPopupOnClickBySelection: false,
-  showPopupOnDoubleClick: true,
-  showPopupOnHotkey: true,
-  showTranslatedFrom: true,
-  rememberLastText: false,
-  textInputTranslateDelayMs: 750,
-  vendor: "google",
-  langFrom: "auto",
-  langTo: navigator.language.split('-')[0],
-  historyEnabled: false,
-  historySaveWordsOnly: true,
-  historyPageSize: 50,
-  favorites: {} as FavoritesList,
-  popupFixedPos: "",
-  hotkey: {
-    altKey: true,
-    shiftKey: true,
-    code: "X"
-  } as Hotkey,
-};
-
 export const settingsStorage = createStorageHelper("settings", {
-  area: "sync", // share user-data via google account (chrome.storage.sync)
+  area: "sync", // share synced data via logged-in account (google, firefox, etc.)
   defaultValue: {
     autoPlayText: false,
     useChromeTtsEngine: false,
     showTextToSpeechIcon: true,
-    showNextVendorIcon: true,
-    showClosePopupIcon: true,
+    showNextVendorIcon: false,
+    showClosePopupIcon: false,
     showCopyTranslationIcon: true,
     useDarkTheme: false,
-    showInContextMenu: false,
+    showInContextMenu: true,
     showIconNearSelection: true,
     showPopupAfterSelection: false,
     showPopupOnClickBySelection: false,
@@ -86,12 +52,12 @@ export class SettingsStore {
     makeObservable(this);
   }
 
-  get ready() {
-    return settingsStorage.whenReady;
-  }
-
   get data() {
     return settingsStorage.get();
+  }
+
+  load(opts?: { force?: boolean }) {
+    return settingsStorage.load(opts);
   }
 
   getFavorites(vendor: string, sourceType: FavoriteLangDirection): string[] {

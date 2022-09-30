@@ -1,11 +1,11 @@
 // Keeps stack of callbacks for later clean up (e.g. remove event handlers)
 
 export interface Disposer {
-  (...disposers: Disposer[]): void;
-  push(...disposers: Disposer[]): void;
+  (...disposers: Function[]): void;
+  push(...disposers: Function[]): void;
 }
 
-export function disposer(...args: Disposer[]): Disposer {
+export function disposer(...args: Function[]): Disposer {
   const disposers = [...args];
 
   function dispose() {

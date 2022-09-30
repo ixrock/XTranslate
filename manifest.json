@@ -1,7 +1,7 @@
 {
   "name": "XTranslate",
   "description": "__MSG_description__",
-  "version": "2.71.1",
+  "version": "2.73.0",
   "manifest_version": 3,
   "default_locale": "en",
   "icons": {
@@ -30,18 +30,6 @@
   "background": {
     "service_worker": "background.js"
   },
-  "web_accessible_resources": [
-    {
-      "resources": ["*.*"],
-      "matches": [
-        "*://*/*",
-        "file://*/*"
-      ]
-    }
-  ],
-  "content_security_policy": {
-    "extension_pages": "script-src 'self'; object-src 'self'"
-  },
   "content_scripts": [
     {
       "all_frames": true,
@@ -54,8 +42,20 @@
       ]
     }
   ],
+  "web_accessible_resources": [
+    {
+      "resources": ["*.*"],
+      "matches": [
+        "*://*/*",
+        "file://*/*"
+      ]
+    }
+  ],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
+  },
   "host_permissions": [
-    "https://*/*"
+    "*://*/*"
   ],
   "permissions": [
     "tts",

@@ -1,20 +1,21 @@
 //-- User script app (page context)
+// FIXME: for some reasons `content_scripts` in firefox `manifest.json (v3)` is not automatically injected..
+// TODO: but it's injected right after clicking extension's action icon (browser's toolbar)
 
 import "./user-script.scss";
-import "../packages.setup";
+import "../setup";
 import React from "react";
 import { createRoot } from "react-dom/client";
 import { action, computed, makeObservable, observable, toJS } from "mobx";
 import { observer } from "mobx-react";
 import { debounce, isEqual } from "lodash"
+import { preloadAppData } from "../preload";
 import { autoBind, getHotkey } from "../utils";
 import { getManifest, getURL, MessageType, onMessage, proxyRequest, ProxyResponseType, TranslateWithVendorPayload } from "../extension";
 import { getNextTranslator, getTranslator, ITranslationError, ITranslationResult, TranslatePayload } from "../vendors";
 import { XTranslateIcon } from "./xtranslate-icon";
 import { Popup } from "../components/popup/popup";
 import { settingsStore } from "../components/settings/settings.storage";
-import { themeStore } from "../components/theme-manager/theme.storage";
-import { i18nInit } from "../i18n";
 
 export type CustomDomRect = Partial<Writeable<DOMRect>>;
 
@@ -22,22 +23,16 @@ export type CustomDomRect = Partial<Writeable<DOMRect>>;
 class App extends React.Component {
   static rootElem: HTMLElement;
 
-  static async init() {
+  static async init(preloadDeps?: () => Promise<unknown>) {
     const appElem = App.rootElem = document.createElement("div");
     appElem.classList.add("XTranslate");
 
     const shadowRoot = appElem.attachShadow({ mode: "closed" });
     const rootNode = createRoot(shadowRoot);
-
     document.documentElement.appendChild(appElem);
 
     // wait for dependent data before first render
-    await Promise.all([
-      i18nInit(),
-      settingsStore.ready,
-      themeStore.ready,
-    ]);
-
+    await preloadDeps?.();
     rootNode.render(<App/>);
   }
 
@@ -453,5 +448,5 @@ class App extends React.Component {
 // preload refs
 import "../../refs";
 
-// run
-App.init();
+// run content script
+App.init(() => Promise.all(preloadAppData()));

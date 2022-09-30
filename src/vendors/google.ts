@@ -186,5 +186,6 @@ export interface GoogleTranslation {
   }
 }
 
-const google = new Google();
-Translator.vendors.set(google.name, google);
+Translator.createInstances.push(
+  () => Translator.registerInstance(new Google()),
+);

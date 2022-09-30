@@ -1,26 +1,27 @@
 // Chrome storages api helper
+import { getBrowserInfo } from "./runtime";
 import { createLogger } from "../utils/createLogger";
 import { StorageHelper, StorageHelperOptions } from "../utils/storageHelper";
 
 export interface ChromeStorageHelperOptions<T> extends Omit<StorageHelperOptions<T>, "storage"> {
-  area?: chrome.storage.AreaName; // default: "local"
+  area?: chrome.storage.AreaName;
 }
 
 export function createStorageHelper<T>(key: string, options: ChromeStorageHelperOptions<T>) {
   const {
     area = "local",
-    autoLoad = true,
+    autoLoad = false,
     autoSyncDelay = 250,
     defaultValue,
     migrations,
   } = options;
 
-  const logger = createLogger({
-    systemPrefix: `[${area.toUpperCase()}]: chrome.storage["${key}"]`,
-  });
+  const logger = createLogger({ systemPrefix: `[StorageHelperLocal]` });
+  const browserStorage = getBrowserInfo().isFirefox
+    ? chrome.storage.local // TODO: support "sync" for firefox (maybe it's disabled only in dev-mode)
+    : chrome.storage[area];
 
   let storageResourceVersion = 1;
-  const chromeStorage = chrome.storage[area];
   const metadataVersionKey = `${key}@version`;
 
   const storageHelper = new StorageHelper<T>(key, {
@@ -31,7 +32,7 @@ export function createStorageHelper<T>(key: string, options: ChromeStorageHelper
     storage: {
       async setItem(key: string, value: T) {
         return new Promise(resolve => {
-          chromeStorage.set({
+          browserStorage.set({
             [key]: value,
             [metadataVersionKey]: ++storageResourceVersion,
           }, resolve)
@@ -39,7 +40,7 @@ export function createStorageHelper<T>(key: string, options: ChromeStorageHelper
       },
       async getItem(key: string): Promise<T> {
         return new Promise(resolve => {
-          chromeStorage.get([key, metadataVersionKey], items => {
+          browserStorage.get([key, metadataVersionKey], (items = {}) => {
             storageResourceVersion = Math.max(storageResourceVersion, items[metadataVersionKey] ?? 0);
             resolve(items[key]);
           })
@@ -47,7 +48,7 @@ export function createStorageHelper<T>(key: string, options: ChromeStorageHelper
       },
       async removeItem(key: string) {
         return new Promise(resolve => {
-          chromeStorage.remove([key, metadataVersionKey], resolve);
+          browserStorage.remove([key, metadataVersionKey], resolve);
         })
       },
     },
@@ -60,7 +61,7 @@ export function createStorageHelper<T>(key: string, options: ChromeStorageHelper
     const resourceVersion = changes[metadataVersionKey]?.newValue;
     const isUpdateRequired = resourceVersion > storageResourceVersion;
 
-    logger.info(`received update`, {
+    logger.info("update", {
       origin: location.href,
       isUpdateRequired,
       ...changes

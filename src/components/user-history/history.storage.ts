@@ -22,7 +22,7 @@ export interface HistoryTranslation<HistoryItem = IHistoryItem> {
 }
 
 export const historyStorage = createStorageHelper<HistoryStorageModel>("history", {
-  area: "local", // keep in chrome.storage.local
+  area: "local",
   autoLoad: false, // manual loading: before saving data or listing items
   defaultValue: {
     translations: {},

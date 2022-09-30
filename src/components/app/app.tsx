@@ -1,15 +1,15 @@
 //-- Main window app (options page)
 
 import "./app.scss";
-import "../../packages.setup";
+import "../../setup";
 import * as React from 'react';
 import { createRoot } from "react-dom/client"
 import { makeObservable, observable, reaction } from "mobx";
 import { observer } from "mobx-react";
+import { preloadAppData } from "../../preload";
 import { cssNames } from "../../utils/cssNames";
 import { getManifest } from "../../extension";
 import { settingsStore } from '../settings/settings.storage'
-import { themeStore } from "../theme-manager/theme.storage";
 import { Footer } from '../footer'
 import { Spinner } from "../spinner";
 import { Tab, Tabs } from "../tabs";
@@ -19,7 +19,7 @@ import { Notifications } from "../notifications";
 import { ExportImportSettingsDialog } from "../export-import-settings";
 import { defaultPageId, getParam, navigate, PageId } from "../../navigation";
 import { pageManager } from "./page-manager";
-import { getMessage, i18nInit } from "../../i18n";
+import { getMessage } from "../../i18n";
 import { DonationDialog } from "./donation-dialog";
 
 @observer
@@ -35,24 +35,18 @@ export class App extends React.Component {
     makeObservable(this);
   }
 
-  static async init() {
+  static async init(preloadDeps?: () => Promise<unknown>) {
     document.title = App.manifest.name;
 
     var rootElem = document.getElementById('app');
     var rootNode = createRoot(rootElem);
     rootNode.render(<Spinner center/>); // show loading indicator
 
-    // wait for dependent data before render
-    await Promise.all([
-      i18nInit(),
-      settingsStore.ready,
-      themeStore.ready,
-    ]);
-
     reaction(() => settingsStore.data.useDarkTheme, App.switchTheme, {
       fireImmediately: true,
     });
 
+    await preloadDeps?.();
     rootNode.render(<App/>);
   }
 
@@ -64,7 +58,7 @@ export class App extends React.Component {
     chrome.windows.create({
       url: location.href,
       focused: true,
-      width: 600,
+      width: 650,
       height: 700,
       left: 25,
       top: 25,
@@ -137,5 +131,5 @@ export class App extends React.Component {
   }
 }
 
-// init app
-App.init();
+// render app
+App.init(() => Promise.all(preloadAppData()));

@@ -11,9 +11,25 @@ export function getURL(path = ""): string {
   return chrome.runtime.getURL(path);
 }
 
+export function getBrowserInfo() {
+  const firefoxVersion = navigator.userAgent.match(/firefox\/(?:\d+\.?)+/i);
+  const chromeVersion = navigator.userAgent.match(/chrome\/(?:\d+\.?)+/i);
+
+  return {
+    isFirefox: !!firefoxVersion,
+    isChrome: !!chromeVersion,
+  }
+}
+
 export function isBackgroundPage(): boolean {
-  const serviceWorkerScript = getManifest().background.service_worker;
-  return location.href.startsWith(getURL(serviceWorkerScript));
+  const isGeneratedBgcPage = location.href.startsWith(getURL("_generated_background_page.html"));
+  if (isGeneratedBgcPage) return true;
+
+  const serviceWorkerFile = getManifest().background.service_worker; // manifest@v3
+  const bgcScriptFileV2 = (getManifest().background as chrome.runtime.ManifestV2["background"])?.scripts?.[0]; // manifest@v2
+  const bgcWorkerFilePath = getURL(serviceWorkerFile ?? bgcScriptFileV2);
+
+  return location.href.startsWith(bgcWorkerFilePath);
 }
 
 export function isOptionsPage(): boolean {

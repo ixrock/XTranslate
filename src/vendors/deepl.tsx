@@ -1,6 +1,6 @@
 import React from "react";
 import DeeplLanguages from "./deepl.json"
-import { ITranslationError, ITranslationResult, TranslateParams, Translator, TranslatorLanguages } from "./translator";
+import { getTranslator, ITranslationError, ITranslationResult, TranslateParams, Translator, TranslatorLanguages } from "./translator";
 import { createStorageHelper } from "../extension/storage";
 import { ProxyRequestInit } from "../extension";
 import { getMessage } from "../i18n";
@@ -176,13 +176,15 @@ export async function dump_deepl_json() {
     from: { "auto": "Auto-detect" },
     to: {},
   };
+  const deeplInstance = await getTranslator("deepl") as Deepl;
 
-  const from = await deepl.getSupportedLanguages("source");
-  const to = await deepl.getSupportedLanguages("target");
+  const from = await deeplInstance.getSupportedLanguages("source");
+  const to = await deeplInstance.getSupportedLanguages("target");
   from.forEach(({ name, language }) => supportedLanguages.from[language.toLowerCase()] = name);
   to.forEach(({ name, language }) => supportedLanguages.to[language.toLowerCase()] = name);
   console.log(JSON.stringify(supportedLanguages));
 }
 
-const deepl = new Deepl();
-Translator.vendors.set(deepl.name, deepl);
+Translator.createInstances.push(
+  () => Translator.registerInstance(new Deepl()),
+);

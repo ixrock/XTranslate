@@ -35,7 +35,7 @@ export class StorageHelper<T> {
     unbindAutoSync: null as IReactionDisposer,
   };
 
-  get whenReady() {
+  get whenReady(): Promise<void> {
     return when(() => this.initialized && this.loaded);
   };
 
@@ -48,7 +48,7 @@ export class StorageHelper<T> {
 
     // setup default options
     this.options = {
-      autoLoad: true,
+      autoLoad: false,
       autoSync: true,
       ...options
     };
@@ -83,14 +83,22 @@ export class StorageHelper<T> {
 
   @action
   load({ force = false } = {}) {
-    if (this.initialized && !force) return;
+    if (this.loading && !force) {
+      return this.whenReady; // skip
+    }
+
+    this.logger.info(`loading "${this.key}"`);
 
     this.initialized = true;
+    this.loading = true;
+
     try {
-      this.loading = true;
       const data = this.storage.getItem(this.key);
-      if (data instanceof Promise) data.then(this.onData, this.onError);
-      else this.onData(data);
+      if (data instanceof Promise) {
+        return data.then(this.onData, this.onError);
+      } else {
+        this.onData(data);
+      }
     } catch (error) {
       this.logger.error("loading failed", error);
       this.onError(error);
@@ -117,6 +125,7 @@ export class StorageHelper<T> {
   @action
   protected onData = (data: T) => {
     this.logger.info("data received", data);
+
     const notEmpty = data != null;
     if (notEmpty) {
       for (let callback of this.options.migrations ?? []) {
@@ -127,8 +136,10 @@ export class StorageHelper<T> {
         this.set(data);
       }
     }
+
     this.loaded = true;
     this.loading = false;
+    this.logger.info("data updated with defaults to:", this.toJS());
   };
 
   @action
@@ -145,6 +156,7 @@ export class StorageHelper<T> {
     return this.data.get();
   }
 
+  @action
   set(value: T, { silent = false } = {}) {
     if (silent && this.options.autoSync) {
       this.disposers?.unbindAutoSync();
@@ -155,10 +167,12 @@ export class StorageHelper<T> {
     }
   }
 
+  @action
   reset() {
     this.set(this.defaultValue);
   }
 
+  @action
   merge(state: Partial<T> | ((draft: Draft<T>) => Draft<T> | void)) {
     let value = this.toJS();
     let nextValue: T;

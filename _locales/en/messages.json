@@ -125,5 +125,6 @@
   "favorites_info_tooltip"           : {"message": "To mark/unmark language as favorite (list is shown on the top), use %hotkey% + click"},
   "donate_title"                     : {"message": "Donate"},
   "donate_via"                       : {"message": "Donate via"},
+  "donate_copy_wallet"               : {"message": "Copy address"},
   "donate_description"               : {"message": "If you like the app, don't hesitate to donate developers via cryptocurrency or paypal. Thanks!"}
 }

@@ -2,7 +2,7 @@
 
 import type React from "react";
 import { observable } from "mobx";
-import { autoBind, createLogger, JsonResponseError } from "../utils";
+import { autoBind, createLogger, disposer, JsonResponseError } from "../utils";
 import { ProxyRequestPayload, ProxyResponseType } from "../extension/messages";
 import { chromeTtsPlay, chromeTtsStop, getTranslationFromHistory, proxyRequest, saveToHistory } from "../extension/actions";
 import { settingsStore } from "../components/settings/settings.storage";
@@ -23,8 +23,14 @@ export interface TranslatePayload extends TranslateParams {
 }
 
 export abstract class Translator {
-  static readonly vendors = observable.map<string, Translator>();
+  static readonly vendors = observable.set<Translator>();
   static readonly logger = createLogger({ systemPrefix: "[TRANSLATOR]" });
+
+  static createInstances = disposer();
+
+  static registerInstance(instance: Translator) {
+    Translator.vendors.add(instance);
+  };
 
   abstract name: string; // code name, e.g. "google"
   abstract title: string; // human readable name, e.g. "Google"
@@ -234,12 +240,19 @@ export function isRTL(lang: string) {
   ].includes(lang);
 }
 
+/**
+ * List of all registered vendors (translators)
+ */
 export function getTranslators(): Translator[] {
-  return Array.from(Translator.vendors.values());
+  return Array.from(Translator.vendors);
 }
 
-export function getTranslator(name: string) {
-  return Translator.vendors.get(name);
+/**
+ * Get registered vendor (translator) if any or nothing
+ * @param {string} name
+ */
+export function getTranslator<T extends Translator>(name: string): T {
+  return (Array.from(Translator.vendors) as T[]).find(vendor => vendor.name === name);
 }
 
 export function getNextTranslator(name: string, langFrom: string, langTo: string, reverse = false) {

@@ -2,14 +2,21 @@
 
 import { autorun } from "mobx";
 import { createTab, getActiveTab, getManifest, MessageType, sendMessageToTab, TranslateWithVendorPayload } from "../extension";
-import { settingsStore } from "../components/settings/settings.storage";
+import { settingsStorage } from "../components/settings/settings.storage";
 import { getTranslator, getTranslators } from "../vendors";
 import { getMessage, i18nInit } from "../i18n";
-import ContextType = chrome.contextMenus.ContextType;
 
-i18nInit().then(() => autorun(initMenus));
+export async function initContextMenus() {
+  await settingsStorage.load();
+  await i18nInit();
 
-export function initMenus() {
+  return autorun(refreshContextMenus);
+}
+
+export function refreshContextMenus() {
+  type ContextType = chrome.contextMenus.ContextType;
+
+  var { showInContextMenu } = settingsStorage.get();
   var appName = getManifest().name;
   var selectionContext: ContextType[] = ['selection'];
   var pageContext: ContextType[] = [...selectionContext, 'page'];
@@ -17,7 +24,7 @@ export function initMenus() {
 
   chrome.contextMenus.removeAll(); // clean up before reassign
   chrome.contextMenus.onClicked.addListener(onClickMenuItem);
-  if (!settingsStore.data.showInContextMenu) return; // skip re-creating
+  if (!showInContextMenu) return; // skip re-creating
 
   chrome.contextMenus.create({
     id: appName,
@@ -67,7 +74,7 @@ async function onClickMenuItem(info: chrome.contextMenus.OnClickData) {
 
   switch (type) {
     case MessageType.TRANSLATE_FULL_PAGE: {
-      const { langTo } = settingsStore.data;
+      const { langTo } = settingsStorage.get();
       const url = getTranslator(vendor).getFullPageTranslationUrl(pageUrl, langTo);
       if (url) createTab(url);
       break;

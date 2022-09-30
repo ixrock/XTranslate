@@ -6,9 +6,9 @@ By using Chrome or Edge browser extension "XTranslate" you consent to this priva
 
 ## Collecting, storing & sharing user data
 
-- some of local user data, like history of translations might be stored via chrome.storage APIs (see more: https://developer.chrome.com/extensions/storage)
-- this extension might use cookies & HTML 5 local storage in order to make the extension's work properly and provide consistent user experience
-- no any user data shared with third-parties
+- Some of generated user data, like history of translations might be stored via chrome.storage APIs (see more: https://developer.chrome.com/extensions/storage)
+- This extension might use cookies & HTML 5 local storage in order to make the extension's work properly and provide consistent user experience
+- No any user data shared with third-parties
 
 ## How to delete all my user data related to the extension?
 

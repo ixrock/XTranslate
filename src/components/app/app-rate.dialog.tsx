@@ -19,17 +19,15 @@ export class AppRateDialog extends React.Component {
   }
 
   async componentDidMount() {
-    await Promise.all([
-      rateButtonClicked.whenReady,
-      rateLastTimestamp.whenReady,
-    ]);
+    await rateButtonClicked.load();
+    await rateLastTimestamp.load();
     this.visibilityCheck();
   }
 
   visibilityCheck() {
     var isRated = rateButtonClicked.get();
     var delayLastTime = rateLastTimestamp.get();
-    var delayDuration = 1000 * 60 * 60 * 24 * 30 * 3; // 3 months
+    var delayDuration = 1000 * 60 * 60 * 24 * 30 * 2; // 2 months
     var isHidden = isRated || (delayLastTime + delayDuration > Date.now());
     this.isOpen = !isHidden;
   }

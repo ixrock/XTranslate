@@ -31,7 +31,7 @@
   "repository": "https://github.com/ixrock/XTranslate.git",
   "license": "MIT",
   "dependencies": {
-    "@types/chrome": "^0.0.180",
+    "@types/chrome": "^0.0.197",
     "@types/copy-webpack-plugin": "^10.1.0",
     "@types/crypto-js": "^4.1.1",
     "@types/hoist-non-react-statics": "^3.3.1",

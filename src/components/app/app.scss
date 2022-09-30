@@ -58,9 +58,8 @@ hr {
 
 #app {
   margin: auto;
-  max-width: 700px;
-  min-width: 560px;
-  min-height: 599px; // max allowed height within chrome's extension window
+  width: var(--theme-content-width);
+  min-height: 600px;
   padding: var(--theme-spacing-double) calc(var(--theme-spacing) * 3);
 }
 
@@ -72,6 +71,7 @@ header {
   padding-bottom: var(--theme-spacing-half);
 
   .app-version {
+    text-transform: lowercase;
     font-weight: normal;
     font-size: 11px;
   }

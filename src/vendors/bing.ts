@@ -169,5 +169,6 @@ interface DictTranslation {
   }[]
 }
 
-const bing = new Bing();
-Translator.vendors.set(bing.name, bing);
+Translator.createInstances.push(
+  () => Translator.registerInstance(new Bing()),
+);
