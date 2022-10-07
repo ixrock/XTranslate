@@ -24,6 +24,8 @@ class App extends React.Component {
   static rootElem: HTMLElement;
 
   static async init(preloadDeps?: () => Promise<unknown>) {
+    await preloadDeps?.();
+
     const appElem = App.rootElem = document.createElement("div");
     appElem.classList.add("XTranslate");
 
@@ -32,7 +34,6 @@ class App extends React.Component {
     document.documentElement.appendChild(appElem);
 
     // wait for dependent data before first render
-    await preloadDeps?.();
     rootNode.render(<App/>);
   }
 
