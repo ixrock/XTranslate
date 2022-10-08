@@ -1,7 +1,7 @@
 import { reaction } from "mobx";
 import { Color } from "react-color"
 import { getURL, proxyRequest, ProxyResponseType } from "../../extension";
-import { createLogger } from "../../utils";
+import { createLogger, disposer } from "../../utils";
 import { createStorageHelper } from "../../extension/storage";
 
 export const themeStorage = createStorageHelper("theme", {
@@ -40,10 +40,7 @@ export interface IThemeFont {
 export class ThemeStore {
   private storage = themeStorage;
   private logger = createLogger({ systemPrefix: `[THEME]` });
-
-  get data() {
-    return this.storage.get();
-  }
+  private dispose = disposer();
 
   public iconsFont: IThemeFont = {
     familyName: "MaterialIcons-XTranslate", // must be the same as defined for <Icon material="">, see: icon.scss
@@ -65,6 +62,21 @@ export class ThemeStore {
     "solid", "dotted", "dashed", "double", "groove", "ridge", "inset", "outset"
   ];
 
+  get data() {
+    return this.storage.get();
+  }
+
+  private bindEvents() {
+    this.dispose(); // clear existing handlers if added previously
+
+    this.dispose.push(
+      // refresh active font when changed in the settings
+      reaction(() => this.data.fontFamily, font => this.loadFont(font), {
+        fireImmediately: true,
+      }),
+    );
+  }
+
   async load() {
     if (themeStorage.loading) {
       return themeStorage.whenReady;
@@ -72,12 +84,7 @@ export class ThemeStore {
 
     await this.loadFont(this.iconsFont);
     await themeStorage.load();
-
-    // refresh active font when changed in the settings
-    reaction(() => this.data.fontFamily, font => this.loadFont(font), {
-      name: "theme-font-loader",
-      fireImmediately: true,
-    });
+    this.bindEvents();
   }
 
   getBundledFont(font: string | IThemeFont): IThemeFont {

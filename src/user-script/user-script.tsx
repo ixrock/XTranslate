@@ -23,8 +23,8 @@ export type CustomDomRect = Partial<Writeable<DOMRect>>;
 class App extends React.Component {
   static rootElem: HTMLElement;
 
-  static async init(preloadDeps?: () => Promise<unknown>) {
-    await preloadDeps?.();
+  static async init(preloadDeps: () => Promise<void>) {
+    await preloadDeps();
 
     const appElem = App.rootElem = document.createElement("div");
     appElem.classList.add("XTranslate");
@@ -450,4 +450,4 @@ class App extends React.Component {
 import "../../refs";
 
 // run content script
-App.init(() => Promise.all(preloadAppData()));
+App.init(preloadAppData);

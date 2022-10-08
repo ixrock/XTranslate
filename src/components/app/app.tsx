@@ -35,18 +35,19 @@ export class App extends React.Component {
     makeObservable(this);
   }
 
-  static async init(preloadDeps?: () => Promise<unknown>) {
+  static async init(preloadDeps: () => Promise<void>) {
     document.title = App.manifest.name;
 
     var rootElem = document.getElementById('app');
     var rootNode = createRoot(rootElem);
     rootNode.render(<Spinner center/>); // show loading indicator
 
+    await preloadDeps(); // preload dependent data before initial app rendering
+
     reaction(() => settingsStore.data.useDarkTheme, App.switchTheme, {
       fireImmediately: true,
     });
 
-    await preloadDeps?.();
     rootNode.render(<App/>);
   }
 
@@ -132,4 +133,4 @@ export class App extends React.Component {
 }
 
 // render app
-App.init(() => Promise.all(preloadAppData()));
+App.init(preloadAppData);

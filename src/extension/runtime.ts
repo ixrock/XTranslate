@@ -38,36 +38,23 @@ export function isOptionsPage(): boolean {
 }
 
 export async function sendMessage<Request, Response = any, Error = any>({ tabId, ...message }: Message<Request> & { tabId?: number }): Promise<Response> {
-  let resolve: (data: Response) => void;
-  let reject: (error: Error) => void;
+  let response: { data?: Response, error?: Error };
 
   if (tabId) {
-    sendMessageToTab(tabId, message, responseCallback);
+    response = await sendMessageToTab(tabId, message);
   } else {
-    chrome.runtime.sendMessage(message, responseCallback);
+    response = await chrome.runtime.sendMessage(message);
   }
 
-  function responseCallback(res: { data?: Response, error?: Error } = {}) {
-    const resultFields = Object.getOwnPropertyNames(res) as (keyof typeof res)[];
-
-    if (resultFields.includes("data")) resolve(res.data);
-    if (resultFields.includes("error")) reject(res.error);
-    else resolve(null); // called in case `onMessage(() => undefined)`
-
-    // fix: "Could not establish connection. Receiving end does not exist."
-    if (chrome.runtime.lastError) {
-      // do nothing
-    }
+  if (response?.data) {
+    return response.data;
+  } else if (response?.error) {
+    throw response.error;
   }
-
-  return new Promise((res, rej) => {
-    resolve = res;
-    reject = rej;
-  });
 }
 
 export interface OnMessageCallback<Request, Response> {
-  (req: Request): Promise<Response> | Response;
+  (req: Request): Promise<Response> | Response | undefined;
 }
 
 export function onMessage<Request, Response = unknown>(type: MessageType, getResult: OnMessageCallback<Request, Response>) {
@@ -77,9 +64,13 @@ export function onMessage<Request, Response = unknown>(type: MessageType, getRes
     _listener = listener;
 
     if (message.type === type) {
-      Promise.resolve(getResult(message.payload))
-        .then(data => sendResponse({ data }))
-        .catch(error => sendResponse({ error }));
+      try {
+        Promise.resolve(getResult(message.payload))
+          .then(data => sendResponse({ data }))
+          .catch(error => sendResponse({ error }));
+      } catch (error) {
+        sendResponse({ error });
+      }
     }
 
     // wait for async response

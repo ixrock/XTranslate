@@ -9,7 +9,7 @@ export function disposer(...args: Function[]): Disposer {
   const disposers = [...args];
 
   function dispose() {
-    disposers.forEach(dispose => dispose?.());
+    disposers.forEach(dispose => dispose());
     disposers.length = 0;
   }
 
