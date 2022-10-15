@@ -1,8 +1,17 @@
 import BingLanguages from "./bing.json"
-import { groupBy } from "lodash";
+import { groupBy, isEmpty } from "lodash";
 import { createStorageHelper, ProxyRequestInit, ProxyResponseType } from "../extension";
-import { isTranslationError, ITranslationError, ITranslationResult, TranslateParams, Translator } from "./translator";
+import { ITranslationError, ITranslationResult, TranslateParams, Translator } from "./translator";
 import { createLogger } from "../utils";
+
+export interface BingParsedGlobalParams {
+  key: string;
+  token: string;
+  IG: string;
+  IID: string;
+  isVertical?: boolean;
+  tokenExpiryTime?: number;
+}
 
 class Bing extends Translator {
   public name = 'bing';
@@ -15,92 +24,112 @@ class Bing extends Translator {
   }
 
   protected logger = createLogger({ systemPrefix: "[BING]" });
-  protected apiClient = createStorageHelper<{ key?: string, token?: string }>("bing_api_client", {
-    defaultValue: {},
+  protected apiGlobalParams = createStorageHelper<BingParsedGlobalParams>("bing_api_global_params", {
+    defaultValue: {} as BingParsedGlobalParams,
   });
 
   getFullPageTranslationUrl(pageUrl: string, lang: string): string {
     return `https://www.microsofttranslator.com/bv.aspx?to=${lang}&a=${pageUrl}`
   }
 
-  protected async refreshApiClient() {
-    this.logger.info('refreshing api client..', {
-      current: this.apiClient.toJS()
-    });
+  protected getQueryApiParams(): string {
+    const { isVertical, IID, IG } = this.apiGlobalParams.get();
+
+    return new URLSearchParams({
+      IID, IG,
+      isVertical: String(isVertical ? 1 : 0),
+    }).toString();
+  }
+
+  protected async beforeRequest() {
+    if (!this.apiGlobalParams.loaded) {
+      await this.apiGlobalParams.load();
+    }
+
+    const params = this.apiGlobalParams.get();
+    if (isEmpty(params) || params.tokenExpiryTime < Date.now()) {
+      await this.refreshApiParams();
+    }
+  }
+
+  protected async refreshApiParams() {
     try {
-      const servicePageText = await this.request<string>({
+      const bingPageHtml = await this.request<string>({
         url: this.publicUrl,
         responseType: ProxyResponseType.TEXT,
         requestInit: {},
       });
-      const matchedParams = /params_RichTranslateHelper\s*=\s*\[(\d+),"(.*?)",.*?\]/.exec(servicePageText);
-      if (matchedParams) {
-        const [page, key, token] = matchedParams;
-        this.logger.info(`api client updated`, { key, token });
-        this.apiClient.set({ key, token });
+
+      const params = /params_RichTranslateHelper\s*=\s*\[(\d+),"(.*?)",(\d+),(true|false),.*?\]/.exec(bingPageHtml);
+      if (params) {
+        const [pageHtml, key, token, tokenExpiryTimeout, isVertical] = params;
+        const IG = bingPageHtml.match(/IG:"([^"]+)"/)?.[1]
+        const IID = bingPageHtml.match(/data-iid="([^"]+)"/)?.[1]
+        const parsedGlobalParams: BingParsedGlobalParams = {
+          key, token,
+          IID, IG,
+          tokenExpiryTime: Number(key) /*timestamp*/ + Number(tokenExpiryTimeout),
+          isVertical: JSON.parse(isVertical),
+        };
+        this.logger.info(`GLOBAL API PARAMS UPDATED`, parsedGlobalParams);
+        this.apiGlobalParams.set(parsedGlobalParams);
       }
     } catch (error) {
-      this.logger.error('refreshing api failed', error);
+      this.logger.error('GLOBAL API UPDATE FAILED', error);
     }
   }
 
   async translate(params: TranslateParams): Promise<ITranslationResult> {
     var { from: langFrom, to: langTo, text } = params;
-    var apiClientRefreshed = false;
 
     var reqInitCommon: ProxyRequestInit = {
       method: "POST",
       credentials: "include",
       headers: {
-        "Content-type": "application/x-www-form-urlencoded"
+        "Content-type": "application/x-www-form-urlencoded",
+        "User-Agent": navigator.userAgent,
       }
     }
-    var translationReq = (langFrom: string): Promise<BingTranslation[]> => {
+    var translationReq = async (langFrom: string): Promise<BingTranslation[]> => {
+      const { key, token } = this.apiGlobalParams.get();
+      const queryParams = this.getQueryApiParams();
+
       return this.request({
-        url: this.apiUrl + "/ttranslatev3",
+        url: this.apiUrl + `/ttranslatev3?${queryParams}`,
         requestInit: {
           ...reqInitCommon,
           body: new URLSearchParams({
             fromLang: langFrom === "auto" ? "auto-detect" : langFrom,
             to: langTo,
-            text: text,
-            ...this.apiClient.get(),
+            text, key, token,
           }).toString(),
         }
       });
     };
 
-    var dictionaryReq = (langFrom: string): Promise<BingDictionary[]> => {
-      var url = this.apiUrl + '/tlookupv3';
+    var dictionaryReq = async (langFrom: string): Promise<BingDictionary[]> => {
+      const { key, token } = this.apiGlobalParams.get();
+      const queryParams = this.getQueryApiParams();
+
       return this.request({
-        url: url,
+        url: this.apiUrl + `/tlookupv3?${queryParams}`,
         requestInit: {
           ...reqInitCommon,
           body: new URLSearchParams({
             from: langFrom,
             to: langTo,
-            text: text,
-            ...this.apiClient.get(),
+            text, key, token,
           }).toString(),
         }
       });
     };
 
     var request = async (): Promise<ITranslationResult> => {
-      var response = await translationReq(langFrom);
+      await this.beforeRequest();
+      const response = await translationReq(langFrom);
 
-      // bing errors comes with normal http-status == 200 via proxy fetch
-      if (isTranslationError(response)) {
-        if (response.statusCode === 400 && !apiClientRefreshed) {
-          apiClientRefreshed = true;
-          return this.refreshApiClient().then(request);
-        }
-        this.logger.error(response);
-        throw response;
-      }
-
-      var { translations, detectedLanguage } = response[0];
-      var result: ITranslationResult = {
+      const { translations, detectedLanguage } = response[0];
+      const result: ITranslationResult = {
         langDetected: detectedLanguage.language,
         translation: translations.length ? translations[0].text : "",
       };
