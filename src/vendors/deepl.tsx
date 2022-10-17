@@ -27,6 +27,7 @@ class Deepl extends Translator {
   }
 
   protected authKey = createStorageHelper("deepl_api_auth_key", {
+    autoLoad: true,
     defaultValue: "b05afc95-d4ea-2bee-07e6-e81469c588f2:fx", // free subscription key (example)
   });
 
