@@ -1,7 +1,7 @@
 import React from "react";
 import { observable } from "mobx";
 import { createStorageHelper, getURL, isBackgroundPage, proxyRequest } from "./extension";
-import { createLogger } from "./utils";
+import { createLogger } from "./utils/createLogger";
 
 export type Locale = "en" | "de" | "ru" | "sr" | "zh_TW";
 

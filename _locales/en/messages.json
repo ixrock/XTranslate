@@ -126,5 +126,7 @@
   "donate_title"                     : {"message": "Donate"},
   "donate_via"                       : {"message": "Donate via"},
   "donate_copy_wallet"               : {"message": "Copy address"},
-  "donate_description"               : {"message": "If you like the app, don't hesitate to donate developers via cryptocurrency. Thanks!"}
+  "donate_description"               : {"message": "If you like the app, don't hesitate to donate developers via cryptocurrency. Thanks!"},
+  "service_unavailable"              : {"message": "Service unavailable. Try again after 5-25 minutes. If this happens constantly increase translation delay in the settings."},
+  "service_confirm_not_a_robot"      : {"message": "Also you can go to %link% and confirm that you're not a robot."}
 }

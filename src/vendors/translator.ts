@@ -56,8 +56,10 @@ export abstract class Translator {
 
   abstract translate(params: TranslateParams): Promise<ITranslationResult>;
 
-  protected request<Response>(payload: ProxyRequestPayload): Promise<Response> {
-    return proxyRequest(payload);
+  protected async request<Response>(payload: ProxyRequestPayload): Promise<Response> {
+    const response = await proxyRequest(payload);
+    if (isTranslationError(response)) throw response;
+    return response as Response;
   }
 
   async #handleTranslation(
@@ -226,8 +228,9 @@ export interface ITranslationDictionaryMeaning {
 export interface ITranslationError extends JsonResponseError {
 }
 
-export function isTranslationError(error: ITranslationError | any): error is ITranslationError {
-  return error?.statusCode > 0 && error?.statusCode < 500; // valid http-status code
+export function isTranslationError(error: ITranslationResult | ITranslationError | unknown): error is ITranslationError {
+  const httpStatus = (error as ITranslationError)?.statusCode;
+  return Number.isInteger(httpStatus) && !(httpStatus >= 200 && httpStatus < 300);
 }
 
 export function isRTL(lang: string) {

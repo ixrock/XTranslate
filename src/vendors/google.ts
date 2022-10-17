@@ -2,6 +2,7 @@ import GoogleLanguages from "./google.json"
 import { createStorageHelper, ProxyRequestInit } from "../extension";
 import { isTranslationError, ITranslationResult, TranslateParams, Translator } from "./translator";
 import { createLogger, delay } from "../utils";
+import { getMessage } from "../i18n";
 
 export class Google extends Translator {
   public name = 'google';
@@ -105,9 +106,12 @@ export class Google extends Translator {
         // TODO: handle 429 header "Retry-After" from response if provided
         // overwrite proxy error about invalid json-response (google returns html-page in that case)
         // SyntaxError: Unexpected token < in JSON at position 0
-        const invalidJsonResponse = [400, 429].includes(error.statusCode);
-        if (invalidJsonResponse) {
-          error.message = `Service unavailable. Try again after 5-30 minutes.`;
+        const banFromGoogleForSuspiciousTraffic = [400, 429].includes(error.statusCode);
+        if (banFromGoogleForSuspiciousTraffic) {
+          error.message = [
+            getMessage("service_unavailable"),
+            getMessage("service_confirm_not_a_robot", { link: "https://translate.googleapis.com/translate_a/single" }),
+          ].join(" ");
         }
 
         if (error.statusCode === 503 && !apiClientRefreshed) {
