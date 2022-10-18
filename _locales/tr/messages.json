@@ -126,7 +126,7 @@
   "donate_title"                     : {"message": "Bağış yap"},
   "donate_via"                       : {"message": "Bağış yap"},
   "donate_copy_wallet"               : {"message": "Adresi kopyala"},
-  "donate_description"               : {"message": "Uygulamayı beğendiyseniz, geliştiricilere kripto para birimi aracılığıyla bağış yapmaktan çekinmeyin. Teşekkürler!"}
+  "donate_description"               : {"message": "Uygulamayı beğendiyseniz, geliştiricilere kripto para birimi aracılığıyla bağış yapmaktan çekinmeyin. Teşekkürler!"},
   "service_unavailable"              : {"message": "Hizmet kullanılamıyor. 5-25 dakika sonra tekrar deneyin. Bu gerçekleşirse, ayarlardaki çeviri gecikmesini sürekli olarak artırın."},
   "service_confirm_not_a_robot"      : {"message": "Ayrıca %link% adresine gidebilir ve robot olmadığınızı onaylayabilirsiniz."}
 }
