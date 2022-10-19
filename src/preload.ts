@@ -9,7 +9,7 @@ import { createLogger } from "./utils/createLogger";
 
 const logger = createLogger({ systemPrefix: `[PRELOAD]` });
 
-export async function preloadAppData() {
+export async function initAppData() {
   try {
     await Promise.all([
       i18nInit().then(() => logger.info("localization data ready")),

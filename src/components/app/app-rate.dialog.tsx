@@ -6,7 +6,7 @@ import { Dialog } from "../dialog";
 import { Button } from "../button";
 import { Icon } from "../icon";
 import { getMessage } from "../../i18n";
-import { extensionUrl } from "../../common-vars";
+import { getExtensionUrl } from "../../common-vars";
 import { rateButtonClicked, rateLastTimestamp } from "./app-rate.storage";
 
 @observer
@@ -33,7 +33,7 @@ export class AppRateDialog extends React.Component {
   }
 
   rateApp = () => {
-    window.open(extensionUrl);
+    window.open(getExtensionUrl());
     rateButtonClicked.set(true);
     this.close();
   }

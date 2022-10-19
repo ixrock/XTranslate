@@ -48,6 +48,8 @@ export class Google extends Translator {
   }
 
   async translate(params: TranslateParams): Promise<ITranslationResult> {
+    await this.apiClient.load();
+
     var { from: langFrom, to: langTo, text } = params;
     var apiClientRefreshed = false;
     var requestInit: ProxyRequestInit = {

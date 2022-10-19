@@ -1,15 +1,14 @@
 //-- Background service worker
 
 import "../setup";
-import "./contextMenu"
+import { initContextMenus } from "./contextMenu";
 import { isProduction } from "../common-vars";
 import { blobToBase64DataUrl, createLogger, parseJson } from "../utils";
 import { ChromeTtsPayload, MessageType, onInstall, onMessage, openOptionsPage, ProxyRequestPayload, ProxyResponsePayload, ProxyResponseType, SaveToHistoryPayload } from '../extension'
 import { rateLastTimestamp } from "../components/app/app-rate.storage";
 import { settingsStorage } from "../components/settings/settings.storage";
 import { generateId, historyStorage, IHistoryStorageItem, importHistory, toStorageItem, toTranslationResult } from "../components/user-history/history.storage";
-import { initContextMenus } from "./contextMenu";
-import { type TranslatePayload } from "../vendors/translator";
+import { TranslatePayload } from "../vendors";
 
 const logger = createLogger({ systemPrefix: '[BACKGROUND]' });
 

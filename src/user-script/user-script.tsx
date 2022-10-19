@@ -1,6 +1,4 @@
 //-- User script app (page context)
-// FIXME: for some reasons `content_scripts` in firefox `manifest.json (v3)` is not automatically injected..
-// TODO: but it's injected right after clicking extension's action icon (browser's toolbar)
 
 import "./user-script.scss";
 import "../setup";
@@ -9,13 +7,14 @@ import { createRoot } from "react-dom/client";
 import { action, computed, makeObservable, observable, toJS } from "mobx";
 import { observer } from "mobx-react";
 import { debounce, isEqual } from "lodash"
-import { preloadAppData } from "../preload";
+import { initAppData } from "../preload";
 import { autoBind, getHotkey } from "../utils";
 import { getManifest, getURL, MessageType, onMessage, proxyRequest, ProxyResponseType, TranslateWithVendorPayload } from "../extension";
 import { getNextTranslator, getTranslator, ITranslationError, ITranslationResult, TranslatePayload } from "../vendors";
 import { XTranslateIcon } from "./xtranslate-icon";
 import { Popup } from "../components/popup/popup";
 import { settingsStore } from "../components/settings/settings.storage";
+import { contentScriptEntry } from "../common-vars";
 
 export type CustomDomRect = Partial<Writeable<DOMRect>>;
 
@@ -64,7 +63,7 @@ class App extends React.Component {
 
   async preloadCss() {
     this.userStyle = await proxyRequest({
-      url: getURL("user-script.css"),
+      url: getURL(`${contentScriptEntry}.css`),
       responseType: ProxyResponseType.TEXT,
     });
   }
@@ -450,4 +449,4 @@ class App extends React.Component {
 import "../../refs";
 
 // run content script
-App.init(preloadAppData);
+App.init(initAppData);

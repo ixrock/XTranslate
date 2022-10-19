@@ -3,13 +3,16 @@ import { observable } from "mobx";
 import { createStorageHelper, getURL, isBackgroundPage, proxyRequest } from "./extension";
 import { createLogger } from "./utils/createLogger";
 
-export type Locale = "en" | "de" | "ru" | "sr" | "zh_TW";
+export type Locale = keyof typeof locales;
 
-export const supportedLocales: Record<Locale, string> = {
+// List of all provided locales from `_locales/*` folders
+// Supported locales by browser: https://src.chromium.org/viewvc/chrome/trunk/src/third_party/cld/languages/internal/languages.cc
+export const locales = {
   en: "English",
   de: "German",
   ru: "Russian",
   sr: "Serbian",
+  tr: "Turkish",
   zh_TW: "Chinese (Taiwan)",
 };
 
@@ -30,7 +33,7 @@ export const i18nStorage = createStorageHelper("i18n", {
 });
 
 async function loadMessages(lang: Locale) {
-  if (messages.has(lang) || !supportedLocales[lang]) {
+  if (messages.has(lang) || !locales[lang]) {
     return; // skip, already loaded or doesn't exist
   }
   const localizationFile = getURL(`_locales/${lang}/messages.json`);
@@ -80,12 +83,12 @@ export function getLocale(): Locale {
 
 export function getSystemLocale(): Locale {
   const locale = (chrome.i18n.getUILanguage?.() ?? navigator.language) as Locale;
-  if (supportedLocales[locale]) {
+  if (locales[locale]) {
     return locale;
   }
 
   const lang = locale.split(/_-/)[0] as Locale; // handle "en-GB", etc.
-  return supportedLocales[lang] ? lang : "en";
+  return locales[lang] ? lang : "en";
 }
 
 export async function i18nInit() {

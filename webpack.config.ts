@@ -1,28 +1,29 @@
+import type webpack from 'webpack'
 import path from 'path'
 import HtmlWebpackPlugin from 'html-webpack-plugin'
 import CopyWebpackPlugin from 'copy-webpack-plugin'
 import MiniCssExtractPlugin from 'mini-css-extract-plugin'
+import { appEntry, serviceWorkerEntry, contentScriptEntry, isDevelopment } from "./src/common-vars";
 
-export default () => {
-  var isDevelopment = process.env.NODE_ENV !== "production";
-  var srcPath = path.resolve(__dirname, "src");
-  var distPath = path.resolve(__dirname, "dist");
-  var optionsPage = path.resolve(__dirname, "options.html");
-  var componentsDir = path.resolve(srcPath, "components");
-  var sassCommonVarsImport = `@import "mixins", "colors";`; // sass-constants & mixins only
+const srcPath = path.resolve(__dirname, "src");
+const distPath = path.resolve(__dirname, "dist");
+const optionsPage = path.resolve(__dirname, "options.html");
+const componentsDir = path.resolve(srcPath, "components");
+const sassCommonVarsImport = `@import "mixins", "colors";`; // sass-constants & mixins only
 
+const configEntries: webpack.EntryObject = {
+  [appEntry]: path.resolve(componentsDir, "app/index.tsx"),
+  [contentScriptEntry]: path.resolve(srcPath, "user-script/user-script.tsx"),
+  [serviceWorkerEntry]: path.resolve(srcPath, "background/background.ts"),
+};
+
+function webpackBaseConfig(): webpack.Configuration {
   return {
-    target: "web", // https://webpack.js.org/configuration/target/
+    target: "web",
     devtool: isDevelopment ? "source-map" : undefined, // https://webpack.js.org/configuration/devtool/
     mode: isDevelopment ? "development" : "production",
     cache: isDevelopment ? { type: "filesystem" } : false,
-
-    entry: {
-      // generated output files (*.js, *.css)
-      "app": path.resolve(componentsDir, "app/index.tsx"),
-      "background": path.resolve(srcPath, "background/background.ts"),
-      "user-script": path.resolve(srcPath, "user-script/user-script.tsx")
-    },
+    entry: {},
 
     output: {
       libraryTarget: "global",
@@ -39,13 +40,15 @@ export default () => {
     },
 
     optimization: {
-      minimize: false
+      minimize: false,
     },
 
     resolve: {
       extensions: ['.ts', '.tsx', '.js', '.json', ".scss", ".css"],
       fallback: {
-        crypto: false // ignore browser polyfill warnings from "crypto-js" package
+        // ignore browser polyfill warnings
+        crypto: false,
+        path: false,
       }
     },
 
@@ -117,16 +120,30 @@ export default () => {
     },
 
     plugins: [
+      new MiniCssExtractPlugin({ filename: '[name].css' })
+    ]
+  }
+}
+
+export default [
+  // app.js (browser action window)
+  function () {
+    const webConfig = webpackBaseConfig();
+    webConfig.target = "web"
+    webConfig.entry = {
+      [appEntry]: configEntries[appEntry],
+    };
+
+    webConfig.plugins = [
       new HtmlWebpackPlugin({
         inject: true,
         chunks: ["app"],
         filename: path.basename(optionsPage),
         template: optionsPage,
+        scriptLoading: "blocking", // required with `optimization.splitChunks`
       }),
 
-      new MiniCssExtractPlugin({
-        filename: '[name].css'
-      }),
+      new MiniCssExtractPlugin({ filename: '[name].css' }),
 
       new CopyWebpackPlugin({
         patterns: [
@@ -137,6 +154,43 @@ export default () => {
           { from: "assets", to: "assets" },
         ]
       })
-    ]
+    ];
+
+    webConfig.optimization.splitChunks = {
+      chunks: "all",
+      cacheGroups: {
+        vendor: {
+          test: /node_modules/,
+          name({ resource }: webpack.NormalModule) {
+            const libPackGroup = resource.match(/node_modules\/(react|mobx|lodash)\b/)?.[1] ?? "common";
+
+            return `lib-${libPackGroup}`;
+          },
+        },
+      }
+    };
+
+    return webConfig;
+  },
+
+  // user-script.js (content pages)
+  function () {
+    const webConfig = webpackBaseConfig();
+    webConfig.target = "web"
+    webConfig.entry = {
+      [contentScriptEntry]: configEntries[contentScriptEntry]
+    };
+    return webConfig;
+  },
+
+  // background.js
+  // service-worker must be compiled with appropriate `config.target` to load chunks via global `importScripts()` in manifest@v3
+  function () {
+    const webConfig = webpackBaseConfig();
+    webConfig.target = "webworker";
+    webConfig.entry = {
+      [serviceWorkerEntry]: configEntries[serviceWorkerEntry]
+    };
+    return webConfig;
   }
-};
+];

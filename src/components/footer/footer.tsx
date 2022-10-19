@@ -1,6 +1,6 @@
 import styles from './footer.module.scss'
 import React from 'react';
-import { extensionUrl } from "../../common-vars";
+import { getExtensionUrl } from "../../common-vars";
 import { prevDefault } from '../../utils'
 import { getManifest } from '../../extension'
 import { getMessage } from "../../i18n";
@@ -21,7 +21,7 @@ export class Footer extends React.Component {
       icon: require('../icon/twitter.svg'),
       url: [
         `https://twitter.com/intent/tweet?source=webclient`,
-        `url=${extensionUrl}`,
+        `url=${getExtensionUrl()}`,
         `text=${[this.manifest.name, getMessage("short_description")].join(' - ')}`,
         `hashtags=${this.shareTags.join(',')}`
       ].join("&")

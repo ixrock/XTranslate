@@ -6,7 +6,7 @@ import * as React from 'react';
 import { createRoot } from "react-dom/client"
 import { makeObservable, observable, reaction } from "mobx";
 import { observer } from "mobx-react";
-import { preloadAppData } from "../../preload";
+import { initAppData } from "../../preload";
 import { cssNames } from "../../utils/cssNames";
 import { getManifest } from "../../extension";
 import { settingsStore } from '../settings/settings.storage'
@@ -133,4 +133,4 @@ export class App extends React.Component {
 }
 
 // render app
-App.init(preloadAppData);
+App.init(initAppData);
