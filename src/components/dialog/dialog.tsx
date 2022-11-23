@@ -6,7 +6,7 @@ import { createPortal, findDOMNode } from "react-dom";
 import { Animate } from "../animate";
 import { cssNames, IClassName, noop, stopPropagation } from "../../utils";
 
-export interface DialogProps {
+export interface DialogProps extends React.PropsWithChildren {
   isOpen: boolean
   modal?: boolean
   pinned?: boolean

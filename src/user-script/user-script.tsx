@@ -445,8 +445,5 @@ class App extends React.Component {
   }
 }
 
-// preload refs
-import "../../refs";
-
 // run content script
 App.init(initAppData);

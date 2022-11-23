@@ -150,7 +150,7 @@ export abstract class Translator {
     });
 
     if (useChromeTtsEngine) {
-      if (lang === "en") lang = "en-US";
+      if (lang.toLowerCase() === "en-us") lang = "en";
       chromeTtsPlay({ lang, text });
     } else if (audioUrl) {
       try {

@@ -6,16 +6,16 @@ import { Icon } from "../icon";
 
 const SelectContext = React.createContext<Select>(null);
 
-export interface SelectProps<T = any> {
+export interface SelectProps<V = any> extends React.PropsWithChildren {
   id?: string;
   className?: IClassName;
   autoFocus?: boolean;
   disabled?: boolean;
   required?: boolean;
-  value?: T;
-  onChange?(value: T, evt: React.ChangeEvent<HTMLSelectElement>): void;
-  getOptionValue?(value: T): string;
-  getOptionLabel?(value: T): string;
+  value?: V;
+  onChange?(value: V, evt: React.ChangeEvent<HTMLSelectElement>): void;
+  getOptionValue?(value: V): string;
+  getOptionLabel?(value: V): string;
 }
 
 export class Select extends React.Component<SelectProps> {

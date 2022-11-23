@@ -6,7 +6,7 @@ import { autoBind, cssNames, noop } from "../../utils";
 
 export type AnimateName = "opacity" | "slide-right" | "opacity-scale"; // predefined classnames in css
 
-export interface AnimateProps {
+export interface AnimateProps extends React.PropsWithChildren {
   name?: AnimateName;
   enter?: boolean;
   onEnter?: () => void;

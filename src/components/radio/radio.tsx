@@ -5,8 +5,8 @@ import { Checkbox, CheckboxProps } from "../checkbox";
 
 const RadioGroupContext = React.createContext<RadioGroup>(null);
 
-export interface RadioGroupProps<D = any> {
-  value: D;
+export interface RadioGroupProps<V = any> extends React.PropsWithChildren {
+  value: V;
   className?: IClassName
   autoFocus?: boolean;
   disabled?: boolean
