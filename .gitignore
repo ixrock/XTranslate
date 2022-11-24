@@ -1,6 +1,7 @@
 .idea
 node_modules
 dist
+dist-firefox
 build
 backup
 *-mock.json

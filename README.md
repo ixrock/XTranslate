@@ -54,4 +54,23 @@ Available translation vendors:
 * [Bing](http://bing.com/translator/)
 * [DeepL](https://www.deepl.com/)
 
+For developers and contributors:
+-----------
+
+Install globals _(prerequisites)_:
+1) node _(>=16 && <=18)_
+2) brew install yarn
+
+3) yarn _(from project root, install all dependencies)_
+
+Steps to **build** (compile) extension:
+
+1) `npm run build`
+2) see `/dist` and `/dist-firefox` (depends on the branch) folder(s) for ready-to use extension source directory with own `manifest.json`
+
+Other commands to **dev** and **test**:
+
+1) `npm run dev` - runs project in dev/watch mode
+2) `npm run test` - runs available jest tests
+
 Powered by typescript, react, mobx, webpack, sass, lodash and some others. Made with ♥
