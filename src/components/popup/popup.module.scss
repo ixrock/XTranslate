@@ -3,6 +3,7 @@
 
   position: relative;
   padding: var(--theme-spacing);
+  margin: var(--theme-spacing) 0;
   visibility: hidden;
   opacity: 0;
   transition: opacity 100ms ease-out;
@@ -10,15 +11,6 @@
   line-height: normal;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
-
-  &.preview {
-    text-align: left;
-  }
-
-  &:not(.preview) {
-    position: absolute;
-    margin: var(--theme-spacing) 0;
-  }
 
   &.fixedPos {
     position: fixed;

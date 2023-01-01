@@ -36,7 +36,7 @@ export class Settings extends React.Component {
     var hotKey = parseHotkey(settings.hotkey);
     var popupTooltip: Partial<TooltipProps> = {
       style: { background: "none" },
-      children: <Popup preview/>
+      children: <Popup translation={Popup.translationMock}/>
     };
     return (
       <main className={styles.Settings}>

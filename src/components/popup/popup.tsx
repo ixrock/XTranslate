@@ -9,9 +9,9 @@ import { Icon } from "../icon";
 import { settingsStorage, settingsStore } from "../settings/settings.storage";
 import { themeStore } from "../theme-manager/theme.storage";
 import { getMessage } from "../../i18n";
+import { isEqual } from "lodash";
 
 interface Props extends Omit<React.HTMLProps<any>, "className"> {
-  preview?: boolean;
   className?: IClassName;
   initParams?: Partial<ITranslationResult>;
   translation?: ITranslationResult
@@ -63,9 +63,8 @@ export class Popup extends React.Component<Props> {
     }
   }
 
-  @computed get translation(): Partial<ITranslationResult | undefined> {
-    var { preview, translation } = this.props;
-    return translation || (preview ? Popup.translationMock : undefined);
+  @computed get isPreviewMode(): boolean {
+    return isEqual(this.props.translation, Popup.translationMock);
   }
 
   @computed get popupStyle(): CSSProperties {
@@ -78,6 +77,7 @@ export class Popup extends React.Component<Props> {
     } = themeStore.data;
 
     return {
+      position: this.isPreviewMode ? "relative" : "absolute",
       background: bgcLinear
         ? `linear-gradient(180deg, ${toCssColor(bgcMain)}, ${toCssColor(bgcSecondary)})`
         : toCssColor(bgcMain),
@@ -115,7 +115,7 @@ export class Popup extends React.Component<Props> {
   }
 
   copyToClipboard = async () => {
-    const { translation, transcription, langTo, langDetected, vendor, dictionary, originalText, } = this.translation;
+    const { translation, transcription, langTo, langDetected, vendor, dictionary, originalText, } = this.props.translation;
 
     const translator = getTranslator(vendor);
     const texts = [
@@ -177,14 +177,14 @@ export class Popup extends React.Component<Props> {
   }
 
   renderNextTranslationIcon() {
-    if (!settingsStore.data.showNextVendorIcon || !this.props.preview) {
-      return;
-    }
-    var { vendor, langFrom, langTo } = this.translation ?? this.props.initParams ?? {};
+    if (!settingsStore.data.showNextVendorIcon) return;
+
+    var { vendor, langFrom, langTo } = this.props.translation ?? this.props.initParams ?? {};
     var nextVendor = getNextTranslator(vendor, langFrom, langTo);
     var iconTitle = getMessage("popup_next_vendor_icon_title", {
       translator: nextVendor.title
-    }) as string;
+    });
+
     return (
       <Icon
         className={styles.icon}
@@ -216,10 +216,10 @@ export class Popup extends React.Component<Props> {
   }
 
   renderResult() {
-    if (!this.translation) {
+    if (!this.props.translation) {
       return;
     }
-    var { translation, transcription, dictionary, vendor, langFrom, langTo, langDetected } = this.translation;
+    var { translation, transcription, dictionary, vendor, langFrom, langTo, langDetected } = this.props.translation;
     if (langDetected) langFrom = langDetected;
     const translator = getTranslator(vendor);
     const rtlClass = { [styles.rtl]: isRTL(langTo) };
@@ -282,12 +282,11 @@ export class Popup extends React.Component<Props> {
 
   render() {
     var { popupFixedPos } = settingsStore.data;
-    var { error, className, style: customStyle, preview } = this.props;
-    var isVisible = !!(this.translation || error);
+    var { translation, error, className, style: customStyle } = this.props;
+    var isVisible = !!(translation || error);
     var popupClass = cssNames(styles.Popup, className, {
-      [styles.preview]: preview,
       [styles.visible]: isVisible,
-      [`${styles.fixedPos} ${popupFixedPos}`]: Boolean(popupFixedPos && !preview)
+      [`${styles.fixedPos} ${popupFixedPos}`]: Boolean(popupFixedPos)
     });
     return (
       <div
