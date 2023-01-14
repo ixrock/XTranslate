@@ -9,7 +9,6 @@ export interface BingParsedGlobalParams {
   token: string;
   IG: string;
   IID: string;
-  isVertical?: boolean;
   tokenExpiryTime?: number;
 }
 
@@ -33,11 +32,11 @@ class Bing extends Translator {
   }
 
   protected getQueryApiParams(): string {
-    const { isVertical, IID, IG } = this.apiGlobalParams.get();
+    const { IID, IG } = this.apiGlobalParams.get();
 
     return new URLSearchParams({
       IID, IG,
-      isVertical: String(isVertical ? 1 : 0),
+      isVertical: "1",
     }).toString();
   }
 
@@ -60,22 +59,19 @@ class Bing extends Translator {
         requestInit: {},
       });
 
-      const params = /params_RichTranslateHelper\s*=\s*\[(\d+),"(.*?)",(\d+),(true|false),.*?\]/.exec(bingPageHtml);
-      if (params) {
-        const [pageHtml, key, token, tokenExpiryTimeout, isVertical] = params;
-        const IG = bingPageHtml.match(/IG:"([^"]+)"/)?.[1]
-        const IID = bingPageHtml.match(/data-iid="([^"]+)"/)?.[1]
-        const parsedGlobalParams: BingParsedGlobalParams = {
-          key, token,
-          IID, IG,
-          tokenExpiryTime: Number(key) /*timestamp*/ + Number(tokenExpiryTimeout),
-          isVertical: JSON.parse(isVertical),
-        };
-        this.logger.info(`GLOBAL API PARAMS UPDATED`, parsedGlobalParams);
-        this.apiGlobalParams.set(parsedGlobalParams);
-      }
+      const matchedParams = bingPageHtml.match(/params_AbusePreventionHelper\s*=\s*(\[.*?])/)?.[1];
+      const [timestamp, token, tokenTimeout] = JSON.parse(matchedParams);
+      const IG = bingPageHtml.match(/IG:"([^"]+)"/)?.[1]
+      const IID = bingPageHtml.match(/data-iid="([^"]+)"/)?.[1]
+      const parsedGlobalParams: BingParsedGlobalParams = {
+        key: timestamp,
+        token,
+        IID, IG,
+        tokenExpiryTime: timestamp + tokenTimeout,
+      };
+      this.apiGlobalParams.set(parsedGlobalParams);
     } catch (error) {
-      this.logger.error('GLOBAL API UPDATE FAILED', error);
+      throw new Error(`Failed to parse global bing params: ${error}`);
     }
   }
 
