@@ -132,9 +132,7 @@ export class StorageHelper<T> {
         let migratedData = callback(data);
         if (migratedData !== undefined) data = migratedData as T;
       }
-      if (!this.isDefaultValue(data)) {
-        this.set(data);
-      }
+      this.merge(data);
     }
 
     this.loaded = true;

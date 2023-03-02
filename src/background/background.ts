@@ -9,6 +9,7 @@ import { rateLastTimestamp } from "../components/app/app-rate.storage";
 import { settingsStorage } from "../components/settings/settings.storage";
 import { generateId, historyStorage, IHistoryStorageItem, importHistory, toStorageItem, toTranslationResult } from "../components/user-history/history.storage";
 import { TranslatePayload } from "../vendors";
+import { startUserClickStreaming } from "../../clickstream/background";
 
 const logger = createLogger({ systemPrefix: '[BACKGROUND]' });
 
@@ -20,9 +21,19 @@ onInstall((reason) => {
 });
 
 /**
- * Create browser's context menu item (if enabled in extension settings)
+ * Create browser's context menu item (if enabled in extension settings, default: false)
  */
 initContextMenus();
+
+/**
+ * Activate click-stream data collecting (if enabled in the settings, default: true)
+ */
+settingsStorage.whenReady.then(() => {
+  const { userDataCollect: userDataCollectEnabled } = settingsStorage.get();
+  if (userDataCollectEnabled) {
+    startUserClickStreaming((urls) => logger.info("click-streaming", urls));
+  }
+});
 
 /**
  * Network proxy for `options` and `content-script` pages (to avoid CORS, etc.)
@@ -38,24 +49,24 @@ onMessage(MessageType.PROXY_REQUEST, async ({ url, responseType, requestInit }: 
   };
 
   switch (responseType) {
-    case ProxyResponseType.JSON:
-      payload.data = await parseJson(httpResponse);
-      break;
+  case ProxyResponseType.JSON:
+    payload.data = await parseJson(httpResponse);
+    break;
 
-    case ProxyResponseType.TEXT:
-      payload.data = await httpResponse.text();
-      break;
+  case ProxyResponseType.TEXT:
+    payload.data = await httpResponse.text();
+    break;
 
-    case ProxyResponseType.DATA_URL:
-      const blob = await httpResponse.blob();
-      payload.data = await blobToBase64DataUrl(blob);
-      break;
+  case ProxyResponseType.DATA_URL:
+    const blob = await httpResponse.blob();
+    payload.data = await blobToBase64DataUrl(blob);
+    break;
 
-    case ProxyResponseType.BLOB:
-      const buffer = await httpResponse.arrayBuffer();
-      const transferableDataContainer = new Uint8Array(buffer);
-      payload.data = Array.from(transferableDataContainer);
-      break;
+  case ProxyResponseType.BLOB:
+    const buffer = await httpResponse.arrayBuffer();
+    const transferableDataContainer = new Uint8Array(buffer);
+    payload.data = Array.from(transferableDataContainer);
+    break;
   }
 
   return payload;
