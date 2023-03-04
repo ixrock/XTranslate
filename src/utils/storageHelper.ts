@@ -1,9 +1,12 @@
 // Helper for working with persistent storages (e.g. WebStorage API, NodeJS file-system api, etc.)
 
 import { action, IReactionDisposer, makeObservable, observable, reaction, toJS, when } from "mobx";
-import produce, { Draft } from "immer";
-import { isEqual, merge } from "lodash";
+import { isEqual, isPlainObject, merge } from "lodash";
 import { createLogger } from "./createLogger";
+
+export type DeepPartial<T> = {
+  [K in keyof T]?: T[K] extends object ? DeepPartial<T[K]> : T[K];
+}
 
 export interface StorageHelperOptions<T> {
   defaultValue?: T;
@@ -171,20 +174,24 @@ export class StorageHelper<T> {
   }
 
   @action
-  merge(state: Partial<T> | ((draft: Draft<T>) => Draft<T> | void)) {
-    let value = this.toJS();
-    let nextValue: T;
+  merge(update: DeepPartial<T>, { deep = false, silent = false } = {}) {
+    let value = this.toJS(); // top-level object or some other data type
+    let newValue: T;
 
-    if (typeof state === "function") {
-      nextValue = produce(value, state);
-    } else {
-      nextValue = produce(value, (draft: Draft<T>) => {
-        if (typeof state === "object") return merge(draft, state); // partial updates for plain objects
-        return state;
-      });
+    // plain-object merge updates
+    if (isPlainObject(value)) {
+      if (deep) {
+        newValue = merge(value, update);
+      } else {
+        newValue = Object.assign(value, update);
+      }
+    }
+    // full-rewrite for basic types, arrays and all non-plain objects
+    else {
+      newValue = update as T;
     }
 
-    this.set(nextValue);
+    this.set(newValue, { silent });
   }
 
   toJS(): T {
