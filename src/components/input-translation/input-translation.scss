@@ -18,6 +18,16 @@
     }
   }
 
+  .source-languages {
+    .link:not(:last-child) {
+      margin-right: .25em;
+
+      &:after {
+        content: ",";
+      }
+    }
+  }
+
   .translation-results {
     &.rtl {
       direction: rtl;

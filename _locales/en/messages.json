@@ -84,6 +84,7 @@
   "text_field_placeholder"           : {"message": "Start typing here to get translation"},
   "translated_with"                  : {"message": "Translated with %translator% (%lang%)"},
   "translated_from"                  : {"message": "Translated from: %lang%"},
+  "translate_also_from"              : {"message": "Translate also from"},
   "spell_correction"                 : {"message": "Did you mean %suggestion%?"},
   "text_input_translation_hint"      : {"message": "%hotkey% to immediate translate, delay: %timeout%ms"},
   "___________history_______________": {"message": "----------------------------------------------"},

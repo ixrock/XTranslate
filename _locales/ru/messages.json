@@ -84,6 +84,7 @@
   "text_field_placeholder"           : {"message": "Начните печатать здесь, чтобы получить перевод"},
   "translated_with"                  : {"message": "Переведено с %translator% (%lang%)"},
   "translated_from"                  : {"message": "Переведено c: %lang%"},
+  "translate_also_from"              : {"message": "Перевести также с"},
   "spell_correction"                 : {"message": "Возможно, вы имели ввиду %suggestion%?"},
   "text_input_translation_hint"      : {"message": "%hotkey% для быстрого перевода, задержка: %timeout%мс"},
   "___________history_______________": {"message": "----------------------------------------------"},

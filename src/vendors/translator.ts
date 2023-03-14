@@ -211,6 +211,7 @@ export interface ITranslationResult {
   transcription?: string
   spellCorrection?: string
   dictionary?: ITranslationDictionary[];
+  sourceLanguages?: string[]; // all detected languages when "auto-detect" is used
 }
 
 export interface ITranslationDictionary {
