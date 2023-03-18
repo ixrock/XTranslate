@@ -232,6 +232,7 @@ export const langToFlagIconMap: Record<string, string> = {
   "yo": "ng", // Yoruba (Nigeria)
   "zu": "za", // Zulu (South Africa)
   "xh": "za", // Xhosa (South Africa)
+  "vi": "vn", // Vietnam (South East Asia)
 };
 
 export function getFlagIcon(locale: string): string | undefined {
