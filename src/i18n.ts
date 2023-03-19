@@ -100,3 +100,9 @@ export async function i18nInit() {
     await loadMessages(getLocale());
   }
 }
+
+export async function getBrowserLanguages(): Promise<string[]> {
+  return navigator.languages
+    ? [...navigator.languages]
+    : chrome.i18n.getAcceptLanguages();
+}

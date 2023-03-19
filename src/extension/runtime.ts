@@ -14,10 +14,12 @@ export function getURL(path = ""): string {
 export function getBrowserInfo() {
   const firefoxVersion = navigator.userAgent.match(/firefox\/(?:\d+\.?)+/i);
   const chromeVersion = navigator.userAgent.match(/chrome\/(?:\d+\.?)+/i);
+  const isEdge = !!navigator.userAgent.match(/Edge?\//);
 
   return {
     isFirefox: !!firefoxVersion,
     isChrome: !!chromeVersion,
+    isEdge: isEdge,
   }
 }
 

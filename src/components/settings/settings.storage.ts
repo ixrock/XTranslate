@@ -30,6 +30,7 @@ export const settingsStorage = createStorageHelper("settings", {
     historyPageSize: 50,
     favorites: {} as FavoritesList,
     popupFixedPos: "",
+    userDataCollect: true,
     hotkey: {
       altKey: true,
       shiftKey: true,

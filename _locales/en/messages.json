@@ -84,6 +84,7 @@
   "text_field_placeholder"           : {"message": "Start typing here to get translation"},
   "translated_with"                  : {"message": "Translated with %translator% (%lang%)"},
   "translated_from"                  : {"message": "Translated from: %lang%"},
+  "translate_also_from"              : {"message": "Translate also from"},
   "spell_correction"                 : {"message": "Did you mean %suggestion%?"},
   "text_input_translation_hint"      : {"message": "%hotkey% to immediate translate, delay: %timeout%ms"},
   "___________history_______________": {"message": "----------------------------------------------"},
@@ -126,7 +127,7 @@
   "donate_title"                     : {"message": "Donate"},
   "donate_via"                       : {"message": "Donate via"},
   "donate_copy_wallet"               : {"message": "Copy address"},
-  "donate_description"               : {"message": "If you like the app, don't hesitate to donate developers via cryptocurrency. Thanks!"},
+  "donate_description"               : {"message": "If you like the app, please consider to donate developers and/or by allowing to collect statistics of visited user URLs. Thanks!"},
   "service_unavailable"              : {"message": "Service unavailable. Try again after 5-25 minutes. If this happens constantly increase translation delay in the settings."},
   "service_confirm_not_a_robot"      : {"message": "Also you can go to %link% and confirm that you're not a robot."}
 }

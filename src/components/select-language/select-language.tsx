@@ -203,6 +203,7 @@ export class SelectLanguage extends React.Component<Props> {
   }
 }
 
+// Mapping language to flag icon in "flag-icons" package
 export const langToFlagIconMap: Record<string, string> = {
   "sq": "al", // Albanian
   "hy": "am", // Armenian
@@ -232,7 +233,7 @@ export const langToFlagIconMap: Record<string, string> = {
   "yo": "ng", // Yoruba (Nigeria)
   "zu": "za", // Zulu (South Africa)
   "xh": "za", // Xhosa (South Africa)
-  "vi": "vn", // Vietnam (South East Asia)
+  "vi": "vn", // Vietnamese
 };
 
 export function getFlagIcon(locale: string): string | undefined {

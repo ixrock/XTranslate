@@ -58,7 +58,7 @@ export class InputTranslation extends React.Component {
 
   bindAutoTranslateOnParamsChange = () => {
     return disposeOnUnmount(this, [
-      reaction(() => [this.text, this.vendor, this.langTo, this.langFrom], this.translate, {
+      reaction(() => [this.text, this.vendor, this.langTo, this.langFrom], () => this.translate(), {
         equals: comparer.structural,
       }),
     ]);
@@ -102,8 +102,8 @@ export class InputTranslation extends React.Component {
     this.input.setValue(text); // update input value manually since @defaultValue is utilized
   }
 
-  @action
-  translate = async () => {
+  @action.bound
+  async translate() {
     let { text, vendor, langFrom, langTo } = this;
     if (!text) return;
 
@@ -161,7 +161,7 @@ export class InputTranslation extends React.Component {
   }
 
   renderTranslationResult() {
-    var { langTo, langDetected, translation, transcription, dictionary, spellCorrection, vendor } = this.translation;
+    var { langTo, langDetected, translation, transcription, dictionary, spellCorrection, sourceLanguages, vendor } = this.translation;
     var translator = getTranslator(vendor);
     return (
       <div className={cssNames("translation-results", { rtl: isRTL(langTo) })}>
@@ -196,6 +196,19 @@ export class InputTranslation extends React.Component {
             })}
           </div>
         ) : null}
+        {sourceLanguages?.length > 0 && (
+          <div className="source-languages">
+            {`${getMessage("translate_also_from")}: `}
+            {sourceLanguages.map(lang => {
+              if (lang === langDetected) return; // skip language for current results
+              return (
+                <b key={lang} className="link" onClick={action(() => this.langFrom = lang)}>
+                  {translator.langFrom[lang]}
+                </b>
+              )
+            })}
+          </div>
+        )}
         <table className="dictionary">
           <tbody>
           {dictionary.map(({ wordType, meanings }) => {

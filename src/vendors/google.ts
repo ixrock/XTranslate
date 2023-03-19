@@ -76,11 +76,15 @@ export class Google extends Translator {
       var url = `${this.apiUrl}/translate_a/single`;
       var result: GoogleTranslation = await this.request({ url, requestInit });
       var { src, ld_result, sentences, dict, spell } = result;
-      var detectedLang = src || ld_result ? ld_result.srclangs[0] : "";
+      var sourceLanguages = ld_result?.srclangs ?? [];
+      var detectedLang = src ?? sourceLanguages[0];
       var translation: ITranslationResult = {
         langDetected: detectedLang,
         translation: sentences.map(sentence => sentence.trans).join(''),
       };
+      if (sourceLanguages.length > 1) {
+        translation.sourceLanguages = sourceLanguages;
+      }
       if (spell) {
         translation.spellCorrection = spell.spell_res;
       }
@@ -163,6 +167,7 @@ export interface GoogleTranslation {
   ld_result: {
     extended_srclangs: string[]
     srclangs: string[]
+    srclangs_confidences: number[]
   }
   definitions?: {
     pos: string

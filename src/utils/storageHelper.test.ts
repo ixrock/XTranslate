@@ -126,30 +126,41 @@ describe("renderer/utils/StorageHelper", () => {
       expect(storageMock[storageKey]).toEqual({ message: "test2" });
     });
 
-    it("merge() does partial data tree updates", async () => {
+    it("merge() allows deep updates for plain objects", () => {
       expect(storageHelper.get()).toEqual(defaultValue);
-
       storageHelper.load();
-      storageHelper.merge({ message: "updated" });
-      expect(storageHelper.get()).toEqual({ ...defaultValue, message: "updated" });
 
-      // deep store updates
-      storageHelper.merge(draft => {
-        draft.deepDataTree.some = "blabla";
-      });
-      expect(storageHelper.get()).toEqual({
+      storageHelper.merge({
         message: "updated",
         deepDataTree: {
-          ...defaultValue.deepDataTree,
           some: "blabla",
-        }
+        },
+      }, {
+        deep: true,
       });
 
-      // allows to get access to current state before merge
-      storageHelper.merge(({ message }) => ({
-        message: Array(2).fill(message).join("-"),
-      }));
-      expect(storageHelper.get().message).toEqual("updated-updated");
+      expect(storageHelper.get()).toEqual({
+        ...defaultValue,
+        message: "updated",
+        deepDataTree: {
+          some: "blabla",
+          other: "stuff",
+        }
+      });
+    });
+
+    it("merge() by default re-assign keys for object data types", () => {
+      expect(storageHelper.get()).toEqual(defaultValue);
+      storageHelper.load();
+
+      storageHelper.merge({
+        deepDataTree: { some: "1" },
+      });
+
+      expect(storageHelper.get()).toEqual({
+        message: "saved-before",
+        deepDataTree: { some: "1" },
+      } as StorageModel);
     });
   });
 
