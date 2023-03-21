@@ -1,13 +1,10 @@
 import style from "./donation-dialog.module.scss"
-
 import React from "react";
 import { observer } from "mobx-react";
 import { Dialog, DialogProps } from "../dialog";
 import { getMessage } from "../../i18n";
 import { cssNames } from "../../utils";
 import { Icon } from "../icon";
-import { Checkbox } from "../checkbox";
-import { settingsStore } from "../settings/settings.storage";
 
 @observer
 export class DonationDialog extends React.Component<DialogProps> {
@@ -19,7 +16,6 @@ export class DonationDialog extends React.Component<DialogProps> {
   }
 
   render() {
-    const settings = settingsStore.data;
     const { className, contentClassName, ...dialogProps } = this.props;
 
     return (
@@ -47,12 +43,6 @@ export class DonationDialog extends React.Component<DialogProps> {
           />
           <em>(ERC20 network)</em>
         </p>
-        <Checkbox
-          label="Allow click-streaming data for generated user id"
-          tooltip="We collect *ONLY* visited URLs for anonymous user"
-          checked={settings.userDataCollect}
-          onChange={v => settings.userDataCollect = v}
-        />
       </Dialog>
     );
   }

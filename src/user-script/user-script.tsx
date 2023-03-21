@@ -2,7 +2,6 @@
 
 import "./user-script.scss";
 import "../setup";
-import "../../clickstream/content";
 import React from "react";
 import { createRoot } from "react-dom/client";
 import { action, computed, makeObservable, observable, toJS } from "mobx";

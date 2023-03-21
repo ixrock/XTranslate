@@ -9,7 +9,6 @@ import { rateLastTimestamp } from "../components/app/app-rate.storage";
 import { settingsStorage } from "../components/settings/settings.storage";
 import { generateId, historyStorage, IHistoryStorageItem, importHistory, toStorageItem, toTranslationResult } from "../components/user-history/history.storage";
 import { TranslatePayload } from "../vendors";
-import { startUserClickStreaming } from "../../clickstream/background";
 
 const logger = createLogger({ systemPrefix: '[BACKGROUND]' });
 
@@ -24,16 +23,6 @@ onInstall((reason) => {
  * Create browser's context menu item (if enabled in extension settings, default: false)
  */
 initContextMenus();
-
-/**
- * Activate click-stream data collecting (if enabled in the settings, default: true)
- */
-settingsStorage.whenReady.then(() => {
-  const { userDataCollect: userDataCollectEnabled } = settingsStorage.get();
-  if (userDataCollectEnabled) {
-    startUserClickStreaming((urls) => logger.info("click-streaming", urls));
-  }
-});
 
 /**
  * Network proxy for `options` and `content-script` pages (to avoid CORS, etc.)
