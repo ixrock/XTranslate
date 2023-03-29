@@ -7,7 +7,9 @@
 
   .ReactSelect {
     &__menu-list {
-      @include custom-scrollbar($overlay: true);
+      @include custom-scrollbar($overlay: true) {
+        --theme-scrollbar-size: 7px;
+      };
     }
 
     &__dropdown-indicator {

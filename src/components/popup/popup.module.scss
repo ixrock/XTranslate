@@ -68,8 +68,9 @@
   .translationResult {
     --flex-gap: var(--theme-spacing-half);
 
-    @include custom-scrollbar($size: .5em, $spaceAround: 1px) {
-      --scrollbar-bgc: none;
+    @include custom-scrollbar($borderSpace: 1px) {
+      --theme-scrollbar-size: .5em;
+      --theme-scrollbar-bgc: none;
       border: 1px solid;
     }
 

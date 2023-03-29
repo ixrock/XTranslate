@@ -162,7 +162,7 @@ export default [
         vendor: {
           test: /node_modules/,
           name({ resource }: webpack.NormalModule) {
-            const libPackGroup = resource.match(/node_modules\/(react|mobx|lodash)\b/)?.[1] ?? "common";
+            const libPackGroup = resource?.match(/node_modules\/(react|mobx|lodash)\b/)?.[1] ?? "common";
 
             return `lib-${libPackGroup}`;
           },

@@ -1,4 +1,4 @@
-@import "~flex.box";
+@import "~flex.box/src/flexbox.css";
 @import "../fonts";
 @import "../mixins";
 
@@ -67,8 +67,13 @@ header {
   text-transform: uppercase;
   font-weight: bold;
   text-align: left;
-  color: var(--theme-color-header);
-  padding-bottom: var(--theme-spacing-half);
+  background: linear-gradient(90deg, #92268dee, transparent);
+  padding: .75em;
+  border-radius: var(--theme-border-radius);
+
+  .app-title {
+    color: white;
+  }
 
   .app-version {
     text-transform: lowercase;
@@ -77,21 +82,18 @@ header {
   }
 }
 
+.Tabs > .Tab {
+  flex-direction: row;
+  padding: calc(var(--theme-spacing) * 1.5) var(--theme-spacing-double);
+}
+
 .TabContent {
   display: flex;
   flex-direction: column;
-  padding: calc(var(--theme-spacing) * 2) 0;
+  padding: var(--theme-spacing-double) 0;
 
   .not-found {
     text-align: center;
-  }
-}
-
-.dark-theme-icon {
-  opacity: .5;
-
-  &:hover {
-    opacity: .7;
   }
 }
 

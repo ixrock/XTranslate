@@ -80,36 +80,40 @@ export class App extends React.Component {
 
     return (
       <div className="App">
-        <header className="flex gaps">
+        <header className="flex gaps align-center">
           <div className="app-title box grow">
             {name} <sup className="app-version">{version}</sup>
           </div>
           <Icon
+            small
             svg="moon"
             tooltip={{ nowrap: true, children: getMessage("use_dark_theme") }}
             className={cssNames("dark-theme-icon", { active: useDarkTheme })}
             onClick={() => settingsStore.data.useDarkTheme = !useDarkTheme}
           />
           <Icon
+            small
             material="open_in_new"
             tooltip={{ nowrap: true, children: getMessage("open_in_window") }}
             onClick={this.detachWindow}
           />
           <Icon
+            small
             material="import_export"
             tooltip={{ nowrap: true, children: getMessage("import_export_settings") }}
             onClick={() => this.showImportExportDialog = true}
           />
           <Icon
+            small
             material="monetization_on"
-            tooltip={{ children: getMessage("donate_title") }}
+            tooltip={{ nowrap: true, children: getMessage("donate_title") }}
             onClick={() => this.showDonationDialog = true}
           />
         </header>
-        <Tabs center value={pageId} onChange={this.onTabsChange}>
+        <Tabs className="Tabs" center value={pageId} onChange={this.onTabsChange}>
           {App.pages.map(pageId => {
             var { Tab } = pageManager.getComponents(pageId);
-            if (Tab) return <Tab key={pageId} value={pageId}/>
+            if (Tab) return <Tab className="Tab" key={pageId} value={pageId}/>
           })}
         </Tabs>
         <div className="TabContent">

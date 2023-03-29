@@ -12,10 +12,13 @@
     "fi": "Finnish",
     "fr": "French",
     "hu": "Hungarian",
+    "id": "Indonesian",
     "it": "Italian",
     "ja": "Japanese",
+    "ko": "Korean",
     "lt": "Lithuanian",
     "lv": "Latvian",
+    "nb": "Norwegian",
     "nl": "Dutch",
     "pl": "Polish",
     "pt": "Portuguese",
@@ -24,6 +27,8 @@
     "sk": "Slovak",
     "sl": "Slovenian",
     "sv": "Swedish",
+    "tr": "Turkish",
+    "uk": "Ukrainian",
     "zh": "Chinese"
   },
   "to": {
@@ -39,10 +44,13 @@
     "fi": "Finnish",
     "fr": "French",
     "hu": "Hungarian",
+    "id": "Indonesian",
     "it": "Italian",
     "ja": "Japanese",
+    "ko": "Korean",
     "lt": "Lithuanian",
     "lv": "Latvian",
+    "nb": "Norwegian",
     "nl": "Dutch",
     "pl": "Polish",
     "pt-br": "Portuguese (Brazilian)",
@@ -52,6 +60,8 @@
     "sk": "Slovak",
     "sl": "Slovenian",
     "sv": "Swedish",
-    "zh": "Chinese"
+    "tr": "Turkish",
+    "uk": "Ukrainian",
+    "zh": "Chinese (simplified)"
   }
 }
