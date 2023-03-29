@@ -3,8 +3,8 @@ import "./user-history.scss";
 import React from "react";
 import { groupBy, orderBy } from "lodash";
 import { action, computed, makeObservable, observable, reaction, runInAction } from "mobx";
-import { disposeOnUnmount, observer } from "mobx-react";
-import { cssNames, prevDefault } from "../../utils";
+import { observer } from "mobx-react";
+import { cssNames, disposer, prevDefault } from "../../utils";
 import { getTranslator, getTranslators, isRTL } from "../../vendors";
 import { Checkbox } from "../checkbox";
 import { Menu, MenuItem } from "../menu";
@@ -30,10 +30,11 @@ enum HistoryTimeFrame {
 
 @observer
 export class UserHistory extends React.Component {
+  private dispose = disposer();
+
   constructor(props: object) {
     super(props);
     makeObservable(this);
-    this.bindSearchResultsHandler();
   }
 
   @observable page = 1;
@@ -49,6 +50,25 @@ export class UserHistory extends React.Component {
   async componentDidMount() {
     await historyStorage.load();
     this.isLoaded = true;
+
+    this.dispose.push(
+      reaction(() => this.searchText, async (searchText) => {
+        if (!searchText) {
+          this.searchResults.clear();
+        } else {
+          console.info(`[USER-HISTORY]: searching.. ${searchText}`)
+          const searchResults: IHistoryItemId[] = await this.search(searchText);
+          this.searchResults.replace(searchResults);
+        }
+      }, {
+        name: "history-search",
+        delay: 500,
+      })
+    );
+  }
+
+  componentWillUnmount() {
+    this.dispose();
   }
 
   @computed get pageSize() {
@@ -113,23 +133,6 @@ export class UserHistory extends React.Component {
     return this.itemsListSorted.length > this.pageSize;
   }
 
-  bindSearchResultsHandler() {
-    disposeOnUnmount(this, [
-      reaction(() => this.searchText, async (searchText) => {
-        if (!searchText) {
-          this.searchResults.clear();
-        } else {
-          console.info(`[USER-HISTORY]: searching.. ${searchText}`)
-          const searchResults: IHistoryItemId[] = await this.search(searchText);
-          this.searchResults.replace(searchResults);
-        }
-      }, {
-        name: "history-search",
-        delay: 500,
-      }),
-    ]);
-  }
-
   async search(searchText: string): Promise<IHistoryItemId[]> {
     searchText = searchText.toLowerCase().trim();
 
@@ -174,26 +177,26 @@ export class UserHistory extends React.Component {
     const { translations } = historyStorage.get();
 
     switch (this.clearTimeFrame) {
-      case HistoryTimeFrame.ALL:
-        return historyStorage.reset();
+    case HistoryTimeFrame.ALL:
+      return historyStorage.reset();
 
-      case HistoryTimeFrame.HOUR:
-        latestEntryTime.setHours(latestEntryTime.getHours(), 0, 0); // reset minutes and seconds
-        break;
+    case HistoryTimeFrame.HOUR:
+      latestEntryTime.setHours(latestEntryTime.getHours(), 0, 0); // reset minutes and seconds
+      break;
 
-      case HistoryTimeFrame.DAY:
-        latestEntryTime.setHours(0, 0, 0);
-        break;
+    case HistoryTimeFrame.DAY:
+      latestEntryTime.setHours(0, 0, 0);
+      break;
 
-      case HistoryTimeFrame.MONTH:
-        latestEntryTime.setHours(0, 0, 0);
-        latestEntryTime.setDate(1); // set first day of the month
-        break;
+    case HistoryTimeFrame.MONTH:
+      latestEntryTime.setHours(0, 0, 0);
+      latestEntryTime.setDate(1); // set first day of the month
+      break;
 
-      case HistoryTimeFrame.YEAR:
-        latestEntryTime.setHours(0, 0, 0);
-        latestEntryTime.setMonth(0, 1);
-        break;
+    case HistoryTimeFrame.YEAR:
+      latestEntryTime.setHours(0, 0, 0);
+      latestEntryTime.setMonth(0, 1);
+      break;
     }
 
     items.forEach(item => {

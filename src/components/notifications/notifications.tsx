@@ -1,14 +1,15 @@
 import styles from './notifications.module.scss';
 import React from 'react'
 import { reaction } from "mobx";
-import { disposeOnUnmount, observer } from "mobx-react"
-import { cssNames, prevDefault } from "../../utils";
+import { observer } from "mobx-react"
+import { cssNames, disposer, prevDefault } from "../../utils";
 import { IMessage, INotification, notificationsStore } from "./notifications.store";
 import { Animate } from "../animate";
 import { Icon } from "../icon"
 
 @observer
 export class Notifications extends React.Component {
+  private dispose = disposer();
   public elem: HTMLElement;
 
   static ok(message: IMessage) {
@@ -35,15 +36,21 @@ export class Notifications extends React.Component {
     });
   }
 
-  componentDidMount() {
-    disposeOnUnmount(this, [
-      reaction(() => notificationsStore.notifications.length, () => {
-        this.scrollToLastNotification();
-      }, { delay: 250 }),
-    ]);
+  constructor(props: object) {
+    super(props);
+
+    this.dispose.push(
+      reaction(() => notificationsStore.notifications.length, this.scrollToLastNotification, {
+        delay: 250,
+      }),
+    );
   }
 
-  scrollToLastNotification() {
+  componentWillUnmount() {
+    this.dispose();
+  }
+
+  scrollToLastNotification = () => {
     if (!this.elem) {
       return;
     }

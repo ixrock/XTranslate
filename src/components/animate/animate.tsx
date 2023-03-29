@@ -1,8 +1,8 @@
 import styles from "./animate.module.scss";
 import React from "react";
 import { action, makeObservable, observable, reaction } from "mobx";
-import { disposeOnUnmount, observer } from "mobx-react";
-import { autoBind, cssNames, noop } from "../../utils";
+import { observer } from "mobx-react";
+import { autoBind, cssNames, disposer, noop } from "../../utils";
 
 export type AnimateName = "opacity" | "slide-right" | "opacity-scale"; // predefined classnames in css
 
@@ -15,6 +15,8 @@ export interface AnimateProps extends React.PropsWithChildren {
 
 @observer
 export class Animate extends React.Component<AnimateProps> {
+  private dispose = disposer();
+
   static defaultProps: AnimateProps = {
     name: "opacity",
     enter: true,
@@ -27,11 +29,15 @@ export class Animate extends React.Component<AnimateProps> {
     makeObservable(this);
     autoBind(this);
 
-    disposeOnUnmount(this, [
+    this.dispose.push(
       reaction(() => this.props.enter, this.toggle, {
         fireImmediately: true,
       })
-    ]);
+    );
+  }
+
+  componentWillUnmount() {
+    this.dispose();
   }
 
   @observable isVisible = Boolean(this.props.enter);

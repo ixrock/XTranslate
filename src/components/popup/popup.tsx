@@ -2,8 +2,8 @@ import styles from "./popup.module.scss"
 
 import React, { CSSProperties } from "react";
 import { computed, makeObservable, observable, reaction } from "mobx";
-import { disposeOnUnmount, observer } from "mobx-react";
-import { cssNames, IClassName, noop, prevDefault, toCssColor } from "../../utils";
+import { observer } from "mobx-react";
+import { cssNames, disposer, IClassName, noop, prevDefault, toCssColor } from "../../utils";
 import { getNextTranslator, getTranslator, isRTL, ITranslationError, ITranslationResult } from "../../vendors";
 import { Icon } from "../icon";
 import { settingsStorage, settingsStore } from "../settings/settings.storage";
@@ -24,6 +24,7 @@ interface Props extends Omit<React.HTMLProps<any>, "className"> {
 
 @observer
 export class Popup extends React.Component<Props> {
+  private dispose = disposer();
   public elem: HTMLElement;
   @observable copied = false;
 
@@ -31,11 +32,13 @@ export class Popup extends React.Component<Props> {
     super(props);
     makeObservable(this);
 
-    disposeOnUnmount(this, [
-      reaction(() => this.props.translation, () => {
-        this.copied = false;
-      }),
-    ]);
+    this.dispose.push(
+      reaction(() => this.props.translation, () => this.copied = false),
+    );
+  }
+
+  componentWillUnmount() {
+    this.dispose();
   }
 
   static defaultProps: Partial<Props> = {

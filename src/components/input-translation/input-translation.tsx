@@ -3,10 +3,10 @@ import "./input-translation.scss";
 import { debounce } from "lodash";
 import React, { Fragment } from "react";
 import { action, comparer, makeObservable, observable, reaction } from "mobx";
-import { disposeOnUnmount, observer } from "mobx-react";
+import { observer } from "mobx-react";
 import { getTranslator, getTranslators, isRTL, ITranslationError, ITranslationResult } from "../../vendors";
 import { getSelectedText } from "../../extension/actions";
-import { createLogger, cssNames, isMac } from "../../utils";
+import { createLogger, cssNames, disposer, isMac } from "../../utils";
 import { SelectLanguage } from "../select-language";
 import { Input } from "../input";
 import { Option, Select } from "../select";
@@ -21,11 +21,13 @@ import { createStorageHelper } from "../../extension/storage";
 import { getMessage } from "../../i18n";
 
 export const lastInputText = createStorageHelper("last_input_text", {
+  autoSyncDelay: 0,
   defaultValue: "",
 });
 
 @observer
 export class InputTranslation extends React.Component {
+  private dispose = disposer();
   private logger = createLogger();
   private inputRef = React.createRef<Input>();
 
@@ -47,7 +49,9 @@ export class InputTranslation extends React.Component {
   }
 
   async componentDidMount() {
+    await lastInputText.load();
     this.input.focus();
+
     this.bindAutoTranslateOnParamsChange();
     this.bindAutoSaveLatestUserInputText();
 
@@ -56,16 +60,20 @@ export class InputTranslation extends React.Component {
     if (selectedText) this.translateText(selectedText);
   }
 
-  bindAutoTranslateOnParamsChange = () => {
-    return disposeOnUnmount(this, [
+  componentWillUnmount() {
+    this.dispose();
+  }
+
+  private bindAutoTranslateOnParamsChange() {
+    this.dispose.push(
       reaction(() => [this.text, this.vendor, this.langTo, this.langFrom], () => this.translate(), {
         equals: comparer.structural,
       }),
-    ]);
+    );
   };
 
-  bindAutoSaveLatestUserInputText = () => {
-    return disposeOnUnmount(this, [
+  private bindAutoSaveLatestUserInputText() {
+    this.dispose.push(
       reaction(() => this.text, (text: string) => {
         if (!settingsStore.data.rememberLastText) {
           return; // exit: option is not enabled in the settings
@@ -87,7 +95,7 @@ export class InputTranslation extends React.Component {
       }, {
         fireImmediately: true, // translate previously saved input's text asap
       }),
-    ])
+    )
   }
 
   playText = () => {
