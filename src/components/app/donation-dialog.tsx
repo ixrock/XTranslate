@@ -34,15 +34,6 @@ export class DonationDialog extends React.Component<DialogProps> {
           />
           <em>(Bitcoin network)</em>
         </p>
-        <p>
-          <b>ETH</b>: {this.#ethWallet} <br/>
-          <Icon
-            material="content_copy"
-            onClick={() => this.copyToBuffer(this.#ethWallet)}
-            tooltip={getMessage("donate_copy_wallet")}
-          />
-          <em>(ERC20 network)</em>
-        </p>
       </Dialog>
     );
   }
