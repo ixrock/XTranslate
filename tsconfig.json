@@ -23,7 +23,11 @@
     }
   },
   "include": [
-    "src"
+    "src",
+    "_locales",
+    "webpack.config.ts",
+    "jest.setup.ts",
+    "package.json",
   ],
   "exclude": [
     "node_modules"
