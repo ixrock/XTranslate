@@ -4,7 +4,7 @@ import React from "react";
 import { groupBy, orderBy } from "lodash";
 import { action, computed, makeObservable, observable, reaction, runInAction } from "mobx";
 import { observer } from "mobx-react";
-import { cssNames, disposer, prevDefault } from "../../utils";
+import { cssNames, disposer, prevDefault, fuzzyMatch } from "../../utils";
 import { getTranslator, getTranslators, isRTL } from "../../vendors";
 import { Checkbox } from "../checkbox";
 import { Menu, MenuItem } from "../menu";
@@ -133,17 +133,19 @@ export class UserHistory extends React.Component {
     return this.itemsListSorted.length > this.pageSize;
   }
 
+  private normalizeSearchValue(text: string) {
+    return String(text).toLowerCase().trim();
+  }
+
   async search(searchText: string): Promise<IHistoryItemId[]> {
-    searchText = searchText.toLowerCase().trim();
+    searchText = this.normalizeSearchValue(searchText);
 
     const searchResults = Object
       .entries(this.items)
       .filter(([itemId, translations]) => {
         return Object.values(translations).some(({ text, translation }: IHistoryItem) => {
-          return (
-            text.toLowerCase().includes(searchText) || // original text
-            translation.toLowerCase().includes(searchText) // result text
-          );
+          const searchFields = [text, translation].map(this.normalizeSearchValue);
+          return searchFields.some(data => fuzzyMatch(data, searchText, { strict: true }));
         });
       });
 
