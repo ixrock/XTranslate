@@ -94,6 +94,11 @@
         }
       }
 
+      .searchMatchedResult {
+        color: var(--theme-color-contrast);
+        font-weight: 500; // semi-bold
+      }
+
       .transcription {
         color: silver;
         font-style: italic;

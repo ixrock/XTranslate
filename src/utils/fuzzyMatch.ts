@@ -13,9 +13,8 @@ export interface FuzzyMatchResult {
 export function fuzzyMatch(searchArea: string, search: string, { strict = false }: FuzzyMatchOptions = {}): false | FuzzyMatchResult[] {
   const searchPattern = search.replace(/[^a-z0-9а-я]+/gi, " ").trim();
   const searchChunks = searchPattern.split(" ");
-  const searchPatternReg = new RegExp(`(${searchPattern.replace(/\s/g, "|")})`, "gi",);
-  const searchResults: FuzzyMatchResult[] = Array
-    .from(searchArea.matchAll(searchPatternReg))
+  const searchPatternReg = new RegExp(`(${searchPattern.replace(/\s/g, "|")})`, "mgi",);
+  const searchResults: FuzzyMatchResult[] = Array.from(searchArea.matchAll(searchPatternReg))
     .map((item) => ({
       value: item[0],
       index: item.index,
@@ -32,4 +31,17 @@ export function fuzzyMatch(searchArea: string, search: string, { strict = false 
   }
 
   return searchResults.length ? searchResults : false;
+}
+
+export interface FuzzyMatchReplaceOpts {
+  input: string;
+  results: FuzzyMatchResult[];
+  replaceValue: (matchedChunk: string) => string;
+}
+
+export function fuzzyMatchReplace({ input, replaceValue, results }: FuzzyMatchReplaceOpts): string {
+  const searchChunks = results.map(({ value }) => value);
+  const replacementRegExp = new RegExp(`(${searchChunks.join("|")})`, "mgi",);
+
+  return input.replaceAll(replacementRegExp, replaceValue);
 }
