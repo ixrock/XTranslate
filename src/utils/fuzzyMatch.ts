@@ -4,18 +4,32 @@ export interface FuzzyMatchOptions {
   strict?: boolean; // default: false
 }
 
-export function fuzzyMatch(searchArea: string, search: string, { strict = false }: FuzzyMatchOptions = {}): boolean {
-  const searchPattern = search.replace(/[^a-z0-9]+/gi, " ").trim();
+export interface FuzzyMatchResult {
+  value: string; // matched chunk
+  index: number; // matched `index` in provided input-string
+  input: string;
+}
+
+export function fuzzyMatch(searchArea: string, search: string, { strict = false }: FuzzyMatchOptions = {}): false | FuzzyMatchResult[] {
+  const searchPattern = search.replace(/[^a-z0-9а-я]+/gi, " ").trim();
   const searchChunks = searchPattern.split(" ");
   const searchPatternReg = new RegExp(`(${searchPattern.replace(/\s/g, "|")})`, "gi",);
-  const searchResultsRaw = Array.from(searchArea.matchAll(searchPatternReg));
+  const searchResults: FuzzyMatchResult[] = Array
+    .from(searchArea.matchAll(searchPatternReg))
+    .map((item) => ({
+      value: item[0],
+      index: item.index,
+      input: item.input,
+    }));
 
   // checking that every part of the search is existing in search area
   if (strict) {
-    const searchResultsUniq = new Set(searchResultsRaw.map(([match]) => match));
+    const searchResultsUniq = new Set(searchResults.map(({ value }) => value));
 
-    return searchChunks.length === searchResultsUniq.size;
+    if (searchResultsUniq.size !== searchChunks.length) {
+      return false;
+    }
   }
 
-  return searchResultsRaw.length > 0;
+  return searchResults.length ? searchResults : false;
 }

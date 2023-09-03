@@ -3,7 +3,7 @@
  * Licensed under MIT License. See LICENSE in package directory for more information.
  */
 
-import { fuzzyMatch } from "./fuzzyMatch";
+import { fuzzyMatch, FuzzyMatchResult } from "./fuzzyMatch";
 
 describe("fuzzy search", () => {
   it("by default just single chunk of the searching input enough to match", () => {
@@ -28,5 +28,13 @@ describe("fuzzy search", () => {
 
     expect(search).toBeTruthy();
     expect(search2).toBeTruthy();
+  });
+
+  it("works with cyrillic letters", () => {
+    const searchRequest = "пои 12";
+    const search = fuzzyMatch("поиск-123", searchRequest, { strict: true }) as FuzzyMatchResult[];
+
+    expect(search).toBeTruthy();
+    expect(search.length === searchRequest.split(/\s/).length).toBeTruthy();
   });
 });
