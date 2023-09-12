@@ -4,7 +4,7 @@ import React from "react";
 import { groupBy, orderBy } from "lodash";
 import { action, computed, makeObservable, observable, reaction, runInAction } from "mobx";
 import { observer } from "mobx-react";
-import { cssNames, disposer, prevDefault, fuzzyMatch, fuzzyMatchReplace } from "../../utils";
+import { cssNames, disposer, prevDefault, fuzzyMatch } from "../../utils";
 import { getTranslator, getTranslators, isRTL } from "../../vendors";
 import { Checkbox } from "../checkbox";
 import { Menu, MenuItem } from "../menu";
@@ -152,23 +152,19 @@ export class UserHistory extends React.Component {
     return searchResults.map(([itemId]) => itemId);
   }
 
-  private highlightMatchedResults(text: string): string {
+  private highlightSearch(text: string): string {
     if (!this.searchText) {
       return text;
     }
 
-    const matchedValues = fuzzyMatch(text, this.searchText) || [];
-    if (!matchedValues.length) {
-      return text;
-    }
-
-    return fuzzyMatchReplace({
-      input: text,
-      results: matchedValues,
-      replaceValue(value) {
+    const match = fuzzyMatch(text, this.searchText, {
+      strict: false,
+      wordReplacer(value) {
         return `<span class="searchMatchedResult">${value}</span>`;
       }
     });
+
+    return match ? match.output : text;
   }
 
   exportHistory(format: "json" | "csv") {
@@ -287,13 +283,13 @@ export class UserHistory extends React.Component {
             )}
             <span
               className="text"
-              dangerouslySetInnerHTML={{ __html: this.highlightMatchedResults(text) }}
+              dangerouslySetInnerHTML={{ __html: this.highlightSearch(text) }}
             />
             {transcription ? <span className="transcription">({transcription})</span> : null}
           </div>
           <div
             className={cssNames("translation box grow", { rtl: isRTL(langTo) })}
-            dangerouslySetInnerHTML={{ __html: this.highlightMatchedResults(translation) }}
+            dangerouslySetInnerHTML={{ __html: this.highlightSearch(translation) }}
           />
           <Icon
             material="remove_circle_outline"
