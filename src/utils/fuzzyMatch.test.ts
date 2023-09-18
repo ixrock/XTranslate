@@ -1,10 +1,27 @@
 import { fuzzyMatch, FuzzyMatchResult } from "./fuzzyMatch";
 
 describe("fuzzy search", () => {
-  it("searching words are case insensitive", () => {
-    const search = fuzzyMatch("test-123 blabla", "TEST");
+  const searchAreas = [
+    "metrics",
+    "4d612ccd-4ea6-4115-9ae8-74c05e68b295",
+    "app.kubernetes.io/created-by=resource-stack",
+    "app.kubernetes.io/managed-by=Lens",
+    "app.kubernetes.io/name=lens-metrics",
+    "extensionVersion=v2.26.0-lens1",
+    "Active"
+  ];
+
+  it("searching are words-case insensitive by default", () => {
+    const search = fuzzyMatch(searchAreas.join(" "), "lens act", {
+      strict: true,
+    });
+    const search2 = fuzzyMatch(searchAreas.join("\n"), "lens act", {
+      strict: true,
+      matchCase: true,
+    });
 
     expect(search).toBeTruthy();
+    expect(search2).toBeFalsy();
   });
 
   it("options.strict=true allows to check that every chunk is matched in area", () => {
