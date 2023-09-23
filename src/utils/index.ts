@@ -1,7 +1,6 @@
 // Helper utilities
 
 export const noop = () => ({});
-export const isMac = navigator.platform.startsWith("Mac");
 
 export * from './autobind'
 export * from './cssNames'

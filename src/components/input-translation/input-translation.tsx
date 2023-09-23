@@ -6,7 +6,7 @@ import { action, comparer, makeObservable, observable, reaction } from "mobx";
 import { observer } from "mobx-react";
 import { getTranslator, getTranslators, isRTL, ITranslationError, ITranslationResult } from "../../vendors";
 import { getSelectedText } from "../../extension/actions";
-import { createLogger, cssNames, disposer, isMac } from "../../utils";
+import { createLogger, cssNames, disposer } from "../../utils";
 import { SelectLanguage } from "../select-language";
 import { Input } from "../input";
 import { Option, Select } from "../select";
@@ -19,6 +19,7 @@ import { Tooltip } from "../tooltip";
 import { navigate } from "../../navigation";
 import { createStorageHelper } from "../../extension/storage";
 import { getMessage } from "../../i18n";
+import { isMac } from "../../common-vars";
 
 export const lastInputText = createStorageHelper("last_input_text", {
   autoSyncDelay: 0,
@@ -304,7 +305,7 @@ export class InputTranslation extends React.Component {
             infoContent={(
               <small className="hint">
                 {getMessage("text_input_translation_hint", {
-                  hotkey: `${isMac ? "Cmd" : "Ctrl"}+Enter`,
+                  hotkey: `${isMac() ? "Cmd" : "Ctrl"}+Enter`,
                   timeout: <a onClick={() => navigate({ page: "settings" })}>{delayMs}</a>,
                 })}
               </small>

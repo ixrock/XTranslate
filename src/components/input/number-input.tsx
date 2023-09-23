@@ -1,4 +1,5 @@
 import styles from "./number-input.module.scss";
+
 import React from "react";
 import { Input, InputProps } from "./input";
 import { Icon } from "../icon";
@@ -16,13 +17,13 @@ export class NumberInput extends React.Component<Props> {
   }
 
   increment() {
-    var inputElem = this.input.input as HTMLInputElement;
+    var inputElem = this.input.elem as HTMLInputElement;
     inputElem.stepUp();
     this.input.setValue(inputElem.valueAsNumber);
   }
 
   decrement() {
-    var inputElem = this.input.input as HTMLInputElement;
+    var inputElem = this.input.elem as HTMLInputElement;
     inputElem.stepDown();
     this.input.setValue(inputElem.valueAsNumber);
   }

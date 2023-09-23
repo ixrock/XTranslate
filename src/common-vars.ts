@@ -12,6 +12,11 @@ export function getExtensionUrl() {
   return getBrowserInfo().isEdge ? edgeAddonsURL : chromeStoreURL;
 }
 
+export function isMac() {
+  const macSearchingWords = ["AppleWebKit", "Macintosh"];
+  return macSearchingWords.some(macWord => navigator.userAgent.includes(macWord));
+}
+
 // webpack: generated output filenames without extension (*.js, *.css)
 export const appEntry = "app";
 export const serviceWorkerEntry = "background"; // keep in sync with manifest.json

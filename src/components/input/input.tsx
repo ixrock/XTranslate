@@ -56,7 +56,7 @@ const defaultProps: Partial<InputProps> = {
 export class Input extends React.Component<InputProps, State> {
   static defaultProps = defaultProps as object;
 
-  public input: InputElement;
+  public elem: InputElement;
   public validators: Validator[] = [];
   public focusValue: string;
 
@@ -68,30 +68,30 @@ export class Input extends React.Component<InputProps, State> {
 
   setValue(value: string | number) {
     if (value != this.getValue()) {
-      var nativeInputValueSetter = Object.getOwnPropertyDescriptor(this.input.constructor.prototype, "value").set;
-      nativeInputValueSetter.call(this.input, value);
+      var nativeInputValueSetter = Object.getOwnPropertyDescriptor(this.elem.constructor.prototype, "value").set;
+      nativeInputValueSetter.call(this.elem, value);
       var evt = new Event("input", { bubbles: true });
-      this.input.dispatchEvent(evt);
+      this.elem.dispatchEvent(evt);
     }
   }
 
   getValue(): string {
     var { value, defaultValue = "" } = this.props;
     if (value !== undefined) return value; // controlled input
-    if (this.input) return this.input.value; // uncontrolled input
+    if (this.elem) return this.elem.value; // uncontrolled input
     return defaultValue as string;
   }
 
   focus() {
-    this.input.focus();
+    this.elem.focus();
   }
 
   blur() {
-    this.input.blur();
+    this.elem.blur();
   }
 
   select() {
-    this.input.select()
+    this.elem.select()
   }
 
   private autoFitHeight() {
@@ -99,7 +99,7 @@ export class Input extends React.Component<InputProps, State> {
     if (!multiLine) {
       return;
     }
-    var textArea = this.input;
+    var textArea = this.elem;
     var lineHeight = parseFloat(window.getComputedStyle(textArea).lineHeight);
     var rowsCount = (this.getValue().match(/\n/g) || []).length + 1;
     var height = lineHeight * Math.min(Math.max(rowsCount, rows), maxRows);
@@ -149,7 +149,7 @@ export class Input extends React.Component<InputProps, State> {
       }
     }
 
-    this.input.setCustomValidity(errors.length ? errors[0].toString() : "");
+    this.elem.setCustomValidity(errors.length ? errors[0].toString() : "");
   }
 
   setValidation(errors: React.ReactNode[]) {
@@ -266,7 +266,7 @@ export class Input extends React.Component<InputProps, State> {
   }
 
   bindRef = (elem: InputElement) => {
-    this.input = elem;
+    this.elem = elem;
   }
 
   render() {

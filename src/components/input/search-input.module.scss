@@ -1,0 +1,18 @@
+.SearchInput {
+  > label {
+    color: inherit;
+    background: none;
+    padding: var(--theme-spacing-half);
+    transition: box-shadow 100ms;
+
+    &:hover, &:focus-within {
+      border-radius: var(--theme-border-radius);
+      box-shadow: 0 0 0 1px var(--theme-border-color);
+    }
+
+    .Icon {
+      height: var(--theme-spacing-double);
+      width: var(--theme-spacing-double);
+    }
+  }
+}

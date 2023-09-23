@@ -4,11 +4,11 @@ import React from "react";
 import { groupBy, orderBy } from "lodash";
 import { action, computed, makeObservable, observable, reaction, runInAction } from "mobx";
 import { observer } from "mobx-react";
-import { cssNames, disposer, prevDefault, fuzzyMatch } from "../../utils";
+import { bindGlobalHotkey, cssNames, disposer, fuzzyMatch, prevDefault, SimpleHotkey } from "../../utils";
 import { getTranslator, getTranslators, isRTL } from "../../vendors";
 import { Checkbox } from "../checkbox";
 import { Menu, MenuItem } from "../menu";
-import { FileInput, ImportingFile, Input, NumberInput } from "../input";
+import { FileInput, ImportingFile, NumberInput, SearchInput } from "../input";
 import { Option, Select } from "../select";
 import { Button } from "../button";
 import { settingsStore } from "../settings/settings.storage";
@@ -19,6 +19,7 @@ import { Tab } from "../tabs";
 import { Spinner } from "../spinner";
 import { Notifications } from "../notifications";
 import { getMessage } from "../../i18n";
+import { isMac } from "../../common-vars";
 
 enum HistoryTimeFrame {
   HOUR = "hour",
@@ -31,6 +32,7 @@ enum HistoryTimeFrame {
 @observer
 export class UserHistory extends React.Component {
   private dispose = disposer();
+  public searchInput?: SearchInput;
 
   constructor(props: object) {
     super(props);
@@ -47,24 +49,39 @@ export class UserHistory extends React.Component {
   @observable clearTimeFrame = HistoryTimeFrame.HOUR;
   @observable isLoaded = false;
 
-  async componentDidMount() {
-    await historyStorage.load();
-    this.isLoaded = true;
+  componentDidMount() {
+    historyStorage.load().then(action(() => {
+      this.isLoaded = true;
+    }));
 
     this.dispose.push(
-      reaction(() => this.searchText, async (searchText) => {
-        if (!searchText) {
-          this.searchResults.clear();
-        } else {
-          console.info(`[USER-HISTORY]: searching.. ${searchText}`)
-          const searchResults: IHistoryItemId[] = await this.search(searchText);
-          this.searchResults.replace(searchResults);
-        }
-      }, {
-        name: "history-search",
-        delay: 500,
-      })
+      this.bindSearchResults(),
+      this.bindGlobalHotkey(),
     );
+  }
+
+  private bindSearchResults() {
+    return reaction(() => this.searchText, async (searchText) => {
+      if (!searchText) {
+        this.searchResults.clear();
+      } else {
+        console.info(`[USER-HISTORY]: searching.. ${searchText}`)
+        const searchResults: IHistoryItemId[] = await this.search(searchText);
+        this.searchResults.replace(searchResults);
+      }
+    }, {
+      name: "history-search",
+      delay: 500,
+    });
+  };
+
+  private bindGlobalHotkey() {
+    const hotkey = SearchInput.defaultProps.globalHotkey as SimpleHotkey; // default hotkey from <SearchInput>
+
+    return bindGlobalHotkey(hotkey, action(() => {
+      this.showSearch = true;
+      this.searchInput?.input?.focus();
+    }));
   }
 
   componentWillUnmount() {
@@ -336,6 +353,17 @@ export class UserHistory extends React.Component {
     Notifications.ok(getMessage("history_import_success", { itemsCount: items.length }));
   }
 
+  @action
+  onClearSearch = (evt: React.KeyboardEvent) => {
+    if (this.searchText) return;
+    this.toggleSearch();
+  };
+
+  @action
+  toggleSearch = () => {
+    this.showSearch = !this.showSearch;
+  };
+
   renderHeader() {
     var { clearTimeFrame, showSettings, showSearch, showImportExport, clearItemsByTimeFrame } = this;
     var { historyEnabled, historySaveWordsOnly, historyPageSize } = settingsStore.data;
@@ -351,8 +379,8 @@ export class UserHistory extends React.Component {
             <Icon
               material="search"
               active={showSearch}
-              tooltip={!showSearch ? getMessage("history_icon_tooltip_search") : undefined}
-              onClick={() => this.showSearch = !showSearch}
+              tooltip={`${getMessage("history_icon_tooltip_search")} (${isMac() ? "Cmd" : "Ctrl"}+F)`}
+              onClick={this.toggleSearch}
             />
             <Icon
               id="import_export_menu_icon_trigger"
@@ -383,11 +411,13 @@ export class UserHistory extends React.Component {
         </div>
         <div className="settings-content flex column gaps">
           {showSearch && (
-            <Input
+            <SearchInput
               autoFocus
               placeholder={getMessage("history_search_input_placeholder")}
               value={this.searchText}
               onChange={v => this.searchText = v}
+              onClear={this.onClearSearch}
+              ref={ref => this.searchInput = ref}
             />
           )}
           {showSettings && (

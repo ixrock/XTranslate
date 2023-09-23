@@ -1,4 +1,5 @@
 // Helper for working with keyboard hotkeys
+import type React from "react";
 
 export interface Hotkey {
   code: string
@@ -51,4 +52,36 @@ function normalizeKeyboardCode(code: string) {
   code = code.replace(/Digit(\d+)/, '$1');
   code = code.replace(/(Control|Alt|Shift|Meta)(Left|Right)/, '$1');
   return code;
+}
+
+export interface SimpleHotkey {
+  ctrlOrCmd?: boolean; // for mac envs "cmd" key used instead
+  shift?: boolean;
+  alt?: boolean;
+  key: string; // e.g. "KeyF"
+}
+
+export function isHotkeyPressed(hotkey: SimpleHotkey, evt: KeyboardEvent | React.KeyboardEvent): boolean {
+  const { ctrlOrCmd, alt, shift, key } = hotkey;
+  const conditions = [
+    () => (ctrlOrCmd ? (evt.metaKey /*mac*/ || evt.ctrlKey) : true),
+    () => (alt ? evt.altKey : true),
+    () => (shift ? evt.shiftKey : true),
+    () => evt.code.toLowerCase() === key.toLowerCase(),
+  ];
+
+  return conditions.map((check) => check()).every(Boolean);
+}
+
+export function bindGlobalHotkey(hotkey: SimpleHotkey, callback?: (evt: KeyboardEvent) => void) {
+  const onGlobalKey = (evt: KeyboardEvent) => {
+    if (isHotkeyPressed(hotkey, evt)) {
+      callback?.(evt);
+      evt.preventDefault();
+    }
+  };
+
+  window.addEventListener("keydown", onGlobalKey);
+
+  return () => window.removeEventListener("keydown", onGlobalKey);
 }
