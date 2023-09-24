@@ -1,4 +1,4 @@
-import type webpack from 'webpack'
+import webpack from 'webpack'
 import path from 'path'
 import HtmlWebpackPlugin from 'html-webpack-plugin'
 import CopyWebpackPlugin from 'copy-webpack-plugin'
@@ -20,7 +20,7 @@ const configEntries: webpack.EntryObject = {
 function webpackBaseConfig(): webpack.Configuration {
   return {
     target: "web",
-    devtool: isDevelopment ? "source-map" : undefined, // https://webpack.js.org/configuration/devtool/
+    devtool: isDevelopment ? "source-map" : false, // https://webpack.js.org/configuration/devtool/
     mode: isDevelopment ? "development" : "production",
     cache: isDevelopment ? { type: "filesystem" } : false,
     entry: {},
@@ -75,7 +75,7 @@ function webpackBaseConfig(): webpack.Configuration {
             {
               loader: "css-loader",
               options: {
-                sourceMap: false,
+                sourceMap: isDevelopment,
                 modules: {
                   auto: /\.module\./i, // https://github.com/webpack-contrib/css-loader#auto
                   mode: 'local', // :local(.selector) by default
@@ -86,7 +86,7 @@ function webpackBaseConfig(): webpack.Configuration {
             {
               loader: 'sass-loader',
               options: {
-                sourceMap: false,
+                sourceMap: isDevelopment,
                 additionalData: sassCommonVarsImport,
                 sassOptions: {
                   includePaths: [componentsDir]
@@ -120,8 +120,13 @@ function webpackBaseConfig(): webpack.Configuration {
     },
 
     plugins: [
-      new MiniCssExtractPlugin({ filename: '[name].css' })
-    ]
+      new MiniCssExtractPlugin({ filename: '[name].css' }),
+
+      // https://webpack.js.org/plugins/source-map-dev-tool-plugin/
+      !isDevelopment && new webpack.SourceMapDevToolPlugin({
+        exclude: ["mobx"],
+      }),
+    ].filter(Boolean),
   }
 }
 
@@ -134,7 +139,7 @@ export default [
       [appEntry]: configEntries[appEntry],
     };
 
-    webConfig.plugins = [
+    webConfig.plugins.push(
       new HtmlWebpackPlugin({
         inject: true,
         chunks: ["app"],
@@ -142,8 +147,6 @@ export default [
         template: optionsPage,
         scriptLoading: "blocking", // required with `optimization.splitChunks`
       }),
-
-      new MiniCssExtractPlugin({ filename: '[name].css' }),
 
       new CopyWebpackPlugin({
         patterns: [
@@ -153,8 +156,8 @@ export default [
           { from: "_locales", to: "_locales" },
           { from: "assets", to: "assets" },
         ]
-      })
-    ];
+      }),
+    );
 
     webConfig.optimization.splitChunks = {
       chunks: "all",

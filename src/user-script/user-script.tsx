@@ -15,6 +15,7 @@ import { XTranslateIcon } from "./xtranslate-icon";
 import { Popup } from "../components/popup/popup";
 import { settingsStore } from "../components/settings/settings.storage";
 import { contentScriptEntry, isPdf } from "../common-vars";
+import "../../refs";
 
 export type CustomDomRect = Partial<Writeable<DOMRect>>;
 
@@ -407,7 +408,7 @@ class App extends React.Component {
     this.refreshPosition();
   }, 250);
 
-  @computed get popupPosition(): React.CSSProperties {
+  get popupPosition(): React.CSSProperties {
     if (isPdf()) {
       // shown always at left-top corner since impossible to detect page selection position in PDF-file natively
       return { margin: 20 };
