@@ -14,7 +14,7 @@ import { getNextTranslator, getTranslator, ITranslationError, ITranslationResult
 import { XTranslateIcon } from "./xtranslate-icon";
 import { Popup } from "../components/popup/popup";
 import { settingsStore } from "../components/settings/settings.storage";
-import { contentScriptEntry } from "../common-vars";
+import { contentScriptEntry, isPdf } from "../common-vars";
 
 export type CustomDomRect = Partial<Writeable<DOMRect>>;
 
@@ -28,7 +28,7 @@ class App extends React.Component {
     const appElem = App.rootElem = document.createElement("div");
     appElem.classList.add("XTranslate");
 
-    const shadowRoot = appElem.attachShadow({ mode: "closed" });
+    const shadowRoot = appElem.attachShadow({ mode: isPdf() ? "open" : "closed" });
     const rootNode = createRoot(shadowRoot);
     document.documentElement.appendChild(appElem);
 
@@ -40,6 +40,7 @@ class App extends React.Component {
     super(props);
     makeObservable(this);
     autoBind(this);
+    this.preloadCss();
   }
 
   public appName = getManifest().name;
@@ -61,6 +62,7 @@ class App extends React.Component {
   @observable isLoading = false;
   @observable userStyle = "";
 
+  // fix: <link rel crossOrigin/> is failed for opened local files
   async preloadCss() {
     this.userStyle = await proxyRequest({
       url: getURL(`${contentScriptEntry}.css`),
@@ -68,9 +70,7 @@ class App extends React.Component {
     });
   }
 
-  async componentDidMount() {
-    await this.preloadCss(); // fix: <link rel crossOrigin/> is failed for opened local files
-
+  componentDidMount() {
     // Bind extension's runtime IPC events
     onMessage<void, string>(MessageType.GET_SELECTED_TEXT, () => this.selectedText);
 
@@ -205,8 +205,8 @@ class App extends React.Component {
   normalizeRect(rect: DOMRect, withScroll = true): CustomDomRect {
     var { left, top, width, height } = rect;
     if (withScroll) {
-      left += window.pageXOffset;
-      top += window.pageYOffset;
+      left += window.scrollX;
+      top += window.scrollY;
     }
     return {
       left, top, width, height,
@@ -347,20 +347,20 @@ class App extends React.Component {
   onKeyDown = (evt: KeyboardEvent) => {
     if (!this.isPopupHidden) {
       switch (evt.code) {
-        case "Escape":
-          this.hidePopup();
-          evt.stopPropagation();
-          break;
-        case "ArrowLeft":
-          this.translateNext(true);
-          evt.stopImmediatePropagation();
-          evt.preventDefault();
-          break;
-        case "ArrowRight":
-          this.translateNext();
-          evt.stopImmediatePropagation();
-          evt.preventDefault();
-          break;
+      case "Escape":
+        this.hidePopup();
+        evt.stopPropagation();
+        break;
+      case "ArrowLeft":
+        this.translateNext(true);
+        evt.stopImmediatePropagation();
+        evt.preventDefault();
+        break;
+      case "ArrowRight":
+        this.translateNext();
+        evt.stopImmediatePropagation();
+        evt.preventDefault();
+        break;
       }
     }
     // handle text translation by hotkey
@@ -408,8 +408,8 @@ class App extends React.Component {
   }, 250);
 
   @computed get popupPosition(): React.CSSProperties {
-    // handle position in PDF-files
-    if (document.contentType === "application/pdf") {
+    if (isPdf()) {
+      // shown always at left-top corner since impossible to detect page selection position in PDF-file natively
       return { margin: 20 };
     }
 

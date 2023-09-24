@@ -17,6 +17,10 @@ export function isMac() {
   return macSearchingWords.some(macWord => navigator.userAgent.includes(macWord));
 }
 
+export function isPdf() {
+  return document.contentType === "application/pdf";
+}
+
 // webpack: generated output filenames without extension (*.js, *.css)
 export const appEntry = "app";
 export const serviceWorkerEntry = "background"; // keep in sync with manifest.json
