@@ -12,28 +12,30 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
 
+  &.previewMode {
+    margin: auto;
+  }
+
   &.fixedPos {
-    position: fixed;
+    position: fixed !important;
     margin: var(--theme-spacing);
 
-    &.leftTop {
-      left: 0;
-      top: 0;
-    }
+    &:global {
+      &.left {
+        left: 0;
+      }
 
-    &.leftBottom {
-      left: 0;
-      bottom: 0;
-    }
+      &.top {
+        top: 0;
+      }
 
-    &.rightTop {
-      right: 0;
-      top: 0;
-    }
+      &.right {
+        right: 0;
+      }
 
-    &.rightBottom {
-      right: 0;
-      bottom: 0;
+      &.bottom {
+        bottom: 0;
+      }
     }
   }
 

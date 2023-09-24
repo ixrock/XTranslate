@@ -3,6 +3,8 @@ import { Hotkey } from "../../utils/parseHotkey";
 import { getTranslator } from "../../vendors";
 import { createStorageHelper } from "../../extension/storage";
 
+export type PopupPosition = "" /*auto*/ | "left top" | "left bottom" | "right top" | "right bottom";
+
 export const settingsStorage = createStorageHelper("settings", {
   area: "sync", // share synced data via logged-in account (google, firefox, etc.)
   defaultValue: {
@@ -29,7 +31,7 @@ export const settingsStorage = createStorageHelper("settings", {
     historySaveWordsOnly: true,
     historyPageSize: 50,
     favorites: {} as FavoritesList,
-    popupFixedPos: "",
+    popupPosition: "" as PopupPosition,
     userDataCollect: true,
     hotkey: {
       altKey: true,

@@ -244,7 +244,7 @@ class App extends React.Component {
 
   @action
   refreshPosition() {
-    if (settingsStore.data.popupFixedPos || !this.selectionRects) {
+    if (settingsStore.data.popupPosition || !this.selectionRects) {
       return; // skip: no position refining is needed
     }
     var { top } = this.selectionRects[0];

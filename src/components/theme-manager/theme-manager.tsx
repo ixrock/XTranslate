@@ -24,7 +24,7 @@ export class ThemeManager extends React.Component {
     var isDefault = themeStorage.isDefaultValue(theme);
     return (
       <div className="ThemeManager flex column gaps">
-        <Popup translation={Popup.translationMock} className="box center"/>
+        <Popup previewMode translation={Popup.translationMock}/>
         <div className="theme">
           <div className="flex gaps auto">
             <div className="box">

@@ -17,12 +17,25 @@ import { Popup } from "../popup";
 import { TooltipProps } from "../tooltip";
 import { SubTitle } from "../sub-title";
 import { Tab } from "../tabs";
-import { settingsStore } from "./settings.storage";
+import { PopupPosition, settingsStore } from "./settings.storage";
 import { pageManager } from "../app/page-manager";
 import { getMessage } from "../../i18n";
 
+export interface PopupPositionOption {
+  value: PopupPosition;
+  label: string;
+}
+
 @observer
 export class Settings extends React.Component {
+  private popupPositions: PopupPositionOption[] = [
+    { value: "", label: getMessage("popup_position_auto") },
+    { value: "left top", label: getMessage("popup_position_left_top") },
+    { value: "left bottom", label: getMessage("popup_position_left_bottom") },
+    { value: "right bottom", label: getMessage("popup_position_right_bottom") },
+    { value: "right top", label: getMessage("popup_position_right_top") },
+  ];
+
   onSaveHotkey = (evt: React.KeyboardEvent) => {
     var nativeEvent = evt.nativeEvent;
     var hotkey = parseHotkey(nativeEvent);
@@ -38,6 +51,7 @@ export class Settings extends React.Component {
       style: { background: "none" },
       children: <Popup translation={Popup.translationMock}/>
     };
+
     return (
       <main className={styles.Settings}>
         <article className={styles.service}>
@@ -166,14 +180,10 @@ export class Settings extends React.Component {
             <Select
               id="select_popup_position"
               className="box grow"
-              value={settings.popupFixedPos}
-              onChange={v => settings.popupFixedPos = v}
+              value={settings.popupPosition}
+              onChange={v => settings.popupPosition = v}
             >
-              <Option value="" label={getMessage("popup_position_auto")}/>
-              <Option value={popupStyle.leftTop} label={getMessage("popup_position_left_top")}/>
-              <Option value={popupStyle.rightTop} label={getMessage("popup_position_right_top")}/>
-              <Option value={popupStyle.leftBottom} label={getMessage("popup_position_left_bottom")}/>
-              <Option value={popupStyle.rightBottom} label={getMessage("popup_position_right_bottom")}/>
+              {this.popupPositions.map((opt) => <Option key={opt.value} {...opt}/>)}
             </Select>
           </div>
         </article>

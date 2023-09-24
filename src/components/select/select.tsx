@@ -18,6 +18,7 @@ export interface SelectProps<V = any> extends React.PropsWithChildren {
   getOptionLabel?(value: V): string;
 }
 
+// TODO: deprecated, replace with "react-select" wrapper (see also `select-language.tsx`)
 export class Select extends React.Component<SelectProps> {
   static defaultProps: SelectProps = {
     getOptionValue: (value: any) => JSON.stringify(value), // must be unique within <select>
@@ -39,8 +40,8 @@ export class Select extends React.Component<SelectProps> {
       <SelectContext.Provider value={this}>
         <div className={cssNames(styles.Select, className)}>
           <select
-            {...selectProps}
             value={getOptionValue(value)}
+            {...selectProps}
             onChange={this.onChange}
           />
           <Icon material="keyboard_arrow_down" className={styles.arrowIcon}/>

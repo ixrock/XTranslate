@@ -12,6 +12,7 @@ import { getMessage } from "../../i18n";
 import { isEqual } from "lodash";
 
 interface Props extends Omit<React.HTMLProps<any>, "className"> {
+  previewMode?: boolean;
   className?: IClassName;
   initParams?: Partial<ITranslationResult>;
   translation?: ITranslationResult
@@ -67,7 +68,7 @@ export class Popup extends React.Component<Props> {
   }
 
   @computed get isPreviewMode(): boolean {
-    return isEqual(this.props.translation, Popup.translationMock);
+    return this.props.previewMode || isEqual(this.props.translation, Popup.translationMock);
   }
 
   @computed get popupStyle(): CSSProperties {
@@ -284,13 +285,15 @@ export class Popup extends React.Component<Props> {
   }
 
   render() {
-    var { popupFixedPos } = settingsStore.data;
+    var { popupPosition } = settingsStore.data;
     var { translation, error, className, style: customStyle } = this.props;
     var isVisible = !!(translation || error);
-    var popupClass = cssNames(styles.Popup, className, {
+    var popupClass = cssNames(styles.Popup, className, popupPosition, {
       [styles.visible]: isVisible,
-      [`${styles.fixedPos} ${popupFixedPos}`]: Boolean(popupFixedPos)
+      [styles.fixedPos]: !this.isPreviewMode && popupPosition,
+      [styles.previewMode]: this.isPreviewMode,
     });
+
     return (
       <div
         className={popupClass} tabIndex={-1}
