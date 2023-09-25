@@ -438,7 +438,7 @@ class App extends React.Component {
           onPlayText={playText}
           onTranslateNext={() => translateNext()}
           onClose={hidePopup}
-          tooltipsRoot={App.rootElem}
+          tooltipParent={App.rootElem}
           ref={(ref: Popup) => this.popup = ref}
         />
       </>

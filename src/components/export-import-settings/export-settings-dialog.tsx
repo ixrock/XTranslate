@@ -29,9 +29,14 @@ export interface ImportExportSettings {
 export interface Props extends DialogProps {
 }
 
+const defaultProps: Partial<Props> = {};
+
 @observer
 export class ExportImportSettingsDialog extends React.Component<Props> {
+  static defaultProps = defaultProps as unknown as Props;
+
   readonly fileNameJson = "xtranslate-settings.json";
+
   @observable.ref dialog: Dialog;
   @observable error = "";
 

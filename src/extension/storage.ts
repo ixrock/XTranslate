@@ -1,7 +1,8 @@
 // Chrome storages api helper
-import { getBrowserInfo } from "./runtime";
+
 import { createLogger } from "../utils/createLogger";
 import { StorageHelper, StorageHelperOptions } from "../utils/storageHelper";
+import { isFirefox } from "../common-vars";
 
 export interface ChromeStorageHelperOptions<T> extends Omit<StorageHelperOptions<T>, "storage"> {
   area?: chrome.storage.AreaName;
@@ -17,7 +18,7 @@ export function createStorageHelper<T>(key: string, options: ChromeStorageHelper
   } = options;
 
   const logger = createLogger({ systemPrefix: `[StorageHelperLocal]` });
-  const browserStorage = getBrowserInfo().isFirefox
+  const browserStorage = isFirefox()
     ? chrome.storage.local // TODO: support "sync" for firefox (maybe it's disabled only in dev-mode)
     : chrome.storage[area];
 

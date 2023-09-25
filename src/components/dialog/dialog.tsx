@@ -5,6 +5,7 @@ import { observer } from "mobx-react";
 import { createPortal, findDOMNode } from "react-dom";
 import { Animate } from "../animate";
 import { cssNames, IClassName, noop, stopPropagation } from "../../utils";
+import { Icon } from "../icon";
 
 export interface DialogProps extends React.PropsWithChildren {
   isOpen: boolean
@@ -12,6 +13,7 @@ export interface DialogProps extends React.PropsWithChildren {
   pinned?: boolean
   className?: IClassName
   contentClassName?: IClassName
+  showCloseIcon?: boolean;
   onOpen?(): void
   onClose?(): void
 }
@@ -22,11 +24,12 @@ const defaultProps: Partial<DialogProps> = {
   onClose: noop,
   modal: true,
   pinned: false,
+  showCloseIcon: true,
 };
 
 @observer
 export class Dialog extends React.Component<DialogProps> {
-  static defaultProps = defaultProps as object;
+  static defaultProps = defaultProps as unknown as DialogProps;
 
   public contentElem: HTMLElement;
 
@@ -68,8 +71,21 @@ export class Dialog extends React.Component<DialogProps> {
     }
   }
 
+  renderCloseIcon(): React.ReactNode {
+    if (!this.props.showCloseIcon) {
+      return;
+    }
+    return (
+      <Icon
+        material="close"
+        className={styles.closeIcon}
+        onClick={this.close}
+      />
+    );
+  }
+
   render() {
-    var { modal, pinned, children, isOpen } = this.props;
+    var { modal, pinned, children, isOpen, showCloseIcon } = this.props;
     var className = cssNames(styles.Dialog, this.props.className, {
       [styles.modal]: modal,
       [styles.pinned]: pinned,
@@ -80,6 +96,7 @@ export class Dialog extends React.Component<DialogProps> {
       <Animate name="opacity-scale" enter={isOpen} onEnter={this.open}>
         <div className={className} onClick={stopPropagation}>
           <div className={contentClassName} ref={e => this.contentElem = e}>
+            {this.renderCloseIcon()}
             {children}
           </div>
         </div>

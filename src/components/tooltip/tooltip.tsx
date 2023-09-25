@@ -11,7 +11,7 @@ export interface TooltipProps {
   className?: string;
   position?: Position;
   following?: boolean; // tooltip is following mouse position (rendered outside of components's root element)
-  portalRootElement?: HTMLElement; // default: document.body
+  parentElement?: HTMLElement; // default: document.body
   nowrap?: boolean; // css-shortcut for style={{whiteSpace: "nowrap"}}
   children?: React.ReactNode;
   style?: React.CSSProperties;
@@ -26,7 +26,7 @@ interface Position {
 }
 
 const defaultProps: Partial<TooltipProps> = {
-  get portalRootElement() {
+  get parentElement() {
     return document.body;
   },
   position: {
@@ -119,7 +119,7 @@ export class Tooltip extends React.Component<TooltipProps> {
   }
 
   render() {
-    var { className, position, following, nowrap, style, children, portalRootElement } = this.props;
+    var { className, position, following, nowrap, style, children, parentElement } = this.props;
 
     className = cssNames(styles.Tooltip, {
       [styles.left]: position.left,
@@ -140,7 +140,7 @@ export class Tooltip extends React.Component<TooltipProps> {
     );
 
     if (following) {
-      return createPortal(tooltip, portalRootElement);
+      return createPortal(tooltip, parentElement);
     }
     return tooltip;
   }

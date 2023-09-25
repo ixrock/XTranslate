@@ -15,7 +15,7 @@
   --theme-color-success: #{$green-600};
   --theme-color-error: #{$red-500};
   --theme-border-color: #{transparentize($textColorMain, .5)};
-  --theme-border-radius: 3px;
+  --theme-border-radius: 5px;
   --theme-spacing: 10px;
   --theme-spacing-half: calc(var(--theme-spacing) / 2);
   --theme-spacing-double: calc(var(--theme-spacing) * 2);

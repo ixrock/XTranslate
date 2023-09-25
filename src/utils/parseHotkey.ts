@@ -74,6 +74,8 @@ export function isHotkeyPressed(hotkey: SimpleHotkey, evt: KeyboardEvent | React
 }
 
 export function bindGlobalHotkey(hotkey: SimpleHotkey, callback?: (evt: KeyboardEvent) => void) {
+  if (!hotkey) return Function; // noop
+
   const onGlobalKey = (evt: KeyboardEvent) => {
     if (isHotkeyPressed(hotkey, evt)) {
       callback?.(evt);

@@ -1,5 +1,6 @@
 import type { ITranslationResult, TranslatePayload } from "../vendors";
-import { ChromeTtsPayload, MessageType, ProxyRequestPayload, ProxyResponsePayload, ProxyResponseType, SaveToHistoryPayload } from "./messages";
+import type { IHistoryItem } from "../components/user-history/history.storage";
+import { ChromeTtsPayload, MessageType, ProxyRequestPayload, ProxyResponsePayload, ProxyResponseType, SaveToFavorites, SaveToHistoryPayload } from "./messages";
 import { getActiveTab, sendMessage } from "./index";
 
 export async function getSelectedText(): Promise<string> {
@@ -31,11 +32,21 @@ export async function proxyRequest<Response>(payload: ProxyRequestPayload): Prom
   return response.data;
 }
 
-export function saveToHistory(translation: ITranslationResult) {
+export function saveToHistory(translation: ITranslationResult | IHistoryItem) {
   return sendMessage<SaveToHistoryPayload, ITranslationResult>({
     type: MessageType.SAVE_TO_HISTORY,
     payload: {
       translation,
+    },
+  });
+}
+
+export function saveToFavorites(item: ITranslationResult | IHistoryItem, { isFavorite = true } = {}) {
+  return sendMessage<SaveToFavorites>({
+    type: MessageType.SAVE_TO_FAVORITES,
+    payload: {
+      item: item,
+      isFavorite: isFavorite,
     },
   });
 }

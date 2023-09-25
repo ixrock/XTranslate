@@ -1,15 +1,17 @@
 import styles from "./popup.module.scss"
 
 import React, { CSSProperties } from "react";
-import { computed, makeObservable, observable, reaction } from "mobx";
+import { action, computed, makeObservable, observable, reaction } from "mobx";
 import { observer } from "mobx-react";
+import { isEqual } from "lodash";
+import { iconMaterialFavorite, iconMaterialFavoriteOutlined } from "../../common-vars";
 import { cssNames, disposer, IClassName, noop, prevDefault, toCssColor } from "../../utils";
 import { getNextTranslator, getTranslator, isRTL, ITranslationError, ITranslationResult } from "../../vendors";
 import { Icon } from "../icon";
 import { settingsStorage, settingsStore } from "../settings/settings.storage";
 import { themeStore } from "../theme-manager/theme.storage";
 import { getMessage } from "../../i18n";
-import { isEqual } from "lodash";
+import { saveToFavorites } from "../../extension";
 
 interface Props extends Omit<React.HTMLProps<any>, "className"> {
   previewMode?: boolean;
@@ -17,7 +19,7 @@ interface Props extends Omit<React.HTMLProps<any>, "className"> {
   initParams?: Partial<ITranslationResult>;
   translation?: ITranslationResult
   error?: ITranslationError
-  tooltipsRoot?: HTMLElement; // where to render tooltips with "fixed" (aka following) "position"
+  tooltipParent?: HTMLElement; // where to render tooltips with "fixed" (aka following) "position"
   onPlayText?(): void;
   onTranslateNext?(): void;
   onClose?(): void;
@@ -27,25 +29,31 @@ interface Props extends Omit<React.HTMLProps<any>, "className"> {
 export class Popup extends React.Component<Props> {
   private dispose = disposer();
   public elem: HTMLElement;
+
+  static defaultProps: Partial<Props> = {
+    tooltipParent: document.body,
+    onPlayText: noop,
+    onTranslateNext: noop,
+  };
+
   @observable copied = false;
+  @observable savedToFavorites = false;
 
   constructor(props: Props) {
     super(props);
     makeObservable(this);
 
     this.dispose.push(
-      reaction(() => this.props.translation, () => this.copied = false),
+      reaction(() => this.props.translation, () => {
+        this.copied = false;
+        this.savedToFavorites = false;
+      }),
     );
   }
 
   componentWillUnmount() {
     this.dispose();
   }
-
-  static defaultProps: Partial<Props> = {
-    onPlayText: noop,
-    onTranslateNext: noop,
-  };
 
   static get translationMock(): ITranslationResult {
     return {
@@ -144,6 +152,28 @@ export class Popup extends React.Component<Props> {
     }
   }
 
+  renderSaveToFavoritesIcon() {
+    if (!settingsStore.data.showSaveToFavoriteIcon || !this.props.translation) {
+      return;
+    }
+    return (
+      <Icon
+        className={styles.icon}
+        material={this.savedToFavorites ? iconMaterialFavorite : iconMaterialFavoriteOutlined}
+        tooltip={{
+          className: styles.iconTooltip,
+          children: getMessage("history_mark_as_favorite"),
+          parentElement: this.props.tooltipParent,
+        }}
+        onClick={action(async () => {
+          if (this.savedToFavorites) return;
+          await saveToFavorites(this.props.translation);
+          this.savedToFavorites = true;
+        })}
+      />
+    )
+  }
+
   renderCopyTranslationIcon() {
     if (!settingsStore.data.showCopyTranslationIcon) {
       return;
@@ -155,7 +185,7 @@ export class Popup extends React.Component<Props> {
         tooltip={{
           className: styles.iconTooltip,
           children: getMessage("popup_copy_translation_title"),
-          portalRootElement: this.props.tooltipsRoot,
+          parentElement: this.props.tooltipParent,
         }}
         onClick={this.copyToClipboard}
       />
@@ -173,7 +203,7 @@ export class Popup extends React.Component<Props> {
         tooltip={{
           className: styles.iconTooltip,
           children: getMessage("popup_play_icon_title"),
-          portalRootElement: this.props.tooltipsRoot,
+          parentElement: this.props.tooltipParent,
         }}
         onClick={prevDefault(this.props.onPlayText)}
       />
@@ -196,7 +226,7 @@ export class Popup extends React.Component<Props> {
         tooltip={{
           className: styles.iconTooltip,
           children: iconTitle,
-          portalRootElement: this.props.tooltipsRoot,
+          parentElement: this.props.tooltipParent,
         }}
         onClick={prevDefault(this.props.onTranslateNext)}
       />
@@ -236,6 +266,7 @@ export class Popup extends React.Component<Props> {
             {transcription ? <i className={styles.transcription}>{" "}[{transcription}]</i> : null}
           </div>
           <div className={styles.icons}>
+            {this.renderSaveToFavoritesIcon()}
             {this.renderCopyTranslationIcon()}
             {this.renderNextTranslationIcon()}
             {this.renderClosePopupIcon()}

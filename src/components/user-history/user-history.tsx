@@ -13,13 +13,14 @@ import { Option, Select } from "../select";
 import { Button } from "../button";
 import { settingsStore } from "../settings/settings.storage";
 import { pageManager } from "../app/page-manager";
-import { clearHistoryItem, exportHistory, historyStorage, HistoryTranslation, HistoryTranslations, IHistoryItem, IHistoryItemId, IHistoryStorageItem, importHistory, toHistoryItem } from "./history.storage";
+import { clearHistoryItem, exportHistory, HistoryRecord, historyStorage, HistoryTranslation, IHistoryItem, IHistoryItemId, IHistoryStorageItem, importHistory, toHistoryItem } from "./history.storage";
 import { Icon } from "../icon";
 import { Tab } from "../tabs";
 import { Spinner } from "../spinner";
 import { Notifications } from "../notifications";
 import { getMessage } from "../../i18n";
-import { isMac } from "../../common-vars";
+import { iconMaterialFavorite, iconMaterialFavoriteOutlined, isMac } from "../../common-vars";
+import { saveToFavorites } from "../../extension";
 
 enum HistoryTimeFrame {
   HOUR = "hour",
@@ -45,6 +46,7 @@ export class UserHistory extends React.Component {
   @observable detailsVisible = observable.set<IHistoryItemId>();
   @observable showSearch = false;
   @observable showSettings = false;
+  @observable showOnlyFavorites = false;
   @observable showImportExport = false;
   @observable clearTimeFrame = HistoryTimeFrame.HOUR;
   @observable isLoaded = false;
@@ -92,6 +94,28 @@ export class UserHistory extends React.Component {
     return this.page * settingsStore.data.historyPageSize;
   }
 
+  @computed get items(): HistoryRecord<IHistoryItem> {
+    const items: HistoryRecord<IHistoryItem> = {};
+    const { translations, favorites } = historyStorage.toJS();
+
+    // convert history items to runtime format (instead of more compressed storage-type format)
+    Object.entries(translations).forEach(([itemId, translationsByVendor]) => {
+      items[itemId] = Object.fromEntries(
+        Object.entries(translationsByVendor).map(([vendor, storageItem]) => {
+          const isFavorite = favorites[itemId]?.[vendor];
+
+          if (this.showOnlyFavorites && !isFavorite) {
+            return;
+          }
+
+          return [vendor, toHistoryItem(storageItem)];
+        }).filter(Boolean)
+      );
+    });
+
+    return items;
+  }
+
   @computed get itemsListSorted(): HistoryTranslation[] {
     let items: HistoryTranslation[] = Object.values(this.items)
       // has at least one result from translation vendor
@@ -107,21 +131,6 @@ export class UserHistory extends React.Component {
       translation => Math.max(...Object.values(translation).map(item => item.date)),
       "desc", // latest on top
     )
-  }
-
-  @computed get items(): HistoryTranslations {
-    const items: HistoryTranslations = {};
-    const { translations } = historyStorage.toJS();
-
-    // convert history items to runtime format (instead of more compressed storage-type format)
-    Object.entries(translations).forEach(([itemId, translationsByVendor]) => {
-      items[itemId] = Object.fromEntries(
-        Object.entries(translationsByVendor)
-          .map(([vendor, storageItem]) => [vendor, toHistoryItem(storageItem)])
-      );
-    });
-
-    return items;
   }
 
   @computed get itemsGroupedByDay(): Map<number/*day*/, { [vendor: string]: IHistoryItem }[]> {
@@ -250,7 +259,7 @@ export class UserHistory extends React.Component {
         {Array.from(this.itemsGroupedByDay).map(([dayTime, translations]) => {
           return (
             <React.Fragment key={dayTime}>
-              <div className="history-date">
+              <div className="history-date" tabIndex={0}>
                 {new Date(dayTime).toDateString()}
               </div>
               {translations.map((translation: HistoryTranslation) => {
@@ -261,7 +270,12 @@ export class UserHistory extends React.Component {
                   isOpened: this.detailsVisible.has(itemGroupId),
                 });
                 return (
-                  <div key={itemGroupId} className={className} onClick={() => this.toggleDetails(itemGroupId)}>
+                  <div
+                    key={itemGroupId}
+                    className={className}
+                    onClick={() => this.toggleDetails(itemGroupId)}
+                    tabIndex={1}
+                  >
                     {getTranslators().map(vendor => {
                       const item = translation[vendor.name];
                       if (!item) return; // no results for this translation service yet
@@ -281,6 +295,8 @@ export class UserHistory extends React.Component {
     var { id: itemId, vendor, from: langFrom, to: langTo, text, translation, transcription, dictionary } = item;
     var showDetails = this.detailsVisible.has(itemId);
     var translator = getTranslator(vendor);
+    var isFavorite = Boolean(historyStorage.get().favorites[itemId]?.[vendor]);
+
     return (
       <div className={cssNames("history-item", { showDetails })}>
         {showDetails && (
@@ -289,7 +305,7 @@ export class UserHistory extends React.Component {
             <span className="translation-direction">{translator.getLangPairTitle(langFrom, langTo)}</span>
           </small>
         )}
-        <div className="main-info flex gaps">
+        <div className="main-info flex gaps align-center">
           <div className="text box grow flex gaps align-center">
             {showDetails && (
               <Icon
@@ -307,6 +323,11 @@ export class UserHistory extends React.Component {
           <div
             className={cssNames("translation box grow", { rtl: isRTL(langTo) })}
             dangerouslySetInnerHTML={{ __html: this.highlightSearch(translation) }}
+          />
+          <Icon
+            material={isFavorite ? iconMaterialFavorite : iconMaterialFavoriteOutlined}
+            className="icons favorite"
+            onClick={prevDefault(() => saveToFavorites(item, { isFavorite: !isFavorite }))}
           />
           <Icon
             material="remove_circle_outline"
@@ -365,22 +386,28 @@ export class UserHistory extends React.Component {
   };
 
   renderHeader() {
-    var { clearTimeFrame, showSettings, showSearch, showImportExport, clearItemsByTimeFrame } = this;
+    var { clearTimeFrame, showSettings, showSearch, showImportExport, showOnlyFavorites, clearItemsByTimeFrame } = this;
     var { historyEnabled, historySaveWordsOnly, historyPageSize } = settingsStore.data;
     return (
       <>
-        <div className="settings flex gaps align-center justify-center">
+        <div className="settings">
           <Checkbox
             label={getMessage("history_enabled_flag")}
             checked={historyEnabled}
             onChange={v => settingsStore.data.historyEnabled = v}
           />
-          <div className="actions">
+          <div className="toolbar-icons">
             <Icon
               material="search"
               active={showSearch}
               tooltip={`${getMessage("history_icon_tooltip_search")} (${isMac() ? "Cmd" : "Ctrl"}+F)`}
               onClick={this.toggleSearch}
+            />
+            <Icon
+              material={showOnlyFavorites ? iconMaterialFavorite : iconMaterialFavoriteOutlined}
+              active={showOnlyFavorites}
+              tooltip={getMessage("history_show_favorites_only")}
+              onClick={() => this.showOnlyFavorites = !showOnlyFavorites}
             />
             <Icon
               id="import_export_menu_icon_trigger"

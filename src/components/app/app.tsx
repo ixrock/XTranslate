@@ -87,6 +87,7 @@ export class App extends React.Component {
           <Icon
             small
             svg="moon"
+            active={useDarkTheme}
             tooltip={{ nowrap: true, children: getMessage("use_dark_theme") }}
             className={cssNames("dark-theme-icon", { active: useDarkTheme })}
             onClick={() => settingsStore.data.useDarkTheme = !useDarkTheme}

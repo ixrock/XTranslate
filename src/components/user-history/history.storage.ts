@@ -5,20 +5,20 @@ import { getTranslator, ITranslationResult } from "../../vendors/translator";
 
 export type IHistoryItemId = string;
 
+export interface HistoryRecord<DataItem> {
+  [id: IHistoryItemId]: {
+    [vendor: string]: DataItem;
+  }
+}
+
 export interface HistoryStorageModel {
   version?: number;
-  translations: HistoryTranslations<IHistoryStorageItem>;
-
-  /** @deprecated **/
-  items?: IHistoryStorageItem[];
+  translations: HistoryRecord<IHistoryStorageItem>;
+  favorites: HistoryRecord<boolean>;
 }
 
-export interface HistoryTranslations<HistoryItem = IHistoryItem> {
-  [id: IHistoryItemId]: HistoryTranslation<HistoryItem>;
-}
-
-export interface HistoryTranslation<HistoryItem = IHistoryItem> {
-  [vendor: string]: HistoryItem;
+export interface HistoryTranslation {
+  [vendor: string]: IHistoryItem;
 }
 
 export const historyStorage = createStorageHelper<HistoryStorageModel>("history", {
@@ -26,18 +26,17 @@ export const historyStorage = createStorageHelper<HistoryStorageModel>("history"
   autoLoad: false, // manual loading: before saving data or listing items
   defaultValue: {
     translations: {},
+    favorites: {}
   },
-  migrations: [
-    function (data: HistoryStorageModel) {
-      if (!data.translations && data.items) {
-        return {
-          version: 1,
-          ...toStorageModel(data.items),
-        };
-      }
-    },
-  ]
 });
+
+export function getHistoryItemId(item: ITranslationResult | IHistoryItem): string {
+  if (isHistoryItem(item)) {
+    return generateId(item.text, item.from, item.to);
+  } else {
+    return generateId(item.originalText, item.langDetected, item.langTo);
+  }
+}
 
 export function generateId(originalText: string, from: string, to: string): IHistoryItemId {
   return MD5([originalText, from, to].join(",")).toString();
@@ -46,6 +45,7 @@ export function generateId(originalText: string, from: string, to: string): IHis
 export function toStorageModel(items: IHistoryStorageItem[]): HistoryStorageModel {
   const model: HistoryStorageModel = {
     translations: {},
+    favorites: {},
   };
 
   items.forEach(storageItem => {
@@ -60,9 +60,11 @@ export function toStorageModel(items: IHistoryStorageItem[]): HistoryStorageMode
 
 export function importHistory(data: IHistoryItem | IHistoryStorageItem) {
   const storageItem = isStorageItem(data) ? data : toStorageItem(data);
-  const item = toHistoryItem(storageItem);
-  const itemId = generateId(item.text, item.from, item.to);
+
+  const item = isHistoryItem(data) ? data : toHistoryItem(storageItem);
   const { translations } = historyStorage.get();
+  const itemId = generateId(item.text, item.from, item.to);
+
   translations[itemId] ??= {};
   translations[itemId][item.vendor] = storageItem;
 }
@@ -105,7 +107,7 @@ export function toTranslationResult(data: IHistoryStorageItem): ITranslationResu
   }
 }
 
-export function toStorageItem(data: ITranslationResult | IHistoryItem): IHistoryStorageItem {
+export function toStorageItem(data: ITranslationResult | IHistoryItem): IHistoryStorageItemVersion2 {
   var { vendor, transcription, translation } = data;
   if (isHistoryItem(data)) {
     return [
@@ -120,7 +122,7 @@ export function toStorageItem(data: ITranslationResult | IHistoryItem): IHistory
         dict.wordType,
         dict.translation,
         dict.similarReverseWords ?? [],
-      ])
+      ]),
     ]
   } else {
     return [
@@ -135,12 +137,14 @@ export function toStorageItem(data: ITranslationResult | IHistoryItem): IHistory
         dict.wordType,
         dict.meanings.map(mean => mean.word),
         dict.meanings.map(mean => mean.translation),
-      ])
+      ]),
     ]
   }
 }
 
 export function toHistoryItem(data: IHistoryStorageItem): IHistoryItem {
+  if (!data) return;
+
   if (Array.isArray(data)) {
     const [date, vendor, from, to, text, translation, transcription, dict] = data;
     return {
@@ -150,9 +154,10 @@ export function toHistoryItem(data: IHistoryStorageItem): IHistoryItem {
         wordType: dict[0],
         translation: dict[1],
         similarReverseWords: dict[2] ?? [],
-      }))
+      })),
     };
   } else {
+    // old format v1, deprecated
     const { date, vendor, from, to, text, tr, ts, dict: dictionary = [] } = data;
     return {
       id: generateId(text, from, to),
@@ -189,12 +194,13 @@ export interface IHistoryItem {
     wordType: string
     translation: string[]
     similarReverseWords: string[][]
-  }[]
+  }[];
 }
 
 // format used for keeping data in chrome.storage
 export type IHistoryStorageItem = IHistoryStorageItemVersion1 | IHistoryStorageItemVersion2;
 
+/* @deprecated */
 export interface IHistoryStorageItemVersion1 {
   date: number
   vendor: string
@@ -222,35 +228,35 @@ export type IHistoryStorageItemVersion2 = [
     string, /*word type*/
     string[], /*translations*/
     string[][], /* similar word groups (reverse translated) per translation */
-  ][]
+  ][],
 ];
 
 export function exportHistory(format: "json" | "csv", items: IHistoryItem[]) {
   var date = new Date().toISOString().replace(/:/g, "_");
   var filename = `xtranslate-history-${date}.${format}`;
   switch (format) {
-    case "json":
-      download.json(filename, items.map(toStorageItem));
-      break;
+  case "json":
+    download.json(filename, items.map(item => toStorageItem(item)));
+    break;
 
-    case "csv":
-      var csvRows = [
-        ["Date", "Translator", "Language", "Text", "Translation", "Transcription", "Dictionary"]
-      ];
-      items.forEach(item => {
-        csvRows.push([
-          new Date(item.date).toLocaleString(),
-          getTranslator(item.vendor).title,
-          item.from + "-" + item.to,
-          item.text,
-          item.translation,
-          item.transcription || "",
-          item.dictionary.map(({ wordType, translation }) => {
-            return wordType + ": " + translation.join(", ")
-          }).join("\n")
-        ]);
-      });
-      download.csv(filename, csvRows);
-      break;
+  case "csv":
+    var csvRows = [
+      ["Date", "Translator", "Language", "Text", "Translation", "Transcription", "Dictionary"]
+    ];
+    items.forEach(item => {
+      csvRows.push([
+        new Date(item.date).toLocaleString(),
+        getTranslator(item.vendor).title,
+        item.from + "-" + item.to,
+        item.text,
+        item.translation,
+        item.transcription || "",
+        item.dictionary.map(({ wordType, translation }) => {
+          return wordType + ": " + translation.join(", ")
+        }).join("\n")
+      ]);
+    });
+    download.csv(filename, csvRows);
+    break;
   }
 }

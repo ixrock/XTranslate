@@ -123,6 +123,12 @@ export class Settings extends React.Component {
             tooltip={popupTooltip}
           />
           <Checkbox
+            label={getMessage("show_save_as_favorite_icon")}
+            checked={settings.showSaveToFavoriteIcon}
+            onChange={v => settings.showSaveToFavoriteIcon = v}
+            tooltip={popupTooltip}
+          />
+          <Checkbox
             label={getMessage("show_copy_translation_icon")}
             checked={settings.showCopyTranslationIcon}
             onChange={v => settings.showCopyTranslationIcon = v}
@@ -162,16 +168,7 @@ export class Settings extends React.Component {
             onChange={v => settings.showPopupOnHotkey = v}
             tooltip={hotKey.title}
           />
-          <label className="flex">
-            <Icon material="keyboard"/>
-            <Input
-              readOnly
-              className={`${styles.hotkey} box grow`}
-              value={hotKey.value}
-              onKeyDown={prevDefault(this.onSaveHotkey)}
-            />
-          </label>
-          <div className="flex gaps align-center">
+          <div className="popup-position flex gaps align-center">
             <Icon
               htmlFor="select_popup_position"
               material="display_settings"
@@ -186,6 +183,15 @@ export class Settings extends React.Component {
               {this.popupPositions.map((opt) => <Option key={opt.value} {...opt}/>)}
             </Select>
           </div>
+          <label className="keyboard-hotkey flex">
+            <Icon material="keyboard"/>
+            <Input
+              readOnly
+              className={`${styles.hotkey} box grow`}
+              value={hotKey.value}
+              onKeyDown={prevDefault(this.onSaveHotkey)}
+            />
+          </label>
         </article>
 
         <article className={cssNames(styles.bottomBar, "flex gaps align-center")}>

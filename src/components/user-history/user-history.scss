@@ -1,6 +1,13 @@
 .UserHistory {
   .settings {
-    margin-bottom: var(--theme-spacing-half);
+    display: flex;
+    justify-content: center;
+    gap: var(--theme-spacing);
+  }
+
+  .toolbar-icons {
+    display: flex;
+    gap: 1px;
   }
 
   .settings-content {
@@ -65,7 +72,7 @@
         border-color: var(--theme-color-text);
       }
 
-      &:hover {
+      &:hover, &:focus {
         cursor: pointer;
         color: var(--theme-color-contrast);
         border-color: currentColor;

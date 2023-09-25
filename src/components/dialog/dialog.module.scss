@@ -16,12 +16,21 @@
   padding: 0;
   z-index: 100;
 
+  .closeIcon {
+    position: absolute;
+    right: 0;
+    top: 0;
+    margin: var(--theme-spacing);
+  }
+
   .box {
+    position: relative;
     margin: auto; // align to center (h/v), applicable only for flex-boxes
     z-index: 1; // show on top of .modal
     border: var(--dialog-border);
     background-color: var(--dialog-bgc);
     padding: var(--dialog-padding);
+    border-radius: var(--theme-border-radius);
   }
 
   &.pinned {

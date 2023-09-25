@@ -5,8 +5,8 @@ import React, { Fragment } from "react";
 import { action, comparer, makeObservable, observable, reaction } from "mobx";
 import { observer } from "mobx-react";
 import { getTranslator, getTranslators, isRTL, ITranslationError, ITranslationResult } from "../../vendors";
-import { getSelectedText } from "../../extension/actions";
-import { createLogger, cssNames, disposer } from "../../utils";
+import { getSelectedText, saveToFavorites } from "../../extension/actions";
+import { bindGlobalHotkey, createLogger, cssNames, disposer, SimpleHotkey } from "../../utils";
 import { SelectLanguage } from "../select-language";
 import { Input } from "../input";
 import { Option, Select } from "../select";
@@ -19,18 +19,31 @@ import { Tooltip } from "../tooltip";
 import { navigate } from "../../navigation";
 import { createStorageHelper } from "../../extension/storage";
 import { getMessage } from "../../i18n";
-import { isMac } from "../../common-vars";
+import { iconMaterialFavorite, iconMaterialFavoriteOutlined, isMac } from "../../common-vars";
+import { isOptionsPage } from "../../extension";
+import { getHistoryItemId, historyStorage } from "../user-history/history.storage";
 
 export const lastInputText = createStorageHelper("last_input_text", {
   autoSyncDelay: 0,
   defaultValue: "",
 });
 
+interface Props {
+  hotkey?: SimpleHotkey;
+}
+
 @observer
-export class InputTranslation extends React.Component {
+export class InputTranslation extends React.Component<Props> {
+  static defaultProps: Props = {
+    hotkey: {
+      ctrlOrCmd: true,
+      key: "KeyF",
+    }
+  };
+
   private dispose = disposer();
   private logger = createLogger();
-  private inputRef = React.createRef<Input>();
+  private input?: Input;
 
   @observable vendor: string = settingsStore.data.vendor;
   @observable langFrom: string = settingsStore.data.langFrom;
@@ -45,58 +58,57 @@ export class InputTranslation extends React.Component {
     makeObservable(this);
   }
 
-  get input(): Input {
-    return this.inputRef.current;
-  }
-
   async componentDidMount() {
     await lastInputText.load();
-    this.input.focus();
 
-    this.bindAutoTranslateOnParamsChange();
-    this.bindAutoSaveLatestUserInputText();
+    // bind some event handlers
+    this.dispose.push(
+      this.bindGlobalHotkey(),
+      this.bindAutoTranslateOnChange(),
+      this.bindAutoSaveLatestUserInputText()
+    );
 
     // auto-translate selected text from active tab
-    const selectedText = await getSelectedText();
-    if (selectedText) this.translateText(selectedText);
+    if (!isOptionsPage()) {
+      const selectedText = await getSelectedText();
+      if (selectedText) this.translateText(selectedText);
+    }
   }
 
   componentWillUnmount() {
     this.dispose();
   }
 
-  private bindAutoTranslateOnParamsChange() {
-    this.dispose.push(
-      reaction(() => [this.text, this.vendor, this.langTo, this.langFrom], () => this.translate(), {
-        equals: comparer.structural,
-      }),
-    );
+  private bindGlobalHotkey() {
+    return bindGlobalHotkey(this.props.hotkey, (evt: KeyboardEvent) => {
+      this.input?.focus();
+    });
+  }
+
+  private bindAutoTranslateOnChange() {
+    return reaction(() => [this.text, this.vendor, this.langTo, this.langFrom], () => this.translate(), {
+      equals: comparer.structural,
+    });
   };
 
   private bindAutoSaveLatestUserInputText() {
-    this.dispose.push(
+    return disposer(...[
       reaction(() => this.text, (text: string) => {
-        if (!settingsStore.data.rememberLastText) {
-          return; // exit: option is not enabled in the settings
-        }
-
-        if (lastInputText.get() !== text) {
-          this.logger.info("saving last user input", { input: text });
-          lastInputText.set(text);
-        }
+        if (!settingsStore.data.rememberLastText) return; // exit: option is not enabled in the settings
+        lastInputText.set(text);
       }, {
         delay: 250, // reduce excessive writings to underlying storage
       }),
 
       reaction(() => settingsStore.data.rememberLastText, rememberText => {
-        if (rememberText) {
+        if (rememberText && !this.text) {
           const savedUserText = lastInputText.get();
           this.translateText(savedUserText);
         }
       }, {
         fireImmediately: true, // translate previously saved input's text asap
       }),
-    )
+    ]);
   }
 
   playText = () => {
@@ -172,10 +184,13 @@ export class InputTranslation extends React.Component {
   renderTranslationResult() {
     var { langTo, langDetected, translation, transcription, dictionary, spellCorrection, sourceLanguages, vendor } = this.translation;
     var translator = getTranslator(vendor);
+    var itemId = getHistoryItemId(this.translation);
+    var isFavorite = Boolean(historyStorage.get().favorites[itemId]?.[vendor]);
+
     return (
       <div className={cssNames("translation-results", { rtl: isRTL(langTo) })}>
         {translation ?
-          <div className="translation flex gaps align-flex-start">
+          <div className="translation flex gaps align-center">
             <Icon
               material="play_circle_outline"
               title={getMessage("popup_play_icon_title")}
@@ -185,15 +200,22 @@ export class InputTranslation extends React.Component {
               <span>{translation}</span>
               {transcription ? <i className="transcription">[{transcription}]</i> : null}
             </div>
-            <span className="lang" id="translated_with">
-              {translator.getLangPairShortTitle(langDetected, langTo)}
-              <Tooltip htmlFor="translated_with" following nowrap>
-                {getMessage("translated_with", {
-                  translator: translator.title,
-                  lang: translator.getLangPairTitle(langDetected, langTo),
-                })}
-              </Tooltip>
-            </span>
+            <div className="flex column center">
+              <Icon
+                material={isFavorite ? iconMaterialFavorite : iconMaterialFavoriteOutlined}
+                tooltip={isFavorite ? getMessage("history_unmark_as_favorite") : getMessage("history_mark_as_favorite")}
+                onClick={() => saveToFavorites(this.translation, { isFavorite: !isFavorite })}
+              />
+              <div className="lang" id="translated_with">
+                {translator.getLangPairShortTitle(langDetected, langTo)}
+                <Tooltip htmlFor="translated_with" following nowrap>
+                  {getMessage("translated_with", {
+                    translator: translator.title,
+                    lang: translator.getLangPairTitle(langDetected, langTo),
+                  })}
+                </Tooltip>
+              </div>
+            </div>
           </div>
           : null}
         {spellCorrection ? (
@@ -301,7 +323,7 @@ export class InputTranslation extends React.Component {
             defaultValue={this.text}
             onChange={(text: string) => this.onInputChange(text)}
             onKeyDown={this.onKeyDown}
-            ref={this.inputRef}
+            ref={input => this.input = input}
             infoContent={(
               <small className="hint">
                 {getMessage("text_input_translation_hint", {

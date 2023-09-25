@@ -11,6 +11,7 @@ export const settingsStorage = createStorageHelper("settings", {
     autoPlayText: false,
     useChromeTtsEngine: false,
     showTextToSpeechIcon: true,
+    showSaveToFavoriteIcon: false,
     showNextVendorIcon: false,
     showClosePopupIcon: false,
     showCopyTranslationIcon: true,

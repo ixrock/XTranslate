@@ -19,7 +19,10 @@ const defaultProps: Partial<SearchInputProps> = {
   showSearchIcon: false,
   placeholder: "Search...",
   clearHotkey: { key: "Escape" },
-  globalHotkey: { ctrlOrCmd: true, key: "KeyF" },
+  globalHotkey: {
+    ctrlOrCmd: true,
+    key: "KeyF",
+  },
 };
 
 @observer

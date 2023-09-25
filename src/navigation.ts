@@ -15,7 +15,7 @@ export async function navigate(params: NavigationParams = {}) {
   if (isOptionsPage()) {
     navigation.push(searchParams);
   } else {
-    const optionsPage = getURL(getManifest().options_ui.page); // chrome://%extension-id/options.html
+    const optionsPage = getURL(getManifest().options_ui.page).split("?")[0]; // chrome://%extension-id/options.html
     return createTab(optionsPage + searchParams);
   }
 }

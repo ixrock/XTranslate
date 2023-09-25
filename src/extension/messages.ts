@@ -1,5 +1,6 @@
 // [IPC]: inter-process communications (background <-> options-page <-> content-pages)
 import type { ITranslationResult } from "../vendors";
+import type { IHistoryItem, IHistoryItemId } from "../components/user-history/history.storage";
 
 export const enum MessageType {
   PROXY_REQUEST = "PROXY_REQUEST",
@@ -7,6 +8,7 @@ export const enum MessageType {
   TRANSLATE_WITH_VENDOR = "TRANSLATE_WITH_VENDOR",
   TRANSLATE_FULL_PAGE = "TRANSLATE_FULL_PAGE",
   SAVE_TO_HISTORY = "SAVE_TO_HISTORY",
+  SAVE_TO_FAVORITES = "SAVE_TO_FAVORITES",
   GET_FROM_HISTORY = "GET_TRANSLATION_FROM_CACHE",
   CHROME_TTS_PLAY = "TEXT_TO_SPEECH_PLAY",
   CHROME_TTS_STOP = "TEXT_TO_SPEECH_STOP",
@@ -48,11 +50,16 @@ export interface TranslateWithVendorPayload {
 }
 
 export interface SaveToHistoryPayload {
-  translation: ITranslationResult;
+  translation: ITranslationResult | IHistoryItem;
 }
 
 export interface ChromeTtsPayload {
   text: string;
   lang: string;
   rate?: number; // default: 1.0
+}
+
+export interface SaveToFavorites {
+  item: ITranslationResult | IHistoryItem;
+  isFavorite: boolean;
 }

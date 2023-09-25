@@ -11,18 +11,6 @@ export function getURL(path = ""): string {
   return chrome.runtime.getURL(path);
 }
 
-export function getBrowserInfo() {
-  const firefoxVersion = navigator.userAgent.match(/firefox\/(?:\d+\.?)+/i);
-  const chromeVersion = navigator.userAgent.match(/chrome\/(?:\d+\.?)+/i);
-  const isEdge = !!navigator.userAgent.match(/Edge?\//);
-
-  return {
-    isFirefox: !!firefoxVersion,
-    isChrome: !!chromeVersion,
-    isEdge: isEdge,
-  }
-}
-
 export function isBackgroundPage(): boolean {
   const isGeneratedBgcPage = location.href.startsWith(getURL("_generated_background_page.html"));
   if (isGeneratedBgcPage) return true;
@@ -35,7 +23,7 @@ export function isBackgroundPage(): boolean {
 }
 
 export function isOptionsPage(): boolean {
-  const optionsHtmlPage = getManifest().options_ui.page;
+  const optionsHtmlPage = getManifest().options_ui.page.split("?")[0];
   return location.href.startsWith(getURL(optionsHtmlPage));
 }
 

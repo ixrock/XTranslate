@@ -4,10 +4,10 @@ import "../setup";
 import { initContextMenus } from "./contextMenu";
 import { isProduction } from "../common-vars";
 import { blobToBase64DataUrl, createLogger, parseJson } from "../utils";
-import { ChromeTtsPayload, MessageType, onInstall, onMessage, openOptionsPage, ProxyRequestPayload, ProxyResponsePayload, ProxyResponseType, SaveToHistoryPayload } from '../extension'
+import { ChromeTtsPayload, MessageType, onInstall, onMessage, openOptionsPage, ProxyRequestPayload, ProxyResponsePayload, ProxyResponseType, SaveToFavorites, SaveToHistoryPayload } from '../extension'
 import { rateLastTimestamp } from "../components/app/app-rate.storage";
 import { settingsStorage } from "../components/settings/settings.storage";
-import { generateId, historyStorage, IHistoryStorageItem, importHistory, toStorageItem, toTranslationResult } from "../components/user-history/history.storage";
+import { generateId, getHistoryItemId, historyStorage, IHistoryStorageItem, importHistory, toHistoryItem, toStorageItem, toTranslationResult } from "../components/user-history/history.storage";
 import { TranslatePayload } from "../vendors";
 
 const logger = createLogger({ systemPrefix: '[BACKGROUND]' });
@@ -64,19 +64,42 @@ onMessage(MessageType.PROXY_REQUEST, async ({ url, responseType, requestInit }: 
 /**
  * Saving history of translations
  */
-onMessage(MessageType.SAVE_TO_HISTORY, async (payload: SaveToHistoryPayload) => {
+onMessage(MessageType.SAVE_TO_HISTORY, async ({ translation }: SaveToHistoryPayload) => {
   await Promise.all([
     settingsStorage.load(),
     historyStorage.load(),
   ]);
 
-  const storageItem = toStorageItem(payload.translation);
-  const isDictionaryWord = payload.translation.dictionary?.length > 0;
-  const saveOnlyWithDictionary = settingsStorage.get().historySaveWordsOnly;
-  if (saveOnlyWithDictionary && !isDictionaryWord) return; // skip
+  const hasDictionary = translation.dictionary?.length > 0;
+  const { historySaveWordsOnly } = settingsStorage.get();
+  if (historySaveWordsOnly && !hasDictionary) {
+    return; // skip saving
+  }
 
-  logger.info("saving item to history", storageItem);
-  importHistory(storageItem);
+  const savingItem = toStorageItem(translation);
+  logger.info("saving item to history", savingItem);
+  importHistory(savingItem);
+});
+
+/**
+ * Handling favorite state of history items
+ */
+onMessage(MessageType.SAVE_TO_FAVORITES, async ({ item, isFavorite }: SaveToFavorites) => {
+  await historyStorage.load();
+
+  const store = historyStorage.get();
+  const itemId = getHistoryItemId(item);
+  const savedItem = toHistoryItem(store.translations[itemId]?.[item.vendor]);
+
+  store.favorites[itemId] ??= {};
+  store.favorites[itemId][item.vendor] = isFavorite;
+  logger.info(`marking item(#${itemId}) as favorite: ${isFavorite}`);
+
+  if (!savedItem) {
+    const savingItem = toStorageItem(item);
+    logger.info(`saving item(${itemId}) to history because favorite`, savingItem);
+    importHistory(savingItem);
+  }
 });
 
 /**
