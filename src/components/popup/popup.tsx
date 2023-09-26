@@ -12,6 +12,7 @@ import { settingsStorage, settingsStore } from "../settings/settings.storage";
 import { themeStore } from "../theme-manager/theme.storage";
 import { getMessage } from "../../i18n";
 import { saveToFavorites } from "../../extension";
+import { Notifications } from "../notifications";
 
 interface Props extends Omit<React.HTMLProps<any>, "className"> {
   previewMode?: boolean;
@@ -37,7 +38,7 @@ export class Popup extends React.Component<Props> {
   };
 
   @observable copied = false;
-  @observable savedToFavorites = false;
+  @observable saved = false;
 
   constructor(props: Props) {
     super(props);
@@ -46,7 +47,7 @@ export class Popup extends React.Component<Props> {
     this.dispose.push(
       reaction(() => this.props.translation, () => {
         this.copied = false;
-        this.savedToFavorites = false;
+        this.saved = false;
       }),
     );
   }
@@ -152,6 +153,17 @@ export class Popup extends React.Component<Props> {
     }
   }
 
+  @action
+  private saveToFavorite = async () => {
+    if (this.saved) return;
+    this.saved = true;
+
+    await saveToFavorites(this.props.translation).catch((err) => {
+      Notifications.error(String(err));
+      this.saved = false;
+    });
+  };
+
   renderSaveToFavoritesIcon() {
     if (!settingsStore.data.showSaveToFavoriteIcon || !this.props.translation) {
       return;
@@ -159,17 +171,13 @@ export class Popup extends React.Component<Props> {
     return (
       <Icon
         className={styles.icon}
-        material={this.savedToFavorites ? iconMaterialFavorite : iconMaterialFavoriteOutlined}
+        material={this.saved ? iconMaterialFavorite : iconMaterialFavoriteOutlined}
         tooltip={{
           className: styles.iconTooltip,
           children: getMessage("history_mark_as_favorite"),
           parentElement: this.props.tooltipParent,
         }}
-        onClick={action(async () => {
-          if (this.savedToFavorites) return;
-          await saveToFavorites(this.props.translation);
-          this.savedToFavorites = true;
-        })}
+        onClick={this.saveToFavorite}
       />
     )
   }

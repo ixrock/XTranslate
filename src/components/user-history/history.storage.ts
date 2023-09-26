@@ -1,4 +1,5 @@
 import MD5 from "crypto-js/md5";
+import { runInAction } from "mobx";
 import { download } from "../../utils/downloadFile";
 import { createStorageHelper } from "../../extension/storage";
 import { getTranslator, ITranslationResult } from "../../vendors/translator";
@@ -12,9 +13,7 @@ export interface HistoryRecord<DataItem> {
 }
 
 export interface HistoryStorageModel {
-  version?: number;
   translations: HistoryRecord<IHistoryStorageItem>;
-  favorites: HistoryRecord<boolean>;
 }
 
 export interface HistoryTranslation {
@@ -26,7 +25,6 @@ export const historyStorage = createStorageHelper<HistoryStorageModel>("history"
   autoLoad: false, // manual loading: before saving data or listing items
   defaultValue: {
     translations: {},
-    favorites: {}
   },
 });
 
@@ -42,22 +40,6 @@ export function generateId(originalText: string, from: string, to: string): IHis
   return MD5([originalText, from, to].join(",")).toString();
 }
 
-export function toStorageModel(items: IHistoryStorageItem[]): HistoryStorageModel {
-  const model: HistoryStorageModel = {
-    translations: {},
-    favorites: {},
-  };
-
-  items.forEach(storageItem => {
-    const { text, from, to, vendor } = toHistoryItem(storageItem);
-    const itemId = generateId(text, from, to);
-    model.translations[itemId] ??= {};
-    model.translations[itemId][vendor] = storageItem;
-  });
-
-  return model;
-}
-
 export function importHistory(data: IHistoryItem | IHistoryStorageItem) {
   const storageItem = isStorageItem(data) ? data : toStorageItem(data);
 
@@ -65,8 +47,10 @@ export function importHistory(data: IHistoryItem | IHistoryStorageItem) {
   const { translations } = historyStorage.get();
   const itemId = generateId(item.text, item.from, item.to);
 
-  translations[itemId] ??= {};
-  translations[itemId][item.vendor] = storageItem;
+  runInAction(() => {
+    translations[itemId] ??= {};
+    translations[itemId][item.vendor] = storageItem;
+  });
 }
 
 export async function clearHistoryItem(id: IHistoryItemId, vendor?: string) {

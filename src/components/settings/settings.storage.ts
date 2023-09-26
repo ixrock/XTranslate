@@ -5,6 +5,8 @@ import { createStorageHelper } from "../../extension/storage";
 
 export type PopupPosition = "" /*auto*/ | "left top" | "left bottom" | "right top" | "right bottom";
 
+export type SettingsStorageModel = typeof settingsStorage.defaultValue;
+
 export const settingsStorage = createStorageHelper("settings", {
   area: "sync", // share synced data via logged-in account (google, firefox, etc.)
   defaultValue: {

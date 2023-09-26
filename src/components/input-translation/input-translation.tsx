@@ -21,7 +21,7 @@ import { createStorageHelper } from "../../extension/storage";
 import { getMessage } from "../../i18n";
 import { iconMaterialFavorite, iconMaterialFavoriteOutlined, isMac } from "../../common-vars";
 import { isOptionsPage } from "../../extension";
-import { getHistoryItemId, historyStorage } from "../user-history/history.storage";
+import { isFavorite } from "../user-history/favorites.storage";
 
 export const lastInputText = createStorageHelper("last_input_text", {
   autoSyncDelay: 0,
@@ -184,8 +184,7 @@ export class InputTranslation extends React.Component<Props> {
   renderTranslationResult() {
     var { langTo, langDetected, translation, transcription, dictionary, spellCorrection, sourceLanguages, vendor } = this.translation;
     var translator = getTranslator(vendor);
-    var itemId = getHistoryItemId(this.translation);
-    var isFavorite = Boolean(historyStorage.get().favorites[itemId]?.[vendor]);
+    var favorite = isFavorite(this.translation);
 
     return (
       <div className={cssNames("translation-results", { rtl: isRTL(langTo) })}>
@@ -202,9 +201,9 @@ export class InputTranslation extends React.Component<Props> {
             </div>
             <div className="flex column center">
               <Icon
-                material={isFavorite ? iconMaterialFavorite : iconMaterialFavoriteOutlined}
-                tooltip={isFavorite ? getMessage("history_unmark_as_favorite") : getMessage("history_mark_as_favorite")}
-                onClick={() => saveToFavorites(this.translation, { isFavorite: !isFavorite })}
+                material={favorite ? iconMaterialFavorite : iconMaterialFavoriteOutlined}
+                tooltip={favorite ? getMessage("history_unmark_as_favorite") : getMessage("history_mark_as_favorite")}
+                onClick={() => saveToFavorites(this.translation, { isFavorite: !favorite })}
               />
               <div className="lang" id="translated_with">
                 {translator.getLangPairShortTitle(langDetected, langTo)}

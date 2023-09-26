@@ -21,6 +21,7 @@ import { Notifications } from "../notifications";
 import { getMessage } from "../../i18n";
 import { iconMaterialFavorite, iconMaterialFavoriteOutlined, isMac } from "../../common-vars";
 import { saveToFavorites } from "../../extension";
+import { favoritesStorage, isFavorite } from "./favorites.storage";
 
 enum HistoryTimeFrame {
   HOUR = "hour",
@@ -51,15 +52,23 @@ export class UserHistory extends React.Component {
   @observable clearTimeFrame = HistoryTimeFrame.HOUR;
   @observable isLoaded = false;
 
-  componentDidMount() {
-    historyStorage.load().then(action(() => {
-      this.isLoaded = true;
-    }));
+  async componentDidMount() {
+    await this.preloadStores();
 
     this.dispose.push(
       this.bindSearchResults(),
       this.bindGlobalHotkey(),
     );
+  }
+
+  @action
+  private async preloadStores() {
+    await Promise.all([
+      historyStorage.load({ skipIfLoaded: true }),
+      favoritesStorage.load({ skipIfLoaded: true }),
+    ]);
+
+    this.isLoaded = true;
   }
 
   private bindSearchResults() {
@@ -96,7 +105,8 @@ export class UserHistory extends React.Component {
 
   @computed get items(): HistoryRecord<IHistoryItem> {
     const items: HistoryRecord<IHistoryItem> = {};
-    const { translations, favorites } = historyStorage.toJS();
+    const { translations } = historyStorage.toJS();
+    const { favorites } = favoritesStorage.toJS();
 
     // convert history items to runtime format (instead of more compressed storage-type format)
     Object.entries(translations).forEach(([itemId, translationsByVendor]) => {
@@ -295,7 +305,7 @@ export class UserHistory extends React.Component {
     var { id: itemId, vendor, from: langFrom, to: langTo, text, translation, transcription, dictionary } = item;
     var showDetails = this.detailsVisible.has(itemId);
     var translator = getTranslator(vendor);
-    var isFavorite = Boolean(historyStorage.get().favorites[itemId]?.[vendor]);
+    var favorite = isFavorite(item);
 
     return (
       <div className={cssNames("history-item", { showDetails })}>
@@ -325,9 +335,9 @@ export class UserHistory extends React.Component {
             dangerouslySetInnerHTML={{ __html: this.highlightSearch(translation) }}
           />
           <Icon
-            material={isFavorite ? iconMaterialFavorite : iconMaterialFavoriteOutlined}
-            className="icons favorite"
-            onClick={prevDefault(() => saveToFavorites(item, { isFavorite: !isFavorite }))}
+            className="icons favorites"
+            material={favorite ? iconMaterialFavorite : iconMaterialFavoriteOutlined}
+            onClick={prevDefault(() => saveToFavorites(item, { isFavorite: !favorite }))}
           />
           <Icon
             material="remove_circle_outline"
@@ -404,6 +414,7 @@ export class UserHistory extends React.Component {
               onClick={this.toggleSearch}
             />
             <Icon
+              className="favorites"
               material={showOnlyFavorites ? iconMaterialFavorite : iconMaterialFavoriteOutlined}
               active={showOnlyFavorites}
               tooltip={getMessage("history_show_favorites_only")}

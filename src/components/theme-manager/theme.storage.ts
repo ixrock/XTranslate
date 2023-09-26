@@ -4,6 +4,8 @@ import { getURL, proxyRequest, ProxyResponseType } from "../../extension";
 import { createLogger, disposer } from "../../utils";
 import { createStorageHelper } from "../../extension/storage";
 
+export type ThemeStorageModel = typeof themeStorage.defaultValue;
+
 export const themeStorage = createStorageHelper("theme", {
   area: "sync",
   autoLoad: true,

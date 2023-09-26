@@ -85,7 +85,11 @@ export class StorageHelper<T> {
   }
 
   @action
-  load({ force = false } = {}) {
+  load({ force = false, skipIfLoaded = false } = {}) {
+    if (skipIfLoaded && this.loaded) {
+      return Promise.resolve();
+    }
+
     if (this.loading && !force) {
       return this.whenReady; // skip
     }

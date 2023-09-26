@@ -3,8 +3,6 @@ import styles from "./export-settings.module.scss";
 import React from "react";
 import { Dialog, DialogProps } from "../dialog";
 import { cssNames, download } from "../../utils";
-import { settingsStorage } from "../settings/settings.storage";
-import { themeStorage } from "../theme-manager/theme.storage";
 import { observer } from "mobx-react";
 import { action, makeObservable, observable } from "mobx";
 import { getManifest } from "../../extension";
@@ -14,6 +12,9 @@ import { Icon } from "../icon";
 import { FileInput, ImportingFile } from "../input";
 import { Notifications } from "../notifications";
 import { SubTitle } from "../sub-title";
+import { settingsStorage, SettingsStorageModel } from "../settings/settings.storage";
+import { themeStorage, ThemeStorageModel } from "../theme-manager/theme.storage";
+import { favoritesStorage, FavoriteStorageModel } from "../user-history/favorites.storage";
 
 export interface StorableSettings<Data> {
   version: number;
@@ -22,8 +23,9 @@ export interface StorableSettings<Data> {
 
 export interface ImportExportSettings {
   appVersion: string; // manifest.json version
-  settings?: StorableSettings<typeof settingsStorage.defaultValue>;
-  theme?: StorableSettings<typeof themeStorage.defaultValue>;
+  settings?: StorableSettings<SettingsStorageModel>;
+  theme?: StorableSettings<ThemeStorageModel>;
+  favorites?: StorableSettings<FavoriteStorageModel>;
 }
 
 export interface Props extends DialogProps {
@@ -50,7 +52,7 @@ export class ExportImportSettingsDialog extends React.Component<Props> {
     this.error = "";
     try {
       const jsonSettings: ImportExportSettings = JSON.parse(await file.text());
-      const { appVersion, settings, theme } = jsonSettings;
+      const { appVersion, settings, theme, favorites } = jsonSettings;
       const noSettingsFound = Boolean(!settings && !theme); // TODO: validate input better
       if (noSettingsFound) {
         const importCommonErrorMessage = getMessage("import_incorrect_file_format", {
@@ -65,6 +67,10 @@ export class ExportImportSettingsDialog extends React.Component<Props> {
         if (theme) {
           themeStorage.set(theme.data);
           Notifications.ok(getMessage("imported_setting_successful", { key: "theme" }));
+        }
+        if (favorites) {
+          favoritesStorage.set(favorites.data);
+          Notifications.ok(getMessage("imported_setting_successful", { key: "favorites" }));
         }
         this.dialog.close();
       }
@@ -85,6 +91,10 @@ export class ExportImportSettingsDialog extends React.Component<Props> {
       theme: {
         version: 1,
         data: themeStorage.toJS(),
+      },
+      favorites: {
+        version: 1,
+        data: favoritesStorage.toJS(),
       },
     };
 

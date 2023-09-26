@@ -1,6 +1,7 @@
 //-- Background service worker
 
 import "../setup";
+import { action } from "mobx";
 import { initContextMenus } from "./contextMenu";
 import { isProduction } from "../common-vars";
 import { blobToBase64DataUrl, createLogger, parseJson } from "../utils";
@@ -9,6 +10,7 @@ import { rateLastTimestamp } from "../components/app/app-rate.storage";
 import { settingsStorage } from "../components/settings/settings.storage";
 import { generateId, getHistoryItemId, historyStorage, IHistoryStorageItem, importHistory, toHistoryItem, toStorageItem, toTranslationResult } from "../components/user-history/history.storage";
 import { TranslatePayload } from "../vendors";
+import { favoritesStorage } from "../components/user-history/favorites.storage";
 
 const logger = createLogger({ systemPrefix: '[BACKGROUND]' });
 
@@ -66,8 +68,8 @@ onMessage(MessageType.PROXY_REQUEST, async ({ url, responseType, requestInit }: 
  */
 onMessage(MessageType.SAVE_TO_HISTORY, async ({ translation }: SaveToHistoryPayload) => {
   await Promise.all([
-    settingsStorage.load(),
-    historyStorage.load(),
+    settingsStorage.load({ skipIfLoaded: true }),
+    historyStorage.load({ skipIfLoaded: true }),
   ]);
 
   const hasDictionary = translation.dictionary?.length > 0;
@@ -84,23 +86,27 @@ onMessage(MessageType.SAVE_TO_HISTORY, async ({ translation }: SaveToHistoryPayl
 /**
  * Handling favorite state of history items
  */
-onMessage(MessageType.SAVE_TO_FAVORITES, async ({ item, isFavorite }: SaveToFavorites) => {
-  await historyStorage.load();
+onMessage(MessageType.SAVE_TO_FAVORITES, action(async ({ item, isFavorite }: SaveToFavorites) => {
+  await Promise.all([
+    historyStorage.load({ skipIfLoaded: true }),
+    favoritesStorage.load({ skipIfLoaded: true }),
+  ]);
 
-  const store = historyStorage.get();
   const itemId = getHistoryItemId(item);
-  const savedItem = toHistoryItem(store.translations[itemId]?.[item.vendor]);
+  const { translations } = historyStorage.get();
+  const { favorites } = favoritesStorage.get();
+  const savedItem = toHistoryItem(translations[itemId]?.[item.vendor]);
 
-  store.favorites[itemId] ??= {};
-  store.favorites[itemId][item.vendor] = isFavorite;
-  logger.info(`marking item(#${itemId}) as favorite: ${isFavorite}`);
+  logger.info(`marking item as favorite: ${isFavorite}`, item);
+  favorites[itemId] ??= {};
+  favorites[itemId][item.vendor] = isFavorite;
 
   if (!savedItem) {
     const savingItem = toStorageItem(item);
     logger.info(`saving item(${itemId}) to history because favorite`, savingItem);
     importHistory(savingItem);
   }
-});
+}));
 
 /**
  * Handling saved translations from history without http-traffic
