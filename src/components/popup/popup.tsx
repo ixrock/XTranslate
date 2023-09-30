@@ -314,7 +314,7 @@ export class Popup extends React.Component<Props> {
         <Icon material="error_outline" className={styles.errorIcon}/>
         <div className={styles.errorInfo}>
           <p>{statusCode}: {getMessage("translation_data_failed")}</p>
-          <p>{message}</p>
+          <p dangerouslySetInnerHTML={{ __html: message }} />
         </div>
         {this.renderNextTranslationIcon()}
       </div>
