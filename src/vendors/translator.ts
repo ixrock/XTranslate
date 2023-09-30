@@ -104,14 +104,17 @@ export abstract class Translator {
     const langDetected = result.langDetected ?? (
       langFrom !== "auto" ? langFrom : null
     );
+    const isDictionaryWord = !!result.dictionary;
+
     return {
       ...result,
       vendor: this.name,
+      translation: result.translation.toLowerCase(),
       dictionary: result.dictionary ?? [],
       langFrom,
       langDetected,
       langTo,
-      originalText,
+      originalText: isDictionaryWord ? originalText?.toLowerCase() : originalText,
     };
   }
 
