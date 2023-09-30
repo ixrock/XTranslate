@@ -10,7 +10,7 @@ import { favoritesStorage } from "./components/user-history/favorites.storage";
 
 const logger = createLogger({ systemPrefix: `[PRELOAD]` });
 
-export async function initAppData() {
+export async function preloadAppData() {
   try {
     await Promise.all([
       i18nInit().then(() => logger.info("localization data ready")),
@@ -18,8 +18,8 @@ export async function initAppData() {
       themeStore.load().then(() => logger.info("theming data ready")),
       favoritesStorage.load().then(() => logger.info("favorites data ready")),
     ]);
-    logger.info("initial data ready for rendering");
+    logger.info("INITIAL DATA READY/PRELOADED");
   } catch (error) {
-    logger.error("initial rendering failed due", error);
+    logger.error("INITIAL DATA PRELOADING FAILED", { error });
   }
 }

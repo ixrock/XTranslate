@@ -78,6 +78,7 @@ export async function setLocale(lang: Locale) {
 }
 
 export function getLocale(): Locale {
+  if (i18nStorage.loaded) return;
   return i18nStorage.get().lang;
 }
 

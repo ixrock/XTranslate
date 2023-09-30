@@ -9,14 +9,26 @@ export interface FavoriteStorageModel {
 
 export const favoritesStorage = createStorageHelper<FavoriteStorageModel>("favorites", {
   area: "local",
+  autoLoad: true,
+  autoSync: true,
+  autoSyncDelay: 0,
   defaultValue: {
     favorites: {},
   },
 });
 
 export function isFavorite(item: ITranslationResult | IHistoryItem): boolean {
+  if (!item) return false;
+
   const itemId = getHistoryItemId(item);
   const { favorites } = favoritesStorage.get();
 
   return Boolean(favorites[itemId]?.[item.vendor]);
+}
+
+export function removeFavorite(item: ITranslationResult | IHistoryItem) {
+  const itemId = getHistoryItemId(item);
+  const { favorites } = favoritesStorage.get();
+
+  delete favorites[itemId]?.[item.vendor];
 }

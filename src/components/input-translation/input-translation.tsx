@@ -283,7 +283,7 @@ export class InputTranslation extends React.Component<Props> {
     return (
       <div className="translation-error flex column gaps">
         <p>{statusCode}: {getMessage("translation_data_failed")}</p>
-        <p>{message}</p>
+        <p dangerouslySetInnerHTML={{ __html: message }}/>
       </div>
     );
   }

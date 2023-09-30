@@ -70,9 +70,14 @@ export class StorageHelper<T> {
 
     const bindAutoSync = () => {
       this.disposers.unbindAutoSync?.(); // reset previous
-      this.disposers.unbindAutoSync = reaction(
-        () => this.toJS(),
-        state => this.save(state),
+      this.disposers.unbindAutoSync = reaction(() => this.toJS(), state => {
+          this.logger.info(`[auto-sync]: saving storage for key "${this.key}"`, {
+            state,
+            key: this.key,
+            hostEnv: location?.href,
+          });
+          this.save(state);
+        },
         autoSyncDelay ? { delay: autoSyncDelay } : {},
       );
     };

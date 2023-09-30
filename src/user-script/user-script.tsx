@@ -7,7 +7,7 @@ import { createRoot } from "react-dom/client";
 import { action, computed, makeObservable, observable, toJS } from "mobx";
 import { observer } from "mobx-react";
 import { debounce, isEqual } from "lodash"
-import { initAppData } from "../preload";
+import { preloadAppData } from "../preloadAppData";
 import { autoBind, getHotkey } from "../utils";
 import { getManifest, getURL, MessageType, onMessage, proxyRequest, ProxyResponseType, TranslateWithVendorPayload } from "../extension";
 import { getNextTranslator, getTranslator, ITranslationError, ITranslationResult, TranslatePayload } from "../vendors";
@@ -447,4 +447,4 @@ class App extends React.Component {
 }
 
 // run content script
-App.init(initAppData);
+App.init(preloadAppData);

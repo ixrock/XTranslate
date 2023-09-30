@@ -10,9 +10,9 @@ import { getNextTranslator, getTranslator, isRTL, ITranslationError, ITranslatio
 import { Icon } from "../icon";
 import { settingsStorage, settingsStore } from "../settings/settings.storage";
 import { themeStore } from "../theme-manager/theme.storage";
+import { isFavorite } from "../user-history/favorites.storage";
 import { getMessage } from "../../i18n";
 import { saveToFavorites } from "../../extension";
-import { Notifications } from "../notifications";
 
 interface Props extends Omit<React.HTMLProps<any>, "className"> {
   previewMode?: boolean;
@@ -38,7 +38,6 @@ export class Popup extends React.Component<Props> {
   };
 
   @observable copied = false;
-  @observable saved = false;
 
   constructor(props: Props) {
     super(props);
@@ -46,8 +45,7 @@ export class Popup extends React.Component<Props> {
 
     this.dispose.push(
       reaction(() => this.props.translation, () => {
-        this.copied = false;
-        this.saved = false;
+        this.copied = false; // reset copy-state for previous translation
       }),
     );
   }
@@ -74,6 +72,10 @@ export class Popup extends React.Component<Props> {
         }
       ]
     }
+  }
+
+  @computed get isFavorite() {
+    return isFavorite(this.props.translation);
   }
 
   @computed get isPreviewMode(): boolean {
@@ -154,13 +156,9 @@ export class Popup extends React.Component<Props> {
   }
 
   @action
-  private saveToFavorite = async () => {
-    if (this.saved) return;
-    this.saved = true;
-
-    await saveToFavorites(this.props.translation).catch((err) => {
-      Notifications.error(String(err));
-      this.saved = false;
+  private toggleFavorites = async () => {
+    await saveToFavorites(this.props.translation, {
+      isFavorite: !this.isFavorite,
     });
   };
 
@@ -171,13 +169,13 @@ export class Popup extends React.Component<Props> {
     return (
       <Icon
         className={styles.icon}
-        material={this.saved ? iconMaterialFavorite : iconMaterialFavoriteOutlined}
+        material={this.isFavorite ? iconMaterialFavorite : iconMaterialFavoriteOutlined}
         tooltip={{
           className: styles.iconTooltip,
           children: getMessage("history_mark_as_favorite"),
           parentElement: this.props.tooltipParent,
         }}
-        onClick={this.saveToFavorite}
+        onClick={this.toggleFavorites}
       />
     )
   }

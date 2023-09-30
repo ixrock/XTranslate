@@ -3,6 +3,7 @@
 import { createLogger } from "../utils/createLogger";
 import { StorageHelper, StorageHelperOptions } from "../utils/storageHelper";
 import { isFirefox } from "../common-vars";
+import isEqual from "lodash/isEqual";
 
 export interface ChromeStorageHelperOptions<T> extends Omit<StorageHelperOptions<T>, "storage"> {
   area?: chrome.storage.AreaName;
@@ -17,13 +18,10 @@ export function createStorageHelper<T>(key: string, options: ChromeStorageHelper
     migrations,
   } = options;
 
-  const logger = createLogger({ systemPrefix: `[StorageHelperLocal]` });
+  const logger = createLogger({ systemPrefix: `[Storage](key=${key})` });
   const browserStorage = isFirefox()
     ? chrome.storage.local // TODO: support "sync" for firefox (maybe it's disabled only in dev-mode)
     : chrome.storage[area];
-
-  let storageResourceVersion = 1;
-  const metadataVersionKey = `${key}@version`;
 
   const storageHelper = new StorageHelper<T>(key, {
     autoLoad,
@@ -32,46 +30,39 @@ export function createStorageHelper<T>(key: string, options: ChromeStorageHelper
     migrations,
     storage: {
       async setItem(key: string, value: T) {
-        return new Promise(resolve => {
-          browserStorage.set({
-            [key]: value,
-            [metadataVersionKey]: ++storageResourceVersion,
-          }, resolve)
-        })
+        return new Promise(resolve => browserStorage.set({ [key]: value, }, resolve))
       },
       async getItem(key: string): Promise<T> {
         return new Promise(resolve => {
-          browserStorage.get([key, metadataVersionKey], (items = {}) => {
-            storageResourceVersion = Math.max(storageResourceVersion, items[metadataVersionKey] ?? 0);
-            resolve(items[key]);
-          })
+          browserStorage.get(key, (items = {}) => resolve(items[key]))
         });
       },
       async removeItem(key: string) {
-        return new Promise(resolve => {
-          browserStorage.remove([key, metadataVersionKey], resolve);
-        })
+        return new Promise(resolve => browserStorage.remove(key, resolve))
       },
     },
   });
 
   // sync storage updates from other processes (e.g. background-page)
-  chrome.storage.onChanged.addListener((changes, areaName) => {
-    if (area !== areaName || !changes[key] || !storageHelper.loaded) return;
-    const { newValue: storageState } = changes[key];
-    const resourceVersion = changes[metadataVersionKey]?.newValue;
-    const isUpdateRequired = resourceVersion > storageResourceVersion;
+  chrome.storage.onChanged.addListener(async (changes, areaName) => {
+    const { newValue: newState, oldValue: prevState } = changes[key] ?? {};
 
-    logger.info("update", {
-      origin: location.href,
-      isUpdateRequired,
-      ...changes
-    });
+    // preload storage if not ready for some reasons
+    await storageHelper.load({ skipIfLoaded: true });
+
+    const storageState = storageHelper.toJS();
+    const isUpdateRequired = areaName === area && newState && !isEqual(storageState, newState);
+
     if (isUpdateRequired) {
-      storageResourceVersion = resourceVersion; // refresh to latest version
-      storageHelper.set(storageState, {
-        silent: true, // skip auto-saving back to chrome.storage
+      logger.info("chrome.storage.onChanged (raw)", {
+        origin: location.href,
+        areaName,
+        newState,
+        prevState,
+        storageHelper,
       });
+
+      storageHelper.set(newState);
     }
   });
 

@@ -1,7 +1,7 @@
 //-- Background service worker
 
 import "../setup";
-import { action } from "mobx";
+import { action, runInAction } from "mobx";
 import { initContextMenus } from "./contextMenu";
 import { isProduction } from "../common-vars";
 import { blobToBase64DataUrl, createLogger, parseJson } from "../utils";
@@ -98,8 +98,10 @@ onMessage(MessageType.SAVE_TO_FAVORITES, action(async ({ item, isFavorite }: Sav
   const savedItem = toHistoryItem(translations[itemId]?.[item.vendor]);
 
   logger.info(`marking item as favorite: ${isFavorite}`, item);
-  favorites[itemId] ??= {};
-  favorites[itemId][item.vendor] = isFavorite;
+  runInAction(() => {
+    favorites[itemId] ??= {};
+    favorites[itemId][item.vendor] = isFavorite;
+  });
 
   if (!savedItem) {
     const savingItem = toStorageItem(item);

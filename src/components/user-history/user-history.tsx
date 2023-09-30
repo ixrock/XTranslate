@@ -21,7 +21,7 @@ import { Notifications } from "../notifications";
 import { getMessage } from "../../i18n";
 import { iconMaterialFavorite, iconMaterialFavoriteOutlined, isMac } from "../../common-vars";
 import { saveToFavorites } from "../../extension";
-import { favoritesStorage, isFavorite } from "./favorites.storage";
+import { favoritesStorage, isFavorite, removeFavorite } from "./favorites.storage";
 
 enum HistoryTimeFrame {
   HOUR = "hour",
@@ -307,6 +307,15 @@ export class UserHistory extends React.Component {
     var translator = getTranslator(vendor);
     var favorite = isFavorite(item);
 
+    var clearItem = prevDefault(() => {
+      removeFavorite(item);
+      clearHistoryItem(itemId, vendor);
+    });
+
+    var toggleFavorite = prevDefault(() => {
+      saveToFavorites(item, { isFavorite: !favorite });
+    });
+
     return (
       <div className={cssNames("history-item", { showDetails })}>
         {showDetails && (
@@ -337,12 +346,12 @@ export class UserHistory extends React.Component {
           <Icon
             className="icons favorites"
             material={favorite ? iconMaterialFavorite : iconMaterialFavoriteOutlined}
-            onClick={prevDefault(() => saveToFavorites(item, { isFavorite: !favorite }))}
+            onClick={toggleFavorite}
           />
           <Icon
             material="remove_circle_outline"
             className="icons remove-icon"
-            onClick={prevDefault(() => clearHistoryItem(itemId, vendor))}
+            onClick={clearItem}
           />
         </div>
 

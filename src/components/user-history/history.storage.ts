@@ -53,7 +53,7 @@ export function importHistory(data: IHistoryItem | IHistoryStorageItem) {
   });
 }
 
-export async function clearHistoryItem(id: IHistoryItemId, vendor?: string) {
+export function clearHistoryItem(id: IHistoryItemId, vendor?: string) {
   const { translations } = historyStorage.get();
   if (!translations[id]) return; // not found
   if (vendor) {

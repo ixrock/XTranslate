@@ -116,7 +116,9 @@ export class Google extends Translator {
         if (banFromGoogleForSuspiciousTraffic) {
           error.message = [
             getMessage("service_unavailable"),
-            getMessage("service_confirm_not_a_robot", { link: "https://translate.googleapis.com/translate_a/single" }),
+            getMessage("service_confirm_not_a_robot", {
+              link: `<a href="https://translate.googleapis.com/translate_a/single" target="_blank">google link</a>`
+            }),
           ].join(" ");
         }
 
