@@ -69,9 +69,9 @@ export class InputTranslation extends React.Component<Props> {
     );
 
     // auto-translate selected text from active tab
-    if (!isOptionsPage()) {
-      const selectedText = await getSelectedText();
-      if (selectedText) this.translateText(selectedText);
+    const selectedText = await getSelectedText();
+    if (selectedText) {
+      this.translateText(selectedText);
     }
   }
 

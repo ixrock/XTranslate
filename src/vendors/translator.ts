@@ -104,17 +104,21 @@ export abstract class Translator {
     const langDetected = result.langDetected ?? (
       langFrom !== "auto" ? langFrom : null
     );
-    const isDictionaryWord = !!result.dictionary;
+
+    function toLowerCase(output: string) {
+      const isDictionaryWord = !!result.dictionary;
+      return isDictionaryWord ? output.toLowerCase() : output;
+    }
 
     return {
       ...result,
       vendor: this.name,
-      translation: result.translation.toLowerCase(),
+      translation: toLowerCase(result.translation),
       dictionary: result.dictionary ?? [],
       langFrom,
       langDetected,
       langTo,
-      originalText: isDictionaryWord ? originalText?.toLowerCase() : originalText,
+      originalText: toLowerCase(originalText),
     };
   }
 
