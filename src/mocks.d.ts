@@ -11,6 +11,7 @@ declare module "*.module.scss" {
 
 // Declare everything what's bundled as webpack's type="asset/resource"
 // Should be mocked for tests support in jestConfig.moduleNameMapper (currently in "/package.json")
+//
 declare module "*.svg" {
   const content: string;
   export = content; // base64 data-url, see also `webpack.config.ts`
@@ -30,6 +31,18 @@ declare module "*.woff?" {
 }
 
 declare module "*.ttf" {
+  const content: string;
+  export = content;
+}
+
+//
+// Raw text files
+//
+declare module "*.txt" {
+  const content: string;
+  export = content;
+}
+declare module "*.md" {
   const content: string;
   export = content;
 }

@@ -1,0 +1,26 @@
+.PrivacyDialog {
+  padding: calc(var(--theme-spacing-double) * 4);
+
+  .content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--theme-spacing);
+    border-radius: var(--theme-spacing);
+    border: var(--theme-border-radius) solid;
+    max-width: var(--theme-content-width);
+    padding: calc(var(--theme-spacing-double) * 1.5);
+  }
+
+  .policyContent {
+    display: flex;
+    flex-direction: column;
+    gap: var(--theme-spacing-half);
+    overflow: auto;
+    max-height: 300px;
+    font-size: small;
+
+    h1, h2 {
+      display: none;
+    }
+  }
+}

@@ -133,5 +133,8 @@
   "donate_copy_wallet"               : {"message": "Copy address"},
   "donate_description"               : {"message": "If you like the app consider to donate developers. Thanks!"},
   "service_unavailable"              : {"message": "Service unavailable. Try again after 5-25 minutes. If this happens constantly increase translation delay in the settings."},
-  "service_confirm_not_a_robot"      : {"message": "Also you can go to %link% and confirm that you're not a robot."}
+  "service_confirm_not_a_robot"      : {"message": "Also you can go to %link% and confirm that you're not a robot."},
+  "___________privacy_policy________": {"message": "----------------------------------------------"},
+  "privacy_policy_title_updated"     : {"message": "Privacy Policy has been updated"},
+  "privacy_policy_accept_terms"      : {"message": "Accept terms & conditions"}
 }

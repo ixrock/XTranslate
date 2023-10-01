@@ -21,6 +21,7 @@ import { defaultPageId, getParam, navigate, PageId } from "../../navigation";
 import { pageManager } from "./page-manager";
 import { getMessage } from "../../i18n";
 import { DonationDialog } from "./donation-dialog";
+import { PrivacyDialog } from "./privacy-dialog";
 
 @observer
 export class App extends React.Component {
@@ -29,6 +30,7 @@ export class App extends React.Component {
 
   @observable showImportExportDialog = false;
   @observable showDonationDialog = false;
+  @observable showPrivacyDialog = false;
 
   constructor(props: object) {
     super(props);
@@ -131,6 +133,10 @@ export class App extends React.Component {
         <ExportImportSettingsDialog
           isOpen={this.showImportExportDialog}
           onClose={() => this.showImportExportDialog = false}
+        />
+        <PrivacyDialog
+          isOpen={this.showPrivacyDialog}
+          onClose={() => this.showPrivacyDialog = false}
         />
       </div>
     );

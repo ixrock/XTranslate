@@ -44,7 +44,7 @@ function webpackBaseConfig(): webpack.Configuration {
     },
 
     resolve: {
-      extensions: ['.ts', '.tsx', '.js', '.json', ".scss", ".css"],
+      extensions: ['.ts', '.tsx', '.js', '.json', ".scss", ".css", ".txt", ".md"],
       fallback: {
         // ignore browser polyfill warnings
         crypto: false,
@@ -115,6 +115,14 @@ function webpackBaseConfig(): webpack.Configuration {
         {
           test: /\.(ttf|eot|woff2?)$/,
           type: "asset/resource"
+        },
+
+        /**
+         * Import raw text resources
+         */
+        {
+          test: /\.(txt|md)$/,
+          type: "asset/source"
         }
       ]
     },

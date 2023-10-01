@@ -72,7 +72,7 @@ export class Dialog extends React.Component<DialogProps> {
   }
 
   renderCloseIcon(): React.ReactNode {
-    if (!this.props.showCloseIcon) {
+    if (!this.props.showCloseIcon || this.props.pinned) {
       return;
     }
     return (
