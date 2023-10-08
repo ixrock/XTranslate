@@ -4,7 +4,7 @@ import React from "react";
 import { groupBy, orderBy } from "lodash";
 import { action, computed, makeObservable, observable, reaction, runInAction } from "mobx";
 import { observer } from "mobx-react";
-import { bindGlobalHotkey, cssNames, disposer, fuzzyMatch, prevDefault, SimpleHotkey } from "../../utils";
+import { bindGlobalHotkey, cssNames, disposer, fuzzyMatch, isHotkeyPressed, prevDefault, SimpleHotkey } from "../../utils";
 import { getTranslator, getTranslators, isRTL } from "../../vendors";
 import { Checkbox } from "../checkbox";
 import { Menu, MenuItem } from "../menu";
@@ -269,22 +269,33 @@ export class UserHistory extends React.Component {
         {Array.from(this.itemsGroupedByDay).map(([dayTime, translations]) => {
           return (
             <React.Fragment key={dayTime}>
-              <div className="history-date" tabIndex={0}>
+              <div className="history-date">
                 {new Date(dayTime).toDateString()}
               </div>
               {translations.map((translation: HistoryTranslation) => {
                 const items = Object.values(translation);
                 if (!items.length) return; // might be empty group after manual item remove
+
+                const historyElem = React.createRef<HTMLDivElement>();
                 const itemGroupId = items[0]?.id; // ID is the same for whole group
-                const className = cssNames("history-items", {
-                  isOpened: this.detailsVisible.has(itemGroupId),
-                });
+                const isOpened = this.detailsVisible.has(itemGroupId);
+
+                const onEnterKey = (evt: React.KeyboardEvent) => {
+                  if (!isHotkeyPressed({ key: "Enter" }, evt)) return;
+
+                  if (evt.target === historyElem.current) {
+                    this.toggleDetails(itemGroupId);
+                  }
+                };
+
                 return (
                   <div
                     key={itemGroupId}
-                    className={className}
+                    className={cssNames("history-items", { isOpened })}
                     onClick={() => this.toggleDetails(itemGroupId)}
-                    tabIndex={1}
+                    tabIndex={0} // make focusable via keyboard
+                    onKeyDown={onEnterKey}
+                    ref={historyElem}
                   >
                     {getTranslators().map(vendor => {
                       const item = translation[vendor.name];
