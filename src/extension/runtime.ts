@@ -11,15 +11,10 @@ export function getURL(path = ""): string {
   return chrome.runtime.getURL(path);
 }
 
-export function isBackgroundPage(): boolean {
-  const isGeneratedBgcPage = location.href.startsWith(getURL("_generated_background_page.html"));
-  if (isGeneratedBgcPage) return true;
+export function isBackgroundWorker(): boolean {
+  const bgcWorkerURL = getURL(getManifest().background.service_worker); // manifest@v3
 
-  const serviceWorkerFile = getManifest().background.service_worker; // manifest@v3
-  const bgcScriptFileV2 = (getManifest().background as chrome.runtime.ManifestV2["background"])?.scripts?.[0]; // manifest@v2
-  const bgcWorkerFilePath = getURL(serviceWorkerFile ?? bgcScriptFileV2);
-
-  return location.href.startsWith(bgcWorkerFilePath);
+  return location.href.startsWith(bgcWorkerURL);
 }
 
 export function isOptionsPage(): boolean {

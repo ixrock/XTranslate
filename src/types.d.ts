@@ -4,13 +4,17 @@
 // - mocked "black-boxed" npm-packages
 // - webpack-handled imports for custom file extensions (e.g. import svg)
 
+declare module "*.module.css" {
+  const classes: { [key: string]: string };
+  export default classes;
+}
 declare module "*.module.scss" {
   const classes: { [key: string]: string };
   export default classes;
 }
 
-// Declare everything what's bundled as webpack's type="asset/resource"
-// Should be mocked for tests support in jestConfig.moduleNameMapper (currently in "/package.json")
+//
+// Images
 //
 declare module "*.svg" {
   const content: string;
@@ -25,7 +29,10 @@ declare module "*.png" {
   export = content;
 }
 
-declare module "*.woff?" {
+//
+// Font URLs
+//
+declare module "*.woff" {
   const content: string;
   export = content;
 }
@@ -36,13 +43,17 @@ declare module "*.ttf" {
 }
 
 //
-// Raw text files
+// Plain text files
 //
 declare module "*.txt" {
   const content: string;
   export = content;
 }
-declare module "*.md" {
+declare module "*.md" { // markdown
+  const content: string;
+  export = content;
+}
+declare module "*.ftl" { // fluent (localization)
   const content: string;
   export = content;
 }

@@ -35,7 +35,7 @@ export class Footer extends React.Component {
   render() {
     return (
       <div className={styles.Footer}>
-        {getMessage("footer")}
+        {getMessage("share_with_friends")}
         <span className={styles.socialIcons}>
             {this.shareIcons.map((share, i) =>
               <a key={i} href={share.url} onClick={prevDefault(() => this.shareUrl(share.url))}>

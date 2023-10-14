@@ -65,7 +65,7 @@ class App extends React.Component {
 
   // fix: <link rel crossOrigin/> is failed for opened local files
   async preloadCss() {
-    this.userStyle = await proxyRequest({
+    this.userStyle = await proxyRequest<string>({
       url: getURL(`${contentScriptEntry}.css`),
       responseType: ProxyResponseType.TEXT,
     });

@@ -20,7 +20,6 @@ import { navigate } from "../../navigation";
 import { createStorageHelper } from "../../extension/storage";
 import { getMessage } from "../../i18n";
 import { iconMaterialFavorite, iconMaterialFavoriteOutlined, isMac } from "../../common-vars";
-import { isOptionsPage } from "../../extension";
 import { isFavorite } from "../user-history/favorites.storage";
 
 export const lastInputText = createStorageHelper("last_input_text", {
@@ -220,9 +219,7 @@ export class InputTranslation extends React.Component<Props> {
         {spellCorrection ? (
           <div className="spell-correction">
             {getMessage("spell_correction", {
-              suggestion: <b className="link" onClick={() => this.translateText(spellCorrection)}>
-                {spellCorrection}
-              </b>
+              suggestion: <b className="link" onClick={() => this.translateText(spellCorrection)}>{spellCorrection}</b>
             })}
           </div>
         ) : null}

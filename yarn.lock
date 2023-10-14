@@ -418,6 +418,18 @@
   dependencies:
     "@floating-ui/core" "^1.2.4"
 
+"@fluent/bundle@^0.18.0":
+  version "0.18.0"
+  resolved "https://registry.yarnpkg.com/@fluent/bundle/-/bundle-0.18.0.tgz#bf67e306719a33baf3b66c88af5ac427d7800dbd"
+  integrity sha512-8Wfwu9q8F9g2FNnv82g6Ch/E1AW1wwljsUOolH5NEtdJdv0sZTuWvfCM7c3teB9dzNaJA8rn4khpidpozHWYEA==
+
+"@fluent/dom@^0.9.0":
+  version "0.9.0"
+  resolved "https://registry.yarnpkg.com/@fluent/dom/-/dom-0.9.0.tgz#0d5a5c10ea60a52697b5af6bc745e8581c64e713"
+  integrity sha512-KElkUkHhFuliHeQaL4bDMin3MEJlXm3Mgh1lDE5JdmdO+5VW1bFZGjxpFS1qNzz8XZtsa71lL5zDPVg5vOgYtQ==
+  dependencies:
+    cached-iterable "^0.3"
+
 "@icons/material@^0.2.4":
   version "0.2.4"
   resolved "https://registry.yarnpkg.com/@icons/material/-/material-0.2.4.tgz#e90c9f71768b3736e76d7dd6783fc6c2afa88bc8"
@@ -1497,6 +1509,11 @@ buffer-from@^1.0.0:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/buffer-from/-/buffer-from-1.1.2.tgz#2b146a6fd72e80b4f55d255f35ed59a3a9a41bd5"
   integrity sha512-E+XQCRwSbaaiChtv6k6Dwgc+bx+Bs6vuKJHHl5kox/BaKbhiXzqQOwK4cO22yElGp2OCmjwVhT3HmxgyPGnJfQ==
+
+cached-iterable@^0.3:
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/cached-iterable/-/cached-iterable-0.3.0.tgz#2618204549e9c5dd102102a6e7e50af6adb77df8"
+  integrity sha512-MDqM6TpBVebZD4UDtmlFp8EjVtRcsB6xt9aRdWymjk0fWVUUGgmt/V7o0H0gkI2Tkvv8B0ucjidZm4mLosdlWw==
 
 callsites@^3.0.0:
   version "3.1.0"

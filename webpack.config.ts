@@ -118,10 +118,10 @@ function webpackBaseConfig(): webpack.Configuration {
         },
 
         /**
-         * Import raw text resources
+         * Import raw "plain/text" resources
          */
         {
-          test: /\.(txt|md)$/,
+          test: /\.(txt|md|ftl)$/,
           type: "asset/source"
         }
       ]
