@@ -11,11 +11,11 @@ export const logger = createLogger({ systemPrefix: "[I18N-LOCALE]" });
 
 // List of all provided locales from `_locales/*` folders
 // Supported locales by browser: https://src.chromium.org/viewvc/chrome/trunk/src/third_party/cld/languages/internal/languages.cc
-export type Locale = keyof typeof locales;
+export type Locale = keyof typeof availableLocales;
 
 export const fallbackLocale = "en";
 
-export const locales = {
+export const availableLocales = {
   en: "English",
   de: "German",
   ru: "Russian",
@@ -46,7 +46,7 @@ export async function i18nInit() {
 
 async function loadMessages(locale: Locale) {
   const preloaded = bundles.has(locale);
-  const unknownLocale = !locales[locale];
+  const unknownLocale = !availableLocales[locale];
   if (preloaded || unknownLocale) return;
 
   const messagesUrl = getURL(`_locales/${locale}.ftl`);
@@ -131,10 +131,10 @@ export function getLocale(): Locale {
 
 export function getSystemLocale(): Locale {
   const systemLocale = (chrome.i18n.getUILanguage?.() ?? navigator.language) as Locale;
-  if (locales[systemLocale]) {
+  if (availableLocales[systemLocale]) {
     return systemLocale;
   }
 
   const locale = systemLocale.split(/_-/)[0] as Locale; // handle "en-GB", etc.
-  return locales[locale] ? locale : fallbackLocale;
+  return availableLocales[locale] ? locale : fallbackLocale;
 }

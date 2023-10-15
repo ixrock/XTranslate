@@ -1,20 +1,20 @@
 .Footer {
+  display: flex;
+  gap: var(--theme-spacing-half);
   padding-top: var(--theme-spacing);
   border-top: 1px solid var(--theme-border-color);
+
+  .showDonationDialogIcon, a, img {
+    opacity: .75;
+  }
 
   .socialIcons {
     display: inline-block;
     vertical-align: middle;
 
-    a {
-      opacity: .75;
-    }
-
     img {
-      height: 25px;
-      margin-left: var(--theme-spacing-half);
+      height: 22px;
       filter: grayscale(100%);
-      opacity: .75;
 
       &:hover {
         opacity: 1;

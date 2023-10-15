@@ -15,6 +15,10 @@ import { Spinner } from "../spinner";
 import { Notifications } from "../notifications";
 import { defaultPageId, getParam } from "../../navigation";
 import { pageManager } from "./page-manager";
+import { DonationDialog } from "./donation-dialog";
+import { ExportImportSettingsDialog } from "../export-import-settings";
+import { PrivacyDialog } from "./privacy-dialog";
+import { AppRateDialog } from "./app-rate.dialog";
 
 @observer
 export class App extends React.Component {
@@ -53,6 +57,19 @@ export class App extends React.Component {
         />
         <Footer/>
         <Notifications/>
+        <DonationDialog
+          isOpen={Header.dialogs.showDonationDialog}
+          onClose={() => Header.dialogs.showDonationDialog = false}
+        />
+        <ExportImportSettingsDialog
+          isOpen={Header.dialogs.showImportExportDialog}
+          onClose={() => Header.dialogs.showImportExportDialog = false}
+        />
+        <PrivacyDialog
+          isOpen={Header.dialogs.showPrivacyDialog}
+          onClose={() => Header.dialogs.showPrivacyDialog = false}
+        />
+        <AppRateDialog/>
       </div>
     );
   }

@@ -1,9 +1,12 @@
 import styles from './footer.module.scss'
 import React from 'react';
+import { observer } from "mobx-react";
 import { getExtensionUrl } from "../../common-vars";
-import { prevDefault } from '../../utils'
+import { cssNames, prevDefault } from '../../utils'
 import { getManifest } from '../../extension'
 import { getMessage } from "../../i18n";
+import { Icon } from "../icon";
+import { Header } from "./header";
 
 interface ShareIcon {
   title: string
@@ -11,6 +14,7 @@ interface ShareIcon {
   url: string
 }
 
+@observer
 export class Footer extends React.Component {
   private manifest = getManifest();
   private shareTags = ["chrome", "extension", "xtranslate"];
@@ -35,14 +39,22 @@ export class Footer extends React.Component {
   render() {
     return (
       <div className={styles.Footer}>
-        {getMessage("share_with_friends")}
-        <span className={styles.socialIcons}>
-            {this.shareIcons.map((share, i) =>
-              <a key={i} href={share.url} onClick={prevDefault(() => this.shareUrl(share.url))}>
-                <img src={share.icon} title={share.title} alt=""/>
-              </a>
-            )}
-          </span>
+        <p>{getMessage("share_with_friends")}</p>
+
+        <div className={styles.socialIcons}>
+          {this.shareIcons.map((share, i) =>
+            <a key={i} href={share.url} onClick={prevDefault(() => this.shareUrl(share.url))}>
+              <img src={share.icon} title={share.title} alt=""/>
+            </a>
+          )}
+        </div>
+
+        <Icon
+          material="monetization_on"
+          className={styles.showDonationDialogIcon}
+          tooltip={{ nowrap: true, children: getMessage("donate_title") }}
+          onClick={() => Header.dialogs.showDonationDialog = true}
+        />
       </div>
     );
   }

@@ -1,30 +1,24 @@
 import "./header.scss";
 import React from 'react';
-import { makeObservable, observable } from "mobx";
+import { observable } from "mobx";
 import { observer } from "mobx-react";
 import { cssNames } from "../../utils/cssNames";
 import { getManifest } from "../../extension";
 import { settingsStore } from '../settings/settings.storage'
 import { Tab, Tabs } from "../tabs";
 import { Icon } from "../icon";
-import { AppRateDialog } from "./app-rate.dialog";
-import { ExportImportSettingsDialog } from "../export-import-settings";
 import { defaultPageId, getParam, navigate, PageId } from "../../navigation";
 import { pageManager } from "./page-manager";
 import { getMessage } from "../../i18n";
-import { DonationDialog } from "./donation-dialog";
-import { PrivacyDialog } from "./privacy-dialog";
+import { SelectLocaleMenu } from "../select-locale";
 
 @observer
 export class Header extends React.Component {
-  @observable showImportExportDialog = false;
-  @observable showDonationDialog = false;
-  @observable showPrivacyDialog = false;
-
-  constructor(props: object) {
-    super(props);
-    makeObservable(this);
-  }
+  static dialogs = observable({
+    showImportExportDialog: false,
+    showDonationDialog: false,
+    showPrivacyDialog: false,
+  });
 
   detachWindow = () => {
     chrome.windows.create({
@@ -72,14 +66,9 @@ export class Header extends React.Component {
             small
             material="import_export"
             tooltip={{ nowrap: true, children: getMessage("import_export_settings") }}
-            onClick={() => this.showImportExportDialog = true}
+            onClick={() => Header.dialogs.showImportExportDialog = true}
           />
-          <Icon
-            small
-            material="monetization_on"
-            tooltip={{ nowrap: true, children: getMessage("donate_title") }}
-            onClick={() => this.showDonationDialog = true}
-          />
+          <SelectLocaleMenu/>
         </header>
         <Tabs className="Tabs" center value={pageId} onChange={this.onTabsChange}>
           {pageManager.getAllRegisteredPageIds().map(pageId => {
@@ -89,19 +78,6 @@ export class Header extends React.Component {
             }
           })}
         </Tabs>
-        <DonationDialog
-          isOpen={this.showDonationDialog}
-          onClose={() => this.showDonationDialog = false}
-        />
-        <ExportImportSettingsDialog
-          isOpen={this.showImportExportDialog}
-          onClose={() => this.showImportExportDialog = false}
-        />
-        <PrivacyDialog
-          isOpen={this.showPrivacyDialog}
-          onClose={() => this.showPrivacyDialog = false}
-        />
-        <AppRateDialog/>
       </div>
     );
   }

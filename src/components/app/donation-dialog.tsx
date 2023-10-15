@@ -9,7 +9,6 @@ import { Icon } from "../icon";
 @observer
 export class DonationDialog extends React.Component<DialogProps> {
   #btcWallet = '1FuwS2M3JpwGRdZqh5kZZtcM36788xthu6';
-  #ethWallet = '0x86ef84b008cf69fa5479e87f1ae82c5d1c47164b';
 
   private copyToBuffer(text: string) {
     return navigator.clipboard.writeText(text);
@@ -22,18 +21,19 @@ export class DonationDialog extends React.Component<DialogProps> {
       <Dialog
         {...dialogProps}
         className={cssNames(style.DonationDialog, className)}
-        contentClassName={cssNames(style.content, contentClassName)}
       >
-        <p>{getMessage("donate_description")}</p>
-        <p>
-          <b>BTC</b>: {this.#btcWallet}<br/>
-          <Icon
-            material="content_copy"
-            onClick={() => this.copyToBuffer(this.#btcWallet)}
-            tooltip={getMessage("donate_copy_wallet")}
-          />
-          <em>(Bitcoin network)</em>
-        </p>
+        <div className="content flex column gaps">
+          <p>{getMessage("donate_description")}</p>
+          <p>
+            <b>BTC</b>: {this.#btcWallet}<br/>
+            <Icon
+              material="content_copy"
+              onClick={() => this.copyToBuffer(this.#btcWallet)}
+              tooltip={getMessage("donate_copy_wallet")}
+            />
+            <em>(Bitcoin network)</em>
+          </p>
+        </div>
       </Dialog>
     );
   }
