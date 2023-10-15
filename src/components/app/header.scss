@@ -1,0 +1,35 @@
+.Header {
+  header {
+    text-transform: uppercase;
+    font-weight: bold;
+    text-align: left;
+    background: linear-gradient(90deg, #92268dee, transparent);
+    padding: .75em;
+    border-radius: var(--theme-border-radius);
+
+    .app-title {
+      color: white;
+    }
+
+    .app-version {
+      text-transform: lowercase;
+      font-weight: normal;
+      font-size: 11px;
+    }
+  }
+
+  .Tabs > .Tab {
+    flex-direction: row;
+    padding: calc(var(--theme-spacing) * 1.5) var(--theme-spacing-double);
+  }
+
+  .PageContent {
+    display: flex;
+    flex-direction: column;
+    padding: var(--theme-spacing-double) 0;
+
+    .notFound {
+      text-align: center;
+    }
+  }
+}

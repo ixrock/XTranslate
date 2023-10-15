@@ -3,7 +3,7 @@
 -app-brand-name = XTranslate
 
 # common
-short_description = Easy translate text on web-pages.
+short_description = Easy translate text on web-pages
 description = Translate texts within page context, customize your own style of popup block, and more.
   
 # header

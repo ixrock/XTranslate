@@ -13,6 +13,9 @@ const viewsRegistry = observable.map<PageId, PageComponents>([], {
 });
 
 export const pageManager = {
+  getAllRegisteredPageIds(): PageId[] {
+    return Array.from(viewsRegistry.keys());
+  },
   getComponents(pageId: PageId): PageComponents {
     return viewsRegistry.get(pageId) ?? {};
   },
