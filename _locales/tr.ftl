@@ -2,17 +2,18 @@
 # URL: https://chrome.google.com/webstore/detail/xtranslate/gfgpkepllngchpmcippidfhmbhlljhoo
 -app-brand-name = XTranslate
 
-short_description = Web sayfalarındaki metni kolayca çevirin.
+# common
+short_description = Web sayfalarındaki metni kolayca çevirin
 description = Metinleri sayfa içinde çevirin, kendi açılır pencere bloğu biçiminizi özelleştirin ve daha fazlasını yapın.
 
-# ____________header_______________
+# header
 open_in_window = Harici pencerede aç
 tab_settings = Ayarlar
 tab_theme = Açılır pencere
 tab_text_input = Çeviri
 tab_history = Geçmiş
 
-# ___________settings_____________
+# settings
 setting_title_common = Genel
 setting_title_text_input = Çeviri
 setting_title_popup = Açılır pencere
@@ -33,6 +34,7 @@ display_icon_near_selection = Seçili metnin yanında çeviri simgesini göster
 show_tts_icon_inside_popup = Metin okuma simgesi göster
 show_next_vendor_icon_in_popup = Sonraki çeviri simgesi göster
 show_copy_translation_icon = Çeviriyi kopyala simgesi göster
+show_save_as_favorite_icon = Sık kullanılanlara kaydet simgesi göster
 show_close_popup_button = Sağ köşede pencereyi kapat simgesi göster
 show_close_popup_button_title = Kapat
 show_detected_language_block = Algılanan dili göster
@@ -53,11 +55,11 @@ popup_position_right_bottom = Sağ alt köşe
 translation_delay = Çeviri gecikmesi
 translation_delay_info = Google'dan ya da diğer hizmetlerden sık sık engelleme yaşıyorsanız (503 hatası), daha büyük bir gecikme değeri ayarlayın
 
-# ___________theme_________________
+# theme
 popup_play_icon_title = Dinle
 popup_copy_translation_title = Çeviriyi kopyala
 popup_next_vendor_icon_title = { $translator } ile çevir
-popup_demo_translation = Çevirilen metin
+popup_demo_translation = Çevrilen metin
 popup_demo_dictionary_noun = isim
 popup_demo_dictionary_values = Kelime 1, kelime 2, vb.
 sub_header_background = Arka plan
@@ -87,14 +89,15 @@ box_size_max_width = En büyük genişlik
 box_size_max_height = En büyük yükseklik
 reset_to_default_button_text = Varsayılana sıfırla
 
-# ___________text_input____________
+# text input
 text_field_placeholder = Çeviri almak için buraya yazmaya başlayın
 translated_with = { $translator } ({ $lang }) ile çevrildi
 translated_from = Çeviri: { $lang }
+translate_also_from = Şuradan da çevir:
 spell_correction = Bunu mu demek istediniz: { $suggestion }?
-text_input_translation_hint = Anında çeviri için { $hotkey }, gecikme: { $timeout } ms
+text_input_translation_hint = Anında çeviri için: { $hotkey }, gecikme: { $timeout } ms
 
-# ___________history_______________
+# history
 history_enabled_flag = Etkin
 history_settings_save_words_only = Sadece sözlük kelimelerini kaydet
 history_search_input_placeholder = Geçmişte ara
@@ -111,14 +114,17 @@ history_page_size = Sayfa boyutu
 history_icon_tooltip_search = Ara
 history_icon_tooltip_imp_exp = İçe aktar / Dışa aktar
 history_icon_tooltip_settings = Ayarlar
+history_show_favorites_only = Yalnızca sık kullanılanları göster
+history_mark_as_favorite = Öğeyi sık kullanılan olarak işaretle
+history_unmark_as_favorite = Öğenin sık kullanılan işaretini kaldır
 history_import_success = { $itemsCount } geçmiş girişi başarıyla içe aktarıldı
 history_import_file_error = '{ $fileName }' dosyası okuma hatası: { $errorInfo }
 
-# ________context_menu_____________
+# context menu
 context_menu_translate_full_page = Tüm sayfayı { $translator } ile çevir
 context_menu_translate_selection = { $selection } { $translator } ile çevir
 
-# ____________other________________
+# other
 share_with_friends = Uygulamayı beğendiyseniz arkadaşlarınızla paylaşabilirsiniz:
 translation_data_failed = Veri yükleme başarısız oldu
 rate_app_info1 = Uygulamayı kullanmaktan zevk alıyor musunuz? Lütfen bizi 5 yıldızla derecelendirin!
@@ -134,7 +140,10 @@ favorites_info_tooltip = Dili sık kullanılan olarak işaretlemek/işaretini ka
 donate_title = Bağış yap
 donate_via = Bağış yap
 donate_copy_wallet = Adresi kopyala
-donate_description = Uygulamayı beğendiyseniz, geliştiricilere kripto para birimi aracılığıyla bağış yapmaktan çekinmeyin. Teşekkürler!
+donate_description = Uygulamayı beğendiyseniz geliştiricilere bağış yapmayı düşünün. Teşekkürler!
 service_unavailable = Hizmet kullanılamıyor. 5-25 dakika sonra tekrar deneyin. Bu gerçekleşirse, ayarlardaki çeviri gecikmesini sürekli olarak artırın.
 service_confirm_not_a_robot = Ayrıca { $link } adresine gidebilir ve robot olmadığınızı onaylayabilirsiniz.
 
+# privacy policy
+privacy_policy_title_updated = Gizlilik Politikası güncellendi
+privacy_policy_accept_terms = Şartlar ve koşulları kabul et
