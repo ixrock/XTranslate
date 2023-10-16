@@ -48,7 +48,7 @@ export function createStorageHelper<T>(key: string, options: ChromeStorageHelper
     const { newValue: newState, oldValue: prevState } = changes[key] ?? {};
 
     // preload storage if not ready for some reasons
-    await storageHelper.load({ skipIfLoaded: true });
+    await storageHelper.load();
 
     const storageState = storageHelper.toJS();
     const isUpdateRequired = areaName === area && newState && !isEqual(storageState, newState);

@@ -16,9 +16,10 @@ import { Notifications } from "../notifications";
 import { defaultPageId, getParam } from "../../navigation";
 import { pageManager } from "./page-manager";
 import { DonationDialog } from "./donation-dialog";
-import { ExportImportSettingsDialog } from "../export-import-settings";
+import { ExportImportSettingsDialog } from "./export-settings-dialog";
 import { PrivacyDialog } from "./privacy-dialog";
 import { AppRateDialog } from "./app-rate.dialog";
+import { dialogsState } from "./dialogs-state";
 
 @observer
 export class App extends React.Component {
@@ -58,16 +59,16 @@ export class App extends React.Component {
         <Footer/>
         <Notifications/>
         <DonationDialog
-          isOpen={Header.dialogs.showDonationDialog}
-          onClose={() => Header.dialogs.showDonationDialog = false}
+          isOpen={dialogsState.showDonationDialog}
+          onClose={() => dialogsState.showDonationDialog = false}
         />
         <ExportImportSettingsDialog
-          isOpen={Header.dialogs.showImportExportDialog}
-          onClose={() => Header.dialogs.showImportExportDialog = false}
+          isOpen={dialogsState.showImportExportDialog}
+          onClose={() => dialogsState.showImportExportDialog = false}
         />
         <PrivacyDialog
-          isOpen={Header.dialogs.showPrivacyDialog}
-          onClose={() => Header.dialogs.showPrivacyDialog = false}
+          isOpen={dialogsState.showPrivacyDialog}
+          onTermsAccepted={() => dialogsState.showPrivacyDialog = false}
         />
         <AppRateDialog/>
       </div>

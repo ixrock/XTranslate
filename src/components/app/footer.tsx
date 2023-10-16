@@ -7,6 +7,7 @@ import { getManifest } from '../../extension'
 import { getMessage } from "../../i18n";
 import { Icon } from "../icon";
 import { Header } from "./header";
+import { dialogsState } from "./dialogs-state";
 
 interface ShareIcon {
   title: string
@@ -53,7 +54,7 @@ export class Footer extends React.Component {
           material="monetization_on"
           className={styles.showDonationDialogIcon}
           tooltip={{ nowrap: true, children: getMessage("donate_title") }}
-          onClick={() => Header.dialogs.showDonationDialog = true}
+          onClick={() => dialogsState.showDonationDialog = true}
         />
       </div>
     );

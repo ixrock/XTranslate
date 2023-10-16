@@ -33,7 +33,7 @@ export class SelectLocaleMenu extends React.Component<LocaleSelectProps> {
         onClose={() => this.showHelpLocalizeAppDialog.set(false)}
       >
         <h4>{this.helpDialogTitle}</h4>
-        <p>1) Copy English version of localization file from <a href={englishLocaleSourceUrl} target="_blank" rel="nofollow">Github source code</a></p>
+        <p>1) Copy English version of localization file from <a href={englishLocaleSourceUrl} target="_blank">Github source code</a></p>
         <p>2) Translate all source texts to your native language and send back to app author (e.g. by e-mail or via Github)</p>
         <p>Thanks in advance!</p>
       </Dialog>

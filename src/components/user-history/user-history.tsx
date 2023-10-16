@@ -64,8 +64,8 @@ export class UserHistory extends React.Component {
   @action
   private async preloadStores() {
     await Promise.all([
-      historyStorage.load({ skipIfLoaded: true }),
-      favoritesStorage.load({ skipIfLoaded: true }),
+      historyStorage.load(),
+      favoritesStorage.load(),
     ]);
 
     this.isLoaded = true;

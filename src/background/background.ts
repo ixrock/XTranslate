@@ -68,8 +68,8 @@ onMessage(MessageType.PROXY_REQUEST, async ({ url, responseType, requestInit }: 
  */
 onMessage(MessageType.SAVE_TO_HISTORY, async ({ translation }: SaveToHistoryPayload) => {
   await Promise.all([
-    settingsStorage.load({ skipIfLoaded: true }),
-    historyStorage.load({ skipIfLoaded: true }),
+    settingsStorage.load(),
+    historyStorage.load(),
   ]);
 
   const hasDictionary = translation.dictionary?.length > 0;
@@ -88,8 +88,8 @@ onMessage(MessageType.SAVE_TO_HISTORY, async ({ translation }: SaveToHistoryPayl
  */
 onMessage(MessageType.SAVE_TO_FAVORITES, action(async ({ item, isFavorite }: SaveToFavorites) => {
   await Promise.all([
-    historyStorage.load({ skipIfLoaded: true }),
-    favoritesStorage.load({ skipIfLoaded: true }),
+    historyStorage.load(),
+    favoritesStorage.load(),
   ]);
 
   const itemId = getHistoryItemId(item);

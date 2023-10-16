@@ -1,6 +1,5 @@
 import "./header.scss";
 import React from 'react';
-import { observable } from "mobx";
 import { observer } from "mobx-react";
 import { cssNames } from "../../utils/cssNames";
 import { getManifest } from "../../extension";
@@ -11,15 +10,10 @@ import { defaultPageId, getParam, navigate, PageId } from "../../navigation";
 import { pageManager } from "./page-manager";
 import { getMessage } from "../../i18n";
 import { SelectLocaleMenu } from "../select-locale";
+import { dialogsState } from "./dialogs-state";
 
 @observer
 export class Header extends React.Component {
-  static dialogs = observable({
-    showImportExportDialog: false,
-    showDonationDialog: false,
-    showPrivacyDialog: false,
-  });
-
   detachWindow = () => {
     chrome.windows.create({
       url: location.href,
@@ -66,7 +60,7 @@ export class Header extends React.Component {
             small
             material="import_export"
             tooltip={{ nowrap: true, children: getMessage("import_export_settings") }}
-            onClick={() => Header.dialogs.showImportExportDialog = true}
+            onClick={() => dialogsState.showImportExportDialog = true}
           />
           <SelectLocaleMenu/>
         </header>
