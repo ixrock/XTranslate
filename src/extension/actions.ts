@@ -2,9 +2,15 @@ import type { ITranslationResult, TranslatePayload } from "../vendors";
 import type { IHistoryItem } from "../components/user-history/history.storage";
 import { ChromeTtsPayload, MessageType, ProxyRequestPayload, ProxyResponsePayload, ProxyResponseType, SaveToFavorites, SaveToHistoryPayload } from "./messages";
 import { getActiveTab, sendMessage } from "./index";
+import { isSystemPage } from "../common-vars";
 
 export async function getSelectedText(): Promise<string> {
   const activeTab = await getActiveTab();
+
+  // fix: Uncaught (in promise) Error: Could not establish connection. Receiving end does not exist
+  if (isSystemPage(activeTab.url)) {
+    return "";
+  }
 
   return sendMessage<void, string>({
     type: MessageType.GET_SELECTED_TEXT,

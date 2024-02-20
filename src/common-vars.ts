@@ -42,3 +42,7 @@ export function isChrome(): boolean {
 export function isEdge(): boolean {
   return !!navigator.userAgent.match(/Edge?\//);
 }
+
+export function isSystemPage(pageUrl = "") {
+  return pageUrl.startsWith("chrome://");
+}
