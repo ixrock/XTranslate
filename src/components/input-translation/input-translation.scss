@@ -54,13 +54,7 @@
     }
 
     .link {
-      border-bottom: 1px dotted;
-      cursor: pointer;
-      opacity: .75;
-
-      &:hover {
-        opacity: 1;
-      }
+      @include pseudo-link;
     }
 
     .dictionary {

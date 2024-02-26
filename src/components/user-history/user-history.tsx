@@ -22,6 +22,7 @@ import { getMessage } from "../../i18n";
 import { iconMaterialFavorite, iconMaterialFavoriteOutlined, isMac } from "../../common-vars";
 import { saveToFavorites } from "../../extension";
 import { favoritesStorage, isFavorite, removeFavorite } from "./favorites.storage";
+import { getTranslationPageUrl, navigate } from "../../navigation";
 
 enum HistoryTimeFrame {
   HOUR = "hour",
@@ -327,6 +328,9 @@ export class UserHistory extends React.Component {
       saveToFavorites(item, { isFavorite: !favorite });
     });
 
+    const sourceTextUrl = getTranslationPageUrl({ vendor, from: langFrom, to: langTo, text });
+    const reverseTranslationUrl = getTranslationPageUrl({ vendor, from: langTo, to: langFrom, text: translation });
+
     return (
       <div className={cssNames("history-item", { showDetails })}>
         {showDetails && (
@@ -344,16 +348,22 @@ export class UserHistory extends React.Component {
                 onClick={prevDefault(() => translator.speak(langFrom, text))}
               />
             )}
-            <span
-              className="text"
-              dangerouslySetInnerHTML={{ __html: this.highlightSearch(text) }}
-            />
+            <div className="source-text">
+              <a
+                href={sourceTextUrl}
+                onClick={prevDefault(() => navigate(sourceTextUrl))}
+                dangerouslySetInnerHTML={{ __html: this.highlightSearch(text) }}
+              />
+            </div>
             {transcription ? <span className="transcription">({transcription})</span> : null}
           </div>
-          <div
-            className={cssNames("translation box grow", { rtl: isRTL(langTo) })}
-            dangerouslySetInnerHTML={{ __html: this.highlightSearch(translation) }}
-          />
+          <div className={cssNames("translation box grow", { rtl: isRTL(langTo) })}>
+            <a
+              href={reverseTranslationUrl}
+              onClick={prevDefault(() => navigate(reverseTranslationUrl))}
+              dangerouslySetInnerHTML={{ __html: this.highlightSearch(translation) }}
+            />
+          </div>
           <Icon
             className="icons favorites"
             material={favorite ? iconMaterialFavorite : iconMaterialFavoriteOutlined}
@@ -374,7 +384,26 @@ export class UserHistory extends React.Component {
                 <div key={wordType} className={cssNames("dictionary", { rtl: isRTL(item.to) })}>
                   <b className="word-type">{wordType}</b>
                   <div className="translations">
-                    {dict.translation?.join?.(", ")}
+                    {dict.translation.map((wordTranslation, index, list) => {
+                      const isLastItem = index === list.length - 1;
+                      const reverseTranslationUrl = getTranslationPageUrl({
+                        vendor: vendor,
+                        from: langTo,
+                        to: langFrom,
+                        text: wordTranslation,
+                      })
+
+                      return [
+                        <a
+                          key={wordTranslation}
+                          href={reverseTranslationUrl}
+                          onClick={prevDefault(() => navigate(reverseTranslationUrl))}>
+                          {wordTranslation}
+                        </a>,
+
+                        !isLastItem ? ", " : "",
+                      ];
+                    }).flat()}
                   </div>
                 </div>
               )

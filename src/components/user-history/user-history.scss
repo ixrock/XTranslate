@@ -85,6 +85,10 @@
       .history-item {
         padding: var(--theme-spacing-half);
 
+        a {
+          @include pseudo-link;
+        }
+
         &.showDetails {
           padding: var(--theme-spacing);
           border-top: 1px dotted; // adds line between vendor translations

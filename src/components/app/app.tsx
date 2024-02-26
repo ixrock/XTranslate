@@ -13,7 +13,7 @@ import { Header } from "./header";
 import { Footer } from './footer'
 import { Spinner } from "../spinner";
 import { Notifications } from "../notifications";
-import { defaultPageId, getParam } from "../../navigation";
+import { getUrlParams } from "../../navigation";
 import { pageManager } from "./page-manager";
 import { DonationDialog } from "./donation-dialog";
 import { ExportImportSettingsDialog } from "./export-settings-dialog";
@@ -46,7 +46,7 @@ export class App extends React.Component {
   };
 
   render() {
-    const pageId = getParam("page", defaultPageId);
+    const { page: pageId } = getUrlParams();
     const { Page } = pageManager.getComponents(pageId);
 
     return (

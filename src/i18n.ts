@@ -19,6 +19,7 @@ export const availableLocales = {
   en: "English",
   de: "German",
   ru: "Russian",
+  sk: "Slovak",
   sr: "Serbian",
   tr: "Turkish",
   vi: "Vietnamese",

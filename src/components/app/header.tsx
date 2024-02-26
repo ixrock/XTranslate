@@ -6,7 +6,7 @@ import { getManifest } from "../../extension";
 import { settingsStore } from '../settings/settings.storage'
 import { Tab, Tabs } from "../tabs";
 import { Icon } from "../icon";
-import { defaultPageId, getParam, navigate, PageId } from "../../navigation";
+import { getUrlParams, navigate, PageId } from "../../navigation";
 import { pageManager } from "./page-manager";
 import { getMessage } from "../../i18n";
 import { SelectLocaleMenu } from "../select-locale";
@@ -33,8 +33,8 @@ export class Header extends React.Component {
 
   render() {
     const { name, version } = getManifest();
+    const { page: pageId } = getUrlParams();
     const { useDarkTheme } = settingsStore.data;
-    const pageId = getParam("page", defaultPageId);
 
     return (
       <div className="Header">
