@@ -8,7 +8,7 @@ export async function getSelectedText(): Promise<string> {
   const activeTab = await getActiveTab();
 
   // fix: Uncaught (in promise) Error: Could not establish connection. Receiving end does not exist
-  if (isSystemPage(activeTab.url)) {
+  if (!activeTab.url || isSystemPage(activeTab.url)) {
     return "";
   }
 
