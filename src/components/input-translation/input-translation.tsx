@@ -147,14 +147,16 @@ export class InputTranslation extends React.Component<Props> {
 
   @action
   translateText(text: string) {
-    this.input.focus();
     this.text = text;
-    this.input.setValue(text); // update input value manually since @defaultValue is utilized
   }
 
   @action
   async translate() {
     let { text, vendor, langFrom, langTo } = this;
+
+    this.input?.focus(); // autofocus input-field
+    this.input?.setValue(text || ""); // update input value manually since @defaultValue is utilized
+
     if (!text) return;
 
     this.logger.info("translating..", { text, vendor, langFrom, langTo });
