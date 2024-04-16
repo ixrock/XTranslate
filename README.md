@@ -1,7 +1,7 @@
 XTranslate
 ==========
 Chrome-extension for translating foreign languages at the viewing web page context.
-Translate from 100+ foreign languages to your native directly on web-site you're reading or 
+Translate from 100+ foreign languages to your native directly on web-site you're reading or
 insert text in the action window (via extension's icon on chrome's toolbar).
 
 ![Screenshot](https://github.com/ixrock/XTranslate/blob/master/screenshots/Untitled-1.jpg?raw=true)
@@ -18,12 +18,12 @@ select text and get translation right after one of the following actions:
 - write text in the input fields, mouse-over it and press hotkey
 - open extension's window while text selected to get translation
 
-You can get even some translation from images by mouse overing the image element and 
+You can get even some translation from images by mouse overing the image element and
 press hotkey (title or alt attributes will be used when applicable).
-With this feature it is possible to get auto-translation by block of text at the page 
+With this feature it is possible to get auto-translation by block of text at the page
 just by pressing the hotkey when mouse over it!
 
-Translations in **PDF files** are also supported, but it works only from context menu (turned off by default in the settings) 
+Translations in **PDF files** are also supported, but it works only from context menu (turned off by default in the settings)
 due technical restrictions of how chrome renders PDF-files.
 Select a text in opened file (be sure it's not an image file inside pdf content),  
 then click mouse right button on the selection and choose "XTranslate -> Translate with ..." from the menu.
@@ -36,8 +36,8 @@ then click mouse right button on the selection and choose "XTranslate -> Transla
 
 5) Type any text in the app's action window and get translation with dictionary support for single words
 
-6) Save your favorite language pairs (from -> to) as bookmarks for quick access 
-(`Cmd/Alt + Shift + click` at the language list item to save and keep on top)
+6) Save your favorite language pairs (from -> to) as bookmarks for quick access
+   (`Cmd/Alt + Shift + click` at the language list item to save and keep on top)
 
 7) History of translations (turned off by default)
 
@@ -45,14 +45,14 @@ Install extension:
 -----------
 * [Chrome's Web Store](https://chrome.google.com/webstore/detail/xtranslate/gfgpkepllngchpmcippidfhmbhlljhoo)
 * [Microsoft Edge Add-ons](https://microsoftedge.microsoft.com/addons/detail/cinfaflgbaachkaamaeglolofeahelkd)
-* [Firefox addons](https://addons.mozilla.org/en-GB/firefox/addon/xtranslate-chrome/)
+* [Firefox addons](https://addons.mozilla.org/en-GB/firefox/addon/xtranslate-chrome/) _(might be not fully supported)_
 
 Available translation vendors:
 -----------
 * [Google](http://translate.google.com/)
 * [Yandex](http://translate.yandex.com/)
 * [Bing](http://bing.com/translator/)
-* [DeepL](https://www.deepl.com/)
+* [DeepL](https://www.deepl.com/) _(requires own user key, register at https://www.deepl.com/en/signup/)_
 
 For developers and contributors:
 -----------
