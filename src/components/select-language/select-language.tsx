@@ -219,6 +219,7 @@ export const langToFlagIconMap: Record<string, string> = {
   "haw": "hm", // Hawaiian
   "hi": "in", // Hindi (India)
   "te": "in", // Telugu (India)
+  "tg": "tj", // Tajik (Tajikistan)
   "ur": "pk", // Urdu (Pakistan)
   "ja": "jp", // Japanese
   "ko": "kr", // Korean
