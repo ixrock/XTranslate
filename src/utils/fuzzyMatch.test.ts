@@ -1,28 +1,33 @@
 import { fuzzyMatch, FuzzyMatchResult } from "./fuzzyMatch";
 
 describe("fuzzy search", () => {
-  const searchAreas = [
-    "metrics",
-    "4d612ccd-4ea6-4115-9ae8-74c05e68b295",
-    "app.kubernetes.io/created-by=resource-stack",
-    "app.kubernetes.io/managed-by=Lens",
-    "app.kubernetes.io/name=lens-metrics",
-    "extensionVersion=v2.26.0-lens1",
-    "Active"
-  ];
+  it("searching words are case insensitive by default", () => {
+    const searchArea = [
+      "lens-metrics",
+      "4d612ccd-4ea6-4115-9ae8-74c05e68b295",
+      "app.kubernetes.io/created-by=resource-stack",
+      "app.kubernetes.io/act-managed-by=Lens",
+      "app.kubernetes.io/name=lens-metrics",
+      "kubernetes.io/metadata.name=metrics",
+      "extensionVersion=v2.26.0-lens1",
+      "Active",
+    ].join("\n");
 
-  it("searching are words-case insensitive by default", () => {
-    const search = fuzzyMatch(searchAreas.join(" "), "lens act", {
-      strict: true,
-    });
-    const search2 = fuzzyMatch(searchAreas.join("\n"), "lens act", {
-      strict: true,
+    const search = fuzzyMatch(searchArea, "Lens active") as FuzzyMatchResult;
+
+    const search2 = fuzzyMatch(searchArea, "Lens active", {
       matchCase: true,
+    }) as FuzzyMatchResult;
+
+    const search3 = fuzzyMatch(searchArea, "Lens active", {
+      matchCase: true,
+      strict: true,
     });
 
-    expect(search).toBeTruthy();
-    expect(search2).toBeFalsy();
-  });
+    expect(search.matchedWords).toEqual(["lens", "active"]);
+    expect(search2.matchedWords).toEqual(["Lens"]);
+    expect(search3).toBeFalsy()
+  })
 
   it("options.strict=true allows to check that every chunk is matched in area", () => {
     const search1 = fuzzyMatch("test-123 blabla", "test 777 12", { strict: true });
