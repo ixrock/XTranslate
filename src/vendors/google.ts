@@ -1,8 +1,9 @@
 import GoogleLanguages from "./google.json"
-import { createStorageHelper, ProxyRequestInit } from "../extension";
+import { ProxyRequestInit } from "../extension";
 import { isTranslationError, ITranslationResult, TranslateParams, Translator } from "./translator";
 import { createLogger, delay } from "../utils";
 import { getMessage } from "../i18n";
+import { createStorageHelper } from "../storage";
 
 export class Google extends Translator {
   public name = 'google';

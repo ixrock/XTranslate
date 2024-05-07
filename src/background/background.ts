@@ -5,12 +5,13 @@ import { action, runInAction } from "mobx";
 import { initContextMenus } from "./contextMenu";
 import { isProduction } from "../common-vars";
 import { blobToBase64DataUrl, createLogger, parseJson } from "../utils";
-import { ChromeTtsPayload, MessageType, onInstall, onMessage, openOptionsPage, ProxyRequestPayload, ProxyResponsePayload, ProxyResponseType, SaveToFavorites, SaveToHistoryPayload } from '../extension'
+import { ChromeTtsPayload, MessageType, onInstall, onMessage, openOptionsPage, ProxyRequestPayload, ProxyResponsePayload, ProxyResponseType, SaveToFavorites, SaveToHistoryPayload, StorageDeletePayload, StorageReadPayload, StorageWritePayload, syncExternalStorageUpdate } from '../extension'
 import { rateLastTimestamp } from "../components/app/app-rate.storage";
 import { settingsStorage } from "../components/settings/settings.storage";
 import { generateId, getHistoryItemId, historyStorage, IHistoryStorageItem, importHistory, toHistoryItem, toStorageItem, toTranslationResult } from "../components/user-history/history.storage";
 import { TranslatePayload } from "../vendors";
 import { favoritesStorage } from "../components/user-history/favorites.storage";
+import { getExtensionStorageApi } from "../storage";
 
 const logger = createLogger({ systemPrefix: '[BACKGROUND]' });
 
@@ -137,4 +138,33 @@ onMessage(MessageType.CHROME_TTS_PLAY, (payload: ChromeTtsPayload) => {
 
 onMessage(MessageType.CHROME_TTS_STOP, () => {
   chrome.tts.stop();
+});
+
+/**
+ * Handling persistent data storage
+ */
+onMessage(MessageType.STORAGE_DATA_READ, async (payload: StorageReadPayload) => {
+  const { key, area } = payload;
+  const storageApi = getExtensionStorageApi(area);
+
+  logger.info(`reading "${key}" from external storage`, payload);
+  const items = await storageApi.get(key) ?? {};
+  return items[key];
+});
+
+onMessage(MessageType.STORAGE_DATA_WRITE, async (payload: StorageWritePayload) => {
+  const { key, area, state } = payload;
+  const storageApi = getExtensionStorageApi(area);
+
+  logger.info(`writing "${key}" data to external storage`, payload);
+  await storageApi.set({ [key]: state });
+  await syncExternalStorageUpdate(payload); // send data update to open tabs
+});
+
+onMessage(MessageType.STORAGE_DATA_REMOVE, async (payload: StorageDeletePayload) => {
+  const { key, area } = payload;
+  const storageApi = getExtensionStorageApi(area);
+
+  logger.info(`removing item "${key}" from external storage`, payload);
+  return storageApi.remove(key);
 });

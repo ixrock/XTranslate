@@ -1,6 +1,6 @@
 // Helper for working with persistent storages (e.g. WebStorage API, NodeJS file-system api, etc.)
 
-import { action, IReactionDisposer, makeObservable, observable, reaction, toJS, when } from "mobx";
+import { action, IReactionDisposer, makeObservable, observable, reaction, toJS, when, IReactionOptions, keys } from "mobx";
 import { isEqual, isPlainObject, merge } from "lodash";
 import { createLogger } from "./createLogger";
 
@@ -10,33 +10,29 @@ export type DeepPartial<T> = {
 
 export interface StorageHelperOptions<T> {
   defaultValue?: T;
-  autoLoad?: boolean; // preload data immediately, default: true
-  autoSync?: boolean; // auto-save changes to remote storage, default: true
-  autoSyncDelay?: number; // delay for reaction to save data to external storage
+  autoLoad?: boolean; // preload data from persistent storage when `opts.storageProvider` (default: true)
   migrations?: StorageMigrationCallback<T>[]; // handle model upgrades during app's lifetime
-  storage: StorageAdapter<T>;
+  storageAdapter?: StorageAdapter<T>; // handle saving and loading state from external storage
+  autoSaveOptions?: IReactionOptions<T, boolean>;
 }
 
 export type StorageMigrationCallback<T> = (data: T | any) => T | void;
 
 export interface StorageAdapter<T> {
-  getItem(key: string): T | Promise<T>;
-  setItem(key: string, value: T): void;
-  removeItem(key: string): void;
+  getItem(key: string): Promise<T> | T;
+  setItem(key: string, value: T): Promise<void> | void;
+  removeItem(key: string): Promise<void> | void;
 }
 
 export class StorageHelper<T> {
   protected logger = createLogger({ systemPrefix: `[StorageHelper](${this.key})` });
-  protected storage: StorageAdapter<T> = this.options.storage;
+  protected storage?: StorageAdapter<T> = this.options.storageAdapter;
+  private skipNextSave = false;
   protected data = observable.box<T>();
   @observable initialized = false;
   @observable saving = false;
   @observable loading = false;
   @observable loaded = false;
-
-  protected disposers = {
-    unbindAutoSync: null as IReactionDisposer,
-  };
 
   get whenReady(): Promise<void> {
     return when(() => this.initialized && this.loaded);
@@ -51,8 +47,7 @@ export class StorageHelper<T> {
 
     // setup default options
     this.options = {
-      autoLoad: false,
-      autoSync: true,
+      autoLoad: true,
       ...options
     };
     this.data.set(this.defaultValue);
@@ -60,33 +55,28 @@ export class StorageHelper<T> {
     if (this.options.autoLoad) {
       this.load();
     }
-    if (this.options.autoSync) {
-      this.bindAutoSync();
+    if (this.options.storageAdapter) {
+      this.bindAutoSaveToExternalStorage();
     }
   }
 
-  public bindAutoSync() {
-    const { autoSyncDelay } = this.options;
+  public unbindAutoSaveToExternalStorage: IReactionDisposer | undefined;
 
-    const bindAutoSync = () => {
-      this.disposers.unbindAutoSync?.(); // reset previous
-      this.disposers.unbindAutoSync = reaction(() => this.toJS(), state => {
-          this.logger.info(`[auto-sync]: saving storage for key "${this.key}"`, {
-            state,
-            key: this.key,
-            hostEnv: location?.href,
-          });
-          this.save(state);
-        },
-        autoSyncDelay ? { delay: autoSyncDelay } : {},
+  public bindAutoSaveToExternalStorage() {
+    const bindAutoSaveToExternalStorage = () => {
+      this.unbindAutoSaveToExternalStorage?.(); // reset previous
+      this.unbindAutoSaveToExternalStorage = reaction(() => this.toJS(), (state) => {
+          if (this.skipNextSave) {
+            this.skipNextSave = false;
+            return;
+          }
+
+          this.saveStateToExternalStorage(state).catch(this.logger.error);
+        }, this.options.autoSaveOptions
       );
     };
 
-    if (autoSyncDelay > 0) {
-      this.whenReady.then(bindAutoSync);
-    } else {
-      bindAutoSync();
-    }
+    return this.whenReady.then(bindAutoSaveToExternalStorage);
   }
 
   @action
@@ -101,7 +91,7 @@ export class StorageHelper<T> {
     this.loading = true;
 
     try {
-      const data = this.storage.getItem(this.key);
+      const data = this.storage?.getItem(this.key) ?? this.defaultValue
       if (data instanceof Promise) {
         return data.then(this.onData, this.onError);
       } else {
@@ -117,21 +107,25 @@ export class StorageHelper<T> {
     return this.whenReady;
   }
 
-  @action
-  protected save(data: T) {
+  @action.bound
+  protected async saveStateToExternalStorage(state: T) {
     try {
-      this.logger.info("saving data to external storage", data);
+      this.logger.info(`saving state to external storage"`, {
+        state,
+        key: this.key,
+        origin: location?.href,
+      });
       this.saving = true;
-      this.storage.setItem(this.key, data);
+      await this.storage?.setItem(this.key, state);
     } catch (error) {
-      this.logger.error("saving data has failed", error);
+      this.logger.error("saving state to external storage has failed", error);
     } finally {
       this.saving = false;
     }
   }
 
-  @action
-  protected onData = (data: T) => {
+  @action.bound
+  protected onData(data: T) {
     this.logger.info("data received", data);
 
     const notEmpty = data != null;
@@ -148,8 +142,8 @@ export class StorageHelper<T> {
     this.logger.info("data updated with defaults to:", this.toJS());
   };
 
-  @action
-  protected onError = (error?: any) => {
+  @action.bound
+  protected onError(error?: any) {
     this.loading = false;
     this.logger.error("loading failed", error, this);
   };
@@ -163,14 +157,10 @@ export class StorageHelper<T> {
   }
 
   @action
-  set(value: T, { silent = false } = {}) {
-    if (silent && this.options.autoSync) {
-      this.disposers?.unbindAutoSync();
-      this.data.set(value);
-      this.bindAutoSync();
-    } else {
-      this.data.set(value);
-    }
+  set(value: T, { silent = false }: { silent?: boolean } = {}) {
+    if (silent) this.skipNextSave = true;
+
+    this.data.set(value);
   }
 
   @action
@@ -179,7 +169,7 @@ export class StorageHelper<T> {
   }
 
   @action
-  merge(update: DeepPartial<T>, { deep = false, silent = false } = {}) {
+  merge(update: DeepPartial<T>, { deep, silent }: { deep?: boolean, silent?: boolean } = {}) {
     let value = this.toJS(); // top-level object or some other data type
     let newValue: T;
 

@@ -1,7 +1,7 @@
 import MD5 from "crypto-js/md5";
 import { runInAction } from "mobx";
 import { download } from "../../utils/downloadFile";
-import { createStorageHelper } from "../../extension/storage";
+import { createStorageHelper } from "../../storage";
 import { getTranslator, ITranslationResult } from "../../vendors/translator";
 
 export type IHistoryItemId = string;

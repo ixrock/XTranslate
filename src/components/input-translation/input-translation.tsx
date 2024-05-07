@@ -17,13 +17,12 @@ import { Tab } from "../tabs";
 import { Icon } from "../icon";
 import { Tooltip } from "../tooltip";
 import { getUrlParams, navigate, navigation, TranslationPageParams } from "../../navigation";
-import { createStorageHelper } from "../../extension/storage";
+import { createStorageHelper } from "../../storage";
 import { getMessage } from "../../i18n";
 import { iconMaterialFavorite, iconMaterialFavoriteOutlined, isMac } from "../../common-vars";
 import { isFavorite } from "../user-history/favorites.storage";
 
 export const lastInputText = createStorageHelper("last_input_text", {
-  autoSyncDelay: 0,
   defaultValue: "",
 });
 

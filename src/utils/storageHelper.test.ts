@@ -13,9 +13,8 @@ describe("renderer/utils/StorageHelper", () => {
       localStorage.clear();
 
       storageHelper = new StorageHelper<StorageModel>(storageKey, {
-        storage: localStorage,
+        storageAdapter: localStorage,
         defaultValue: "test",
-        autoSync: true,
         autoLoad: false,
       });
     });
@@ -32,17 +31,6 @@ describe("renderer/utils/StorageHelper", () => {
       expect(storageHelper.key).toBe(storageKey);
       expect(storageHelper.defaultValue).toBe("test");
       expect(storageHelper.get()).toBe("saved");
-    });
-
-    it("updates storage", async () => {
-      storageHelper.load();
-
-      storageHelper.set("test2");
-      expect(localStorage.getItem(storageKey)).toBe("test2");
-
-      localStorage.setItem(storageKey, "test3");
-      storageHelper.load({ force: true }); // reload from underlying storage and merge
-      expect(storageHelper.get()).toBe("test3");
     });
   });
 
@@ -83,13 +71,13 @@ describe("renderer/utils/StorageHelper", () => {
       storageHelper = new StorageHelper(storageKey, {
         autoLoad: false,
         defaultValue: defaultValue,
-        storage: storageAdapter,
+        storageAdapter: storageAdapter,
       });
 
       storageHelperAsync = new StorageHelper(storageKey, {
         autoLoad: false,
         defaultValue: defaultValue,
-        storage: {
+        storageAdapter: {
           ...storageAdapter,
           async getItem(key: string): Promise<typeof defaultValue | any> {
             await delay(500); // fake loading timeout
@@ -120,7 +108,7 @@ describe("renderer/utils/StorageHelper", () => {
     });
 
     it("set() fully replaces data in storage", async () => {
-      storageHelper.load();
+      await storageHelper.load();
       storageHelper.set({ message: "test2" });
       expect(storageHelper.get()).toEqual({ message: "test2" });
       expect(storageMock[storageKey]).toEqual({ message: "test2" });
@@ -175,7 +163,7 @@ describe("renderer/utils/StorageHelper", () => {
       storageHelper = new StorageHelper<typeof defaultValue>("some-key", {
         autoLoad: true,
         defaultValue,
-        storage: {
+        storageAdapter: {
           getItem: jest.fn(),
           setItem: jest.fn(),
           removeItem: jest.fn(),

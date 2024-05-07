@@ -12,6 +12,10 @@ export const enum MessageType {
   GET_FROM_HISTORY = "GET_TRANSLATION_FROM_CACHE",
   CHROME_TTS_PLAY = "TEXT_TO_SPEECH_PLAY",
   CHROME_TTS_STOP = "TEXT_TO_SPEECH_STOP",
+  STORAGE_DATA_READ = "READ_FROM_LOCAL_OR_EXTERNAL_STORAGE",
+  STORAGE_DATA_WRITE = "SAVE_TO_LOCAL_OR_EXTERNAL_STORAGE",
+  STORAGE_DATA_REMOVE = "REMOVE_ITEM_FROM_STORAGE",
+  STORAGE_DATA_SYNC = "SYNC_DATA_FROM_STORAGE",
 }
 
 export interface Message<Payload = any /*json-serializable*/> {
@@ -62,4 +66,22 @@ export interface ChromeTtsPayload {
 export interface SaveToFavorites {
   item: ITranslationResult | IHistoryItem;
   isFavorite: boolean;
+}
+
+export interface StorageReadPayload {
+  key: string;
+  area: chrome.storage.AreaName;
+}
+
+export interface StorageWritePayload<T = any> {
+  key: string;
+  area: chrome.storage.AreaName;
+  state: T;
+  origin: string; // window.location where action happened
+}
+
+export interface StorageDeletePayload extends StorageReadPayload {
+}
+
+export interface StorageSyncPayload<T> extends StorageWritePayload<T> {
 }

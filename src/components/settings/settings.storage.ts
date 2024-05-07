@@ -1,7 +1,7 @@
 import { action, makeObservable } from "mobx";
 import { Hotkey } from "../../utils/parseHotkey";
 import { getTranslator } from "../../vendors";
-import { createStorageHelper } from "../../extension/storage";
+import { createStorageHelper } from "../../storage";
 
 export type PopupPosition = "" /*auto*/ | "left top" | "left bottom" | "right top" | "right bottom";
 

@@ -1,7 +1,7 @@
 import type { ITranslationResult } from "../../vendors";
 import type { HistoryRecord, IHistoryItem } from "./history.storage";
 import { getHistoryItemId } from "./history.storage";
-import { createStorageHelper } from "../../extension/storage";
+import { createStorageHelper } from "../../storage";
 
 export interface FavoriteStorageModel {
   favorites: HistoryRecord<boolean>;
@@ -9,9 +9,6 @@ export interface FavoriteStorageModel {
 
 export const favoritesStorage = createStorageHelper<FavoriteStorageModel>("favorites", {
   area: "local",
-  autoLoad: true,
-  autoSync: true,
-  autoSyncDelay: 0,
   defaultValue: {
     favorites: {},
   },

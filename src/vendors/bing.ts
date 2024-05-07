@@ -1,8 +1,9 @@
 import BingLanguages from "./bing.json"
 import { groupBy, isEmpty } from "lodash";
-import { createStorageHelper, ProxyRequestInit, ProxyResponseType } from "../extension";
+import { ProxyRequestInit, ProxyResponseType } from "../extension";
 import { ITranslationError, ITranslationResult, TranslateParams, Translator } from "./translator";
 import { createLogger } from "../utils";
+import { createStorageHelper } from "../storage";
 
 export interface BingParsedGlobalParams {
   key: string;

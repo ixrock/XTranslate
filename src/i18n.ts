@@ -1,11 +1,12 @@
 // Localization
+import type { Pattern, PatternElement } from "@fluent/bundle/esm/ast"
 
 import React from "react";
 import { observable } from "mobx";
-import { createStorageHelper, getURL, isBackgroundWorker, proxyRequest, ProxyResponseType } from "./extension";
+import { getURL, isBackgroundWorker, proxyRequest, ProxyResponseType } from "./extension";
 import { createLogger } from "./utils/createLogger";
 import { FluentBundle, FluentResource, FluentVariable } from "@fluent/bundle"
-import type { Pattern, PatternElement } from "@fluent/bundle/esm/ast"
+import { createStorageHelper } from "./storage";
 
 export const logger = createLogger({ systemPrefix: "[I18N-LOCALE]" });
 

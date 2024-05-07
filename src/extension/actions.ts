@@ -1,7 +1,7 @@
 import type { ITranslationResult, TranslatePayload } from "../vendors";
 import type { IHistoryItem } from "../components/user-history/history.storage";
-import { ChromeTtsPayload, MessageType, ProxyRequestPayload, ProxyResponsePayload, ProxyResponseType, SaveToFavorites, SaveToHistoryPayload } from "./messages";
-import { getActiveTab, sendMessage } from "./index";
+import { ChromeTtsPayload, MessageType, ProxyRequestPayload, ProxyResponsePayload, ProxyResponseType, SaveToFavorites, SaveToHistoryPayload, StorageDeletePayload, StorageReadPayload, StorageSyncPayload, StorageWritePayload } from "./messages";
+import { getActiveTab, sendMessage, sendMessageToAllTabs } from "./index";
 import { isSystemPage } from "../common-vars";
 
 export async function getSelectedText(): Promise<string> {
@@ -78,5 +78,33 @@ export function chromeTtsPlay(data: ChromeTtsPayload) {
 export function chromeTtsStop() {
   return sendMessage({
     type: MessageType.CHROME_TTS_STOP,
+  });
+}
+
+export async function writeToExternalStorage<T = any>(payload: StorageWritePayload<T>) {
+  return sendMessage<StorageWritePayload>({
+    type: MessageType.STORAGE_DATA_WRITE,
+    payload,
+  });
+}
+
+export async function readFromExternalStorage(payload: StorageReadPayload) {
+  return sendMessage<StorageReadPayload>({
+    type: MessageType.STORAGE_DATA_READ,
+    payload,
+  });
+}
+
+export async function deleteFromExternalStorage(payload: StorageDeletePayload) {
+  return sendMessage<StorageDeletePayload>({
+    type: MessageType.STORAGE_DATA_REMOVE,
+    payload,
+  });
+}
+
+export async function syncExternalStorageUpdate<T = any>(payload: StorageSyncPayload<T>) {
+  return sendMessageToAllTabs<StorageSyncPayload<T>>({
+    type: MessageType.STORAGE_DATA_SYNC,
+    payload,
   });
 }
