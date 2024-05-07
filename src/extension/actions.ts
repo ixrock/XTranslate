@@ -81,29 +81,36 @@ export function chromeTtsStop() {
   });
 }
 
-export async function writeToExternalStorage<T = any>(payload: StorageWritePayload<T>) {
+export async function writeToExternalStorageAction<T = any>(payload: StorageWritePayload<T>) {
   return sendMessage<StorageWritePayload>({
     type: MessageType.STORAGE_DATA_WRITE,
     payload,
   });
 }
 
-export async function readFromExternalStorage(payload: StorageReadPayload) {
+export async function readFromExternalStorageAction(payload: StorageReadPayload) {
   return sendMessage<StorageReadPayload>({
     type: MessageType.STORAGE_DATA_READ,
     payload,
   });
 }
 
-export async function deleteFromExternalStorage(payload: StorageDeletePayload) {
+export async function removeFromExternalStorageAction(payload: StorageDeletePayload) {
   return sendMessage<StorageDeletePayload>({
     type: MessageType.STORAGE_DATA_REMOVE,
     payload,
   });
 }
 
-export async function syncExternalStorageUpdate<T = any>(payload: StorageSyncPayload<T>) {
-  return sendMessageToAllTabs<StorageSyncPayload<T>>({
+export function syncExternalStorageUpdateAction<T = any>(payload: StorageSyncPayload<T>) {
+  // send update to options page
+  sendMessage<StorageSyncPayload<T>>({
+    type: MessageType.STORAGE_DATA_SYNC,
+    payload,
+  });
+
+  // send update to all browser window tabs
+  sendMessageToAllTabs<StorageSyncPayload<T>>({
     type: MessageType.STORAGE_DATA_SYNC,
     payload,
   });
