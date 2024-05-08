@@ -1,6 +1,6 @@
-// [IPC]: inter-process communications (background <-> options-page <-> content-pages)
+// [IPC]: inter-process communications for [options-page] <-> [background] <-> [content-pages]
 import type { ITranslationResult } from "../vendors";
-import type { IHistoryItem, IHistoryItemId } from "../components/user-history/history.storage";
+import type { IHistoryItem } from "../components/user-history/history.storage";
 
 export const enum MessageType {
   PROXY_REQUEST = "PROXY_REQUEST",
@@ -63,7 +63,7 @@ export interface ChromeTtsPayload {
   rate?: number; // default: 1.0
 }
 
-export interface SaveToFavorites {
+export interface SaveToFavoritesPayload {
   item: ITranslationResult | IHistoryItem;
   isFavorite: boolean;
 }

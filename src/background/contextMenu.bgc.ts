@@ -1,4 +1,5 @@
-// Extension's context menu
+// Create extension's menu-item for global browser's context menu
+// Works only when enabled in the extension settings (default: false)
 
 import { autorun } from "mobx";
 import { createTab, getActiveTab, getManifest, MessageType, sendMessageToTab, TranslateWithVendorPayload } from "../extension";
@@ -73,23 +74,23 @@ async function onClickMenuItem(info: chrome.contextMenus.OnClickData) {
   var [type, vendor] = String(info.menuItemId).split("-");
 
   switch (type) {
-    case MessageType.TRANSLATE_FULL_PAGE: {
-      const { langTo } = settingsStorage.get();
-      const url = getTranslator(vendor).getFullPageTranslationUrl(pageUrl, langTo);
-      if (url) createTab(url);
-      break;
-    }
+  case MessageType.TRANSLATE_FULL_PAGE: {
+    const { langTo } = settingsStorage.get();
+    const url = getTranslator(vendor).getFullPageTranslationUrl(pageUrl, langTo);
+    if (url) createTab(url);
+    break;
+  }
 
-    case MessageType.TRANSLATE_WITH_VENDOR: {
-      const tab = await getActiveTab();
-      sendMessageToTab<TranslateWithVendorPayload>(tab.id, {
-        type: MessageType.TRANSLATE_WITH_VENDOR,
-        payload: {
-          vendor: vendor,
-          text: selectionText,
-        }
-      });
-      break;
-    }
+  case MessageType.TRANSLATE_WITH_VENDOR: {
+    const tab = await getActiveTab();
+    sendMessageToTab<TranslateWithVendorPayload>(tab.id, {
+      type: MessageType.TRANSLATE_WITH_VENDOR,
+      payload: {
+        vendor: vendor,
+        text: selectionText,
+      }
+    });
+    break;
+  }
   }
 }

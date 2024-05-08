@@ -1,7 +1,7 @@
 import React from "react";
 import DeeplLanguages from "./deepl.json"
 import { ITranslationError, ITranslationResult, TranslateParams, Translator, TranslatorLanguages } from "./translator";
-import { createStorageHelper } from "../storage";
+import { createStorage } from "../storage";
 import { ProxyRequestInit } from "../extension";
 import { getMessage } from "../i18n";
 import { Icon } from "../components/icon";
@@ -26,7 +26,7 @@ class Deepl extends Translator {
     return "https://api.deepl.com/v2";
   }
 
-  protected authKey = createStorageHelper("deepl_api_auth_key", {
+  protected authKey = createStorage("deepl_api_auth_key", {
     defaultValue: "b05afc95-d4ea-2bee-07e6-e81469c588f2:fx", // free subscription key (example)
   });
 

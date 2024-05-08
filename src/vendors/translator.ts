@@ -4,7 +4,7 @@ import type React from "react";
 import { observable } from "mobx";
 import { autoBind, createLogger, disposer, JsonResponseError } from "../utils";
 import { ProxyRequestPayload, ProxyResponseType } from "../extension/messages";
-import { chromeTtsPlay, chromeTtsStop, getTranslationFromHistory, proxyRequest, saveToHistory } from "../extension/actions";
+import { ttsPlayAction, ttsStopAction, getTranslationFromHistoryAction, proxyRequest, saveToHistoryAction } from "../extension/actions";
 import { settingsStore } from "../components/settings/settings.storage";
 
 export interface TranslatorLanguages {
@@ -66,7 +66,7 @@ export abstract class Translator {
     originalTranslate: (params: TranslateParams) => Promise<ITranslationResult>,
     params: TranslateParams,
   ): Promise<ITranslationResult> {
-    let translation = await getTranslationFromHistory({ vendor: this.name, ...params }) as ITranslationResult;
+    let translation = await getTranslationFromHistoryAction({ vendor: this.name, ...params }) as ITranslationResult;
     if (translation) translation = this.normalize(translation, params);
 
     // get result via network
@@ -94,7 +94,7 @@ export abstract class Translator {
     const { autoPlayText, historyEnabled } = settingsStore.data;
 
     if (autoPlayText) this.speak(langDetected, originalText);
-    if (historyEnabled) saveToHistory(translation);
+    if (historyEnabled) saveToHistoryAction(translation);
 
     return translation;
   }
@@ -147,7 +147,7 @@ export abstract class Translator {
   }
 
   async speak(lang: string, text: string) {
-    this.stopSpeaking(); // stop previous if any
+    await this.stopSpeaking(); // stop previous if any
 
     const audioUrl = this.getAudioUrl(lang, text);
     const useChromeTtsEngine = Boolean(settingsStore.data.useChromeTtsEngine || !audioUrl);
@@ -158,7 +158,7 @@ export abstract class Translator {
 
     if (useChromeTtsEngine) {
       if (lang.toLowerCase() === "en-us") lang = "en";
-      chromeTtsPlay({ lang, text });
+      ttsPlayAction({ lang, text });
     } else if (audioUrl) {
       try {
         this.audio = document.createElement("audio");
@@ -176,20 +176,20 @@ export abstract class Translator {
         Translator.logger.error(`[TTS]: failed to play: ${error}`, { lang, text });
 
         // fallback to native chrome's text-to-speech engine
-        chromeTtsPlay({ lang, text });
+        ttsPlayAction({ lang, text });
       }
     }
   }
 
-  static stopSpeaking() {
+  static async stopSpeaking() {
     Translator.logger.info(`[TTS]: stop speaking`);
     getTranslators().forEach(vendor => vendor.audio?.pause());
-    chromeTtsStop();
+    await ttsStopAction();
   }
 
-  stopSpeaking() {
+  async stopSpeaking() {
     this.audio?.pause();
-    Translator.stopSpeaking();
+    await Translator.stopSpeaking();
   }
 
   getAudioUrl(lang: string, text: string): string {

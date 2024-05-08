@@ -1,13 +1,13 @@
 import { action, makeObservable } from "mobx";
 import { Hotkey } from "../../utils/parseHotkey";
 import { getTranslator } from "../../vendors";
-import { createStorageHelper } from "../../storage";
+import { createStorage } from "../../storage";
 
 export type PopupPosition = "" /*auto*/ | "left top" | "left bottom" | "right top" | "right bottom";
 
 export type SettingsStorageModel = typeof settingsStorage.defaultValue;
 
-export const settingsStorage = createStorageHelper("settings", {
+export const settingsStorage = createStorage("settings", {
   area: "sync", // share synced data via logged-in account (google, firefox, etc.)
   defaultValue: {
     autoPlayText: false,

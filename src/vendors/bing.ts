@@ -3,7 +3,7 @@ import { groupBy, isEmpty } from "lodash";
 import { ProxyRequestInit, ProxyResponseType } from "../extension";
 import { ITranslationError, ITranslationResult, TranslateParams, Translator } from "./translator";
 import { createLogger } from "../utils";
-import { createStorageHelper } from "../storage";
+import { createStorage } from "../storage";
 
 export interface BingParsedGlobalParams {
   key: string;
@@ -24,7 +24,7 @@ class Bing extends Translator {
   }
 
   protected logger = createLogger({ systemPrefix: "[BING]" });
-  protected apiGlobalParams = createStorageHelper<BingParsedGlobalParams>("bing_api_global_params", {
+  protected apiGlobalParams = createStorage<BingParsedGlobalParams>("bing_api_global_params", {
     defaultValue: {} as BingParsedGlobalParams,
   });
 

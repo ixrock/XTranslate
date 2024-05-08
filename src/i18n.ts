@@ -6,7 +6,7 @@ import { observable } from "mobx";
 import { getURL, isBackgroundWorker, proxyRequest, ProxyResponseType } from "./extension";
 import { createLogger } from "./utils/createLogger";
 import { FluentBundle, FluentResource, FluentVariable } from "@fluent/bundle"
-import { createStorageHelper } from "./storage";
+import { createStorage } from "./storage";
 
 export const logger = createLogger({ systemPrefix: "[I18N-LOCALE]" });
 
@@ -29,7 +29,7 @@ export const availableLocales = {
 
 export const bundles = observable.map<Locale, FluentBundle>();
 
-export const storage = createStorageHelper<{ lang: Locale }>("i18n", {
+export const storage = createStorage<{ lang: Locale }>("i18n", {
   area: "sync",
   defaultValue: {
     lang: getSystemLocale(),

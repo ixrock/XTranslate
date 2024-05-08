@@ -20,7 +20,7 @@ import { Spinner } from "../spinner";
 import { Notifications } from "../notifications";
 import { getMessage } from "../../i18n";
 import { iconMaterialFavorite, iconMaterialFavoriteOutlined, isMac } from "../../common-vars";
-import { saveToFavorites } from "../../extension";
+import { saveToFavoritesAction } from "../../extension";
 import { favoritesStorage, isFavorite, removeFavorite } from "./favorites.storage";
 import { getTranslationPageUrl, navigate } from "../../navigation";
 
@@ -325,7 +325,7 @@ export class UserHistory extends React.Component {
     });
 
     var toggleFavorite = prevDefault(() => {
-      saveToFavorites(item, { isFavorite: !favorite });
+      saveToFavoritesAction(item, { isFavorite: !favorite });
     });
 
     const sourceTextUrl = getTranslationPageUrl({ vendor, from: langFrom, to: langTo, text });

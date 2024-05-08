@@ -1,6 +1,6 @@
 import type { ITranslationResult, TranslatePayload } from "../vendors";
 import type { IHistoryItem } from "../components/user-history/history.storage";
-import { ChromeTtsPayload, MessageType, ProxyRequestPayload, ProxyResponsePayload, ProxyResponseType, SaveToFavorites, SaveToHistoryPayload, StorageDeletePayload, StorageReadPayload, StorageSyncPayload, StorageWritePayload } from "./messages";
+import { ChromeTtsPayload, MessageType, ProxyRequestPayload, ProxyResponsePayload, ProxyResponseType, SaveToFavoritesPayload, SaveToHistoryPayload, StorageDeletePayload, StorageReadPayload, StorageSyncPayload, StorageWritePayload } from "./messages";
 import { getActiveTab, sendMessage, sendMessageToAllTabs } from "./index";
 import { isSystemPage } from "../common-vars";
 
@@ -38,7 +38,7 @@ export async function proxyRequest<Response>(payload: ProxyRequestPayload): Prom
   return response.data;
 }
 
-export function saveToHistory(translation: ITranslationResult | IHistoryItem) {
+export function saveToHistoryAction(translation: ITranslationResult | IHistoryItem) {
   return sendMessage<SaveToHistoryPayload, ITranslationResult>({
     type: MessageType.SAVE_TO_HISTORY,
     payload: {
@@ -47,8 +47,8 @@ export function saveToHistory(translation: ITranslationResult | IHistoryItem) {
   });
 }
 
-export function saveToFavorites(item: ITranslationResult | IHistoryItem, { isFavorite = true } = {}) {
-  return sendMessage<SaveToFavorites>({
+export function saveToFavoritesAction(item: ITranslationResult | IHistoryItem, { isFavorite = true } = {}) {
+  return sendMessage<SaveToFavoritesPayload>({
     type: MessageType.SAVE_TO_FAVORITES,
     payload: {
       item: item,
@@ -57,7 +57,7 @@ export function saveToFavorites(item: ITranslationResult | IHistoryItem, { isFav
   });
 }
 
-export function getTranslationFromHistory(payload: TranslatePayload) {
+export function getTranslationFromHistoryAction(payload: TranslatePayload) {
   if (payload.from === "auto") {
     return; // skip: source-language always saved as detected-language in history
   }
@@ -68,14 +68,14 @@ export function getTranslationFromHistory(payload: TranslatePayload) {
   });
 }
 
-export function chromeTtsPlay(data: ChromeTtsPayload) {
+export function ttsPlayAction(data: ChromeTtsPayload) {
   return sendMessage<ChromeTtsPayload>({
     type: MessageType.CHROME_TTS_PLAY,
     payload: data,
   });
 }
 
-export function chromeTtsStop() {
+export function ttsStopAction() {
   return sendMessage({
     type: MessageType.CHROME_TTS_STOP,
   });

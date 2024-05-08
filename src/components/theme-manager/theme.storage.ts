@@ -2,11 +2,11 @@ import { reaction } from "mobx";
 import { Color } from "react-color"
 import { getURL, proxyRequest, ProxyResponseType } from "../../extension";
 import { createLogger, disposer } from "../../utils";
-import { createStorageHelper } from "../../storage";
+import { createStorage } from "../../storage";
 
 export type ThemeStorageModel = typeof themeStorage.defaultValue;
 
-export const themeStorage = createStorageHelper("theme", {
+export const themeStorage = createStorage("theme", {
   area: "sync",
   defaultValue: {
     bgcMain: "#000" as Color,

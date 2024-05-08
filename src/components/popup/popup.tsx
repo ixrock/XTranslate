@@ -12,7 +12,7 @@ import { settingsStorage, settingsStore } from "../settings/settings.storage";
 import { themeStore } from "../theme-manager/theme.storage";
 import { isFavorite } from "../user-history/favorites.storage";
 import { getMessage } from "../../i18n";
-import { saveToFavorites } from "../../extension";
+import { saveToFavoritesAction } from "../../extension";
 
 interface Props extends Omit<React.HTMLProps<any>, "className"> {
   previewMode?: boolean;
@@ -157,7 +157,7 @@ export class Popup extends React.Component<Props> {
 
   @action
   private toggleFavorites = async () => {
-    await saveToFavorites(this.props.translation, {
+    await saveToFavoritesAction(this.props.translation, {
       isFavorite: !this.isFavorite,
     });
   };

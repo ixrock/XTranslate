@@ -1,7 +1,7 @@
 import MD5 from "crypto-js/md5";
 import { runInAction } from "mobx";
 import { download } from "../../utils/downloadFile";
-import { createStorageHelper } from "../../storage";
+import { createStorage } from "../../storage";
 import { getTranslator, ITranslationResult } from "../../vendors/translator";
 
 export type IHistoryItemId = string;
@@ -20,7 +20,7 @@ export interface HistoryTranslation {
   [vendor: string]: IHistoryItem;
 }
 
-export const historyStorage = createStorageHelper<HistoryStorageModel>("history", {
+export const historyStorage = createStorage<HistoryStorageModel>("history", {
   area: "local",
   autoLoad: false, // manual loading: before saving data or listing items
   defaultValue: {

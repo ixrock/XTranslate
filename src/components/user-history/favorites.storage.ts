@@ -1,13 +1,13 @@
 import type { ITranslationResult } from "../../vendors";
 import type { HistoryRecord, IHistoryItem } from "./history.storage";
 import { getHistoryItemId } from "./history.storage";
-import { createStorageHelper } from "../../storage";
+import { createStorage } from "../../storage";
 
 export interface FavoriteStorageModel {
   favorites: HistoryRecord<boolean>;
 }
 
-export const favoritesStorage = createStorageHelper<FavoriteStorageModel>("favorites", {
+export const favoritesStorage = createStorage<FavoriteStorageModel>("favorites", {
   area: "local",
   defaultValue: {
     favorites: {},

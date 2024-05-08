@@ -3,7 +3,7 @@ import { ProxyRequestInit } from "../extension";
 import { isTranslationError, ITranslationResult, TranslateParams, Translator } from "./translator";
 import { createLogger, delay } from "../utils";
 import { getMessage } from "../i18n";
-import { createStorageHelper } from "../storage";
+import { createStorage } from "../storage";
 
 export class Google extends Translator {
   public name = 'google';
@@ -14,7 +14,7 @@ export class Google extends Translator {
 
   protected logger = createLogger({ systemPrefix: "[GOOGLE]" });
   protected apiClients = ["gtx", "dict-chrome-ex"];
-  protected apiClient = createStorageHelper<string>("google_api_client", {
+  protected apiClient = createStorage<string>("google_api_client", {
     defaultValue: this.apiClients[0],
   });
 

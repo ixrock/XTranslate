@@ -5,7 +5,7 @@ import React, { Fragment } from "react";
 import { action, comparer, computed, makeObservable, observable, reaction } from "mobx";
 import { observer } from "mobx-react";
 import { getTranslator, getTranslators, isRTL, ITranslationError, ITranslationResult } from "../../vendors";
-import { getSelectedText, saveToFavorites } from "../../extension/actions";
+import { getSelectedText, saveToFavoritesAction } from "../../extension/actions";
 import { bindGlobalHotkey, createLogger, cssNames, disposer, SimpleHotkey } from "../../utils";
 import { SelectLanguage } from "../select-language";
 import { Input } from "../input";
@@ -17,12 +17,12 @@ import { Tab } from "../tabs";
 import { Icon } from "../icon";
 import { Tooltip } from "../tooltip";
 import { getUrlParams, navigate, navigation, TranslationPageParams } from "../../navigation";
-import { createStorageHelper } from "../../storage";
+import { createStorage } from "../../storage";
 import { getMessage } from "../../i18n";
 import { iconMaterialFavorite, iconMaterialFavoriteOutlined, isMac } from "../../common-vars";
 import { isFavorite } from "../user-history/favorites.storage";
 
-export const lastInputText = createStorageHelper("last_input_text", {
+export const lastInputText = createStorage("last_input_text", {
   defaultValue: "",
 });
 
@@ -233,7 +233,7 @@ export class InputTranslation extends React.Component<Props> {
               <Icon
                 material={favorite ? iconMaterialFavorite : iconMaterialFavoriteOutlined}
                 tooltip={favorite ? getMessage("history_unmark_as_favorite") : getMessage("history_mark_as_favorite")}
-                onClick={() => saveToFavorites(this.translation, { isFavorite: !favorite })}
+                onClick={() => saveToFavoritesAction(this.translation, { isFavorite: !favorite })}
               />
               <div className="lang" id="translated_with">
                 {translator.getLangPairShortTitle(langDetected, langTo)}
