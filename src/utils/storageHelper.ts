@@ -1,7 +1,7 @@
 // Helper for working with persistent storages (e.g. WebStorage API, NodeJS file-system api, etc.)
 
-import { action, IReactionDisposer, makeObservable, observable, reaction, toJS, when, IReactionOptions, keys } from "mobx";
-import { isEqual, isPlainObject, merge } from "lodash";
+import { action, IReactionDisposer, makeObservable, observable, reaction, toJS, when, IReactionOptions } from "mobx";
+import { isEqual, isPlainObject, merge, noop } from "lodash";
 import { createLogger } from "./createLogger";
 
 export type DeepPartial<T> = {
@@ -27,7 +27,6 @@ export interface StorageAdapter<T> {
 export class StorageHelper<T> {
   protected logger = createLogger({ systemPrefix: `[StorageHelper](${this.key})` });
   protected storage?: StorageAdapter<T> = this.options.storageAdapter;
-  private skipNextSave = false;
   protected data = observable.box<T>();
   @observable initialized = false;
   @observable saving = false;
@@ -55,28 +54,19 @@ export class StorageHelper<T> {
     if (this.options.autoLoad) {
       this.load();
     }
-    if (this.options.storageAdapter) {
-      this.bindAutoSaveToExternalStorage();
-    }
   }
 
-  public unbindAutoSaveToExternalStorage: IReactionDisposer | undefined;
+  public unbindAutoSaveToExternalStorage: IReactionDisposer | Function = noop;
 
   public bindAutoSaveToExternalStorage() {
-    const bindAutoSaveToExternalStorage = () => {
-      this.unbindAutoSaveToExternalStorage?.(); // reset previous
-      this.unbindAutoSaveToExternalStorage = reaction(() => this.toJS(), (state) => {
-          if (this.skipNextSave) {
-            this.skipNextSave = false;
-            return;
-          }
+    if (!this.options.storageAdapter) return;
 
-          this.saveStateToExternalStorage(state).catch(this.logger.error);
-        }, this.options.autoSaveOptions
-      );
-    };
+    this.unbindAutoSaveToExternalStorage?.(); // reset previous
 
-    return this.whenReady.then(bindAutoSaveToExternalStorage);
+    this.unbindAutoSaveToExternalStorage = reaction(() => this.toJS(), (state) => {
+        this.saveToExternalStorage(state).catch(this.logger.error);
+      }, this.options.autoSaveOptions,
+    );
   }
 
   @action
@@ -108,7 +98,7 @@ export class StorageHelper<T> {
   }
 
   @action.bound
-  protected async saveStateToExternalStorage(state: T) {
+  protected async saveToExternalStorage(state: T) {
     try {
       this.logger.info(`saving state to external storage"`, {
         state,
@@ -134,12 +124,13 @@ export class StorageHelper<T> {
         let migratedData = callback(data);
         if (migratedData !== undefined) data = migratedData as T;
       }
-      this.merge(data);
+      this.merge(data); // merge first
+      this.bindAutoSaveToExternalStorage();
     }
 
     this.loaded = true;
     this.loading = false;
-    this.logger.info("data updated with defaults to:", this.toJS());
+    this.logger.info("data fetched", this.toJS());
   };
 
   @action.bound
@@ -158,9 +149,13 @@ export class StorageHelper<T> {
 
   @action
   set(value: T, { silent = false }: { silent?: boolean } = {}) {
-    if (silent) this.skipNextSave = true;
-
+    if (silent) {
+      this.unbindAutoSaveToExternalStorage?.();
+    }
     this.data.set(value);
+    if (silent) {
+      this.bindAutoSaveToExternalStorage();
+    }
   }
 
   @action
