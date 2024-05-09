@@ -40,12 +40,9 @@ export async function writeToExternalStorage<T>(payload: StorageWritePayload, sy
   logger.info(`writing "${key}" data to external storage`, { key, area, state });
   await storageApi.set({ [key]: state });
 
-  // sync data update with other browser tabs
+  // send sync update to other browser tabs
   if (syncUpdate) {
-    syncExternalStorageUpdateAction({
-      origin: location?.href,
-      area, state, key,
-    });
+    syncExternalStorageUpdateAction(payload);
   }
 }
 

@@ -52,15 +52,15 @@ export function createStorage<T>(key: string, options: ChromeStorageHelperOption
   });
 
   onMessage(MessageType.STORAGE_DATA_SYNC, async (payload: StorageSyncPayload<T>) => {
+    const eventOrigin = globalThis.location?.href;
     const storageKeyMatched = payload.key === storageHelper.key;
     const sameArea = payload.area === area;
-    const differentWindow = payload.origin !== location?.href;
+    const differentOrigin = payload.origin !== eventOrigin;
 
-    if (storageKeyMatched && sameArea && differentWindow) {
+    if (storageKeyMatched && sameArea && differentOrigin) {
       logger.info("data sync", {
-        origin: location?.href,
+        eventOrigin,
         payload,
-        anotherWindowTab: differentWindow,
       });
 
       storageHelper.set(payload.state, {

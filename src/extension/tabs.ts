@@ -9,11 +9,13 @@ export function sendMessageToTab<Request, Response = unknown>(tabId: number, mes
   return chrome.tabs.sendMessage(tabId, message);
 }
 
-export async function sendMessageToAllTabs<P>(message: Message<P>) {
-  const tabs = await chrome.tabs.query({});
+export async function sendMessageToAllTabs<P>(message: Message<P>, filter?: (tabUrl: string) => boolean) {
+  let tabs = await chrome.tabs.query({});
 
   return Promise.allSettled(
-    tabs.map(tab => sendMessageToTab(tab.id, message))
+    tabs
+      .filter(filter ? tab => filter(tab.url) : () => true)
+      .map(tab => sendMessageToTab(tab.id, message))
   );
 }
 
