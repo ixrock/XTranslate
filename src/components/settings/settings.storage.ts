@@ -11,7 +11,7 @@ export const settingsStorage = createStorage("settings", {
   area: "sync", // share synced data via logged-in account (google, firefox, etc.)
   defaultValue: {
     autoPlayText: false,
-    useChromeTtsEngine: false,
+    useSpeechSynthesis: false,
     showTextToSpeechIcon: true,
     showSaveToFavoriteIcon: true,
     showNextVendorIcon: false,

@@ -148,7 +148,7 @@ export class StorageHelper<T> {
   }
 
   @action
-  set(value: T, { silent = false }: { silent?: boolean } = {}) {
+  set(value: T, { silent = false } = {}) {
     if (silent) {
       this.unbindAutoSaveToExternalStorage?.();
     }

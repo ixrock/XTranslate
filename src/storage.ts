@@ -15,15 +15,15 @@ export interface ChromeStorageHelperOptions<T> extends Omit<StorageHelperOptions
 export function createStorage<T>(key: string, options: ChromeStorageHelperOptions<T>) {
   const {
     area = "local",
-    autoLoad = false,
     ...storageOptions
   } = options;
 
   const storageAdapter: StorageAdapter<T> = {
     setItem(key: string, value: T) {
       const payload: StorageWritePayload<T> = {
-        key, area, state: value,
-        origin: location?.href
+        key, area,
+        state: value,
+        origin: globalThis.location?.href
       };
       if (isBackgroundWorker()) {
         return writeToExternalStorage(payload);

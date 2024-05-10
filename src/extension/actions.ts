@@ -1,8 +1,8 @@
 import type { ITranslationResult, TranslatePayload } from "../vendors";
 import type { IHistoryItem } from "../components/user-history/history.storage";
-import { ChromeTtsPayload, MessageType, ProxyRequestPayload, ProxyResponsePayload, ProxyResponseType, SaveToFavoritesPayload, SaveToHistoryPayload, StorageDeletePayload, StorageReadPayload, StorageSyncPayload, StorageWritePayload } from "./messages";
 import { getActiveTab, sendMessage, sendMessageToAllTabs } from "./index";
 import { isSystemPage } from "../common-vars";
+import { MessageType, ProxyRequestPayload, ProxyResponsePayload, ProxyResponseType, SaveToFavoritesPayload, SaveToHistoryPayload, StorageDeletePayload, StorageReadPayload, StorageSyncPayload, StorageWritePayload } from "./messages";
 
 export async function getSelectedText(): Promise<string> {
   const activeTab = await getActiveTab();
@@ -65,19 +65,6 @@ export function getTranslationFromHistoryAction(payload: TranslatePayload) {
   return sendMessage<TranslatePayload, ITranslationResult | void>({
     type: MessageType.GET_FROM_HISTORY,
     payload,
-  });
-}
-
-export function ttsPlayAction(data: ChromeTtsPayload) {
-  return sendMessage<ChromeTtsPayload>({
-    type: MessageType.CHROME_TTS_PLAY,
-    payload: data,
-  });
-}
-
-export function ttsStopAction() {
-  return sendMessage({
-    type: MessageType.CHROME_TTS_STOP,
   });
 }
 

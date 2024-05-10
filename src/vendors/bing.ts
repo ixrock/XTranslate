@@ -2,7 +2,6 @@ import BingLanguages from "./bing.json"
 import { groupBy, isEmpty } from "lodash";
 import { ProxyRequestInit, ProxyResponseType } from "../extension";
 import { ITranslationError, ITranslationResult, TranslateParams, Translator } from "./translator";
-import { createLogger } from "../utils";
 import { createStorage } from "../storage";
 
 export interface BingParsedGlobalParams {
@@ -23,7 +22,6 @@ class Bing extends Translator {
     super(BingLanguages);
   }
 
-  protected logger = createLogger({ systemPrefix: "[BING]" });
   protected apiGlobalParams = createStorage<BingParsedGlobalParams>("bing_api_global_params", {
     defaultValue: {} as BingParsedGlobalParams,
   });

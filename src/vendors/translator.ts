@@ -4,7 +4,7 @@ import type React from "react";
 import { observable } from "mobx";
 import { autoBind, createLogger, disposer, JsonResponseError } from "../utils";
 import { ProxyRequestPayload, ProxyResponseType } from "../extension/messages";
-import { ttsPlayAction, ttsStopAction, getTranslationFromHistoryAction, proxyRequest, saveToHistoryAction } from "../extension/actions";
+import { getTranslationFromHistoryAction, proxyRequest, saveToHistoryAction } from "../extension/actions";
 import { settingsStore } from "../components/settings/settings.storage";
 
 export interface TranslatorLanguages {
@@ -24,13 +24,8 @@ export interface TranslatePayload extends TranslateParams {
 
 export abstract class Translator {
   static readonly vendors = observable.set<Translator>();
-  static readonly logger = createLogger({ systemPrefix: "[TRANSLATOR]" });
-
   static createInstances = disposer();
-
-  static registerInstance(instance: Translator) {
-    Translator.vendors.add(instance);
-  };
+  static registerInstance = (instance: Translator) => Translator.vendors.add(instance);
 
   abstract name: string; // code name, e.g. "google"
   abstract title: string; // human readable name, e.g. "Google"
@@ -39,6 +34,7 @@ export abstract class Translator {
   public langFrom: Record<string, string> = {};
   public langTo: Record<string, string> = {};
   public audio: HTMLAudioElement;
+  protected logger = createLogger({ systemPrefix: "[TRANSLATOR]" });
 
   constructor({ from: langFrom, to: langTo }: TranslatorLanguages) {
     autoBind(this);
@@ -146,19 +142,41 @@ export abstract class Translator {
     return null; // should be overridden in sub-classes if supported
   }
 
-  async speak(lang: string, text: string) {
-    await this.stopSpeaking(); // stop previous if any
+  // TODO: provide voice choosing in the settings and translation pages
+  getSynthTtsVoices(filterByTargetLanguage?: boolean): SpeechSynthesisVoice[] {
+    const targetLang = settingsStore.data.langTo;
+    const voices = speechSynthesis.getVoices();
+
+    return voices.filter(voice => filterByTargetLanguage ? voice.lang.includes(targetLang) : true);
+  }
+
+  speakSynth(text: string, voice?: SpeechSynthesisVoice) {
+    try {
+      const utterance = new SpeechSynthesisUtterance(text);
+      if (voice) {
+        utterance.voice = voice;
+      }
+      speechSynthesis.cancel(); // stop previous if any
+      speechSynthesis.speak(new SpeechSynthesisUtterance(text));
+    } catch (err) {
+      this.logger.error(`[TTS]: speech synthesis failed to speak: ${err}`, { text, voice });
+    }
+  }
+
+  async speak(lang: string, text: string, voice?: SpeechSynthesisVoice) {
+    this.stopSpeaking(); // stop previous if any
 
     const audioUrl = this.getAudioUrl(lang, text);
-    const useChromeTtsEngine = Boolean(settingsStore.data.useChromeTtsEngine || !audioUrl);
+    const useSpeechSynthesis = Boolean(settingsStore.data.useSpeechSynthesis || !audioUrl);
 
-    Translator.logger.info(`[TTS]: speaking in lang="${lang}" text="${text}"`, {
-      useChromeTtsEngine,
+    this.logger.info(`[TTS]: speaking`, {
+      lang, text, voice,
+      useSpeechSynthesis,
+      audioUrl
     });
 
-    if (useChromeTtsEngine) {
-      if (lang.toLowerCase() === "en-us") lang = "en";
-      ttsPlayAction({ lang, text });
+    if (useSpeechSynthesis) {
+      this.speakSynth(text, voice);
     } else if (audioUrl) {
       try {
         this.audio = document.createElement("audio");
@@ -173,23 +191,18 @@ export abstract class Translator {
       } catch (error) {
         // TODO: it might fall due CORS in some sites (e.g. github)
         // so we have to do some workaround with new background 1x1 window (due manifest@3.0 limitations currently)
-        Translator.logger.error(`[TTS]: failed to play: ${error}`, { lang, text });
+        this.logger.error(`[TTS]: failed to play: ${error}`, { lang, text });
 
-        // fallback to native chrome's text-to-speech engine
-        ttsPlayAction({ lang, text });
+        // fallback to text to speech synthesis engine
+        this.speakSynth(text, voice);
       }
     }
   }
 
-  static async stopSpeaking() {
-    Translator.logger.info(`[TTS]: stop speaking`);
+  stopSpeaking() {
+    this.logger.info(`[TTS]: stop speaking`);
     getTranslators().forEach(vendor => vendor.audio?.pause());
-    await ttsStopAction();
-  }
-
-  async stopSpeaking() {
-    this.audio?.pause();
-    await Translator.stopSpeaking();
+    speechSynthesis.pause();
   }
 
   getAudioUrl(lang: string, text: string): string {

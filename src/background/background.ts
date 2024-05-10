@@ -5,7 +5,6 @@ import { initContextMenus } from "./contextMenu.bgc";
 import { listenStorageActions } from "./storage.bgc";
 import { listenProxyRequestActions } from "./httpProxy.bgc";
 import { listenTranslationHistoryActions } from "./history.bgc";
-import { listenTextToSpeechActions } from "./tts.bgc";
 import { openOptionsPageOnInstall } from "./install.bgc";
 
 initContextMenus();
@@ -15,4 +14,3 @@ openOptionsPageOnInstall();
 listenStorageActions();
 listenProxyRequestActions()
 listenTranslationHistoryActions();
-listenTextToSpeechActions();

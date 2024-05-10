@@ -89,8 +89,8 @@ export class Settings extends React.Component {
           />
           <Checkbox
             label={getMessage("use_chrome_tts")}
-            checked={settings.useChromeTtsEngine}
-            onChange={v => settings.useChromeTtsEngine = v}
+            checked={settings.useSpeechSynthesis}
+            onChange={v => settings.useSpeechSynthesis = v}
             tooltip={getMessage("use_chrome_tts_tooltip_info")}
           />
 

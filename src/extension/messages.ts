@@ -10,8 +10,6 @@ export const enum MessageType {
   SAVE_TO_HISTORY = "SAVE_TO_HISTORY",
   SAVE_TO_FAVORITES = "SAVE_TO_FAVORITES",
   GET_FROM_HISTORY = "GET_TRANSLATION_FROM_CACHE",
-  CHROME_TTS_PLAY = "TEXT_TO_SPEECH_PLAY",
-  CHROME_TTS_STOP = "TEXT_TO_SPEECH_STOP",
   STORAGE_DATA_READ = "READ_FROM_LOCAL_OR_EXTERNAL_STORAGE",
   STORAGE_DATA_WRITE = "SAVE_TO_LOCAL_OR_EXTERNAL_STORAGE",
   STORAGE_DATA_REMOVE = "REMOVE_ITEM_FROM_STORAGE",
@@ -55,12 +53,6 @@ export interface TranslateWithVendorPayload {
 
 export interface SaveToHistoryPayload {
   translation: ITranslationResult | IHistoryItem;
-}
-
-export interface ChromeTtsPayload {
-  text: string;
-  lang: string;
-  rate?: number; // default: 1.0
 }
 
 export interface SaveToFavoritesPayload {
