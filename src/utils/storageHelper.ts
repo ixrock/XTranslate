@@ -61,7 +61,8 @@ export class StorageHelper<T> {
   public bindAutoSaveToExternalStorage() {
     if (!this.options.storageAdapter) return;
 
-    this.unbindAutoSaveToExternalStorage?.(); // reset previous
+    this.logger.info("auto-saving state to external storage enabled", this.toJS());
+    this.unbindAutoSaveToExternalStorage?.(); // stop previous if any
 
     this.unbindAutoSaveToExternalStorage = reaction(() => this.toJS(), (state) => {
         this.saveToExternalStorage(state).catch(this.logger.error);
@@ -125,12 +126,12 @@ export class StorageHelper<T> {
         if (migratedData !== undefined) data = migratedData as T;
       }
       this.merge(data); // merge first
-      this.bindAutoSaveToExternalStorage();
     }
 
     this.loaded = true;
     this.loading = false;
     this.logger.info("data fetched", this.toJS());
+    this.bindAutoSaveToExternalStorage();
   };
 
   @action.bound
