@@ -2,7 +2,7 @@ import "./input-translation.scss";
 
 import { debounce, isEqual } from "lodash";
 import React, { Fragment } from "react";
-import { action, comparer, computed, makeObservable, observable, reaction } from "mobx";
+import { action, comparer, computed, makeObservable, observable, reaction, toJS } from "mobx";
 import { observer } from "mobx-react";
 import { getTranslator, getTranslators, isRTL, ITranslationError, ITranslationResult } from "../../vendors";
 import { getSelectedText, saveToFavoritesAction } from "../../extension/actions";
@@ -45,18 +45,17 @@ export class InputTranslation extends React.Component<Props> {
 
   @computed get urlParams(): TranslationPageParams {
     const { vendor, text, to, from } = getUrlParams<TranslationPageParams>();
-    return { vendor, text, to, from, page: "translate" };
+    return { page: "translate", vendor, from, to, text };
   }
 
-  @computed get params(): TranslationPageParams {
-    const { vendor, text, langTo, langFrom } = this;
-    return { vendor, text, to: langTo, from: langFrom, page: "translate" };
+  @observable params: TranslationPageParams = {
+    page: "translate",
+    vendor: this.urlParams.vendor ?? settingsStore.data.vendor,
+    from: this.urlParams.from ?? settingsStore.data.langFrom,
+    to: this.urlParams.to ?? settingsStore.data.langTo,
+    text: this.urlParams.text ?? "",
   }
 
-  @observable vendor: string = this.urlParams.vendor ?? settingsStore.data.vendor;
-  @observable langFrom: string = this.urlParams.from ?? settingsStore.data.langFrom;
-  @observable langTo: string = this.urlParams.to ?? settingsStore.data.langTo;
-  @observable text = this.urlParams.text ?? "";
   @observable isLoading = false;
   @observable translation?: ITranslationResult;
   @observable error?: ITranslationError;
@@ -66,21 +65,27 @@ export class InputTranslation extends React.Component<Props> {
     makeObservable(this);
   }
 
-  componentDidMount() {
-    // auto-translate selected text (if any) from active browser's page
-    getSelectedText().then(this.translateText)
+  async componentDidMount() {
+    await this.translateSelectedTextFromActiveWindow();
 
     // bind event handlers
     this.dispose.push(
       this.bindGlobalHotkey(),
-      this.bindTranslationOnUrlParamsChange(),
-      this.bindTranslationOnParamsChange(),
-      this.bindAutoSaveLatestUserInputText()
+      this.bindAutoSaveLatestUserInputText(),
+      this.syncParamsWithUrl(),
     );
   }
 
   componentWillUnmount() {
     this.dispose();
+  }
+
+  // auto-translate selected text from active browser's page
+  private translateSelectedTextFromActiveWindow = async () => {
+    const selectedText = await getSelectedText();
+    if (selectedText) {
+      this.translateText(selectedText);
+    }
   }
 
   private bindGlobalHotkey() {
@@ -89,34 +94,34 @@ export class InputTranslation extends React.Component<Props> {
     });
   }
 
-  private bindTranslationOnUrlParamsChange() {
-    return reaction(() => this.urlParams, ({ vendor, text, to, from }) => {
-      if (isEqual(this.urlParams, this.params)) {
-        return;
-      }
-      this.vendor = vendor ?? settingsStore.data.vendor;
-      this.langFrom = from ?? settingsStore.data.langFrom;
-      this.langTo = to ?? settingsStore.data.langTo;
-      this.text = text ?? "";
-    });
+  private syncParamsWithUrl() {
+    return disposer(
+      reaction(() => toJS(this.params), (params: TranslationPageParams) => {
+        this.translate(); // translate text (if any)
+        if (!isEqual(this.urlParams, params)) {
+          navigation.searchParams.replace(params); // update url
+        }
+      }, {
+        fireImmediately: true,
+        equals: comparer.structural,
+      }),
+
+      reaction(() => this.urlParams, ({ vendor, text, to, from }) => {
+        if (vendor) this.params.vendor = vendor;
+        if (to) this.params.to = to;
+        if (from) this.params.from = from;
+        if (text) {
+          this.params.text = text;
+        } else {
+          this.input?.setValue(""); // clear input field
+        }
+      }),
+    )
   }
 
-  private bindTranslationOnParamsChange() {
-    return reaction(() => this.params, () => {
-      this.translate();
-
-      if (this.params.text && !isEqual(this.params, this.urlParams)) {
-        navigation.searchParams.replace(this.params); // update url
-      }
-    }, {
-      equals: comparer.structural,
-      fireImmediately: true,
-    });
-  };
-
   private bindAutoSaveLatestUserInputText() {
-    return disposer(...[
-      reaction(() => this.text, (text: string) => {
+    return disposer(
+      reaction(() => this.params.text, (text: string) => {
         if (!settingsStore.data.rememberLastText) return; // exit: option is not enabled in the settings
         lastInputText.set(text);
       }, {
@@ -124,14 +129,14 @@ export class InputTranslation extends React.Component<Props> {
       }),
 
       reaction(() => settingsStore.data.rememberLastText, rememberText => {
-        if (rememberText && !this.text) {
+        if (rememberText && !this.params.text) {
           const savedUserText = lastInputText.get();
           this.translateText(savedUserText);
         }
       }, {
         fireImmediately: true, // translate previously saved input's text asap
       }),
-    ]);
+    );
   }
 
   playText = () => {
@@ -141,12 +146,12 @@ export class InputTranslation extends React.Component<Props> {
 
   @action.bound
   translateText(text: string) {
-    this.text = text;
+    this.params.text = text;
   }
 
   @action
   async translate() {
-    let { text, vendor, langFrom, langTo } = this;
+    let { text, vendor, from: langFrom, to: langTo } = this.params;
 
     this.input?.focus(); // autofocus input-field
     this.input?.setValue(text || ""); // update input value manually since @defaultValue is utilized
@@ -172,7 +177,7 @@ export class InputTranslation extends React.Component<Props> {
   };
 
   onInputChange = debounce(
-    (text: string) => this.text = text.trim(),
+    (text: string) => this.params.text = text.trim(),
     settingsStore.data.textInputTranslateDelayMs,
   );
 
@@ -185,23 +190,23 @@ export class InputTranslation extends React.Component<Props> {
 
   @action
   onLangChange = (from: string, to: string) => {
-    this.langFrom = from;
-    this.langTo = to;
+    this.params.from = from;
+    this.params.to = to;
   }
 
   @action
   onVendorChange = (name: string) => {
     var vendor = getTranslator(name);
-    this.vendor = name;
+    this.params.vendor = name;
 
-    if (!vendor.langFrom[this.langFrom]) {
-      this.langFrom = "auto";
+    if (!vendor.langFrom[this.params.from]) {
+      this.params.from = "auto";
     }
-    if (!vendor.langTo[this.langTo]) {
+    if (!vendor.langTo[this.params.to]) {
       const navLang = navigator.language.split("-");
-      if (vendor.langTo[navLang.join("-")]) this.langTo = navLang.join("-");
-      else if (vendor.langTo[navLang[0]]) this.langTo = navLang[0];
-      else this.langTo = "en";
+      if (vendor.langTo[navLang.join("-")]) this.params.to = navLang.join("-");
+      else if (vendor.langTo[navLang[0]]) this.params.to = navLang[0];
+      else this.params.to = "en";
     }
     this.input.focus();
   }
@@ -255,7 +260,7 @@ export class InputTranslation extends React.Component<Props> {
             {sourceLanguages.map(lang => {
               if (lang === langDetected) return; // skip language for current results
               return (
-                <b key={lang} className="link" onClick={action(() => this.langFrom = lang)}>
+                <b key={lang} className="link" onClick={action(() => this.params.from = lang)}>
                   {translator.langFrom[lang]}
                 </b>
               )
@@ -278,8 +283,8 @@ export class InputTranslation extends React.Component<Props> {
                     <tr key={meaning.word}>
                       <td className="word">
                         <span className="link" onClick={action(() => {
-                          this.langFrom = langTo;
-                          this.langTo = langDetected;
+                          this.params.from = langTo;
+                          this.params.to = langDetected;
                           this.translateText(meaning.word);
                         })}>
                           {meaning.word}
@@ -318,8 +323,8 @@ export class InputTranslation extends React.Component<Props> {
   }
 
   renderTranslation() {
-    var { text, isLoading, translation, error } = this;
-    if (!text) return;
+    var { params, isLoading, translation, error } = this;
+    if (!params.text) return;
     if (isLoading) return <Spinner center/>;
     if (translation) return this.renderTranslationResult();
     if (error) return this.renderTranslationError();
@@ -340,7 +345,7 @@ export class InputTranslation extends React.Component<Props> {
 
   render() {
     var { textInputTranslateDelayMs: delayMs, rememberLastText } = settingsStore.data;
-    var { vendor, langFrom, langTo } = this;
+    var { vendor, from: langFrom, to: langTo, text } = this.params;
 
     return (
       <div className="InputTranslation flex column gaps">
@@ -361,7 +366,7 @@ export class InputTranslation extends React.Component<Props> {
             rows={2}
             tabIndex={1}
             placeholder={getMessage("text_field_placeholder")}
-            defaultValue={this.text}
+            defaultValue={text}
             onChange={(text: string) => this.onInputChange(text)}
             onKeyDown={this.onKeyDown}
             ref={input => this.input = input}
