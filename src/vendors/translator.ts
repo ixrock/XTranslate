@@ -142,14 +142,6 @@ export abstract class Translator {
     return null; // should be overridden in sub-classes if supported
   }
 
-  // TODO: provide voice choosing in the settings and translation pages
-  getSynthTtsVoices(filterByTargetLanguage?: boolean): SpeechSynthesisVoice[] {
-    const targetLang = settingsStore.data.langTo;
-    const voices = speechSynthesis.getVoices();
-
-    return voices.filter(voice => filterByTargetLanguage ? voice.lang.includes(targetLang) : true);
-  }
-
   speakSynth(text: string, voice?: SpeechSynthesisVoice) {
     try {
       const utterance = new SpeechSynthesisUtterance(text);

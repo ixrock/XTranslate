@@ -16,7 +16,7 @@ import { pageManager } from "../app/page-manager";
 import { Tab } from "../tabs";
 import { Icon } from "../icon";
 import { Tooltip } from "../tooltip";
-import { getUrlParams, navigate, navigation, TranslationPageParams } from "../../navigation";
+import { getUrlParams, navigation, TranslationPageParams } from "../../navigation";
 import { createStorage } from "../../storage";
 import { getMessage } from "../../i18n";
 import { iconMaterialFavorite, iconMaterialFavoriteOutlined, isMac } from "../../common-vars";
@@ -330,6 +330,19 @@ export class InputTranslation extends React.Component<Props> {
     if (error) return this.renderTranslationError();
   }
 
+  @action.bound
+  setTranslationDelay() {
+    const currentDelay = settingsStore.data.textInputTranslateDelayMs;
+    const delayInput = window.parseInt(
+      window.prompt(getMessage("translation_delay_info"), String(currentDelay))
+    );
+
+    if (isNaN(delayInput)) {
+      return;
+    }
+    settingsStore.data.textInputTranslateDelayMs = delayInput;
+  }
+
   render() {
     var { textInputTranslateDelayMs: delayMs, rememberLastText } = settingsStore.data;
     var { vendor, langFrom, langTo } = this;
@@ -361,7 +374,7 @@ export class InputTranslation extends React.Component<Props> {
               <small className="hint">
                 {getMessage("text_input_translation_hint", {
                   hotkey: `${isMac() ? "Cmd" : "Ctrl"}+Enter`,
-                  timeout: <a onClick={() => navigate({ page: "settings" })}>{delayMs}</a>,
+                  timeout: <a onClick={this.setTranslationDelay}>{delayMs || 0}</a>,
                 })}
               </small>
             )}

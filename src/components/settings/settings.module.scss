@@ -1,14 +1,11 @@
 .Settings {
-  &, .service {
+  &, > article {
     display: flex;
     flex-direction: column;
-    gap: calc(var(--flex-gap) * 1.5);
+    gap: var(--flex-gap);
   }
 
-  .bottomBar {
-  }
-
-  article:not(.service):not(.bottomBar) {
+  .grid {
     display: grid;
     gap: var(--flex-gap);
     grid-template-columns: 1fr 1fr;

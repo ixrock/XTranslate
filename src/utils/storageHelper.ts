@@ -117,7 +117,8 @@ export class StorageHelper<T> {
 
   @action.bound
   protected onData(data: T) {
-    this.logger.info("data received", data);
+    const dataType = typeof data;
+    this.logger.info(`data fetched (${dataType})`, dataType === "object" ? data : JSON.stringify(data))
 
     const notEmpty = data != null;
     if (notEmpty) {
@@ -125,12 +126,11 @@ export class StorageHelper<T> {
         let migratedData = callback(data);
         if (migratedData !== undefined) data = migratedData as T;
       }
-      this.merge(data); // merge first
+      this.merge(data);
     }
 
     this.loaded = true;
     this.loading = false;
-    this.logger.info("data fetched", this.toJS());
     this.bindAutoSaveToExternalStorage();
   };
 

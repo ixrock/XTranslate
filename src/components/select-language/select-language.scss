@@ -5,56 +5,6 @@
     flex: 1 0;
   }
 
-  .ReactSelect {
-    &__menu-list {
-      @include custom-scrollbar($overlay: true) {
-        --theme-scrollbar-size: 7px;
-      };
-    }
-
-    &__dropdown-indicator {
-      padding: var(--theme-spacing-half);
-    }
-
-    &__input-container,
-    &__single-value {
-      color: var(--theme-color-text);
-    }
-
-    &__control {
-      border: 1px solid currentColor;
-      min-height: 32px;
-      box-shadow: none;
-      background: none;
-
-      &:focus-within {
-        border-color: var(--theme-color-primary) !important;
-      }
-    }
-
-    &__menu {
-      background: var(--theme-bgc);
-      border: 1px solid var(--theme-border-color);
-    }
-
-    &__option {
-      color: var(--theme-color-text);
-      padding: var(--theme-spacing-half);
-
-      &:active, &:hover,
-      &--is-selected,
-      &--is-focused {
-        color: white;
-        background: var(--theme-color-primary);
-      }
-
-      &--is-disabled {
-        opacity: .75;
-        cursor: not-allowed;
-      }
-    }
-  }
-
   .language {
     padding: var(--theme-spacing-half);
 

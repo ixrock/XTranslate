@@ -1,16 +1,16 @@
 import "./select-language.scss";
 
 import React from "react";
-import ReactSelect, { Props as ReactSelectProps } from "react-select";
 import { action, computed, makeObservable } from "mobx";
 import { observer } from "mobx-react";
+import { ReactSelect, ReactSelectGroup } from "../select";
 import { cssNames } from "../../utils";
 import { getTranslator } from "../../vendors";
 import { getMessage } from "../../i18n";
 import { Icon } from "../icon";
 import { FavoriteLangDirection, settingsStore } from "../settings/settings.storage";
 
-export interface Props extends Omit<ReactSelectProps, "onChange"> {
+export interface Props {
   className?: string;
   vendor?: string;
   from?: string;
@@ -47,7 +47,7 @@ export class SelectLanguage extends React.Component<Props> {
     return settingsStore.getFavorites(this.vendor, "target")
   }
 
-  @computed get sourceLanguageOptions() {
+  @computed get sourceLanguageOptions(): ReactSelectGroup<string>[] {
     var { langFrom: sourceLangList } = getTranslator(this.vendor);
 
     var getOption = (lang: string) => ({
@@ -72,7 +72,7 @@ export class SelectLanguage extends React.Component<Props> {
     ];
   }
 
-  @computed get targetLanguageOptions() {
+  @computed get targetLanguageOptions(): ReactSelectGroup<string>[] {
     var { langTo: targetLangList } = getTranslator(this.vendor);
 
     var getOption = (lang: string) => ({
@@ -164,14 +164,13 @@ export class SelectLanguage extends React.Component<Props> {
 
     return (
       <div className={cssNames("SelectLanguage flex gaps align-center", className)}>
-        <ReactSelect
+        <ReactSelect<string>
           // menuIsOpen={true}
           className="Select"
-          classNamePrefix="ReactSelect"
           placeholder={getMessage("source_lang_placeholder")}
           value={sourceLang}
           options={this.sourceLanguageOptions}
-          onChange={opt => this.onChange({ sourceLang: opt.value })}
+          onChange={(opt) => this.onChange({ sourceLang: opt.value })}
           formatOptionLabel={({ label, value: lang }) => this.formatLanguageLabel({
             lang, sourceType: "source", title: label,
           })}
@@ -182,9 +181,8 @@ export class SelectLanguage extends React.Component<Props> {
           title={getMessage("swap_languages")}
           onClick={this.onSwap}
         />
-        <ReactSelect
+        <ReactSelect<string>
           className="Select"
-          classNamePrefix="ReactSelect"
           placeholder={getMessage("target_lang_placeholder")}
           value={targetLang}
           options={this.targetLanguageOptions}

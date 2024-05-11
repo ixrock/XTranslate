@@ -1,18 +1,15 @@
 import styles from "./settings.module.scss";
-import popupStyle from "../popup/popup.module.scss";
 import React from "react";
 import { observer } from "mobx-react";
 import { getTranslators } from "../../vendors";
-import { createTab } from "../../extension";
-import { cssNames, getHotkey, parseHotkey, prevDefault } from "../../utils";
+import { getHotkey, parseHotkey, prevDefault } from "../../utils";
 import { XTranslateIcon } from "../../user-script/xtranslate-icon";
 import { SelectLanguage } from "../select-language";
-import { Input, NumberInput } from "../input";
+import { Input } from "../input";
 import { Checkbox } from "../checkbox";
 import { Radio, RadioGroup } from "../radio";
 import { Option, Select } from "../select";
 import { Icon } from "../icon";
-import { Button } from "../button";
 import { Popup } from "../popup";
 import { TooltipProps } from "../tooltip";
 import { SubTitle } from "../sub-title";
@@ -54,7 +51,7 @@ export class Settings extends React.Component {
 
     return (
       <main className={styles.Settings}>
-        <article className={styles.service}>
+        <article>
           <SelectLanguage showInfoIcon/>
           <RadioGroup
             className={styles.vendors}
@@ -79,21 +76,8 @@ export class Settings extends React.Component {
           </RadioGroup>
         </article>
 
-        <SubTitle>{getMessage("settings_title_tts")} & {getMessage("settings_title_appearance")}</SubTitle>
-
-        <article>
-          <Checkbox
-            label={getMessage("auto_play_tts")}
-            checked={settings.autoPlayText}
-            onChange={v => settings.autoPlayText = v}
-          />
-          <Checkbox
-            label={getMessage("use_chrome_tts")}
-            checked={settings.useSpeechSynthesis}
-            onChange={v => settings.useSpeechSynthesis = v}
-            tooltip={getMessage("use_chrome_tts_tooltip_info")}
-          />
-
+        <SubTitle>{getMessage("settings_title_appearance")}</SubTitle>
+        <article className={styles.grid}>
           <Checkbox
             label={getMessage("show_context_menu")}
             checked={settings.showInContextMenu}
@@ -107,9 +91,23 @@ export class Settings extends React.Component {
           />
         </article>
 
-        <SubTitle>{getMessage("setting_title_popup")}</SubTitle>
-
+        <SubTitle>{getMessage("settings_title_tts")}</SubTitle>
         <article>
+          <Checkbox
+            label={getMessage("auto_play_tts")}
+            checked={settings.autoPlayText}
+            onChange={v => settings.autoPlayText = v}
+          />
+          <Checkbox
+            label={getMessage("use_chrome_tts")}
+            checked={settings.useSpeechSynthesis}
+            onChange={v => settings.useSpeechSynthesis = v}
+            tooltip={getMessage("use_chrome_tts_tooltip_info")}
+          />
+        </article>
+
+        <SubTitle>{getMessage("setting_title_popup")}</SubTitle>
+        <article className={styles.grid}>
           <Checkbox
             label={getMessage("show_tts_icon_inside_popup")}
             checked={settings.showTextToSpeechIcon}
@@ -192,30 +190,6 @@ export class Settings extends React.Component {
               onKeyDown={prevDefault(this.onSaveHotkey)}
             />
           </label>
-        </article>
-
-        <article className={cssNames(styles.bottomBar, "flex gaps align-center")}>
-          <SubTitle>{getMessage("setting_title_text_input")}</SubTitle>
-
-          <Button
-            outline
-            className="box flex gaps"
-            onClick={() => createTab("chrome://extensions/shortcuts")}
-            tooltip={getMessage("quick_access_configure_link")}
-            children={getMessage("sub_header_quick_access_hotkey")}
-          />
-          <div className="flex column gaps">
-            <div className="flex gaps align-center">
-              <p>{getMessage("translation_delay")}</p>
-              <NumberInput
-                className="box grow"
-                min={0} max={10000} step={50}
-                value={settings.textInputTranslateDelayMs}
-                onChange={v => settings.textInputTranslateDelayMs = v}
-              />
-            </div>
-            <small>{getMessage("translation_delay_info")}</small>
-          </div>
         </article>
       </main>
     );
