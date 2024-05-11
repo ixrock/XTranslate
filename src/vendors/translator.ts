@@ -161,6 +161,10 @@ export abstract class Translator {
     const audioUrl = this.getAudioUrl(lang, text);
     const useSpeechSynthesis = Boolean(settingsStore.data.useSpeechSynthesis || !audioUrl);
 
+    if (!voice) {
+      voice = speechSynthesis.getVoices()[settingsStore.data.ttsVoiceIndex];
+    }
+
     this.logger.info(`[TTS]: speaking`, {
       lang, text, voice,
       useSpeechSynthesis,

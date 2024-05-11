@@ -18,7 +18,9 @@ export interface SelectProps<V = any> extends React.PropsWithChildren {
   getOptionLabel?(value: V): string;
 }
 
-// TODO: deprecated, replace with "react-select" wrapper (see also `select-language.tsx`)
+/**
+ * @deprecated use <ReactSelect> instead
+ */
 export class Select extends React.Component<SelectProps> {
   static defaultProps: SelectProps = {
     getOptionValue: (value: any) => JSON.stringify(value), // must be unique within <select>

@@ -8,7 +8,7 @@ import { SelectLanguage } from "../select-language";
 import { Input } from "../input";
 import { Checkbox } from "../checkbox";
 import { Radio, RadioGroup } from "../radio";
-import { Option, Select } from "../select";
+import { ReactSelect, ReactSelectOption } from "../select";
 import { Icon } from "../icon";
 import { Popup } from "../popup";
 import { TooltipProps } from "../tooltip";
@@ -17,6 +17,7 @@ import { Tab } from "../tabs";
 import { PopupPosition, settingsStore } from "./settings.storage";
 import { pageManager } from "../app/page-manager";
 import { getMessage } from "../../i18n";
+import { SelectVoice } from "../select-tts-voice";
 
 export interface PopupPositionOption {
   value: PopupPosition;
@@ -92,7 +93,7 @@ export class Settings extends React.Component {
         </article>
 
         <SubTitle>{getMessage("settings_title_tts")}</SubTitle>
-        <article>
+        <article className="grid">
           <Checkbox
             label={getMessage("auto_play_tts")}
             checked={settings.autoPlayText}
@@ -104,6 +105,13 @@ export class Settings extends React.Component {
             onChange={v => settings.useSpeechSynthesis = v}
             tooltip={getMessage("use_chrome_tts_tooltip_info")}
           />
+          <div className="flex gaps align-center">
+            <p>{getMessage("tts_default_system_voice")}</p>
+            <SelectVoice
+              currentIndex={settings.ttsVoiceIndex}
+              onChange={v => settings.ttsVoiceIndex = v}
+            />
+          </div>
         </article>
 
         <SubTitle>{getMessage("setting_title_popup")}</SubTitle>
@@ -168,18 +176,15 @@ export class Settings extends React.Component {
           />
           <div className="popup-position flex gaps align-center">
             <Icon
-              htmlFor="select_popup_position"
               material="display_settings"
               tooltip={getMessage("popup_position_title")}
             />
-            <Select
-              id="select_popup_position"
-              className="box grow"
-              value={settings.popupPosition}
-              onChange={v => settings.popupPosition = v}
-            >
-              {this.popupPositions.map((opt) => <Option key={opt.value} {...opt}/>)}
-            </Select>
+            <ReactSelect
+              menuPlacement="top"
+              options={this.popupPositions}
+              value={this.popupPositions.find(pos => pos.value === settings.popupPosition)}
+              onChange={(opt: ReactSelectOption<PopupPosition>) => settings.popupPosition = opt.value}
+            />
           </div>
           <label className="keyboard-hotkey flex">
             <Icon material="keyboard"/>

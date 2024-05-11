@@ -1,25 +1,48 @@
 import styles from "./select-voice.module.scss";
 import React from "react";
-import { settingsStore } from "../settings/settings.storage";
-
-console.log(styles.SelectVoice)
+import { ReactSelect, ReactSelectOption } from "../select";
+import { getMessage } from "../../i18n";
 
 export interface SelectVoiceProps {
+  currentIndex?: number;
+  onChange?(voiceIndex: number): void;
 }
 
-// TODO: provide voice choosing in the settings and translation pages
 export class SelectVoice extends React.Component<SelectVoiceProps> {
-  getVoices(filterByTargetLanguage?: boolean): SpeechSynthesisVoice[] {
-    const targetLang = settingsStore.data.langTo;
-    const voices = speechSynthesis.getVoices();
+  static defaultProps: SelectVoiceProps = {
+    currentIndex: 0,
+  }
 
-    return voices.filter(voice => filterByTargetLanguage ? voice.lang.includes(targetLang) : true);
+  componentDidMount() {
+    // re-render a bit later since speechSynthesis.getVoices() not available immediately
+    setTimeout(() => this.forceUpdate());
+  }
+
+  get selectedVoice() {
+    return this.voices.find(({ value }) => value === this.props.currentIndex);
+  }
+
+  get voices(): ReactSelectOption<number>[] {
+    return speechSynthesis.getVoices().map(({ name, lang }, index) => ({
+      value: index,
+      label: `${name} (${lang})`,
+    }));
+  }
+
+  onChange = ({ value: voiceIndex }: ReactSelectOption<number>) => {
+    this.props.onChange?.(voiceIndex);
   }
 
   render() {
     return (
       <div className={styles.SelectVoice}>
-        <h1>SelectVoice</h1>
+        <ReactSelect
+          menuPlacement="auto"
+          placeholder={getMessage("tts_select_voice_title")}
+          value={this.selectedVoice}
+          onChange={this.onChange}
+          options={this.voices}
+        />
       </div>
     );
   }

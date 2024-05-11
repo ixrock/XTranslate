@@ -1,5 +1,7 @@
 // TODO: convert to css-modules
 .ReactSelect  {
+  flex: 1;
+
   .ReactSelectCustomize {
     &__menu-list {
       @include custom-scrollbar($overlay: true) {

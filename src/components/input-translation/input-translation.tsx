@@ -66,14 +66,9 @@ export class InputTranslation extends React.Component<Props> {
     makeObservable(this);
   }
 
-  async componentDidMount() {
-    await lastInputText.load();
-
+  componentDidMount() {
     // auto-translate selected text (if any) from active browser's page
-    const selectedText = await getSelectedText();
-    if (selectedText) {
-      this.translateText(selectedText);
-    }
+    getSelectedText().then(this.translateText)
 
     // bind event handlers
     this.dispose.push(
@@ -144,7 +139,7 @@ export class InputTranslation extends React.Component<Props> {
     getTranslator(vendor).speak(langDetected, originalText);
   }
 
-  @action
+  @action.bound
   translateText(text: string) {
     this.text = text;
   }

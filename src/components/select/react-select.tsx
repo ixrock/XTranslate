@@ -9,7 +9,7 @@ export type ReactSelectMultiValue<T> = MultiValue<ReactSelectOption<T>>
 
 export interface ReactSelectOption<T = unknown> {
   value: T;
-  label?: string;
+  label?: React.ReactNode;
   isDisabled?: boolean;
   isSelected?: boolean;
   isFocused?: boolean;

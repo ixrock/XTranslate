@@ -35,7 +35,7 @@ export const settingsStorage = createStorage("settings", {
     historyPageSize: 50,
     favorites: {} as FavoritesList,
     popupPosition: "" as PopupPosition,
-    userDataCollect: true,
+    ttsVoiceIndex: 0,
     hotkey: {
       altKey: true,
       shiftKey: true,
