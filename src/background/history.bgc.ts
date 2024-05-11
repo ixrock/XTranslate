@@ -1,6 +1,6 @@
 //-- History items management
 
-import { action, runInAction } from "mobx";
+import { runInAction } from "mobx";
 import { createLogger, disposer } from "../utils";
 import { MessageType, onMessage, SaveToFavoritesPayload, SaveToHistoryPayload } from '../extension'
 import { settingsStorage } from "../components/settings/settings.storage";
@@ -20,8 +20,8 @@ export function listenTranslationHistoryActions() {
 
 export async function saveToHistory({ translation }: SaveToHistoryPayload) {
   await Promise.all([
-    settingsStorage.load(),
-    historyStorage.load(),
+    settingsStorage.load({ force: true }),
+    historyStorage.load({ force: true }),
   ]);
 
   const hasDictionary = translation.dictionary?.length > 0;
@@ -37,8 +37,8 @@ export async function saveToHistory({ translation }: SaveToHistoryPayload) {
 
 export async function saveToFavorites({ item, isFavorite }: SaveToFavoritesPayload) {
   await Promise.all([
-    historyStorage.load(),
-    favoritesStorage.load(),
+    historyStorage.load({ force: true }),
+    favoritesStorage.load({ force: true }),
   ]);
 
   const itemId = getHistoryItemId(item);
