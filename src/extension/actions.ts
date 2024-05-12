@@ -1,8 +1,9 @@
 import type { ITranslationResult, TranslatePayload } from "../vendors";
 import type { IHistoryItem } from "../components/user-history/history.storage";
-import { getActiveTab, sendMessage, sendMessageToAllTabs } from "./index";
+import { getActiveTab, isBackgroundWorker, sendMessage, sendMessageToAllTabs } from "./index";
 import { isSystemPage } from "../common-vars";
 import { MessageType, ProxyRequestPayload, ProxyResponsePayload, ProxyResponseType, SaveToFavoritesPayload, SaveToHistoryPayload, StorageDeletePayload, StorageReadPayload, StorageSyncPayload, StorageWritePayload } from "./messages";
+import { handleProxyRequestPayload } from "../background/httpProxy.bgc";
 
 export async function getSelectedText(): Promise<string> {
   const activeTab = await getActiveTab();
@@ -19,13 +20,19 @@ export async function getSelectedText(): Promise<string> {
 }
 
 export async function proxyRequest<Response>(payload: ProxyRequestPayload): Promise<Response> {
-  const response: ProxyResponsePayload<Response> = await sendMessage<ProxyRequestPayload>({
-    type: MessageType.PROXY_REQUEST,
-    payload: {
-      responseType: ProxyResponseType.JSON, /*default*/
-      ...payload,
-    },
-  });
+  let response: ProxyResponsePayload<Response>;
+
+  if (isBackgroundWorker()) {
+    response = await handleProxyRequestPayload(payload);
+  } else {
+    response = await sendMessage<ProxyRequestPayload>({
+      type: MessageType.PROXY_REQUEST,
+      payload: {
+        responseType: ProxyResponseType.JSON, /*default*/
+        ...payload,
+      },
+    });
+  }
 
   if (payload.responseType === ProxyResponseType.BLOB) {
     const arrayBuffer = Uint8Array.from(response.data as unknown as number[]).buffer;

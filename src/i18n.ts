@@ -3,7 +3,7 @@ import type { Pattern, PatternElement } from "@fluent/bundle/esm/ast"
 
 import React from "react";
 import { observable } from "mobx";
-import { getURL, isBackgroundWorker, proxyRequest, ProxyResponseType } from "./extension";
+import { getURL, proxyRequest, ProxyResponseType } from "./extension";
 import { createLogger } from "./utils/createLogger";
 import { FluentBundle, FluentResource, FluentVariable } from "@fluent/bundle"
 import { createStorage } from "./storage";
@@ -53,12 +53,10 @@ async function loadMessages(locale: Locale) {
 
   const messagesUrl = getURL(`_locales/${locale}.ftl`);
   try {
-    const messages = isBackgroundWorker()
-      ? await fetch(messagesUrl).then(res => res.text()) // required in background / service worker (e.g. context menus)
-      : await proxyRequest<string>({ // requested from options and content pages
-        url: messagesUrl,
-        responseType: ProxyResponseType.TEXT,
-      });
+    const messages = await proxyRequest<string>({
+      url: messagesUrl,
+      responseType: ProxyResponseType.TEXT,
+    });
 
     const bundle = new FluentBundle(locale);
     bundle.addResource(new FluentResource(messages))

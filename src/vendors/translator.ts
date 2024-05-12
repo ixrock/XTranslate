@@ -54,7 +54,10 @@ export abstract class Translator {
 
   protected async request<Response>(payload: ProxyRequestPayload): Promise<Response> {
     const response = await proxyRequest<Response>(payload);
-    if (isTranslationError(response)) throw response;
+
+    if (isTranslationError(response)) {
+      throw response;
+    }
     return response as Response;
   }
 

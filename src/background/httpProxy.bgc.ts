@@ -6,10 +6,10 @@ import { MessageType, onMessage, ProxyRequestPayload, ProxyResponsePayload, Prox
 const logger = createLogger({ systemPrefix: '[BACKGROUND(proxy)]' });
 
 export function listenProxyRequestActions() {
-  return onMessage(MessageType.PROXY_REQUEST, handleHttpRequestFromAction);
+  return onMessage(MessageType.PROXY_REQUEST, handleProxyRequestPayload);
 }
 
-export async function handleHttpRequestFromAction({ url, responseType, requestInit }: ProxyRequestPayload) {
+export async function handleProxyRequestPayload<Response>({ url, responseType, requestInit }: ProxyRequestPayload) {
   logger.info(`proxying request (${responseType}): ${url}`);
 
   const httpResponse = await fetch(url, requestInit);
@@ -40,6 +40,6 @@ export async function handleHttpRequestFromAction({ url, responseType, requestIn
     break;
   }
 
-  return payload;
+  return payload as Response;
 }
 
