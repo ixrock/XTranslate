@@ -60,7 +60,7 @@ export async function saveToFavorites({ item, isFavorite }: SaveToFavoritesPaylo
 }
 
 export async function getHistoryItemOffline(payload: TranslatePayload) {
-  await historyStorage.load();
+  await historyStorage.load({ force: true });
 
   const { text, from, to, vendor } = payload;
   const translationId = generateId(text, from, to);

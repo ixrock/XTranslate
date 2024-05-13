@@ -2,7 +2,7 @@
 // Currently used `chrome.storage.*` APIs
 
 import { disposer } from "../utils/disposer";
-import { MessageType, onMessage, StorageDeletePayload, StorageReadPayload, StorageWritePayload, syncExternalStorageUpdateAction } from '../extension'
+import { MessageType, onMessage, StorageDeletePayload, StorageReadPayload, StorageWritePayload, syncExternalStorageUpdate } from '../extension'
 import { isFirefox } from "../common-vars";
 import { createLogger } from "../utils/createLogger";
 
@@ -42,7 +42,7 @@ export async function writeToExternalStorage<T>(payload: StorageWritePayload, sy
 
   // send sync update to other browser tabs
   if (syncUpdate) {
-    syncExternalStorageUpdateAction(payload);
+    syncExternalStorageUpdate(payload);
   }
 }
 
