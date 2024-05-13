@@ -1,6 +1,8 @@
 import styles from "./settings.module.scss";
+
 import React from "react";
 import { observer } from "mobx-react";
+import { isEqual } from "lodash";
 import { getTranslators } from "../../vendors";
 import { getHotkey, parseHotkey, prevDefault } from "../../utils";
 import { XTranslateIcon } from "../../user-script/xtranslate-icon";
@@ -14,25 +16,32 @@ import { Popup } from "../popup";
 import { TooltipProps } from "../tooltip";
 import { SubTitle } from "../sub-title";
 import { Tab } from "../tabs";
-import { PopupPosition, settingsStore } from "./settings.storage";
+import { PopupPosition, settingsStore, XIconPosition } from "./settings.storage";
 import { pageManager } from "../app/page-manager";
 import { getMessage } from "../../i18n";
 import { SelectVoice } from "../select-tts-voice";
 
-export interface PopupPositionOption {
-  value: PopupPosition;
-  label: string;
-}
-
 @observer
 export class Settings extends React.Component {
-  private popupPositions: PopupPositionOption[] = [
-    { value: "", label: getMessage("popup_position_auto") },
-    { value: "left top", label: getMessage("popup_position_left_top") },
-    { value: "left bottom", label: getMessage("popup_position_left_bottom") },
-    { value: "right bottom", label: getMessage("popup_position_right_bottom") },
-    { value: "right top", label: getMessage("popup_position_right_top") },
-  ];
+  private get popupPositions(): ReactSelectOption<string>[] {
+    return [
+      { value: "", label: getMessage("popup_position_auto") },
+      { value: "left top", label: getMessage("popup_position_left_top") },
+      { value: "right top", label: getMessage("popup_position_right_top") },
+      { value: "right bottom", label: getMessage("popup_position_right_bottom") },
+      { value: "left bottom", label: getMessage("popup_position_left_bottom") },
+    ]
+  }
+
+  private get iconPositions(): ReactSelectOption<XIconPosition>[] {
+    return [
+      { value: {}, label: "Auto" },
+      { value: { left: true, top: true }, label: getMessage("popup_position_left_top") },
+      { value: { right: true, top: true }, label: getMessage("popup_position_right_top") },
+      { value: { right: true, bottom: true }, label: getMessage("popup_position_right_bottom") },
+      { value: { left: true, bottom: true }, label: getMessage("popup_position_left_bottom") },
+    ];
+  };
 
   onSaveHotkey = (evt: React.KeyboardEvent) => {
     var nativeEvent = evt.nativeEvent;
@@ -90,6 +99,16 @@ export class Settings extends React.Component {
             onChange={v => settings.showIconNearSelection = v}
             tooltip={<XTranslateIcon style={{ position: "unset" }}/>}
           />
+          {settings.showIconNearSelection && (
+            <>
+              <div>{getMessage("position_of_x_translate_icon")}</div>
+              <ReactSelect
+                options={this.iconPositions}
+                value={this.iconPositions.find(pos => isEqual(pos.value, settings.iconPosition))}
+                onChange={(opt: ReactSelectOption<XIconPosition>) => settings.iconPosition = opt.value}
+              />
+            </>
+          )}
         </article>
 
         <SubTitle>{getMessage("settings_title_tts")}</SubTitle>

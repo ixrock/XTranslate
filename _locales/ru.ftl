@@ -58,8 +58,9 @@ popup_position_right_bottom = Правый нижний угол
 translation_delay = Задержка перевода
 translation_delay_info = Если вы часто сталкиваетесь с блокировкой (503 ошибка) от Google или других сервисов, установите большее значение задержки
 reverse_translate_select_placeholder = Язык обратного перевода
-reverse_translate_add_action = Добавить язык обратного перевода: { $lang } - ? (применимо только для авто-определения языка)
+reverse_translate_add_action = Добавить язык обратного перевода: { $lang } -> ? (применимо только в случае когда выбрана опция авто-определения языка)
 reverse_translate_delete_action = Удалить язык обратного перевода
+position_of_x_translate_icon = Расположение иконки рядом с выделенным текстом
 
 
 # ___________theme_________________

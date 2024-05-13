@@ -9,6 +9,7 @@
     display: grid;
     gap: var(--flex-gap);
     grid-template-columns: 1fr 1fr;
+    align-items: center;
 
     &:first-child {
       padding-right: var(--theme-spacing-double);

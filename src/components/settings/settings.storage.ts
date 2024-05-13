@@ -5,6 +5,13 @@ import { createStorage } from "../../storage";
 
 export type PopupPosition = "" /*auto*/ | "left top" | "left bottom" | "right top" | "right bottom";
 
+export type XIconPosition = {
+  top?: boolean;
+  right?: boolean;
+  bottom?: boolean;
+  left?: boolean;
+};
+
 export type SettingsStorageModel = typeof settingsStorage.defaultValue;
 
 export const settingsStorage = createStorage("settings", {
@@ -36,6 +43,7 @@ export const settingsStorage = createStorage("settings", {
     historyPageSize: 50,
     favorites: {} as FavoritesList,
     popupPosition: "" as PopupPosition,
+    iconPosition: {} as XIconPosition,
     ttsVoiceIndex: 0,
     hotkey: {
       altKey: true,

@@ -6,7 +6,7 @@ import React from "react";
 import { createRoot } from "react-dom/client";
 import { action, computed, makeObservable, observable, toJS } from "mobx";
 import { observer } from "mobx-react";
-import { debounce, isEqual } from "lodash"
+import { debounce, isEqual, isEmpty, orderBy } from "lodash"
 import { preloadAppData } from "../preloadAppData";
 import { autoBind, getHotkey } from "../utils";
 import { getManifest, getURL, MessageType, onMessage, proxyRequest, ProxyResponseType, TranslateWithVendorPayload } from "../extension";
@@ -94,25 +94,34 @@ class App extends React.Component {
   }
 
   @computed get iconPosition(): React.CSSProperties {
-    var { selectedText, selectionRects, isRtlSelection, isIconShown } = this;
+    const { iconPosition } = settingsStore.data;
+    const { selectedText, selectionRects, isRtlSelection, isIconShown } = this;
     if (!selectedText || !selectionRects || !isIconShown || !this.isPopupHidden) {
       return {
         display: "none"
       }
     }
-    if (isRtlSelection) {
-      var { left, top } = selectionRects[0];
+
+    const firstRect = selectionRects[0];
+    const lastRect = selectionRects.slice(-1)[0];
+
+    if (!isEmpty(iconPosition)) {
+      const top = iconPosition.top ? orderBy(selectionRects, "top", "asc")[0].top : undefined;
+      const left = iconPosition.left ? orderBy(selectionRects, "left", "asc")[0].left : undefined;
+      const right = iconPosition.right ? orderBy(selectionRects, "right", "desc")[0].right : undefined;
+      const bottom = iconPosition.bottom ? orderBy(selectionRects, "bottom", "desc")[0].bottom : undefined;
+
       return {
-        left: left,
-        top: top,
-        transform: isRtlSelection ? "translate(-100%, -100%)" : undefined,
+        left: left ?? right,
+        top: top ?? bottom,
+        transform: `translate(${left ? -100 : 0}%, ${top ? -100 : 0}%)`,
       }
-    } else {
-      var { right, bottom } = selectionRects.slice(-1)[0];
-      return {
-        left: right,
-        top: bottom,
-      }
+    }
+
+    return {
+      left: isRtlSelection ? firstRect.left : lastRect.right,
+      top: isRtlSelection ? firstRect.top : lastRect.bottom,
+      transform: isRtlSelection ? "translate(-100%, -100%)" : undefined,
     }
   }
 
