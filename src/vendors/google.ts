@@ -75,11 +75,11 @@ export class Google extends Translator {
     var request = async (): Promise<ITranslationResult> => {
       var url = `${this.apiUrl}/translate_a/single`;
       var result: GoogleTranslation = await this.request({ url, requestInit });
-      var { src, ld_result, sentences, dict, spell } = result;
+      var { ld_result, sentences, dict, spell } = result;
       var sourceLanguages = ld_result?.srclangs ?? [];
-      var detectedLang = src ?? sourceLanguages[0];
+
       var translation: ITranslationResult = {
-        langDetected: detectedLang,
+        langDetected: sourceLanguages[0] ?? result.src,
         translation: sentences.map(sentence => sentence.trans).join(''),
       };
       if (sourceLanguages.length > 1) {

@@ -2,8 +2,8 @@
   "name": "xtranslate",
   "version": "2.0.0",
   "scripts": {
-    "dev": "rm -rf ./dist && webpack --watch",
-    "build": "rm -rf ./dist && NODE_ENV=production webpack --progress",
+    "dev": "rm -rf ./dist/* && webpack --watch",
+    "build": "rm -rf ./dist/* && NODE_ENV=production webpack --progress",
     "test": "jest"
   },
   "jest": {

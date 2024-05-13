@@ -3,7 +3,7 @@ import "./select-language.scss";
 import React from "react";
 import { action, computed, makeObservable } from "mobx";
 import { observer } from "mobx-react";
-import { ReactSelect, ReactSelectGroup } from "../select";
+import { ReactSelect, ReactSelectGroup, ReactSelectOption } from "../select";
 import { cssNames } from "../../utils";
 import { getTranslator } from "../../vendors";
 import { getMessage } from "../../i18n";
@@ -16,6 +16,7 @@ export interface Props {
   from?: string;
   to?: string;
   showInfoIcon?: boolean;
+  showReverseTranslation?: boolean;
   onChange?(update: { langFrom: string, langTo: string }): void;
   onSwap?(update: { langFrom: string, langTo: string }): void;
 }
@@ -50,7 +51,7 @@ export class SelectLanguage extends React.Component<Props> {
   @computed get sourceLanguageOptions(): ReactSelectGroup<string>[] {
     var { langFrom: sourceLangList } = getTranslator(this.vendor);
 
-    var getOption = (lang: string) => ({
+    var getOption = (lang: string): ReactSelectOption<string> => ({
       value: lang,
       isDisabled: lang == this.langTo,
       isSelected: lang == this.langFrom,
@@ -75,7 +76,7 @@ export class SelectLanguage extends React.Component<Props> {
   @computed get targetLanguageOptions(): ReactSelectGroup<string>[] {
     var { langTo: targetLangList } = getTranslator(this.vendor);
 
-    var getOption = (lang: string) => ({
+    var getOption = (lang: string): ReactSelectOption<string> => ({
       value: lang,
       isDisabled: lang == this.langFrom,
       isSelected: lang == this.langTo,
@@ -95,6 +96,20 @@ export class SelectLanguage extends React.Component<Props> {
     return [
       { options: targetLanguageOptions },
     ];
+  }
+
+  @computed get reverseLanguageOptions(): ReactSelectOption<string>[] {
+    var { langToReverse } = settingsStore.data;
+    var { langTo: targetLangList } = getTranslator(this.vendor);
+
+    var getOption = (lang: string): ReactSelectOption<string> => ({
+      value: lang,
+      isDisabled: lang == this.langTo,
+      isSelected: lang == langToReverse,
+      label: targetLangList[lang as keyof typeof targetLangList],
+    });
+
+    return Object.keys(targetLangList).map(getOption);
   }
 
   @action
@@ -137,17 +152,63 @@ export class SelectLanguage extends React.Component<Props> {
     evt.preventDefault();
   }
 
-  formatLanguageLabel(opts: { lang: string, title: string, sourceType: FavoriteLangDirection }): React.ReactNode {
+  formatLanguageLabel(opts: { lang: string, title: string, sourceType?: FavoriteLangDirection }): React.ReactNode {
     const flagIcon = getFlagIcon(opts.lang);
     return (
       <div
         className={cssNames("language flex gaps align-center", opts.lang)}
-        onClick={evt => this.toggleFavorite(evt, opts.lang, opts.sourceType)}
+        onClick={opts.sourceType ? evt => this.toggleFavorite(evt, opts.lang, opts.sourceType) : undefined}
       >
         {flagIcon && <img className="country-icon" src={flagIcon} alt=""/>}
         <span>{opts.title}</span>
       </div>
     )
+  }
+
+  @action
+  setReverseTranslateLanguage(lang: string) {
+    settingsStore.data.langToReverse = lang;
+  }
+
+  renderReverseTranslationSettingsPanel() {
+    var { showReverseTranslation } = this.props;
+    if (!showReverseTranslation) return;
+
+    var { langTo } = this;
+    const langToTitle = getTranslator(this.vendor).langTo[langTo];
+    const { langTo: targetLangList } = getTranslator(this.vendor);
+    const initialReverseLang = langTo !== "en" ? "en" : Object.keys(targetLangList).filter(lang => lang !== "auto")[0] /*first*/;
+
+    if (settingsStore.data.langToReverse) {
+      return (
+        <>
+          <Icon small material="arrow_forward"/>
+          <ReactSelect<string>
+            className="Select"
+            placeholder={getMessage("reverse_translate_select_placeholder")}
+            value={this.reverseLanguageOptions.find(opt => opt.value === settingsStore.data.langToReverse)}
+            options={this.reverseLanguageOptions}
+            onChange={opt => this.setReverseTranslateLanguage(opt.value)}
+            formatOptionLabel={({ label, value: lang }) => this.formatLanguageLabel({ lang, title: label })}
+          />
+          <Icon
+            small
+            material="clear"
+            tooltip={getMessage("reverse_translate_delete_action")}
+            onClick={() => this.setReverseTranslateLanguage("")}
+          />
+        </>
+      )
+    }
+
+    return (
+      <Icon
+        small
+        material="arrow_forward"
+        tooltip={getMessage("reverse_translate_add_action", { lang: langToTitle })}
+        onClick={() => this.setReverseTranslateLanguage(initialReverseLang)}
+      />
+    );
   }
 
   render() {
@@ -175,13 +236,16 @@ export class SelectLanguage extends React.Component<Props> {
             lang, sourceType: "source", title: label,
           })}
         />
+
         <Icon
           material="swap_horiz"
           className="swap-icon"
-          title={getMessage("swap_languages")}
+          tooltip={getMessage("swap_languages")}
           onClick={this.onSwap}
         />
+
         <ReactSelect<string>
+          // menuIsOpen={true}
           className="Select"
           placeholder={getMessage("target_lang_placeholder")}
           value={targetLang}
@@ -191,10 +255,16 @@ export class SelectLanguage extends React.Component<Props> {
             lang, sourceType: "target", title: label,
           })}
         />
+
+        {this.renderReverseTranslationSettingsPanel()}
+
         {showInfoIcon && (
-          <Icon small material="info_outline" tooltip={
-            getMessage("favorites_info_tooltip", { hotkey: "Cmd / Alt+Shift" })
-          }/>
+          <Icon
+            small
+            material="info_outline"
+            tooltip={
+              getMessage("favorites_info_tooltip", { hotkey: "Cmd / Alt+Shift" })
+            }/>
         )}
       </div>
     );

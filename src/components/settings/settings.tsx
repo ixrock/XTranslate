@@ -53,7 +53,7 @@ export class Settings extends React.Component {
     return (
       <main className={styles.Settings}>
         <article>
-          <SelectLanguage showInfoIcon/>
+          <SelectLanguage showReverseTranslation showInfoIcon/>
           <RadioGroup
             className={styles.vendors}
             value={settings.vendor}

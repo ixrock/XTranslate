@@ -56,6 +56,9 @@ popup_position_left_bottom = Left-bottom corner
 popup_position_right_bottom = Right-bottom corner
 translation_delay = Translation delay
 translation_delay_info = If you often experience blocking (503 error) from Google or other services set bigger value of delay
+reverse_translate_select_placeholder = Reverse translate language
+reverse_translate_add_action = Add reverse language: { $lang } - ? (applicable only for auto-detect)
+reverse_translate_delete_action = Reset reverse translate language
 
 # theme
 popup_play_icon_title = Listen

@@ -70,16 +70,17 @@ export abstract class Translator {
 
     // get result via network
     if (!translation) {
-      const getResult = async (customParams: Partial<TranslateParams> = {}) => {
+      const getTranslationResult = async (customParams: Partial<TranslateParams> = {}) => {
         const customizedParams = { ...params, ...customParams };
         const result: ITranslationResult = await Reflect.apply(originalTranslate, this, [customizedParams]);
         return this.normalize(result, customizedParams);
       };
 
-      translation = await getResult();
-      const swappedLangParams = this.swapLangCheck(translation);
-      if (swappedLangParams) {
-        translation = await getResult(swappedLangParams);
+      translation = await getTranslationResult();
+
+      const reverseTranslationParams = this.checkReverseTranslationParams(translation);
+      if (reverseTranslationParams) {
+        translation = await getTranslationResult(reverseTranslationParams);
       }
     }
 
@@ -100,9 +101,6 @@ export abstract class Translator {
 
   protected normalize(result: ITranslationResult, initParams: TranslateParams): ITranslationResult {
     const { from: langFrom, to: langTo, text: originalText } = initParams;
-    const langDetected = result.langDetected ?? (
-      langFrom !== "auto" ? langFrom : null
-    );
 
     function toLowerCase(output: string) {
       const isDictionaryWord = !!result.dictionary;
@@ -115,20 +113,32 @@ export abstract class Translator {
       translation: toLowerCase(result.translation),
       dictionary: result.dictionary ?? [],
       langFrom,
-      langDetected,
       langTo,
       originalText: toLowerCase(originalText),
     };
   }
 
-  protected swapLangCheck(normalizedResult: ITranslationResult): Partial<TranslateParams> | undefined {
-    var { langTo, langFrom, langDetected, originalText, translation } = normalizedResult;
-    var sameTextResult = originalText.trim().toLowerCase() === translation.toLowerCase().trim();
+  protected checkReverseTranslationParams(translationResult: ITranslationResult): Partial<TranslateParams> | undefined {
+    const reverseLanguage = settingsStore.data.langToReverse
+    const { langTo, langFrom, langDetected, originalText, translation } = translationResult;
+    const sameText = originalText.trim().toLowerCase() === translation.toLowerCase().trim();
+    const invalidInputOutputTargetLanguage = sameText || langDetected === langTo;
 
-    if (sameTextResult && langDetected === langTo) {
+    if (!invalidInputOutputTargetLanguage) {
+      return; // quit: we got some different result
+    }
+
+    // swap exact languages (from,to) in case mismatching
+    if (langFrom !== "auto") {
       return {
-        from: langDetected,
-        to: langFrom !== "auto" ? langFrom : "en",
+        from: langTo,
+        to: langFrom,
+      };
+    } else if (reverseLanguage) {
+      // swap languages with predefined reverse-language (if defined in the settings)
+      return {
+        from: langTo,
+        to: reverseLanguage,
       };
     }
   };

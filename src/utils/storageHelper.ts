@@ -61,7 +61,6 @@ export class StorageHelper<T> {
   public bindAutoSaveToExternalStorage() {
     if (!this.options.storageAdapter) return;
 
-    this.logger.info("auto-saving state to external storage enabled", this.toJS());
     this.unbindAutoSaveToExternalStorage?.(); // stop previous if any
 
     this.unbindAutoSaveToExternalStorage = reaction(() => this.toJS(), (state) => {
@@ -117,8 +116,10 @@ export class StorageHelper<T> {
 
   @action.bound
   protected onData(data: T) {
-    const dataType = typeof data;
-    this.logger.info(`data fetched (${dataType})`, dataType === "object" ? data : JSON.stringify(data))
+    this.logger.info("data fetched", {
+      data,
+      origin: globalThis.location?.href,
+    });
 
     const notEmpty = data != null;
     if (notEmpty) {

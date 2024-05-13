@@ -30,6 +30,7 @@ export const settingsStorage = createStorage("settings", {
     vendor: "google",
     langFrom: "auto",
     langTo: navigator.language.split('-')[0],
+    langToReverse: "", // applied in case when `langFrom` == "auto" && `langDetected` == `langTo`
     historyEnabled: false,
     historySaveWordsOnly: true,
     historyPageSize: 50,
