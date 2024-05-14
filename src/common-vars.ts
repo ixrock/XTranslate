@@ -43,6 +43,6 @@ export function isEdge(): boolean {
   return !!navigator.userAgent.match(/Edge?\//);
 }
 
-export function isSystemPage(pageUrl = "") {
-  return pageUrl.startsWith("chrome://" || "edge://");
+export function isSystemPage(pageUrl = ""): boolean {
+  return !!pageUrl.match(/^(chrome|edge):\/\//i);
 }
