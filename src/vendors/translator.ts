@@ -114,6 +114,7 @@ export abstract class Translator {
       dictionary: result.dictionary ?? [],
       langFrom,
       langTo,
+      langDetected: result.langDetected ?? langFrom,
       originalText: toLowerCase(originalText),
     };
   }
