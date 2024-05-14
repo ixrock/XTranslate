@@ -82,9 +82,13 @@ export class InputTranslation extends React.Component<Props> {
 
   // auto-translate selected text from active browser's page
   private translateSelectedTextFromActiveWindow = async () => {
-    const selectedText = await getSelectedText();
-    if (selectedText) {
-      this.translateText(selectedText);
+    try {
+      const selectedText = await getSelectedText();
+      if (selectedText) {
+        this.translateText(selectedText);
+      }
+    } catch (err) {
+      this.logger.error(`cannot get selected text from active window: ${err.message}`);
     }
   }
 

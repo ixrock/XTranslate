@@ -44,5 +44,5 @@ export function isEdge(): boolean {
 }
 
 export function isSystemPage(pageUrl = "") {
-  return pageUrl.startsWith("chrome://");
+  return pageUrl.startsWith("chrome://" || "edge://");
 }
