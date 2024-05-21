@@ -1,6 +1,7 @@
 import styles from "./settings.module.scss";
 
 import React from "react";
+import { action, makeObservable, observable } from "mobx";
 import { observer } from "mobx-react";
 import { isEqual } from "lodash";
 import { getTranslators } from "../../vendors";
@@ -20,9 +21,15 @@ import { PopupPosition, settingsStore, XIconPosition } from "./settings.storage"
 import { pageManager } from "../app/page-manager";
 import { getMessage } from "../../i18n";
 import { SelectVoice } from "../select-tts-voice";
+import { getTTSVoices, speak, stopSpeaking } from "../../tts";
 
 @observer
 export class Settings extends React.Component {
+  constructor(props: object) {
+    super(props);
+    makeObservable(this);
+  }
+
   private get popupPositions(): ReactSelectOption<string>[] {
     return [
       { value: "", label: getMessage("popup_position_auto") },
@@ -48,6 +55,32 @@ export class Settings extends React.Component {
     var hotkey = parseHotkey(nativeEvent);
     if (hotkey.code) {
       settingsStore.data.hotkey = getHotkey(nativeEvent);
+    }
+  }
+
+  @observable demoVoiceText = "Quick brown fox jumps over the lazy dog";
+  @observable isSpeaking = false;
+
+  @action.bound
+  editDemoVoiceText() {
+    const newText = window.prompt(getMessage("tts_play_demo_sound_edit"), this.demoVoiceText);
+    if (newText) {
+      this.demoVoiceText = newText;
+    }
+  }
+
+  @action.bound
+  async speakDemoText() {
+    this.isSpeaking = !this.isSpeaking;
+
+    if (this.isSpeaking) {
+      const voices = await getTTSVoices();
+      const selectedVoice = voices[settingsStore.data.ttsVoiceIndex];
+
+      stopSpeaking();
+      speak(this.demoVoiceText, selectedVoice);
+    } else {
+      stopSpeaking();
     }
   }
 
@@ -129,6 +162,21 @@ export class Settings extends React.Component {
             <SelectVoice
               currentIndex={settings.ttsVoiceIndex}
               onChange={v => settings.ttsVoiceIndex = v}
+            />
+            <Icon
+              small
+              material="edit"
+              tooltip={{ nowrap: true, children: getMessage("tts_play_demo_sound_edit") }}
+              onClick={this.editDemoVoiceText}
+            />
+            <Icon
+              small
+              material={this.isSpeaking ? "pause_outline" : "play_circle_outline"}
+              tooltip={{
+                nowrap: true,
+                children: `${getMessage("tts_play_demo_sound")}: "${this.demoVoiceText}"`,
+              }}
+              onClick={this.speakDemoText}
             />
           </div>
         </article>

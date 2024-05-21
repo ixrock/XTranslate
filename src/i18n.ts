@@ -80,14 +80,14 @@ export function getMessagePattern(key: string): { message: Pattern, bundle: Flue
   const bundle = bundles.get(currentLocale);
   const fallbackBundle = bundles.get(fallbackLocale);
   const message = bundle?.getMessage(key)?.value;
-  const fallbackMessage = fallbackBundle.getMessage(key).value;
+  const fallbackMessage = fallbackBundle.getMessage(key)?.value; // fallback locale message (default: english)
 
   if (message) {
     return { message, bundle }
   }
 
   return {
-    message: fallbackMessage,
+    message: fallbackMessage ?? `Unknown message key: "${key}"`,
     bundle: fallbackBundle,
   };
 }

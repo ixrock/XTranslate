@@ -6,6 +6,7 @@ import { autoBind, createLogger, disposer, JsonResponseError } from "../utils";
 import { ProxyRequestPayload, ProxyResponseType } from "../extension/messages";
 import { getTranslationFromHistoryAction, proxyRequest, saveToHistoryAction } from "../extension/actions";
 import { settingsStore } from "../components/settings/settings.storage";
+import { getTTSVoices, speak, stopSpeaking, TTSVoice } from "../tts";
 
 export interface TranslatorLanguages {
   from: Record<string/*locale*/, string> & { auto?: string };
@@ -156,31 +157,28 @@ export abstract class Translator {
     return null; // should be overridden in sub-classes if supported
   }
 
-  speakSynth(text: string, voice?: SpeechSynthesisVoice) {
+  speakSynth(text: string, voice?: TTSVoice) {
     try {
-      const utterance = new SpeechSynthesisUtterance(text);
-      if (voice) {
-        utterance.voice = voice;
-      }
-      speechSynthesis.cancel(); // stop previous if any
-      speechSynthesis.speak(new SpeechSynthesisUtterance(text));
+      speak(text, voice); // // tts-play
     } catch (err) {
       this.logger.error(`[TTS]: speech synthesis failed to speak: ${err}`, { text, voice });
     }
   }
 
-  async speak(lang: string, text: string, voice?: SpeechSynthesisVoice) {
+  async speak(lang: string, text: string, voice?: TTSVoice) {
     this.stopSpeaking(); // stop previous if any
 
     const audioUrl = this.getAudioUrl(lang, text);
     const useSpeechSynthesis = Boolean(settingsStore.data.useSpeechSynthesis || !audioUrl);
 
     if (!voice) {
-      voice = speechSynthesis.getVoices()[settingsStore.data.ttsVoiceIndex];
+      const voices = await getTTSVoices();
+      voice = voices[settingsStore.data.ttsVoiceIndex];
     }
 
     this.logger.info(`[TTS]: speaking`, {
       lang, text, voice,
+      voiceIndex: settingsStore.data.ttsVoiceIndex,
       useSpeechSynthesis,
       audioUrl
     });
@@ -212,7 +210,7 @@ export abstract class Translator {
   stopSpeaking() {
     this.logger.info(`[TTS]: stop speaking`);
     getTranslators().forEach(vendor => vendor.audio?.pause());
-    speechSynthesis.pause();
+    stopSpeaking(); // tts-stop
   }
 
   getAudioUrl(lang: string, text: string): string {
