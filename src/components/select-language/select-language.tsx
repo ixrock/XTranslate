@@ -292,6 +292,9 @@ export const langToFlagIconMap: Record<string, string> = {
   "ja": "jp", // Japanese
   "ko": "kr", // Korean
   "lo": "la", // Laos
+  "si": "lk", // Sinhala (Sri Lanka)
+  "sl": "si", // Slovenia
+  "sv": "se", // Sweden
   "uk": "ua", // Ukrainian
   "fa": "ir", // Iran (Persian)
   "ku": "iq", // Iraq, Kurdistan Region

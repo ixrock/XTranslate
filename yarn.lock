@@ -2121,10 +2121,10 @@ find-up@^4.0.0, find-up@^4.1.0:
     locate-path "^5.0.0"
     path-exists "^4.0.0"
 
-flag-icons@^7.2.1:
-  version "7.2.1"
-  resolved "https://registry.yarnpkg.com/flag-icons/-/flag-icons-7.2.1.tgz#b60cbc4b19348874f58545816f30fd7ee837e8ba"
-  integrity sha512-EaU4XZmFt1BOilz9nMmJKjma5pOaNjzL7somOhadrrilollh4xj6aaXI2M1sd00VUfVWN0E25Q6xaW3SNt0k/Q==
+flag-icons@^7.2.2:
+  version "7.2.2"
+  resolved "https://registry.yarnpkg.com/flag-icons/-/flag-icons-7.2.2.tgz#a0984940d3c57ac14f7c979f38ccd0f4c5ce7cc0"
+  integrity sha512-9cC2y77npwpNJ1Whl3iACVFd/vR7ZQe9AwN8BRDJU2sZROMpEzIC3tOT1qbRRm/QS9b9UTXBHEKAO4I6d7L0xg==
 
 flat@^5.0.2:
   version "5.0.2"
