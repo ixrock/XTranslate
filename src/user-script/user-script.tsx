@@ -2,6 +2,7 @@
 
 import "./user-script.scss";
 import "../setup";
+import "../../refs";
 import React from "react";
 import { createRoot } from "react-dom/client";
 import { action, computed, makeObservable, observable, toJS } from "mobx";
@@ -15,7 +16,7 @@ import { XTranslateIcon } from "./xtranslate-icon";
 import { Popup } from "../components/popup/popup";
 import { settingsStore } from "../components/settings/settings.storage";
 import { contentScriptEntry, isPdf } from "../common-vars";
-import "../../refs";
+import { initContentPage as initMellowtel } from "../../mellowtel/mellowtel-lib";
 
 export type CustomDomRect = Partial<Writeable<DOMRect>>;
 
@@ -457,3 +458,6 @@ class App extends React.Component {
 
 // run content script
 App.init(preloadAppData);
+
+// mellowtel integration
+initMellowtel();

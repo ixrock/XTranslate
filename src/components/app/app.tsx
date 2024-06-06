@@ -20,6 +20,7 @@ import { ExportImportSettingsDialog } from "./export-settings-dialog";
 import { PrivacyDialog } from "./privacy-dialog";
 import { AppRateDialog } from "./app-rate.dialog";
 import { dialogsState } from "./dialogs-state";
+import { MellowtelDialog } from "../../../mellowtel/mellowtel-dialog";
 
 @observer
 export class App extends React.Component {
@@ -71,6 +72,7 @@ export class App extends React.Component {
           onTermsAccepted={() => dialogsState.showPrivacyDialog = false}
         />
         <AppRateDialog/>
+        <MellowtelDialog/>
       </div>
     );
   }

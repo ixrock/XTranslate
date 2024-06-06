@@ -145,8 +145,7 @@ target_lang_placeholder = Target languages
 source_lang_placeholder = Source languages
 favorites_lang_title = Favorites
 favorites_info_tooltip = To mark/unmark language as favorite (list is shown on the top), use { $hotkey } + click
-donate_title = Donate
-donate_via = Donate via
+donate_title = Developers support
 donate_copy_wallet = Copy address
 donate_description = If you like the app consider to donate developers. Thanks!
 service_unavailable = Service unavailable. Try again after 5-25 minutes. If this happens constantly increase translation delay in the settings.
@@ -155,3 +154,20 @@ service_confirm_not_a_robot = Also you can go to { $link } and confirm that you'
 # privacy policy
 privacy_policy_title_updated = Privacy Policy has been updated
 privacy_policy_accept_terms = Accept terms & conditions
+
+# mellowtel integration
+mellowtel_greetings = Hello, friend 👋
+mellowtel_text1 = As you might know this extension is free and available to everybody... but to keep it up this time we require some action from you!
+mellowtel_text2 = This new version includes the open-source { $link } library. This library lets you share your unused internet with trusted AI labs & startups who use it to train their models.
+mellowtel_usage_title = We use Mellowtel to:
+mellowtel_usage1 = Track outages of the service
+mellowtel_usage2 = Measure the quality of the service
+mellowtel_usage3 = As the developer of this extension get a small share of the revenue
+mellowtel_accept_all_info1 = If you choose to 'Accept all', we will also use the Mellowtel API to: Enable trusted partners to access internet resources by also routing part of their traffic through your node in the network.
+mellowtel_accept_all_info2 = Mellowtel shares your bandwidth only. Security and privacy are 100% guaranteed and the library is open source for everyone to see.
+mellowtel_regulation1 = It doesn't collect, share, or sell personal information (not even anonymized data).
+mellowtel_regulation2 = It’s also highly regulated: Mellowtel keeps communicating with Chrome Web Store regulators to guarantee a safe experience.
+mellowtel_regulation3 = It also provides CWS regulators with tools to monitor and enforce compliance.
+mellowtel_button_decline = Decline optional use
+mellowtel_button_accept = Accept all
+mellowtel_dialog_footer = Thanks for taking the time to read, teams { $devs }.

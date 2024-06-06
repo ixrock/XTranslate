@@ -1,7 +1,7 @@
 {
   "name": "XTranslate",
   "description": "__MSG_short_description__",
-  "version": "3.3.2",
+  "version": "3.4.0",
   "manifest_version": 3,
   "default_locale": "en",
   "icons": {
@@ -33,9 +33,10 @@
   "content_scripts": [
     {
       "all_frames": true,
-      "run_at": "document_end",
+      "run_at": "document_start",
       "js": ["user-script.js"],
       "matches": [
+        "<all_urls>",
         "http://*/*",
         "https://*/*",
         "file://*/*"
@@ -55,13 +56,13 @@
     "extension_pages": "script-src 'self'; object-src 'self'"
   },
   "host_permissions": [
-    "*://*/*"
+    "*://*/*",
+    "\u003Call_urls\u003E"
   ],
   "permissions": [
-    "tts",
-    "storage",
-    "unlimitedStorage",
+    "storage", "unlimitedStorage",
     "contextMenus",
-    "activeTab"
+    "activeTab", "tabs",
+    "declarativeNetRequest"
   ]
 }

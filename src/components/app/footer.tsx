@@ -2,12 +2,12 @@ import styles from './footer.module.scss'
 import React from 'react';
 import { observer } from "mobx-react";
 import { getExtensionUrl } from "../../common-vars";
-import { cssNames, prevDefault } from '../../utils'
+import { prevDefault } from '../../utils'
 import { getManifest } from '../../extension'
 import { getMessage } from "../../i18n";
 import { Icon } from "../icon";
-import { Header } from "./header";
 import { dialogsState } from "./dialogs-state";
+import { resetDialogVisibility } from "../../../mellowtel/mellowtel-lib";
 
 interface ShareIcon {
   title: string
@@ -51,10 +51,10 @@ export class Footer extends React.Component {
         </div>
 
         <Icon
-          material="monetization_on"
-          className={styles.showDonationDialogIcon}
+          material="support"
+          className={styles.monetizationIcon}
           tooltip={{ nowrap: true, children: getMessage("donate_title") }}
-          onClick={() => dialogsState.showDonationDialog = true}
+          onClick={resetDialogVisibility}
         />
       </div>
     );

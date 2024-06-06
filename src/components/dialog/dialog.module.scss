@@ -6,6 +6,7 @@
   --dialog-bgc: var(--theme-bgc);
   --dialog-padding: var(--theme-spacing-double);
   --dialog-border: 1px solid currentColor;
+  --dialog-spacing: auto;
 
   position: fixed;
   display: flex;
@@ -25,12 +26,12 @@
 
   .box {
     position: relative;
-    margin: auto; // align to center (h/v), applicable only for flex-boxes
-    z-index: 1; // show on top of .modal
+    margin: var(--dialog-spacing, auto);
     border: var(--dialog-border);
     background-color: var(--dialog-bgc);
     padding: var(--dialog-padding);
     border-radius: var(--theme-border-radius);
+    z-index: 1; // show on top of .modal
   }
 
   &.pinned {
