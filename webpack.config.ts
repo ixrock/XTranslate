@@ -23,7 +23,7 @@ function webpackBaseConfig(): webpack.Configuration {
     devtool: isDevelopment ? "source-map" : false, // https://webpack.js.org/configuration/devtool/
     mode: isDevelopment ? "development" : "production",
     cache: isDevelopment ? { type: "filesystem" } : false,
-    entry: {},
+    entry: {}, // to be defined on each config
 
     output: {
       libraryTarget: "global",
@@ -153,7 +153,6 @@ export default [
         chunks: ["app"],
         filename: path.basename(optionsPage),
         template: optionsPage,
-        scriptLoading: "blocking", // required with `optimization.splitChunks`
       }),
 
       new CopyWebpackPlugin({
@@ -166,20 +165,6 @@ export default [
         ]
       }),
     );
-
-    webConfig.optimization.splitChunks = {
-      chunks: "all",
-      cacheGroups: {
-        vendor: {
-          test: /node_modules/,
-          name({ resource }: webpack.NormalModule) {
-            const libPackGroup = resource?.match(/node_modules\/(react|mobx|lodash)\b/)?.[1] ?? "common";
-
-            return `lib-${libPackGroup}`;
-          },
-        },
-      }
-    };
 
     return webConfig;
   },
