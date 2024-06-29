@@ -1,4 +1,4 @@
-import styles from "./animate.module.scss";
+import * as styles from "./animate.module.scss";
 import React from "react";
 import { action, makeObservable, observable, reaction } from "mobx";
 import { observer } from "mobx-react";

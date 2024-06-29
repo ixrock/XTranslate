@@ -1,4 +1,4 @@
-import styles from "./select-voice.module.scss";
+import * as styles from "./select-voice.module.scss";
 import React from "react";
 import { makeObservable, observable } from "mobx";
 import { observer } from "mobx-react";

@@ -1,4 +1,4 @@
-import styles from "./select-locale.module.scss"
+import * as styles from "./select-locale.module.scss"
 
 import React from "react";
 import { observable } from "mobx";

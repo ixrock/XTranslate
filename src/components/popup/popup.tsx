@@ -1,4 +1,4 @@
-import styles from "./popup.module.scss"
+import * as styles from "./popup.module.scss"
 
 import React, { CSSProperties } from "react";
 import { action, computed, makeObservable, observable, reaction } from "mobx";

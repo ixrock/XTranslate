@@ -1,4 +1,4 @@
-import styles from "./sub-title.module.scss"
+import * as styles from "./sub-title.module.scss"
 import React from "react"
 import { cssNames } from "../../utils";
 

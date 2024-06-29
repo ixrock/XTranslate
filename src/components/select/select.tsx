@@ -1,4 +1,4 @@
-import styles from "./select.module.scss";
+import * as styles from "./select.module.scss";
 
 import * as React from "react";
 import { cssNames, IClassName } from "../../utils";

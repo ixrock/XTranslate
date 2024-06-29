@@ -1,4 +1,4 @@
-import styles from "./button.module.scss";
+import * as styles from "./button.module.scss";
 import React, { ButtonHTMLAttributes, ReactNode } from "react";
 import { cssNames } from "../../utils";
 import { TooltipDecoratorProps, withTooltip } from "../tooltip";

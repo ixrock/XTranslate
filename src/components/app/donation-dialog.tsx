@@ -1,4 +1,4 @@
-import style from "./donation-dialog.module.scss"
+import * as styles from "./donation-dialog.module.scss"
 import React from "react";
 import { observer } from "mobx-react";
 import { Dialog, DialogProps } from "../dialog";
@@ -20,7 +20,7 @@ export class DonationDialog extends React.Component<DialogProps> {
     return (
       <Dialog
         {...dialogProps}
-        className={cssNames(style.DonationDialog, className)}
+        className={cssNames(styles.DonationDialog, className)}
       >
         <div className="content flex column gaps">
           <p>{getMessage("donate_description")}</p>

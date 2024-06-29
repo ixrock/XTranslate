@@ -1,4 +1,4 @@
-import styles from './menu-item.module.scss'
+import * as styles from './menu-item.module.scss'
 import React from "react";
 import { autoBind, cssNames } from "../../utils";
 import { Icon } from "../icon";

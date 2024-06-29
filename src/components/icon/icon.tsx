@@ -1,4 +1,4 @@
-import styles from "./icon.module.scss";
+import * as styles from "./icon.module.scss";
 import React, { type ReactNode } from "react";
 import { base64, cssNames } from "../../utils";
 import { TooltipDecoratorProps, withTooltip } from "../tooltip";

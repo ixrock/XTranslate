@@ -1,4 +1,4 @@
-import styles from "./export-settings.module.scss";
+import * as styles from "./export-settings.module.scss";
 
 import React from "react";
 import { Dialog, DialogProps } from "../dialog";

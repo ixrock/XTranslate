@@ -1,4 +1,4 @@
-import styles from "./number-input.module.scss";
+import * as styles from "./number-input.module.scss";
 
 import React from "react";
 import { Input, InputProps } from "./input";

@@ -4,14 +4,8 @@
 // - mocked "black-boxed" npm-packages
 // - webpack-handled imports for custom file extensions (e.g. import svg)
 
-declare module "*.module.css" {
-  const classes: { [key: string]: string };
-  export default classes;
-}
-declare module "*.module.scss" {
-  const classes: { [key: string]: string };
-  export default classes;
-}
+declare module "*.module.css";
+declare module "*.module.scss";
 
 //
 // Images

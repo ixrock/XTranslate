@@ -1,4 +1,4 @@
-import styles from "./slider.module.scss";
+import * as styles from "./slider.module.scss";
 import React from "react"
 import { cssNames } from "../../utils";
 

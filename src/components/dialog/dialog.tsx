@@ -1,4 +1,4 @@
-import styles from "./dialog.module.scss";
+import * as styles from "./dialog.module.scss";
 
 import React from "react";
 import { observer } from "mobx-react";

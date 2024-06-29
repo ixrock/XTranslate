@@ -1,4 +1,4 @@
-import styles from './menu.module.scss'
+import * as styles from './menu.module.scss'
 import React, { Fragment, ReactElement, ReactNode } from "react";
 import { createPortal } from "react-dom";
 import { autoBind, cssNames } from "../../utils";

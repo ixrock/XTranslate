@@ -1,4 +1,4 @@
-import style from "./privacy-dialog.module.scss"
+import * as styles from "./privacy-dialog.module.scss"
 import React from "react";
 import * as marked from "marked"
 import { observer } from "mobx-react";
@@ -18,7 +18,7 @@ export class PrivacyDialog extends React.Component<PrivacyDialogProps> {
 
   renderPolicyText() {
     return (
-      <div className={style.policyContent} dangerouslySetInnerHTML={{
+      <div className={styles.policyContent} dangerouslySetInnerHTML={{
         __html: marked.parse(privacyPolicyMd),
       }}/>
     );
@@ -36,8 +36,8 @@ export class PrivacyDialog extends React.Component<PrivacyDialogProps> {
       <Dialog
         pinned
         {...dialogProps}
-        className={cssNames(style.PrivacyDialog, className)}
-        contentClassName={cssNames(style.content, contentClassName)}
+        className={cssNames(styles.PrivacyDialog, className)}
+        contentClassName={cssNames(styles.content, contentClassName)}
         ref={ref => this.dialog = ref}
       >
         <div className="flex column gaps">

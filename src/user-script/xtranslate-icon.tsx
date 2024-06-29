@@ -1,4 +1,4 @@
-import styles from "./xtranslate-icon.module.scss";
+import * as styles from "./xtranslate-icon.module.scss";
 import React from "react";
 import { findDOMNode } from "react-dom";
 import { cssNames } from "../utils";

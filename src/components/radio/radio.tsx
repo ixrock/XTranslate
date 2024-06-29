@@ -1,4 +1,4 @@
-import styles from "./radio.module.scss";
+import * as styles from "./radio.module.scss";
 import * as React from "react";
 import { cssNames, IClassName } from "../../utils";
 import { Checkbox, CheckboxProps } from "../checkbox";

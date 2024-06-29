@@ -43,6 +43,13 @@ function webpackBaseConfig(): webpack.Configuration {
       minimize: false,
     },
 
+    stats: {
+      warningsFilter: [
+        // hide css-loader's warnings about empty classes within defined modules
+        /export '.*?' \(imported as 'styles?'\) was not found in '.*?\.module\.s?css' .*/i
+      ]
+    },
+
     resolve: {
       extensions: ['.ts', '.tsx', '.js', '.json', ".scss", ".css", ".txt", ".md"],
       fallback: {

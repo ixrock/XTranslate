@@ -1,4 +1,4 @@
-import styles from "./search-input.module.scss";
+import * as styles from "./search-input.module.scss";
 
 import React from "react";
 import { observer } from "mobx-react";

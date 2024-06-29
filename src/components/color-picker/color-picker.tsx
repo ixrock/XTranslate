@@ -1,4 +1,4 @@
-import styles from "./color-picker.module.scss";
+import * as styles from "./color-picker.module.scss";
 import React from "react"
 import { ChromePicker, Color, ColorResult } from "react-color"
 import { cssNames, IClassName, noop, toCssColor } from "../../utils";

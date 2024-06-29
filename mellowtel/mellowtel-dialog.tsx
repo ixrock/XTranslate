@@ -1,4 +1,4 @@
-import styles from "./mellowtel-dialog.module.scss";
+import * as styles from "./mellowtel-dialog.module.scss";
 import React from "react";
 import { observer } from "mobx-react";
 import { Dialog, DialogProps } from "../src/components/dialog";

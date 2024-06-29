@@ -1,4 +1,4 @@
-import styles from './spinner.module.scss'
+import * as styles from './spinner.module.scss'
 import React from 'react'
 import { cssNames } from "../../utils";
 

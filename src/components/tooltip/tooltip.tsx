@@ -1,4 +1,4 @@
-import styles from './tooltip.module.scss'
+import * as styles from './tooltip.module.scss'
 import React from "react"
 import { observer } from "mobx-react";
 import { makeObservable, observable } from "mobx";

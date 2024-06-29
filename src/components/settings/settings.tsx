@@ -1,4 +1,4 @@
-import styles from "./settings.module.scss";
+import * as styles from "./settings.module.scss";
 
 import React from "react";
 import { action, makeObservable, observable } from "mobx";

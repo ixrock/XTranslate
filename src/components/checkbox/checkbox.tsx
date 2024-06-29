@@ -1,4 +1,4 @@
-import styles from "./checkbox.module.scss"
+import * as styles from "./checkbox.module.scss"
 import React, { DOMAttributes } from 'react'
 import { cssNames, IClassName } from "../../utils";
 import { TooltipDecoratorProps, withTooltip } from "../tooltip";
