@@ -1,9 +1,10 @@
 import * as styles from "./icon.module.scss";
+import uniqueId from "lodash/uniqueId";
 import React, { type ReactNode } from "react";
 import { base64, cssNames } from "../../utils";
-import { TooltipDecoratorProps, withTooltip } from "../tooltip";
+import { Tooltip, TooltipProps } from "../tooltip";
 
-export interface IconProps extends React.HTMLAttributes<any>, TooltipDecoratorProps {
+export interface IconProps extends React.HTMLAttributes<any> {
   material?: string;          // material-icon, see available names at https://material.io/icons/
   svg?: string;               // svg-filename without extension in current folder
   htmlFor?: string;           // render icon as <label htmlFor="id">
@@ -16,11 +17,12 @@ export interface IconProps extends React.HTMLAttributes<any>, TooltipDecoratorPr
   focusable?: boolean;        // allow focus to the icon + show .active styles (default: "true", when icon is interactive)
   colorful?: boolean;          // applicable only for svg-icons
   disabled?: boolean;
+  tooltip?: ReactNode | Omit<TooltipProps, "htmlFor">; // TODO: move to proper decorator / wrapper (?)
 }
 
-@withTooltip
 export class Icon extends React.PureComponent<IconProps> {
-  private elem: HTMLElement;
+  public elem?: HTMLElement;
+  public iconId = this.props.id ?? this.props.tooltip ? uniqueId(`icon_tooltip`) : undefined;
 
   static defaultProps: IconProps = {
     focusable: true,
@@ -48,14 +50,14 @@ export class Icon extends React.PureComponent<IconProps> {
 
   onKeyDown = (evt: React.KeyboardEvent<any>) => {
     switch (evt.nativeEvent.code) {
-      case "Space":
+    case "Space":
 
       // fallthrough
-      case "Enter": {
-        this.elem?.click();
-        evt.preventDefault();
-        break;
-      }
+    case "Enter": {
+      this.elem?.click();
+      evt.preventDefault();
+      break;
+    }
     }
 
     if (this.props.onKeyDown) {
@@ -80,7 +82,9 @@ export class Icon extends React.PureComponent<IconProps> {
     } = this.props;
 
     let iconContent: ReactNode;
+
     const iconProps: Partial<IconProps & { ref?: React.Ref<HTMLElement | any> }> = {
+      id: this.iconId,
       className: cssNames(styles.Icon, className, {
         [styles.svg]: svg,
         [styles.material]: material,
@@ -124,13 +128,35 @@ export class Icon extends React.PureComponent<IconProps> {
     );
 
     // render icon type
-    if (href) {
-      return <a href={href} {...iconProps}/>;
-    }
-    if (htmlFor) {
-      return <label htmlFor={htmlFor} {...iconProps} />;
+    const renderIcon = () => {
+      if (href) {
+        return <a href={href} {...iconProps}/>;
+      }
+      if (htmlFor) {
+        return <label htmlFor={htmlFor} {...iconProps} />;
+      }
+
+      return <i {...iconProps}/>;
+    };
+
+    const renderTooltip = () => {
+      if (!tooltip) {
+        return;
+      }
+      return (
+        <Tooltip
+          following={true}
+          {...(typeof tooltip == "object" ? tooltip : { children: tooltip })}
+          htmlFor={this.iconId}
+        />
+      )
     }
 
-    return <i {...iconProps}/>;
+    return (
+      <>
+        {renderTooltip()}
+        {renderIcon()}
+      </>
+    )
   }
 }

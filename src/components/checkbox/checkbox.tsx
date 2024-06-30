@@ -1,9 +1,10 @@
 import * as styles from "./checkbox.module.scss"
-import React, { DOMAttributes } from 'react'
+import uniqueId from "lodash/uniqueId";
+import React, { DOMAttributes, type ReactNode } from 'react'
 import { cssNames, IClassName } from "../../utils";
-import { TooltipDecoratorProps, withTooltip } from "../tooltip";
+import { Tooltip, TooltipProps } from "../tooltip";
 
-export type CheckboxProps<D = any> = Omit<DOMAttributes<any>, "onChange"> & TooltipDecoratorProps & {
+export type CheckboxProps<D = any> = Omit<DOMAttributes<any>, "onChange"> & {
   id?: string;
   checked: boolean;
   className?: IClassName;
@@ -15,11 +16,12 @@ export type CheckboxProps<D = any> = Omit<DOMAttributes<any>, "onChange"> & Tool
   disabled?: boolean
   value?: D;
   onChange?(checked: boolean, value: D): void;
+  tooltip?: ReactNode | Omit<TooltipProps, "htmlFor">; // TODO: move to proper decorator / wrapper (?)
 }
 
-@withTooltip
 export class Checkbox extends React.Component<CheckboxProps> {
   public elem: HTMLLabelElement;
+  public checkboxId = this.props.id ?? this.props.tooltip ? uniqueId(`checkbox_tooltip`) : undefined;
 
   componentDidMount() {
     if (this.props.autoFocus) {
@@ -48,15 +50,28 @@ export class Checkbox extends React.Component<CheckboxProps> {
 
   onKeyDown = (evt: React.KeyboardEvent<any>) => {
     switch (evt.nativeEvent.code) {
-      case "Enter":
-      case "Space":
-        this.toggle();
-        evt.preventDefault(); // prevent page scrolling (space)
-        break;
+    case "Enter":
+    case "Space":
+      this.toggle();
+      evt.preventDefault(); // prevent page scrolling (space)
+      break;
     }
     if (this.props.onKeyDown) {
       this.props.onKeyDown(evt);
     }
+  }
+
+  renderTooltip() {
+    const { tooltip } = this.props;
+    if (!tooltip) return;
+
+    return (
+      <Tooltip
+        following={true}
+        {...(typeof tooltip == "object" ? tooltip : { children: tooltip })}
+        htmlFor={this.checkboxId}
+      />
+    )
   }
 
   bindRef = (elem: HTMLLabelElement) => {
@@ -73,10 +88,10 @@ export class Checkbox extends React.Component<CheckboxProps> {
       [styles.checked]: checked,
       [styles.disabled]: disabled,
     });
-    
+
     return (
       <label
-        id={id}
+        id={this.checkboxId}
         className={className}
         tabIndex={disabled ? -1 : 0}
         onClick={this.onClick}
@@ -86,6 +101,7 @@ export class Checkbox extends React.Component<CheckboxProps> {
         <i className={cssNames(styles.tickBox, tickBoxClass)}/>
         {label && <div className={cssNames(labelClass)}>{label}</div>}
         {children}
+        {this.renderTooltip()}
       </label>
     );
   }

@@ -2,7 +2,7 @@ import * as styles from "./dialog.module.scss";
 
 import React from "react";
 import { observer } from "mobx-react";
-import { createPortal, findDOMNode } from "react-dom";
+import { createPortal } from "react-dom";
 import { Animate } from "../animate";
 import { cssNames, IClassName, noop, stopPropagation } from "../../utils";
 import { Icon } from "../icon";
@@ -31,17 +31,14 @@ const defaultProps: Partial<DialogProps> = {
 export class Dialog extends React.Component<DialogProps> {
   static defaultProps = defaultProps as unknown as DialogProps;
 
-  public contentElem: HTMLElement;
-
-  get elem() {
-    return findDOMNode(this) as HTMLElement;
-  }
+  public elem?: HTMLElement;
+  public contentElem?: HTMLElement;
 
   open = () => {
     this.props.onOpen();
 
     if (!this.props.pinned) {
-      if (this.elem) this.elem.addEventListener('click', this.onClickOutside);
+      this.elem.addEventListener('click', this.onClickOutside);
       window.addEventListener('keydown', this.onEscapeKey);
     }
   }
@@ -50,7 +47,7 @@ export class Dialog extends React.Component<DialogProps> {
     this.props.onClose();
 
     if (!this.props.pinned) {
-      if (this.elem) this.elem.removeEventListener('click', this.onClickOutside);
+      this.elem.removeEventListener('click', this.onClickOutside);
       window.removeEventListener('keydown', this.onEscapeKey);
     }
   }
@@ -85,7 +82,7 @@ export class Dialog extends React.Component<DialogProps> {
   }
 
   render() {
-    var { modal, pinned, children, isOpen, showCloseIcon } = this.props;
+    var { modal, pinned, children, isOpen } = this.props;
     var className = cssNames(styles.Dialog, this.props.className, {
       [styles.modal]: modal,
       [styles.pinned]: pinned,
@@ -94,7 +91,7 @@ export class Dialog extends React.Component<DialogProps> {
 
     var dialog = (
       <Animate name="opacity-scale" enter={isOpen} onEnter={this.open}>
-        <div className={className} onClick={stopPropagation}>
+        <div className={className} onClick={stopPropagation} ref={e => this.elem = e}>
           <div className={contentClassName} ref={e => this.contentElem = e}>
             {this.renderCloseIcon()}
             {children}

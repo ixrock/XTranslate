@@ -1,13 +1,10 @@
 import * as styles from "./xtranslate-icon.module.scss";
 import React from "react";
-import { findDOMNode } from "react-dom";
 import { cssNames } from "../utils";
 import { Icon, IconProps } from "../components/icon";
 
 export class XTranslateIcon extends React.Component<IconProps> {
-  get elem() {
-    return findDOMNode(this)
-  }
+  public elem: HTMLElement;
 
   render() {
     const { className, ...iconProps } = this.props;
@@ -18,6 +15,7 @@ export class XTranslateIcon extends React.Component<IconProps> {
         svg="logo"
         colorful interactive
         className={cssNames(styles.XTranslateIcon, className)}
+        ref={icon => this.elem = icon?.elem}
       />
     )
   }

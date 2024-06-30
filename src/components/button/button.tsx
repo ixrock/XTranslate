@@ -1,9 +1,8 @@
 import * as styles from "./button.module.scss";
 import React, { ButtonHTMLAttributes, ReactNode } from "react";
 import { cssNames } from "../../utils";
-import { TooltipDecoratorProps, withTooltip } from "../tooltip";
 
-export interface ButtonProps extends ButtonHTMLAttributes<any>, TooltipDecoratorProps {
+export interface ButtonProps extends ButtonHTMLAttributes<any> {
   label?: React.ReactNode;
   waiting?: boolean
   primary?: boolean
@@ -17,13 +16,12 @@ export interface ButtonProps extends ButtonHTMLAttributes<any>, TooltipDecorator
   target?: string // in case of using @href
 }
 
-@withTooltip
 export class Button extends React.PureComponent<ButtonProps, {}> {
   private link: HTMLAnchorElement;
   private button: HTMLButtonElement;
 
   render() {
-    var { className, waiting, label, primary, accent, outline, hidden, active, big, round, tooltip, children, ...props } = this.props;
+    var { className, waiting, label, primary, accent, outline, hidden, active, big, round, children, ...props } = this.props;
     var btnProps = props as Partial<ButtonProps>;
     if (hidden) return;
 

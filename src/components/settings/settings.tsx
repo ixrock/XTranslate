@@ -130,7 +130,7 @@ export class Settings extends React.Component {
             label={getMessage("display_icon_near_selection")}
             checked={settings.showIconNearSelection}
             onChange={v => settings.showIconNearSelection = v}
-            tooltip={<XTranslateIcon style={{ position: "unset" }}/>}
+            tooltip={{ children: <XTranslateIcon style={{ position: "static" }}/> }}
           />
           {settings.showIconNearSelection && (
             <>
