@@ -5,6 +5,9 @@ import { Translator } from "./vendors";
 Mobx.configure({
   enforceActions: "never",
   reactionRequiresObservable: true,
+  observableRequiresReaction: false, // TODO: enable in the future
+  computedRequiresReaction: false,  // TODO: enable in the future
+  safeDescriptors: true,
 });
 
 // App's related init

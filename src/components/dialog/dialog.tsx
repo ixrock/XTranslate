@@ -1,7 +1,6 @@
 import * as styles from "./dialog.module.scss";
 
 import React from "react";
-import { observer } from "mobx-react";
 import { createPortal } from "react-dom";
 import { Animate } from "../animate";
 import { cssNames, IClassName, noop, stopPropagation } from "../../utils";
@@ -27,7 +26,6 @@ const defaultProps: Partial<DialogProps> = {
   showCloseIcon: true,
 };
 
-@observer
 export class Dialog extends React.Component<DialogProps> {
   static defaultProps = defaultProps as unknown as DialogProps;
 

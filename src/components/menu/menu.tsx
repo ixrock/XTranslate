@@ -1,6 +1,8 @@
 import * as styles from './menu.module.scss'
 import React, { Fragment, ReactElement, ReactNode } from "react";
 import { createPortal } from "react-dom";
+import { observer } from "mobx-react";
+import { action, makeObservable, observable } from "mobx";
 import { autoBind, cssNames } from "../../utils";
 import { Animate } from "../animate";
 import { MenuContext } from './menu-context';
@@ -16,7 +18,8 @@ export interface MenuPosition {
 export interface MenuProps {
   className?: string;
   htmlFor?: string;
-  isOpen?: boolean; // initial opening state
+  isOpen?: boolean; // initial open-state
+  position?: MenuPosition; // initial position
   autoFocus?: boolean;
   portalElem?: HTMLElement; // default: document.body
   closeOnItemClick?: boolean; // default: true
@@ -27,12 +30,8 @@ export interface MenuProps {
   onClose?(): void;
 }
 
-export interface MenuState {
-  open: boolean;
-  position?: MenuPosition;
-}
-
-export class Menu extends React.Component<MenuProps, MenuState> {
+@observer
+export class Menu extends React.Component<MenuProps> {
   static defaultProps: MenuProps = {
     autoFocus: false,
     closeOnItemClick: true,
@@ -41,28 +40,29 @@ export class Menu extends React.Component<MenuProps, MenuState> {
     portalElem: document.body,
   };
 
-  constructor(props: MenuProps) {
-    super(props);
-    autoBind(this);
-  }
-
-  public elem: HTMLUListElement | undefined;
+  public elem?: HTMLUListElement | undefined;
   protected items: { [index: number]: MenuItem } = {};
 
-  public state: MenuState = {
-    open: this.props.isOpen,
-    position: {
-      left: true,
-      top: true,
-    },
-  };
+  @observable isOpen = this.props.isOpen ?? false;
 
-  get isOpen() {
-    return !!this.state.open;
-  }
+  @observable position: MenuPosition = {
+    left: true,
+    top: true,
+  };
 
   get opener() {
     return document.getElementById(this.props.htmlFor);
+  }
+
+  constructor(props: MenuProps) {
+    super(props);
+    makeObservable(this);
+    autoBind(this);
+  }
+
+  @action
+  componentDidUpdate() {
+    this.isOpen = this.props.isOpen ?? this.isOpen
   }
 
   componentDidMount() {
@@ -85,22 +85,23 @@ export class Menu extends React.Component<MenuProps, MenuState> {
     window.removeEventListener('scroll', this.onScrollOutside);
   }
 
+  @action
   open() {
-    this.setState({ open: true }, () => {
-      if (this.props.autoFocus) this.focusNextItem();
-      this.elem.addEventListener('keydown', this.onKeyDown);
-      this.refreshPosition();
-      this.props.onOpen?.();
-    });
+    this.isOpen = true;
+    if (this.props.autoFocus) this.focusNextItem();
+    this.refreshPosition();
+    this.props.onOpen?.();
+    this.elem?.addEventListener('keydown', this.onKeyDown);
   }
 
+  @action
   close() {
-    this.elem.removeEventListener('keydown', this.onKeyDown);
-    this.setState({ open: false }, () => {
-      this.props.onClose?.();
-    });
+    this.elem?.removeEventListener('keydown', this.onKeyDown);
+    this.isOpen = false;
+    this.props.onClose?.();
   }
 
+  @action
   toggle() {
     this.isOpen ? this.close() : this.open();
   }
@@ -128,7 +129,7 @@ export class Menu extends React.Component<MenuProps, MenuState> {
     }
   }
 
-  refreshPosition = () => requestAnimationFrame(() => {
+  refreshPosition = () => requestAnimationFrame(action(() => {
     if (!this.opener || !this.elem) return;
 
     var { left, top, bottom, right, width, height } = this.opener.getBoundingClientRect();
@@ -161,35 +162,35 @@ export class Menu extends React.Component<MenuProps, MenuState> {
       delete position.bottom;
     }
 
-    this.setState({ position });
-  });
+    this.position = position; // refresh
+  }));
 
   onKeyDown(evt: KeyboardEvent) {
     if (!this.isOpen) return;
 
     switch (evt.code) {
-      case "Escape":
-        this.close();
-        break;
+    case "Escape":
+      this.close();
+      break;
 
-      case "Space":
-      case "Enter":
-        var focusedItem = this.focusedItem;
-        if (focusedItem) {
-          focusedItem.elem.click();
-          evt.preventDefault();
-        }
-        break;
-
-      case "ArrowUp":
-        this.focusNextItem(true);
-        evt.preventDefault(); // avoid document scrolling
-        break;
-
-      case "ArrowDown":
-        this.focusNextItem();
+    case "Space":
+    case "Enter":
+      var focusedItem = this.focusedItem;
+      if (focusedItem) {
+        focusedItem.elem.click();
         evt.preventDefault();
-        break;
+      }
+      break;
+
+    case "ArrowUp":
+      this.focusNextItem(true);
+      evt.preventDefault(); // avoid document scrolling
+      break;
+
+    case "ArrowDown":
+      this.focusNextItem();
+      evt.preventDefault();
+      break;
     }
   }
 
@@ -218,7 +219,7 @@ export class Menu extends React.Component<MenuProps, MenuState> {
   }
 
   render() {
-    var { left, top, bottom, right } = this.state.position;
+    var { left, top, bottom, right } = this.position;
     var className = cssNames(styles.Menu, this.props.className, {
       [styles.left]: left,
       [styles.right]: right,

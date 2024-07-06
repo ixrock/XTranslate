@@ -28,12 +28,13 @@ export class Animate extends React.Component<AnimateProps> {
     super(props);
     makeObservable(this);
     autoBind(this);
+    this.toggle(this.isVisible);
+  }
 
-    this.dispose.push(
-      reaction(() => this.props.enter, this.toggle, {
-        fireImmediately: true,
-      })
-    );
+  componentDidUpdate(prevProps: AnimateProps) {
+    if (prevProps.enter !== this.props.enter) {
+      this.toggle(this.props.enter);
+    }
   }
 
   componentWillUnmount() {
@@ -41,7 +42,10 @@ export class Animate extends React.Component<AnimateProps> {
   }
 
   @observable isVisible = Boolean(this.props.enter);
-  @observable className = { enter: false, leave: false };
+  @observable className = {
+    enter: false,
+    leave: false,
+  };
 
   get contentElem(): React.ReactElement<React.HTMLProps<any>> {
     return React.Children.only(this.props.children) as React.ReactElement;

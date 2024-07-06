@@ -40,7 +40,7 @@ export class InputTranslation extends React.Component<Props> {
   };
 
   private dispose = disposer();
-  private logger = createLogger();
+  private logger = createLogger({ systemPrefix: "[INPUT-TRANSLATION]" });
   private input?: Input;
 
   @computed get urlParams(): TranslationPageParams {
@@ -88,7 +88,10 @@ export class InputTranslation extends React.Component<Props> {
         this.translateText(selectedText);
       }
     } catch (err) {
-      this.logger.error(`cannot get selected text from active window: ${err.message}`);
+      this.logger.info(`cannot obtain selected text: "${err.message}"`, {
+        err: err,
+        origin: location.href,
+      });
     }
   }
 

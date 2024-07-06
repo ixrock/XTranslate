@@ -1,7 +1,6 @@
 import * as styles from "./search-input.module.scss";
 
 import React from "react";
-import { observer } from "mobx-react";
 import { Input, InputProps } from "./input";
 import { Icon } from "../icon";
 import { bindGlobalHotkey, cssNames, disposer, isHotkeyPressed, SimpleHotkey } from "../../utils";
@@ -25,7 +24,6 @@ const defaultProps: Partial<SearchInputProps> = {
   },
 };
 
-@observer
 export class SearchInput extends React.Component<SearchInputProps> {
   static defaultProps = defaultProps as object as SearchInputProps;
 

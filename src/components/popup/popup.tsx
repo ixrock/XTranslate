@@ -1,7 +1,7 @@
 import * as styles from "./popup.module.scss"
 
 import React, { CSSProperties } from "react";
-import { action, computed, makeObservable, observable, reaction } from "mobx";
+import { action, computed, makeObservable, observable } from "mobx";
 import { observer } from "mobx-react";
 import { isEqual } from "lodash";
 import { iconMaterialFavorite, iconMaterialFavoriteOutlined } from "../../common-vars";
@@ -38,16 +38,16 @@ export class Popup extends React.Component<Props> {
   };
 
   @observable copied = false;
+  @observable translation = this.props.translation;
 
   constructor(props: Props) {
     super(props);
     makeObservable(this);
+  }
 
-    this.dispose.push(
-      reaction(() => this.props.translation, () => {
-        this.copied = false; // reset copy-state for previous translation
-      }),
-    );
+  @action
+  componentDidUpdate() {
+    this.translation = this.props.translation;
   }
 
   componentWillUnmount() {
@@ -74,15 +74,15 @@ export class Popup extends React.Component<Props> {
     }
   }
 
-  @computed get isFavorite() {
+  get isFavorite() {
     return isFavorite(this.props.translation);
   }
 
-  @computed get isPreviewMode(): boolean {
+  get isPreviewMode(): boolean {
     return this.props.previewMode || isEqual(this.props.translation, Popup.translationMock);
   }
 
-  @computed get popupStyle(): CSSProperties {
+  get popupStyle(): CSSProperties {
     var {
       bgcMain, bgcLinear, bgcSecondary,
       borderRadius, fontFamily, fontSize, textColor,
@@ -129,6 +129,7 @@ export class Popup extends React.Component<Props> {
     }
   }
 
+  @action
   copyToClipboard = async () => {
     const { translation, transcription, langTo, langDetected, vendor, dictionary, originalText, } = this.props.translation;
 
@@ -150,6 +151,7 @@ export class Popup extends React.Component<Props> {
     try {
       await navigator.clipboard.writeText(texts.join("\n"));
       this.copied = true;
+      setTimeout(() => this.copied = false, 2500); // reset in 2,5 seconds
     } catch (error) {
       console.error(`failed to copy text to clipboard: ${error}`);
     }
@@ -314,7 +316,7 @@ export class Popup extends React.Component<Props> {
         <Icon material="error_outline" className={styles.errorIcon}/>
         <div className={styles.errorInfo}>
           <p>{statusCode}: {getMessage("translation_data_failed")}</p>
-          <p dangerouslySetInnerHTML={{ __html: message }} />
+          <p dangerouslySetInnerHTML={{ __html: message }}/>
         </div>
         {this.renderNextTranslationIcon()}
       </div>

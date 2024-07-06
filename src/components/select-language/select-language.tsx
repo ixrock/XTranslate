@@ -1,7 +1,7 @@
 import "./select-language.scss";
 
 import React from "react";
-import { action, computed, makeObservable } from "mobx";
+import { action, makeObservable } from "mobx";
 import { observer } from "mobx-react";
 import { ReactSelect, ReactSelectGroup, ReactSelectOption } from "../select";
 import { cssNames } from "../../utils";
@@ -28,27 +28,27 @@ export class SelectLanguage extends React.Component<Props> {
     makeObservable(this);
   }
 
-  @computed get langFrom() {
+  get langFrom() {
     return this.props.from ?? settingsStore.data.langFrom;
   }
 
-  @computed get langTo() {
+  get langTo() {
     return this.props.to ?? settingsStore.data.langTo;
   }
 
-  @computed get vendor() {
+  get vendor() {
     return this.props.vendor ?? settingsStore.data.vendor;
   }
 
-  @computed get sourceFavorites(): string[] {
+  get sourceFavorites(): string[] {
     return settingsStore.getFavorites(this.vendor, "source")
   }
 
-  @computed get targetFavorites(): string[] {
+  get targetFavorites(): string[] {
     return settingsStore.getFavorites(this.vendor, "target")
   }
 
-  @computed get sourceLanguageOptions(): ReactSelectGroup<string>[] {
+  get sourceLanguageOptions(): ReactSelectGroup<string>[] {
     var { langFrom: sourceLangList } = getTranslator(this.vendor);
 
     var getOption = (lang: string): ReactSelectOption<string> => ({
@@ -73,7 +73,7 @@ export class SelectLanguage extends React.Component<Props> {
     ];
   }
 
-  @computed get targetLanguageOptions(): ReactSelectGroup<string>[] {
+  get targetLanguageOptions(): ReactSelectGroup<string>[] {
     var { langTo: targetLangList } = getTranslator(this.vendor);
 
     var getOption = (lang: string): ReactSelectOption<string> => ({
@@ -98,7 +98,7 @@ export class SelectLanguage extends React.Component<Props> {
     ];
   }
 
-  @computed get reverseLanguageOptions(): ReactSelectOption<string>[] {
+  get reverseLanguageOptions(): ReactSelectOption<string>[] {
     var { langToReverse } = settingsStore.data;
     var { langTo: targetLangList } = getTranslator(this.vendor);
 

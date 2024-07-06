@@ -36,6 +36,7 @@ enum HistoryTimeFrame {
 export class UserHistory extends React.Component {
   private dispose = disposer();
   public searchInput?: SearchInput;
+  public importHistoryInput?: FileInput;
 
   constructor(props: object) {
     super(props);
@@ -477,7 +478,7 @@ export class UserHistory extends React.Component {
               onClick={action(() => this.showImportExport = !showImportExport)}
             />
             <Menu htmlFor="import_export_menu_icon_trigger">
-              <MenuItem htmlFor="import-history">
+              <MenuItem onClick={() => this.importHistoryInput.selectFiles()}>
                 {getMessage("history_import_entries", { format: "JSON" })}
               </MenuItem>
               <MenuItem spacer/>
@@ -552,6 +553,7 @@ export class UserHistory extends React.Component {
           id="import-history"
           accept="application/json"
           onImport={this.onImport}
+          ref={fileInput => this.importHistoryInput = fileInput}
         />
         {this.renderHeader()}
         {this.renderHistory()}
