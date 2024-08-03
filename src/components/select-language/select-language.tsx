@@ -306,6 +306,7 @@ export const langToFlagIconMap: Record<string, string> = {
   "zu": "za", // Zulu (South Africa)
   "xh": "za", // Xhosa (South Africa)
   "vi": "vn", // Vietnamese
+  "ar": "sa", // Arabic
 };
 
 export function getFlagIcon(locale: string): string | undefined {
