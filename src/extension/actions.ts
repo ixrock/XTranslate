@@ -1,6 +1,6 @@
 import type { ITranslationResult, TranslatePayload } from "../vendors";
 import type { IHistoryItem } from "../components/user-history/history.storage";
-import { getActiveTab, isBackgroundWorker, sendMessage, sendMessageToAllTabs } from "./index";
+import { broadcastMessage, getActiveTab, isBackgroundWorker, Message, sendMessage } from "./index";
 import { isSystemPage } from "../common-vars";
 import { MessageType, ProxyRequestPayload, ProxyResponsePayload, ProxyResponseType, SaveToFavoritesPayload, SaveToHistoryPayload, StorageDeletePayload, StorageReadPayload, StorageSyncPayload, StorageWritePayload } from "./messages";
 import { handleProxyRequestPayload } from "../background/httpProxy.bgc";
@@ -122,23 +122,11 @@ export async function removeFromExternalStorageAction(payload: StorageDeletePayl
   });
 }
 
-export async function syncExternalStorageUpdate<T = any>(payload: StorageSyncPayload<T>) {
-  // send update to options page
-  try {
-    await sendMessage<StorageSyncPayload<T>>({
-      type: MessageType.STORAGE_DATA_SYNC,
-      payload,
-    });
-  } catch (err) {
-    if (String(err).includes("Could not establish connection. Receiving end does not exist.")) {
-      // do nothing: this error might happen when options page extension window is not opened
-    } else {
-      throw err
-    }
-  }
-
-  return sendMessageToAllTabs<StorageSyncPayload<T>>({
+export const syncExternalStorageUpdate = <T>(payload: StorageSyncPayload<T>) => {
+  const msg: Message<StorageSyncPayload<T>> = {
     type: MessageType.STORAGE_DATA_SYNC,
     payload,
-  });
+  };
+
+  return broadcastMessage(msg);
 }

@@ -29,7 +29,7 @@ export const availableLocales = {
 
 export const bundles = observable.map<Locale, FluentBundle>();
 
-export const storage = createStorage<{ lang: Locale }>("i18n", {
+const storage = createStorage<{ lang: Locale }>("i18n", {
   area: "sync",
   defaultValue: {
     lang: getSystemLocale(),

@@ -1,5 +1,6 @@
 // Chrome tabs apis
 import type { Message } from './messages'
+import { sendMessage } from "./runtime";
 
 export function createTab(url: string, active = true): Promise<chrome.tabs.Tab> {
   return chrome.tabs.create({ url, active });
@@ -28,4 +29,21 @@ export function getActiveTab(): Promise<chrome.tabs.Tab> {
       resolve(tabs[0]);
     });
   });
+}
+
+/**
+ * Broadcast message to all window tabs (context pages) and extension windows (options page)
+ */
+export async function broadcastMessage<T>(msg: Message<T>) {
+  try {
+    await sendMessage<T>(msg);
+  } catch (err) {
+    if (String(err).includes("Could not establish connection. Receiving end does not exist.")) {
+      // do nothing: this error might happen when options page extension window is not opened
+    } else {
+      throw err;
+    }
+  }
+
+  return sendMessageToAllTabs<T>(msg);
 }

@@ -23,7 +23,7 @@ export function createStorage<T>(key: string, options: ChromeStorageHelperOption
       const payload: StorageWritePayload<T> = {
         key, area,
         state: value,
-        origin: globalThis.location?.href
+        origin: StorageHelper.getResourceOrigin(),
       };
       return writeToExternalStorageAction(payload);
     },
@@ -33,7 +33,10 @@ export function createStorage<T>(key: string, options: ChromeStorageHelperOption
     },
 
     async removeItem(key: string) {
-      return removeFromExternalStorageAction({ area, key });
+      return removeFromExternalStorageAction({
+        area, key,
+        origin: StorageHelper.getResourceOrigin(),
+      });
     },
   };
 
@@ -43,20 +46,26 @@ export function createStorage<T>(key: string, options: ChromeStorageHelperOption
   });
 
   onMessage(MessageType.STORAGE_DATA_SYNC, async (payload: StorageSyncPayload<T>) => {
-    const eventOrigin = globalThis.location?.href;
-    const storageKeyMatched = payload.key === storageHelper.key;
-    const sameArea = payload.area === area;
-    const differentOrigin = payload.origin !== eventOrigin;
+    const currentOrigin = StorageHelper.getResourceOrigin();
 
-    if (storageKeyMatched && sameArea && differentOrigin) {
+    const { key: evtKey, origin: evtOrigin, area: evtArea, state: evtState } = payload;
+    const storageKeyMatched = evtKey === storageHelper.key;
+    const isSameArea = evtArea === area;
+    const isDifferentOrigin = evtOrigin !== currentOrigin;
+
+    if (storageKeyMatched && isSameArea && isDifferentOrigin) {
       logger.info("data sync", {
-        eventOrigin,
+        eventOrigin: currentOrigin,
         payload,
       });
 
-      storageHelper.set(payload.state, {
-        silent: true, // don't save back to persistent storage
-      });
+      if (evtState === undefined) {
+        storageHelper.reset({ silent: true });
+      } else {
+        storageHelper.set(evtState, {
+          silent: true, // don't save back to persistent storage
+        });
+      }
     }
   });
 

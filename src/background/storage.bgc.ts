@@ -3,7 +3,6 @@
 
 import { disposer } from "../utils/disposer";
 import { MessageType, onMessage, StorageDeletePayload, StorageReadPayload, StorageWritePayload, syncExternalStorageUpdate } from '../extension'
-import { isFirefox } from "../common-vars";
 import { createLogger } from "../utils/createLogger";
 
 const logger = createLogger({ systemPrefix: "STORAGE(BGC)" });
@@ -19,9 +18,7 @@ export function listenStorageActions() {
 }
 
 function getExtensionStorageApi(area: StorageArea = "local") {
-  return isFirefox()
-    ? chrome.storage.local // TODO: support "sync" for firefox (maybe it's disabled only in dev-mode)
-    : chrome.storage[area];
+  return chrome.storage[area];
 }
 
 export async function readFromExternalStorage<T>({ key, area }: StorageReadPayload): Promise<T> {
@@ -40,16 +37,23 @@ export async function writeToExternalStorage<T>(payload: StorageWritePayload, sy
   logger.info(`writing "${key}" data to external storage`, { key, area, state });
   await storageApi.set({ [key]: state });
 
-  // send sync update to other browser tabs
+  // send sync update to browser tabs and opened extension windows (if any)
   if (syncUpdate) {
-    syncExternalStorageUpdate(payload);
+    void syncExternalStorageUpdate(payload);
   }
 }
 
-export async function removeFromExternalStorage(payload: StorageDeletePayload) {
+export async function removeFromExternalStorage(payload: StorageDeletePayload, syncUpdate = true): Promise<void> {
   const { key, area } = payload;
   const storageApi = getExtensionStorageApi(area);
 
   logger.info(`removing item "${key}"(area: ${area}) from storage`);
-  return storageApi.remove(key);
+  await storageApi.remove(key);
+
+  if (syncUpdate) {
+    void syncExternalStorageUpdate({
+      ...payload,
+      state: undefined,
+    });
+  }
 }

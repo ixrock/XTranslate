@@ -69,11 +69,11 @@ export interface StorageWritePayload<T = any> {
   key: string;
   area: chrome.storage.AreaName;
   state: T;
-  origin: string; // window.location where action happened
+  origin: string; // location URL or unique window/resource ID where action happened
 }
 
-export interface StorageDeletePayload extends StorageReadPayload {
+export interface StorageSyncPayload<T = any> extends StorageWritePayload<T> {
 }
 
-export interface StorageSyncPayload<T> extends StorageWritePayload<T> {
+export interface StorageDeletePayload extends Omit<StorageWritePayload, "state"> {
 }

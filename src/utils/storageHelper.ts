@@ -25,6 +25,10 @@ export interface StorageAdapter<T> {
 }
 
 export class StorageHelper<T> {
+  static getResourceOrigin() {
+    return globalThis.location?.href;
+  }
+
   protected logger = createLogger({ systemPrefix: `[StorageHelper](${this.key})` });
   protected storage?: StorageAdapter<T> = this.options.storageAdapter;
   protected data = observable.box<T>();
@@ -118,7 +122,7 @@ export class StorageHelper<T> {
   protected onData(data: T) {
     this.logger.info("data fetched", {
       data,
-      origin: globalThis.location?.href,
+      origin: StorageHelper.getResourceOrigin(),
     });
 
     const notEmpty = data != null;
@@ -161,8 +165,8 @@ export class StorageHelper<T> {
   }
 
   @action
-  reset() {
-    this.set(this.defaultValue);
+  reset(opts?: { silent?: boolean }) {
+    this.set(this.defaultValue, opts);
   }
 
   @action

@@ -31,10 +31,6 @@ export function isPdf(): boolean {
   return document.contentType === "application/pdf";
 }
 
-export function isFirefox(): boolean {
-  return !!navigator.userAgent.match(/firefox\/(?:\d+\.?)+/i);
-}
-
 export function isChrome(): boolean {
   return !!navigator.userAgent.match(/chrome\/(?:\d+\.?)+/i);
 }
