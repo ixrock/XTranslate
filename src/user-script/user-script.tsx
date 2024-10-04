@@ -9,7 +9,7 @@ import { action, computed, makeObservable, observable, toJS } from "mobx";
 import { observer } from "mobx-react";
 import { debounce, isEqual, isEmpty, orderBy } from "lodash"
 import { preloadAppData } from "../preloadAppData";
-import { autoBind, getHotkey } from "../utils";
+import { autoBind, delay, getHotkey } from "../utils";
 import { getManifest, getURL, MessageType, onMessage, proxyRequest, ProxyResponseType, TranslateWithVendorPayload } from "../extension";
 import { getNextTranslator, getTranslator, ITranslationError, ITranslationResult, TranslatePayload } from "../vendors";
 import { XTranslateIcon } from "./xtranslate-icon";
@@ -456,8 +456,11 @@ class App extends React.Component {
   }
 }
 
-// run content script
-App.init(preloadAppData);
-
 // mellowtel integration
 initMellowtel();
+
+// fix: wait for 1 second to avoid possible react.js error: https://react.dev/errors/418
+// that might happen in case of server-side-rendering at resource backend
+// reproducible at the moment at https://chatgpt.com/
+await delay(1000);
+await App.init(preloadAppData);
