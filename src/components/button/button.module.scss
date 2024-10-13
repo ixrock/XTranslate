@@ -1,4 +1,7 @@
 .Button {
+  --bgc-waiting: #ffffffd8;
+  --bgc-outline: transparent;
+
   position: relative;
   overflow: hidden; // required for transition effect on hover
   color: white;
@@ -26,7 +29,7 @@
 
   &.outline {
     color: inherit;
-    background: transparent;
+    background: var(--bgc-outline);
     box-shadow: 0 0 0 1px inset;
     transition: 100ms box-shadow ease-out;
 
@@ -69,7 +72,7 @@
       top: 0;
       width: 0;
       height: 100%;
-      background: transparentize(white, .85);
+      background: var(--bgc-waiting);
       animation: ButtonWaitingAnimation 1.5s infinite linear;
     }
   }
@@ -86,7 +89,7 @@
     width: 100%;
     height: 100%;
     border-radius: inherit;
-    background: transparentize(white, .85);
+    background: var(--bgc-waiting);
     transform-origin: left top;
     transition: transform 150ms;
     transform: rotate(0deg);

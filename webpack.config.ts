@@ -9,7 +9,11 @@ const srcPath = path.resolve(__dirname, "src");
 const distPath = path.resolve(__dirname, "dist");
 const optionsPage = path.resolve(__dirname, "options.html");
 const componentsDir = path.resolve(srcPath, "components");
-const sassCommonVarsImport = `@import "mixins", "colors";`; // sass-constants & mixins only
+
+const sassCommonVarsImport = [
+  `@import "${componentsDir}/mixins.scss";`,
+  `@import "${componentsDir}/colors.scss";`,
+].join("\n");
 
 const configEntries: webpack.EntryObject = {
   [appEntry]: path.resolve(componentsDir, "app/index.tsx"),
@@ -43,12 +47,10 @@ function webpackBaseConfig(): webpack.Configuration {
       minimize: false,
     },
 
-    stats: {
-      warningsFilter: [
-        // hide css-loader's warnings about empty classes within defined modules
-        /export '.*?' \(imported as 'styles?'\) was not found in '.*?\.module\.s?css' .*/i
-      ]
-    },
+    ignoreWarnings: [
+      // hide css-loader's warnings about empty classes within defined modules
+      /export '.*?' \(imported as 'styles?'\) was not found in '.*?\.module\.s?css' .*/i
+    ],
 
     resolve: {
       extensions: ['.ts', '.tsx', '.js', '.json', ".scss", ".css", ".txt", ".md"],

@@ -1,20 +1,18 @@
 // Themes customization (dark/light)
 
 @mixin theme-vars() {
-  $textColorMain: #87909c;
   --flex-gap: var(--theme-spacing);
-
   --theme-content-width: 620px;
   --theme-color-contrast: black;
   --theme-bgc: white;
   --theme-bgc-invert: #36393e;
   --theme-color-primary: #942486aa;
   --theme-color-accent: #e85555;
-  --theme-color-text: #{$textColorMain};
+  --theme-color-text: #87909c;
   --theme-color-text2: #a0a0a0;
   --theme-color-success: #{$green-600};
   --theme-color-error: #{$red-500};
-  --theme-border-color: #{transparentize($textColorMain, .5)};
+  --theme-border-color: rgba(from var(--theme-color-text) r g b / .5);
   --theme-border-radius: 5px;
   --theme-spacing: 10px;
   --theme-spacing-half: calc(var(--theme-spacing) / 2);
@@ -27,7 +25,7 @@
   --theme-color-contrast: white;
   --theme-bgc: #36393e;
   --theme-bgc-invert: white;
-  --theme-color-text: #{lighten(#a0a0a0, 2.5%)};
+  --theme-color-text: #a0a0a0;
   --theme-scrollbar-bgc: rgba(255, 255, 255, .25);
 }
 
