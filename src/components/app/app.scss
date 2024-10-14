@@ -18,7 +18,6 @@ html {
 }
 
 body {
-  @include custom-scrollbar($overlay: true);
   font: 15px Helvetica Neue, Roboto, sans-serif;
   background: var(--theme-bgc);
   color: var(--theme-color-text);
@@ -57,9 +56,11 @@ hr {
 }
 
 #app {
+  @include custom-scrollbar($overlay: true);
+
   margin: auto;
   width: var(--theme-content-width);
-  min-height: 600px;
+  min-height: var(--theme-content-height);
   padding: var(--theme-spacing-double) calc(var(--theme-spacing) * 3);
 }
 
