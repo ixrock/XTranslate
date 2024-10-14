@@ -68,9 +68,10 @@
   }
 
   textarea {
-    @include hidden-scrollbar;
     line-height: 1.2;
-    resize: none;
+    min-height: 2rem;
+    overflow: overlay;
+    resize: vertical;
   }
 
   fieldset:disabled &,
