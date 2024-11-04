@@ -1,6 +1,9 @@
 # Localization file for chrome extension
 # URL: https://chrome.google.com/webstore/detail/xtranslate/gfgpkepllngchpmcippidfhmbhlljhoo
-# Author: Radoš Milićev (https://github.com/rammba)
+# Authors:
+#				- https://github.com/Sijera
+#				- Radoš Milićev (https://github.com/rammba)
+
 -app-brand-name = XTranslate
 
 # common
