@@ -7,25 +7,13 @@ import { getURL, proxyRequest, ProxyResponseType } from "./extension";
 import { createLogger } from "./utils/createLogger";
 import { FluentBundle, FluentResource, FluentVariable } from "@fluent/bundle"
 import { createStorage } from "./storage";
+import LocalesList from "../_locales/_list.json"
 
 export const logger = createLogger({ systemPrefix: "[I18N-LOCALE]" });
 
-// List of all provided locales from `_locales/*` folders
-// Supported locales by browser: https://src.chromium.org/viewvc/chrome/trunk/src/third_party/cld/languages/internal/languages.cc
-export type Locale = keyof typeof availableLocales;
-
+export type Locale = keyof typeof LocalesList;
+export const availableLocales = LocalesList;
 export const fallbackLocale = "en";
-
-export const availableLocales = {
-  en: "English",
-  de: "German",
-  ru: "Russian",
-  sk: "Slovak",
-  sr: "Serbian",
-  tr: "Turkish",
-  vi: "Vietnamese",
-  zh_TW: "Chinese (Taiwan)",
-};
 
 export const bundles = observable.map<Locale, FluentBundle>();
 
