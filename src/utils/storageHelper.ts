@@ -31,7 +31,7 @@ export class StorageHelper<T> {
 
   protected logger = createLogger({ systemPrefix: `[StorageHelper](${this.key})` });
   protected storage?: StorageAdapter<T> = this.options.storageAdapter;
-  protected data = observable.box<T>();
+  #data = observable.box<T>();
   @observable initialized = false;
   @observable saving = false;
   @observable loading = false;
@@ -53,7 +53,7 @@ export class StorageHelper<T> {
       autoLoad: true,
       ...options
     };
-    this.data.set(this.defaultValue);
+    this.#data.set(this.defaultValue);
 
     if (this.options.autoLoad) {
       this.load();
@@ -150,7 +150,7 @@ export class StorageHelper<T> {
   }
 
   get(): T {
-    return this.data.get();
+    return this.#data.get();
   }
 
   @action
@@ -158,7 +158,7 @@ export class StorageHelper<T> {
     if (silent) {
       this.unbindAutoSaveToExternalStorage?.();
     }
-    this.data.set(value);
+    this.#data.set(value);
     if (silent) {
       this.bindAutoSaveToExternalStorage();
     }

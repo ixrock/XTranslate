@@ -63,19 +63,25 @@ async function loadMessages(locale: Locale) {
   }
 }
 
-export function getMessagePattern(key: string): { message: Pattern, bundle: FluentBundle } {
+export interface MessagePattern {
+  message: Pattern
+  bundle: FluentBundle
+}
+
+export function getMessagePattern(key: string): MessagePattern {
   const currentLocale = getLocale();
   const bundle = bundles.get(currentLocale);
-  const fallbackBundle = bundles.get(fallbackLocale);
   const message = bundle?.getMessage(key)?.value;
-  const fallbackMessage = fallbackBundle.getMessage(key)?.value; // fallback locale message (default: english)
 
   if (message) {
     return { message, bundle }
   }
 
+  const fallbackBundle = bundles.get(fallbackLocale);
+  const fallbackMessage = fallbackBundle.getMessage(key)?.value; // fallback locale message (default: english)
+
   return {
-    message: fallbackMessage ?? `Unknown message key: "${key}"`,
+    message: fallbackMessage,
     bundle: fallbackBundle,
   };
 }
@@ -84,9 +90,7 @@ export function getMessage(key: string): string;
 export function getMessage(key: string, placeholders: Record<string, React.ReactNode>): React.ReactNode;
 export function getMessage(key: string, placeholders: Record<string, FluentVariable | any> = {}): React.ReactNode {
   const { message, bundle } = getMessagePattern(key);
-  if (!message) {
-    return `[${key}:not-found]`;
-  }
+  if (!message) return;
 
   const formatAsReactNode = Object.values(placeholders ?? {}).some(React.isValidElement);
   if (formatAsReactNode) {

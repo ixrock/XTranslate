@@ -17,32 +17,35 @@ class Deepl extends Translator {
   }
 
   get apiUrl() {
-    const authKey = this.authKey.get();
-    const isFreeKey = authKey?.endsWith(":fx");
+    const apiKey = this.#apiKey.get();
+    const isFreeKey = apiKey?.endsWith(":fx");
 
-    if (isFreeKey || !authKey) {
+    if (isFreeKey || !apiKey) {
       return "https://api-free.deepl.com/v2";
     }
     return "https://api.deepl.com/v2";
   }
 
-  protected authKey = createStorage("deepl_api_auth_key", {
-    defaultValue: "b05afc95-d4ea-2bee-07e6-e81469c588f2:fx", // free subscription key (example)
+  #apiKey = createStorage("deepl_api_auth_key", {
+    defaultValue: "", // free or paid subscription key (example: "b05afc95-d4ea-2bee-07e6-e81469c588f2:fx")
   });
 
-  protected setupAuthApiKey = () => {
-    const newKey = window.prompt("DeepL API Key", this.authKey.get());
+  private setupAuthApiKey = () => {
+    const newKey = window.prompt("DeepL API Key");
     if (newKey === null) return;
-    this.authKey.set(newKey || this.authKey.defaultValue);
+    this.#apiKey.set(newKey || this.#apiKey.defaultValue);
+  };
+
+  private clearApiKey() {
+    this.#apiKey.set("");
   };
 
   renderSettingsListWidget(): React.ReactNode {
-    const authKey = this.authKey.get();
-    const isDefaultAuthKey = authKey === this.authKey.defaultValue;
+    const apiKey = this.#apiKey.get();
 
     return (
       <div className="flex gaps align-center">
-        {isDefaultAuthKey && (
+        {!apiKey && (
           <Icon
             small
             material="error_outline"
@@ -50,11 +53,22 @@ class Deepl extends Translator {
           />
         )}
         <a href="#" onClick={prevDefault(this.setupAuthApiKey)}>
+          <Icon
+            small
+            material="warning_amber"
+            tooltip={getMessage("deepl_insert_auth_key_warning")}
+          />
           <small>
-            {isDefaultAuthKey && <em>{getMessage("deepl_insert_auth_key")}</em>}
-            {!isDefaultAuthKey && <> / key: <em>{authKey}</em></>}
+            {!apiKey && <em>{getMessage("deepl_insert_auth_key")}</em>}
+            {apiKey && <b>{apiKey.substring(0, 4)}-****-{apiKey.substring(apiKey.length - 4)}</b>}
           </small>
         </a>
+        {apiKey && <Icon
+          small
+          material="clear"
+          onClick={this.clearApiKey}
+          tooltip={getMessage("deepl_insert_auth_key_remove")}
+        />}
       </div>
     );
   }
@@ -64,7 +78,7 @@ class Deepl extends Translator {
     const reqInit: ProxyRequestInit = {
       method: "POST",
       headers: {
-        "Authorization": `DeepL-Auth-Key ${this.authKey.get()}`,
+        "Authorization": `DeepL-Auth-Key ${this.#apiKey.get()}`,
         "Content-type": "application/x-www-form-urlencoded",
       },
       body: new URLSearchParams({
@@ -93,12 +107,12 @@ class Deepl extends Translator {
   }
 
   async getDataUsage(): Promise<DeeplUsageResponse> {
-    const url = `${this.apiUrl}/usage?auth_key=${this.authKey.get()}`;
+    const url = `${this.apiUrl}/usage?auth_key=${this.#apiKey.get()}`;
     return this.request({ url });
   }
 
   async getSupportedLanguages(type: "source" | "target"): Promise<DeeplSupportedLanguage[]> {
-    const url = `${this.apiUrl}/languages?type=${type}&auth_key=${this.authKey.get()}`;
+    const url = `${this.apiUrl}/languages?type=${type}&auth_key=${this.#apiKey.get()}`;
     return this.request({ url });
   }
 }

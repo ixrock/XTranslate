@@ -8,3 +8,5 @@ backup
 npm-debug.log
 ads.js
 refs.ts
+.env
+.env.*

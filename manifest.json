@@ -37,7 +37,6 @@
       "js": ["user-script.js"],
       "matches": [
         "<all_urls>",
-        "http://*/*",
         "https://*/*",
         "file://*/*"
       ]
