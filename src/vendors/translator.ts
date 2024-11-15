@@ -150,7 +150,10 @@ export abstract class Translator {
   }
 
   getLangPairTitle(langFrom: string, langTo: string) {
-    return [this.langFrom[langFrom], this.langTo[langTo]].join(' → ');
+    return [
+      this.langFrom[langFrom] ?? langFrom,
+      this.langTo[langTo] ?? langTo
+    ].join(' → ');
   }
 
   getFullPageTranslationUrl(pageUrl: string, lang: string): string {

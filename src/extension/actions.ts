@@ -1,11 +1,12 @@
 import type { ITranslationResult, TranslatePayload } from "../vendors";
 import type { IHistoryItem } from "../components/user-history/history.storage";
-import { broadcastMessage, getActiveTab, isBackgroundWorker, Message, sendMessage } from "./index";
+import { broadcastMessage, getActiveTab, isBackgroundWorker, Message, OpenAITranslatePayload, sendMessage } from "./index";
 import { isSystemPage } from "../common-vars";
 import { MessageType, ProxyRequestPayload, ProxyResponsePayload, ProxyResponseType, SaveToFavoritesPayload, SaveToHistoryPayload, StorageDeletePayload, StorageReadPayload, StorageSyncPayload, StorageWritePayload } from "./messages";
 import { handleProxyRequestPayload } from "../background/httpProxy.bgc";
 import { readFromExternalStorage, removeFromExternalStorage, writeToExternalStorage } from "../background/storage.bgc";
 import { getHistoryItemOffline, saveToFavorites, saveToHistory } from "../background/history.bgc";
+import { translateText } from "../background/openai.bgc";
 
 export async function getSelectedText(): Promise<string> {
   const activeTab = await getActiveTab();
@@ -118,6 +119,17 @@ export async function removeFromExternalStorageAction(payload: StorageDeletePayl
 
   return sendMessage<StorageDeletePayload>({
     type: MessageType.STORAGE_DATA_REMOVE,
+    payload,
+  });
+}
+
+export async function openAiTranslationAction(payload: OpenAITranslatePayload) {
+  if (isBackgroundWorker()) {
+    return translateText(payload);
+  }
+
+  return sendMessage<OpenAITranslatePayload>({
+    type: MessageType.OPENAI_TRANSLATION,
     payload,
   });
 }

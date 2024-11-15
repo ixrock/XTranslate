@@ -141,7 +141,7 @@ rate_app_button = Rate in extensions store
 rate_app_button_later = Remind me later
 deepl_get_own_key_info = Register at www.deepl.com and get own free authentication key for DeepL API
 deepl_insert_auth_key = Setup auth api key for getting access to DeepL translations
-deepl_insert_auth_key_warning = Warning: do not enter your API key in any other place except this extension window
+deepl_insert_auth_key_warning = Warning: DO NOT enter your API key in any other place except this extension window
 deepl_insert_auth_key_remove = Remove DeepL API Key
 target_lang_placeholder = Target languages
 source_lang_placeholder = Source languages
@@ -173,3 +173,9 @@ mellowtel_regulation3 = It also provides CWS regulators with tools to monitor an
 mellowtel_button_decline = Decline optional use
 mellowtel_button_accept = Accept all
 mellowtel_dialog_footer = Thanks for taking the time to read, teams { $devs }.
+
+# open-ai integration
+open_ai_get_access_info = 1) Register at platform.openai.com 2) Create api access key 3) Top-up your balance (5$+)
+open_ai_insert_auth_key = Provide your api key for getting OpenAI translations (ChatGPT authors platform)
+open_ai_insert_auth_key_warning = Warning: DO NOT enter your API key in any other place except this extension window
+open_ai_insert_auth_key_remove = Remove OpenAI API key

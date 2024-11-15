@@ -5,7 +5,7 @@ import { action, makeObservable, observable } from "mobx";
 import { observer } from "mobx-react";
 import { isEqual } from "lodash";
 import { getTranslators } from "../../vendors";
-import { getHotkey, parseHotkey, prevDefault } from "../../utils";
+import { cssNames, getHotkey, parseHotkey, prevDefault } from "../../utils";
 import { XTranslateIcon } from "../../user-script/xtranslate-icon";
 import { SelectLanguage } from "../select-language";
 import { Input } from "../input";
@@ -103,12 +103,12 @@ export class Settings extends React.Component {
           >
             {getTranslators().map(vendor => {
               const { name, title, publicUrl } = vendor;
-              var domain = publicUrl.match(/https?:\/\/(.*?)(?:\/\w*|$)/i)[1];
+              var domain = new URL(publicUrl).hostname.replace(/^www\./, "");
               return (
-                <div key={name} className="flex gaps">
+                <div key={name} className={cssNames(styles.vendor, "flex gaps")}>
                   <Radio value={name} label={title}/>
                   <a href={publicUrl} target="_blank" tabIndex={-1}>
-                    {domain.split('.').slice(-2).join('.')}
+                    {domain}
                   </a>
                   <div className="flex gaps align-center">
                     {vendor.renderSettingsListWidget()}

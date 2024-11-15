@@ -298,7 +298,9 @@ export class Popup extends React.Component<Props> {
         {
           settingsStore.data.showTranslatedFrom && (
             <div className={styles.translatedFrom}>
-              {getMessage("translated_from", { lang: translator.langFrom[langFrom] })}
+              {getMessage("translated_from", {
+                lang: translator.langFrom[langFrom] ?? langFrom,
+              })}
               {` (${translator.title})`}
             </div>
           )

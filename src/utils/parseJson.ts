@@ -2,7 +2,7 @@
 
 export interface JsonResponseError {
   statusCode: number; // http response code (e.g. 400)
-  message?: string; // error explanation
+  message: string; // error explanation
 }
 
 export async function parseJson(res: Response): Promise<any> {
