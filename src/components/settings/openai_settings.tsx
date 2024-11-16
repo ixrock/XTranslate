@@ -1,3 +1,4 @@
+import * as styles from "./openai_settings.module.scss";
 import React from 'react';
 import { computed } from "mobx";
 import { observer } from "mobx-react";
@@ -5,12 +6,13 @@ import { ReactSelect, ReactSelectOption } from "../select";
 import { OpenAIModel } from "../../vendors/open-ai.vendor";
 import { getMessage } from "../../i18n";
 import { settingsStore } from "./settings.storage";
+import { Icon } from "../icon";
 
-export interface OpenAiSelectModelProps {
+export interface OpenAiSettingsModelProps {
 }
 
 @observer
-export class OpenAiSelectModel extends React.Component<OpenAiSelectModelProps> {
+export class OpenAiSettings extends React.Component<OpenAiSettingsModelProps> {
   get modelsOptions(): ReactSelectOption<OpenAIModel>[] {
     return [
       {
@@ -36,16 +38,21 @@ export class OpenAiSelectModel extends React.Component<OpenAiSelectModelProps> {
     const selectedOption = computed(() => this.modelsOptions.find(({ value }) => value === settingsStore.data.openAiModel))
 
     return (
-      <small>
+      <div className={styles.OpenAISettings}>
         <ReactSelect<OpenAIModel>
           placeholder={getMessage("open_ai_choose_model")}
-          className="openai-select-model flex gaps align-center"
+          className={styles.selectModel}
           value={selectedOption.get()}
           options={this.modelsOptions}
           formatOptionLabel={({ label, value }: ReactSelectOption<string>) => <>{label} (<em>{value}</em>)</>}
           onChange={({ value }) => settingsStore.data.openAiModel = value}
         />
-      </small>
+        <Icon small material="help_outline" tooltip={{
+          children: getMessage("open_ai_why_info_help"),
+          position: { right: true, bottom: true },
+          following: false,
+        }}/>
+      </div>
     )
   }
 }

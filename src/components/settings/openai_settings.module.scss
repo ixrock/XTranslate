@@ -1,0 +1,12 @@
+.OpenAISettings {
+  position: relative;
+  display: flex;
+  gap: var(--flex-gap);
+  align-items: center;
+}
+
+.selectModel {
+  font-size: small;
+  display: flex;
+  align-items: center;
+}

@@ -22,7 +22,7 @@ import { pageManager } from "../app/page-manager";
 import { getMessage } from "../../i18n";
 import { SelectVoice } from "../select-tts-voice";
 import { getTTSVoices, speak, stopSpeaking } from "../../tts";
-import { OpenAiSelectModel } from "./openai_select_model";
+import { OpenAiSettings } from "./openai_settings";
 
 @observer
 export class Settings extends React.Component {
@@ -32,7 +32,7 @@ export class Settings extends React.Component {
   }
 
   private vendorSettings: Record<string/*name*/, React.ReactNode> = {
-    openai: <OpenAiSelectModel/>,
+    openai: <OpenAiSettings/>,
   };
 
   private get popupPositions(): ReactSelectOption<string>[] {
