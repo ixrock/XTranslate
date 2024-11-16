@@ -53,6 +53,20 @@ Available translation vendors:
 * [Yandex](http://translate.yandex.com/)
 * [Bing](http://bing.com/translator/)
 * [DeepL](https://www.deepl.com/) _(requires own user key, register at https://www.deepl.com/en/signup/)_
+* [OpenAI (ChatGPT)](https://platform.openai.com) _(see registration steps below)_
+
+Steps for access OpenAI translations:
+------
+1) [Sign up](https://platform.openai.com/signup) if not yet registered or go to [OpenAI platform settings](https://platform.openai.com/settings) 
+2) Create api access key to get access for OpenAI translation service results 
+3) Top-up your balance (5$+) and disable credit card's auto-top-up balance at [billing page](https://platform.openai.com/settings/organization/billing/overview) _(recommended)_
+4) Don't forget to adjust [limits settings](https://platform.openai.com/settings/organization/limits) _(recommended)_
+
+Security considerations:
+------
+- OpenAI key handled via extension-scoped [chrome.storage.local](https://developer.chrome.com/docs/extensions/reference/api/storage)
+and used only within `Authorization` header to sign OpenAI API requests (which is not exposed or tracked, even with `webRequest` API enabled, [see excluded list of headers](https://developer.chrome.com/docs/extensions/reference/api/webRequest#concepts_and_usage)).
+- Don't enter or share your OpenAI key anywhere else except extension's settings page (options page)
 
 For developers and contributors:
 -----------

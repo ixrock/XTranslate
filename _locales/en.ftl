@@ -187,4 +187,4 @@ open_ai_choose_model_best_results = Best results (most expensive)
 open_ai_why_info_help =
  By using your own OpenAI platform's account directly and proving api key you saves a lot of money instead of using "middle-of-the-man" services from other apps/extensions,
    where you usually pay for monthly/yearly subscription and where all prices and usage limits are not under your control.
-   Don't forget to adjust usage limits at platform.openai.com and disable credir card's auto-top-up balance.
+   Don't forget to adjust usage limits at platform.openai.com and disable credit card's auto-top-up balance.
