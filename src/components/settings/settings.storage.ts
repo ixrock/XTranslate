@@ -1,6 +1,6 @@
 import { action, makeObservable } from "mobx";
 import { Hotkey } from "../../utils/parseHotkey";
-import { getTranslator } from "../../vendors";
+import { getTranslator, OpenAIModel } from "../../vendors";
 import { createStorage } from "../../storage";
 
 export type PopupPosition = "" /*auto*/ | "left top" | "left bottom" | "right top" | "right bottom";
@@ -45,6 +45,7 @@ export const settingsStorage = createStorage("settings", {
     popupPosition: "" as PopupPosition,
     iconPosition: {} as XIconPosition,
     ttsVoiceIndex: 0,
+    openAiModel: OpenAIModel.RECOMMENDED,
     hotkey: {
       altKey: true,
       shiftKey: true,

@@ -1,11 +1,10 @@
-import React from "react";
+import React, { ReactNode } from "react";
 import DeeplLanguages from "./deepl.json"
 import { ITranslationError, ITranslationResult, TranslateParams, Translator, TranslatorLanguages } from "./translator";
 import { createStorage } from "../storage";
 import { ProxyRequestInit } from "../extension";
 import { getMessage } from "../i18n";
-import { Icon } from "../components/icon";
-import { prevDefault } from "../utils";
+import { VendorAuthSettings } from "../components/settings/vendor_auth_settings";
 
 class Deepl extends Translator {
   public name = "deepl";
@@ -36,41 +35,20 @@ class Deepl extends Translator {
     this.#apiKey.set(newKey || this.#apiKey.defaultValue);
   };
 
-  private clearApiKey() {
-    this.#apiKey.set("");
-  };
-
-  renderSettingsListWidget(): React.ReactNode {
-    const apiKey = this.#apiKey.get();
-
+  renderSettingsWidget(extraContent?: ReactNode): ReactNode {
     return (
-      <div className="flex gaps align-center">
-        {!apiKey && (
-          <Icon
-            small
-            material="error_outline"
-            tooltip={getMessage("deepl_get_own_key_info")}
-          />
-        )}
-        <a href="#" onClick={prevDefault(this.setupAuthApiKey)}>
-          <Icon
-            small
-            material="warning_amber"
-            tooltip={getMessage("deepl_insert_auth_key_warning")}
-          />
-          <small>
-            {!apiKey && <em>{getMessage("deepl_insert_auth_key")}</em>}
-            {apiKey && <b>{apiKey.substring(0, 4)}-****-{apiKey.substring(apiKey.length - 4)}</b>}
-          </small>
-        </a>
-        {apiKey && <Icon
-          small
-          material="clear"
-          onClick={this.clearApiKey}
-          tooltip={getMessage("deepl_insert_auth_key_remove")}
-        />}
-      </div>
-    );
+      <VendorAuthSettings
+        className="deepl-settings"
+        apiKey={this.#apiKey}
+        setupApiKey={this.setupAuthApiKey}
+        clearApiKey={() => this.#apiKey.set("")}
+        accessInfo={getMessage("deepl_get_own_key_info")}
+        accessInfo2={getMessage("deepl_insert_auth_key")}
+        warningInfo={getMessage("deepl_insert_auth_key_warning")}
+        clearKeyInfo={getMessage("deepl_insert_auth_key_remove")}
+        children={extraContent}
+      />
+    )
   }
 
   async translate(params: TranslateParams): Promise<ITranslationResult> {

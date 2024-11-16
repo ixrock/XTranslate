@@ -29,10 +29,10 @@ export interface TranslateTextParams {
 
 export async function translateText(params: TranslateTextParams): Promise<ITranslationResult> {
   const {
-    apiKey,
     model = "gpt-4o",
     targetLanguage, sourceLanguage, text,
   } = params;
+  const { apiKey, ...sanitizedParams } = params;
   const isAutoDetect = !sourceLanguage;
 
   const prompt = isAutoDetect
@@ -43,10 +43,10 @@ export async function translateText(params: TranslateTextParams): Promise<ITrans
     const response = await getAPI(apiKey).chat.completions.create({
       model,
       messages: [
-        { role: "system", content: `You are a professional text translator assistant who translates very accurate.` },
-        { role: "system", content: `Try to obtain word or phrase transcription if applicable for source/detected language` },
+        { role: "system", content: `You are a professional text translator assistant who translates texts very accurate with knowledge of dialects and slang.` },
+        { role: "system", content: `Try to obtain transcription ONLY for dictionary words or phrasal verbs for source/detected language.` },
         { role: "system", content: `Spell correction might be suggested for detected or provided source/detected language."` },
-        { role: "system", content: `Output format is ["sourceLanguage", "transcription", "spellCorrection", "translation"]"` },
+        { role: "system", content: `Output format is ["sourceLanguage", "transcription", "spellCorrection", "translation"]` },
         { role: "user", content: prompt }
       ],
     });
@@ -66,16 +66,16 @@ export async function translateText(params: TranslateTextParams): Promise<ITrans
       dictionary: [],
     };
 
-    logger.info({ result, params, prompt });
-
+    logger.info({ result, prompt, params: sanitizedParams });
     return result;
+
   } catch (err) {
     const error: ITranslationError = {
       message: String(err),
       statusCode: err.statusCode || err.status,
     };
 
-    logger.error({ error, params, prompt });
+    logger.error({ error, params: sanitizedParams, prompt });
     throw error;
   }
 }

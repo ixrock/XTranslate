@@ -5,7 +5,7 @@ import { delay } from "../utils";
 import { getMessage } from "../i18n";
 import { createStorage } from "../storage";
 
-export class Google extends Translator {
+class Google extends Translator {
   public name = 'google';
   public title = 'Google';
   public apiUrl = 'https://translate.googleapis.com';

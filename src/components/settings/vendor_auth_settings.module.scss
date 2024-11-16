@@ -1,0 +1,16 @@
+.VendorAuthSettings {
+  display: flex;
+  gap: var(--flex-gap);
+  align-items: center;
+}
+
+.key {
+  white-space: nowrap;
+}
+
+.setupApiKey {
+  @include pseudo-link;
+
+  display: flex;
+  gap: var(--flex-gap)
+}

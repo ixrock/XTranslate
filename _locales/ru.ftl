@@ -181,3 +181,13 @@ mellowtel_button_decline = Отклонить
 mellowtel_button_accept = Принять всё
 mellowtel_dialog_footer = Спасибо за то, что прочли досюда. Kоманды { $devs }.
 
+# open-ai integration
+open_ai_get_access_info = 1) Зарегистрируйтесь на platform.openai.com 2) Создайте ключ доступа к API 3) Пополните баланс (минимально 5$)
+open_ai_insert_auth_key = Предоставьте свой API-ключ для получения переводов OpenAI (платформа от авторов ChatGPT)
+open_ai_insert_auth_key_warning = Предупреждение: НЕ вводите свой API-ключ в других местах, кроме как из этого окна расширения.
+open_ai_insert_auth_key_remove = Удалить ключ доступа OpenAI API
+open_ai_choose_model = Выберите AI-модель
+open_ai_choose_model_cost_efficient = Наиболее экономичная
+open_ai_choose_model_optimal = Рекомендуемая / оптимальная модель
+open_ai_choose_model_chatgpt_like = ChatGPT (может быть дорого)
+open_ai_choose_model_best_results = Лучшие результаты (наиболее дорогое)

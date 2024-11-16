@@ -22,6 +22,7 @@ import { pageManager } from "../app/page-manager";
 import { getMessage } from "../../i18n";
 import { SelectVoice } from "../select-tts-voice";
 import { getTTSVoices, speak, stopSpeaking } from "../../tts";
+import { OpenAiSelectModel } from "./openai_select_model";
 
 @observer
 export class Settings extends React.Component {
@@ -29,6 +30,10 @@ export class Settings extends React.Component {
     super(props);
     makeObservable(this);
   }
+
+  private vendorSettings: Record<string/*name*/, React.ReactNode> = {
+    openai: <OpenAiSelectModel/>,
+  };
 
   private get popupPositions(): ReactSelectOption<string>[] {
     return [
@@ -111,7 +116,7 @@ export class Settings extends React.Component {
                     {domain}
                   </a>
                   <div className="flex gaps align-center">
-                    {vendor.renderSettingsListWidget()}
+                    {vendor.renderSettingsWidget(this.vendorSettings[name])}
                   </div>
                 </div>
               )

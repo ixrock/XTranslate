@@ -79,7 +79,7 @@ export abstract class Translator {
 
       translation = await getTranslationResult();
 
-      const reverseTranslationParams = this.checkReverseTranslationParams(translation);
+      const reverseTranslationParams = this.getReverseTranslationParams(translation);
       if (reverseTranslationParams) {
         translation = await getTranslationResult(reverseTranslationParams);
       }
@@ -120,7 +120,7 @@ export abstract class Translator {
     };
   }
 
-  protected checkReverseTranslationParams(translationResult: ITranslationResult): Partial<TranslateParams> | undefined {
+  protected getReverseTranslationParams(translationResult: ITranslationResult): Partial<TranslateParams> | undefined {
     const reverseLanguage = settingsStore.data.langToReverse
     const { langTo, langFrom, langDetected, originalText, translation } = translationResult;
     const sameText = originalText.trim().toLowerCase() === translation.toLowerCase().trim();
@@ -224,7 +224,7 @@ export abstract class Translator {
     return !!(this.langFrom[langFrom] && this.langTo[langTo]);
   }
 
-  renderSettingsListWidget(): React.ReactNode {
+  renderSettingsWidget(content?: React.ReactNode): React.ReactNode {
     return null;
   }
 }

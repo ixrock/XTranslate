@@ -1,7 +1,6 @@
 export * from "./translator"
-
-import './google'
-import './yandex'
-import './bing'
-import './deepl'
-import './open-ai'
+export * from './google.vendor'
+export * from './yandex.vendor'
+export * from './bing.vendor'
+export * from './deepl.vendor'
+export * from './open-ai.vendor'

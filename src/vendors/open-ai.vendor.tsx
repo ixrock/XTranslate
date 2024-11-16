@@ -1,11 +1,19 @@
 import React from "react";
 import OpenAILanguages from "./open-ai.json"
 import { ITranslationResult, TranslateParams, Translator } from "./translator";
-import { createStorage } from "../storage";
 import { getMessage } from "../i18n";
-import { Icon } from "../components/icon";
-import { prevDefault } from "../utils";
+import { createStorage } from "../storage";
 import { openAiTranslationAction } from "../extension";
+import { VendorAuthSettings } from "../components/settings/vendor_auth_settings";
+import { settingsStore } from "../components/settings/settings.storage";
+
+// Read more about the prices: https://openai.com/api/pricing/
+export const enum OpenAIModel {
+  MOST_COST_EFFECTIVE = "gpt-4o-mini",
+  RECOMMENDED = "gpt-4o",
+  CHAT_GPT = "chatgpt-4o-latest", // we don't consider "gpt-4-32k" for this kind of tasks
+  MOST_EXPENSIVE = "gpt-4", // we don't consider "gpt-4-32k" for this kind of tasks
+}
 
 class OpenAITranslator extends Translator {
   public name = "openai";
@@ -27,51 +35,34 @@ class OpenAITranslator extends Translator {
     this.#apiKey.set(newKey || this.#apiKey.defaultValue);
   };
 
-  private clearApiKey() {
+  private clearApiKey = () => {
     this.#apiKey.set("");
   };
 
   async translate({ from, to, text }: TranslateParams): Promise<ITranslationResult> {
     return openAiTranslationAction({
-      apiKey: this.#apiKey.get(),
-      model: undefined, // TODO: allow to customize / take from settings-storage
       text,
+      model: settingsStore.data.openAiModel,
+      apiKey: this.#apiKey.get(),
       targetLanguage: this.langTo[to],
       sourceLanguage: from !== "auto" ? this.langFrom[from] : undefined,
     })
   }
 
-  renderSettingsListWidget(): React.ReactNode {
-    const apiKey = this.#apiKey.get();
-
+  renderSettingsWidget(content?: React.ReactNode): React.ReactNode {
     return (
-      <div className="flex gaps align-center">
-        {!apiKey && (
-          <Icon
-            small
-            material="info_outline"
-            tooltip={getMessage("open_ai_get_access_info")}
-          />
-        )}
-        <a href="#" onClick={prevDefault(this.setupApiKey)}>
-          <Icon
-            small
-            material="warning_amber"
-            tooltip={getMessage("open_ai_insert_auth_key_warning")}
-          />
-          <small>
-            {!apiKey && <em>{getMessage("open_ai_insert_auth_key")}</em>}
-            {apiKey && <b>{apiKey.substring(0, 4)}-****-{apiKey.substring(apiKey.length - 4)}</b>}
-          </small>
-        </a>
-        {apiKey && <Icon
-          small
-          material="clear"
-          onClick={this.clearApiKey}
-          tooltip={getMessage("open_ai_insert_auth_key_remove")}
-        />}
-      </div>
-    );
+      <VendorAuthSettings
+        className="openi-ai-settings"
+        apiKey={this.#apiKey}
+        setupApiKey={this.setupApiKey}
+        clearApiKey={this.clearApiKey}
+        accessInfo={getMessage("open_ai_get_access_info")}
+        accessInfo2={getMessage("open_ai_insert_auth_key")}
+        warningInfo={getMessage("open_ai_insert_auth_key_warning")}
+        clearKeyInfo={getMessage("open_ai_insert_auth_key_remove")}
+        children={content}
+      />
+    )
   }
 }
 
