@@ -11,7 +11,7 @@ export type CheckboxProps<D = any> = Omit<DOMAttributes<any>, "onChange"> & {
   tickBoxClass?: IClassName;
   labelClass?: IClassName;
   autoFocus?: boolean
-  label?: string
+  label?: React.ReactNode;
   inline?: boolean
   disabled?: boolean
   value?: D;

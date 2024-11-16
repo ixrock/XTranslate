@@ -4,7 +4,7 @@ import React from "react";
 import { action, makeObservable, observable } from "mobx";
 import { observer } from "mobx-react";
 import { isEqual } from "lodash";
-import { getTranslators } from "../../vendors";
+import { getTranslators, VendorCodeName } from "../../vendors";
 import { cssNames, getHotkey, parseHotkey, prevDefault } from "../../utils";
 import { XTranslateIcon } from "../../user-script/xtranslate-icon";
 import { SelectLanguage } from "../select-language";
@@ -107,11 +107,21 @@ export class Settings extends React.Component {
             onChange={v => settingsStore.setVendor(v)}
           >
             {getTranslators().map(vendor => {
-              const { name, title, publicUrl } = vendor;
+              const { title, publicUrl } = vendor;
+              const name = vendor.name as VendorCodeName;
               var domain = new URL(publicUrl).hostname.replace(/^www\./, "");
+              var skipInRotation = settingsStore.data.skipVendorInRotation[name];
+              const disableInRotationClassName = cssNames({
+                [styles.vendorSkippedInRotation]: skipInRotation,
+              });
               return (
                 <div key={name} className={cssNames(styles.vendor, "flex gaps")}>
-                  <Radio value={name} label={title}/>
+                  <Checkbox
+                    checked={skipInRotation}
+                    onChange={checked => settingsStore.data.skipVendorInRotation[name] = checked}
+                    tooltip={getMessage("skip_translation_vendor_in_rotation", { vendor: title })}
+                  />
+                  <Radio value={name} label={<span className={disableInRotationClassName}>{title}</span>}/>
                   <a href={publicUrl} target="_blank" tabIndex={-1}>
                     {domain}
                   </a>

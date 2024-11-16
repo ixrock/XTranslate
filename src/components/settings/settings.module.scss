@@ -34,7 +34,12 @@
   }
 
   .vendor {
-    gap: var(--flex-gap);
+    gap: 2px;
     align-items: center;
+  }
+
+  .vendorSkippedInRotation {
+    opacity: .75;
+    text-decoration: line-through;
   }
 }

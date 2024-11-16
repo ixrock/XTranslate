@@ -1,6 +1,6 @@
 import { action, makeObservable } from "mobx";
 import { Hotkey } from "../../utils/parseHotkey";
-import { getTranslator, OpenAIModel } from "../../vendors";
+import { getTranslator, OpenAIModel, VendorCodeName } from "../../vendors";
 import { createStorage } from "../../storage";
 
 export type PopupPosition = "" /*auto*/ | "left top" | "left bottom" | "right top" | "right bottom";
@@ -34,7 +34,7 @@ export const settingsStorage = createStorage("settings", {
     showTranslatedFrom: true,
     rememberLastText: false,
     textInputTranslateDelayMs: 750,
-    vendor: "google",
+    vendor: "google" as VendorCodeName,
     langFrom: "auto",
     langTo: navigator.language.split('-')[0],
     langToReverse: "", // applied in case when `langFrom` == "auto" && `langDetected` == `langTo`
@@ -46,6 +46,7 @@ export const settingsStorage = createStorage("settings", {
     iconPosition: {} as XIconPosition,
     ttsVoiceIndex: 0,
     openAiModel: OpenAIModel.RECOMMENDED,
+    skipVendorInRotation: {} as Record<VendorCodeName, boolean>,
     hotkey: {
       altKey: true,
       shiftKey: true,
@@ -102,7 +103,7 @@ export class SettingsStore {
     this.data.favorites[vendor][sourceType] = Array.from(favorites);
   }
 
-  setVendor(name: string) {
+  setVendor(name: VendorCodeName) {
     var translator = getTranslator(name);
     var { vendor, langFrom, langTo } = this.data;
     if (vendor === name) return;

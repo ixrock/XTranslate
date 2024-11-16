@@ -7,6 +7,7 @@ import { ProxyRequestPayload, ProxyResponseType } from "../extension/messages";
 import { getTranslationFromHistoryAction, proxyRequest, saveToHistoryAction } from "../extension/actions";
 import { settingsStore } from "../components/settings/settings.storage";
 import { getTTSVoices, speak, stopSpeaking, TTSVoice } from "../tts";
+import type { VendorCodeName } from "./index";
 
 export interface TranslatorLanguages {
   from: Record<string/*locale*/, string> & { auto?: string };
@@ -303,7 +304,13 @@ export function getNextTranslator(name: string, langFrom: string, langTo: string
     list.push(...afterCurrent, ...beforeCurrent)
   }
   while ((vendor = list.shift())) {
-    if (vendor.canTranslate(langFrom, langTo)) return vendor;
+    const vendorName = vendor.name as VendorCodeName;
+    if (settingsStore.data.skipVendorInRotation[vendorName]) {
+      continue;
+    }
+    if (vendor.canTranslate(langFrom, langTo)) {
+      return vendor;
+    }
   }
   return null;
 }

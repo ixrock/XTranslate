@@ -62,6 +62,7 @@ reverse_translate_select_placeholder = Reverse translate language
 reverse_translate_add_action = Add reverse language: { $lang } -> ? (applicable only with "Auto-detect" option)
 reverse_translate_delete_action = Unset reverse translate language
 position_of_x_translate_icon = Position of translate-icon near selection
+skip_translation_vendor_in_rotation = Skip { $vendor }-translations in rotation via arrow-icon or keyboard arrows (in popup)
 
 # theme
 popup_play_icon_title = Listen

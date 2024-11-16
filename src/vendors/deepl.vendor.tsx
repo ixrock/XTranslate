@@ -1,13 +1,13 @@
 import React, { ReactNode } from "react";
 import DeeplLanguages from "./deepl.json"
-import { ITranslationError, ITranslationResult, TranslateParams, Translator, TranslatorLanguages } from "./translator";
+import { ITranslationError, ITranslationResult, TranslateParams, Translator, TranslatorLanguages, VendorCodeName } from "./index";
 import { createStorage } from "../storage";
 import { ProxyRequestInit } from "../extension";
 import { getMessage } from "../i18n";
 import { VendorAuthSettings } from "../components/settings/vendor_auth_settings";
 
 class Deepl extends Translator {
-  public name = "deepl";
+  public name = VendorCodeName.DEEPL;
   public title = "Deepl";
   public publicUrl = "https://www.deepl.com/translator";
 

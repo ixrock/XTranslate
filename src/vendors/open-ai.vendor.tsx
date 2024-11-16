@@ -1,6 +1,6 @@
 import React from "react";
 import OpenAILanguages from "./open-ai.json"
-import { ITranslationResult, TranslateParams, Translator } from "./translator";
+import { ITranslationResult, TranslateParams, Translator, VendorCodeName } from "./index";
 import { getMessage } from "../i18n";
 import { createStorage } from "../storage";
 import { openAiTranslationAction } from "../extension";
@@ -11,12 +11,12 @@ import { settingsStore } from "../components/settings/settings.storage";
 export const enum OpenAIModel {
   MOST_COST_EFFECTIVE = "gpt-4o-mini",
   RECOMMENDED = "gpt-4o",
-  CHAT_GPT = "chatgpt-4o-latest", // we don't consider "gpt-4-32k" for this kind of tasks
+  CHAT_GPT = "chatgpt-4o-latest",
   MOST_EXPENSIVE = "gpt-4", // we don't consider "gpt-4-32k" for this kind of tasks
 }
 
 class OpenAITranslator extends Translator {
-  public name = "openai";
+  public name = VendorCodeName.OPENAI;
   public title = "OpenAI";
   public publicUrl = "https://platform.openai.com/";
   public apiUrl = "https://api.openai.com/v1";

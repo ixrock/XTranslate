@@ -1,8 +1,8 @@
 import YandexLanguages from "./yandex.json"
-import { ITranslationDictionaryMeaning, ITranslationResult, TranslateParams, Translator } from "./translator";
+import { ITranslationDictionaryMeaning, ITranslationResult, TranslateParams, Translator, VendorCodeName } from "./index";
 
 class Yandex extends Translator {
-  public name = 'yandex';
+  public name = VendorCodeName.YANDEX;
   public title = 'Yandex';
   public apiUrl = 'https://translate.yandex.net';
   public publicUrl = 'https://translate.yandex.com';

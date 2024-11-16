@@ -1,7 +1,7 @@
 import BingLanguages from "./bing.json"
 import { groupBy, isEmpty } from "lodash";
 import { ProxyRequestInit, ProxyResponseType } from "../extension";
-import { ITranslationError, ITranslationResult, TranslateParams, Translator } from "./translator";
+import { ITranslationError, ITranslationResult, TranslateParams, Translator, VendorCodeName } from "./index";
 import { createStorage } from "../storage";
 
 export interface BingParsedGlobalParams {
@@ -13,7 +13,7 @@ export interface BingParsedGlobalParams {
 }
 
 class Bing extends Translator {
-  public name = 'bing';
+  public name = VendorCodeName.BING;
   public title = 'Bing';
   public apiUrl = 'https://www.bing.com';
   public publicUrl = `${this.apiUrl}/translator`;

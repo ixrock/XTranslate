@@ -1,12 +1,12 @@
 import GoogleLanguages from "./google.json"
 import { ProxyRequestInit } from "../extension";
-import { isTranslationError, ITranslationResult, TranslateParams, Translator } from "./translator";
+import { isTranslationError, ITranslationResult, TranslateParams, Translator, VendorCodeName } from "./index";
 import { delay } from "../utils";
 import { getMessage } from "../i18n";
 import { createStorage } from "../storage";
 
 class Google extends Translator {
-  public name = 'google';
+  public name = VendorCodeName.GOOGLE;
   public title = 'Google';
   public apiUrl = 'https://translate.googleapis.com';
   public publicUrl = 'https://translate.google.com';
