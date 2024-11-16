@@ -64,8 +64,9 @@ Steps for access OpenAI translations:
 
 Security considerations:
 ------
-- OpenAI key handled via extension-scoped [chrome.storage.local](https://developer.chrome.com/docs/extensions/reference/api/storage)
-and used only within `Authorization` header to sign OpenAI API requests (which is not exposed or tracked, even with `webRequest` API enabled, [see excluded list of headers](https://developer.chrome.com/docs/extensions/reference/api/webRequest#concepts_and_usage)).
+- OpenAI api key handled via extension-scoped [chrome.storage.local](https://developer.chrome.com/docs/extensions/reference/api/storage) apis
+and used only within `Authorization` header to sign OpenAI API requests (which is not exposed or tracked, even if `webRequest` API enabled in some other malicious extension, [see excluded list of headers](https://developer.chrome.com/docs/extensions/reference/api/webRequest#concepts_and_usage))
+- OpenAI requests goes through official [openai](https://www.npmjs.com/package/openai) NPM-package and running only within background service-worker (`{dangerouslyAllowBrowser: false}`)
 - Don't enter or share your OpenAI key anywhere else except extension's settings page (options page)
 
 For developers and contributors:
