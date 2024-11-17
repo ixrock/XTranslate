@@ -12,7 +12,6 @@ export const enum OpenAIModel {
   MOST_COST_EFFECTIVE = "gpt-4o-mini",
   RECOMMENDED = "gpt-4o",
   CHAT_GPT = "chatgpt-4o-latest",
-  MOST_EXPENSIVE = "gpt-4", // we don't consider "gpt-4-32k" for this kind of tasks
 }
 
 class OpenAITranslator extends Translator {
@@ -48,6 +47,9 @@ class OpenAITranslator extends Translator {
       sourceLanguage: from !== "auto" ? this.langFrom[from] : undefined,
     })
   }
+
+  // TODO: implement usage of TTS-apis in OpenAI
+  // Read more: https://platform.openai.com/docs/api-reference/audio/createSpeech
 
   renderSettingsWidget(content?: React.ReactNode): React.ReactNode {
     return (

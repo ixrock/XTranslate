@@ -30,24 +30,27 @@ export interface TranslateTextParams {
 export async function translateText(params: TranslateTextParams): Promise<ITranslationResult> {
   const {
     model = "gpt-4o",
-    targetLanguage, sourceLanguage, text,
+    targetLanguage,
+    sourceLanguage,
+    text = "",
   } = params;
   const { apiKey, ...sanitizedParams } = params;
   const isAutoDetect = !sourceLanguage;
+  const sanitizedText = text.trim();
 
   const prompt = isAutoDetect
-    ? `Translate a text into language "${targetLanguage}" and auto-detect the source language. Input: "${text}"`
-    : `Translate a text from language "${sourceLanguage}" to "${targetLanguage}". Input: "${text}"`;
+    ? `Translate a text into language "${targetLanguage}" and auto-detect the source language for text "${sanitizedText}"`
+    : `Translate a text from language "${sourceLanguage}" to "${targetLanguage}" for text "${sanitizedText}"`;
 
   try {
     const response = await getAPI(apiKey).chat.completions.create({
       model,
       messages: [
-        { role: "system", content: `You are a professional text translator assistant who translates texts very accurate with knowledge of dialects and slang.` },
-        { role: "system", content: `Try to obtain transcription ONLY for dictionary words or phrasal verbs for source/detected language.` },
-        { role: "system", content: `Spell correction might be suggested for detected or provided source/detected language."` },
+        { role: "system", content: `You are a professional text translator assistant who does its job very accurate with knowledge of language dialects and slang.` },
+        { role: "system", content: `Transcription must be applied only if provided user text is dictionary word or phrasal verb or special language-specific phrase.` },
+        { role: "system", content: `Spell correction must be applied only if there are possible syntax errors in provided text."` },
         { role: "system", content: `Output format is ["sourceLanguage", "transcription", "spellCorrection", "translation"]` },
-        { role: "user", content: prompt }
+        { role: "user", content: prompt },
       ],
     });
 
@@ -56,8 +59,8 @@ export async function translateText(params: TranslateTextParams): Promise<ITrans
 
     const result: ITranslationResult = {
       vendor: "openai",
-      originalText: text,
-      translation: translatedText ?? text,
+      originalText: sanitizedText,
+      translation: translatedText ?? sanitizedText,
       langDetected: detectedLang ?? sourceLanguage,
       langFrom: sourceLanguage ?? detectedLang,
       langTo: targetLanguage,

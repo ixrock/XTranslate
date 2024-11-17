@@ -27,10 +27,6 @@ export class OpenAiSettings extends React.Component<OpenAiSettingsModelProps> {
         value: OpenAIModel.CHAT_GPT,
         label: getMessage("open_ai_choose_model_chatgpt_like"),
       },
-      {
-        value: OpenAIModel.MOST_EXPENSIVE,
-        label: getMessage("open_ai_choose_model_best_results"),
-      },
     ]
   }
 
