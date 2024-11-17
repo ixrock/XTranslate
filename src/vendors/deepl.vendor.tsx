@@ -179,6 +179,4 @@ export async function dump_deepl_json() {
   console.info("[[Deepl]]: supported languages", supportedLanguages);
 }
 
-Translator.createInstances.push(
-  () => Translator.registerInstance(new Deepl()),
-);
+Translator.registerVendor(Deepl);

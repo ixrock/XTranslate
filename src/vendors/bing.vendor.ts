@@ -193,6 +193,4 @@ interface DictTranslation {
   }[]
 }
 
-Translator.createInstances.push(
-  () => Translator.registerInstance(new Bing()),
-);
+Translator.registerVendor(Bing);

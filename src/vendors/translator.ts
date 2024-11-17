@@ -25,11 +25,16 @@ export interface TranslatePayload extends TranslateParams {
 }
 
 export abstract class Translator {
-  static readonly vendors = observable.set<Translator>();
+  static readonly instances = observable.set<Translator>();
   static createInstances = disposer();
-  static registerInstance = (instance: Translator) => Translator.vendors.add(instance);
 
-  abstract name: string; // code name, e.g. "google"
+  static registerVendor = (instance: { new(): Translator }) => {
+    this.createInstances.push(
+      () => this.instances.add(new instance())
+    );
+  };
+
+  abstract name: VendorCodeName; // registered code name, e.g. "google"
   abstract title: string; // human readable name, e.g. "Google"
   abstract publicUrl: string; // public translation service page
   abstract apiUrl: string; // service api url
@@ -280,7 +285,7 @@ export function isRTL(lang: string) {
  * List of all registered vendors (translators)
  */
 export function getTranslators(): Translator[] {
-  return Array.from(Translator.vendors);
+  return Array.from(Translator.instances);
 }
 
 /**
@@ -288,7 +293,7 @@ export function getTranslators(): Translator[] {
  * @param {string} name
  */
 export function getTranslator<T extends Translator>(name: string): T {
-  return (Array.from(Translator.vendors) as T[]).find(vendor => vendor.name === name);
+  return (Array.from(Translator.instances) as T[]).find(vendor => vendor.name === name);
 }
 
 export function getNextTranslator(name: string, langFrom: string, langTo: string, reverse = false) {
@@ -304,7 +309,7 @@ export function getNextTranslator(name: string, langFrom: string, langTo: string
     list.push(...afterCurrent, ...beforeCurrent)
   }
   while ((vendor = list.shift())) {
-    const vendorName = vendor.name as VendorCodeName;
+    const vendorName = vendor.name;
     if (settingsStore.data.skipVendorInRotation[vendorName]) {
       continue;
     }

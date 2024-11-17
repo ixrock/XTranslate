@@ -66,6 +66,4 @@ class OpenAITranslator extends Translator {
   }
 }
 
-Translator.createInstances.push(
-  () => Translator.registerInstance(new OpenAITranslator()),
-);
+Translator.registerVendor(OpenAITranslator);

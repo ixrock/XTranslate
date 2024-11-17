@@ -145,6 +145,4 @@ export const supportedDictionary: Record<string, string[]> = {
   "uk": ["en", "ru", "uk"]
 };
 
-Translator.createInstances.push(
-  () => Translator.registerInstance(new Yandex()),
-);
+Translator.registerVendor(Yandex);

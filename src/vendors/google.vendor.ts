@@ -199,6 +199,4 @@ export interface GoogleTranslation {
   }
 }
 
-Translator.createInstances.push(
-  () => Translator.registerInstance(new Google()),
-);
+Translator.registerVendor(Google);
