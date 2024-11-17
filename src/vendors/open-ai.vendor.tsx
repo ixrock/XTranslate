@@ -3,9 +3,10 @@ import OpenAILanguages from "./open-ai.json"
 import { ITranslationResult, TranslateParams, Translator, VendorCodeName } from "./index";
 import { getMessage } from "../i18n";
 import { createStorage } from "../storage";
-import { openAiTranslationAction } from "../extension";
+import { openAiTextToSpeechAction, openAiTranslationAction } from "../extension";
 import { VendorAuthSettings } from "../components/settings/vendor_auth_settings";
 import { settingsStore } from "../components/settings/settings.storage";
+import { toBinaryFile } from "../utils/binary";
 
 // Read more about the prices: https://openai.com/api/pricing/
 export const enum OpenAIModel {
@@ -19,6 +20,7 @@ class OpenAITranslator extends Translator {
   public title = "OpenAI";
   public publicUrl = "https://platform.openai.com/";
   public apiUrl = "https://api.openai.com/v1";
+  public ttsMaxLength = 4096;
 
   constructor() {
     super(OpenAILanguages);
@@ -48,8 +50,18 @@ class OpenAITranslator extends Translator {
     })
   }
 
-  // TODO: implement usage of TTS-apis in OpenAI
-  // Read more: https://platform.openai.com/docs/api-reference/audio/createSpeech
+  async getAudioFile(text: string, lang?: string): Promise<Blob> {
+    if (text.length >= this.ttsMaxLength) {
+      return;
+    }
+    const data = await openAiTextToSpeechAction({
+      apiKey: this.#apiKey.get(),
+      text,
+      targetLanguage: lang,
+    });
+
+    return toBinaryFile(data, "audio/mpeg");
+  }
 
   renderSettingsWidget(content?: React.ReactNode): React.ReactNode {
     return (

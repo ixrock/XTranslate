@@ -15,6 +15,7 @@ export const enum MessageType {
   STORAGE_DATA_REMOVE = "REMOVE_ITEM_FROM_STORAGE",
   STORAGE_DATA_SYNC = "SYNC_DATA_FROM_STORAGE",
   OPENAI_TRANSLATION = "OPENAI_TRANSLATION",
+  OPENAI_TTS = "OPENAI_TEXT_TO_SPEECH",
 }
 
 export interface Message<Payload = any /*json-serializable*/> {
@@ -85,4 +86,12 @@ export interface OpenAITranslatePayload {
   text: string;
   targetLanguage: string;
   sourceLanguage?: string; /* if not provided translation-request considered as "auto-detect" */
+}
+
+export interface OpenAITextToSpeechPayload {
+  apiKey: string;
+  text: string;
+  voice?: 'alloy' | 'echo' | 'fable' | 'onyx' | 'nova' | 'shimmer';
+  targetLanguage?: string; /* or auto-detect if not provided */
+  speed?: number; /* 0.5 - 4.0 */
 }

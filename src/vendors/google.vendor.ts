@@ -40,7 +40,7 @@ class Google extends Translator {
     });
   }
 
-  getAudioUrl(lang: string, text: string) {
+  getAudioUrl(text: string, lang: string) {
     if (text.length > this.ttsMaxLength) return;
     var textEncoded = encodeURIComponent(text);
     var apiClient = this.apiClient.get();

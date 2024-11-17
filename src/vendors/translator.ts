@@ -2,7 +2,7 @@
 
 import type React from "react";
 import { observable } from "mobx";
-import { autoBind, createLogger, disposer, JsonResponseError } from "../utils";
+import { autoBind, blobToBase64DataUrl, createLogger, disposer, JsonResponseError } from "../utils";
 import { ProxyRequestPayload, ProxyResponseType } from "../extension/messages";
 import { getTranslationFromHistoryAction, proxyRequest, saveToHistoryAction } from "../extension/actions";
 import { settingsStore } from "../components/settings/settings.storage";
@@ -177,33 +177,30 @@ export abstract class Translator {
   async speak(lang: string, text: string, voice?: TTSVoice) {
     this.stopSpeaking(); // stop previous if any
 
-    const audioUrl = this.getAudioUrl(lang, text);
-    const useSpeechSynthesis = Boolean(settingsStore.data.useSpeechSynthesis || !audioUrl);
+    const audioUrl = this.getAudioUrl(text, lang);
+    const audioFile = await this.getAudioFile(text, lang);
+    const useSpeechSynthesis = Boolean(settingsStore.data.useSpeechSynthesis || !(audioUrl || audioFile));
 
     if (!voice) {
       const voices = await getTTSVoices();
       voice = voices[settingsStore.data.ttsVoiceIndex];
     }
 
-    this.logger.info(`[TTS]: speaking`, {
-      lang, text, voice,
-      voiceIndex: settingsStore.data.ttsVoiceIndex,
-      useSpeechSynthesis,
-      audioUrl
-    });
-
     if (useSpeechSynthesis) {
+      this.logger.info(`[TTS]: speaking using system speech synthesis`, {
+        lang, text, voice,
+        voiceIndex: settingsStore.data.ttsVoiceIndex,
+      });
       this.speakSynth(text, voice);
-    } else if (audioUrl) {
+    } else {
       try {
+        const audioDataUrl = audioFile
+          ? await blobToBase64DataUrl(audioFile)
+          : await this.request<string>({ url: audioUrl, responseType: ProxyResponseType.DATA_URL });
+
+        this.logger.info(`[TTS]: speaking via api request`, { lang, text });
         this.audio = document.createElement("audio");
-        this.audio.src = await this.request({
-          url: audioUrl,
-          responseType: ProxyResponseType.DATA_URL,
-          requestInit: {
-            credentials: "include",
-          },
-        });
+        this.audio.src = audioDataUrl;
         await this.audio.play();
       } catch (error) {
         // TODO: it might fall due CORS in some sites (e.g. github)
@@ -213,6 +210,7 @@ export abstract class Translator {
         // fallback to text to speech synthesis engine
         this.speakSynth(text, voice);
       }
+
     }
   }
 
@@ -222,7 +220,11 @@ export abstract class Translator {
     stopSpeaking(); // tts-stop
   }
 
-  getAudioUrl(lang: string, text: string): string {
+  async getAudioFile(text: string, lang?: string): Promise<Blob> {
+    return;
+  }
+
+  getAudioUrl(text: string, lang: string): string {
     return;
   }
 

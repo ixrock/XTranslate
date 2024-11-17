@@ -1,12 +1,13 @@
 import type { ITranslationResult, TranslatePayload } from "../vendors";
 import type { IHistoryItem } from "../components/user-history/history.storage";
-import { broadcastMessage, getActiveTab, isBackgroundWorker, Message, OpenAITranslatePayload, sendMessage } from "./index";
+import { broadcastMessage, getActiveTab, isBackgroundWorker, Message, OpenAITextToSpeechPayload, OpenAITranslatePayload, sendMessage } from "./index";
 import { isSystemPage } from "../common-vars";
 import { MessageType, ProxyRequestPayload, ProxyResponsePayload, ProxyResponseType, SaveToFavoritesPayload, SaveToHistoryPayload, StorageDeletePayload, StorageReadPayload, StorageSyncPayload, StorageWritePayload } from "./messages";
 import { handleProxyRequestPayload } from "../background/httpProxy.bgc";
 import { readFromExternalStorage, removeFromExternalStorage, writeToExternalStorage } from "../background/storage.bgc";
 import { getHistoryItemOffline, saveToFavorites, saveToHistory } from "../background/history.bgc";
-import { translateText } from "../background/openai.bgc";
+import { textToSpeech, translateText } from "../background/openai.bgc";
+import { toBinaryFile } from "../utils/binary";
 
 export async function getSelectedText(): Promise<string> {
   const activeTab = await getActiveTab();
@@ -38,11 +39,10 @@ export async function proxyRequest<Response>(payload: ProxyRequestPayload): Prom
   }
 
   if (payload.responseType === ProxyResponseType.BLOB) {
-    const arrayBuffer = Uint8Array.from(response.data as unknown as number[]).buffer;
-
-    return new Blob([arrayBuffer], {
-      type: response.headers["content-type"]
-    }) as any as Response;
+    return toBinaryFile(
+      response.data as Uint8Array,
+      response.headers["content-type"]
+    ) as Response;
   }
 
   return response.data;
@@ -130,6 +130,17 @@ export async function openAiTranslationAction(payload: OpenAITranslatePayload) {
 
   return sendMessage<OpenAITranslatePayload>({
     type: MessageType.OPENAI_TRANSLATION,
+    payload,
+  });
+}
+
+export async function openAiTextToSpeechAction(payload: OpenAITextToSpeechPayload) {
+  if (isBackgroundWorker()) {
+    return textToSpeech(payload);
+  }
+
+  return sendMessage<OpenAITextToSpeechPayload>({
+    type: MessageType.OPENAI_TTS,
     payload,
   });
 }

@@ -1,13 +1,14 @@
 import OpenAI from "openai";
 import type { ITranslationError, ITranslationResult } from "../vendors/translator";
 import { createLogger, disposer } from "../utils";
-import { MessageType, onMessage } from "../extension";
+import { MessageType, onMessage, OpenAITextToSpeechPayload } from "../extension";
 
 const logger = createLogger({ systemPrefix: "OPEN_AI(helper)" });
 
 export function listenOpenAIApiRequests() {
   return disposer(
     onMessage(MessageType.OPENAI_TRANSLATION, translateText),
+    onMessage(MessageType.OPENAI_TTS, textToSpeech),
   );
 }
 
@@ -19,6 +20,10 @@ export function getAPI(apiKey: string) {
   });
 }
 
+export function getModels(apiKey: string) {
+  return getAPI(apiKey).models.list();
+}
+
 export interface TranslateTextParams {
   apiKey: string;
   model?: string; /* default: "gpt-4o" */
@@ -27,6 +32,7 @@ export interface TranslateTextParams {
   sourceLanguage?: string; /* if not provided translation-request considered as "auto-detect" */
 }
 
+// Text translation capabilities
 export async function translateText(params: TranslateTextParams): Promise<ITranslationResult> {
   const {
     model = "gpt-4o",
@@ -83,6 +89,20 @@ export async function translateText(params: TranslateTextParams): Promise<ITrans
   }
 }
 
-export function getModels(apiKey: string) {
-  return getAPI(apiKey).models.list();
+// TTS capabilities
+// Docs: https://platform.openai.com/docs/api-reference/audio/createSpeech
+export async function textToSpeech(params: OpenAITextToSpeechPayload): Promise<number[]> {
+  const { apiKey, text, voice = "alloy", speed = 1 } = params;
+
+  const speechFile = await getAPI(apiKey).audio.speech.create({
+    model: "tts-1",
+    voice: voice,
+    input: text,
+    speed: speed,
+    response_format: "mp3",
+  });
+
+  const buffer = await speechFile.arrayBuffer();
+  const transferableDataContainer = new Uint8Array(buffer);
+  return Array.from(transferableDataContainer);
 }
