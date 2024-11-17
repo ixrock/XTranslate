@@ -175,6 +175,9 @@ mellowtel_button_decline = Decline optional use
 mellowtel_button_accept = Accept all
 mellowtel_dialog_footer = Thanks for taking the time to read, teams { $devs }.
 
+# various error messages
+error_403_auth_failed = Authorization failed. Please supply a valid auth api key in the settings
+
 # open-ai integration
 open_ai_get_access_info = 1) Register at platform.openai.com 2) Create api access key 3) Top-up your balance (5$+)
 open_ai_insert_auth_key = Provide your api key for getting OpenAI translations (ChatGPT authors platform)

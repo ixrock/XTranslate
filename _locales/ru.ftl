@@ -182,6 +182,9 @@ mellowtel_button_decline = Отклонить
 mellowtel_button_accept = Принять всё
 mellowtel_dialog_footer = Спасибо за то, что прочли досюда. Kоманды { $devs }.
 
+# various error messages
+error_403_auth_failed = Авторизация не удалась. Пожалуйста, предоставьте действительный ключ авторизации в настройках
+
 # open-ai integration
 open_ai_get_access_info = 1) Зарегистрируйтесь на platform.openai.com 2) Создайте ключ доступа к API 3) Пополните баланс (минимально 5$)
 open_ai_insert_auth_key = Предоставьте свой API-ключ для получения переводов OpenAI (платформа от авторов ChatGPT)

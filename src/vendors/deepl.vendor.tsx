@@ -75,12 +75,17 @@ class Deepl extends Translator {
         langDetected: translations[0].detected_source_language.toLowerCase(),
         translation: translations[0].text,
       };
-    } catch (error) {
-      const { message }: DeeplErrorResponse = error;
-      if (message.startsWith(`"`) && message.endsWith(`"`)) {
-        error.message = JSON.parse(message); // unwrap json-text
+    } catch (error: ITranslationError | any) {
+      let { statusCode, message } = error as ITranslationError;
+
+      if (statusCode === DeeplErrorCode.AUTH_FAILED) {
+        message = getMessage("error_403_auth_failed");
       }
-      throw error;
+
+      throw {
+        statusCode,
+        message,
+      };
     }
   }
 
@@ -138,10 +143,6 @@ export interface DeeplTranslation {
 
 export interface DeeplTranslationResponse {
   translations: DeeplTranslation[];
-}
-
-export interface DeeplErrorResponse extends ITranslationError {
-  message: string;
 }
 
 // See also: https://www.deepl.com/docs-api/accessing-the-api/error-handling/
