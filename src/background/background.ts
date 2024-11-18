@@ -1,16 +1,16 @@
 //-- Background (service worker)
 
 import "../setup";
+import { onInstallActions } from "./install.bgc";
 import { initContextMenus } from "./contextMenu.bgc";
 import { listenStorageActions } from "./storage.bgc";
 import { listenProxyRequestActions } from "./httpProxy.bgc";
 import { listenTranslationHistoryActions } from "./history.bgc";
-import { openOptionsPageOnInstall } from "./install.bgc";
-import { initBackground as initMellowtel } from "../../mellowtel/mellowtel-lib";
+import { initBackground as initMellowtel, mellowtelOptOutTime } from "../../mellowtel/mellowtel-lib";
 import { listenOpenAIApiRequests } from "./openai.bgc";
 
 initContextMenus();
-openOptionsPageOnInstall();
+onInstallActions(() => mellowtelOptOutTime.set(Date.now()));
 
 // Listen IPC messages from "options-page" (extension window) or "content-script" pages
 listenStorageActions();

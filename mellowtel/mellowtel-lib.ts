@@ -45,9 +45,9 @@ export async function checkDialogVisibility(): Promise<boolean> {
 
   const lastOptOutTime = mellowtelOptOutTime.get();
   const { enabled } = await mellowtelStatus();
-  const remindDuration = 1000 * 60 * 60 * 24 * 14; // every 2 weeks
-
-  var isHidden = enabled || (lastOptOutTime + remindDuration > Date.now());
+  const remindDuration = 1000 /*ms*/ * 3600 /*1h*/ * 24 /*1d*/ * 14; // every 2 weeks
+  const trialActive = lastOptOutTime + remindDuration > Date.now();
+  const isHidden = enabled || trialActive;
 
   return !isHidden;
 }

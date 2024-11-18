@@ -10,3 +10,4 @@ ads.js
 refs.ts
 .env
 .env.*
+yarn-error.log
