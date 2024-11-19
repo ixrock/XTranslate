@@ -64,6 +64,7 @@ reverse_translate_select_placeholder = Jezik za obrnuti prevod
 reverse_translate_add_action = Dodaj jezik za obrnuti prevod: { $lang } -> ? (primenljivo samo kad je "Otkrivanje jezika" uključeno)
 reverse_translate_delete_action = Obriši jezik za obrnuti prevod
 position_of_x_translate_icon = Pozicija ikonice za prevod kod odabira
+skip_translation_vendor_in_rotation = Preskoči { $vendor }-prevode u rotaciji preko ikonice strelice ili strelica na tastaturi (u iskačućem prozoru)
 
 # theme
 popup_play_icon_title = Preslušaj
@@ -142,7 +143,9 @@ rate_app_info2 = To će pomoći drugim korisnicima da pronađu proširenje u Chr
 rate_app_button = Ocenite u Chrome veb prodavnici
 rate_app_button_later = Podseti me kasnije
 deepl_get_own_key_info = Registruj se na www.deepl.com da bi dobio besplatan ključ za autentifikaciju za DeepL API
-deepl_insert_auth_key = Postavi ključ za autentifikaciju za DeepL API
+deepl_insert_auth_key = Postavi API ključ za autentifikaciju za dobijanje pristupa ka DeepL prevodima
+deepl_insert_auth_key_warning = Upozorenje: NE UNOSI svoj API ključ nigde osim u prozoru ovog proširenja
+deepl_insert_auth_key_remove = Ukloni DeepL API ključ
 target_lang_placeholder = Ciljani jezici
 source_lang_placeholder = Izvorni jezici
 favorites_lang_title = Omiljeno
@@ -173,3 +176,21 @@ mellowtel_regulation3 = Takođe pruža i CWS regulatore sa alatima za nadgledanj
 mellowtel_button_decline = Odbi opciono
 mellowtel_button_accept = Prihvati sve
 mellowtel_dialog_footer = Hvala što ste izdvojili vreme da pročitate, timovi { $devs }.
+
+# various error messages
+error_403_auth_failed = Autorizacija nije uspela. Unesi validan API ključ za autentifikaciju u podešavanjima
+
+# open-ai integration
+open_ai_get_access_info = 1) Registruj se na platform.openai.com 2) Kreiraj ključ za pristup API-ju 3) Dopuni svoja novčana sredstva (5$+)
+open_ai_insert_auth_key = Obezbedi API ključ za dobijanje OpenAI prevoda (platforma autora ChatGPT-a)
+open_ai_insert_auth_key_warning = Upozorenje: NE UNOSI svoj API ključ nigde osim u prozoru ovog proširenja
+open_ai_insert_auth_key_remove = Ukloni OpenAI API ključ
+open_ai_choose_model = Izaberi AI model
+open_ai_choose_model_cost_efficient = Najisplativije
+open_ai_choose_model_optimal = Preporučeni model
+open_ai_choose_model_chatgpt_like = ChatGPT (može biti skupo)
+open_ai_choose_model_best_results = Najbolji rezultati (najskuplje)
+open_ai_why_info_help =
+ Direktnom upotrebom ličnog naloga na OpenAI platformi i dokazivanjem API ključa štedite dosta novca. Korišćenjem servisa od drugih aplikacija/proširenja koji služe kao "čovek u sredini",
+   često plaćate mesečnu/godišnju pretplatu, a cene i ograničenja upotrebe nisu pod vašom kontrolom.
+   Ne zaboravite da prilagodite ograničenja upotrebe na platform.openai.com i onemogućite automatsku dopunu sredstava na kreditnoj kartici.
