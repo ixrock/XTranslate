@@ -26,7 +26,7 @@ class Yandex extends Translator {
       return this.request({ url });
     };
 
-    var dictReq = async (from = langFrom, to = langTo): Promise<YandexDictionary> => {
+    var dictReq = async (from = langFrom, to = langTo): Promise<YandexDictionary | undefined> => {
       var url = 'https://dictionary.yandex.net/dicservice.json/lookup?' +
         new URLSearchParams({
           ui: to,
@@ -35,7 +35,7 @@ class Yandex extends Translator {
         });
       var canUseDictionary = this.isDictionarySupported(from, to);
       if (!canUseDictionary) return;
-      return this.request<YandexDictionary>({ url }).catch(() => null); // ignore errors
+      return await this.request<YandexDictionary>({ url }).catch(() => {}) as YandexDictionary; // ignore errors
     };
 
     // main translation
@@ -46,7 +46,7 @@ class Yandex extends Translator {
     };
 
     // dictionary translations
-    var dictRes = await dictReq(translation.langDetected);
+    var dictRes = await dictReq(translation.langDetected).catch(() => {});
     if (dictRes) {
       translation.dictionary = dictRes.def.map(dict => {
         if (!translation.transcription && dict.ts) {

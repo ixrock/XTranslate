@@ -128,7 +128,7 @@ export class Input extends React.Component<InputProps, State> {
         }
         asyncValidators.push(
           result.then(
-            () => null, // don't consider any valid result from promise since we interested in errors only
+            () => {}, // don't consider any valid result from promise since we interested in errors  54only
             error => this.getValidatorError(value, validator) || error
           )
         );

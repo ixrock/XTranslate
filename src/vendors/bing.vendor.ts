@@ -130,7 +130,7 @@ class Bing extends Translator {
       };
 
       // dictionary results
-      var dictRes = await dictionaryReq(result.langDetected).catch(() => null);
+      var dictRes = await dictionaryReq(result.langDetected).catch(() => {});
       if (dictRes) {
         var dictGroups = groupBy<DictTranslation>(dictRes[0].translations, trans => trans.posTag)
         result.dictionary = Object.keys(dictGroups).map(wordType => {

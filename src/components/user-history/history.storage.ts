@@ -151,9 +151,9 @@ export function toHistoryItem(data: IHistoryStorageItem): IHistoryItem {
       dictionary: dictionary.map(dict => ({
         wordType: dict.w,
         translation: dict.tr,
-        similarReverseWords: [],
+        similarReverseWords: [] as string[][],
       })),
-    }
+    };
   }
 }
 
