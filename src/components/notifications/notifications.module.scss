@@ -1,4 +1,4 @@
-@import "../mixins";
+@use "../mixins" as *;
 
 .Notifications {
   @include hidden-scrollbar;

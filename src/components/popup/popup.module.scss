@@ -1,3 +1,5 @@
+@use "../mixins" as *;
+
 .Popup {
   --theme-spacing: .6em;
 

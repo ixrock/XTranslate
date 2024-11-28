@@ -1,4 +1,6 @@
-// TODO: convert to css-modules
+@use "../mixins" as *;
+
+// TODO: convert to (s)css-module
 .ReactSelect  {
   flex: 1;
 

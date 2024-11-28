@@ -1,5 +1,4 @@
 //-- Mixins
-@import "theme";
 
 @mixin custom-scrollbar($borderSpace: 5px, $overlay: false) {
   $size: calc(var(--theme-scrollbar-size) + #{$borderSpace * 2});

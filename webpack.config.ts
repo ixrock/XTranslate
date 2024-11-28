@@ -10,11 +10,6 @@ const distPath = path.resolve(__dirname, "dist");
 const optionsPage = path.resolve(__dirname, "options.html");
 const componentsDir = path.resolve(srcPath, "components");
 
-const sassCommonVarsImport = [
-  `@import "${componentsDir}/mixins.scss";`,
-  `@import "${componentsDir}/colors.scss";`,
-].join("\n");
-
 const configEntries: webpack.EntryObject = {
   [appEntry]: path.resolve(componentsDir, "app/index.tsx"),
   [contentScriptEntry]: path.resolve(srcPath, "user-script/user-script.tsx"),
@@ -93,13 +88,9 @@ function webpackBaseConfig(): webpack.Configuration {
               }
             },
             {
-              loader: 'sass-loader',
+              loader: "sass-loader",
               options: {
                 sourceMap: isDevelopment,
-                additionalData: sassCommonVarsImport,
-                sassOptions: {
-                  includePaths: [componentsDir]
-                },
               }
             }
           ]

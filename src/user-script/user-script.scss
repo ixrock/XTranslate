@@ -1,3 +1,5 @@
+@use "../components/theme" as *;
+
 :host-context(.XTranslate) {
   @include theme-vars;
 

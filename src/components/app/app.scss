@@ -1,8 +1,9 @@
-@import "~flex.box/src/flexbox.css";
-@import "../fonts";
-@import "../mixins";
+@use "../mixins" as *;
+@use "../theme" as *;
+@use "../fonts" as *;
 
-@include theme-setup;
+@include theme-setup();
+@import "~flex.box/src/flexbox.css"; // TODO: get rid of outdated dependency
 
 *, *:before, *:after {
   box-sizing: border-box;

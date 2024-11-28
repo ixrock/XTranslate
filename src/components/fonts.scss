@@ -1,8 +1,6 @@
 // Extension's custom fonts
 
 $assetsPathChrome: "chrome-extension://__MSG_@@extension_id__/assets";
-$assetsPathFirefox: "moz-extension://__MSG_@@extension_id__/assets"; // fallback for firefox-env system path
-$iconsFont: "/fonts/MaterialIcons-Regular.ttf";
 
 // Material Design Icons (see also: icon.tsx)
 // Latest version: https://github.com/google/material-design-icons/tree/master/font
@@ -10,7 +8,6 @@ $iconsFont: "/fonts/MaterialIcons-Regular.ttf";
   font-family: "MaterialIcons-XTranslate";
   font-display: block;
   src: local("Material Icons"),
-  url("#{$assetsPathChrome}/#{$iconsFont}") format("truetype"), // TODO: remove warnings in firefox dev-console
-  url("#{$assetsPathFirefox}/#{$iconsFont}") format("truetype")
+  url("#{$assetsPathChrome}/fonts/MaterialIcons-Regular.ttf") format("truetype")
 ;
 }

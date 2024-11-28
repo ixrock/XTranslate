@@ -1,3 +1,5 @@
+@use "../mixins" as *;
+
 .VendorAuthSettings {
   display: flex;
   gap: var(--flex-gap);
