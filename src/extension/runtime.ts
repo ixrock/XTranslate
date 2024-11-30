@@ -69,10 +69,8 @@ export function onMessage<Request, Response = unknown>(type: MessageType, getRes
   };
 }
 
-export function openOptionsPage() {
-  return new Promise(resolve => {
-    chrome.runtime.openOptionsPage(() => resolve(null));
-  });
+export async function openOptionsPage() {
+  return chrome.runtime.openOptionsPage();
 }
 
 export function onInstall(callback: (reason: "install" | "update" | "chrome_update", details: InstalledDetails) => void) {

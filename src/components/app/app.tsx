@@ -2,7 +2,7 @@
 
 import "./app.scss";
 import "../../setup";
-import * as React from 'react';
+import React from "react";
 import { createRoot } from "react-dom/client"
 import { reaction } from "mobx";
 import { observer } from "mobx-react";
@@ -11,7 +11,6 @@ import { getManifest } from "../../extension";
 import { settingsStore } from '../settings/settings.storage'
 import { Header } from "./header";
 import { Footer } from './footer'
-import { Spinner } from "../spinner";
 import { Notifications } from "../notifications";
 import { getUrlParams } from "../../navigation";
 import { pageManager } from "./page-manager";
@@ -24,15 +23,17 @@ import { MellowtelDialog } from "../../../mellowtel/mellowtel-dialog";
 
 @observer
 export class App extends React.Component {
-  static async init(preloadDeps: () => Promise<void>) {
-    await preloadDeps(); // preload dependent data before initial app rendering
+  static async init() {
+    await preloadAppData(); // preload dependent data before initial app rendering
 
     const { name: appName, description: appDescription } = getManifest();
     document.title = `${appName} - ${appDescription}`;
 
-    var rootElem = document.getElementById('app');
-    var rootNode = createRoot(rootElem);
-    rootNode.render(<Spinner center/>); // show loading indicator
+    // create DOM placeholder
+    const rootElem = document.createElement('div');
+    const rootNode = createRoot(rootElem);
+    rootElem.id = "XTranslateWindowApp";
+    document.body.appendChild(rootElem);
 
     App.bindDarkThemeSwitching();
     rootNode.render(<App/>);
@@ -79,4 +80,4 @@ export class App extends React.Component {
 }
 
 // render app
-App.init(preloadAppData);
+void App.init();

@@ -1,5 +1,5 @@
 import * as styles from './footer.module.scss'
-import React from 'react';
+import React from "react";
 import { observer } from "mobx-react";
 import { getExtensionUrl } from "../../common-vars";
 import { prevDefault } from '../../utils'

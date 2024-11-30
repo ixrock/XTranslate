@@ -1,5 +1,5 @@
 import * as styles from './notifications.module.scss';
-import React from 'react'
+import React from "react"
 import { reaction } from "mobx";
 import { observer } from "mobx-react"
 import { cssNames, disposer, prevDefault } from "../../utils";

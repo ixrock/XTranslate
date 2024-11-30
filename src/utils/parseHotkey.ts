@@ -7,10 +7,6 @@ export interface Hotkey {
   ctrlKey?: boolean
   metaKey?: boolean
   shiftKey?: boolean
-  /**
-   * @deprecated
-   */
-  keyCode?: number;
 }
 
 interface HotkeyChunk {
@@ -35,7 +31,7 @@ export function parseHotkey(hotkey: Hotkey) {
   };
 }
 
-export function getHotkey(e: KeyboardEvent) {
+export function getHotkey(e: KeyboardEvent | React.KeyboardEvent) {
   var hotkey: Hotkey = {
     code: normalizeKeyboardCode(e.code),
   };

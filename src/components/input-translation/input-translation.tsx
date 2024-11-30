@@ -189,7 +189,7 @@ export class InputTranslation extends React.Component<Props> {
   );
 
   onKeyDown = (evt: React.KeyboardEvent<HTMLInputElement>) => {
-    var isCmdEnter = (evt.metaKey || evt.ctrlKey) && evt.keyCode === 13;
+    var isCmdEnter = (evt.metaKey || evt.ctrlKey) && evt.code === "Enter";
     if (isCmdEnter) {
       this.onInputChange.flush();
     }

@@ -137,6 +137,12 @@ export class Settings extends React.Component {
         <SubTitle>{getMessage("settings_title_appearance")}</SubTitle>
         <article className={styles.grid}>
           <Checkbox
+            label={getMessage("pdf_use_custom_viewer")}
+            tooltip={getMessage("pdf_use_custom_viewer_info")}
+            checked={settings.customPdfViewer}
+            onChange={v => settings.customPdfViewer = v}
+          />
+          <Checkbox
             label={getMessage("show_context_menu")}
             checked={settings.showInContextMenu}
             onChange={v => settingsStore.data.showInContextMenu = v}
@@ -148,19 +154,19 @@ export class Settings extends React.Component {
             tooltip={{ children: <XTranslateIcon style={{ position: "static" }}/> }}
           />
           {settings.showIconNearSelection && (
-            <>
-              <div>{getMessage("position_of_x_translate_icon")}</div>
+            <label>
+              <span>{getMessage("position_of_x_translate_icon")}</span>
               <ReactSelect
                 options={this.iconPositions}
                 value={this.iconPositions.find(pos => isEqual(pos.value, settings.iconPosition))}
                 onChange={(opt: ReactSelectOption<XIconPosition>) => settings.iconPosition = opt.value}
               />
-            </>
+            </label>
           )}
         </article>
 
         <SubTitle>{getMessage("settings_title_tts")}</SubTitle>
-        <article className="grid">
+        <article className={styles.grid}>
           <Checkbox
             label={getMessage("auto_play_tts")}
             checked={settings.autoPlayText}
@@ -172,28 +178,30 @@ export class Settings extends React.Component {
             onChange={v => settings.useSpeechSynthesis = v}
             tooltip={getMessage("use_chrome_tts_tooltip_info")}
           />
-          <div className="flex gaps align-center">
-            <p>{getMessage("tts_default_system_voice")}</p>
-            <SelectVoice
-              currentIndex={settings.ttsVoiceIndex}
-              onChange={v => settings.ttsVoiceIndex = v}
-            />
-            <Icon
-              small
-              material="edit"
-              tooltip={{ nowrap: true, children: getMessage("tts_play_demo_sound_edit") }}
-              onClick={this.editDemoVoiceText}
-            />
-            <Icon
-              small
-              material={this.isSpeaking ? "pause_outline" : "play_circle_outline"}
-              tooltip={{
-                nowrap: true,
-                children: `${getMessage("tts_play_demo_sound")}: "${this.demoVoiceText}"`,
-              }}
-              onClick={this.speakDemoText}
-            />
-          </div>
+          <label className="flex column">
+            <span className="box noshrink">{getMessage("tts_default_system_voice")}</span>
+            <div className="flex gaps align-center">
+              <SelectVoice
+                currentIndex={settings.ttsVoiceIndex}
+                onChange={v => settings.ttsVoiceIndex = v}
+              />
+              <Icon
+                small
+                material="edit"
+                tooltip={{ nowrap: true, children: getMessage("tts_play_demo_sound_edit") }}
+                onClick={this.editDemoVoiceText}
+              />
+              <Icon
+                small
+                material={this.isSpeaking ? "pause_outline" : "play_circle_outline"}
+                tooltip={{
+                  nowrap: true,
+                  children: `${getMessage("tts_play_demo_sound")}: "${this.demoVoiceText}"`,
+                }}
+                onClick={this.speakDemoText}
+              />
+            </div>
+          </label>
         </article>
 
         <SubTitle>{getMessage("setting_title_popup")}</SubTitle>
@@ -256,7 +264,7 @@ export class Settings extends React.Component {
             onChange={v => settings.showPopupOnHotkey = v}
             tooltip={hotKey.title}
           />
-          <div className="popup-position flex gaps align-center">
+          <label className="popup-position flex gaps align-center">
             <Icon
               material="display_settings"
               tooltip={getMessage("popup_position_title")}
@@ -267,7 +275,7 @@ export class Settings extends React.Component {
               value={this.popupPositions.find(pos => pos.value === settings.popupPosition)}
               onChange={(opt: ReactSelectOption<PopupPosition>) => settings.popupPosition = opt.value}
             />
-          </div>
+          </label>
           <label className="keyboard-hotkey flex">
             <Icon material="keyboard"/>
             <Input

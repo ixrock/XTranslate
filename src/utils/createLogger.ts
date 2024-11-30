@@ -3,26 +3,46 @@ import { isProduction } from "../common-vars";
 
 export interface CreateLoggerOptions {
   systemPrefix?: string; // system part logger with own prefix
-  outputSource?: Logger; // logger instance, default: global.console
 }
 
 export interface Logger {
-  info(...data: any[]): void,
-  error(...data: any[]): void
+  info(...args: any[]): void
+  error(...args: any[]): void
+  time: (label: string) => {
+    start(): void;
+    stop(): void;
+  }
 }
 
-export function createLogger({ systemPrefix = "[APP]", outputSource = console }: CreateLoggerOptions = {}): Logger {
-  const prefix = systemPrefix + `:`;
-  const console = Object.create(outputSource) as typeof outputSource;
+export function createLogger({ systemPrefix = "[APP]" }: CreateLoggerOptions = {}): Logger {
+  const prefix = `${systemPrefix}:`;
 
-  // logs are shown only in development/debug mode
   if (isProduction) {
-    console.info = () => null;
-    console.error = () => null;
-  } else {
-    console.info = console.info.bind(console, prefix);
-    console.error = console.error.bind(console, prefix);
+    const noop = Function; // logs are provided only in `development` mode
+    return {
+      error: noop,
+      info: noop,
+      time: (label: string) => ({ start: noop, stop: noop })
+    }
   }
 
-  return console;
+  return {
+    info(...args) {
+      console.info(`%c ${prefix}`, "color: #942486; font-weight: bold;", ...args);
+    },
+    error(...args) {
+      console.error(`%c ${prefix}`, "color: red; font-weight: bold;", ...args);
+    },
+    time(label: string) {
+      label = `Time (${label})`;
+      return {
+        start() {
+          console.time(label);
+        },
+        stop() {
+          console.timeEnd(label);
+        },
+      }
+    }
+  }
 }

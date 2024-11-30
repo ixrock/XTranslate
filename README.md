@@ -11,7 +11,7 @@ Features:
 1) Many ways to get translation from texts within web page:
 - double-click on the word
 
-select text and get translation right after one of the following actions:
+Select text and get translation right after one of the following actions:
 - press hotkey defined in extension settings (`Alt + Shift + X` by default)
 - click on the XTranslate icon appeared near selected text
 - release mouse button after selecting a text (this option is turned off by default)
@@ -23,10 +23,11 @@ press hotkey (title or alt attributes will be used when applicable).
 With this feature it is possible to get auto-translation by block of text at the page
 just by pressing the hotkey when mouse over it!
 
-Translations in **PDF files** are also supported, but it works only from context menu (turned off by default in the settings)
-due technical restrictions of how chrome renders PDF-files.
-Select a text in opened file (be sure it's not an image file inside pdf content),  
-then click mouse right button on the selection and choose "XTranslate -> Translate with ..." from the menu.
+1) Translate texts in **PDF** files _(powered by [pdf.js](https://github.com/mozilla/pdf.js))_. 
+
+In order to work with local files (e.g. `file://path/to/file.pdf`) you must allow access for the extension:
+- open extensions page `chrome://extensions/`, find **XTranslate** and click **(Details)** button
+- enable checkbox **"Allow access to file URLs"** 
 
 2) Listen text-to-speech (TTS) for all supported translation vendors
 
@@ -73,15 +74,13 @@ For developers and contributors:
 -----------
 
 Install globals _(prerequisites)_:
-1) node _(>=16 && <=18)_
-2) brew install yarn
-
-3) yarn _(from project root, install all dependencies)_
+1) node.js _(v.20+)_
+2) npm install _(from project root folder)_
 
 Steps to **build** (compile) extension:
 
 1) `npm run build`
-2) see `/dist` and `/dist-firefox` (depends on the branch) folder(s) for ready-to use extension source directory with own `manifest.json`
+2) use `/dist` folder as extension's build source with own `manifest.json`
 
 Other commands to **dev** and **test**:
 

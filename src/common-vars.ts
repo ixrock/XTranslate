@@ -1,4 +1,4 @@
-// Common variables for any process: background page (main), options page (renderer), user-script, etc.
+// Common variables for any process: background page (main), options page (renderer), content-script, etc.
 
 export const isProduction = process.env.NODE_ENV === "production";
 export const isDevelopment = !isProduction;
@@ -10,7 +10,8 @@ export const edgeAddonsURL = 'https://microsoftedge.microsoft.com/addons/detail/
 // Webpack: app build, generated output filenames without extension (*.js, *.css)
 export const appEntry = "app";
 export const serviceWorkerEntry = "background"; // keep in sync with manifest.json
-export const contentScriptEntry = "user-script"; // keep in sync with manifest.json
+export const contentScriptEntry = "content-script"; // keep in sync with manifest.json
+export const pdfViewerEntry = "pdf-viewer";
 
 // Icons, see also: https://fonts.google.com/icons
 export const iconMaterialFavorite = "star";

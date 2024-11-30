@@ -1,6 +1,7 @@
+import { EventEmitter } from "events"
 import { reaction } from "mobx";
 import { Color } from "react-color"
-import { getURL, proxyRequest, ProxyResponseType } from "../../extension";
+import { getURL } from "../../extension";
 import { createLogger, disposer } from "../../utils";
 import { createStorage } from "../../storage";
 
@@ -38,7 +39,12 @@ export interface IThemeFont {
   fileName?: string;
 }
 
+export interface ThemeStoreEvents {
+  fontLoaded: [FontFace];
+}
+
 export class ThemeStore {
+  public events = new EventEmitter<ThemeStoreEvents>();
   private storage = themeStorage;
   private logger = createLogger({ systemPrefix: `[THEME]` });
   private dispose = disposer();
@@ -95,21 +101,25 @@ export class ThemeStore {
     return font;
   }
 
+  isLoaded(familyName: string): boolean {
+    return [...document.fonts].some((fontFace) => fontFace.family === familyName);
+  }
+
   async loadFont(font: string | IThemeFont) {
     await document.fonts.ready
 
     const { fileName, familyName } = this.getBundledFont(font);
     if (!fileName) return; // system font is selected by user, e.g. "Arial"
+    if (this.isLoaded(familyName)) return; // font already preloaded
 
     try {
-      const fontBlob = await proxyRequest<Blob>({
-        url: getURL(`assets/fonts/${fileName}`),
-        responseType: ProxyResponseType.BLOB,
+      const font = new FontFace(familyName, `url(${getURL(`assets/fonts/${fileName}`)})`, {
+        display: "swap",
       });
-      const font = new FontFace(familyName, await fontBlob.arrayBuffer());
-      font.display = "swap";
       await font.load();
+      this.logger.info(`font "${familyName}" is loaded`, { font, origin: location.href });
       document.fonts.add(font);
+      this.events.emit("fontLoaded", font);
     } catch (error) {
       this.logger.error(`loading font "${familyName}" from file "${fileName}" has failed`, error);
     }

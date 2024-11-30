@@ -3,7 +3,7 @@
 
 @mixin theme-vars() {
   --flex-gap: var(--theme-spacing);
-  --theme-content-width: clamp(620px, 1000px, 100%);
+  --theme-content-width: clamp(600px, 1000px, 100%);
   --theme-content-height: 600px;
   --theme-color-contrast: black;
   --theme-bgc: white;

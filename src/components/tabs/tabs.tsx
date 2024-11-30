@@ -1,5 +1,5 @@
 import * as styles from "./tabs.module.scss";
-import * as React from "react";
+import React from "react";
 import { cssNames, IClassName } from "../../utils";
 import { Icon } from "../icon";
 

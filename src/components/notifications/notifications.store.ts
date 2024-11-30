@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 import { action, observable } from "mobx"
 import { autoBind } from "../../utils";
 import isObject from "lodash/isObject"

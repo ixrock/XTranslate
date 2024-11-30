@@ -1,5 +1,5 @@
 import * as styles from './spinner.module.scss'
-import React from 'react'
+import React from "react"
 import { cssNames } from "../../utils";
 
 interface Props extends React.HTMLProps<any> {

@@ -1,6 +1,5 @@
 @use "../mixins" as *;
 @use "../theme" as *;
-@use "../fonts" as *;
 
 @include theme-setup();
 @import "~flex.box/src/flexbox.css"; // TODO: get rid of outdated dependency
@@ -56,7 +55,7 @@ hr {
   background: var(--theme-border-color);
 }
 
-#app {
+#XTranslateWindowApp {
   @include custom-scrollbar($overlay: true);
 
   margin: auto;

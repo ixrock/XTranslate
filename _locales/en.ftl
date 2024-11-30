@@ -33,8 +33,8 @@ export_settings_button_label = Export settings
 import_settings_button_label = Import settings
 import_incorrect_file_format = Incorrect file format (should be probably { $fileNameJson })
 imported_setting_successful = Settings under the key { $key } imported successful
-show_context_menu = Show in page context menu (required in *.pdf)
-display_icon_near_selection = Show translate-icon near selected text
+show_context_menu = Show in page context menu
+display_icon_near_selection = Show icon near selected text
 show_tts_icon_inside_popup = Display text-to-speech icon
 show_next_vendor_icon_in_popup = Display next-translation icon
 show_copy_translation_icon = Display copy-translation icon
@@ -61,7 +61,7 @@ translation_delay_info = If you often experience blocking (503 error) from Googl
 reverse_translate_select_placeholder = Reverse translate language
 reverse_translate_add_action = Add reverse language: { $lang } -> ? (applicable only with "Auto-detect" option)
 reverse_translate_delete_action = Unset reverse translate language
-position_of_x_translate_icon = Position of translate-icon near selection
+position_of_x_translate_icon = Position of the translation icon
 skip_translation_vendor_in_rotation = Skip { $vendor }-translations in rotation via arrow-icon or keyboard arrows (in popup)
 
 # theme
@@ -192,3 +192,7 @@ open_ai_why_info_help =
  By using your own OpenAI platform's account directly and proving api key you saves a lot of money instead of using "middle-of-the-man" services from other apps/extensions,
    where you usually pay for monthly/yearly subscription and where all prices and usage limits are not under your control.
    Don't forget to adjust usage limits at platform.openai.com and disable credit card's auto-top-up balance.
+
+# PDF translations suppot via pdf.js
+pdf_use_custom_viewer = Support translations in PDF files
+pdf_use_custom_viewer_info = This option will replace default PDF viewer

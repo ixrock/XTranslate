@@ -12,7 +12,7 @@
   border-radius: var(--theme-border-radius);
   left: -1000px;
   top: -1000px;
-  z-index: 100;
+  z-index: 10000;
   max-height: 300px;
 
   &.top {

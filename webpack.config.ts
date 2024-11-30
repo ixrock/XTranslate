@@ -3,17 +3,17 @@ import path from 'path'
 import HtmlWebpackPlugin from 'html-webpack-plugin'
 import CopyWebpackPlugin from 'copy-webpack-plugin'
 import MiniCssExtractPlugin from 'mini-css-extract-plugin'
-import { appEntry, serviceWorkerEntry, contentScriptEntry, isDevelopment } from "./src/common-vars";
+import { appEntry, serviceWorkerEntry, contentScriptEntry, isDevelopment, pdfViewerEntry } from "./src/common-vars";
 
 const srcPath = path.resolve(__dirname, "src");
 const distPath = path.resolve(__dirname, "dist");
-const optionsPage = path.resolve(__dirname, "options.html");
 const componentsDir = path.resolve(srcPath, "components");
 
 const configEntries: webpack.EntryObject = {
   [appEntry]: path.resolve(componentsDir, "app/index.tsx"),
-  [contentScriptEntry]: path.resolve(srcPath, "user-script/user-script.tsx"),
+  [contentScriptEntry]: path.resolve(srcPath, "user-script/content-script-entry.tsx"),
   [serviceWorkerEntry]: path.resolve(srcPath, "background/background.ts"),
+  [pdfViewerEntry]: path.resolve(srcPath, "pdf-viewer/pdf-viewer.tsx"),
 };
 
 function webpackBaseConfig(): webpack.Configuration {
@@ -51,6 +51,7 @@ function webpackBaseConfig(): webpack.Configuration {
       extensions: ['.ts', '.tsx', '.js', '.json', ".scss", ".css", ".txt", ".md"],
       fallback: {
         // ignore browser polyfill warnings
+        zlib: false,
         crypto: false,
         path: false,
       }
@@ -145,14 +146,21 @@ export default [
     webConfig.target = "web"
     webConfig.entry = {
       [appEntry]: configEntries[appEntry],
+      [pdfViewerEntry]: configEntries[pdfViewerEntry],
     };
 
     webConfig.plugins.push(
       new HtmlWebpackPlugin({
         inject: true,
-        chunks: ["app"],
-        filename: path.basename(optionsPage),
-        template: optionsPage,
+        chunks: [appEntry],
+        filename: "options.html",
+      }),
+
+      new HtmlWebpackPlugin({
+        inject: true,
+        chunks: [pdfViewerEntry],
+        filename: `${pdfViewerEntry}.html`,
+        title: "PDF.js viewer"
       }),
 
       new CopyWebpackPlugin({
@@ -169,7 +177,7 @@ export default [
     return webConfig;
   },
 
-  // user-script.js (content pages)
+  // webpage content script
   function () {
     const webConfig = webpackBaseConfig();
     webConfig.target = "web"

@@ -3,23 +3,25 @@
  */
 
 import { i18nInit } from "./i18n";
+import { createLogger } from "./utils/createLogger";
 import { settingsStore } from "./components/settings/settings.storage";
 import { themeStore } from "./components/theme-manager/theme.storage";
-import { createLogger } from "./utils/createLogger";
 import { favoritesStorage } from "./components/user-history/favorites.storage";
 
-const logger = createLogger({ systemPrefix: `[PRELOAD]` });
-
 export async function preloadAppData() {
+  const logger = createLogger({ systemPrefix: `[PRELOAD]` });
+  const loadingTimer = logger.time("preloadAppData()");
+
   try {
+    loadingTimer.start();
     await Promise.all([
-      i18nInit().then(() => logger.info("localization data ready")),
-      settingsStore.load().then(() => logger.info("settings data ready")),
-      themeStore.load().then(() => logger.info("theming data ready")),
-      favoritesStorage.load().then(() => logger.info("favorites data ready")),
+      i18nInit(),
+      settingsStore.load(),
+      themeStore.load(),
+      favoritesStorage.load(),
     ]);
-    logger.info("INITIAL DATA READY/PRELOADED");
+    loadingTimer.stop();
   } catch (error) {
-    logger.error("INITIAL DATA PRELOADING FAILED", { error });
+    logger.error(`data fetching failed: ${error}`);
   }
 }

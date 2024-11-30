@@ -1,5 +1,5 @@
 import * as styles from "./openai_settings.module.scss";
-import React from 'react';
+import React from "react";
 import { computed } from "mobx";
 import { observer } from "mobx-react";
 import { ReactSelect, ReactSelectOption } from "../select";

@@ -1,5 +1,5 @@
 import "./header.scss";
-import React from 'react';
+import React from "react";
 import { observer } from "mobx-react";
 import { cssNames } from "../../utils/cssNames";
 import { getManifest } from "../../extension";

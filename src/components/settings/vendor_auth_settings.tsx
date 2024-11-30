@@ -1,5 +1,5 @@
 import * as styles from "./vendor_auth_settings.module.scss";
-import React from 'react';
+import React from "react";
 import { observer } from "mobx-react";
 import { Icon } from "../icon";
 import { cssNames, prevDefault } from "../../utils";
