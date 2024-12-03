@@ -1,5 +1,6 @@
 import BingLanguages from "./bing.json"
-import { groupBy, isEmpty } from "lodash";
+import isEmpty from "lodash/isEmpty";
+import groupBy from "lodash/groupBy";
 import { ProxyRequestInit, ProxyResponseType } from "../extension";
 import { ITranslationError, ITranslationResult, TranslateParams, Translator, VendorCodeName } from "./index";
 import { createStorage } from "../storage";

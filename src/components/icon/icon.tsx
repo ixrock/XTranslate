@@ -1,7 +1,7 @@
 import * as styles from "./icon.module.scss";
 import uniqueId from "lodash/uniqueId";
 import React, { type ReactNode } from "react";
-import { base64, cssNames } from "../../utils";
+import { base64Decode, cssNames } from "../../utils";
 import { Tooltip, TooltipProps } from "../tooltip";
 
 export interface IconProps extends React.HTMLAttributes<any> {
@@ -109,7 +109,7 @@ export class Icon extends React.PureComponent<IconProps> {
       const dataUrlPrefix = "data:image/svg+xml;base64,";
       const svgIconDataUrl = svg.startsWith(dataUrlPrefix) ? svg : require(`./${svg}.svg`);
       const svgIconText = typeof svgIconDataUrl == "string" // decode xml from data-url
-        ? base64.decode(svgIconDataUrl.replace(dataUrlPrefix, "")) : "";
+        ? base64Decode(svgIconDataUrl.replace(dataUrlPrefix, "")) : "";
 
       iconContent = <span dangerouslySetInnerHTML={{ __html: svgIconText }}/>;
     }

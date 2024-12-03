@@ -19,8 +19,8 @@ const configEntries: webpack.EntryObject = {
 function webpackBaseConfig(): webpack.Configuration {
   return {
     target: "web",
+    mode: isDevelopment ? "development" : "production", // FIXME: production build is broken due "pdfjs-dist"
     devtool: isDevelopment ? "source-map" : false, // https://webpack.js.org/configuration/devtool/
-    mode: isDevelopment ? "development" : "production",
     cache: isDevelopment ? { type: "filesystem" } : false,
     entry: {}, // to be defined on each config
 
@@ -30,8 +30,8 @@ function webpackBaseConfig(): webpack.Configuration {
       publicPath: "auto",
       path: distPath,
       filename: '[name].js',
-      chunkFilename: 'chunks/[name].js',
-      assetModuleFilename: `assets/[name][ext][query]`
+      chunkFilename: '[name].chunk.js',
+      assetModuleFilename: `assets/[name][ext]`
     },
 
     experiments: {
@@ -48,11 +48,10 @@ function webpackBaseConfig(): webpack.Configuration {
     ],
 
     resolve: {
-      extensions: ['.ts', '.tsx', '.js', '.json', ".scss", ".css", ".txt", ".md"],
+      extensions: ['.ts', '.tsx', '.js', '.mjs', '.json'],
       fallback: {
         // ignore browser polyfill warnings
         zlib: false,
-        crypto: false,
         path: false,
       }
     },
@@ -129,27 +128,28 @@ function webpackBaseConfig(): webpack.Configuration {
     },
 
     plugins: [
-      new MiniCssExtractPlugin({ filename: '[name].css' }),
-
-      // https://webpack.js.org/plugins/source-map-dev-tool-plugin/
-      !isDevelopment && new webpack.SourceMapDevToolPlugin({
-        exclude: ["mobx"],
+      new MiniCssExtractPlugin({
+        filename: '[name].css'
       }),
-    ].filter(Boolean),
+    ]
   }
 }
 
 export default [
-  // app.js (browser action window)
+  // build main app (options page), pdf-viewer and content-script
   function () {
     const webConfig = webpackBaseConfig();
-    webConfig.target = "web"
+
     webConfig.entry = {
       [appEntry]: configEntries[appEntry],
       [pdfViewerEntry]: configEntries[pdfViewerEntry],
+      [contentScriptEntry]: configEntries[contentScriptEntry],
     };
 
-    webConfig.plugins.push(
+    // FIXME: figure out how to remove "openai", "mellowtel" (pdfjs-dist) and other non-UI dependencies from bundle
+    webConfig.externals = [];
+
+    webConfig.plugins.push(...[
       new HtmlWebpackPlugin({
         inject: true,
         chunks: [appEntry],
@@ -160,7 +160,6 @@ export default [
         inject: true,
         chunks: [pdfViewerEntry],
         filename: `${pdfViewerEntry}.html`,
-        title: "PDF.js viewer"
       }),
 
       new CopyWebpackPlugin({
@@ -172,18 +171,8 @@ export default [
           { from: "assets", to: "assets" },
         ]
       }),
-    );
+    ]);
 
-    return webConfig;
-  },
-
-  // webpage content script
-  function () {
-    const webConfig = webpackBaseConfig();
-    webConfig.target = "web"
-    webConfig.entry = {
-      [contentScriptEntry]: configEntries[contentScriptEntry]
-    };
     return webConfig;
   },
 

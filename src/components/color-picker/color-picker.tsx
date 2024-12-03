@@ -1,7 +1,8 @@
 import * as styles from "./color-picker.module.scss";
 import React from "react"
 import { ChromePicker, Color, ColorResult } from "react-color"
-import { cssNames, IClassName, noop, toCssColor } from "../../utils";
+import { cssNames, IClassName, noop } from "../../utils";
+import { toCssColor } from "../../utils/toCssColor";
 
 export interface Props {
   className?: IClassName;

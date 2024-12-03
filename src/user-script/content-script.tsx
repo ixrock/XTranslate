@@ -5,7 +5,10 @@ import React from "react";
 import { createRoot } from "react-dom/client";
 import { action, computed, makeObservable, observable, toJS } from "mobx";
 import { observer } from "mobx-react";
-import { debounce, isEmpty, isEqual, orderBy } from "lodash"
+import debounce from 'lodash/debounce';
+import isEmpty from 'lodash/isEmpty';
+import isEqual from 'lodash/isEqual';
+import orderBy from 'lodash/orderBy';
 import { autoBind, getHotkey } from "../utils";
 import { getManifest, getURL, MessageType, onMessage, proxyRequest, ProxyResponseType, TranslateWithVendorPayload } from "../extension";
 import { getNextTranslator, getTranslator, ITranslationError, ITranslationResult, TranslatePayload } from "../vendors";

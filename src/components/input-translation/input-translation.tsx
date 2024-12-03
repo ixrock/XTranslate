@@ -1,6 +1,7 @@
 import "./input-translation.scss";
 
-import { debounce, isEqual } from "lodash";
+import debounce from "lodash/debounce";
+import isEqual from "lodash/isEqual";
 import React, { Fragment } from "react";
 import { action, comparer, computed, makeObservable, observable, reaction, toJS } from "mobx";
 import { observer } from "mobx-react";

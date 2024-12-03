@@ -1,15 +1,24 @@
 /**
  * Encode/decode utf-8 base64 string
  */
-import * as Base64 from "crypto-js/enc-base64";
-import * as Utf8 from "crypto-js/enc-utf8";
 
-export const base64 = { decode, encode };
+export function base64Decode(base64: string): string;
+export function base64Decode(base64: string, asBinary: true): Uint8Array;
+export function base64Decode(base64: string, asBinary?: boolean): Uint8Array | string {
+  const binString = atob(base64);
+  const binary = Uint8Array.from(binString, (m) => m.codePointAt(0));
 
-export function decode(data: string): string {
-  return Base64.parse(data).toString(Utf8);
+  if (asBinary) {
+    return binary;
+  }
+  return new TextDecoder().decode(binary);
 }
 
-export function encode(data: string): string {
-  return Utf8.parse(data).toString(Base64);
+export function base64Encode(content: Uint8Array | string): string {
+  if (typeof content === "string") {
+    content = new TextEncoder().encode(content);
+  }
+
+  const binString = Array.from(content, (byte) => String.fromCodePoint(byte)).join("");
+  return btoa(binString);
 }

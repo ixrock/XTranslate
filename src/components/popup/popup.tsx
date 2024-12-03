@@ -3,9 +3,10 @@ import * as styles from "./popup.module.scss"
 import React, { CSSProperties } from "react";
 import { action, computed, makeObservable, observable } from "mobx";
 import { observer } from "mobx-react";
-import { isEqual } from "lodash";
+import isEqual from "lodash/isEqual";
 import { iconMaterialFavorite, iconMaterialFavoriteOutlined } from "../../common-vars";
-import { cssNames, disposer, IClassName, noop, prevDefault, toCssColor } from "../../utils";
+import { cssNames, disposer, IClassName, noop, prevDefault } from "../../utils";
+import { toCssColor } from "../../utils/toCssColor";
 import { getNextTranslator, getTranslator, isRTL, ITranslationError, ITranslationResult } from "../../vendors";
 import { Icon } from "../icon";
 import { settingsStorage, settingsStore } from "../settings/settings.storage";

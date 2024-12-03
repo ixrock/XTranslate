@@ -1,5 +1,5 @@
 import * as Mobx from "mobx";
-import { Translator } from "./vendors"; // FIXME: includes too much dependencies, e.g. "openai", "crypto-js", etc
+import { Translator } from "./vendors";
 
 // Global packages (NPM, etc.)
 Mobx.configure({

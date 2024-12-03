@@ -1,7 +1,7 @@
 // Localization
 import type { Pattern, PatternElement } from "@fluent/bundle/esm/ast"
 
-import React from "react";
+import React from "react"; // TODO: remove direct dependency (used in non-browser envs too)
 import { observable } from "mobx";
 import { getURL, proxyRequest, ProxyResponseType } from "./extension";
 import { createLogger } from "./utils/createLogger";

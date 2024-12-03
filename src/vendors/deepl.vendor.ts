@@ -1,10 +1,9 @@
-import React, { ReactNode } from "react";
 import DeeplLanguages from "./deepl.json"
-import { ITranslationError, ITranslationResult, TranslateParams, Translator, TranslatorLanguages, VendorCodeName } from "./index";
+import { ITranslationError, ITranslationResult, sanitizeApiKey, TranslateParams, Translator, TranslatorLanguages, VendorCodeName } from "./index";
 import { createStorage } from "../storage";
 import { ProxyRequestInit } from "../extension";
 import { getMessage } from "../i18n";
-import { VendorAuthSettings } from "../components/settings/vendor_auth_settings";
+import type { VendorAuthSettingsProps } from "../components/settings/vendor_auth_settings";
 
 class Deepl extends Translator {
   public name = VendorCodeName.DEEPL;
@@ -34,22 +33,6 @@ class Deepl extends Translator {
     if (newKey === null) return;
     this.#apiKey.set(newKey || this.#apiKey.defaultValue);
   };
-
-  renderSettingsWidget(extraContent?: ReactNode): ReactNode {
-    return (
-      <VendorAuthSettings
-        className="deepl-settings"
-        apiKey={this.#apiKey}
-        setupApiKey={this.setupAuthApiKey}
-        clearApiKey={() => this.#apiKey.set("")}
-        accessInfo={getMessage("deepl_get_own_key_info")}
-        accessInfo2={getMessage("deepl_insert_auth_key")}
-        warningInfo={getMessage("deepl_insert_auth_key_warning")}
-        clearKeyInfo={getMessage("deepl_insert_auth_key_remove")}
-        children={extraContent}
-      />
-    )
-  }
 
   async translate(params: TranslateParams): Promise<ITranslationResult> {
     const { from: langFrom, to: langTo, text } = params;
@@ -97,6 +80,19 @@ class Deepl extends Translator {
   async getSupportedLanguages(type: "source" | "target"): Promise<DeeplSupportedLanguage[]> {
     const url = `${this.apiUrl}/languages?type=${type}&auth_key=${this.#apiKey.get()}`;
     return this.request({ url });
+  }
+
+  getAuthSettings(): VendorAuthSettingsProps {
+    return {
+      className: "deepl-settings",
+      apiKeySanitized: sanitizeApiKey(this.#apiKey.get()),
+      setupApiKey: this.setupAuthApiKey,
+      clearApiKey: () => this.#apiKey.set(""),
+      accessInfo: getMessage("deepl_get_own_key_info"),
+      accessInfo2: getMessage("deepl_insert_auth_key"),
+      warningInfo: getMessage("deepl_insert_auth_key_warning"),
+      clearKeyInfo: getMessage("deepl_insert_auth_key_remove"),
+    };
   }
 }
 

@@ -1,13 +1,13 @@
 // Base class for all translation vendors
 
-import type React from "react";
 import { observable } from "mobx";
-import { autoBind, blobToBase64DataUrl, createLogger, disposer, JsonResponseError } from "../utils";
+import { autoBind, createLogger, disposer, JsonResponseError } from "../utils";
 import { ProxyRequestPayload, ProxyResponseType } from "../extension/messages";
 import { getTranslationFromHistoryAction, proxyRequest, saveToHistoryAction } from "../extension/actions";
 import { settingsStore } from "../components/settings/settings.storage";
 import { getTTSVoices, speak, stopSpeaking, TTSVoice } from "../tts";
 import type { VendorCodeName } from "./index";
+import type { VendorAuthSettingsProps } from "../components/settings/vendor_auth_settings";
 
 export interface TranslatorLanguages {
   from: Record<string/*locale*/, string> & { auto?: string };
@@ -41,6 +41,7 @@ export abstract class Translator {
   public langFrom: Record<string, string> = {};
   public langTo: Record<string, string> = {};
   public audio: HTMLAudioElement;
+  public audioDataUrl = "";
   protected logger = createLogger({ systemPrefix: "[TRANSLATOR]" });
 
   constructor({ from: langFrom, to: langTo }: TranslatorLanguages) {
@@ -194,23 +195,24 @@ export abstract class Translator {
       this.speakSynth(text, voice);
     } else {
       try {
-        const audioDataUrl = audioFile
-          ? await blobToBase64DataUrl(audioFile)
-          : await this.request<string>({ url: audioUrl, responseType: ProxyResponseType.DATA_URL });
+        const audioBinary = audioFile ?? await this.request<Blob>({
+          url: audioUrl,
+          responseType: ProxyResponseType.BLOB
+        });
 
+        this.audioDataUrl = URL.createObjectURL(audioBinary);
         this.logger.info(`[TTS]: speaking via api request`, { lang, text });
         this.audio = document.createElement("audio");
-        this.audio.src = audioDataUrl;
+        this.audio.src = this.audioDataUrl = URL.createObjectURL(audioBinary);
+
         await this.audio.play();
       } catch (error) {
-        // TODO: it might fall due CORS in some sites (e.g. github)
-        // so we have to do some workaround with new background 1x1 window (due manifest@3.0 limitations currently)
+        // FIXME: it might fall due CORS at some sites (e.g. github)
+        // Error: refused to load media from 'blob:https://github.com/fce42e78-5c8c-47fc-84d9-a6433ada5840' because it violates the following Content Security Policy directive: "media-src github.com user-images.githubusercontent.com/ secured-user-images.githubusercontent.com/ private-user-images.githubusercontent.com github-production-user-asset-6210df.s3.amazonaws.com gist.github.com github.githubassets.com".
+        // So, we have to do some workaround, e.g. with new background 1x1 window or something..
         this.logger.error(`[TTS]: failed to play: ${error}`, { lang, text });
-
-        // fallback to text to speech synthesis engine
-        this.speakSynth(text, voice);
+        this.speakSynth(text, voice); // fallback to TTS-synthesis engine
       }
-
     }
   }
 
@@ -218,6 +220,7 @@ export abstract class Translator {
     this.logger.info(`[TTS]: stop speaking`);
     getTranslators().forEach(vendor => vendor.audio?.pause());
     stopSpeaking(); // tts-stop
+    URL.revokeObjectURL(this.audioDataUrl);
   }
 
   async getAudioFile(text: string, lang?: string): Promise<Blob> {
@@ -232,9 +235,14 @@ export abstract class Translator {
     return !!(this.langFrom[langFrom] && this.langTo[langTo]);
   }
 
-  renderSettingsWidget(content?: React.ReactNode): React.ReactNode {
-    return null;
+  getAuthSettings(): VendorAuthSettingsProps {
+    return;
   }
+}
+
+export function sanitizeApiKey(apiKey: string) {
+  if (!apiKey) return "";
+  return apiKey.substring(0, 4) + "-****-" + apiKey.substring(apiKey.length - 4);
 }
 
 export interface ITranslationResult {

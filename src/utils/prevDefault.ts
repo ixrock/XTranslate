@@ -1,4 +1,4 @@
-import { SyntheticEvent } from "react";
+import type { SyntheticEvent } from "react";
 
 // Helper for preventing default event action and performing custom callback
 // 1)

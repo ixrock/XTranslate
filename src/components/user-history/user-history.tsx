@@ -1,7 +1,8 @@
 import "./user-history.scss";
 
 import React from "react";
-import { groupBy, orderBy } from "lodash";
+import groupBy from "lodash/groupBy";
+import orderBy from "lodash/orderBy";
 import { action, computed, makeObservable, observable, reaction, runInAction } from "mobx";
 import { observer } from "mobx-react";
 import { bindGlobalHotkey, cssNames, disposer, fuzzyMatch, isHotkeyPressed, prevDefault, SimpleHotkey } from "../../utils";

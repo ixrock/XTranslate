@@ -1,8 +1,11 @@
 // Helper for working with persistent storages (e.g. WebStorage API, NodeJS file-system api, etc.)
 
 import { action, IReactionDisposer, makeObservable, observable, reaction, toJS, when, IReactionOptions } from "mobx";
-import { isEqual, isPlainObject, merge, noop } from "lodash";
 import { createLogger } from "./createLogger";
+import noop from "lodash/noop";
+import isPlainObject from "lodash/isPlainObject";
+import isEqual from "lodash/isEqual";
+import merge from "lodash/merge";
 
 export type DeepPartial<T> = {
   [K in keyof T]?: T[K] extends object ? DeepPartial<T[K]> : T[K];

@@ -1,10 +1,9 @@
 import * as styles from "./settings.module.scss";
-
 import React from "react";
 import { action, makeObservable, observable } from "mobx";
 import { observer } from "mobx-react";
-import { isEqual } from "lodash";
-import { getTranslators, VendorCodeName } from "../../vendors";
+import isEqual from "lodash/isEqual";
+import { getTranslators, Translator, VendorCodeName } from "../../vendors";
 import { cssNames, getHotkey, parseHotkey, prevDefault } from "../../utils";
 import { XTranslateIcon } from "../../user-script/xtranslate-icon";
 import { SelectLanguage } from "../select-language";
@@ -23,6 +22,7 @@ import { getMessage } from "../../i18n";
 import { SelectVoice } from "../select-tts-voice";
 import { getTTSVoices, speak, stopSpeaking } from "../../tts";
 import { OpenAiSettings } from "./openai_settings";
+import { VendorAuthSettings } from "./vendor_auth_settings";
 
 @observer
 export class Settings extends React.Component {
@@ -89,6 +89,14 @@ export class Settings extends React.Component {
     }
   }
 
+  renderVendorAuthWidget(vendor: Translator): React.ReactNode {
+    const content = this.vendorSettings[vendor.name];
+    const props = vendor.getAuthSettings();
+    if (props) {
+      return <VendorAuthSettings {...props} children={content}/>;
+    }
+  }
+
   render() {
     var settings = settingsStore.data;
     var hotKey = parseHotkey(settings.hotkey);
@@ -126,7 +134,7 @@ export class Settings extends React.Component {
                     {domain}
                   </a>
                   <div className="flex gaps align-center">
-                    {vendor.renderSettingsWidget(this.vendorSettings[name])}
+                    {this.renderVendorAuthWidget(vendor)}
                   </div>
                 </div>
               )

@@ -1,5 +1,5 @@
 // Basic logger for outputting system logs to console or other source
-import { isProduction } from "../common-vars";
+import { isDevelopment } from "../common-vars";
 
 export interface CreateLoggerOptions {
   systemPrefix?: string; // system part logger with own prefix
@@ -17,7 +17,7 @@ export interface Logger {
 export function createLogger({ systemPrefix = "[APP]" }: CreateLoggerOptions = {}): Logger {
   const prefix = `${systemPrefix}:`;
 
-  if (isProduction) {
+  if (!isDevelopment) {
     const noop = Function; // logs are provided only in `development` mode
     return {
       error: noop,

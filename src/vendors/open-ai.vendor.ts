@@ -1,12 +1,11 @@
-import React from "react";
 import OpenAILanguages from "./open-ai.json"
-import { ITranslationResult, TranslateParams, Translator, VendorCodeName } from "./index";
+import { ITranslationResult, sanitizeApiKey, TranslateParams, Translator, VendorCodeName } from "./index";
 import { getMessage } from "../i18n";
 import { createStorage } from "../storage";
 import { openAiTextToSpeechAction, openAiTranslationAction } from "../extension";
-import { VendorAuthSettings } from "../components/settings/vendor_auth_settings";
 import { settingsStore } from "../components/settings/settings.storage";
 import { toBinaryFile } from "../utils/binary";
+import type { VendorAuthSettingsProps } from "../components/settings/vendor_auth_settings";
 
 // Read more about the prices: https://openai.com/api/pricing/
 export const enum OpenAIModel {
@@ -63,20 +62,17 @@ class OpenAITranslator extends Translator {
     return toBinaryFile(data, "audio/mpeg");
   }
 
-  renderSettingsWidget(content?: React.ReactNode): React.ReactNode {
-    return (
-      <VendorAuthSettings
-        className="openi-ai-settings"
-        apiKey={this.#apiKey}
-        setupApiKey={this.setupApiKey}
-        clearApiKey={this.clearApiKey}
-        accessInfo={getMessage("open_ai_get_access_info")}
-        accessInfo2={getMessage("open_ai_insert_auth_key")}
-        warningInfo={getMessage("open_ai_insert_auth_key_warning")}
-        clearKeyInfo={getMessage("open_ai_insert_auth_key_remove")}
-        children={content}
-      />
-    )
+  getAuthSettings(): VendorAuthSettingsProps {
+    return {
+      className: "openi-ai-settings",
+      apiKeySanitized: sanitizeApiKey(this.#apiKey.get()),
+      setupApiKey: this.setupApiKey,
+      clearApiKey: this.clearApiKey,
+      accessInfo: getMessage("open_ai_get_access_info"),
+      accessInfo2: getMessage("open_ai_insert_auth_key"),
+      warningInfo: getMessage("open_ai_insert_auth_key_warning"),
+      clearKeyInfo: getMessage("open_ai_insert_auth_key_remove"),
+    };
   }
 }
 

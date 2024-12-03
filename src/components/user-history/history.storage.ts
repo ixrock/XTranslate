@@ -1,5 +1,5 @@
-import MD5 from "crypto-js/md5";
 import { runInAction } from "mobx";
+import { md5 } from "js-md5";
 import { download } from "../../utils/downloadFile";
 import { createStorage } from "../../storage";
 import { getTranslator, ITranslationResult } from "../../vendors/translator";
@@ -37,7 +37,7 @@ export function getHistoryItemId(item: ITranslationResult | IHistoryItem): strin
 }
 
 export function generateId(originalText: string, from: string, to: string): IHistoryItemId {
-  return MD5([originalText, from, to].join(",")).toString();
+  return md5([originalText, from, to].join(",")).toString();
 }
 
 export function importHistory(data: IHistoryItem | IHistoryStorageItem) {

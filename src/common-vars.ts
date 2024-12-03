@@ -1,7 +1,6 @@
 // Common variables for any process: background page (main), options page (renderer), content-script, etc.
 
-export const isProduction = process.env.NODE_ENV === "production";
-export const isDevelopment = !isProduction;
+export const isDevelopment = process.env.NODE_ENV === "development";
 
 // Extension's public store url for different browsers besides Chrome, e.g. Brave, MS Edge, etc.
 export const chromeStoreURL = 'https://chrome.google.com/webstore/detail/gfgpkepllngchpmcippidfhmbhlljhoo';
