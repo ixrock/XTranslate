@@ -3,7 +3,7 @@ import path from 'path'
 import HtmlWebpackPlugin from 'html-webpack-plugin'
 import CopyWebpackPlugin from 'copy-webpack-plugin'
 import MiniCssExtractPlugin from 'mini-css-extract-plugin'
-import { appEntry, serviceWorkerEntry, contentScriptEntry, isDevelopment, pdfViewerEntry } from "./src/common-vars";
+import { appEntry, serviceWorkerEntry, contentScriptEntry, pdfViewerEntry, isDevelopment } from "./src/common-vars";
 
 const srcPath = path.resolve(__dirname, "src");
 const distPath = path.resolve(__dirname, "dist");
@@ -19,7 +19,7 @@ const configEntries: webpack.EntryObject = {
 function webpackBaseConfig(): webpack.Configuration {
   return {
     target: "web",
-    mode: "development", // FIXME: "production" build is broken due "mellowtel/node_modules/pdfjs-dist"
+    mode: isDevelopment ? "development" : "production",
     devtool: isDevelopment ? "source-map" : false, // https://webpack.js.org/configuration/devtool/
     cache: isDevelopment ? { type: "filesystem" } : false,
     entry: {}, // to be defined on each config

@@ -17,29 +17,24 @@ export interface Logger {
 export function createLogger({ systemPrefix = "[APP]" }: CreateLoggerOptions = {}): Logger {
   const prefix = `${systemPrefix}:`;
 
-  if (!isDevelopment) {
-    const noop = Function; // logs are provided only in `development` mode
-    return {
-      error: noop,
-      info: noop,
-      time: (label: string) => ({ start: noop, stop: noop })
-    }
-  }
-
   return {
     info(...args) {
+      if (!isDevelopment) return;
       console.info(`%c ${prefix}`, "color: #942486; font-weight: bold;", ...args);
     },
     error(...args) {
+      if (!isDevelopment) return;
       console.error(`%c ${prefix}`, "color: red; font-weight: bold;", ...args);
     },
     time(label: string) {
       label = `Time (${label})`;
       return {
         start() {
+          if (!isDevelopment) return;
           console.time(label);
         },
         stop() {
+          if (!isDevelopment) return;
           console.timeEnd(label);
         },
       }
