@@ -73,7 +73,7 @@ export async function openOptionsPage() {
   return chrome.runtime.openOptionsPage();
 }
 
-export function onInstall(callback: (reason: "install" | "update" | "chrome_update", details: InstalledDetails) => void) {
+export function onInstallExtension(callback: (reason: "install" | "update" | "chrome_update", details: InstalledDetails) => void) {
   const callbackWrapper = (event: InstalledDetails) => {
     callback(event.reason as "update", event);
   };

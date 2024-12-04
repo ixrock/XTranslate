@@ -1,7 +1,7 @@
 import "../setup";
 import { settingsStore } from "../components/settings/settings.storage";
 import { ContentScript } from "./content-script";
-import { initContentPage as initMellowtel } from "../../mellowtel/mellowtel-lib";
+import { initContentPage as initMellowtel } from "../../mellowtel/mellowtel.bgc";
 import { delay } from "../utils";
 import { isPdf } from "../common-vars";
 import { getPdfViewerURL } from "../pdf-viewer/pdf-utils";

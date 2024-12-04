@@ -19,18 +19,18 @@ const configEntries: webpack.EntryObject = {
 function webpackBaseConfig(): webpack.Configuration {
   return {
     target: "web",
-    mode: isDevelopment ? "development" : "production", // FIXME: production build is broken due "pdfjs-dist"
+    mode: "development", // FIXME: "production" build is broken due "mellowtel/node_modules/pdfjs-dist"
     devtool: isDevelopment ? "source-map" : false, // https://webpack.js.org/configuration/devtool/
     cache: isDevelopment ? { type: "filesystem" } : false,
     entry: {}, // to be defined on each config
 
     output: {
-      libraryTarget: "global",
+      libraryTarget: "umd", // "umd": provide module as global variable, CommonJS and AMD
       globalObject: "globalThis",
       publicPath: "auto",
       path: distPath,
       filename: '[name].js',
-      chunkFilename: '[name].chunk.js',
+      chunkFilename: 'chunks/[name].js',
       assetModuleFilename: `assets/[name][ext]`
     },
 
@@ -138,18 +138,15 @@ function webpackBaseConfig(): webpack.Configuration {
 export default [
   // build main app (options page), pdf-viewer and content-script
   function () {
-    const webConfig = webpackBaseConfig();
+    const config = webpackBaseConfig();
+    config.target = "web"
 
-    webConfig.entry = {
+    config.entry = {
       [appEntry]: configEntries[appEntry],
       [pdfViewerEntry]: configEntries[pdfViewerEntry],
-      [contentScriptEntry]: configEntries[contentScriptEntry],
     };
 
-    // FIXME: figure out how to remove "openai", "mellowtel" (pdfjs-dist) and other non-UI dependencies from bundle
-    webConfig.externals = [];
-
-    webConfig.plugins.push(...[
+    config.plugins.push(...[
       new HtmlWebpackPlugin({
         inject: true,
         chunks: [appEntry],
@@ -173,17 +170,35 @@ export default [
       }),
     ]);
 
-    return webConfig;
+    // exclude non-UI dependencies from final bundle
+    config.externals = ["openai", "mellowtel"];
+
+    return config;
+  },
+
+  // user-script.js
+  function () {
+    const config = webpackBaseConfig();
+
+    config.target = "web"
+    config.entry = {
+      [contentScriptEntry]: configEntries[contentScriptEntry],
+    };
+
+    config.externals = ["openai"];
+    return config;
   },
 
   // background.js
   // service-worker must be compiled with appropriate `config.target` to load chunks via global `importScripts()` in manifest@v3
   function () {
-    const webConfig = webpackBaseConfig();
-    webConfig.target = "webworker";
-    webConfig.entry = {
+    const config = webpackBaseConfig();
+    config.target = "webworker";
+
+    config.entry = {
       [serviceWorkerEntry]: configEntries[serviceWorkerEntry]
     };
-    return webConfig;
+
+    return config;
   }
 ];

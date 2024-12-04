@@ -2,12 +2,13 @@ import * as styles from "./mellowtel-dialog.module.scss";
 import React from "react";
 import { observer } from "mobx-react";
 import { Dialog, DialogProps } from "../src/components/dialog";
-import { action, makeObservable, observable } from "mobx";
-import { checkDialogVisibility, mellowtelActivate, mellowtelDeactivate, mellowtelOptOutTime } from "./mellowtel-lib";
+import { action, makeObservable } from "mobx";
+import { getMessage } from "../src/i18n";
 import { Button } from "../src/components/button";
 import { Icon } from "../src/components/icon";
 import { dialogsState } from "../src/components/app";
-import { getMessage } from "../src/i18n";
+import { mellowtelOptOutTime } from "./mellowtel.storage";
+import { mellowtelActivateAction, mellowtelDeactivateAction, mellowtelStatusAction } from "./mellowtel.actions";
 
 export interface MellowtelDialogProps extends Omit<DialogProps, "isOpen"> {
 }
@@ -21,21 +22,33 @@ export class MellowtelDialog extends React.Component<MellowtelDialogProps> {
 
   async componentDidMount() {
     await mellowtelOptOutTime.load();
-    dialogsState.showMellowtelDialog = await checkDialogVisibility();
+    dialogsState.showMellowtelDialog = await this.checkDialogVisibility();
+  }
+
+  async checkDialogVisibility() {
+    await mellowtelOptOutTime.load();
+
+    const lastOptOutTime = mellowtelOptOutTime.get();
+    const enabled = await mellowtelStatusAction();
+    const remindDuration = 1000 /*ms*/ * 3600 /*1h*/ * 24 /*1d*/ * 14; // every 2 weeks
+    const trialActive = lastOptOutTime + remindDuration > Date.now();
+    const isHidden = enabled || trialActive;
+
+    return Boolean(!isHidden);
   }
 
   optIn = async () => {
-    await mellowtelActivate();
+    await mellowtelActivateAction();
     this.close();
   };
 
   optOut = async () => {
-    await mellowtelDeactivate();
+    await mellowtelDeactivateAction();
     this.close();
   };
 
-  @action
-  close = () => {
+  @action.bound
+  close() {
     dialogsState.showMellowtelDialog = false;
     mellowtelOptOutTime.set(Date.now());
   }

@@ -1,5 +1,6 @@
 import * as styles from './footer.module.scss'
 import React from "react";
+import { action } from "mobx";
 import { observer } from "mobx-react";
 import { getExtensionUrl } from "../../common-vars";
 import { prevDefault } from '../../utils'
@@ -7,7 +8,7 @@ import { getManifest } from '../../extension'
 import { getMessage } from "../../i18n";
 import { Icon } from "../icon";
 import { dialogsState } from "./dialogs-state";
-import { resetDialogVisibility } from "../../../mellowtel/mellowtel-lib";
+import { mellowtelOptOutTime } from "../../../mellowtel/mellowtel.storage";
 
 interface ShareIcon {
   title: string
@@ -37,6 +38,12 @@ export class Footer extends React.Component {
     window.open(url, "share", "width=550,height=300,resizable=1");
   }
 
+  @action.bound
+  onSupport() {
+    dialogsState.showMellowtelDialog = true;
+    mellowtelOptOutTime.set(0);
+  }
+
   render() {
     return (
       <div className={styles.Footer}>
@@ -54,7 +61,7 @@ export class Footer extends React.Component {
           material="support"
           className={styles.monetizationIcon}
           tooltip={{ nowrap: true, children: getMessage("donate_title") }}
-          onClick={resetDialogVisibility}
+          onClick={this.onSupport}
         />
       </div>
     );
