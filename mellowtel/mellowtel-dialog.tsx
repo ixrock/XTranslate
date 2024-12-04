@@ -21,14 +21,18 @@ export class MellowtelDialog extends React.Component<MellowtelDialogProps> {
   }
 
   async componentDidMount() {
-    await mellowtelOptOutTime.load();
     dialogsState.showMellowtelDialog = await this.checkDialogVisibility();
   }
 
   async checkDialogVisibility() {
     await mellowtelOptOutTime.load();
+    let lastOptOutTime = mellowtelOptOutTime.get();
 
-    const lastOptOutTime = mellowtelOptOutTime.get();
+    if (!lastOptOutTime) {
+      lastOptOutTime = Date.now();
+      mellowtelOptOutTime.set(lastOptOutTime);
+    }
+
     const enabled = await mellowtelStatusAction();
     const remindDuration = 1000 /*ms*/ * 3600 /*1h*/ * 24 /*1d*/ * 14; // every 2 weeks
     const trialActive = lastOptOutTime + remindDuration > Date.now();
