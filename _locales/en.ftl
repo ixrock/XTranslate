@@ -63,7 +63,7 @@ reverse_translate_add_action = Add reverse language: { $lang } -> ? (applicable 
 reverse_translate_delete_action = Unset reverse translate language
 position_of_x_translate_icon = Position of the translation icon
 skip_translation_vendor_in_rotation = Skip { $vendor }-translations in rotation via arrow-icon or keyboard arrows (in popup)
-custom_font = Custom font
+custom_font_select = Select custom font
 
 # theme
 popup_play_icon_title = Listen

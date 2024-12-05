@@ -102,7 +102,7 @@ export class ExportImportSettingsDialog extends React.Component<Props> {
   };
 
   render() {
-    let fileInput: FileInput;
+    let fileInput: FileInput<string>;
     const { className, ...dialogProps } = this.props;
     const dialogClass = cssNames(styles.ExportSettingsDialog, className);
 
@@ -121,6 +121,7 @@ export class ExportImportSettingsDialog extends React.Component<Props> {
         <div className="flex gaps">
           <FileInput
             accept="application/json"
+            outputType="text"
             onImport={this.importSettings}
             ref={elem => fileInput = elem}
           />

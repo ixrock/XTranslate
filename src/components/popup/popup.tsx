@@ -98,7 +98,7 @@ export class Popup extends React.Component<Props> {
         ? `linear-gradient(180deg, ${toCssColor(bgcMain)}, ${toCssColor(bgcSecondary)})`
         : toCssColor(bgcMain),
       borderRadius: borderRadius,
-      fontFamily: `${fontFamily}, sans-serif`,
+      fontFamily: fontFamily,
       fontSize: fontSize + "px",
       color: toCssColor(textColor),
       border: borderWidth ? [

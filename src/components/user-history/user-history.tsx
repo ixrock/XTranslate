@@ -37,7 +37,7 @@ enum HistoryTimeFrame {
 export class UserHistory extends React.Component {
   private dispose = disposer();
   public searchInput?: SearchInput;
-  public importHistoryInput?: FileInput;
+  public importHistoryInput?: FileInput<string>;
 
   constructor(props: object) {
     super(props);
@@ -416,7 +416,7 @@ export class UserHistory extends React.Component {
     );
   }
 
-  onImport = async (files: ImportingFile[]) => {
+  onImport = async (files: ImportingFile<string>[]) => {
     var items: IHistoryStorageItem[] = [];
     files.forEach(({ file, data, error }) => {
       if (error) {
@@ -551,8 +551,8 @@ export class UserHistory extends React.Component {
     return (
       <div className="UserHistory">
         <FileInput
-          id="import-history"
           accept="application/json"
+          outputType="text"
           onImport={this.onImport}
           ref={fileInput => this.importHistoryInput = fileInput}
         />

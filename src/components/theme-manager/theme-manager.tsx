@@ -1,12 +1,12 @@
 import "./theme-manager.scss";
 
-import React, { ReactNode } from "react";
+import React from "react";
 import { observer } from "mobx-react";
-import { action, computed } from "mobx";
-import { customFont, IThemeFont, themeStorage, themeStore } from "./theme.storage";
+import { action } from "mobx";
+import { customFont, CustomFontStorageModel, themeStorage, ThemeStorageModel, themeStore } from "./theme.storage";
 import { pageManager } from "../app/page-manager";
 import { Popup } from "../popup";
-import { NumberInput } from "../input";
+import { FileInput, ImportingFile, NumberInput } from "../input";
 import { Checkbox } from "../checkbox";
 import { ReactSelect, ReactSelectOption } from "../select";
 import { Slider } from "../slider";
@@ -15,43 +15,71 @@ import { SubTitle } from "../sub-title";
 import { ColorPicker } from "../color-picker";
 import { Tab } from "../tabs";
 import { getMessage } from "../../i18n";
+import { Icon } from "../icon";
+import { base64Encode } from "../../utils";
 
 @observer
 export class ThemeManager extends React.Component {
+  protected customFontInput: FileInput;
   protected formatMinMaxTitle = (value: number) => !value ? "auto" : value;
 
+  get theme(): ThemeStorageModel {
+    return themeStore.data;
+  }
+
+  get customFont(): CustomFontStorageModel {
+    return customFont.get();
+  }
+
   renderFontsSelect() {
-    const theme = themeStore.data;
-
-    const options = computed<ReactSelectOption<string>[]>(() => {
-      const bundledFontsOpts = themeStore.bundledFonts.map(({ familyName }) => {
-        return { value: familyName, label: familyName }
-      });
-
-      return [
-        ...bundledFontsOpts,
-        {
-          value: customFont.get(),
-          label: getMessage("custom_font"),
-        }
-      ]
+    const bundledFonts: ReactSelectOption<string>[] = themeStore.bundledFonts.map(({ familyName }) => {
+      return { value: familyName, label: familyName, }
     });
 
+    const selectCustomFontLabel = (
+      <div className="flex align-center">
+        <Icon material="folder_open" small/>
+        <em>&lt;{getMessage("custom_font_select")}&gt;</em>
+      </div>
+    );
+
+    const customFontOpt: ReactSelectOption<string> = {
+      value: this.customFont.fileName,
+      label: this.customFont.fileName ? <em>{this.customFont.fileName}</em> : selectCustomFontLabel,
+    };
+
+    const options = [
+      customFontOpt,
+      ...bundledFonts,
+    ];
+
     const onChange = action(({ value }: ReactSelectOption<string>) => {
-      if (!value) {
-        // select custom font file action
+      const customFontName = this.customFont.fileName;
+      const openDialog = !value || value == customFontName && this.theme.fontFamily === customFontName;
+      if (openDialog) {
+        this.customFontInput.selectFiles();
+        return;
       }
-      theme.fontFamily = value;
+      this.theme.fontFamily = value;
     });
 
     return (
       <ReactSelect<string>
-        options={options.get()}
-        value={options.get().find(opt => opt.value === theme.fontFamily)}
+        options={options}
+        value={options.find(opt => opt.value === this.theme.fontFamily)}
         onChange={onChange}
       />
     );
   }
+
+  onImportCustomFont = async ([{ file }]: ImportingFile[]) => {
+    const fileBuffer = await file.arrayBuffer();
+
+    this.customFont.fileName = file.name.split(".")[0];
+    this.customFont.type = file.type;
+    this.customFont.fontDataBase64 = base64Encode(fileBuffer);
+    this.theme.fontFamily = this.customFont.fileName; // save as current font
+  };
 
   renderPopupBorderStyles() {
     const theme = themeStore.data;
@@ -77,7 +105,7 @@ export class ThemeManager extends React.Component {
 
   render() {
     const theme = themeStore.data;
-    const isDefault = themeStorage.isDefaultValue(theme);
+    const isDefault = themeStorage.isDefaultValue(theme) && customFont.isDefaultValue(this.customFont);
     return (
       <div className="ThemeManager flex column gaps">
         <Popup previewMode translation={Popup.translationMock}/>
@@ -241,6 +269,11 @@ export class ThemeManager extends React.Component {
         </div>
 
         <div className="reset flex center">
+          <FileInput
+            accept=".ttf,.otf,.woff,.woff2"
+            onImport={this.onImportCustomFont}
+            ref={instance => this.customFontInput = instance}
+          />
           <Button
             accent
             label={getMessage("reset_to_default_button_text")}

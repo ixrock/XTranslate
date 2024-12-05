@@ -1,5 +1,5 @@
 import { EventEmitter } from "events"
-import { observable, reaction } from "mobx";
+import { reaction } from "mobx";
 import { Color } from "react-color"
 import { getURL } from "../../extension";
 import { createLogger, disposer } from "../../utils";
@@ -34,11 +34,17 @@ export const themeStorage = createStorage("theme", {
   }
 });
 
-export const customFont = createStorage<string>("customFont", {
+export type CustomFontStorageModel = typeof customFont.defaultValue;
+
+export const customFont = createStorage("customFont", {
   area: "local",
   autoLoad: true,
-  defaultValue: "", // base64-encoded
-});
+  defaultValue: {
+    fontDataBase64: "", // base64-encoded
+    fileName: "", // font-family or file-name
+    type: "", // e.g. "font/ttf"
+  },
+})
 
 export interface IThemeFont {
   familyName: string;
@@ -60,7 +66,7 @@ export class ThemeStore {
     fileName: "MaterialIcons-Regular.ttf",
   };
 
-  public bundledFonts: IThemeFont[] = observable.array([
+  public bundledFonts: IThemeFont[] = [
     { familyName: "Roboto", fileName: "Roboto-Regular.ttf" },
     { familyName: "Lato", fileName: "Lato-Regular.ttf" },
     { familyName: "Open Sans", fileName: "OpenSans-Regular.ttf" },
@@ -69,7 +75,7 @@ export class ThemeStore {
     { familyName: "Arial" }, // system fonts
     { familyName: "Helvetica Neue" },
     { familyName: "Times New Roman" },
-  ]);
+  ];
 
   public borderStyle = [
     "solid", "dotted", "dashed", "double", "groove", "ridge", "inset", "outset"
@@ -112,27 +118,39 @@ export class ThemeStore {
   }
 
   async loadFont(font: string | IThemeFont) {
-    if (!font) return;
     await document.fonts.ready;
+    await customFont.load();
 
-    const { fileName, familyName } = this.getBundledFont(font);
-    if (!fileName) return; // system font is selected by user, e.g. "Arial"
-    if (this.isLoaded(familyName)) return; // font already preloaded
+    let fontFace: FontFace;
 
+    // load custom font if provided
+    const { fileName: customFontName, fontDataBase64, type: customFontType } = customFont.get();
+    if (font === customFontName) {
+      const fontUrl = `url(data:${customFontType};base64,${fontDataBase64})`;
+      fontFace = new FontFace(customFontName, fontUrl, { display: "swap" });
+    } else {
+      // handle bundled fonts
+      const { fileName, familyName } = this.getBundledFont(font);
+      if (!fileName) return; // system font is selected by user, e.g. "Arial"
+      if (this.isLoaded(familyName)) return; // font already preloaded
+
+      const fontAssetsUrl = getURL(`assets/fonts/${fileName}`);
+      fontFace = new FontFace(familyName, `url(${fontAssetsUrl})`, { display: "swap" });
+    }
+
+    // load font-face and add to document
     try {
-      const font = new FontFace(familyName, `url(${getURL(`assets/fonts/${fileName}`)})`, {
-        display: "swap",
-      });
-      await font.load();
-      this.logger.info(`font "${familyName}" is loaded`, { font, origin: location.href });
-      document.fonts.add(font);
-      this.events.emit("fontLoaded", font);
+      await fontFace.load();
+      this.logger.info(`font loaded`, { font: fontFace, origin: location.href });
+      document.fonts.add(fontFace);
+      this.events.emit("fontLoaded", fontFace);
     } catch (error) {
-      this.logger.error(`loading font "${familyName}" from file "${fileName}" has failed`, error);
+      this.logger.error(`loading font has failed`, error);
     }
   }
 
   reset() {
+    customFont.reset();
     this.storage.reset();
   }
 }
