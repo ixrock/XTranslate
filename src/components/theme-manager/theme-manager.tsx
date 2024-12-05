@@ -1,13 +1,14 @@
 import "./theme-manager.scss";
 
-import React from "react";
+import React, { ReactNode } from "react";
 import { observer } from "mobx-react";
-import { themeStorage, themeStore } from "./theme.storage";
+import { action, computed } from "mobx";
+import { customFont, IThemeFont, themeStorage, themeStore } from "./theme.storage";
 import { pageManager } from "../app/page-manager";
 import { Popup } from "../popup";
 import { NumberInput } from "../input";
 import { Checkbox } from "../checkbox";
-import { Option, Select } from "../select";
+import { ReactSelect, ReactSelectOption } from "../select";
 import { Slider } from "../slider";
 import { Button } from "../button";
 import { SubTitle } from "../sub-title";
@@ -19,9 +20,64 @@ import { getMessage } from "../../i18n";
 export class ThemeManager extends React.Component {
   protected formatMinMaxTitle = (value: number) => !value ? "auto" : value;
 
+  renderFontsSelect() {
+    const theme = themeStore.data;
+
+    const options = computed<ReactSelectOption<string>[]>(() => {
+      const bundledFontsOpts = themeStore.bundledFonts.map(({ familyName }) => {
+        return { value: familyName, label: familyName }
+      });
+
+      return [
+        ...bundledFontsOpts,
+        {
+          value: customFont.get(),
+          label: getMessage("custom_font"),
+        }
+      ]
+    });
+
+    const onChange = action(({ value }: ReactSelectOption<string>) => {
+      if (!value) {
+        // select custom font file action
+      }
+      theme.fontFamily = value;
+    });
+
+    return (
+      <ReactSelect<string>
+        options={options.get()}
+        value={options.get().find(opt => opt.value === theme.fontFamily)}
+        onChange={onChange}
+      />
+    );
+  }
+
+  renderPopupBorderStyles() {
+    const theme = themeStore.data;
+
+    const options: ReactSelectOption<string>[] = themeStore.borderStyle.map(style => {
+      return { value: style, label: style }
+    });
+
+    return (
+      <ReactSelect<string>
+        formatOptionLabel={({ label, value }: ReactSelectOption<string>) => (
+          <div className="flex gaps align-center">
+            <span>{label}</span>
+            <span className="box grow" style={{ height: 0, borderTop: `${theme.borderWidth}px ${value}` }}/>
+          </div>
+        )}
+        options={options}
+        value={options.find(opt => opt.value === theme.borderStyle)}
+        onChange={({ value }) => theme.borderStyle = value}
+      />
+    )
+  }
+
   render() {
-    var theme = themeStore.data;
-    var isDefault = themeStorage.isDefaultValue(theme);
+    const theme = themeStore.data;
+    const isDefault = themeStorage.isDefaultValue(theme);
     return (
       <div className="ThemeManager flex column gaps">
         <Popup previewMode translation={Popup.translationMock}/>
@@ -89,11 +145,7 @@ export class ThemeManager extends React.Component {
               onChange={v => theme.fontSize = v}
             />
             <span className="heading">{getMessage("text_font_family")}</span>
-            <Select className="box grow" value={theme.fontFamily} onChange={v => theme.fontFamily = v}>
-              {themeStore.bundledFonts.map(({ familyName }) => (
-                <Option key={familyName} value={familyName}/>
-              ))}
-            </Select>
+            {this.renderFontsSelect()}
           </div>
           <div className="flex gaps align-center">
             <span className="heading">{getMessage("text_shadow")}</span>
@@ -131,9 +183,7 @@ export class ThemeManager extends React.Component {
               onChange={v => theme.borderWidth = v}
             />
             <span className="heading">{getMessage("border_style")}</span>
-            <Select className="box grow" value={theme.borderStyle} onChange={v => theme.borderStyle = v}>
-              {themeStore.borderStyle.map(style => <Option key={style} value={style}/>)}
-            </Select>
+            {this.renderPopupBorderStyles()}
             <span className="heading">{getMessage("border_color")}</span>
             <ColorPicker
               position={{ bottom: true, right: true }}

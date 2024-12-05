@@ -1,5 +1,5 @@
 import { EventEmitter } from "events"
-import { reaction } from "mobx";
+import { observable, reaction } from "mobx";
 import { Color } from "react-color"
 import { getURL } from "../../extension";
 import { createLogger, disposer } from "../../utils";
@@ -34,9 +34,15 @@ export const themeStorage = createStorage("theme", {
   }
 });
 
+export const customFont = createStorage<string>("customFont", {
+  area: "local",
+  autoLoad: true,
+  defaultValue: "", // base64-encoded
+});
+
 export interface IThemeFont {
   familyName: string;
-  fileName?: string;
+  fileName?: string; // bundled font
 }
 
 export interface ThemeStoreEvents {
@@ -54,7 +60,7 @@ export class ThemeStore {
     fileName: "MaterialIcons-Regular.ttf",
   };
 
-  public bundledFonts: IThemeFont[] = [
+  public bundledFonts: IThemeFont[] = observable.array([
     { familyName: "Roboto", fileName: "Roboto-Regular.ttf" },
     { familyName: "Lato", fileName: "Lato-Regular.ttf" },
     { familyName: "Open Sans", fileName: "OpenSans-Regular.ttf" },
@@ -63,7 +69,7 @@ export class ThemeStore {
     { familyName: "Arial" }, // system fonts
     { familyName: "Helvetica Neue" },
     { familyName: "Times New Roman" },
-  ];
+  ]);
 
   public borderStyle = [
     "solid", "dotted", "dashed", "double", "groove", "ridge", "inset", "outset"
@@ -106,7 +112,8 @@ export class ThemeStore {
   }
 
   async loadFont(font: string | IThemeFont) {
-    await document.fonts.ready
+    if (!font) return;
+    await document.fonts.ready;
 
     const { fileName, familyName } = this.getBundledFont(font);
     if (!fileName) return; // system font is selected by user, e.g. "Arial"
