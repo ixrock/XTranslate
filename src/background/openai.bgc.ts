@@ -2,6 +2,7 @@ import OpenAI from "openai";
 import type { ITranslationError, ITranslationResult } from "../vendors/translator";
 import { createLogger, disposer } from "../utils";
 import { MessageType, onMessage, OpenAITextToSpeechPayload } from "../extension";
+import { isFirefox } from "../common-vars";
 
 const logger = createLogger({ systemPrefix: "OPEN_AI(helper)" });
 
@@ -15,7 +16,7 @@ export function listenOpenAIApiRequests() {
 export function getAPI(apiKey: string) {
   return new OpenAI({
     apiKey,
-    dangerouslyAllowBrowser: false, /* safe: since usage allowed *only* within service-worker */
+    dangerouslyAllowBrowser: isFirefox(), // allow for firefox, since not support `background.service_worker` api
     maxRetries: 0,
   });
 }

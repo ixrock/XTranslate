@@ -1,4 +1,5 @@
 // Text-to-speech
+// FIXME: doesn't work in firefox
 
 export interface TTSVoice extends SpeechSynthesisVoice {
 }

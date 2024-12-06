@@ -3,7 +3,7 @@ import path from 'path'
 import HtmlWebpackPlugin from 'html-webpack-plugin'
 import CopyWebpackPlugin from 'copy-webpack-plugin'
 import MiniCssExtractPlugin from 'mini-css-extract-plugin'
-import { appEntry, serviceWorkerEntry, contentScriptEntry, pdfViewerEntry, isDevelopment } from "./src/common-vars";
+import { appEntry, serviceWorkerEntry, contentScriptEntry, pdfViewerEntry, isDevelopment, isFirefox } from "./src/common-vars";
 
 const srcPath = path.resolve(__dirname, "src");
 const distPath = path.resolve(__dirname, "dist");
@@ -39,7 +39,7 @@ function webpackBaseConfig(): webpack.Configuration {
     },
 
     optimization: {
-      minimize: false,
+      minimize: true, // 4MB max/file for firefox addons bundle files
     },
 
     ignoreWarnings: [

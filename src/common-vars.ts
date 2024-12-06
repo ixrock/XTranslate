@@ -31,8 +31,8 @@ export function isPdf(): boolean {
   return document.contentType === "application/pdf";
 }
 
-export function isChrome(): boolean {
-  return !!navigator.userAgent.match(/chrome\/(?:\d+\.?)+/i);
+export function isFirefox(): boolean {
+  return !!navigator.userAgent.match(/firefox\/(?:\d+\.?)+/i);
 }
 
 export function isEdge(): boolean {

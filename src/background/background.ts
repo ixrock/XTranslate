@@ -7,7 +7,7 @@ import { listenStorageActions } from "./storage.bgc";
 import { listenProxyRequestActions } from "./httpProxy.bgc";
 import { listenTranslationHistoryActions } from "./history.bgc";
 import { listenOpenAIApiRequests } from "./openai.bgc";
-import { initBackground as initMellowtel, listenMellowtelActions } from "../../mellowtel";
+// import { initBackground as initMellowtel, listenMellowtelActions } from "../../mellowtel";
 
 onInstall();
 initContextMenus();
@@ -19,5 +19,5 @@ listenTranslationHistoryActions();
 listenOpenAIApiRequests();
 
 // Mellowtel integration
-initMellowtel();
-listenMellowtelActions();
+// initMellowtel();
+// listenMellowtelActions();

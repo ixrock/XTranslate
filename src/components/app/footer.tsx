@@ -57,12 +57,12 @@ export class Footer extends React.Component {
           )}
         </div>
 
-        <Icon
+        {/*<Icon
           material="support"
           className={styles.monetizationIcon}
           tooltip={{ nowrap: true, children: getMessage("donate_title") }}
           onClick={this.onSupport}
-        />
+        />*/}
       </div>
     );
   }

@@ -5,6 +5,7 @@ import { StorageAdapter, StorageHelper, StorageHelperOptions } from "./utils/sto
 import { readFromExternalStorageAction, removeFromExternalStorageAction, writeToExternalStorageAction } from "./extension/actions";
 import { MessageType, onMessage, StorageSyncPayload, StorageWritePayload } from "./extension";
 import { StorageArea } from "./background/storage.bgc";
+import { isDevelopment, isFirefox } from "./common-vars";
 
 const logger = createLogger({ systemPrefix: "STORAGE(helper)" });
 
@@ -13,10 +14,14 @@ export interface ChromeStorageHelperOptions<T> extends Omit<StorageHelperOptions
 }
 
 export function createStorage<T>(key: string, options: ChromeStorageHelperOptions<T>) {
-  const {
+  let {
     area = "local",
     ...storageOptions
   } = options;
+
+  if (isFirefox()) {
+    area = "local"; // area "sync" requires firefox account
+  }
 
   const storageAdapter: StorageAdapter<T> = {
     setItem(key: string, value: T) {

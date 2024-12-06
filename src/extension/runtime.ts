@@ -12,9 +12,8 @@ export function getURL(path = ""): string {
 }
 
 export function isBackgroundWorker(): boolean {
-  const bgcWorkerURL = getURL(getManifest().background.service_worker); // manifest@v3
-
-  return location.href.startsWith(bgcWorkerURL);
+  const backgroundURL = getURL("_generated_background_page.html"); // FIXME: old-school background.scripts[] in manifest@v3 in firefox so far
+  return location.href.startsWith(backgroundURL);
 }
 
 export function isOptionsPage(): boolean {
