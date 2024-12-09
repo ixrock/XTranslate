@@ -294,7 +294,6 @@ export class ContentScript extends React.Component {
   }
 
   isClickedOnSelection() {
-    if (!settingsStore.data.showPopupOnClickBySelection) return;
     if (!this.selectedText || !this.selectionRects) return;
     const { pageX, pageY } = this.mousePos;
     return this.selectionRects.some(({ left, top, right, bottom }) => {
@@ -323,8 +322,7 @@ export class ContentScript extends React.Component {
   }, 250);
 
   onIconClick(evt: React.MouseEvent) {
-    this.hideIcon();
-    this.translate();
+    void this.translate();
     evt.stopPropagation();
   }
 
@@ -338,19 +336,18 @@ export class ContentScript extends React.Component {
   onMouseDown(evt: MouseEvent) {
     const clickedElem = evt.target as HTMLElement;
     const rightBtnClick = evt.button === 2;
-    if (rightBtnClick) {
-      return;
-    }
-    if (this.icon && !this.icon.elem.contains(clickedElem)) {
+    if (rightBtnClick) return;
+
+    if (!this.icon.elem.contains(clickedElem)) {
       this.hideIcon();
     }
-    if (ContentScript.isOutsideRenderRoot(clickedElem)) {
-      if (this.isPopupHidden && this.isClickedOnSelection()) {
-        this.translate();
-        evt.preventDefault(); // don't reset selection
-      } else {
-        this.hidePopup();
-      }
+    if (!this.isLoading) {
+      this.hidePopup();
+    }
+
+    if (settingsStore.data.showPopupOnClickBySelection && this.isClickedOnSelection()) {
+      this.translate();
+      evt.preventDefault(); // don't reset selection
     }
   }
 
@@ -429,7 +426,7 @@ export class ContentScript extends React.Component {
     const translator = getTranslator(vendor);
     return (
       <>
-        <link rel="stylesheet" href={this.stylesUrl}/>
+        <link rel="stylesheet" href={this.stylesUrl} crossOrigin="anonymous"/>
         <XTranslateIcon
           style={this.iconPosition}
           onMouseDown={onIconClick}
