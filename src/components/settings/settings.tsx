@@ -155,22 +155,24 @@ export class Settings extends React.Component {
             checked={settings.showInContextMenu}
             onChange={v => settingsStore.data.showInContextMenu = v}
           />
-          <Checkbox
-            label={getMessage("display_icon_near_selection")}
-            checked={settings.showIconNearSelection}
-            onChange={v => settings.showIconNearSelection = v}
-            tooltip={{ children: <XTranslateIcon style={{ position: "static" }}/> }}
-          />
-          {settings.showIconNearSelection && (
-            <label>
-              <span>{getMessage("position_of_x_translate_icon")}</span>
-              <ReactSelect
-                options={this.iconPositions}
-                value={this.iconPositions.find(pos => isEqual(pos.value, settings.iconPosition))}
-                onChange={(opt: ReactSelectOption<XIconPosition>) => settings.iconPosition = opt.value}
-              />
-            </label>
-          )}
+          <div className="flex gaps column">
+            <Checkbox
+              label={getMessage("display_icon_near_selection")}
+              checked={settings.showIconNearSelection}
+              onChange={v => settings.showIconNearSelection = v}
+              tooltip={{ children: <XTranslateIcon style={{ position: "static" }}/> }}
+            />
+            {settings.showIconNearSelection && (
+              <label>
+                <span>{getMessage("position_of_x_translate_icon")}</span>
+                <ReactSelect
+                  options={this.iconPositions}
+                  value={this.iconPositions.find(pos => isEqual(pos.value, settings.iconPosition))}
+                  onChange={(opt: ReactSelectOption<XIconPosition>) => settings.iconPosition = opt.value}
+                />
+              </label>
+            )}
+          </div>
         </article>
 
         <SubTitle>{getMessage("settings_title_tts")}</SubTitle>
@@ -265,13 +267,24 @@ export class Settings extends React.Component {
             checked={settings.showPopupOnDoubleClick}
             onChange={v => settings.showPopupOnDoubleClick = v}
           />
-          <Checkbox
-            className="box grow"
-            label={getMessage("display_popup_on_hotkey") + ":"}
-            checked={settings.showPopupOnHotkey}
-            onChange={v => settings.showPopupOnHotkey = v}
-            tooltip={hotKey.title}
-          />
+          <div className="flex column gaps">
+            <Checkbox
+              className="box grow"
+              label={getMessage("display_popup_on_hotkey") + ":"}
+              checked={settings.showPopupOnHotkey}
+              onChange={v => settings.showPopupOnHotkey = v}
+              tooltip={hotKey.title}
+            />
+            <label className="keyboard-hotkey flex gaps align-center">
+              <Icon material="keyboard"/>
+              <Input
+                readOnly
+                className={`${styles.hotkey} box grow`}
+                value={hotKey.value}
+                onKeyDown={prevDefault(this.onSaveHotkey)}
+              />
+            </label>
+          </div>
           <label className="popup-position flex gaps align-center">
             <Icon
               material="display_settings"
@@ -282,15 +295,6 @@ export class Settings extends React.Component {
               options={this.popupPositions}
               value={this.popupPositions.find(pos => pos.value === settings.popupPosition)}
               onChange={(opt: ReactSelectOption<PopupPosition>) => settings.popupPosition = opt.value}
-            />
-          </label>
-          <label className="keyboard-hotkey flex">
-            <Icon material="keyboard"/>
-            <Input
-              readOnly
-              className={`${styles.hotkey} box grow`}
-              value={hotKey.value}
-              onKeyDown={prevDefault(this.onSaveHotkey)}
             />
           </label>
         </article>

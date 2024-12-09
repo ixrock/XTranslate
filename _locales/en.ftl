@@ -61,7 +61,6 @@ translation_delay_info = If you often experience blocking (503 error) from Googl
 reverse_translate_select_placeholder = Reverse translate language
 reverse_translate_add_action = Add reverse language: { $lang } -> ? (applicable only with "Auto-detect" option)
 reverse_translate_delete_action = Unset reverse translate language
-position_of_x_translate_icon = Position of the translation icon
 skip_translation_vendor_in_rotation = Skip { $vendor }-translations in rotation via arrow-icon or keyboard arrows (in popup)
 custom_font_select = Select custom font
 
