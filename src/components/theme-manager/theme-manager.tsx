@@ -272,7 +272,9 @@ export class ThemeManager extends React.Component {
           <FileInput
             accept=".ttf,.otf,.woff,.woff2"
             onImport={this.onImportCustomFont}
-            ref={instance => this.customFontInput = instance}
+            ref={elem => {
+              this.customFontInput = elem;
+            }}
           />
           <Button
             accent

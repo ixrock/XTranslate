@@ -79,6 +79,13 @@ export class Dialog extends React.Component<DialogProps> {
     );
   }
 
+  private bindElemRef = (elem: HTMLElement) => {
+    this.elem = elem;
+  };
+  private bindContentElemRef = (elem: HTMLElement) => {
+    this.contentElem = elem;
+  };
+
   render() {
     var { modal, pinned, children, isOpen } = this.props;
     var className = cssNames(styles.Dialog, this.props.className, {
@@ -89,8 +96,8 @@ export class Dialog extends React.Component<DialogProps> {
 
     var dialog = (
       <Animate name="opacity-scale" enter={isOpen} onEnter={this.open}>
-        <div className={className} onClick={stopPropagation} ref={e => this.elem = e}>
-          <div className={contentClassName} ref={e => this.contentElem = e}>
+        <div className={className} onClick={stopPropagation} ref={this.bindElemRef}>
+          <div className={contentClassName} ref={this.bindContentElemRef}>
             {this.renderCloseIcon()}
             {children}
           </div>

@@ -74,11 +74,13 @@ export class FileInput<DataType = void> extends React.Component<Props<DataType>>
     const { onImport, outputType, ...props } = this.props;
     return (
       <input
+        {...props}
         type="file"
         style={this.style}
         onChange={this.onChange}
-        ref={e => this.input = e}
-        {...props}
+        ref={e => {
+          this.input = e
+        }}
       />
     )
   }

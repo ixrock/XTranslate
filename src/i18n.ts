@@ -1,7 +1,7 @@
 // Localization
-import type { Pattern, PatternElement } from "@fluent/bundle/esm/ast"
 
-import React from "react"; // TODO: remove direct dependency (used in non-browser envs too)
+import type { Pattern, PatternElement } from "@fluent/bundle/esm/ast"
+import type { ReactNode } from "react";
 import { observable } from "mobx";
 import { getURL, proxyRequest, ProxyResponseType } from "./extension";
 import { createLogger } from "./utils/createLogger";
@@ -87,23 +87,21 @@ export function getMessagePattern(key: string): MessagePattern {
 }
 
 export function getMessage(key: string): string;
-export function getMessage(key: string, placeholders: Record<string, React.ReactNode>): React.ReactNode;
-export function getMessage(key: string, placeholders: Record<string, FluentVariable | any> = {}): React.ReactNode {
+export function getMessage(key: string, placeholders: Record<string, ReactNode>): ReactNode;
+export function getMessage(key: string, placeholders: Record<string, FluentVariable | any> = {}): ReactNode {
   const { message, bundle } = getMessagePattern(key);
   if (!message) return;
 
-  const formatAsReactNode = Object.values(placeholders ?? {}).some(React.isValidElement);
-  if (formatAsReactNode) {
-    return React.Children.toArray(
-      Array.from(message).map((msgChunk: PatternElement) => {
-        if (typeof msgChunk == "string") {
-          return msgChunk;
-        } else if (msgChunk.type === "var") {
-          return placeholders[msgChunk.name];
-        }
+  const hasReactNodes = Object.values(placeholders ?? {}).some(item => typeof item === "object");
+  if (hasReactNodes) {
+    return Array.from(message).map((msgChunk: PatternElement) => {
+      if (typeof msgChunk == "string") {
         return msgChunk;
-      })
-    )
+      } else if (msgChunk.type === "var") {
+        return placeholders[msgChunk.name];
+      }
+      return msgChunk;
+    })
   }
 
   return bundle.formatPattern(message, placeholders);

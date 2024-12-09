@@ -71,6 +71,11 @@ export class PdfViewer extends React.Component {
     this.pdfUrl = await getPdfEmbeddableURL(remotePDF);
   }
 
+  @action.bound
+  bindRef(elem: HTMLIFrameElement){
+    this.iframe = elem;
+  }
+
   render() {
     if (!this.pdfUrl) return;
 
@@ -78,7 +83,7 @@ export class PdfViewer extends React.Component {
       <iframe
         src={getPdfViewerFrameURL(this.pdfUrl)}
         onLoad={this.onPdfViewerReady}
-        ref={elem => this.iframe = elem}
+        ref={this.bindRef}
         style={{
           position: "absolute",
           left: 0, top: 0,

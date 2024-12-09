@@ -146,7 +146,7 @@ export class Popup extends React.Component<Props> {
       getMessage("translated_with", {
         translator: translator.title,
         lang: translator.getLangPairTitle(langDetected, langTo),
-      }) as string,
+      }),
     ];
 
     try {
@@ -326,6 +326,10 @@ export class Popup extends React.Component<Props> {
     )
   }
 
+  private bindRef = (elem: HTMLElement) => {
+    this.elem = elem;
+  }
+
   render() {
     var { popupPosition } = settingsStore.data;
     var { translation, error, className, style: customStyle } = this.props;
@@ -340,7 +344,7 @@ export class Popup extends React.Component<Props> {
       <div
         className={popupClass} tabIndex={-1}
         style={{ ...this.popupStyle, ...(customStyle ?? {}) }}
-        ref={e => this.elem = e}
+        ref={this.bindRef}
       >
         {error ? this.renderError() : this.renderResult()}
       </div>

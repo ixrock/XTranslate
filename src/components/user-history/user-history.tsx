@@ -506,7 +506,9 @@ export class UserHistory extends React.Component {
               value={this.searchText}
               onChange={v => this.searchText = v}
               onClear={this.onClearSearch}
-              ref={ref => this.searchInput = ref}
+              ref={ref => {
+                this.searchInput = ref;
+              }}
             />
           )}
           {showSettings && (
@@ -554,7 +556,9 @@ export class UserHistory extends React.Component {
           accept="application/json"
           outputType="text"
           onImport={this.onImport}
-          ref={fileInput => this.importHistoryInput = fileInput}
+          ref={fileInput => {
+            this.importHistoryInput = fileInput
+          }}
         />
         {this.renderHeader()}
         {this.renderHistory()}

@@ -65,10 +65,12 @@ export class Notifications extends React.Component {
   }
 
   render() {
-    var { notifications, remove, addAutoHideTimer, removeAutoHideTimer } = notificationsStore;
+    const { notifications, remove, addAutoHideTimer, removeAutoHideTimer } = notificationsStore;
 
     return (
-      <div className={styles.Notifications} ref={e => this.elem = e}>
+      <div className={styles.Notifications} ref={elem => {
+        this.elem = elem;
+      }}>
         {notifications.map(notification => {
           var { id, status } = notification;
           var msgText = this.getMessage(notification);

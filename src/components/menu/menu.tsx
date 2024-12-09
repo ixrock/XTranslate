@@ -1,5 +1,5 @@
 import * as styles from './menu.module.scss'
-import React, { Fragment, ReactElement, ReactNode } from "react";
+import React, { Fragment, ReactElement, ReactNode, PropsWithChildren} from "react";
 import { createPortal } from "react-dom";
 import { observer } from "mobx-react";
 import { action, makeObservable, observable } from "mobx";
@@ -229,7 +229,7 @@ export class Menu extends React.Component<MenuProps> {
 
     var children = this.props.children as ReactElement;
     if (children.type === Fragment) {
-      children = children.props.children;
+      children = (children.props as PropsWithChildren).children as ReactElement;
     }
     var menuItems = React.Children.toArray(children).map((item: ReactElement<MenuItemProps>, index) => {
       if (item.type === MenuItem) {

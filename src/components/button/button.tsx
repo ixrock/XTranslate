@@ -45,7 +45,9 @@ export class Button extends React.PureComponent<ButtonProps, {}> {
     // render as link
     if (this.props.href) {
       return (
-        <a {...btnProps} ref={e => this.link = e}>
+        <a {...btnProps} ref={e => {
+          this.link = e
+        }}>
           {btnContent}
         </a>
       )
@@ -53,7 +55,9 @@ export class Button extends React.PureComponent<ButtonProps, {}> {
 
     // render as button
     return (
-      <button type="button" {...btnProps} ref={e => this.button = e}>
+      <button type="button" {...btnProps} ref={e => {
+        this.button = e
+      }}>
         {btnContent}
       </button>
     )

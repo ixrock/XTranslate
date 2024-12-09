@@ -434,7 +434,9 @@ export class ContentScript extends React.Component {
           style={this.iconPosition}
           onMouseDown={onIconClick}
           title={`${this.appName}: ${translator.getLangPairTitle(langFrom, langTo)}`}
-          ref={e => this.icon = e}
+          ref={elem => {
+            this.icon = elem
+          }}
         />
         <Popup
           style={popupPosition}
@@ -445,7 +447,9 @@ export class ContentScript extends React.Component {
           onTranslateNext={() => translateNext()}
           onClose={hidePopup}
           tooltipParent={ContentScript.rootElem}
-          ref={(ref: Popup) => this.popup = ref}
+          ref={(ref: Popup) => {
+            this.popup = ref
+          }}
         />
       </>
     )

@@ -15,7 +15,9 @@ export class XTranslateIcon extends React.Component<IconProps> {
         svg="logo"
         colorful interactive
         className={cssNames(styles.XTranslateIcon, className)}
-        ref={icon => this.elem = icon?.elem}
+        ref={icon => {
+          this.elem = icon?.elem
+        }}
       />
     )
   }
