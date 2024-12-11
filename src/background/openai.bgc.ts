@@ -45,17 +45,17 @@ export async function translateText(params: TranslateTextParams): Promise<ITrans
   const sanitizedText = text.trim();
 
   const prompt = isAutoDetect
-    ? `Translate a text into language "${targetLanguage}" and auto-detect the source language for text "${sanitizedText}"`
-    : `Translate a text from language "${sourceLanguage}" to "${targetLanguage}" for text "${sanitizedText}"`;
+    ? `To "${targetLanguage}" and auto-detect the source language the text: ${sanitizedText}`
+    : `From "${sourceLanguage}" to "${targetLanguage}" language the text: ${sanitizedText}`;
 
   try {
     const response = await getAPI(apiKey).chat.completions.create({
       model,
       messages: [
-        { role: "system", content: `You are a professional text translator assistant who does its job very accurate with knowledge of language dialects and slang.` },
-        { role: "system", content: `Transcription must be applied only if provided user text is dictionary word or phrasal verb or special language-specific phrase.` },
-        { role: "system", content: `Spell correction must be applied only if there are possible syntax errors in provided text."` },
-        { role: "system", content: `Output format is ["sourceLanguage", "transcription", "spellCorrection", "translation"]` },
+        { role: "system", content: `You are a professional text translator assistant.` },
+        { role: "system", content: `Add transcription ONLY when provided full text is dictionary word, phrasal verb, e.g. "cat", "way out".` },
+        { role: "system", content: `Spell correction might be suggested when translating text has issues or when you have more relevant option to say the same whole text."` },
+        { role: "system", content: `Output format ["sourceLanguage", "transcription", "spellCorrection", "translation"]` },
         { role: "user", content: prompt },
       ],
     });
