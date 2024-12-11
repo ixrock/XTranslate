@@ -4,6 +4,7 @@
   "version": "4.2.2",
   "manifest_version": 3,
   "default_locale": "en",
+  "homepage_url": "https://github.com/ixrock/XTranslate",
   "icons": {
     "16": "assets/icons/16.png",
     "48": "assets/icons/48.png",
