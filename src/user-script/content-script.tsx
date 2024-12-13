@@ -338,16 +338,14 @@ export class ContentScript extends React.Component {
     const rightBtnClick = evt.button === 2;
     if (rightBtnClick) return;
 
-    if (!this.icon.elem.contains(clickedElem)) {
+    if (ContentScript.isOutsideRenderRoot(clickedElem)) {
       this.hideIcon();
-    }
-    if (!this.isLoading) {
-      this.hidePopup();
+      !this.isLoading && this.hidePopup();
     }
 
     if (settingsStore.data.showPopupOnClickBySelection && this.isClickedOnSelection()) {
-      this.translate();
-      evt.preventDefault(); // don't reset selection
+      void this.translate();
+      evt.preventDefault();
     }
   }
 

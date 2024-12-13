@@ -1,4 +1,3 @@
-import "../../refs";
 import "../setup";
 import { ContentScript } from "./content-script";
 import { customPDFViewerRedirectCheck } from "../pdf-viewer/pdf-utils";
@@ -12,3 +11,5 @@ void initMellowtel();
 
 // render app
 void ContentScript.init();
+
+import "../../refs";
