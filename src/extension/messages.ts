@@ -1,5 +1,5 @@
 // [IPC]: inter-process communications for [options-page] <-> [background] <-> [content-pages]
-import type { ITranslationResult } from "../vendors";
+import type { ITranslationResult, OpenAIModel } from "../vendors";
 import type { IHistoryItem } from "../components/user-history/history.storage";
 
 export const enum MessageType {
@@ -85,7 +85,7 @@ export interface StorageDeletePayload extends Omit<StorageWritePayload, "state">
 
 export interface OpenAITranslatePayload {
   apiKey: string;
-  model?: string;
+  model?: OpenAIModel;
   text: string;
   targetLanguage: string;
   sourceLanguage?: string; /* if not provided translation-request considered as "auto-detect" */

@@ -1,5 +1,6 @@
 import OpenAI from "openai";
 import type { ITranslationError, ITranslationResult } from "../vendors/translator";
+import { OpenAIModel } from "../vendors/open-ai.vendor";
 import { createLogger, disposer } from "../utils";
 import { MessageType, onMessage, OpenAITextToSpeechPayload } from "../extension";
 
@@ -26,7 +27,7 @@ export function getModels(apiKey: string) {
 
 export interface TranslateTextParams {
   apiKey: string;
-  model?: string; /* default: "gpt-4o" */
+  model?: OpenAIModel; /* default: "gpt-4o" */
   text: string;
   targetLanguage: string;
   sourceLanguage?: string; /* if not provided translation-request considered as "auto-detect" */
@@ -35,7 +36,7 @@ export interface TranslateTextParams {
 // Text translation capabilities
 export async function translateText(params: TranslateTextParams): Promise<ITranslationResult> {
   const {
-    model = "gpt-4o",
+    model = OpenAIModel.RECOMMENDED,
     targetLanguage,
     sourceLanguage,
     text = "",
