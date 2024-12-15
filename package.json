@@ -2,8 +2,10 @@
   "name": "xtranslate",
   "version": "4.0.0",
   "scripts": {
-    "dev": "rm -rf ./dist/* && NODE_ENV=development webpack --watch",
-    "build": "rm -rf ./dist/* && NODE_ENV=production webpack --progress",
+    "compile": "rm -rf ./dist && npm run unzip && webpack",
+    "dev": "npm run compile -- --mode development --watch",
+    "build": "npm run compile -- --mode production --progress",
+    "unzip": "[ -d assets/pdfjs ] || unzip plugins/pdfjs.zip -d assets -x \"__MACOSX/*\"",
     "update-deps": "npx npm-check-updates -u",
     "test": "jest"
   },
