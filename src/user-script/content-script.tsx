@@ -295,9 +295,10 @@ export class ContentScript extends React.Component {
 
   isClickedOnSelection() {
     if (!this.selectedText || !this.selectionRects) return;
-    const { pageX, pageY } = this.mousePos;
+    const { x, y } = this.mousePos;
+
     return this.selectionRects.some(({ left, top, right, bottom }) => {
-      return left <= pageX && pageX <= right && top <= pageY && pageY <= bottom;
+      return left <= x && x <= right && top <= y && y <= bottom;
     });
   }
 
