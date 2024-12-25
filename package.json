@@ -3,8 +3,8 @@
   "version": "4.0.0",
   "scripts": {
     "compile": "rm -rf ./dist && npm run unzip && webpack",
-    "dev": "npm run compile -- --mode development --watch",
-    "build": "npm run compile -- --mode production --progress",
+    "dev": "npm run compile -- --env mode=development --watch",
+    "build": "npm run compile -- --env mode=production --progress",
     "unzip": "[ -d assets/pdfjs ] || unzip plugins/pdfjs.zip -d assets -x \"__MACOSX/*\"",
     "update-deps": "npx npm-check-updates -u",
     "test": "jest"
