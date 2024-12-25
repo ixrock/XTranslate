@@ -1,10 +1,10 @@
 {
   "name": "XTranslate",
   "description": "__MSG_short_description__",
-  "version": "4.2.4",
+  "version": "4.2.5",
   "manifest_version": 3,
   "default_locale": "en",
-  "homepage_url": "https://github.com/ixrock/XTranslate",
+  "homepage_url": "https://xtranslate.dev/",
   "icons": {
     "16": "assets/icons/16.png",
     "48": "assets/icons/48.png",

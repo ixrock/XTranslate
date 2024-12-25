@@ -27,10 +27,6 @@ class Bing extends Translator {
     defaultValue: {} as BingParsedGlobalParams,
   });
 
-  getFullPageTranslationUrl(pageUrl: string, lang: string): string {
-    return `https://www.microsofttranslator.com/bv.aspx?to=${lang}&a=${pageUrl}`
-  }
-
   protected getQueryApiParams(): string {
     const { IID, IG } = this.apiGlobalParams.get();
 
