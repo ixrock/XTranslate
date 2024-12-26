@@ -1,1 +1,1 @@
-export * from "./select-locale-menu";
+export * from "./select-locale";

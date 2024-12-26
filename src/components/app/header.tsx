@@ -9,7 +9,7 @@ import { Icon } from "../icon";
 import { getUrlParams, navigate, PageId } from "../../navigation";
 import { pageManager } from "./page-manager";
 import { getMessage } from "../../i18n";
-import { SelectLocaleMenu } from "../select-locale";
+import { SelectLocale } from "../select-locale";
 import { dialogsState } from "./dialogs-state";
 
 @observer
@@ -62,7 +62,7 @@ export class Header extends React.Component {
             tooltip={{ nowrap: true, children: getMessage("import_export_settings") }}
             onClick={() => dialogsState.showImportExportDialog = true}
           />
-          <SelectLocaleMenu/>
+          <SelectLocale/>
         </header>
         <Tabs className="Tabs" center value={pageId} onChange={this.onTabsChange}>
           {pageManager.getAllRegisteredPageIds().map(pageId => {

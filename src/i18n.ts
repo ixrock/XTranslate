@@ -7,7 +7,7 @@ import { getURL, proxyRequest, ProxyResponseType } from "./extension";
 import { createLogger } from "./utils/createLogger";
 import { FluentBundle, FluentResource, FluentVariable } from "@fluent/bundle"
 import { createStorage } from "./storage";
-import LocalesList from "../_locales/_list.json"
+import LocalesList from "../_locales/_locales.json"
 
 export const logger = createLogger({ systemPrefix: "[I18N-LOCALE]" });
 
