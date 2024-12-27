@@ -58,7 +58,8 @@ hr {
 #XTranslateWindowApp {
   //@include custom-scrollbar($overlay: true);
   margin: auto;
-  width: var(--theme-content-width);
+  min-width: var(--theme-content-min-width);
+  max-width: var(--theme-content-width);
   min-height: var(--theme-content-height);
   padding: var(--theme-spacing-double) calc(var(--theme-spacing) * 3);
 }
