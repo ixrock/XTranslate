@@ -64,9 +64,9 @@ export class Header extends React.Component {
           />
           <SelectLocale/>
         </header>
-        <Tabs className="Tabs" center value={pageId} onChange={this.onTabsChange}>
+        <Tabs className="Tabs" value={pageId} onChange={this.onTabsChange}>
           {pageManager.getAllRegisteredPageIds().map(pageId => {
-            var { Tab } = pageManager.getComponents(pageId);
+            let { Tab } = pageManager.getComponents(pageId);
             if (Tab) {
               return <Tab className="Tab" key={pageId} value={pageId}/>
             }

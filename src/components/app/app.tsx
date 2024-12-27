@@ -20,6 +20,8 @@ import { PrivacyDialog } from "./privacy-dialog";
 import { AppRateDialog } from "./app-rate.dialog";
 import { dialogsState } from "./dialogs-state";
 import { MellowtelDialog } from "../../../mellowtel/mellowtel-dialog";
+import { isRTL } from "../../vendors";
+import { getLocale } from "../../i18n";
 
 @observer
 export class App extends React.Component {
@@ -50,9 +52,10 @@ export class App extends React.Component {
   render() {
     const { page: pageId } = getUrlParams();
     const { Page } = pageManager.getComponents(pageId);
+    const direction = isRTL(getLocale()) ? "rtl" : "ltr";
 
     return (
-      <div className="App">
+      <div className="App" style={{ direction }}>
         <Header/>
         <div
           className="PageContent"

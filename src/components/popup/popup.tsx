@@ -12,7 +12,7 @@ import { Icon } from "../icon";
 import { settingsStorage, settingsStore } from "../settings/settings.storage";
 import { themeStore } from "../theme-manager/theme.storage";
 import { isFavorite } from "../user-history/favorites.storage";
-import { getMessage } from "../../i18n";
+import { getMessage, getLocale } from "../../i18n";
 import { saveToFavoritesAction } from "../../extension";
 
 interface Props extends Omit<React.HTMLProps<any>, "className"> {
@@ -59,7 +59,7 @@ export class Popup extends React.Component<Props> {
     return {
       vendor: settingsStorage.defaultValue.vendor,
       langFrom: "en",
-      langTo: navigator.language.split("-")[0],
+      langTo: getLocale(),
       translation: getMessage("popup_demo_translation"),
       dictionary: [
         {
@@ -121,7 +121,7 @@ export class Popup extends React.Component<Props> {
   }
 
   @computed get settingsStyle(): CSSProperties {
-    var { maxHeight, maxWidth, minHeight, minWidth } = themeStore.data;
+    let { maxHeight, maxWidth, minHeight, minWidth } = themeStore.data;
     return {
       maxWidth: !maxWidth ? "" : Math.max(maxWidth, minWidth),
       maxHeight: !maxHeight ? "" : Math.max(maxHeight, minHeight),
@@ -259,18 +259,24 @@ export class Popup extends React.Component<Props> {
   }
 
   renderResult() {
-    if (!this.props.translation) {
-      return;
-    }
-    var { translation, transcription, dictionary, vendor, langFrom, langTo, langDetected } = this.props.translation;
+    if (!this.props.translation) return;
+
+    let { translation, transcription, dictionary, vendor, langFrom, langTo, langDetected } = this.props.translation;
     if (langDetected) langFrom = langDetected;
+
     const translator = getTranslator(vendor);
-    const rtlClass = { [styles.rtl]: isRTL(langTo) };
+    const directionUI = isRTL(getLocale()) ? "rtl" : "ltr";
+    const directionResults = isRTL(langTo) ? "rtl" : "ltr";
+    const popupResultStyle: React.CSSProperties = {
+      ...this.settingsStyle,
+      direction: directionUI,
+    };
+
     return (
-      <div className={styles.translationResult} style={this.settingsStyle}>
+      <div className={styles.translationResult} style={popupResultStyle}>
         <div className={styles.translation}>
           {this.renderPlayTextIcon()}
-          <div className={cssNames(styles.value, rtlClass)}>
+          <div className={styles.value} style={{ direction: directionResults }}>
             <span>{translation}</span>
             {transcription ? <i className={styles.transcription}>{" "}[{transcription}]</i> : null}
           </div>
@@ -282,12 +288,12 @@ export class Popup extends React.Component<Props> {
           </div>
         </div>
         {dictionary.map(({ wordType, meanings }) =>
-          <div key={wordType} className={cssNames(styles.dictionary, rtlClass)}>
+          <div key={wordType} className={styles.dictionary} style={{ direction: directionResults }}>
             <div className={styles.wordType}>{wordType}</div>
             <div className={styles.wordMeanings}>
               {meanings.map((meaning, i, list) => {
-                var last = i === list.length - 1;
-                var title = meaning.translation.join(", ") || null;
+                let last = i === list.length - 1;
+                let title = meaning.translation.join(", ") || null;
                 return [
                   <span key={i} className={styles.word} title={title}>{meaning.word}</span>,
                   !last ? ", " : null

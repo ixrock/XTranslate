@@ -10,7 +10,6 @@ export interface TabsProps<D = any> extends Omit<React.DOMAttributes<HTMLElement
   value?: D;
   autoFocus?: boolean;
   className?: string;
-  center?: boolean;
   wrap?: boolean;
   scrollable?: boolean;
   onChange?(value: D): void;
@@ -24,13 +23,12 @@ export class Tabs extends React.Component<TabsProps> {
   }
 
   render() {
-    var { className, center, wrap, scrollable, onChange, value, autoFocus, ...elemProps } = this.props;
+    var { className, wrap, scrollable, onChange, value, autoFocus, ...elemProps } = this.props;
     return (
       <TabsContext.Provider value={this.props}>
         <div
           {...elemProps}
           className={cssNames(styles.Tabs, className, {
-            [styles.center]: center,
             [styles.wrap]: wrap,
             [styles.scrollable]: scrollable,
           })}

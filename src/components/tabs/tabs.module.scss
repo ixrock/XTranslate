@@ -3,21 +3,12 @@
 .Tabs {
   display: flex;
   user-select: none;
+  justify-content: center;
   border-bottom: 1px solid var(--theme-border-color);
   color: var(--theme-color-text);
 
   &.wrap {
     flex-wrap: wrap;
-  }
-
-  &.center {
-    > :first-child {
-      margin-left: auto;
-    }
-
-    > :last-child {
-      margin-right: auto;
-    }
   }
 
   &.scrollable {
