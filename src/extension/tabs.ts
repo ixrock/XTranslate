@@ -1,6 +1,7 @@
 // Chrome tabs apis
 import type { Message } from './messages'
 import { sendMessage } from "./runtime";
+import { isSystemPage } from "../common-vars";
 
 export function createTab(url: string, active = true): Promise<chrome.tabs.Tab> {
   return chrome.tabs.create({ url, active });
@@ -18,6 +19,16 @@ export async function sendMessageToAllTabs<P>(message: Message<P>, filter?: (tab
       .filter(filter ? tab => filter(tab.url) : () => true)
       .map(tab => sendMessageToTab(tab.id, message))
   );
+}
+
+export async function getContentScriptInjectableTabs(): Promise<chrome.tabs.Tab[]> {
+  return new Promise(resolve => {
+    chrome.tabs.query({}, function (tabs) {
+      resolve(
+        tabs.filter(tab => tab.url && !isSystemPage(tab.url))
+      );
+    });
+  });
 }
 
 // Works differently than `chrome.tabs.getCurrent()`

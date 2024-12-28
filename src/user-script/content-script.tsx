@@ -2,14 +2,14 @@
 
 import "./content-script.scss";
 import React from "react";
-import { createRoot } from "react-dom/client";
+import { createRoot, Root } from "react-dom/client";
 import { action, computed, makeObservable, observable, toJS } from "mobx";
 import { observer } from "mobx-react";
 import debounce from 'lodash/debounce';
 import isEmpty from 'lodash/isEmpty';
 import isEqual from 'lodash/isEqual';
 import orderBy from 'lodash/orderBy';
-import { autoBind, getHotkey } from "../utils";
+import { autoBind, disposer, getHotkey } from "../utils";
 import { getManifest, getURL, MessageType, onMessage, proxyRequest, ProxyResponseType, TranslateWithVendorPayload } from "../extension";
 import { getNextTranslator, getTranslator, ITranslationError, ITranslationResult, TranslatePayload } from "../vendors";
 import { XTranslateIcon } from "./xtranslate-icon";
@@ -22,6 +22,7 @@ import { contentScriptEntry } from "../common-vars";
 export class ContentScript extends React.Component {
   static window: Window;
   static rootElem: HTMLElement;
+  static rootNode: Root;
 
   static async init(window: Window = globalThis.window.self) {
     await preloadAppData();
@@ -34,6 +35,7 @@ export class ContentScript extends React.Component {
     const shadowRoot = appElem.attachShadow({ mode: "closed" });
     const rootNode = createRoot(shadowRoot);
     window.document.documentElement.appendChild(appElem);
+    ContentScript.rootNode = rootNode;
 
     // wait for dependent data before first render
     rootNode.render(<ContentScript/>);
@@ -53,6 +55,9 @@ export class ContentScript extends React.Component {
   private isDblClicked = false;
   private isHotkeyActivated = false;
   private mousePos = { x: 0, y: 0, pageX: 0, pageY: 0 };
+
+  // Unload previous content script (e.g. in case of "context invalidated" error on extension update to new version)
+  private unloadContentScript = disposer();
 
   @observable.ref translation: ITranslationResult;
   @observable.ref error: ITranslationError;
@@ -77,24 +82,40 @@ export class ContentScript extends React.Component {
   }
 
   componentDidMount() {
-    // Bind extension's runtime IPC events
-    onMessage<void, string>(MessageType.GET_SELECTED_TEXT, () => this.selectedText);
+    this.bindEvents();
+  }
 
-    onMessage(MessageType.TRANSLATE_WITH_VENDOR, ({ vendor, text }: TranslateWithVendorPayload) => {
-      this.hideIcon();
-      this.translate({ vendor, text });
-    });
-
-    // Bind DOM events
+  private bindEvents() {
     const window = ContentScript.window;
     const document = window.document;
-    document.addEventListener("selectionchange", this.onSelectionChange);
-    document.addEventListener("mousemove", this.onMouseMove, true);
-    document.addEventListener("mousedown", this.onMouseDown, true);
-    document.addEventListener("dblclick", this.onDoubleClick, true);
-    document.addEventListener("keydown", this.onKeyDown, true);
-    window.addEventListener("scroll", this.updatePopupPositionLazy);
-    window.addEventListener("resize", this.updatePopupPositionLazy);
+    const abortCtrl = new AbortController();
+    const signal = abortCtrl.signal;
+
+    // Bind DOM events
+    document.addEventListener("selectionchange", this.onSelectionChange, { signal });
+    document.addEventListener("mousemove", this.onMouseMove, { signal, capture: true });
+    document.addEventListener("mousedown", this.onMouseDown, { signal, capture: true });
+    document.addEventListener("dblclick", this.onDoubleClick, { signal, capture: true });
+    document.addEventListener("keydown", this.onKeyDown, { signal, capture: true });
+    window.addEventListener("scroll", this.updatePopupPositionLazy, { signal });
+    window.addEventListener("resize", this.updatePopupPositionLazy, { signal });
+
+    this.unloadContentScript.push(
+      () => {
+        ContentScript.rootElem.parentElement.removeChild(ContentScript.rootElem);
+        ContentScript.rootNode.unmount();
+      },
+
+      () => abortCtrl.abort(), // unbind DOM-events
+
+      onMessage<void, string>(MessageType.GET_SELECTED_TEXT, () => {
+        return this.selectedText;
+      }),
+      onMessage(MessageType.TRANSLATE_WITH_VENDOR, ({ vendor, text }: TranslateWithVendorPayload) => {
+        this.hideIcon();
+        this.translate({ vendor, text });
+      })
+    );
   }
 
   @computed get isPopupHidden() {
@@ -151,6 +172,13 @@ export class ContentScript extends React.Component {
       this.error = null;
       this.translation = await getTranslator(vendor).translate({ to, from, text });
     } catch (err) {
+      const reloadingContentScriptsRequired = (
+        err instanceof Error &&
+        err.message.includes("Extension context invalidated")
+      );
+      if (reloadingContentScriptsRequired) {
+        this.unloadContentScript();
+      }
       this.error = err;
     } finally {
       this.isLoading = false;
@@ -276,6 +304,7 @@ export class ContentScript extends React.Component {
 
     // make correction if popup is out of viewport bonds
     window.requestAnimationFrame(action(() => {
+      if (!this.popup) return;
       const popupPos = this.popup.elem.getBoundingClientRect();
       const isOutByX = popupPos.right > viewPortWidth;
       const isOutByY = popupPos.bottom > viewPortHeight;

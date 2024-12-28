@@ -8,8 +8,10 @@ import { listenProxyRequestActions } from "./httpProxy.bgc";
 import { listenTranslationHistoryActions } from "./history.bgc";
 import { listenOpenAIApiRequests } from "./openai.bgc";
 import { initBackground as initMellowtel, listenMellowtelActions } from "../../mellowtel";
+import { handleContextInvalidatedError } from "./contextInvalidated.bgc";
 
 onInstall();
+handleContextInvalidatedError();
 initContextMenus();
 
 // Listen IPC messages from "options-page" (extension window) or "content-script" pages
