@@ -29,11 +29,12 @@ export class SelectLocale extends React.Component<LocaleSelectProps> {
         />
 
         <Menu htmlFor={id} className={cssNames(styles.Menu, menuClassName)}>
-          {Object.entries(availableLocales).map(([locale, langName]) => {
+          {Object.entries(availableLocales).map(([locale, { english, native }]) => {
             const isSelected = getLocale() === locale;
             return (
-              <MenuItem key={locale} disabled={isSelected} onClick={() => setLocale(locale as Locale)}>
-                {langName}
+              <MenuItem className={styles.MenuItem} key={locale} disabled={isSelected} onClick={() => setLocale(locale as Locale)}>
+                <em>{english}</em>
+                <span>{english != native ? native : ""}</span>
               </MenuItem>
             );
           })}
