@@ -62,7 +62,6 @@ export async function translateText(params: TranslateTextParams): Promise<ITrans
       },
       messages: [
         { role: "system", content: `You are a professional text translator assistant` },
-        { role: "system", content: `Add transcription ONLY when provided full text is dictionary word, phrasal verbs` },
         { role: "system", content: `Spell correction might be suggested when translating text has issues or when you have more relevant option to say the same whole text"` },
         { role: "system", content: `Output JSON {translation, detectedLang, transcription, spellCorrection}` },
         { role: "user", content: prompt },
