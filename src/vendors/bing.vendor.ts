@@ -59,13 +59,16 @@ class Bing extends Translator {
     const { from: langFrom, to: langTo, text } = params;
     const { token } = this.apiParams.get();
 
-    const reqInitCommon: ProxyRequestInit = {
+    const requestInit: ProxyRequestInit = {
       method: "POST",
       headers: {
         "Authorization": `Bearer ${token}`,
         "Content-type": "application/json; charset=UTF-8",
         "User-Agent": navigator.userAgent,
-      }
+      },
+      body: JSON.stringify(
+        [{ Text: text }]
+      ),
     };
 
     const queryParams = new URLSearchParams({
@@ -73,16 +76,12 @@ class Bing extends Translator {
       to: langTo,
       from: langFrom !== "auto" ? langFrom : "",
     });
-    const bodyPayload = JSON.stringify([{ Text: text }]);
 
     // API: https://learn.microsoft.com/en-gb/azure/ai-services/translator/reference/v3-0-translate
     const translationReq = async (): Promise<BingTranslation[]> => {
       return this.request({
         url: this.apiUrl + `/translate?${queryParams}`,
-        requestInit: {
-          ...reqInitCommon,
-          body: bodyPayload,
-        }
+        requestInit,
       });
     };
 
@@ -93,10 +92,7 @@ class Bing extends Translator {
 
       return this.request({
         url: this.apiUrl + `/dictionary/lookup?${modifiedQuery}`,
-        requestInit: {
-          ...reqInitCommon,
-          body: bodyPayload,
-        }
+        requestInit,
       });
     };
 
@@ -105,7 +101,7 @@ class Bing extends Translator {
 
       const { translations, detectedLanguage } = response[0];
       const result: ITranslationResult = {
-        langDetected: detectedLanguage.language,
+        langDetected: detectedLanguage?.language ?? langFrom,
         translation: translations.length ? translations[0].text : "",
       };
 

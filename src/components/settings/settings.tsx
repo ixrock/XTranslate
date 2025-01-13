@@ -115,10 +115,11 @@ export class Settings extends React.Component {
             onChange={v => settingsStore.setVendor(v)}
           >
             {getTranslators().map(vendor => {
-              const { title, publicUrl } = vendor;
+              const vendorName = vendor.title;
+              const publicUrl = new URL(vendor.publicUrl);
               const name = vendor.name as VendorCodeName;
-              var domain = new URL(publicUrl).hostname.replace(/^www\./, "");
-              var skipInRotation = settingsStore.data.skipVendorInRotation[name];
+              const domain = publicUrl.hostname.replace(/^www\./, "") + publicUrl.pathname.replace(/\/$/, "");
+              const skipInRotation = settingsStore.data.skipVendorInRotation[name];
               const disableInRotationClassName = cssNames({
                 [styles.vendorSkippedInRotation]: skipInRotation,
               });
@@ -127,10 +128,10 @@ export class Settings extends React.Component {
                   <Checkbox
                     checked={skipInRotation}
                     onChange={checked => settingsStore.data.skipVendorInRotation[name] = checked}
-                    tooltip={getMessage("skip_translation_vendor_in_rotation", { vendor: title })}
+                    tooltip={getMessage("skip_translation_vendor_in_rotation", { vendor: vendorName })}
                   />
-                  <Radio value={name} label={<span className={disableInRotationClassName}>{title}</span>}/>
-                  <a href={publicUrl} target="_blank" tabIndex={-1}>
+                  <Radio value={name} label={<span className={disableInRotationClassName}>{vendorName}</span>}/>
+                  <a href={String(publicUrl)} target="_blank" tabIndex={-1}>
                     {domain}
                   </a>
                   <div className="flex gaps align-center">

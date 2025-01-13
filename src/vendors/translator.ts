@@ -86,7 +86,7 @@ export abstract class Translator {
 
       translation = await getTranslationResult();
 
-      const reverseTranslationParams = this.getReverseTranslationParams(translation);
+      const reverseTranslationParams = this.swapTranslationCheck(translation);
       if (reverseTranslationParams) {
         translation = await getTranslationResult(reverseTranslationParams);
       }
@@ -127,28 +127,26 @@ export abstract class Translator {
     };
   }
 
-  protected getReverseTranslationParams(translationResult: ITranslationResult): Partial<TranslateParams> | undefined {
-    const reverseLanguage = settingsStore.data.langToReverse
+  protected swapTranslationCheck(translationResult: ITranslationResult): Partial<TranslateParams> | undefined {
+    const reverseTargetLang = settingsStore.data.langToReverse
     const { langTo, langFrom, langDetected, originalText, translation } = translationResult;
     const sameText = originalText.trim().toLowerCase() === translation.toLowerCase().trim();
-    const invalidInputOutputTargetLanguage = sameText || langDetected === langTo;
 
-    if (!invalidInputOutputTargetLanguage) {
-      return; // quit: we got some different result
-    }
-
-    // swap exact languages (from,to) in case mismatching
-    if (langFrom !== "auto") {
+    if (langDetected !== langTo) {
       return {
-        from: langTo,
+        from: langDetected,
+        to: langTo,
+      }
+    } else if (langDetected !== langFrom && langFrom !== "auto") {
+      return {
+        from: langDetected,
         to: langFrom,
-      };
-    } else if (reverseLanguage) {
-      // swap languages with predefined reverse-language (if defined in the settings)
+      }
+    } else if (reverseTargetLang && sameText) {
       return {
         from: langTo,
-        to: reverseLanguage,
-      };
+        to: reverseTargetLang,
+      }
     }
   };
 

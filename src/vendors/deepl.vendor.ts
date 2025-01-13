@@ -7,7 +7,7 @@ import type { VendorAuthSettingsProps } from "../components/settings/vendor_auth
 
 class Deepl extends Translator {
   public name = VendorCodeName.DEEPL;
-  public title = "Deepl";
+  public title = "DeepL";
   public publicUrl = "https://www.deepl.com/translator";
 
   constructor() {
