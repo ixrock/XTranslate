@@ -7,11 +7,11 @@ export function getPdfRemoteURL(): string {
 }
 
 export function getPdfViewerURL(url: string) {
-  return getURL(`${pdfViewerEntry}.html?file=${encodeURIComponent(url)}`);
+  return getURL(`${pdfViewerEntry}.html?file=${url}`);
 }
 
 export function getPdfViewerFrameURL(url: string) {
-  return getURL(`assets/pdfjs/web/viewer.html?file=${encodeURIComponent(url)}`);
+  return getURL(`assets/pdfjs/web/viewer.html?file=${url}`);
 }
 
 export async function getPdfEmbeddableURL(url: string): Promise<string> {
