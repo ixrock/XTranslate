@@ -196,3 +196,9 @@ open_ai_why_info_help =
 # 通过pdf.js支持PDF翻译
 pdf_use_custom_viewer = 支持在PDF文件中翻译
 pdf_use_custom_viewer_info = 此选项将替换默认的PDF查看器
+
+# DeepSeek AI integration (ZH_CN)
+deepseek_get_own_key_info=在 platform.deepseek.com 注册并充值余额（例如通过 PayPal）
+deepseek_auth_key=在 DeepSeek 平台创建 API 访问密钥，并将其保存在此设置中
+deepseek_auth_key_warning=警告：请勿将您的 API 密钥输入到此扩展窗口以外的任何地方
+deepseek_auth_key_remove=删除 DeepSeek API 密钥

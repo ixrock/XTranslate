@@ -64,7 +64,6 @@ class OpenAITranslator extends Translator {
 
   getAuthSettings(): VendorAuthSettingsProps {
     return {
-      className: "openi-ai-settings",
       apiKeySanitized: sanitizeApiKey(this.#apiKey.get()),
       setupApiKey: this.setupApiKey,
       clearApiKey: this.clearApiKey,

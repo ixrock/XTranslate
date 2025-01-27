@@ -196,3 +196,9 @@ open_ai_why_info_help =
 # PDF अनुवाद समर्थन pdf.js के माध्यम से
 pdf_use_custom_viewer = PDF फाइलों में अनुवाद समर्थन
 pdf_use_custom_viewer_info = यह विकल्प डिफ़ॉल्ट PDF दर्शक को प्रतिस्थापित करेगा
+
+# DeepSeek AI integration (HI)
+deepseek_get_own_key_info=platform.deepseek.com पर रजिस्टर करें और बैलेंस रिचार्ज करें (जैसे PayPal के जरिए)
+deepseek_auth_key=DeepSeek प्लेटफॉर्म पर API एक्सेस की बनाएं और इसे सेटिंग्स में यहां सहेजें
+deepseek_auth_key_warning=चेतावनी: अपना API की केवल इस एक्सटेंशन विंडो में ही दर्ज करें, अन्यत्र नहीं
+deepseek_auth_key_remove=DeepSeek API की को हटाएं

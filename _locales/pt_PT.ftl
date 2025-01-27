@@ -196,3 +196,9 @@ open_ai_why_info_help =
 # Suporte para tradução de PDF via pdf.js
 pdf_use_custom_viewer = Suporte para traduções em arquivos PDF
 pdf_use_custom_viewer_info = Esta opção substituirá o visualizador de PDF padrão
+
+# DeepSeek AI integration (PT_PT)
+deepseek_get_own_key_info=Registe-se em platform.deepseek.com e carregue o saldo (por exemplo, via PayPal)
+deepseek_auth_key=Crie uma chave de acesso API na plataforma DeepSeek e guarde-a aqui nas definições
+deepseek_auth_key_warning=Aviso: NÃO insira a sua chave API em nenhum outro lugar exceto nesta janela da extensão
+deepseek_auth_key_remove=Remover chave API do DeepSeek

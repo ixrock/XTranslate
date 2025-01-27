@@ -196,3 +196,9 @@ open_ai_why_info_help =
 # Hỗ trợ dịch PDF qua pdf.js
 pdf_use_custom_viewer = Hỗ trợ dịch trong các tệp PDF
 pdf_use_custom_viewer_info = Tùy chọn này sẽ thay thế trình xem PDF mặc định
+
+# DeepSeek AI integration (VI)
+deepseek_get_own_key_info=Đăng ký tại platform.deepseek.com và nạp số dư (ví dụ: qua PayPal)
+deepseek_auth_key=Tạo khóa truy cập API trên nền tảng DeepSeek và lưu nó tại đây trong cài đặt
+deepseek_auth_key_warning=Cảnh báo: KHÔNG nhập khóa API của bạn ở bất kỳ nơi nào khác ngoài cửa sổ tiện ích mở rộng này
+deepseek_auth_key_remove=Xóa khóa API DeepSeek

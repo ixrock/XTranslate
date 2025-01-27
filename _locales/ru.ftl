@@ -203,3 +203,9 @@ open_ai_why_info_help =
 # PDF translations suppot via pdf.js
 pdf_use_custom_viewer = Поддержка переводов в PDF файлах
 pdf_use_custom_viewer_info = Эта опция заменит стандартный просмоторщик PDF файлов
+
+# DeepSeek AI integration
+deepseek_get_own_key_info = Зарегистрируйтесь на platform.deepseek.com и пополните баланс (2$+)
+deepseek_auth_key = Создайте API-ключ на платформе DeepSeek
+deepseek_auth_key_warning = Предупреждение: НЕ вводите свой API-ключ в других местах, кроме как из этого окна расширения
+deepseek_auth_key_remove = Удалить API-ключ DeepSeek

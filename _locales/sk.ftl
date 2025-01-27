@@ -147,3 +147,9 @@ service_confirm_not_a_robot = Môžete tiež prejsť na { $link } a potvrdiť, �
 # privacy policy
 privacy_policy_title_updated = Zásady ochrany osobných údajov boli aktualizované
 privacy_policy_accept_terms = Prijať zmluvné podmienky
+
+# DeepSeek AI integration (SK)
+deepseek_get_own_key_info=Zaregistrujte sa na platform.deepseek.com a dobite si kredit (napr. cez PayPal)
+deepseek_auth_key=Vytvorte si prístupový kľúč API na platforme DeepSeek a uložte ho sem do nastavení
+deepseek_auth_key_warning=Upozornenie: NEZADÁVAJTE svoj API kľúč nikde inde okrem tohto okna rozšírenia
+deepseek_auth_key_remove=Odstrániť API kľúč DeepSeek

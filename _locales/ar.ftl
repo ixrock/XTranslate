@@ -196,3 +196,10 @@ open_ai_why_info_help =
 # دعم ترجمة PDF عبر pdf.js
 pdf_use_custom_viewer = دعم الترجمات في ملفات PDF
 pdf_use_custom_viewer_info = ستستبدل هذه الخيار عارض PDF الافتراضي
+
+# DeepSeek AI integration (AR)
+deepseek_get_own_key_info=قم بالتسجيل في platform.deepseek.com وقم بشحن الرصيد (مثلًا عبر PayPal)
+deepseek_auth_key=قم بإنشاء مفتاح وصول API على منصة DeepSeek واحفظه هنا في الإعدادات
+deepseek_auth_key_warning=تحذير: لا تدخل مفتاح API الخاص بك في أي مكان آخر باستثناء نافذة هذا الامتداد
+deepseek_auth_key_remove=إزالة مفتاح API الخاص بـ DeepSeek
+

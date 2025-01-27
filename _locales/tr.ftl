@@ -147,3 +147,9 @@ service_confirm_not_a_robot = Ayrıca { $link } adresine gidebilir ve robot olma
 # privacy policy
 privacy_policy_title_updated = Gizlilik Politikası güncellendi
 privacy_policy_accept_terms = Şartlar ve koşulları kabul et
+
+# DeepSeek AI integration (TR)
+deepseek_get_own_key_info=platform.deepseek.com adresinden kaydolun ve bakiyenizi doldurun (örneğin, PayPal aracılığıyla)
+deepseek_auth_key=DeepSeek platformunda bir API erişim anahtarı oluşturun ve bunu ayarlara kaydedin
+deepseek_auth_key_warning=Uyarı: API anahtarınızı bu uzantı penceresi dışında başka bir yere GİRMEYİN
+deepseek_auth_key_remove=DeepSeek API Anahtarını Kaldırın

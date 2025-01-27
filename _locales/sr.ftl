@@ -193,3 +193,9 @@ open_ai_why_info_help =
  Direktnom upotrebom ličnog naloga na OpenAI platformi i dokazivanjem API ključa štedite dosta novca. Korišćenjem servisa od drugih aplikacija/proširenja koji služe kao "čovek u sredini",
    često plaćate mesečnu/godišnju pretplatu, a cene i ograničenja upotrebe nisu pod vašom kontrolom.
    Ne zaboravite da prilagodite ograničenja upotrebe na platform.openai.com i onemogućite automatsku dopunu sredstava na kreditnoj kartici.
+
+# DeepSeek AI integration (SR)
+deepseek_get_own_key_info=Registrujte se na platform.deepseek.com i dopunite saldo (npr. putem PayPal-a)
+deepseek_auth_key=Kreirajte API pristupni ključ na platformi DeepSeek i sačuvajte ga ovde u podešavanjima
+deepseek_auth_key_warning=Upozorenje: NE unosite svoj API ključ ni na jednom drugom mestu osim u prozoru ovog dodatka
+deepseek_auth_key_remove=Uklonite DeepSeek API ključ
