@@ -131,23 +131,30 @@ export abstract class Translator {
     const reverseTargetLang = settingsStore.data.langToReverse
     const { langTo, langFrom, langDetected, originalText, translation } = translationResult;
     const sameText = originalText.trim().toLowerCase() === translation.toLowerCase().trim();
+    let swapParamsWith: Partial<TranslateParams>;
 
-    if (langDetected !== langTo) {
-      return {
-        from: langDetected,
-        to: langTo,
-      }
-    } else if (langDetected !== langFrom && langFrom !== "auto") {
-      return {
+    if (langDetected !== langFrom && langFrom !== "auto") {
+      swapParamsWith = {
         from: langDetected,
         to: langFrom,
       }
     } else if (reverseTargetLang && sameText) {
-      return {
+      swapParamsWith = {
         from: langTo,
         to: reverseTargetLang,
       }
     }
+
+    if (swapParamsWith) {
+      const { from, to } = swapParamsWith;
+      this.logger.info(`SWAP-TRANSLATION-RESULT-WITH: from="${from}", to="${to}"`, {
+        translationResult,
+        reverseTargetLang,
+        sameText,
+      });
+    }
+
+    return swapParamsWith;
   };
 
   getLangPairShortTitle(langFrom: string, langTo: string) {

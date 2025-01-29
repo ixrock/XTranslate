@@ -1,7 +1,7 @@
 {
   "name": "XTranslate",
   "description": "__MSG_short_description__",
-  "version": "4.5.0",
+  "version": "4.5.1",
   "manifest_version": 3,
   "default_locale": "en",
   "homepage_url": "https://xtranslate.dev/",

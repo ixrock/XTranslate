@@ -15,7 +15,7 @@ export function listenDeepSeekRequests() {
 export function deepSeekApi(apiKey: string) {
   return new OpenAI({
     apiKey,
-    baseURL: "https://api.deepseek.com",
+    baseURL: "https://api.deepseek.com/v1",
     dangerouslyAllowBrowser: false,
     maxRetries: 0,
   })
@@ -34,8 +34,8 @@ export async function translateText(params: DeepSeekTranslatePayload): Promise<I
   const sanitizedText = text.trim();
 
   const prompt = isAutoDetect
-    ? `To "${targetLanguage}" and auto-detect the source language the text: ${sanitizedText}`
-    : `From "${sourceLanguage}" to "${targetLanguage}" language the text: ${sanitizedText}`;
+    ? `Translate to "${targetLanguage}" and auto-detect source language of text: ${sanitizedText}`
+    : `Translate from "${sourceLanguage}" to "${targetLanguage}" language of text: ${sanitizedText}`;
 
   try {
     const response = await deepSeekApi(apiKey).chat.completions.create({
@@ -46,10 +46,9 @@ export async function translateText(params: DeepSeekTranslatePayload): Promise<I
         type: "json_object"
       },
       messages: [
-        { role: "system", content: `You are professional foreign languages translator.` },
-        { role: "system", content: `Add transcription ONLY when provided full text is dictionary word, phrasal verbs` },
-        { role: "system", content: `Spell correction might be suggested when translating text has issues or when you have more conscious way to say the same` },
-        { role: "system", content: `Output JSON {translation, detectedLang, transcription, spellCorrection}` },
+        { role: "system", content: `You are professional languages translator assistant.` },
+        { role: "system", content: `Add transcription ONLY when provided full text is dictionary word, phrasal verbs.` },
+        { role: "system", content: `Output JSON {translation, detectedLang, transcription?, spellCorrection?}` },
         { role: "user", content: prompt },
       ],
     });
