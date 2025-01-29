@@ -180,7 +180,7 @@ error_403_auth_failed = 授權失敗。請在設定中提供有效的 API 金鑰
 
 # OpenAI 整合
 open_ai_get_access_info = 1）在 platform.openai.com 註冊 2）創建 API 訪問金鑰 3）充值您的帳戶餘額（5 美元以上）
-open_ai_insert_auth_key = 提供您的 API 金鑰以獲得 OpenAI 翻譯（ChatGPT 作者平台）
+open_ai_insert_auth_key = 提供您的 API 金鑰以獲得 OpenAI 翻譯
 open_ai_insert_auth_key_warning = 警告：請勿在此擴充功能視窗以外的任何地方輸入您的 API 金鑰
 open_ai_insert_auth_key_remove = 移除 OpenAI API 金鑰
 open_ai_choose_model = 選擇 AI 模型

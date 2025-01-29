@@ -14,5 +14,6 @@
   @include pseudo-link;
 
   display: flex;
-  gap: var(--flex-gap)
+  gap: var(--flex-gap);
+  font-size: small;
 }

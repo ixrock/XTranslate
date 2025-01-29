@@ -1,0 +1,10 @@
+.SettingsPopup {
+  display: grid;
+  gap: var(--theme-spacing);
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+}
+
+.hotkey {
+  width: 75px;
+  text-align: center;
+}

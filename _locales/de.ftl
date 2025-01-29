@@ -180,7 +180,7 @@ error_403_auth_failed = Authentifizierung fehlgeschlagen. Bitte geben Sie einen 
 
 # OpenAI Integration
 open_ai_get_access_info = 1) Registrieren Sie sich bei platform.openai.com 2) Erstellen Sie einen API-Zugriffsschlüssel 3) Beladen Sie Ihr Guthaben (5$+)
-open_ai_insert_auth_key = Geben Sie Ihren API-Schlüssel ein, um OpenAI-Übersetzungen zu erhalten (Plattform der ChatGPT-Autoren)
+open_ai_insert_auth_key = Geben Sie Ihren API-Schlüssel ein, um OpenAI-Übersetzungen zu erhalten
 open_ai_insert_auth_key_warning = Warnung: Geben Sie Ihren API-Schlüssel nirgendwo außer in diesem Erweiterungsfenster ein
 open_ai_insert_auth_key_remove = OpenAI API-Schlüssel entfernen
 open_ai_choose_model = KI-Modell auswählen

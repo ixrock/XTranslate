@@ -187,7 +187,7 @@ error_403_auth_failed = Авторизация не удалась. Пожалу
 
 # open-ai integration
 open_ai_get_access_info = 1) Зарегистрируйтесь на platform.openai.com 2) Создайте ключ доступа к API 3) Пополните баланс (минимально 5$)
-open_ai_insert_auth_key = Предоставьте свой API-ключ для получения переводов OpenAI (платформа от авторов ChatGPT)
+open_ai_insert_auth_key = Предоставьте свой API-ключ для получения переводов OpenAI
 open_ai_insert_auth_key_warning = Предупреждение: НЕ вводите свой API-ключ в других местах, кроме как из этого окна расширения.
 open_ai_insert_auth_key_remove = Удалить ключ доступа OpenAI API
 open_ai_choose_model = Выберите AI-модель

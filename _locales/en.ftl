@@ -180,7 +180,7 @@ error_403_auth_failed = Authorization failed. Please supply a valid auth api key
 
 # open-ai integration
 open_ai_get_access_info = 1) Register at platform.openai.com 2) Create api access key 3) Top-up your balance (5$+)
-open_ai_insert_auth_key = Provide your api key for getting OpenAI translations (ChatGPT authors platform)
+open_ai_insert_auth_key = Provide your api key for getting OpenAI translations
 open_ai_insert_auth_key_warning = Warning: DO NOT enter your API key in any other place except this extension window
 open_ai_insert_auth_key_remove = Remove OpenAI API key
 open_ai_choose_model = Choose AI model

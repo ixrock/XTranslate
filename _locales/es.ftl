@@ -180,7 +180,7 @@ error_403_auth_failed = Fallo de autorización. Por favor, proporciona una clave
 
 # integración de OpenAI
 open_ai_get_access_info = 1) Regístrate en platform.openai.com 2) Crea una clave de acceso a la API 3) Recarga tu saldo (5$+)
-open_ai_insert_auth_key = Proporciona tu clave de API para obtener traducciones de OpenAI (plataforma de los autores de ChatGPT)
+open_ai_insert_auth_key = Proporciona tu clave de API para obtener traducciones de OpenAI
 open_ai_insert_auth_key_warning = Advertencia: NO ingreses tu clave de API en ningún otro lugar excepto en esta ventana de la extensión
 open_ai_insert_auth_key_remove = Eliminar la clave de API de OpenAI
 open_ai_choose_model = Elige el modelo de IA

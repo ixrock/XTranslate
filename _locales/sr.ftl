@@ -181,7 +181,7 @@ error_403_auth_failed = Autorizacija nije uspela. Unesi validan API ključ za au
 
 # open-ai integration
 open_ai_get_access_info = 1) Registruj se na platform.openai.com 2) Kreiraj ključ za pristup API-ju 3) Dopuni svoja novčana sredstva (5$+)
-open_ai_insert_auth_key = Obezbedi API ključ za dobijanje OpenAI prevoda (platforma autora ChatGPT-a)
+open_ai_insert_auth_key = Obezbedi API ključ za dobijanje OpenAI prevoda
 open_ai_insert_auth_key_warning = Upozorenje: NE UNOSI svoj API ključ nigde osim u prozoru ovog proširenja
 open_ai_insert_auth_key_remove = Ukloni OpenAI API ključ
 open_ai_choose_model = Izaberi AI model

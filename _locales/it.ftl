@@ -180,7 +180,7 @@ error_403_auth_failed = Autorizzazione fallita. Fornisci una chiave API valida n
 
 # integrazione OpenAI
 open_ai_get_access_info = 1) Registrati su platform.openai.com 2) Crea una chiave di accesso API 3) Ricarica il tuo saldo (5$+)
-open_ai_insert_auth_key = Fornisci la tua chiave API per ottenere traduzioni da OpenAI (piattaforma degli autori di ChatGPT)
+open_ai_insert_auth_key = Fornisci la tua chiave API per ottenere traduzioni da OpenAI
 open_ai_insert_auth_key_warning = Attenzione: NON inserire la tua chiave API in nessun altro posto tranne questa finestra dell'estensione
 open_ai_insert_auth_key_remove = Rimuovi la chiave API di OpenAI
 open_ai_choose_model = Scegli il modello di IA

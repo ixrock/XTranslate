@@ -5,8 +5,10 @@ import { observer } from "mobx-react";
 import { ReactSelect, ReactSelectOption } from "../select";
 import { getMessage } from "../../i18n";
 import { getTTSVoices, TTSVoice } from "../../tts";
+import { cssNames, IClassName } from "../../utils";
 
 export interface SelectVoiceProps {
+  className?: IClassName;
   currentIndex?: number;
   onChange?(voiceIndex: number): void;
 }
@@ -44,8 +46,10 @@ export class SelectVoice extends React.Component<SelectVoiceProps> {
   }
 
   render() {
+    const { className } = this.props;
+
     return (
-      <div className={styles.SelectVoice}>
+      <div className={cssNames(styles.SelectVoice, className)}>
         <ReactSelect
           menuPlacement="auto"
           placeholder={getMessage("tts_select_voice_title")}

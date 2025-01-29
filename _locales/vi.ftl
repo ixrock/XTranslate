@@ -180,7 +180,7 @@ error_403_auth_failed = Xác thực thất bại. Vui lòng cung cấp khóa API
 
 # Tích hợp OpenAI
 open_ai_get_access_info = 1) Đăng ký tại platform.openai.com 2) Tạo khóa truy cập API 3) Nạp tiền vào tài khoản (5$+)
-open_ai_insert_auth_key = Cung cấp khóa API của bạn để nhận bản dịch từ OpenAI (nền tảng của tác giả ChatGPT)
+open_ai_insert_auth_key = Cung cấp khóa API của bạn để nhận bản dịch từ OpenAI
 open_ai_insert_auth_key_warning = Cảnh báo: KHÔNG nhập khóa API của bạn ở bất kỳ nơi nào khác ngoài cửa sổ tiện ích mở rộng này
 open_ai_insert_auth_key_remove = Xóa khóa API OpenAI
 open_ai_choose_model = Chọn mô hình AI

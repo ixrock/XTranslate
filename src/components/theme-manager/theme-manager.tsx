@@ -17,6 +17,7 @@ import { Tab } from "../tabs";
 import { getMessage } from "../../i18n";
 import { Icon } from "../icon";
 import { base64Encode } from "../../utils";
+import { SettingsPopup } from "../settings/settings_popup";
 
 @observer
 export class ThemeManager extends React.Component {
@@ -108,7 +109,14 @@ export class ThemeManager extends React.Component {
     const isDefault = themeStorage.isDefaultValue(theme) && customFont.isDefaultValue(this.customFont);
     return (
       <div className="ThemeManager flex column gaps">
-        <Popup previewMode translation={Popup.translationMock}/>
+        <Popup
+          previewMode
+          style={{ position: "sticky", top: 20 }}
+          translation={Popup.translationMock}
+        />
+        <br/>
+        <SettingsPopup/>
+
         <div className="theme">
           <div className="flex gaps auto">
             <div className="box">
@@ -288,7 +296,7 @@ export class ThemeManager extends React.Component {
   }
 }
 
-pageManager.registerComponents("theme", {
+pageManager.registerComponents("popup", {
   Tab: props => <Tab {...props} label={getMessage("tab_theme")} icon="color_lens"/>,
   Page: ThemeManager,
 });

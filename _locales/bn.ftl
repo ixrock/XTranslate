@@ -180,7 +180,7 @@ error_403_auth_failed = অথেন্টিকেশন ব্যর্থ। 
 
 # ওপেন-এআই ইন্টিগ্রেশন
 open_ai_get_access_info = ১) platform.openai.com-তে নিবন্ধন করুন ২) API অ্যাক্সেস কী তৈরি করুন ৩) আপনার ব্যালেন্স টপ-আপ করুন (৫$+)
-open_ai_insert_auth_key = OpenAI অনুবাদ পেতে আপনার API কী প্রদান করুন (ChatGPT লেখকদের প্ল্যাটফর্ম)
+open_ai_insert_auth_key = OpenAI অনুবাদ পেতে আপনার API কী প্রদান করুন
 open_ai_insert_auth_key_warning = সতর্কতা: এই এক্সটেনশন উইন্ডো ছাড়া অন্য কোথাও আপনার API কী না দিন
 open_ai_insert_auth_key_remove = OpenAI API কী সরান
 open_ai_choose_model = AI মডেল বেছে নিন

@@ -180,7 +180,7 @@ error_403_auth_failed = प्रमाणीकरण विफल। कृप
 
 # ओपन-एआई एकीकरण
 open_ai_get_access_info = 1) platform.openai.com पर पंजीकरण करें 2) api पहुँच कुंजी बनाएँ 3) अपना बैलेंस टॉप-अप करें (5$+)
-open_ai_insert_auth_key = OpenAI अनुवाद (ChatGPT लेखकों की प्लेटफार्म) प्राप्त करने के लिए अपनी api कुंजी प्रदान करें
+open_ai_insert_auth_key = OpenAI अनुवाद प्राप्त करने के लिए अपनी api कुंजी प्रदान करें
 open_ai_insert_auth_key_warning = चेतावनी: इस एक्सटेंशन विंडो के अलावा कहीं भी अपनी API कुंजी न दर्ज करें
 open_ai_insert_auth_key_remove = OpenAI API कुंजी हटाएं
 open_ai_choose_model = AI मॉडल चुनें

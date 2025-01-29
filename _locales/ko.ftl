@@ -180,7 +180,7 @@ error_403_auth_failed = 인증 실패. 설정에서 유효한 인증 API 키를 
 
 # OpenAI 통합
 open_ai_get_access_info = 1) platform.openai.com 에 등록 2) API 접근 키 생성 3) 잔액 충전 (5$+)
-open_ai_insert_auth_key = OpenAI 번역을 얻기 위해 API 키 제공 (ChatGPT 저자 플랫폼)
+open_ai_insert_auth_key = OpenAI 번역을 얻기 위해 API 키 제공
 open_ai_insert_auth_key_warning = 경고: 이 확장 프로그램 창 외에 다른 곳에 API 키를 입력하지 마세요
 open_ai_insert_auth_key_remove = OpenAI API 키 제거
 open_ai_choose_model = AI 모델 선택

@@ -180,7 +180,7 @@ error_403_auth_failed = 認証に失敗しました。設定で有効な認証AP
 
 # OpenAI統合
 open_ai_get_access_info = 1) platform.openai.com で登録 2) APIアクセスキーを作成 3) 残高をトップアップ（5$+）
-open_ai_insert_auth_key = OpenAI翻訳を取得するためのAPIキーを提供（ChatGPTの著者のプラットフォーム）
+open_ai_insert_auth_key = OpenAI翻訳を取得するためのAPIキーを提供
 open_ai_insert_auth_key_warning = 警告: この拡張機能のウィンドウ以外にAPIキーを入力しないでください
 open_ai_insert_auth_key_remove = OpenAI APIキーを削除
 open_ai_choose_model = AIモデルを選択

@@ -180,7 +180,7 @@ error_403_auth_failed = فشل في التوثيق. يرجى توفير مفتا
 
 # تكامل OpenAI
 open_ai_get_access_info = 1) تسجيل الدخول إلى platform.openai.com 2) إنشاء مفتاح وصول API 3) إعادة تعبئة رصيدك (5$+)
-open_ai_insert_auth_key = قدم مفتاح API الخاص بك للحصول على ترجمات OpenAI (منصة مؤلفي ChatGPT)
+open_ai_insert_auth_key = قدم مفتاح API الخاص بك للحصول على ترجمات OpenAI
 open_ai_insert_auth_key_warning = تحذير: لا تدخل مفتاح API الخاص بك في أي مكان آخر بخلاف نافذة هذه الإضافة
 open_ai_insert_auth_key_remove = إزالة مفتاح API OpenAI
 open_ai_choose_model = اختر نموذج الذكاء الاصطناعي

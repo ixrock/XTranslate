@@ -24,11 +24,11 @@ export class VendorAuthSettings extends React.Component<VendorAuthSettingsProps>
           <Icon small material="info_outline" tooltip={accessInfo}/>
         )}
         <div className={styles.setupApiKey} onClick={prevDefault(setupApiKey)}>
-          <Icon small material="warning_amber" tooltip={warningInfo}/>
-          <small>
-            {!apiKeySanitized && <em>{accessInfo2}</em>}
-            {apiKeySanitized && <b className={styles.key}>{apiKeySanitized}</b>}
-          </small>
+          {!apiKeySanitized && <>
+            <Icon small material="warning_amber" tooltip={warningInfo}/>
+            <em>{accessInfo2}</em>
+          </>}
+          {apiKeySanitized && <b className={styles.key}>{apiKeySanitized}</b>}
         </div>
         {apiKeySanitized && <Icon
           small
