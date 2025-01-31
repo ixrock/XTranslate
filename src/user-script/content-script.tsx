@@ -448,7 +448,9 @@ export class ContentScript extends React.Component {
     const translator = getTranslator(vendor);
     return (
       <>
-        <link rel="stylesheet" href={this.stylesUrl} crossOrigin="anonymous"/>
+        {this.stylesUrl && (
+          <link rel="stylesheet" href={this.stylesUrl} crossOrigin="anonymous"/>
+        )}
         {isIconVisible && (
           <XTranslateIcon
             style={this.iconPosition}
