@@ -40,8 +40,8 @@ export async function translateText(params: OpenAITranslatePayload): Promise<ITr
   const sanitizedText = text.trim();
 
   const prompt = isAutoDetect
-    ? `To "${targetLanguage}" and auto-detect the source language the text: ${sanitizedText}`
-    : `From "${sourceLanguage}" to "${targetLanguage}" language the text: ${sanitizedText}`;
+    ? `Translate to "${targetLanguage}" to auto-detected source-language text: ${sanitizedText}`
+    : `Translate from "${sourceLanguage}" to "${targetLanguage}" text: ${sanitizedText}`;
 
   try {
     const response = await getAPI(apiKey).chat.completions.create({
@@ -52,7 +52,7 @@ export async function translateText(params: OpenAITranslatePayload): Promise<ITr
         type: "json_object"
       },
       messages: [
-        { role: "system", content: `You are a professional text translator assistant` },
+        { role: "system", content: `You are a professional languages translator assistant.` },
         { role: "system", content: `Add transcription ONLY when provided full text is dictionary word, phrasal verbs` },
         { role: "system", content: `Spell correction might be suggested when translating text has issues or when you have more relevant option to say the same whole text` },
         { role: "system", content: `Output JSON {translation, detectedLang, transcription, spellCorrection}` },

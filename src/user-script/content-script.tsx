@@ -51,7 +51,6 @@ export class ContentScript extends React.Component {
   public appName = getManifest().name;
   private selection = ContentScript.window.getSelection();
   private popup: Popup;
-  private icon: XTranslateIcon | null;
   private isDblClicked = false;
   private isHotkeyActivated = false;
   private mousePos = { x: 0, y: 0, pageX: 0, pageY: 0 };
@@ -66,7 +65,7 @@ export class ContentScript extends React.Component {
   @observable popupPosition: React.CSSProperties = {};
   @observable selectedText = "";
   @observable isRtlSelection = false;
-  @observable isIconShown = false;
+  @observable isIconVisible = false;
   @observable isLoading = false;
   @observable stylesUrl = "";
 
@@ -124,13 +123,7 @@ export class ContentScript extends React.Component {
 
   @computed get iconPosition(): React.CSSProperties {
     const { iconPosition } = settingsStore.data;
-    const { selectedText, selectionRects, isRtlSelection, isIconShown } = this;
-    if (!selectedText || !selectionRects || !isIconShown || !this.isPopupHidden) {
-      return {
-        display: "none"
-      }
-    }
-
+    const { selectionRects, isRtlSelection } = this;
     const firstRect = selectionRects[0];
     const lastRect = selectionRects.slice(-1)[0];
 
@@ -208,11 +201,11 @@ export class ContentScript extends React.Component {
   }
 
   showIcon() {
-    this.isIconShown = true;
+    this.isIconVisible = true;
   }
 
   hideIcon() {
-    this.isIconShown = false;
+    this.isIconVisible = false;
   }
 
   hidePopup() {
@@ -352,6 +345,7 @@ export class ContentScript extends React.Component {
   }, 250);
 
   onIconClick(evt: React.MouseEvent) {
+    this.hideIcon();
     void this.translate();
     evt.stopPropagation();
   }
@@ -449,20 +443,19 @@ export class ContentScript extends React.Component {
   }, 250);
 
   render() {
-    const { lastParams, translation, error, popupPosition, playText, translateNext, onIconClick, hidePopup } = this;
+    const { lastParams, translation, error, popupPosition, playText, translateNext, onIconClick, hidePopup, isIconVisible } = this;
     const { langFrom, langTo, vendor } = settingsStore.data;
     const translator = getTranslator(vendor);
     return (
       <>
         <link rel="stylesheet" href={this.stylesUrl} crossOrigin="anonymous"/>
-        <XTranslateIcon
-          style={this.iconPosition}
-          onMouseDown={onIconClick}
-          title={`${this.appName}: ${translator.getLangPairTitle(langFrom, langTo)}`}
-          ref={elem => {
-            this.icon = elem
-          }}
-        />
+        {isIconVisible && (
+          <XTranslateIcon
+            style={this.iconPosition}
+            onMouseDown={onIconClick}
+            title={`${this.appName}: ${translator.getLangPairTitle(langFrom, langTo)}`}
+          />
+        )}
         <Popup
           style={popupPosition}
           initParams={lastParams}
