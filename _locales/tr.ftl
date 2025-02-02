@@ -148,6 +148,43 @@ service_confirm_not_a_robot = Ayrıca { $link } adresine gidebilir ve robot olma
 privacy_policy_title_updated = Gizlilik Politikası güncellendi
 privacy_policy_accept_terms = Şartlar ve koşulları kabul et
 
+# mellowtel integration (TR)
+mellowtel_greetings=Merhaba, dostum 👋
+mellowtel_text1=Bildiğiniz gibi bu eklenti ücretsiz ve herkese açıktır... ancak devam ettirebilmek için bu sefer sizden bir aksiyon bekliyoruz!
+mellowtel_text2=Bu yeni sürüm, açık kaynaklı { $link } kütüphanesini içeriyor. Bu kütüphane, kullanılmayan internet bağlantınızı, modellerini eğitmek için kullanan güvenilir AI laboratuvarları ve startup'larla paylaşmanıza olanak tanır.
+mellowtel_usage_title=Mellowtel'i şu amaçlarla kullanıyoruz:
+mellowtel_usage1=Servisin kesintilerini izlemek
+mellowtel_usage2=Servisin kalitesini ölçmek
+mellowtel_usage3=Bu eklentinin geliştiricisi olarak gelirin küçük bir payını almak
+mellowtel_accept_all_info1='Hepsini kabul et'i seçerseniz, Mellowtel API'sini şu amaçla da kullanacağız: Güvenilir ortakların internet kaynaklarına erişimini sağlamak için trafiğin bir kısmını ağınızdaki düğüm üzerinden yönlendirmek.
+mellowtel_accept_all_info2=Mellowtel sadece bant genişliğinizi paylaşır. Güvenlik ve gizlilik %100 garanti altındadır ve kütüphane herkesin görebileceği şekilde açık kaynak kodludur.
+mellowtel_regulation1=Kişisel bilgileri toplamaz, paylaşmaz veya satmaz (anonimleştirilmiş veriler bile).
+mellowtel_regulation2=Ayrıca, oldukça düzenlenmiştir: Mellowtel, güvenli bir deneyim sağlamak için Chrome Web Store düzenleyicileriyle iletişimde kalır.
+mellowtel_regulation3=Ayrıca, CWS düzenleyicilerine uyumu izlemek ve sağlamak için araçlar sunar.
+mellowtel_button_decline=İsteğe bağlı kullanımı reddet
+mellowtel_button_accept=Hepsini kabul et
+mellowtel_dialog_footer=Okuduğunuz için teşekkürler, { $devs } ekipleri.
+
+# various error messages (TR)
+error_403_auth_failed=Yetkilendirme başarısız. Lütfen ayarlarda geçerli bir API anahtarı girin.
+
+# open-ai integration (TR)
+open_ai_get_access_info=1) platform.openai.com'da kayıt olun 2) API erişim anahtarı oluşturun 3) Bakiyenizi yükleyin (5$+)
+open_ai_insert_auth_key=OpenAI çevirileri almak için API anahtarınızı sağlayın
+open_ai_insert_auth_key_warning=Uyarı: API anahtarınızı bu eklenti penceresi dışında hiçbir yere girmeyin
+open_ai_insert_auth_key_remove=OpenAI API anahtarını kaldır
+open_ai_choose_model=AI modelini seçin
+open_ai_choose_model_cost_efficient=En maliyet etkin
+open_ai_choose_model_optimal=Önerilen model
+open_ai_choose_model_chatgpt_like=ChatGPT (pahalı olabilir)
+open_ai_choose_model_best_results=En iyi sonuçlar (en pahalı)
+open_ai_choose_model_reasoning=Akıl yürütme modeli (seride en yeni ve maliyet etkin)
+open_ai_why_info_help=Kendi OpenAI platform hesabınızı doğrudan kullanıp API anahtarınızı sağladığınızda, diğer uygulama/eklenti aracılığıyla "aracı hizmetler" kullanmak yerine çok para tasarrufu sağlarsınız; bu hizmetlerde genellikle aylık/yıllık abonelik ücreti ödersiniz ve tüm fiyatlar ile kullanım limitleri sizin kontrolünüzde olmaz. platform.openai.com'da kullanım limitlerini ayarlamayı ve kredi kartınızın otomatik bakiye yüklemesini devre dışı bırakmayı unutmayın.
+
+# PDF translations suppot via pdf.js (TR)
+pdf_use_custom_viewer=PDF dosyalarında çevirileri destekle
+pdf_use_custom_viewer_info=Bu seçenek varsayılan PDF görüntüleyicisini değiştirecektir
+
 # DeepSeek AI integration (TR)
 deepseek_get_own_key_info=platform.deepseek.com adresinden kaydolun ve bakiyenizi doldurun (örneğin, PayPal aracılığıyla)
 deepseek_auth_key=DeepSeek platformunda bir API erişim anahtarı oluşturun ve bunu ayarlara kaydedin
