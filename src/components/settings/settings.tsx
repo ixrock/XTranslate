@@ -140,6 +140,7 @@ export class Settings extends React.Component {
               <label>
                 <span>{getMessage("position_of_x_translate_icon")}</span>
                 <ReactSelect
+                  menuPlacement="auto"
                   options={this.iconPositions}
                   value={this.iconPositions.find(pos => isEqual(pos.value, settings.iconPosition))}
                   onChange={(opt: ReactSelectOption<XIconPosition>) => settings.iconPosition = opt.value}
