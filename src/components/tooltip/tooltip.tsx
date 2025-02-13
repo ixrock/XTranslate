@@ -7,7 +7,7 @@ import { autoBind, cssNames } from "../../utils";
 import { Animate } from "../animate";
 
 export interface TooltipProps {
-  htmlFor: string
+  anchorId: string; // element-id to bind for tooltip
   className?: string;
   position?: Position;
   following?: boolean; // tooltip is following mouse position (rendered outside of components's root element)
@@ -49,28 +49,28 @@ export class Tooltip extends React.Component<TooltipProps> {
     autoBind(this);
   }
 
-  get anchor(): HTMLElement | undefined {
-    var { htmlFor } = this.props;
-    return htmlFor ? document.getElementById(htmlFor) : this.elem?.parentElement;
+  get anchorElem(): HTMLElement | undefined {
+    const { anchorId } = this.props;
+    return anchorId ? document.getElementById(anchorId) : this.elem?.parentElement;
   }
 
   componentDidMount() {
-    if (!this.anchor) return;
+    if (!this.anchorElem) return;
 
-    if (window.getComputedStyle(this.anchor).position === "static") {
-      this.anchor.style.position = "relative"
+    if (window.getComputedStyle(this.anchorElem).position === "static") {
+      this.anchorElem.style.position = "relative"
     }
-    this.anchor.addEventListener("mouseenter", this.onMouseEnter);
-    this.anchor.addEventListener("mouseleave", this.onMouseLeave);
-    this.anchor.addEventListener("mousemove", this.onMouseMove);
+    this.anchorElem.addEventListener("mouseenter", this.onMouseEnter);
+    this.anchorElem.addEventListener("mouseleave", this.onMouseLeave);
+    this.anchorElem.addEventListener("mousemove", this.onMouseMove);
   }
 
   componentWillUnmount() {
-    if (!this.anchor) return;
+    if (!this.anchorElem) return;
 
-    this.anchor.removeEventListener("mouseenter", this.onMouseEnter);
-    this.anchor.removeEventListener("mouseleave", this.onMouseLeave);
-    this.anchor.removeEventListener("mousemove", this.onMouseMove);
+    this.anchorElem.removeEventListener("mouseenter", this.onMouseEnter);
+    this.anchorElem.removeEventListener("mouseleave", this.onMouseLeave);
+    this.anchorElem.removeEventListener("mousemove", this.onMouseMove);
   }
 
   onMouseEnter(evt: MouseEvent) {

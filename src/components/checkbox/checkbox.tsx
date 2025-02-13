@@ -16,7 +16,7 @@ export type CheckboxProps<D = any> = Omit<DOMAttributes<any>, "onChange"> & {
   disabled?: boolean
   value?: D;
   onChange?(checked: boolean, value: D): void;
-  tooltip?: ReactNode | Omit<TooltipProps, "htmlFor">; // TODO: move to proper decorator / wrapper (?)
+  tooltip?: ReactNode | Omit<TooltipProps, "anchorId">; // TODO: move to proper decorator / wrapper (?)
 }
 
 export class Checkbox extends React.Component<CheckboxProps> {
@@ -69,7 +69,7 @@ export class Checkbox extends React.Component<CheckboxProps> {
       <Tooltip
         following={true}
         {...(typeof tooltip == "object" ? tooltip : { children: tooltip })}
-        htmlFor={this.checkboxId}
+        anchorId={this.checkboxId}
       />
     )
   }

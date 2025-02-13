@@ -1,5 +1,5 @@
 import * as styles from './menu.module.scss'
-import React, { Fragment, ReactElement, ReactNode, PropsWithChildren} from "react";
+import React, { Fragment, ReactElement, ReactNode, PropsWithChildren } from "react";
 import { createPortal } from "react-dom";
 import { observer } from "mobx-react";
 import { action, makeObservable, observable } from "mobx";
@@ -7,6 +7,7 @@ import { autoBind, cssNames } from "../../utils";
 import { Animate } from "../animate";
 import { MenuContext } from './menu-context';
 import { MenuItem, MenuItemProps } from './menu-item';
+import debounce from "lodash/debounce";
 
 export interface MenuPosition {
   left?: boolean;
@@ -16,8 +17,8 @@ export interface MenuPosition {
 }
 
 export interface MenuProps {
+  anchorId?: string;
   className?: string;
-  htmlFor?: string;
   isOpen?: boolean; // initial open-state
   position?: MenuPosition; // initial position
   autoFocus?: boolean;
@@ -50,8 +51,8 @@ export class Menu extends React.Component<MenuProps> {
     top: true,
   };
 
-  get opener() {
-    return document.getElementById(this.props.htmlFor);
+  get anchorElem() {
+    return document.getElementById(this.props.anchorId);
   }
 
   constructor(props: MenuProps) {
@@ -66,9 +67,9 @@ export class Menu extends React.Component<MenuProps> {
   }
 
   componentDidMount() {
-    if (this.opener) {
-      this.opener.addEventListener('click', this.toggle);
-      this.opener.addEventListener('keydown', this.onKeyDown);
+    if (this.anchorElem) {
+      this.anchorElem.addEventListener('click', this.toggle);
+      this.anchorElem.addEventListener('keydown', this.onKeyDown);
     }
     window.addEventListener('resize', this.refreshPosition);
     window.addEventListener('click', this.onClickOutside);
@@ -76,9 +77,9 @@ export class Menu extends React.Component<MenuProps> {
   }
 
   componentWillUnmount() {
-    if (this.opener) {
-      this.opener.removeEventListener('click', this.toggle);
-      this.opener.removeEventListener('keydown', this.onKeyDown);
+    if (this.anchorElem) {
+      this.anchorElem.removeEventListener('click', this.toggle);
+      this.anchorElem.removeEventListener('keydown', this.onKeyDown);
     }
     window.removeEventListener('resize', this.refreshPosition);
     window.removeEventListener('click', this.onClickOutside);
@@ -102,9 +103,9 @@ export class Menu extends React.Component<MenuProps> {
   }
 
   @action
-  toggle() {
-    this.isOpen ? this.close() : this.open();
-  }
+  toggle = debounce(() => {
+    this.isOpen ? this.close() : this.open()
+  });
 
   protected get focusableItems() {
     return Object.values(this.items).filter(item => item.isFocusable);
@@ -130,9 +131,9 @@ export class Menu extends React.Component<MenuProps> {
   }
 
   refreshPosition = () => requestAnimationFrame(action(() => {
-    if (!this.opener || !this.elem) return;
+    if (!this.anchorElem || !this.elem) return;
 
-    var { left, top, bottom, right, width, height } = this.opener.getBoundingClientRect();
+    var { left, top, bottom, right, width, height } = this.anchorElem.getBoundingClientRect();
     var withScroll = window.getComputedStyle(this.elem).position !== "fixed";
 
     // window global scroll corrections

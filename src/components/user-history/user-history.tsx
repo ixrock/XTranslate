@@ -478,7 +478,10 @@ export class UserHistory extends React.Component {
               tooltip={!showImportExport ? getMessage("history_icon_tooltip_imp_exp") : undefined}
               onClick={action(() => this.showImportExport = !showImportExport)}
             />
-            <Menu htmlFor="import_export_menu_icon_trigger">
+            <Menu
+              anchorId="import_export_menu_icon_trigger"
+              onClose={action(() => this.showImportExport = false)}
+            >
               <MenuItem onClick={() => this.importHistoryInput.selectFiles()}>
                 {getMessage("history_import_entries", { format: "JSON" })}
               </MenuItem>

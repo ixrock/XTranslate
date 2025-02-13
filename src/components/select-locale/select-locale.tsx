@@ -28,7 +28,7 @@ export class SelectLocale extends React.Component<LocaleSelectProps> {
           interactive
         />
 
-        <Menu htmlFor={id} className={cssNames(styles.Menu, menuClassName)}>
+        <Menu anchorId={id} className={cssNames(styles.Menu, menuClassName)}>
           {Object.entries(availableLocales).map(([locale, { english, native }]) => {
             const isSelected = getLocale() === locale;
             return (

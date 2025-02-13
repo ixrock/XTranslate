@@ -129,7 +129,7 @@ export class Settings extends React.Component {
             checked={settings.showInContextMenu}
             onChange={v => settingsStore.data.showInContextMenu = v}
           />
-          <div className="flex gaps column">
+          <div className="flex gaps">
             <Checkbox
               label={getMessage("display_icon_near_selection")}
               checked={settings.showIconNearSelection}

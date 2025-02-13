@@ -245,7 +245,7 @@ export class InputTranslation extends React.Component<Props> {
               />
               <div className="lang" id="translated_with">
                 {translator.getLangPairShortTitle(langDetected, langTo)}
-                <Tooltip htmlFor="translated_with" following nowrap>
+                <Tooltip anchorId="translated_with" following nowrap>
                   {getMessage("translated_with", {
                     translator: translator.title,
                     lang: translator.getLangPairTitle(langDetected, langTo),
