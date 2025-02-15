@@ -165,3 +165,18 @@ export async function deepSeekTranslationAction<P extends DeepSeekTranslatePaylo
     payload,
   });
 }
+
+export async function checkContextInvalidationError() {
+  try {
+    await sendMessage({
+      type: MessageType.CONTEXT_INVALIDATION_CHECK,
+    });
+
+    return false;
+  } catch (err) {
+    return (
+      err instanceof Error &&
+      err.message.includes("Extension context invalidated")
+    );
+  }
+}

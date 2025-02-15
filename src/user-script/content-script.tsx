@@ -10,7 +10,7 @@ import isEmpty from 'lodash/isEmpty';
 import isEqual from 'lodash/isEqual';
 import orderBy from 'lodash/orderBy';
 import { autoBind, disposer, getHotkey } from "../utils";
-import { getManifest, getURL, MessageType, onMessage, proxyRequest, ProxyResponseType, TranslateWithVendorPayload } from "../extension";
+import { checkContextInvalidationError, getManifest, getURL, MessageType, onMessage, proxyRequest, ProxyResponseType, TranslateWithVendorPayload } from "../extension";
 import { getNextTranslator, getTranslator, ITranslationError, ITranslationResult, TranslatePayload } from "../vendors";
 import { XTranslateIcon } from "./xtranslate-icon";
 import { Popup } from "../components/popup/popup";
@@ -117,6 +117,11 @@ export class ContentScript extends React.Component {
     );
   }
 
+  async checkContextInvalidationError() {
+    const isInvalidated = await checkContextInvalidationError();
+    if (isInvalidated) this.unloadContentScript();
+  }
+
   @computed get isPopupHidden() {
     return !(this.translation || this.error);
   }
@@ -158,6 +163,8 @@ export class ContentScript extends React.Component {
       originalText: text ?? this.selectedText.trim(),
     };
 
+    void this.checkContextInvalidationError();
+
     try {
       const { vendor, langTo: to, langFrom: from, originalText: text } = this.lastParams;
       this.isLoading = true;
@@ -165,13 +172,6 @@ export class ContentScript extends React.Component {
       this.error = null;
       this.translation = await getTranslator(vendor).translate({ to, from, text });
     } catch (err) {
-      const reloadingContentScriptsRequired = (
-        err instanceof Error &&
-        err.message.includes("Extension context invalidated")
-      );
-      if (reloadingContentScriptsRequired) {
-        this.unloadContentScript();
-      }
       this.error = err;
     } finally {
       this.isLoading = false;
@@ -201,6 +201,7 @@ export class ContentScript extends React.Component {
   }
 
   showIcon() {
+    void this.checkContextInvalidationError();
     this.isIconVisible = true;
   }
 

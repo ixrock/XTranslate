@@ -1,15 +1,8 @@
 //-- Handling chrome.api extension error "context invalidated"
 // Happens on extension new version updates, content-script stops working (not re-connected automatically)
 
-import { getContentScriptInjectableTabs, MessageType, onMessage } from "../extension";
-import { disposer } from "../utils";
 import { contentScriptEntry } from "../common-vars";
-
-export function handleContextInvalidatedError() {
-  return disposer(
-    onMessage(MessageType.EXTENSION_CONTEXT_INVALIDATED, onContextInvalidated)
-  );
-}
+import { getContentScriptInjectableTabs } from "../extension";
 
 export async function onContextInvalidated() {
   const tabsForUpdateScript = await getContentScriptInjectableTabs();

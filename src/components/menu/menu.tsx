@@ -104,6 +104,7 @@ export class Menu extends React.Component<MenuProps> {
 
   @action
   toggle = debounce(() => {
+    // FIXME: close is not working (e.g. import/export history)
     this.isOpen ? this.close() : this.open()
   });
 
