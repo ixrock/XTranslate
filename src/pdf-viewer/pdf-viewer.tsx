@@ -65,23 +65,25 @@ export class PdfViewer extends React.Component {
 
   @action
   async preloadPdf() {
-    const remotePDF = getPdfRemoteURL();
+    const remotePDF = getPdfRemoteURL(); // e.g. https://example.com/file.pdf or file://path/to/file.pdf
     if (!remotePDF) return;
     document.title = `PDF-viewer: ${this.fileName}`;
+    // TODO: customize toolbar of PDF-viewer and add button for opening in native PDF-viewer (blob:/*)
     this.pdfUrl = await getPdfEmbeddableURL(remotePDF);
   }
 
   @action.bound
-  bindRef(elem: HTMLIFrameElement){
+  bindRef(elem: HTMLIFrameElement) {
     this.iframe = elem;
   }
 
   render() {
     if (!this.pdfUrl) return;
+    const pdfViewerFrameURL = getPdfViewerFrameURL(this.pdfUrl);
 
     return (
       <iframe
-        src={getPdfViewerFrameURL(this.pdfUrl)}
+        src={pdfViewerFrameURL}
         onLoad={this.onPdfViewerReady}
         ref={this.bindRef}
         style={{
