@@ -6,13 +6,13 @@ import { Menu, MenuItem } from "../menu";
 import { Icon } from "../icon";
 import { availableLocales, getLocale, Locale, setLocale } from "../../i18n";
 
-export interface LocaleSelectProps {
+export interface SelectLocaleIconProps {
   id?: string; // DOM Element.id (default: "select_locale")
   className?: IClassName;
   menuClassName?: IClassName;
 }
 
-export class SelectLocale extends React.Component<LocaleSelectProps> {
+export class SelectLocaleIcon extends React.Component<SelectLocaleIconProps> {
   render() {
     const {
       className, menuClassName,

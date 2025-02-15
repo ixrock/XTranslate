@@ -2,7 +2,8 @@
 
 export const isDevelopment = process.env.NODE_ENV === "development";
 
-// Extension's public store url for different browsers besides Chrome, e.g. Brave, MS Edge, etc.
+// Extension's public urls for different browsers besides Chrome, e.g. Brave, MS Edge, etc.
+export const websiteURL = 'https://xtranslate.dev';
 export const chromeStoreURL = 'https://chrome.google.com/webstore/detail/gfgpkepllngchpmcippidfhmbhlljhoo';
 export const edgeAddonsURL = 'https://microsoftedge.microsoft.com/addons/detail/cinfaflgbaachkaamaeglolofeahelkd';
 
