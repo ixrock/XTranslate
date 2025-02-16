@@ -9,11 +9,12 @@ import { observer } from "mobx-react";
 import { getPdfEmbeddableURL, getPdfRemoteURL, getPdfViewerFrameURL } from "./pdf-utils";
 import { ContentScript } from "../user-script/content-script";
 import { themeStore } from "../components/theme-manager/theme.storage";
-import type { PDFViewer } from "pdfjs-dist/types/web/pdf_viewer"
+import ChromeIcon from "./chrome.svg";
 
 @observer
 export class PdfViewer extends React.Component {
   @observable pdfUrl = "";
+  @observable isPdfReady = false;
   @observable.ref iframe: HTMLIFrameElement;
 
   static async init() {
@@ -33,16 +34,38 @@ export class PdfViewer extends React.Component {
     void this.preloadPdf();
   }
 
-  private onPdfViewerReady = () => {
-    this.customizePdfViewer();
+  private onPdfViewerReady = action(() => {
+    this.isPdfReady = true;
     void this.bindContentScript();
+    void this.correctPdfDownloadFilename();
+    void this.addChromeNativePdfViewerIconButton();
+  });
+
+  get pdfDocument(): Document {
+    return this.iframe.contentWindow.document;
   }
 
-  get pdfViewer(): PDFViewer & { download: () => void } {
-    return (this.iframe.contentWindow as any).PDFViewerApplication;
+  get pdfViewer(): PDFViewerApplication {
+    return (this.iframe.contentWindow as any).PDFViewerApplication as PDFViewerApplication;
   }
 
-  private customizePdfViewer() {
+  private async addChromeNativePdfViewerIconButton() {
+    try {
+      const rightToolbarElem = this.pdfDocument.getElementById("toolbarViewerRight");
+      const iconBtn = this.pdfDocument.createElement("img");
+      iconBtn.src = ChromeIcon; // data:image/svg+xml;base64,***
+      iconBtn.title = "Open in browser's native PDF viewer (chrome-based)";
+      iconBtn.onclick = () => window.open(this.pdfUrl, "_blank");
+      iconBtn.classList.add("toolbarButton");
+      iconBtn.style.padding = "5px";
+      iconBtn.style.height = "28px";
+      rightToolbarElem.prepend(iconBtn);
+    } catch (err) {
+      console.error("Failed to add Chrome native PDF viewer button", err);
+    }
+  }
+
+  private async correctPdfDownloadFilename() {
     this.pdfViewer.download = async () => {
       const pdfFile = await this.pdfViewer.pdfDocument.getData();
       this.pdfViewer.downloadManager.download(
@@ -68,8 +91,7 @@ export class PdfViewer extends React.Component {
     const remotePDF = getPdfRemoteURL(); // e.g. https://example.com/file.pdf or file://path/to/file.pdf
     if (!remotePDF) return;
     document.title = `PDF-viewer: ${this.fileName}`;
-    // TODO: customize toolbar of PDF-viewer and add button for opening in native PDF-viewer (blob:/*)
-    this.pdfUrl = await getPdfEmbeddableURL(remotePDF);
+    this.pdfUrl = await getPdfEmbeddableURL(remotePDF); // e.g. `blob:chrome-extension://***/1234-5678-90ab-cdef`
   }
 
   @action.bound
