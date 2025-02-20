@@ -9,4 +9,3 @@ refs.ts
 .env
 .env.*
 yarn-error.log
-assets/pdfjs

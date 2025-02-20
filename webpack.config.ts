@@ -172,6 +172,7 @@ export default [
           { from: "manifest.json" },
           { from: "_locales", to: "_locales" },
           { from: "assets", to: "assets" },
+          { from: "node_modules/pdf.js/build/generic", to: "assets/pdfjs" },
         ]
       }),
     ]);
