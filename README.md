@@ -23,7 +23,8 @@ press hotkey (title or alt attributes will be used when applicable).
 With this feature it is possible to get auto-translation by block of text at the page
 just by pressing the hotkey when mouse over it!
 
-1) Translate texts in **PDF** files _(powered by [pdf.js](https://github.com/mozilla/pdf.js))_. 
+1) Translate texts in **PDF** files _(disabled by default)_.\
+This option will replace default chrome-based PDF-viewer and might not work correctly due [CORS](https://developer.mozilla.org/en-US/docs/Glossary/CORS) sometimes.
 
 In order to work with local files (e.g. `file://path/to/file.pdf`) you must allow access for the extension:
 - open extensions page `chrome://extensions/`, find **XTranslate** and click **(Details)** button

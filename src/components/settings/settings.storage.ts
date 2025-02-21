@@ -47,7 +47,7 @@ export const settingsStorage = createStorage("settings", {
     ttsVoiceIndex: 0,
     openAiModel: OpenAIModel.RECOMMENDED,
     skipVendorInRotation: {} as Record<VendorCodeName, boolean>,
-    customPdfViewer: true,
+    customPdfViewer: false,
     hotkey: {
       altKey: true,
       shiftKey: true,
