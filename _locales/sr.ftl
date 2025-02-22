@@ -36,12 +36,12 @@ import_settings_button_label = Import podešavanja
 import_incorrect_file_format = Neispravan format (trebalo bi da bude { $fileNameJson })
 imported_setting_successful = Podešavanja sa ključem { $key } su uspešno import-ovana
 show_context_menu = Prikaži stavku u kontekstnom meniju
-display_icon_near_selection = Prikaži ikonicu za prevod pored izabranog teksta
+display_icon_near_selection = Prikaži ikonicu pored izabranog teksta
 show_tts_icon_inside_popup = Prikaži ikonicu za pretvaranje teksta u govor
 show_next_vendor_icon_in_popup = Prikaži ikonicu sledećeg prevodioca
 show_copy_translation_icon = Prikaži ikonicu za kopiranje prevoda
 show_save_as_favorite_icon = Prikaži ikonicu za čuvanje u omiljeno
-show_close_popup_button = Prikaži ikonicu za zatvaranje iskačućeg prozora u desnom ćošku
+show_close_popup_button = Prikaži ikonicu za zatvaranje iskačućeg prozora u desnom uglu
 show_close_popup_button_title = Zatvori
 show_detected_language_block = Prikaži otkriveni jezik
 display_on_click_by_selected_text = Prikaži klikom na izabrani tekst
@@ -64,6 +64,7 @@ reverse_translate_select_placeholder = Jezik za obrnuti prevod
 reverse_translate_add_action = Dodaj jezik za obrnuti prevod: { $lang } -> ? (primenljivo samo kad je "Otkrivanje jezika" uključeno)
 reverse_translate_delete_action = Obriši jezik za obrnuti prevod
 skip_translation_vendor_in_rotation = Preskoči { $vendor }-prevode u rotaciji preko ikonice strelice ili strelica na tastaturi (u iskačućem prozoru)
+custom_font_select = Izaberi prilagođeni font
 
 # theme
 popup_play_icon_title = Preslušaj
@@ -93,7 +94,7 @@ border_width = Širina
 border_style = Stil
 border_color = Boja
 border_radius = Poluprečnik
-box_size_min_width = Minimilna širina
+box_size_min_width = Minimalna širina
 box_size_min_height = Minimalna visina
 box_size_max_width = Maksimalna širina
 box_size_max_height = Maksimalna visina
@@ -138,17 +139,17 @@ context_menu_translate_selection = Prevedi { $selection } pomoću: { $translator
 share_with_friends = Ako vam se sviđa aplikacija, podelite je sa prijateljima:
 translation_data_failed = Učitavanje podataka nije uspelo
 rate_app_info1 = Uživate u korišćenju aplikacije? Ocenite nas sa 5 zvezdica!
-rate_app_info2 = To će pomoći drugim korisnicima da pronađu proširenje u Chrome veb prodavnici.
-rate_app_button = Ocenite u Chrome veb prodavnici
+rate_app_info2 = To će pomoći drugim korisnicima da pronađu proširenje u veb prodavnici.
+rate_app_button = Ocenite u veb prodavnici
 rate_app_button_later = Podseti me kasnije
-deepl_get_own_key_info = Registruj se na www.deepl.com da bi dobio besplatan ključ za autentifikaciju za DeepL API
+deepl_get_own_key_info = Registruj se na www.deepl.com da bi dobio besplatan ključ za autentifikaciju na DeepL API
 deepl_insert_auth_key = Postavi API ključ za autentifikaciju za dobijanje pristupa ka DeepL prevodima
 deepl_insert_auth_key_warning = Upozorenje: NE UNOSI svoj API ključ nigde osim u prozoru ovog proširenja
 deepl_insert_auth_key_remove = Ukloni DeepL API ključ
 target_lang_placeholder = Ciljani jezici
 source_lang_placeholder = Izvorni jezici
 favorites_lang_title = Omiljeno
-favorites_info_tooltip = Da bi menjali omiljene jezike (lista na vrhu), koristite { $hotkey } + klik
+favorites_info_tooltip = Da biste menjali omiljene jezike (lista na vrhu), koristite { $hotkey } + klik
 donate_title = Podrška developera
 donate_copy_wallet = Kopiraj adresu
 donate_description = Ako vam se sviđa aplikacija, možete donirati developerima. Hvala!
@@ -162,17 +163,17 @@ privacy_policy_accept_terms = Prihvatite odredbe i uslove
 # mellowtel integration
 mellowtel_greetings = Pozdrav, prijatelju 👋
 mellowtel_text1 = Kao što verovatno znate, ovo proširenje je besplatno i dostupno svima... ali da bi nastavili, potrebno je da uradite par stvari!
-mellowtel_text2 = Nova verzija uključuje open-source { $link } biblioteku. Ova biblioteka vam omogućava da podelite nekorišćeni internet sa pouzdanim AI laboratorijama & startup-ima koji ga koriste da treniraju svoje modele.
+mellowtel_text2 = Nova verzija uključuje open-source { $link } biblioteku. Ova biblioteka vam omogućava da podelite nekorišćeni internet sa pouzdanim AI laboratorijama i startup-ima koji ga koriste da treniraju svoje modele.
 mellowtel_usage_title = Mellowtel koristimo za:
 mellowtel_usage1 = Praćenje prekida rada servisa
 mellowtel_usage2 = Merenje kvaliteta rada servisa
 mellowtel_usage3 = Kao developer ovog proširenja, dobijamo mali deo prihoda
 mellowtel_accept_all_info1 = Ako izaberete 'Prihvati sve', koristićemo Mellowtel API da: Dozvolimo pouzdanim partnerima da pristupe resursima na internetu rutiranjem dela njihovog saobraćaja kroz vaš čvor na mreži.
 mellowtel_accept_all_info2 = Mellowtel deli samo vaš propusni opseg. Sigurnost i privatnost su 100% garantovani i sama biblioteka je open source kako bi svi mogli da je vide.
-mellowtel_regulation1 = Ne prikuplja, deli niti prodaje privatne informacije (čak ni anonimne podatke).
+mellowtel_regulation1 = Ne prikuplja, ne deli, niti prodaje privatne informacije (čak ni anonimne podatke).
 mellowtel_regulation2 = Takođe je visoko regulisano: Mellowtel komunicira sa regulatorima Chrome veb prodavnice da bi garantovao sigurno iskustvo.
 mellowtel_regulation3 = Takođe pruža i CWS regulatore sa alatima za nadgledanje i primenu usklađenosti.
-mellowtel_button_decline = Odbi opciono
+mellowtel_button_decline = Odbij opciono
 mellowtel_button_accept = Prihvati sve
 mellowtel_dialog_footer = Hvala što ste izdvojili vreme da pročitate, timovi { $devs }.
 
@@ -190,12 +191,16 @@ open_ai_choose_model_optimal = Preporučeni model
 open_ai_choose_model_chatgpt_like = ChatGPT (može biti skupo)
 open_ai_choose_model_best_results = Najbolji rezultati (najskuplje)
 open_ai_why_info_help =
- Direktnom upotrebom ličnog naloga na OpenAI platformi i dokazivanjem API ključa štedite dosta novca. Korišćenjem servisa od drugih aplikacija/proširenja koji služe kao "čovek u sredini",
+ Direktnom upotrebom ličnog naloga na OpenAI platformi i obezbeđivanjem API ključa štedite dosta novca. Korišćenjem servisa od drugih aplikacija/proširenja koje služe kao "čovek u sredini",
    često plaćate mesečnu/godišnju pretplatu, a cene i ograničenja upotrebe nisu pod vašom kontrolom.
    Ne zaboravite da prilagodite ograničenja upotrebe na platform.openai.com i onemogućite automatsku dopunu sredstava na kreditnoj kartici.
 
-# DeepSeek AI integration (SR)
-deepseek_get_own_key_info=Registrujte se na platform.deepseek.com i dopunite saldo (npr. putem PayPal-a)
-deepseek_auth_key=Kreirajte API pristupni ključ na platformi DeepSeek i sačuvajte ga ovde u podešavanjima
-deepseek_auth_key_warning=Upozorenje: NE unosite svoj API ključ ni na jednom drugom mestu osim u prozoru ovog dodatka
-deepseek_auth_key_remove=Uklonite DeepSeek API ključ
+# PDF translations suppot via pdf.js
+pdf_use_custom_viewer = Podrška za prevode u PDF fajlovima
+pdf_use_custom_viewer_info = Ova opcija će pregaziti podrazumevani PDF pregledač
+
+# DeepSeek AI integration
+deepseek_get_own_key_info = Registrujte se na platform.deepseek.com i dopunite sredstva (npr. preko PayPal-a)
+deepseek_auth_key = Kreirajte API ključ na platformi DeepSeek da biste dobili pristup
+deepseek_auth_key_warning = Upozorenje: NE UNOSI svoj API ključ nigde osim u prozoru ovog proširenja
+deepseek_auth_key_remove = Ukloni DeepSeek API ključ
