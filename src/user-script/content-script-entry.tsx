@@ -10,6 +10,6 @@ void customPDFViewerRedirectCheck();
 void initMellowtel();
 
 // render app
-void ContentScript.init();
+ContentScript.start();
 
 import "../../refs";

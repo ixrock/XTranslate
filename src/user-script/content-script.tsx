@@ -9,7 +9,7 @@ import debounce from 'lodash/debounce';
 import isEmpty from 'lodash/isEmpty';
 import isEqual from 'lodash/isEqual';
 import orderBy from 'lodash/orderBy';
-import { autoBind, disposer, getHotkey } from "../utils";
+import { autoBind, delay, disposer, getHotkey } from "../utils";
 import { checkContextInvalidationError, getManifest, getURL, MessageType, onMessage, proxyRequest, ProxyResponseType, TranslateWithVendorPayload } from "../extension";
 import { getNextTranslator, getTranslator, ITranslationError, ITranslationResult, TranslatePayload } from "../vendors";
 import { XTranslateIcon } from "./xtranslate-icon";
@@ -24,8 +24,19 @@ export class ContentScript extends React.Component {
   static rootElem: HTMLElement;
   static rootNode: Root;
 
+  static start() {
+    if (document.readyState !== "complete") {
+      window.addEventListener("load", async () => {
+        await delay(100); // give some time for react-hydration to finish work (react-error #418)
+        void this.init();
+      });
+    } else {
+      void this.init();
+    }
+  }
+
   static async init(window: Window = globalThis.window.self) {
-    await preloadAppData();
+    await preloadAppData(); // wait for dependent data before first render
 
     ContentScript.window = window;
     ContentScript.rootElem = window.document.createElement("div");
@@ -37,7 +48,6 @@ export class ContentScript extends React.Component {
     window.document.documentElement.appendChild(appElem);
     ContentScript.rootNode = rootNode;
 
-    // wait for dependent data before first render
     rootNode.render(<ContentScript/>);
   }
 
