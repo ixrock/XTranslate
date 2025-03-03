@@ -4,19 +4,16 @@ import { action, makeObservable, observable } from "mobx";
 import { observer } from "mobx-react";
 import isEqual from "lodash/isEqual";
 import { getTranslators, Translator, VendorCodeName } from "../../vendors";
-import { cssNames, getHotkey, parseHotkey, prevDefault } from "../../utils";
+import { cssNames } from "../../utils";
 import { XTranslateIcon } from "../../user-script/xtranslate-icon";
 import { SelectLanguage } from "../select-language";
-import { Input } from "../input";
 import { Checkbox } from "../checkbox";
 import { Radio, RadioGroup } from "../radio";
 import { ReactSelect, ReactSelectOption } from "../select";
 import { Icon } from "../icon";
-import { Popup } from "../popup";
-import { TooltipProps } from "../tooltip";
 import { SubTitle } from "../sub-title";
 import { Tab } from "../tabs";
-import { PopupPosition, settingsStore, XIconPosition } from "./settings.storage";
+import { settingsStore, XIconPosition } from "./settings.storage";
 import { pageManager } from "../app/page-manager";
 import { getMessage } from "../../i18n";
 import { SelectVoice } from "../select-tts-voice";
@@ -35,16 +32,6 @@ export class Settings extends React.Component {
     openai: <OpenAiSettings/>,
   };
 
-  private get popupPositions(): ReactSelectOption<string>[] {
-    return [
-      { value: "", label: getMessage("popup_position_auto") },
-      { value: "left top", label: getMessage("popup_position_left_top") },
-      { value: "right top", label: getMessage("popup_position_right_top") },
-      { value: "right bottom", label: getMessage("popup_position_right_bottom") },
-      { value: "left bottom", label: getMessage("popup_position_left_bottom") },
-    ]
-  }
-
   private get iconPositions(): ReactSelectOption<XIconPosition>[] {
     return [
       { value: {}, label: "Auto" },
@@ -54,14 +41,6 @@ export class Settings extends React.Component {
       { value: { left: true, bottom: true }, label: getMessage("popup_position_left_bottom") },
     ];
   };
-
-  onSaveHotkey = (evt: React.KeyboardEvent) => {
-    var nativeEvent = evt.nativeEvent;
-    var hotkey = parseHotkey(nativeEvent);
-    if (hotkey.code) {
-      settingsStore.data.hotkey = getHotkey(nativeEvent);
-    }
-  }
 
   @observable demoVoiceText = "Quick brown fox jumps over the lazy dog";
   @observable isSpeaking = false;
@@ -98,13 +77,7 @@ export class Settings extends React.Component {
   }
 
   render() {
-    var settings = settingsStore.data;
-    var hotKey = parseHotkey(settings.hotkey);
-    var popupTooltip: Partial<TooltipProps> = {
-      style: { background: "none" },
-      children: <Popup translation={Popup.translationMock}/>
-    };
-
+    const settings = settingsStore.data;
     return (
       <main className={styles.Settings}>
         <article>
@@ -115,10 +88,11 @@ export class Settings extends React.Component {
             onChange={v => settingsStore.setVendor(v)}
           >
             {getTranslators().map(vendor => {
-              const { title, publicUrl } = vendor;
+              const vendorName = vendor.title;
+              const publicUrl = new URL(vendor.publicUrl);
               const name = vendor.name as VendorCodeName;
-              var domain = new URL(publicUrl).hostname.replace(/^www\./, "");
-              var skipInRotation = settingsStore.data.skipVendorInRotation[name];
+              const domain = publicUrl.hostname.replace(/^www\./, "") + publicUrl.pathname.replace(/\/$/, "");
+              const skipInRotation = settingsStore.data.skipVendorInRotation[name];
               const disableInRotationClassName = cssNames({
                 [styles.vendorSkippedInRotation]: skipInRotation,
               });
@@ -127,10 +101,10 @@ export class Settings extends React.Component {
                   <Checkbox
                     checked={skipInRotation}
                     onChange={checked => settingsStore.data.skipVendorInRotation[name] = checked}
-                    tooltip={getMessage("skip_translation_vendor_in_rotation", { vendor: title })}
+                    tooltip={getMessage("skip_translation_vendor_in_rotation", { vendor: vendorName })}
                   />
-                  <Radio value={name} label={<span className={disableInRotationClassName}>{title}</span>}/>
-                  <a href={publicUrl} target="_blank" tabIndex={-1}>
+                  <Radio value={name} label={<span className={disableInRotationClassName}>{vendorName}</span>}/>
+                  <a href={String(publicUrl)} target="_blank" tabIndex={-1}>
                     {domain}
                   </a>
                   <div className="flex gaps align-center">
@@ -155,22 +129,25 @@ export class Settings extends React.Component {
             checked={settings.showInContextMenu}
             onChange={v => settingsStore.data.showInContextMenu = v}
           />
-          <Checkbox
-            label={getMessage("display_icon_near_selection")}
-            checked={settings.showIconNearSelection}
-            onChange={v => settings.showIconNearSelection = v}
-            tooltip={{ children: <XTranslateIcon style={{ position: "static" }}/> }}
-          />
-          {settings.showIconNearSelection && (
-            <label>
-              <span>{getMessage("position_of_x_translate_icon")}</span>
-              <ReactSelect
-                options={this.iconPositions}
-                value={this.iconPositions.find(pos => isEqual(pos.value, settings.iconPosition))}
-                onChange={(opt: ReactSelectOption<XIconPosition>) => settings.iconPosition = opt.value}
-              />
-            </label>
-          )}
+          <div className="flex gaps">
+            <Checkbox
+              label={getMessage("display_icon_near_selection")}
+              checked={settings.showIconNearSelection}
+              onChange={v => settings.showIconNearSelection = v}
+              tooltip={{ children: <XTranslateIcon style={{ position: "static" }}/> }}
+            />
+            {settings.showIconNearSelection && (
+              <label>
+                <span>{getMessage("position_of_x_translate_icon")}</span>
+                <ReactSelect
+                  menuPlacement="auto"
+                  options={this.iconPositions}
+                  value={this.iconPositions.find(pos => isEqual(pos.value, settings.iconPosition))}
+                  onChange={(opt: ReactSelectOption<XIconPosition>) => settings.iconPosition = opt.value}
+                />
+              </label>
+            )}
+          </div>
         </article>
 
         <SubTitle>{getMessage("settings_title_tts")}</SubTitle>
@@ -190,6 +167,7 @@ export class Settings extends React.Component {
             <span className="box noshrink">{getMessage("tts_default_system_voice")}</span>
             <div className="flex gaps align-center">
               <SelectVoice
+                className="box grow"
                 currentIndex={settings.ttsVoiceIndex}
                 onChange={v => settings.ttsVoiceIndex = v}
               />
@@ -209,89 +187,6 @@ export class Settings extends React.Component {
                 onClick={this.speakDemoText}
               />
             </div>
-          </label>
-        </article>
-
-        <SubTitle>{getMessage("setting_title_popup")}</SubTitle>
-        <article className={styles.grid}>
-          <Checkbox
-            label={getMessage("show_tts_icon_inside_popup")}
-            checked={settings.showTextToSpeechIcon}
-            onChange={v => settings.showTextToSpeechIcon = v}
-            tooltip={popupTooltip}
-          />
-          <Checkbox
-            label={getMessage("show_next_vendor_icon_in_popup")}
-            checked={settings.showNextVendorIcon}
-            onChange={v => settings.showNextVendorIcon = v}
-            tooltip={popupTooltip}
-          />
-          <Checkbox
-            label={getMessage("show_save_as_favorite_icon")}
-            checked={settings.showSaveToFavoriteIcon}
-            onChange={v => settings.showSaveToFavoriteIcon = v}
-            tooltip={popupTooltip}
-          />
-          <Checkbox
-            label={getMessage("show_copy_translation_icon")}
-            checked={settings.showCopyTranslationIcon}
-            onChange={v => settings.showCopyTranslationIcon = v}
-            tooltip={popupTooltip}
-          />
-          <Checkbox
-            label={getMessage("show_close_popup_button")}
-            checked={settings.showClosePopupIcon}
-            onChange={v => settings.showClosePopupIcon = v}
-            tooltip={popupTooltip}
-          />
-          <Checkbox
-            label={getMessage("show_detected_language_block")}
-            checked={settings.showTranslatedFrom}
-            onChange={v => settings.showTranslatedFrom = v}
-            tooltip={popupTooltip}
-          />
-          <Checkbox
-            label={getMessage("display_popup_after_text_selected")}
-            checked={settings.showPopupAfterSelection}
-            onChange={v => settings.showPopupAfterSelection = v}
-          />
-          <Checkbox
-            label={getMessage("display_on_click_by_selected_text")}
-            checked={settings.showPopupOnClickBySelection}
-            onChange={v => settings.showPopupOnClickBySelection = v}
-          />
-          <Checkbox
-            label={getMessage("display_popup_on_double_click")}
-            checked={settings.showPopupOnDoubleClick}
-            onChange={v => settings.showPopupOnDoubleClick = v}
-          />
-          <Checkbox
-            className="box grow"
-            label={getMessage("display_popup_on_hotkey") + ":"}
-            checked={settings.showPopupOnHotkey}
-            onChange={v => settings.showPopupOnHotkey = v}
-            tooltip={hotKey.title}
-          />
-          <label className="popup-position flex gaps align-center">
-            <Icon
-              material="display_settings"
-              tooltip={getMessage("popup_position_title")}
-            />
-            <ReactSelect
-              menuPlacement="top"
-              options={this.popupPositions}
-              value={this.popupPositions.find(pos => pos.value === settings.popupPosition)}
-              onChange={(opt: ReactSelectOption<PopupPosition>) => settings.popupPosition = opt.value}
-            />
-          </label>
-          <label className="keyboard-hotkey flex">
-            <Icon material="keyboard"/>
-            <Input
-              readOnly
-              className={`${styles.hotkey} box grow`}
-              value={hotKey.value}
-              onKeyDown={prevDefault(this.onSaveHotkey)}
-            />
           </label>
         </article>
       </main>

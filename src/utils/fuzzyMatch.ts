@@ -12,6 +12,7 @@ export interface FuzzyMatchResult {
 }
 
 export function fuzzyMatch(searchArea: string, search: string, opts: FuzzyMatchOptions = {}): false | FuzzyMatchResult {
+  if (!searchArea) return false;
   const { strict = false, matchCase = false, wordReplacer } = opts;
 
   // Splits search request into chunks that contain only language sentences (any language) or numbers (0-9)

@@ -6,6 +6,7 @@ export const enum VendorCodeName {
   YANDEX = "yandex",
   DEEPL = "deepl",
   OPENAI = "openai",
+  DEEPSEEK = "deepseek",
 }
 
 export * from './google.vendor'
@@ -13,3 +14,4 @@ export * from './bing.vendor'
 export * from './yandex.vendor'
 export * from './deepl.vendor'
 export * from './open-ai.vendor'
+export * from './deepseek.vendor'

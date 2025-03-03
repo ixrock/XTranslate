@@ -1,14 +1,11 @@
 import * as styles from './footer.module.scss'
 import React from "react";
-import { action } from "mobx";
 import { observer } from "mobx-react";
 import { getExtensionUrl } from "../../common-vars";
 import { prevDefault } from '../../utils'
 import { getManifest } from '../../extension'
 import { getMessage } from "../../i18n";
 import { Icon } from "../icon";
-import { dialogsState } from "./dialogs-state";
-import { mellowtelOptOutTime } from "../../../mellowtel/mellowtel.storage";
 
 interface ShareIcon {
   title: string
@@ -16,32 +13,54 @@ interface ShareIcon {
   url: string
 }
 
+export const shareIcons: ShareIcon[] = [
+  {
+    title: "X (Twitter)",
+    icon: require('../icon/x.svg'),
+    url: "https://twitter.com/intent/tweet?url={url}&text={title}&hashtags={tags}",
+  },
+  {
+    title: "Facebook",
+    icon: require('../icon/fb.svg'),
+    url: "https://www.facebook.com/sharer/sharer.php?u={url}&title={title}&quote={tags}",
+  },
+  {
+    title: "VK",
+    icon: require('../icon/vk.svg'),
+    url: "https://vk.com/share.php?url={url}&title={title}",
+  },
+  {
+    title: "LinkedIn",
+    icon: require('../icon/linked.svg'),
+    url: "https://www.linkedin.com/shareArticle?url={url}",
+  },
+  {
+    title: "Reddit",
+    icon: require('../icon/reddit.svg'),
+    url: "https://www.reddit.com/submit?url={url}&title={title}",
+  },
+];
+
+export const shareTags = ["chrome", "extension", "xtranslate", "in_place_text_translator", "ai_text_translations"];
+
 @observer
 export class Footer extends React.Component {
   private manifest = getManifest();
-  private shareTags = ["chrome", "extension", "xtranslate"];
-
-  private shareIcons: ShareIcon[] = [
-    {
-      title: "Twitter",
-      icon: require('../icon/twitter.svg'),
-      url: [
-        `https://twitter.com/intent/tweet?source=webclient`,
-        `url=${getExtensionUrl()}`,
-        `text=${[this.manifest.name, getMessage("short_description")].join(' - ')}`,
-        `hashtags=${this.shareTags.join(',')}`
-      ].join("&")
-    },
-  ];
 
   shareUrl(url: string) {
-    window.open(url, "share", "width=550,height=300,resizable=1");
+    window.open(url, "share", "width=650,height=550,resizable=1");
   }
 
-  @action.bound
-  onSupport() {
-    dialogsState.showMellowtelDialog = true;
-    mellowtelOptOutTime.set(0);
+  private makeShareUrl(socialNetworkURLMask: string) {
+    const params: Record<string, string> = {
+      url: getExtensionUrl(),
+      title: [this.manifest.name, getMessage("short_description")].join(' - '),
+      tags: shareTags.join(','),
+    };
+
+    return socialNetworkURLMask.replace(/\{(.*?)}/g, (matchedParamMask, paramName) => {
+      return encodeURIComponent(params[paramName]);
+    });
   }
 
   render() {
@@ -50,19 +69,15 @@ export class Footer extends React.Component {
         <p>{getMessage("share_with_friends")}</p>
 
         <div className={styles.socialIcons}>
-          {this.shareIcons.map((share, i) =>
-            <a key={i} href={share.url} onClick={prevDefault(() => this.shareUrl(share.url))}>
-              <img src={share.icon} title={share.title} alt=""/>
-            </a>
-          )}
+          {shareIcons.map((share, i) => {
+            const url = this.makeShareUrl(share.url);
+            return (
+              <a key={i} href={url} onClick={prevDefault(() => this.shareUrl(url))}>
+                <Icon small svg={share.icon} title={share.title}/>
+              </a>
+            )
+          })}
         </div>
-
-        {/*<Icon
-          material="support"
-          className={styles.monetizationIcon}
-          tooltip={{ nowrap: true, children: getMessage("donate_title") }}
-          onClick={this.onSupport}
-        />*/}
       </div>
     );
   }

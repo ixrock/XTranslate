@@ -147,3 +147,46 @@ service_confirm_not_a_robot = Môžete tiež prejsť na { $link } a potvrdiť, �
 # privacy policy
 privacy_policy_title_updated = Zásady ochrany osobných údajov boli aktualizované
 privacy_policy_accept_terms = Prijať zmluvné podmienky
+
+# mellowtel integration (SK)
+mellowtel_greetings=Ahoj, priateľ 👋
+mellowtel_text1=Ako možno viete, toto rozšírenie je zadarmo a je k dispozícii pre každého... ale aby sme ho mohli udržať, tentoraz vyžadujeme od vás určitú akciu!
+mellowtel_text2=Táto nová verzia obsahuje open-source knižnicu { $link }. Táto knižnica vám umožňuje zdieľať váš nevyužitý internet s dôveryhodnými AI laboratóriami a startupmi, ktoré ho využívajú na trénovanie svojich modelov.
+mellowtel_usage_title=Mellowtel využívame na:
+mellowtel_usage1=Sledovanie výpadkov služby
+mellowtel_usage2=Meranie kvality služby
+mellowtel_usage3=Ako vývojár tohto rozšírenia získate malý podiel z príjmov
+mellowtel_accept_all_info1=Ak si vyberiete 'Prijať všetko', využijeme aj Mellowtel API na: Umožniť dôveryhodným partnerom prístup k internetovým zdrojom tým, že časť ich prevádzky bude smerovaná cez váš uzol v sieti.
+mellowtel_accept_all_info2=Mellowtel zdieľa len vašu šírku pásma. Bezpečnosť a súkromie sú 100% zaručené a knižnica je open-source pre všetkých na prezeranie.
+mellowtel_regulation1=Neposkytuje, nezdieľa ani nepredáva osobné údaje (ani anonymizované dáta).
+mellowtel_regulation2=Je tiež prísne regulovaný: Mellowtel neustále komunikuje s regulátormi Chrome Web Store, aby zaručil bezpečný zážitok.
+mellowtel_regulation3=Taktiež poskytuje regulátorom CWS nástroje na monitorovanie a zabezpečenie dodržiavania pravidiel.
+mellowtel_button_decline=Odmietnuť voliteľné použitie
+mellowtel_button_accept=Prijať všetko
+mellowtel_dialog_footer=Ďakujeme, že ste si našli čas na prečítanie, tímy { $devs }.
+
+# various error messages (SK)
+error_403_auth_failed=Autorizácia zlyhala. Prosím, zadajte platný API kľúč v nastaveniach.
+
+# open-ai integration (SK)
+open_ai_get_access_info=1) Zaregistrujte sa na platform.openai.com 2) Vytvorte API kľúč 3) Doplňte svoj zostatok (5$+)
+open_ai_insert_auth_key=Zadajte svoj API kľúč pre získanie prekladov od OpenAI
+open_ai_insert_auth_key_warning=Upozornenie: Nezadávajte svoj API kľúč nikde inde, okrem tohto okna rozšírenia
+open_ai_insert_auth_key_remove=Odstrániť OpenAI API kľúč
+open_ai_choose_model=Vyberte AI model
+open_ai_choose_model_cost_efficient=Najúspornejší z hľadiska nákladov
+open_ai_choose_model_optimal=Odporúčaný model
+open_ai_choose_model_chatgpt_like=ChatGPT (môže byť drahý)
+open_ai_choose_model_best_results=Najlepšie výsledky (najdrahší)
+open_ai_choose_model_reasoning=Model uvažovania (najnovší a nákladovo efektívny v sérii)
+open_ai_why_info_help=Pri použití vlastného účtu na platforme OpenAI a zadaní API kľúča ušetríte veľa peňazí, namiesto využívania služieb „prostredníka“ z iných aplikácií/rozšírení, kde zvyčajne platíte mesačné/ročné predplatné a kde ceny a limity používania nie sú vo vašej kontrole. Nezabudnite nastaviť limity používania na platform.openai.com a vypnúť automatické dobíjanie kreditnej karty.
+
+# PDF translations suppot via pdf.js (SK)
+pdf_use_custom_viewer=Podpora prekladov v PDF súboroch
+pdf_use_custom_viewer_info=Táto možnosť nahradí predvolený prehliadač PDF
+
+# DeepSeek AI integration (SK)
+deepseek_get_own_key_info=Zaregistrujte sa na platform.deepseek.com a dobite si kredit (napr. cez PayPal)
+deepseek_auth_key=Vytvorte si prístupový kľúč API na platforme DeepSeek a uložte ho sem do nastavení
+deepseek_auth_key_warning=Upozornenie: NEZADÁVAJTE svoj API kľúč nikde inde okrem tohto okna rozšírenia
+deepseek_auth_key_remove=Odstrániť API kľúč DeepSeek

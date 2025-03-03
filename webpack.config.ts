@@ -16,10 +16,16 @@ const configEntries: webpack.EntryObject = {
   [pdfViewerEntry]: path.resolve(srcPath, "pdf-viewer/pdf-viewer.tsx"),
 };
 
-function webpackBaseConfig(): webpack.Configuration {
+interface WebpackConfigEnv {
+  mode?: "development" | "production"; // must be provided inside `package.json` scripts
+}
+
+function webpackBaseConfig({ mode }: WebpackConfigEnv): webpack.Configuration {
+  const isDevelopment = mode === "development";
+
   return {
+    mode,
     target: "web",
-    mode: isDevelopment ? "development" : "production",
     devtool: isDevelopment ? "source-map" : false, // https://webpack.js.org/configuration/devtool/
     cache: isDevelopment ? { type: "filesystem" } : false,
     entry: {}, // to be defined on each config
@@ -137,8 +143,8 @@ function webpackBaseConfig(): webpack.Configuration {
 
 export default [
   // build main app (options page), pdf-viewer and content-script
-  function () {
-    const config = webpackBaseConfig();
+  function (env: WebpackConfigEnv) {
+    const config = webpackBaseConfig(env);
     config.target = "web"
 
     config.entry = {
@@ -166,6 +172,7 @@ export default [
           { from: "manifest.json" },
           { from: "_locales", to: "_locales" },
           { from: "assets", to: "assets" },
+          { from: "node_modules/pdf.js/build/generic", to: "assets/pdfjs" },
         ]
       }),
     ]);
@@ -177,8 +184,8 @@ export default [
   },
 
   // user-script.js
-  function () {
-    const config = webpackBaseConfig();
+  function (env: WebpackConfigEnv) {
+    const config = webpackBaseConfig(env);
 
     config.target = "web"
     config.entry = {
@@ -191,8 +198,8 @@ export default [
 
   // background.js
   // service-worker must be compiled with appropriate `config.target` to load chunks via global `importScripts()` in manifest@v3
-  function () {
-    const config = webpackBaseConfig();
+  function (env: WebpackConfigEnv) {
+    const config = webpackBaseConfig(env);
     config.target = "webworker";
 
     config.entry = {

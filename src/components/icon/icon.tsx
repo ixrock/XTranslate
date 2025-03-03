@@ -17,20 +17,18 @@ export interface IconProps extends React.HTMLAttributes<any> {
   focusable?: boolean;        // allow focus to the icon + show .active styles (default: "true", when icon is interactive)
   colorful?: boolean;          // applicable only for svg-icons
   disabled?: boolean;
-  tooltip?: ReactNode | Omit<TooltipProps, "htmlFor">; // TODO: move to proper decorator / wrapper (?)
+  tooltip?: ReactNode | Omit<TooltipProps, "anchorId">; // TODO: move to proper decorator / wrapper (?)
 }
 
 export class Icon extends React.PureComponent<IconProps> {
   public elem?: HTMLElement;
-  public iconId = this.props.id ?? this.props.tooltip ? uniqueId(`icon_tooltip`) : undefined;
+  public iconId = this.props.id ?? (
+    this.props.tooltip ? uniqueId(`icon_tooltip`) : undefined
+  );
 
   static defaultProps: IconProps = {
     focusable: true,
   };
-
-  static isSvg(content: string) {
-    return String(content).includes("svg+xml"); // data-url for raw svg-icon
-  }
 
   get isInteractive() {
     const { interactive, onClick, href } = this.props;
@@ -147,7 +145,7 @@ export class Icon extends React.PureComponent<IconProps> {
         <Tooltip
           following={true}
           {...(typeof tooltip == "object" ? tooltip : { children: tooltip })}
-          htmlFor={this.iconId}
+          anchorId={this.iconId}
         />
       )
     }

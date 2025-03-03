@@ -2,15 +2,15 @@
 
 import "./content-script.scss";
 import React from "react";
-import { createRoot } from "react-dom/client";
+import { createRoot, Root } from "react-dom/client";
 import { action, computed, makeObservable, observable, toJS } from "mobx";
 import { observer } from "mobx-react";
 import debounce from 'lodash/debounce';
 import isEmpty from 'lodash/isEmpty';
 import isEqual from 'lodash/isEqual';
 import orderBy from 'lodash/orderBy';
-import { autoBind, getHotkey } from "../utils";
-import { getManifest, getURL, MessageType, onMessage, proxyRequest, ProxyResponseType, TranslateWithVendorPayload } from "../extension";
+import { autoBind, delay, disposer, getHotkey } from "../utils";
+import { checkContextInvalidationError, getManifest, getURL, MessageType, onMessage, proxyRequest, ProxyResponseType, TranslateWithVendorPayload } from "../extension";
 import { getNextTranslator, getTranslator, ITranslationError, ITranslationResult, TranslatePayload } from "../vendors";
 import { XTranslateIcon } from "./xtranslate-icon";
 import { Popup } from "../components/popup/popup";
@@ -22,9 +22,21 @@ import { contentScriptEntry } from "../common-vars";
 export class ContentScript extends React.Component {
   static window: Window;
   static rootElem: HTMLElement;
+  static rootNode: Root;
+
+  static start() {
+    if (document.readyState !== "complete") {
+      window.addEventListener("load", async () => {
+        await delay(100); // give some time for react-hydration to finish work (react-error #418)
+        void this.init();
+      });
+    } else {
+      void this.init();
+    }
+  }
 
   static async init(window: Window = globalThis.window.self) {
-    await preloadAppData();
+    await preloadAppData(); // wait for dependent data before first render
 
     ContentScript.window = window;
     ContentScript.rootElem = window.document.createElement("div");
@@ -34,8 +46,8 @@ export class ContentScript extends React.Component {
     const shadowRoot = appElem.attachShadow({ mode: "closed" });
     const rootNode = createRoot(shadowRoot);
     window.document.documentElement.appendChild(appElem);
+    ContentScript.rootNode = rootNode;
 
-    // wait for dependent data before first render
     rootNode.render(<ContentScript/>);
   }
 
@@ -49,10 +61,12 @@ export class ContentScript extends React.Component {
   public appName = getManifest().name;
   private selection = ContentScript.window.getSelection();
   private popup: Popup;
-  private icon: XTranslateIcon | null;
   private isDblClicked = false;
   private isHotkeyActivated = false;
   private mousePos = { x: 0, y: 0, pageX: 0, pageY: 0 };
+
+  // Unload previous content script (e.g. in case of "context invalidated" error on extension update to new version)
+  private unloadContentScript = disposer();
 
   @observable.ref translation: ITranslationResult;
   @observable.ref error: ITranslationError;
@@ -61,7 +75,7 @@ export class ContentScript extends React.Component {
   @observable popupPosition: React.CSSProperties = {};
   @observable selectedText = "";
   @observable isRtlSelection = false;
-  @observable isIconShown = false;
+  @observable isIconVisible = false;
   @observable isLoading = false;
   @observable stylesUrl = "";
 
@@ -77,24 +91,45 @@ export class ContentScript extends React.Component {
   }
 
   componentDidMount() {
-    // Bind extension's runtime IPC events
-    onMessage<void, string>(MessageType.GET_SELECTED_TEXT, () => this.selectedText);
+    this.bindEvents();
+  }
 
-    onMessage(MessageType.TRANSLATE_WITH_VENDOR, ({ vendor, text }: TranslateWithVendorPayload) => {
-      this.hideIcon();
-      this.translate({ vendor, text });
-    });
-
-    // Bind DOM events
+  private bindEvents() {
     const window = ContentScript.window;
     const document = window.document;
-    document.addEventListener("selectionchange", this.onSelectionChange);
-    document.addEventListener("mousemove", this.onMouseMove, true);
-    document.addEventListener("mousedown", this.onMouseDown, true);
-    document.addEventListener("dblclick", this.onDoubleClick, true);
-    document.addEventListener("keydown", this.onKeyDown, true);
-    window.addEventListener("scroll", this.updatePopupPositionLazy);
-    window.addEventListener("resize", this.updatePopupPositionLazy);
+    const abortCtrl = new AbortController();
+    const signal = abortCtrl.signal;
+
+    // Bind DOM events
+    document.addEventListener("selectionchange", this.onSelectionChange, { signal });
+    document.addEventListener("mousemove", this.onMouseMove, { signal, capture: true });
+    document.addEventListener("mousedown", this.onMouseDown, { signal, capture: true });
+    document.addEventListener("dblclick", this.onDoubleClick, { signal, capture: true });
+    document.addEventListener("keydown", this.onKeyDown, { signal, capture: true });
+    window.addEventListener("scroll", this.updatePopupPositionLazy, { signal });
+    window.addEventListener("resize", this.updatePopupPositionLazy, { signal });
+
+    this.unloadContentScript.push(
+      () => {
+        ContentScript.rootElem.parentElement.removeChild(ContentScript.rootElem);
+        ContentScript.rootNode.unmount();
+      },
+
+      () => abortCtrl.abort(), // unbind DOM-events
+
+      onMessage<void, string>(MessageType.GET_SELECTED_TEXT, () => {
+        return this.selectedText;
+      }),
+      onMessage(MessageType.TRANSLATE_WITH_VENDOR, ({ vendor, text }: TranslateWithVendorPayload) => {
+        this.hideIcon();
+        this.translate({ vendor, text });
+      })
+    );
+  }
+
+  async checkContextInvalidationError() {
+    const isInvalidated = await checkContextInvalidationError();
+    if (isInvalidated) this.unloadContentScript();
   }
 
   @computed get isPopupHidden() {
@@ -103,13 +138,7 @@ export class ContentScript extends React.Component {
 
   @computed get iconPosition(): React.CSSProperties {
     const { iconPosition } = settingsStore.data;
-    const { selectedText, selectionRects, isRtlSelection, isIconShown } = this;
-    if (!selectedText || !selectionRects || !isIconShown || !this.isPopupHidden) {
-      return {
-        display: "none"
-      }
-    }
-
+    const { selectionRects, isRtlSelection } = this;
     const firstRect = selectionRects[0];
     const lastRect = selectionRects.slice(-1)[0];
 
@@ -143,6 +172,8 @@ export class ContentScript extends React.Component {
       langTo: to ?? settingsStore.data.langTo,
       originalText: text ?? this.selectedText.trim(),
     };
+
+    void this.checkContextInvalidationError();
 
     try {
       const { vendor, langTo: to, langFrom: from, originalText: text } = this.lastParams;
@@ -180,11 +211,12 @@ export class ContentScript extends React.Component {
   }
 
   showIcon() {
-    this.isIconShown = true;
+    void this.checkContextInvalidationError();
+    this.isIconVisible = true;
   }
 
   hideIcon() {
-    this.isIconShown = false;
+    this.isIconVisible = false;
   }
 
   hidePopup() {
@@ -276,6 +308,7 @@ export class ContentScript extends React.Component {
 
     // make correction if popup is out of viewport bonds
     window.requestAnimationFrame(action(() => {
+      if (!this.popup) return;
       const popupPos = this.popup.elem.getBoundingClientRect();
       const isOutByX = popupPos.right > viewPortWidth;
       const isOutByY = popupPos.bottom > viewPortHeight;
@@ -294,11 +327,11 @@ export class ContentScript extends React.Component {
   }
 
   isClickedOnSelection() {
-    if (!settingsStore.data.showPopupOnClickBySelection) return;
     if (!this.selectedText || !this.selectionRects) return;
-    const { pageX, pageY } = this.mousePos;
+    const { x, y } = this.mousePos;
+
     return this.selectionRects.some(({ left, top, right, bottom }) => {
-      return left <= pageX && pageX <= right && top <= pageY && pageY <= bottom;
+      return left <= x && x <= right && top <= y && y <= bottom;
     });
   }
 
@@ -324,7 +357,7 @@ export class ContentScript extends React.Component {
 
   onIconClick(evt: React.MouseEvent) {
     this.hideIcon();
-    this.translate();
+    void this.translate();
     evt.stopPropagation();
   }
 
@@ -338,19 +371,16 @@ export class ContentScript extends React.Component {
   onMouseDown(evt: MouseEvent) {
     const clickedElem = evt.target as HTMLElement;
     const rightBtnClick = evt.button === 2;
-    if (rightBtnClick) {
-      return;
-    }
-    if (this.icon && !this.icon.elem.contains(clickedElem)) {
-      this.hideIcon();
-    }
+    if (rightBtnClick) return;
+
     if (ContentScript.isOutsideRenderRoot(clickedElem)) {
-      if (this.isPopupHidden && this.isClickedOnSelection()) {
-        this.translate();
-        evt.preventDefault(); // don't reset selection
-      } else {
-        this.hidePopup();
-      }
+      this.hideIcon();
+      !this.isLoading && this.hidePopup();
+    }
+
+    if (settingsStore.data.showPopupOnClickBySelection && this.isClickedOnSelection()) {
+      void this.translate();
+      evt.preventDefault();
     }
   }
 
@@ -424,18 +454,21 @@ export class ContentScript extends React.Component {
   }, 250);
 
   render() {
-    const { lastParams, translation, error, popupPosition, playText, translateNext, onIconClick, hidePopup } = this;
+    const { lastParams, translation, error, popupPosition, playText, translateNext, onIconClick, hidePopup, isIconVisible } = this;
     const { langFrom, langTo, vendor } = settingsStore.data;
     const translator = getTranslator(vendor);
     return (
       <>
-        <link rel="stylesheet" href={this.stylesUrl}/>
-        <XTranslateIcon
-          style={this.iconPosition}
-          onMouseDown={onIconClick}
-          title={`${this.appName}: ${translator.getLangPairTitle(langFrom, langTo)}`}
-          ref={e => this.icon = e}
-        />
+        {this.stylesUrl && (
+          <link rel="stylesheet" href={this.stylesUrl} crossOrigin="anonymous"/>
+        )}
+        {isIconVisible && (
+          <XTranslateIcon
+            style={this.iconPosition}
+            onMouseDown={onIconClick}
+            title={`${this.appName}: ${translator.getLangPairTitle(langFrom, langTo)}`}
+          />
+        )}
         <Popup
           style={popupPosition}
           initParams={lastParams}
@@ -445,7 +478,9 @@ export class ContentScript extends React.Component {
           onTranslateNext={() => translateNext()}
           onClose={hidePopup}
           tooltipParent={ContentScript.rootElem}
-          ref={(ref: Popup) => this.popup = ref}
+          ref={(ref: Popup) => {
+            this.popup = ref
+          }}
         />
       </>
     )

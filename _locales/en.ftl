@@ -61,7 +61,6 @@ translation_delay_info = If you often experience blocking (503 error) from Googl
 reverse_translate_select_placeholder = Reverse translate language
 reverse_translate_add_action = Add reverse language: { $lang } -> ? (applicable only with "Auto-detect" option)
 reverse_translate_delete_action = Unset reverse translate language
-position_of_x_translate_icon = Position of the translation icon
 skip_translation_vendor_in_rotation = Skip { $vendor }-translations in rotation via arrow-icon or keyboard arrows (in popup)
 custom_font_select = Select custom font
 
@@ -181,7 +180,7 @@ error_403_auth_failed = Authorization failed. Please supply a valid auth api key
 
 # open-ai integration
 open_ai_get_access_info = 1) Register at platform.openai.com 2) Create api access key 3) Top-up your balance (5$+)
-open_ai_insert_auth_key = Provide your api key for getting OpenAI translations (ChatGPT authors platform)
+open_ai_insert_auth_key = Provide your api key for getting OpenAI translations
 open_ai_insert_auth_key_warning = Warning: DO NOT enter your API key in any other place except this extension window
 open_ai_insert_auth_key_remove = Remove OpenAI API key
 open_ai_choose_model = Choose AI model
@@ -197,3 +196,9 @@ open_ai_why_info_help =
 # PDF translations suppot via pdf.js
 pdf_use_custom_viewer = Support translations in PDF files
 pdf_use_custom_viewer_info = This option will replace default PDF viewer
+
+# DeepSeek AI integration
+deepseek_get_own_key_info = Register at platform.deepseek.com and top-up balance (e.g. via Paypal)
+deepseek_auth_key = Create api-key at DeepSeek's platform to get access
+deepseek_auth_key_warning = Warning: DO NOT enter your API key in any other place except this extension window
+deepseek_auth_key_remove = Remove DeepSeek API Key

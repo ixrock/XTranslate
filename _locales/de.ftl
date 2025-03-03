@@ -1,113 +1,204 @@
-# Localization file for chrome extension
+# Lokalisierungsdatei für Chrome-Erweiterung
 # URL: https://chrome.google.com/webstore/detail/xtranslate/gfgpkepllngchpmcippidfhmbhlljhoo
 -app-brand-name = XTranslate
 
-short_description = Text auf Internetseiten leicht übersetzen.
-description = Übersetzen Sie Texte von einer Internetseite, passen Sie das Design des Popup-Fensters an, und vieles mehr.
+# Allgemein
+short_description = Text auf Webseiten einfach übersetzen
+description = Übersetzen Sie Texte im Kontext der Seite, passen Sie Ihren eigenen Stil des Popup-Blocks an und vieles mehr.
 
-# ____________header_______________
-open_in_window = In gesondertem Fenster öffnen
+# Header
+open_in_window = In externem Fenster öffnen
 tab_settings = Einstellungen
 tab_theme = Popup
 tab_text_input = Übersetzen
 tab_history = Verlauf
 
-# ___________settings_____________
-
+# Einstellungen
 setting_title_common = Allgemein
 setting_title_text_input = Übersetzen
 setting_title_popup = Popup
-setting_title_translator_service = Übersetzungsdienst
+setting_title_translator_service = Dienst
+settings_title_tts = Text-zu-Sprache
+settings_title_appearance = Aussehen
 auto_play_tts = Text-zu-Sprache automatisch abspielen
-use_chrome_tts = Erzwinge Text-zu-Sprache-Ausgabe von Chrome
-use_chrome_tts_tooltip_info = Diese Option ist auch dann aktiv, wenn der Übersetzer über keine TTS-Ausgabe verfügt.
-use_dark_theme = Für dieses Fenster ein dunkles Thema verwenden
+use_chrome_tts = Erzwingen der Verwendung des System-Text-zu-Sprache-Engine
+use_chrome_tts_tooltip_info = Diese Option wird automatisch aktiviert, wenn der Übersetzer keinen eigenen TTS-Engine hat
+use_dark_theme = Dunkelmodus für dieses Fenster aktivieren
+tts_default_system_voice = Standard-Systemstimme
+tts_select_voice_title = Stimme auswählen
+tts_play_demo_sound = Demosound abspielen
+tts_play_demo_sound_edit = Text für Sprachdemo bearbeiten
+import_export_settings = Einstellungen importieren oder exportieren
+export_settings_button_label = Einstellungen exportieren
+import_settings_button_label = Einstellungen importieren
+import_incorrect_file_format = Falscher Dateiformat (sollte wahrscheinlich { $fileNameJson } sein)
+imported_setting_successful = Einstellungen unter dem Schlüssel { $key } erfolgreich importiert
 show_context_menu = Im Kontextmenü der Seite anzeigen
-display_icon_near_selection = Übersetzen-Schaltfläche neben ausgewähltem Text anzeigen
-show_tts_icon_inside_popup = Symbol für Text-zu-Sprache anzeigen
-show_next_vendor_icon_in_popup = Symbol für nächste Übersetzung anzeigen
+display_icon_near_selection = Symbol in der Nähe des ausgewählten Textes anzeigen
+show_tts_icon_inside_popup = Text-zu-Sprache-Symbol anzeigen
+show_next_vendor_icon_in_popup = Nächstes-Übersetzungssymbol anzeigen
 show_copy_translation_icon = Symbol zum Kopieren der Übersetzung anzeigen
+show_save_as_favorite_icon = Symbol zum Speichern als Favorit anzeigen
+show_close_popup_button = Schließen-Button für Popup in der rechten Ecke anzeigen
+show_close_popup_button_title = Schließen
 show_detected_language_block = Erkannte Sprache anzeigen
-display_on_click_by_selected_text = Popup nach Klick auf Textauswahl anzeigen
-display_popup_after_text_selected = Popup direkt nach Textauswahl anzeigen
-display_popup_on_double_click = Popup nach Doppelklick auf ein Wort anzeigen
-display_popup_on_hotkey = Popup bei Verwendung eines Kürzels anzeigen
-remember_last_typed_text = Zuletzt eingegebenen Text merken
-sub_header_quick_access_hotkey = Globales Kürzel für diese App
-quick_access_configure_link = Tastaturkürzel für schnellen Zugriff auf dieses Fenster einstellen
-swap_languages = Sprachen umschalten
+display_on_click_by_selected_text = Beim Klicken auf die Auswahl anzeigen
+display_popup_after_text_selected = Direkt nach Textauswahl anzeigen
+display_popup_on_double_click = Beim Doppelklicken auf ein Wort anzeigen
+display_popup_on_hotkey = Beim Drücken der Hotkey anzeigen
+remember_last_typed_text = Letzten eingegebenen Text merken
+sub_header_quick_access_hotkey = Globale Hotkey einstellen
+quick_access_configure_link = Tastenkürzel für schnellen Zugriff auf dieses Fenster konfigurieren
+swap_languages = Sprachen tauschen
 popup_position_title = Position
-popup_position_auto = Auto (Nahe dem Text)
-popup_position_left_top = Ecke links-oben
-popup_position_right_top = Ecke rechts-oben
-popup_position_left_bottom = Ecke links-unten
-popup_position_right_bottom = Ecke rechts-unten
+popup_position_auto = Auto (ausrichten an Text)
+popup_position_left_top = Linke obere Ecke
+popup_position_right_top = Rechte obere Ecke
+popup_position_left_bottom = Linke untere Ecke
+popup_position_right_bottom = Rechte untere Ecke
 translation_delay = Übersetzungsverzögerung
-translation_delay_info = Stellen Sie einen höheren Wert für die Verzögerung ein, wenn Sie oft Blockaden durch Google oder andere Dienste feststellen (Fehler 503)
+translation_delay_info = Wenn Sie häufig Sperrungen (Fehler 503) von Google oder anderen Diensten erleben, setzen Sie einen höheren Verzögerungswert
+reverse_translate_select_placeholder = Umgekehrte Übersetzung der Sprache
+reverse_translate_add_action = Umgekehrte Sprache hinzufügen: { $lang } -> ? (nur mit der Option "Automatische Erkennung" anwendbar)
+reverse_translate_delete_action = Umgekehrte Sprachübersetzung aufheben
+skip_translation_vendor_in_rotation = Übersetzungen von { $vendor } in der Rotation durch Pfeil-Symbol oder Tastaturpfeile überspringen (im Popup)
+custom_font_select = Benutzerdefinierte Schriftart auswählen
 
-# ___________theme_________________
-
-popup_play_icon_title = Anhören
+# Thema
+popup_play_icon_title = Hören
 popup_copy_translation_title = Übersetzung kopieren
-popup_next_vendor_icon_title = Übersetzen mit { $translator }
+popup_next_vendor_icon_title = Mit { $translator } übersetzen
 popup_demo_translation = Übersetzter Text
-popup_demo_dictionary_noun = Hauptwort
-popup_demo_dictionary_values = Wort 1, Wort 2, usw.
+popup_demo_dictionary_noun = Substantiv
+popup_demo_dictionary_values = Wort 1, Wort 2, etc.
 sub_header_background = Hintergrund
-sub_header_box_shadow = Kastenschatten
+sub_header_box_shadow = Boxschatten
 sub_header_text = Text
 sub_header_border = Rahmen
-sub_header_box_size = Kastengröße
+sub_header_box_size = Boxgröße
 background_color = Farbe
-background_linear_gradient = Verlauf
+background_linear_gradient = Linear
 box_shadow_color = Farbe
 box_shadow_inner = Innen
 text_size = Größe
 text_font_family = Schriftart
 text_color = Farbe
 text_shadow = Schatten
-text_shadow_size = Größe des Schattens
-text_shadow_offset_x = Horizontaler Versatz
-text_shadow_offset_y = Vertikaler Versatz
+text_shadow_size = Unschärferadius
+text_shadow_offset_x = Horizontale Verschiebung
+text_shadow_offset_y = Vertikale Verschiebung
 text_shadow_color = Farbe
 border_width = Breite
-border_style = Art
+border_style = Stil
 border_color = Farbe
 border_radius = Radius
-box_size_min_width = Mindestbreite
-box_size_min_height = Mindesthöhe
-box_size_max_width = Maximalbreite
-box_size_max_height = Maximalhöhe
-reset_to_default_button_text = Auf Standardwerte zurücksetzen
+box_size_min_width = Minimale Breite
+box_size_min_height = Minimale Höhe
+box_size_max_width = Maximale Breite
+box_size_max_height = Maximale Höhe
+reset_to_default_button_text = Auf Standard zurücksetzen
 
-# ___________text_input____________
-text_field_placeholder = Hier Text eingeben, um etwas zu übersetzen
+# Texteingabe
+text_field_placeholder = Hier tippen, um eine Übersetzung zu erhalten
 translated_with = Übersetzt mit { $translator } ({ $lang })
-translated_from = Übersetzt aus: { $lang }
-spell_correction = Meinten Sie vielleicht { $suggestion }?
+translated_from = Übersetzt von: { $lang }
+translate_also_from = Auch von hier übersetzen
+spell_correction = Meinten Sie { $suggestion }?
 text_input_translation_hint = { $hotkey } für sofortige Übersetzung, Verzögerung: { $timeout }ms
 
-# ___________history_______________
+# Verlauf
 history_enabled_flag = Aktiviert
-history_settings_save_words_only = Nur Wörterbucheinträge merken
-history_search_input_placeholder = Suche im Verlauf
+history_settings_save_words_only = Nur Wörterbuchwörter speichern
+history_search_input_placeholder = Im Verlauf suchen
 history_clear_period_hour = Letzte Stunde
-history_clear_period_day = Letzten Tag
-history_clear_period_month = Letzten Monat
+history_clear_period_day = Letzter Tag
+history_clear_period_month = Letzter Monat
+history_clear_period_year = Letztes Jahr
 history_clear_period_all = Alles
 history_button_clear = Verlauf löschen
 history_button_show_more = Mehr anzeigen
-history_export_entries = Exportiere nach { $format }
-history_page_size = Seitengröße
+history_export_entries = { $format } exportieren
+history_import_entries = { $format } importieren
+history_page_size = Seitenzahl
+history_icon_tooltip_search = Suchen
+history_icon_tooltip_imp_exp = Importieren / Exportieren
+history_icon_tooltip_settings = Einstellungen
+history_show_favorites_only = Nur Favoriten anzeigen
+history_mark_as_favorite = Eintrag als Favorit markieren
+history_unmark_as_favorite = Eintrag als Favorit abwählen
+history_import_success = { $itemsCount } Verlaufseinträge erfolgreich importiert
+history_import_file_error = Fehler beim Lesen der Datei '{ $fileName }': { $errorInfo }
 
-# ________context_menu_____________
-context_menu_translate_full_page = Ganze Seite übersetzen mit { $translator }
-context_menu_translate_selection = Übersetze { $selection } mit { $translator }
+# Kontextmenü
+context_menu_translate_full_page = Ganze Seite mit { $translator } übersetzen
+context_menu_translate_selection = { $selection } mit { $translator } übersetzen
 
-# ___________footer________________
-share_with_friends = Wenn Sie diese App mögen, teilen Sie es gerne mit Ihren Freunden:
-translation_data_failed = Fehler beim Laden der Daten
-rate_app_info1 = Finden Sie diese App gut? Bitte bewerten Sie uns mit 5 Sternen!
-rate_app_info2 = Es wird den anderen Nutzern helfen, diese Erweiterung zu finden und Sie unterstützen dabei etwas Gutes.
-rate_app_button = Im Chrome-Web-Store bewerten
-rate_app_button_later = Erinnere mich später
+# Sonstiges
+share_with_friends = Wenn Ihnen die App gefällt, teilen Sie sie mit Ihren Freunden
+translation_data_failed = Daten laden fehlgeschlagen
+rate_app_info1 = Gefällt Ihnen die Nutzung der App? Bitte bewerten Sie uns mit 5 Sternen!
+rate_app_info2 = Das hilft anderen Nutzern, die Erweiterung zu finden und die Vorteile zu verbreiten.
+rate_app_button = In der Erweiterungsstore bewerten
+rate_app_button_later = Später erinnern
+deepl_get_own_key_info = Registrieren Sie sich bei www.deepl.com und erhalten Sie einen eigenen kostenlosen Authentifizierungsschlüssel für die DeepL API
+deepl_insert_auth_key = Authentifizierungs-API-Schlüssel einrichten, um auf DeepL-Übersetzungen zuzugreifen
+deepl_insert_auth_key_warning = Warnung: Geben Sie Ihren API-Schlüssel nirgendwo außer in diesem Erweiterungsfenster ein
+deepl_insert_auth_key_remove = DeepL API-Schlüssel entfernen
+target_lang_placeholder = Zielsprachen
+source_lang_placeholder = Quellsprachen
+favorites_lang_title = Favoriten
+favorites_info_tooltip = Um eine Sprache als Favorit zu markieren/zu löschen (die Liste wird oben angezeigt), verwenden Sie { $hotkey } + Klicken
+donate_title = Entwicklerunterstützung
+donate_copy_wallet = Adresse kopieren
+donate_description = Wenn Ihnen die App gefällt, erwägen Sie bitte eine Spende an die Entwickler. Danke!
+service_unavailable = Dienst nicht verfügbar. Versuchen Sie es nach 5-25 Minuten erneut. Wenn dies ständig passiert, erhöhen Sie die Übersetzungsverzögerung in den Einstellungen.
+service_confirm_not_a_robot = Sie können auch zu { $link } gehen und bestätigen, dass Sie kein Roboter sind.
+
+# Datenschutzrichtlinie
+privacy_policy_title_updated = Die Datenschutzerklärung wurde aktualisiert
+privacy_policy_accept_terms = Allgemeine Geschäftsbedingungen akzeptieren
+
+# Mellowtel Integration
+mellowtel_greetings = Hallo, Freund 👋
+mellowtel_text1 = Wie Sie vielleicht wissen, ist diese Erweiterung kostenlos und für jeden verfügbar... aber dieses Mal brauchen wir eine Handlung von Ihnen, um sie aufrechtzuerhalten!
+mellowtel_text2 = Diese neue Version enthält die Open-Source-Bibliothek { $link }. Diese Bibliothek ermöglicht es Ihnen, Ihr ungenutztes Internet mit vertrauenswürdigen KI-Laboren und Start-ups zu teilen, die es verwenden, um ihre Modelle zu trainieren.
+mellowtel_usage_title = Wir verwenden Mellowtel, um:
+mellowtel_usage1 = Ausfälle des Dienstes zu verfolgen
+mellowtel_usage2 = Die Qualität des Dienstes zu messen
+mellowtel_usage3 = Als Entwickler dieser Erweiterung einen kleinen Anteil am Umsatz zu erhalten
+mellowtel_accept_all_info1 = Wenn Sie 'Alles akzeptieren' wählen, verwenden wir auch die Mellowtel-API, um: Vertrauenswürdigen Partnern den Zugriff auf Internetressourcen zu ermöglichen, indem ein Teil ihres Traffics über Ihren Knoten im Netzwerk geroutet wird.
+mellowtel_accept_all_info2 = Mellowtel teilt nur Ihre Bandbreite. Sicherheit und Privatsphäre sind zu 100% garantiert, und die Bibliothek ist Open Source für alle sichtbar.
+mellowtel_regulation1 = Es sammelt, teilt oder verkauft keine persönlichen Informationen (nicht einmal anonymisierte Daten).
+mellowtel_regulation2 = Es ist auch stark reguliert: Mellowtel kommuniziert kontinuierlich mit den Regulatoren des Chrome Web Stores, um eine sichere Erfahrung zu gewährleisten.
+mellowtel_regulation3 = Es stellt den Regulatoren des CWS auch Werkzeuge zur Verfügung, um die Einhaltung zu überwachen und durchzusetzen.
+mellowtel_button_decline = Optionalen Gebrauch ablehnen
+mellowtel_button_accept = Alles akzeptieren
+mellowtel_dialog_footer = Danke, dass Sie sich die Zeit genommen haben zu lesen, Teams { $devs }.
+
+# Verschiedene Fehlermeldungen
+error_403_auth_failed = Authentifizierung fehlgeschlagen. Bitte geben Sie einen gültigen Authentifizierungs-API-Schlüssel in den Einstellungen an.
+
+# OpenAI Integration
+open_ai_get_access_info = 1) Registrieren Sie sich bei platform.openai.com 2) Erstellen Sie einen API-Zugriffsschlüssel 3) Beladen Sie Ihr Guthaben (5$+)
+open_ai_insert_auth_key = Geben Sie Ihren API-Schlüssel ein, um OpenAI-Übersetzungen zu erhalten
+open_ai_insert_auth_key_warning = Warnung: Geben Sie Ihren API-Schlüssel nirgendwo außer in diesem Erweiterungsfenster ein
+open_ai_insert_auth_key_remove = OpenAI API-Schlüssel entfernen
+open_ai_choose_model = KI-Modell auswählen
+open_ai_choose_model_cost_efficient = Kostenwirksamste Wahl
+open_ai_choose_model_optimal = Empfohlenes Modell
+open_ai_choose_model_chatgpt_like = ChatGPT (kann kostspielig sein)
+open_ai_choose_model_best_results = Beste Ergebnisse (am teuersten)
+open_ai_why_info_help =
+    Durch direkte Nutzung Ihres eigenen OpenAI-Plattformkontos und Bereitstellung des API-Schlüssels können Sie viel Geld sparen im Vergleich zur Nutzung von "Mittelsmann"-Diensten anderer Apps/Erweiterungen,
+     wo Sie normalerweise für ein monatliches/jährliches Abonnement zahlen und wo alle Preise und Nutzungsgrenzen nicht unter Ihrer Kontrolle stehen.
+     Vergessen Sie nicht, die Nutzungsgrenzen auf platform.openai.com anzupassen und die automatische Aufladung des Guthabens Ihrer Kreditkarte zu deaktivieren.
+
+# Unterstützung für PDF-Übersetzungen via pdf.js
+pdf_use_custom_viewer = Unterstützung für Übersetzungen in PDF-Dateien
+pdf_use_custom_viewer_info = Diese Option ersetzt den Standard-PDF-Viewer
+
+# DeepSeek AI integration (DE)
+deepseek_get_own_key_info=Registrieren Sie sich auf platform.deepseek.com und laden Sie Ihr Guthaben auf (z. B. über PayPal)
+deepseek_auth_key=Erstellen Sie einen API-Zugangsschlüssel auf der DeepSeek-Plattform und speichern Sie ihn hier in den Einstellungen
+deepseek_auth_key_warning=Warnung: Geben Sie Ihren API-Schlüssel NICHT an einem anderen Ort als in diesem Erweiterungsfenster ein
+deepseek_auth_key_remove=DeepSeek-API-Schlüssel entfernen

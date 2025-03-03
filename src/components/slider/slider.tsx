@@ -34,7 +34,10 @@ export class Slider extends React.Component<Props> {
     });
     return (
       <div className={componentClass}>
-        <input {...inputProps} type="range" onChange={this.onChange} ref={e => this.input = e}/>
+        <input {...inputProps} type="range" onChange={this.onChange} ref={e => {
+          this.input = e
+        }}
+        />
         <span className={styles.title}>
           {formatTitle ? formatTitle(value) : value}
         </span>

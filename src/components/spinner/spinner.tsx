@@ -21,6 +21,10 @@ export class Spinner extends React.Component<Props, {}> {
       [styles.singleColor]: singleColor,
       [styles.center]: center,
     });
-    return <div {...props} className={className} ref={e => this.elem = e}/>;
+    return (
+      <div {...props} className={className} ref={e => {
+        this.elem = e
+      }}/>
+    );
   }
 }

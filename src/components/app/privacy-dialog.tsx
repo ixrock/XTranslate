@@ -38,7 +38,9 @@ export class PrivacyDialog extends React.Component<PrivacyDialogProps> {
         {...dialogProps}
         className={cssNames(styles.PrivacyDialog, className)}
         contentClassName={cssNames(styles.content, contentClassName)}
-        ref={ref => this.dialog = ref}
+        ref={elem => {
+          this.dialog = elem;
+        }}
       >
         <div className="flex column gaps">
           <h3>{getMessage("privacy_policy_title_updated")}</h3>

@@ -8,21 +8,11 @@
   .grid {
     display: grid;
     gap: var(--flex-gap);
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-    align-items: center;
+    grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
 
     &:first-child {
       padding-right: var(--theme-spacing-double);
     }
-  }
-
-  .hotkey {
-    width: 75px;
-    text-align: center;
-  }
-
-  small {
-    color: var(--theme-color-text2);
   }
 
   .vendors {

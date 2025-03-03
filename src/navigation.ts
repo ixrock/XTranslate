@@ -3,7 +3,7 @@ import { createTab, getManifest, getURL, isOptionsPage } from "./extension";
 
 export const navigation = createObservableHistory(); // not available in service-worker aka "background page"
 
-export type PageId = "settings" | "theme" | "translate" | "history";
+export type PageId = "settings" | "popup" | "translate" | "history";
 export const defaultPageId: PageId = "settings";
 
 export interface NavigationParams {

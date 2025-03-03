@@ -1,0 +1,90 @@
+import OpenAI from "openai";
+import { ITranslationError, ITranslationResult, VendorCodeName } from "../vendors";
+import { createLogger, disposer } from "../utils";
+import { DeepSeekTranslatePayload, MessageType, onMessage } from "../extension";
+
+const logger = createLogger({ systemPrefix: "DEEPSEEK_AI(helper)" });
+
+export function listenDeepSeekRequests() {
+  return disposer(
+    onMessage(MessageType.DEEPSEEK_TRANSLATION, translateText),
+  );
+}
+
+// API: https://api-docs.deepseek.com/
+export function deepSeekApi(apiKey: string) {
+  return new OpenAI({
+    apiKey,
+    baseURL: "https://api.deepseek.com/v1",
+    dangerouslyAllowBrowser: false,
+    maxRetries: 0,
+  })
+}
+
+export async function translateText(params: DeepSeekTranslatePayload): Promise<ITranslationResult> {
+  const {
+    model = "deepseek-chat",
+    targetLanguage,
+    sourceLanguage,
+    text = "",
+  } = params;
+
+  const { apiKey, ...sanitizedParams } = params;
+  const isAutoDetect = !sourceLanguage;
+  const sanitizedText = text.trim();
+
+  const prompt = isAutoDetect
+    ? `Translate to "${targetLanguage}" and auto-detect source language of text: ${sanitizedText}`
+    : `Translate from "${sourceLanguage}" to "${targetLanguage}" language of text: ${sanitizedText}`;
+
+  try {
+    const response = await deepSeekApi(apiKey).chat.completions.create({
+      model,
+      n: 1,
+      temperature: 1.3, // https://api-docs.deepseek.com/quick_start/parameter_settings
+      response_format: {
+        type: "json_object"
+      },
+      messages: [
+        { role: "system", content: `You are professional languages translator assistant.` },
+        { role: "system", content: `Add transcription ONLY when provided full text is dictionary word, phrasal verbs.` },
+        { role: "system", content: `Output JSON {translation, detectedLang, transcription?, spellCorrection?}` },
+        { role: "user", content: prompt },
+      ],
+    });
+
+    const data = JSON.parse(response.choices[0].message.content) as TranslateTextResponse;
+    const { detectedLang, transcription, spellCorrection, translation } = data;
+
+    const result: ITranslationResult = {
+      vendor: VendorCodeName.DEEPSEEK,
+      originalText: sanitizedText,
+      translation: translation ?? sanitizedText,
+      langDetected: detectedLang ?? sourceLanguage,
+      langFrom: sourceLanguage ?? detectedLang,
+      langTo: targetLanguage,
+      transcription,
+      spellCorrection,
+      dictionary: [],
+    };
+
+    logger.info({ result, prompt, params: sanitizedParams });
+    return result;
+
+  } catch (err) {
+    const error: ITranslationError = {
+      message: String(err),
+      statusCode: err.statusCode || err.status,
+    };
+
+    logger.error({ error, params: sanitizedParams, prompt });
+    throw error;
+  }
+}
+
+export interface TranslateTextResponse {
+  translation: string;
+  detectedLang: string;
+  transcription?: string;
+  spellCorrection?: string;
+}

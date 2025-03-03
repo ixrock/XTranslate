@@ -98,7 +98,9 @@ export class ColorPicker extends React.Component<Props, State> {
           className={styles.value}
           style={{ color }}
           onClick={this.toggle}
-          ref={e => this.opener = e}
+          ref={elem => {
+            this.opener = elem
+          }}
         />
       </div>
     );

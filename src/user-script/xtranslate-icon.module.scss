@@ -4,6 +4,7 @@
   position: absolute;
   box-shadow: 0 0 5px -1px black !important;
   background: white !important;
+  pointer-events: auto !important;
   border-radius: 50%;
   padding: 5px;
   cursor: pointer;

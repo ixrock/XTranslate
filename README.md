@@ -23,7 +23,8 @@ press hotkey (title or alt attributes will be used when applicable).
 With this feature it is possible to get auto-translation by block of text at the page
 just by pressing the hotkey when mouse over it!
 
-1) Translate texts in **PDF** files _(powered by [pdf.js](https://github.com/mozilla/pdf.js))_. 
+1) Translate texts in **PDF** files _(disabled by default)_.\
+This option will replace default chrome-based PDF-viewer and might not work correctly due [CORS](https://developer.mozilla.org/en-US/docs/Glossary/CORS) sometimes.
 
 In order to work with local files (e.g. `file://path/to/file.pdf`) you must allow access for the extension:
 - open extensions page `chrome://extensions/`, find **XTranslate** and click **(Details)** button
@@ -54,6 +55,7 @@ Available translation vendors:
 * [Yandex](http://translate.yandex.com/)
 * [Bing](http://bing.com/translator/)
 * [DeepL](https://www.deepl.com/) _(requires own user key, register at https://www.deepl.com/en/signup/)_
+* [DeepSeek](https://platform.deepseek.com) _(register, top-up balance and create api-key)_
 * [OpenAI (ChatGPT)](https://platform.openai.com) _(see registration steps below)_
 
 Steps for access OpenAI translations:

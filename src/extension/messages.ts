@@ -1,5 +1,5 @@
 // [IPC]: inter-process communications for [options-page] <-> [background] <-> [content-pages]
-import type { ITranslationResult } from "../vendors";
+import type { ITranslationResult, OpenAIModel, DeepSeekAIModel } from "../vendors";
 import type { IHistoryItem } from "../components/user-history/history.storage";
 
 export const enum MessageType {
@@ -16,9 +16,11 @@ export const enum MessageType {
   STORAGE_DATA_SYNC = "SYNC_DATA_FROM_STORAGE",
   OPENAI_TRANSLATION = "OPENAI_TRANSLATION",
   OPENAI_TTS = "OPENAI_TEXT_TO_SPEECH",
+  DEEPSEEK_TRANSLATION = "DEEPSEEK_TRANSLATION",
   MELLOWTEL_STATUS = "MELLOWTEL_STATUS",
   MELLOWTEL_ACTIVATE = "MELLOWTEL_ACTIVATE",
   MELLOWTEL_DEACTIVATE = "MELLOWTEL_DEACTIVATE",
+  CONTEXT_INVALIDATION_CHECK = "CONTEXT_INVALIDATION_CHECK",
 }
 
 export interface Message<Payload = any /*json-serializable*/> {
@@ -85,7 +87,7 @@ export interface StorageDeletePayload extends Omit<StorageWritePayload, "state">
 
 export interface OpenAITranslatePayload {
   apiKey: string;
-  model?: string;
+  model?: OpenAIModel; /* default: "gpt-4o" */
   text: string;
   targetLanguage: string;
   sourceLanguage?: string; /* if not provided translation-request considered as "auto-detect" */
@@ -97,4 +99,12 @@ export interface OpenAITextToSpeechPayload {
   voice?: 'alloy' | 'echo' | 'fable' | 'onyx' | 'nova' | 'shimmer';
   targetLanguage?: string; /* or auto-detect if not provided */
   speed?: number; /* 0.5 - 4.0 */
+}
+
+export interface DeepSeekTranslatePayload {
+  apiKey: string;
+  model?: DeepSeekAIModel; /* default: "deepseek-chat" */
+  text: string;
+  targetLanguage: string;
+  sourceLanguage?: string;
 }

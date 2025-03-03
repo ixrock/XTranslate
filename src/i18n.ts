@@ -1,23 +1,23 @@
-// Localization
-import type { Pattern, PatternElement } from "@fluent/bundle/esm/ast"
+// UI localization
 
-import React from "react"; // TODO: remove direct dependency (used in non-browser envs too)
+import SupportedLocalesList from "../_locales/_locales.json"
+import type { ReactNode } from "react";
+import type { Pattern, PatternElement } from "@fluent/bundle/esm/ast"
+import { FluentBundle, FluentResource, FluentVariable } from "@fluent/bundle"
 import { observable } from "mobx";
 import { getURL, proxyRequest, ProxyResponseType } from "./extension";
 import { createLogger } from "./utils/createLogger";
-import { FluentBundle, FluentResource, FluentVariable } from "@fluent/bundle"
 import { createStorage } from "./storage";
-import LocalesList from "../_locales/_list.json"
 
-export const logger = createLogger({ systemPrefix: "[I18N-LOCALE]" });
+const logger = createLogger({ systemPrefix: "[I18N-LOCALE]" });
 
-export type Locale = keyof typeof LocalesList;
-export const availableLocales = LocalesList;
+export type Locale = keyof typeof SupportedLocalesList;
+export const availableLocales = SupportedLocalesList;
 export const fallbackLocale = "en";
 
 export const bundles = observable.map<Locale, FluentBundle>();
 
-const storage = createStorage<{ lang: Locale }>("i18n", {
+export const i18nStorage = createStorage<{ lang: Locale }>("i18n", {
   area: "sync",
   defaultValue: {
     lang: getSystemLocale(),
@@ -26,7 +26,7 @@ const storage = createStorage<{ lang: Locale }>("i18n", {
 
 export async function i18nInit() {
   await loadMessages(fallbackLocale);
-  await storage.load() // load current i18n settings
+  await i18nStorage.load() // load current i18n settings
 
   const userLocale = getLocale();
   if (userLocale !== fallbackLocale) {
@@ -87,23 +87,21 @@ export function getMessagePattern(key: string): MessagePattern {
 }
 
 export function getMessage(key: string): string;
-export function getMessage(key: string, placeholders: Record<string, React.ReactNode>): React.ReactNode;
-export function getMessage(key: string, placeholders: Record<string, FluentVariable | any> = {}): React.ReactNode {
+export function getMessage(key: string, placeholders: Record<string, ReactNode>): ReactNode;
+export function getMessage(key: string, placeholders: Record<string, FluentVariable | any> = {}): ReactNode {
   const { message, bundle } = getMessagePattern(key);
   if (!message) return;
 
-  const formatAsReactNode = Object.values(placeholders ?? {}).some(React.isValidElement);
-  if (formatAsReactNode) {
-    return React.Children.toArray(
-      Array.from(message).map((msgChunk: PatternElement) => {
-        if (typeof msgChunk == "string") {
-          return msgChunk;
-        } else if (msgChunk.type === "var") {
-          return placeholders[msgChunk.name];
-        }
+  const hasReactNodes = Object.values(placeholders ?? {}).some(item => typeof item === "object");
+  if (hasReactNodes) {
+    return Array.from(message).map((msgChunk: PatternElement) => {
+      if (typeof msgChunk == "string") {
         return msgChunk;
-      })
-    )
+      } else if (msgChunk.type === "var") {
+        return placeholders[msgChunk.name];
+      }
+      return msgChunk;
+    })
   }
 
   return bundle.formatPattern(message, placeholders);
@@ -111,14 +109,14 @@ export function getMessage(key: string, placeholders: Record<string, FluentVaria
 
 export async function setLocale(lang: Locale) {
   await loadMessages(lang); // preload first for smooth UI switching
-  storage.merge({ lang });
+  i18nStorage.merge({ lang });
 }
 
 export function getLocale(): Locale {
-  if (!storage.loaded) {
-    return storage.defaultValue.lang;
+  if (!i18nStorage.loaded) {
+    return i18nStorage.defaultValue.lang;
   }
-  return storage.get().lang;
+  return i18nStorage.get().lang;
 }
 
 export function getSystemLocale(): Locale {

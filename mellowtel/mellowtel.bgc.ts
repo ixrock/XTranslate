@@ -5,7 +5,7 @@ import { createLogger } from "../src/utils/createLogger";
 import { disposer } from "../src/utils";
 import { MessageType, onMessage } from "../src/extension";
 
-export const logger = createLogger({ systemPrefix: "[MELLOWTEL]" });
+const logger = createLogger({ systemPrefix: "[MELLOWTEL]" });
 
 export function listenMellowtelActions() {
   return disposer(

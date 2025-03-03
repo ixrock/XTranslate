@@ -1,7 +1,7 @@
 import OpenAI from "openai";
-import type { ITranslationError, ITranslationResult } from "../vendors/translator";
+import { ITranslationError, ITranslationResult, VendorCodeName, OpenAIModel } from "../vendors";
 import { createLogger, disposer } from "../utils";
-import { MessageType, onMessage, OpenAITextToSpeechPayload } from "../extension";
+import { MessageType, onMessage, OpenAITextToSpeechPayload, OpenAITranslatePayload } from "../extension";
 import { isFirefox } from "../common-vars";
 
 const logger = createLogger({ systemPrefix: "OPEN_AI(helper)" });
@@ -21,22 +21,17 @@ export function getAPI(apiKey: string) {
   });
 }
 
-export function getModels(apiKey: string) {
-  return getAPI(apiKey).models.list();
-}
-
-export interface TranslateTextParams {
-  apiKey: string;
-  model?: string; /* default: "gpt-4o" */
-  text: string;
-  targetLanguage: string;
-  sourceLanguage?: string; /* if not provided translation-request considered as "auto-detect" */
+export interface TranslateTextResponse {
+  translation: string;
+  detectedLang: string;
+  transcription?: string;
+  spellCorrection?: string;
 }
 
 // Text translation capabilities
-export async function translateText(params: TranslateTextParams): Promise<ITranslationResult> {
+export async function translateText(params: OpenAITranslatePayload): Promise<ITranslationResult> {
   const {
-    model = "gpt-4o",
+    model = OpenAIModel.RECOMMENDED,
     targetLanguage,
     sourceLanguage,
     text = "",
@@ -46,28 +41,33 @@ export async function translateText(params: TranslateTextParams): Promise<ITrans
   const sanitizedText = text.trim();
 
   const prompt = isAutoDetect
-    ? `Translate a text into language "${targetLanguage}" and auto-detect the source language for text "${sanitizedText}"`
-    : `Translate a text from language "${sourceLanguage}" to "${targetLanguage}" for text "${sanitizedText}"`;
+    ? `Translate to "${targetLanguage}" to auto-detected source-language text: ${sanitizedText}`
+    : `Translate from "${sourceLanguage}" to "${targetLanguage}" text: ${sanitizedText}`;
 
   try {
     const response = await getAPI(apiKey).chat.completions.create({
       model,
+      n: 1,
+      temperature: 1,
+      response_format: {
+        type: "json_object"
+      },
       messages: [
-        { role: "system", content: `You are a professional text translator assistant who does its job very accurate with knowledge of language dialects and slang.` },
-        { role: "system", content: `Transcription must be applied only if provided user text is dictionary word or phrasal verb or special language-specific phrase.` },
-        { role: "system", content: `Spell correction must be applied only if there are possible syntax errors in provided text."` },
-        { role: "system", content: `Output format is ["sourceLanguage", "transcription", "spellCorrection", "translation"]` },
+        { role: "system", content: `You are a professional languages translator assistant.` },
+        { role: "system", content: `Add transcription ONLY when provided full text is dictionary word, phrasal verbs` },
+        { role: "system", content: `Spell correction might be suggested when translating text has issues or when you have more relevant option to say the same whole text` },
+        { role: "system", content: `Output JSON {translation, detectedLang, transcription, spellCorrection}` },
         { role: "user", content: prompt },
       ],
     });
 
-    const content = response.choices[0].message.content;
-    const [detectedLang, transcription, spellCorrection, translatedText] = JSON.parse(content);
+    const data = JSON.parse(response.choices[0].message.content) as TranslateTextResponse;
+    const { detectedLang, transcription, spellCorrection, translation } = data;
 
     const result: ITranslationResult = {
-      vendor: "openai",
+      vendor: VendorCodeName.OPENAI,
       originalText: sanitizedText,
-      translation: translatedText ?? sanitizedText,
+      translation: translation ?? sanitizedText,
       langDetected: detectedLang ?? sourceLanguage,
       langFrom: sourceLanguage ?? detectedLang,
       langTo: targetLanguage,

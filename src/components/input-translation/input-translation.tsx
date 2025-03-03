@@ -245,7 +245,7 @@ export class InputTranslation extends React.Component<Props> {
               />
               <div className="lang" id="translated_with">
                 {translator.getLangPairShortTitle(langDetected, langTo)}
-                <Tooltip htmlFor="translated_with" following nowrap>
+                <Tooltip anchorId="translated_with" following nowrap>
                   {getMessage("translated_with", {
                     translator: translator.title,
                     lang: translator.getLangPairTitle(langDetected, langTo),
@@ -258,7 +258,11 @@ export class InputTranslation extends React.Component<Props> {
         {spellCorrection ? (
           <div className="spell-correction">
             {getMessage("spell_correction", {
-              suggestion: <b className="link" onClick={() => this.translateText(spellCorrection)}>{spellCorrection}</b>
+              suggestion: (
+                <b key="correction" className="link" onClick={() => this.translateText(spellCorrection)}>
+                  {spellCorrection}
+                </b>
+              )
             })}
           </div>
         ) : null}
@@ -351,6 +355,11 @@ export class InputTranslation extends React.Component<Props> {
     settingsStore.data.textInputTranslateDelayMs = delayInput;
   }
 
+  @action.bound
+  bindInputRef(elem: Input) {
+    this.input = elem;
+  }
+
   render() {
     var { textInputTranslateDelayMs: delayMs, rememberLastText } = settingsStore.data;
     var { vendor, from: langFrom, to: langTo, text } = this.params;
@@ -377,12 +386,12 @@ export class InputTranslation extends React.Component<Props> {
             defaultValue={text}
             onChange={(text: string) => this.onInputChange(text)}
             onKeyDown={this.onKeyDown}
-            ref={input => this.input = input}
+            ref={this.bindInputRef}
             infoContent={(
               <small className="hint">
                 {getMessage("text_input_translation_hint", {
                   hotkey: `${isMac() ? "Cmd" : "Ctrl"}+Enter`,
-                  timeout: <a onClick={this.setTranslationDelay}>{delayMs || 0}</a>,
+                  timeout: <a key="delay" onClick={this.setTranslationDelay}>{delayMs || 0}</a>,
                 })}
               </small>
             )}

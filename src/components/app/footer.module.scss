@@ -4,22 +4,9 @@
   padding-top: var(--theme-spacing);
   border-top: 1px solid var(--theme-border-color);
 
-  .monetizationIcon, a, img {
-    opacity: .75;
-  }
-
   .socialIcons {
-    display: inline-block;
-    vertical-align: middle;
-
-    img {
-      height: 22px;
-      filter: grayscale(100%);
-
-      &:hover {
-        opacity: 1;
-        filter: grayscale(0);
-      }
-    }
+    display: flex;
+    gap: var(--theme-spacing-half);
+    align-items: center;
   }
 }

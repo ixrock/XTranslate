@@ -86,7 +86,7 @@ export abstract class Translator {
 
       translation = await getTranslationResult();
 
-      const reverseTranslationParams = this.getReverseTranslationParams(translation);
+      const reverseTranslationParams = this.swapTranslationCheck(translation);
       if (reverseTranslationParams) {
         translation = await getTranslationResult(reverseTranslationParams);
       }
@@ -127,29 +127,34 @@ export abstract class Translator {
     };
   }
 
-  protected getReverseTranslationParams(translationResult: ITranslationResult): Partial<TranslateParams> | undefined {
-    const reverseLanguage = settingsStore.data.langToReverse
+  protected swapTranslationCheck(translationResult: ITranslationResult): Partial<TranslateParams> | undefined {
+    const reverseTargetLang = settingsStore.data.langToReverse
     const { langTo, langFrom, langDetected, originalText, translation } = translationResult;
     const sameText = originalText.trim().toLowerCase() === translation.toLowerCase().trim();
-    const invalidInputOutputTargetLanguage = sameText || langDetected === langTo;
+    let swapParamsWith: Partial<TranslateParams>;
 
-    if (!invalidInputOutputTargetLanguage) {
-      return; // quit: we got some different result
-    }
-
-    // swap exact languages (from,to) in case mismatching
-    if (langFrom !== "auto") {
-      return {
-        from: langTo,
+    if (langDetected !== langFrom && langFrom !== "auto") {
+      swapParamsWith = {
+        from: langDetected,
         to: langFrom,
-      };
-    } else if (reverseLanguage) {
-      // swap languages with predefined reverse-language (if defined in the settings)
-      return {
+      }
+    } else if (reverseTargetLang && sameText) {
+      swapParamsWith = {
         from: langTo,
-        to: reverseLanguage,
-      };
+        to: reverseTargetLang,
+      }
     }
+
+    if (swapParamsWith) {
+      const { from, to } = swapParamsWith;
+      this.logger.info(`SWAP-TRANSLATION-RESULT-WITH: from="${from}", to="${to}"`, {
+        translationResult,
+        reverseTargetLang,
+        sameText,
+      });
+    }
+
+    return swapParamsWith;
   };
 
   getLangPairShortTitle(langFrom: string, langTo: string) {

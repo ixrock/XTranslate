@@ -38,6 +38,7 @@ export class ExportImportSettingsDialog extends React.Component<Props> {
   static defaultProps = defaultProps as unknown as Props;
 
   readonly fileNameJson = "xtranslate-settings.json";
+  private fileInput: FileInput<string>;
 
   @observable.ref dialog: Dialog;
   @observable error = "";
@@ -102,7 +103,6 @@ export class ExportImportSettingsDialog extends React.Component<Props> {
   };
 
   render() {
-    let fileInput: FileInput<string>;
     const { className, ...dialogProps } = this.props;
     const dialogClass = cssNames(styles.ExportSettingsDialog, className);
 
@@ -111,7 +111,9 @@ export class ExportImportSettingsDialog extends React.Component<Props> {
         {...dialogProps}
         className={dialogClass}
         contentClassName="flex gaps column"
-        ref={elem => this.dialog = elem}
+        ref={elem => {
+          this.dialog = elem
+        }}
       >
         <SubTitle>
           <Icon material="import_export"/>
@@ -123,13 +125,15 @@ export class ExportImportSettingsDialog extends React.Component<Props> {
             accept="application/json"
             outputType="text"
             onImport={this.importSettings}
-            ref={elem => fileInput = elem}
+            ref={elem => {
+              this.fileInput = elem;
+            }}
           />
           <Button outline className="flex gaps align-center" onClick={this.exportSettings}>
             <Icon material="save" small/>
             <span>{getMessage("export_settings_button_label")}</span>
           </Button>
-          <Button outline className="flex gaps align-center" onClick={() => fileInput.selectFiles()}>
+          <Button outline className="flex gaps align-center" onClick={() => this.fileInput.selectFiles()}>
             <Icon material="tune" small/>
             <span>{getMessage("import_settings_button_label")}</span>
           </Button>

@@ -5,135 +5,114 @@ import { ProxyRequestInit, ProxyResponseType } from "../extension";
 import { ITranslationError, ITranslationResult, TranslateParams, Translator, VendorCodeName } from "./index";
 import { createStorage } from "../storage";
 
-export interface BingParsedGlobalParams {
-  key: string;
-  token: string;
-  IG: string;
-  IID: string;
-  tokenExpiryTime?: number;
+export interface BingApiAuthParams {
+  token: string; // jwt-token
+  tokenExpiryTimeMs?: number;
 }
 
 class Bing extends Translator {
   public name = VendorCodeName.BING;
-  public title = 'Bing';
-  public apiUrl = 'https://www.bing.com';
-  public publicUrl = `${this.apiUrl}/translator`;
+  public title = "Bing";
+  public publicUrl = "https://www.bing.com/translator";
+  public apiUrl = "https://api.cognitive.microsofttranslator.com";
+  public authUrl = "https://edge.microsoft.com/translate/auth";
 
   constructor() {
     super(BingLanguages);
   }
 
-  protected apiGlobalParams = createStorage<BingParsedGlobalParams>("bing_api_global_params", {
-    defaultValue: {} as BingParsedGlobalParams,
+  protected apiParams = createStorage<BingApiAuthParams>("bing_auth_params", {
+    defaultValue: {} as BingApiAuthParams,
   });
 
-  getFullPageTranslationUrl(pageUrl: string, lang: string): string {
-    return `https://www.microsofttranslator.com/bv.aspx?to=${lang}&a=${pageUrl}`
-  }
-
-  protected getQueryApiParams(): string {
-    const { IID, IG } = this.apiGlobalParams.get();
-
-    return new URLSearchParams({
-      IID, IG,
-      isVertical: "1",
-    }).toString();
-  }
-
   protected async beforeRequest() {
-    if (!this.apiGlobalParams.loaded) {
-      await this.apiGlobalParams.load();
-    }
+    await this.apiParams.load();
 
-    const params = this.apiGlobalParams.get();
-    if (isEmpty(params) || params.tokenExpiryTime < Date.now()) {
+    const params = this.apiParams.get();
+    if (isEmpty(params) || params.tokenExpiryTimeMs < Date.now()) {
       await this.refreshApiParams();
     }
   }
 
-  protected async refreshApiParams() {
+  private async refreshApiParams() {
     try {
-      const bingPageHtml = await this.request<string>({
-        url: this.publicUrl,
+      const token = await this.request<string>({
+        url: this.authUrl,
         responseType: ProxyResponseType.TEXT,
-        requestInit: {},
       });
 
-      const matchedParams = bingPageHtml.match(/params_AbusePreventionHelper\s*=\s*(\[.*?])/)?.[1];
-      const [timestamp, token, tokenTimeout] = JSON.parse(matchedParams);
-      const IG = bingPageHtml.match(/IG:"([^"]+)"/)?.[1]
-      const IID = bingPageHtml.match(/data-iid="([^"]+)"/)?.[1]
-      const parsedGlobalParams: BingParsedGlobalParams = {
-        key: timestamp,
+      const jwtPayload = JSON.parse(atob(token.split(".")[1])) as BingJwtPayload;
+      const authParams: BingApiAuthParams = {
         token,
-        IID, IG,
-        tokenExpiryTime: timestamp + tokenTimeout,
+        tokenExpiryTimeMs: jwtPayload.exp * 1e3
       };
-      this.apiGlobalParams.set(parsedGlobalParams);
+
+      this.apiParams.set(authParams);
     } catch (error) {
-      throw new Error(`Failed to parse global bing params: ${error}`);
+      throw new Error(`Failed to parse bing auth params: ${error}`);
     }
   }
 
   async translate(params: TranslateParams): Promise<ITranslationResult> {
-    var { from: langFrom, to: langTo, text } = params;
+    await this.beforeRequest();
 
-    var reqInitCommon: ProxyRequestInit = {
+    const { from: langFrom, to: langTo, text } = params;
+    const { token } = this.apiParams.get();
+
+    const requestInit: ProxyRequestInit = {
       method: "POST",
-      credentials: "include",
       headers: {
-        "Content-type": "application/x-www-form-urlencoded",
+        "Authorization": `Bearer ${token}`,
+        "Content-type": "application/json; charset=UTF-8",
         "User-Agent": navigator.userAgent,
-      }
-    }
-    var translationReq = async (langFrom: string): Promise<BingTranslation[]> => {
-      const { key, token } = this.apiGlobalParams.get();
-      const queryParams = this.getQueryApiParams();
+      },
+      body: JSON.stringify(
+        [{ Text: text }]
+      ),
+    };
 
+    const queryParams = new URLSearchParams({
+      "api-version": "3.0",
+      to: langTo,
+      from: langFrom !== "auto" ? langFrom : "",
+    });
+
+    // API: https://learn.microsoft.com/en-gb/azure/ai-services/translator/reference/v3-0-translate
+    const translationReq = async (): Promise<BingTranslation[]> => {
       return this.request({
-        url: this.apiUrl + `/ttranslatev3?${queryParams}`,
-        requestInit: {
-          ...reqInitCommon,
-          body: new URLSearchParams({
-            fromLang: langFrom === "auto" ? "auto-detect" : langFrom,
-            to: langTo,
-            text, key, token,
-          }).toString(),
-        }
+        url: this.apiUrl + `/translate?${queryParams}`,
+        requestInit,
       });
     };
 
-    var dictionaryReq = async (langFrom: string): Promise<BingDictionary[]> => {
-      const { key, token } = this.apiGlobalParams.get();
-      const queryParams = this.getQueryApiParams();
+    // API: https://learn.microsoft.com/en-gb/azure/ai-services/translator/reference/v3-0-dictionary-lookup
+    const dictionaryReq = async (langFrom: string): Promise<BingDictionary[]> => {
+      const modifiedQuery = new URLSearchParams(queryParams);
+      modifiedQuery.set("from", langFrom);
 
       return this.request({
-        url: this.apiUrl + `/tlookupv3?${queryParams}`,
-        requestInit: {
-          ...reqInitCommon,
-          body: new URLSearchParams({
-            from: langFrom,
-            to: langTo,
-            text, key, token,
-          }).toString(),
-        }
+        url: this.apiUrl + `/dictionary/lookup?${modifiedQuery}`,
+        requestInit,
       });
     };
 
-    var request = async (): Promise<ITranslationResult> => {
-      await this.beforeRequest();
-      const response = await translationReq(langFrom);
+    const request = async (): Promise<ITranslationResult> => {
+      const response = await translationReq();
 
       const { translations, detectedLanguage } = response[0];
       const result: ITranslationResult = {
-        langDetected: detectedLanguage.language,
+        langDetected: detectedLanguage?.language ?? langFrom,
         translation: translations.length ? translations[0].text : "",
       };
 
+      if (text.split(" ").length > 3) {
+        return result; // basic text translation, no dictionary lookup
+      }
+
       // dictionary results
-      var dictRes = await dictionaryReq(result.langDetected).catch(() => {});
+      const dictRes = await dictionaryReq(result.langDetected).catch(() => {});
       if (dictRes) {
-        var dictGroups = groupBy<DictTranslation>(dictRes[0].translations, trans => trans.posTag)
+        const dictGroups = groupBy<DictTranslation>(dictRes[0].translations, trans => trans.posTag)
         result.dictionary = Object.keys(dictGroups).map(wordType => {
           return {
             wordType: wordType.toLowerCase(),
@@ -153,6 +132,18 @@ class Bing extends Translator {
     return request();
   }
 }
+
+export type BingJwtPayload = {
+  region: string;
+  "subscription-id": string;
+  "product-id": string;
+  "cognitive-services-endpoint": string;
+  "azure-resource-id": string;
+  scope: string;
+  aud: string;
+  exp: number;
+  iss: string;
+};
 
 export interface BingTranslation {
   detectedLanguage: {
