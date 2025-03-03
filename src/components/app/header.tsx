@@ -70,12 +70,12 @@ export class Header extends React.Component {
             tooltip={{ nowrap: true, children: getMessage("import_export_settings") }}
             onClick={() => dialogsState.showImportExportDialog = true}
           />
-          <Icon
+          {/*<Icon
             small
             material="support"
             tooltip={{ nowrap: true, children: getMessage("donate_title") }}
             onClick={this.onSupport}
-          />
+          />*/}
           <SelectLocaleIcon/>
         </header>
         <Tabs className="Tabs" value={pageId} onChange={this.onTabsChange}>
