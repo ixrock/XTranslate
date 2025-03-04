@@ -2,7 +2,7 @@ import OpenAILanguages from "./open-ai.json"
 import { ITranslationResult, sanitizeApiKey, TranslateParams, Translator, VendorCodeName } from "./index";
 import { getMessage } from "../i18n";
 import { createStorage } from "../storage";
-import { openAiTextToSpeechAction, openAiTranslationAction } from "../extension";
+import { aiTextToSpeechAction, aiTranslateAction } from "../extension";
 import { settingsStore } from "../components/settings/settings.storage";
 import { toBinaryFile } from "../utils/binary";
 import type { VendorAuthSettingsProps } from "../components/settings/vendor_auth_settings";
@@ -40,12 +40,13 @@ class OpenAITranslator extends Translator {
   };
 
   async translate({ from, to, text }: TranslateParams): Promise<ITranslationResult> {
-    return openAiTranslationAction({
-      text,
+    return aiTranslateAction({
+      vendor: this.name,
       model: settingsStore.data.openAiModel,
       apiKey: this.#apiKey.get(),
       targetLanguage: this.langTo[to],
       sourceLanguage: from !== "auto" ? this.langFrom[from] : undefined,
+      text,
     })
   }
 
@@ -53,7 +54,9 @@ class OpenAITranslator extends Translator {
     if (text.length >= this.ttsMaxLength) {
       return;
     }
-    const data = await openAiTextToSpeechAction({
+    const data = await aiTextToSpeechAction({
+      vendor: this.name,
+      model: "tts-1",
       apiKey: this.#apiKey.get(),
       text,
       targetLanguage: lang,

@@ -2,11 +2,12 @@
   "name": "xtranslate",
   "version": "4.0.0",
   "scripts": {
-    "compile": "rm -rf ./dist && npm run pdfjs-build && webpack",
-    "dev": "npm run compile -- --env mode=development --watch",
-    "build": "npm run compile -- --env mode=production --progress",
+    "dev": "npm run webpack -- --env mode=development --watch",
+    "build": "npm run clean && npm run webpack -- --env mode=production --progress && npm run pdfjs-build",
+    "webpack": "node --import tsx node_modules/webpack-cli/bin/cli.js --config webpack.config.ts",
     "pdfjs-build": "cd node_modules/pdf.js && npm install && npx gulp generic && find ./build -name '*.map' -delete",
     "update-packages": "npx npm-check-updates -u",
+    "clean": "rm -rf ./dist",
     "test": "jest"
   },
   "jest": {
@@ -18,7 +19,7 @@
     ]
   },
   "engines": {
-    "node": ">=20"
+    "node": ">=23"
   },
   "keywords": [
     "chrome",
@@ -80,7 +81,7 @@
     "style-loader": "^4.0.0",
     "ts-jest": "^29.2.5",
     "ts-loader": "^9.5.2",
-    "ts-node": "^10.9.2",
+    "tsx": "^4.19.3",
     "typescript": "^5.7.3",
     "webpack": "^5.98.0",
     "webpack-cli": "^6.0.1"

@@ -15,12 +15,6 @@
     "resolveJsonModule": true,
     "useDefineForClassFields": true,
   },
-  "ts-node": {
-    "transpileOnly": true,
-    "compilerOptions": {
-      "module": "CommonJS"
-    }
-  },
   "include": [
     "_locales",
     "src",

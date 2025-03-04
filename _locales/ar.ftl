@@ -203,3 +203,8 @@ deepseek_auth_key=قم بإنشاء مفتاح وصول API على منصة Deep
 deepseek_auth_key_warning=تحذير: لا تدخل مفتاح API الخاص بك في أي مكان آخر باستثناء نافذة هذا الامتداد
 deepseek_auth_key_remove=إزالة مفتاح API الخاص بـ DeepSeek
 
+# Grok AI integration (AR)
+grok_ai_get_own_key_info = تسجيل في console.x.ai وتعبئة الرصيد (مثلاً عبر بطاقة الائتمان)
+grok_ai_auth_key = إنشاء مفتاح API في منصة Grok (X) للحصول على الوصول إلى API
+grok_ai_auth_key_warning = تحذير: لا تدخل مفتاح API الخاص بك في أي مكان آخر باستثناء نافذة الامتداد هذه
+grok_ai_auth_key_remove = إزالة مفتاح API الخاص بـ Grok

@@ -202,3 +202,9 @@ deepseek_get_own_key_info=platform.deepseek.com पर रजिस्टर क
 deepseek_auth_key=DeepSeek प्लेटफॉर्म पर API एक्सेस की बनाएं और इसे सेटिंग्स में यहां सहेजें
 deepseek_auth_key_warning=चेतावनी: अपना API की केवल इस एक्सटेंशन विंडो में ही दर्ज करें, अन्यत्र नहीं
 deepseek_auth_key_remove=DeepSeek API की को हटाएं
+
+# Grok AI integration (HI)
+grok_ai_get_own_key_info = console.x.ai पर पंजीकरण करें और बैलेंस टॉप-अप करें (उदाहरण के लिए क्रेडिट कार्ड के माध्यम से)
+grok_ai_auth_key = Grok (X) प्लेटफॉर्म पर API-कुंजी बनाएं ताकि API तक पहुंच प्राप्त हो सके
+grok_ai_auth_key_warning = चेतावनी: अपनी API कुंजी को इस एक्सटेंशन विंडो के अलावा कहीं और दर्ज न करें
+grok_ai_auth_key_remove = Grok API कुंजी हटाएं

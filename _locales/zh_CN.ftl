@@ -202,3 +202,9 @@ deepseek_get_own_key_info=在 platform.deepseek.com 注册并充值余额（例�
 deepseek_auth_key=在 DeepSeek 平台创建 API 访问密钥，并将其保存在此设置中
 deepseek_auth_key_warning=警告：请勿将您的 API 密钥输入到此扩展窗口以外的任何地方
 deepseek_auth_key_remove=删除 DeepSeek API 密钥
+
+# Grok AI integration (ZH_CN)
+grok_ai_get_own_key_info = 在 console.x.ai 注册并充值余额（例如通过信用卡）
+grok_ai_auth_key = 在 Grok (X) 平台创建 API 密钥以获取 API 访问权限
+grok_ai_auth_key_warning = 警告：请勿在此扩展窗口以外的任何地方输入您的 API 密钥
+grok_ai_auth_key_remove = 删除 Grok API 密钥

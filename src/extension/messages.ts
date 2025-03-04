@@ -1,5 +1,5 @@
 // [IPC]: inter-process communications for [options-page] <-> [background] <-> [content-pages]
-import type { ITranslationResult, OpenAIModel, DeepSeekAIModel } from "../vendors";
+import { ITranslationResult, VendorCodeName } from "../vendors";
 import type { IHistoryItem } from "../components/user-history/history.storage";
 
 export const enum MessageType {
@@ -14,9 +14,8 @@ export const enum MessageType {
   STORAGE_DATA_WRITE = "SAVE_TO_LOCAL_OR_EXTERNAL_STORAGE",
   STORAGE_DATA_REMOVE = "REMOVE_ITEM_FROM_STORAGE",
   STORAGE_DATA_SYNC = "SYNC_DATA_FROM_STORAGE",
-  OPENAI_TRANSLATION = "OPENAI_TRANSLATION",
-  OPENAI_TTS = "OPENAI_TEXT_TO_SPEECH",
-  DEEPSEEK_TRANSLATION = "DEEPSEEK_TRANSLATION",
+  AI_TRANSLATION = "AI_TRANSLATION",
+  AI_TEXT_TO_SPEECH = "AI_TEXT_TO_SPEECH",
   MELLOWTEL_STATUS = "MELLOWTEL_STATUS",
   MELLOWTEL_ACTIVATE = "MELLOWTEL_ACTIVATE",
   MELLOWTEL_DEACTIVATE = "MELLOWTEL_DEACTIVATE",
@@ -85,26 +84,26 @@ export interface StorageSyncPayload<T = any> extends StorageWritePayload<T> {
 export interface StorageDeletePayload extends Omit<StorageWritePayload, "state"> {
 }
 
-export interface OpenAITranslatePayload {
+export interface AITranslatePayload {
+  vendor: VendorCodeName;
   apiKey: string;
-  model?: OpenAIModel; /* default: "gpt-4o" */
+  model: string;
   text: string;
   targetLanguage: string;
   sourceLanguage?: string; /* if not provided translation-request considered as "auto-detect" */
 }
 
-export interface OpenAITextToSpeechPayload {
+export interface AITextToSpeechPayload {
+  vendor: VendorCodeName;
+  model: string;
   apiKey: string;
   text: string;
-  voice?: 'alloy' | 'echo' | 'fable' | 'onyx' | 'nova' | 'shimmer';
   targetLanguage?: string; /* or auto-detect if not provided */
   speed?: number; /* 0.5 - 4.0 */
+  voice?: string;
+  response_format?: "mp3"
 }
 
-export interface DeepSeekTranslatePayload {
-  apiKey: string;
-  model?: DeepSeekAIModel; /* default: "deepseek-chat" */
-  text: string;
-  targetLanguage: string;
-  sourceLanguage?: string;
+export interface OpenAITextToSpeechPayload extends AITextToSpeechPayload {
+  voice?: 'alloy' | 'echo' | 'fable' | 'onyx' | 'nova' | 'shimmer';
 }

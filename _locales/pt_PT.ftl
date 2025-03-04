@@ -202,3 +202,9 @@ deepseek_get_own_key_info=Registe-se em platform.deepseek.com e carregue o saldo
 deepseek_auth_key=Crie uma chave de acesso API na plataforma DeepSeek e guarde-a aqui nas definições
 deepseek_auth_key_warning=Aviso: NÃO insira a sua chave API em nenhum outro lugar exceto nesta janela da extensão
 deepseek_auth_key_remove=Remover chave API do DeepSeek
+
+# Grok AI integration (PT_PT)
+grok_ai_get_own_key_info = Registe-se em console.x.ai e recarregue o saldo (por exemplo, via cartão de crédito)
+grok_ai_auth_key = Crie uma chave API na plataforma Grok (X) para obter acesso à API
+grok_ai_auth_key_warning = Aviso: NÃO insira a sua chave API em nenhum outro lugar exceto nesta janela de extensão
+grok_ai_auth_key_remove = Remover a chave API do Grok

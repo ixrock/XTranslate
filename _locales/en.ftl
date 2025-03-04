@@ -202,3 +202,9 @@ deepseek_get_own_key_info = Register at platform.deepseek.com and top-up balance
 deepseek_auth_key = Create api-key at DeepSeek's platform to get access
 deepseek_auth_key_warning = Warning: DO NOT enter your API key in any other place except this extension window
 deepseek_auth_key_remove = Remove DeepSeek API Key
+
+# Grok AI integration
+grok_ai_get_own_key_info = Register at console.x.ai and top-up balance (e.g. via Credit card)
+grok_ai_auth_key = Create api-key at Grok (X) platform to get access for API
+grok_ai_auth_key_warning = Warning: DO NOT enter your API key in any other place except this extension window
+grok_ai_auth_key_remove = Remove Grok API Key

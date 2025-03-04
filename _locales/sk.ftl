@@ -190,3 +190,9 @@ deepseek_get_own_key_info=Zaregistrujte sa na platform.deepseek.com a dobite si 
 deepseek_auth_key=Vytvorte si prístupový kľúč API na platforme DeepSeek a uložte ho sem do nastavení
 deepseek_auth_key_warning=Upozornenie: NEZADÁVAJTE svoj API kľúč nikde inde okrem tohto okna rozšírenia
 deepseek_auth_key_remove=Odstrániť API kľúč DeepSeek
+
+# Grok AI integration (SK)
+grok_ai_get_own_key_info = Zaregistrujte sa na console.x.ai a dobiť zostatok (napr. prostredníctvom kreditnej karty)
+grok_ai_auth_key = Vytvorte API kľúč na platforme Grok (X), aby ste získali prístup k API
+grok_ai_auth_key_warning = Varovanie: NEVKLADAJTE svoj API kľúč nikde inde okrem tohto okna rozšírenia
+grok_ai_auth_key_remove = Odstrániť API kľúč Grok

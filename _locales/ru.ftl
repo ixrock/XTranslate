@@ -209,3 +209,9 @@ deepseek_get_own_key_info = Зарегистрируйтесь на platform.dee
 deepseek_auth_key = Создайте API-ключ на платформе DeepSeek
 deepseek_auth_key_warning = Предупреждение: НЕ вводите свой API-ключ в других местах, кроме как из этого окна расширения
 deepseek_auth_key_remove = Удалить API-ключ DeepSeek
+
+# Grok AI integration (RU)
+grok_ai_get_own_key_info = Зарегистрируйтесь на console.x.ai и пополните баланс (например, с помощью кредитной карты)
+grok_ai_auth_key = Создайте API-ключ на платформе Grok (X), чтобы получить доступ к API
+grok_ai_auth_key_warning = Предупреждение: НЕ вводите ваш API-ключ нигде, кроме этого окна расширения
+grok_ai_auth_key_remove = Удалить API-ключ Grok
