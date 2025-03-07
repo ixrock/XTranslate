@@ -20,7 +20,7 @@ interface WebpackConfigEnv {
   mode?: "development" | "production"; // must be provided inside `package.json` scripts
 }
 
-function webpackBaseConfig({ mode }: WebpackConfigEnv): webpack.Configuration {
+function webpackBaseConfig({ mode = "development" }: WebpackConfigEnv): webpack.Configuration {
   const isDevelopment = mode === "development";
 
   return {
@@ -45,7 +45,7 @@ function webpackBaseConfig({ mode }: WebpackConfigEnv): webpack.Configuration {
     },
 
     optimization: {
-      minimize: true, // 4MB max/file for firefox addons bundle files
+      minimize: false,
     },
 
     ignoreWarnings: [
