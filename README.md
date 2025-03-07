@@ -57,6 +57,7 @@ Available translation vendors:
 * [DeepL](https://www.deepl.com/) _(requires own user key, register at https://www.deepl.com/en/signup/)_
 * [DeepSeek](https://platform.deepseek.com) _(register, top-up balance and create api-key)_
 * [OpenAI (ChatGPT)](https://platform.openai.com) _(see registration steps below)_
+* [Grok](https://grok.com) _(create account at https://console.x.ai, top-up balance and provide api-key)_
 
 Steps for access OpenAI translations:
 ------

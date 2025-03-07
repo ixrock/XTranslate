@@ -202,3 +202,9 @@ deepseek_get_own_key_info=platform.deepseek.com に登録して、残高をチ�
 deepseek_auth_key=DeepSeek プラットフォームで API アクセスキーを作成し、設定内でここに保存してください
 deepseek_auth_key_warning=警告：この拡張ウィンドウ以外の場所に API キーを入力しないでください
 deepseek_auth_key_remove=DeepSeek API キーを削除する
+
+# Grok AI integration (JA)
+grok_ai_get_own_key_info = console.x.ai に登録し、残高をチャージしてください（例：クレジットカード経由）
+grok_ai_auth_key = Grok (X) プラットフォームで API キーを作成して API へのアクセスを取得
+grok_ai_auth_key_warning = 警告：この拡張ウィンドウ以外で API キーを入力しないでください
+grok_ai_auth_key_remove = Grok API キーを削除

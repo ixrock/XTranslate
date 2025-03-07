@@ -190,3 +190,9 @@ deepseek_get_own_key_info=platform.deepseek.com adresinden kaydolun ve bakiyeniz
 deepseek_auth_key=DeepSeek platformunda bir API erişim anahtarı oluşturun ve bunu ayarlara kaydedin
 deepseek_auth_key_warning=Uyarı: API anahtarınızı bu uzantı penceresi dışında başka bir yere GİRMEYİN
 deepseek_auth_key_remove=DeepSeek API Anahtarını Kaldırın
+
+# Grok AI integration (TR)
+grok_ai_get_own_key_info = console.x.ai'de kaydolun ve bakiyenizi doldurun (örneğin kredi kartıyla)
+grok_ai_auth_key = Grok (X) platformunda API anahtarı oluşturun ve API'ye erişim sağlayın
+grok_ai_auth_key_warning = Uyarı: API anahtarınızı bu eklenti penceresi dışında başka bir yere GİRMEMELİSİNİZ
+grok_ai_auth_key_remove = Grok API anahtarını kaldır

@@ -202,3 +202,9 @@ deepseek_get_own_key_info=platform.deepseek.com-এ নিবন্ধন কর
 deepseek_auth_key=DeepSeek প্ল্যাটফর্মে API অ্যাক্সেস কী তৈরি করুন এবং এটি সেটিংসে সংরক্ষণ করুন
 deepseek_auth_key_warning=সতর্কতা: এই এক্সটেনশনের উইন্ডো ছাড়া অন্য কোথাও আপনার API কী প্রবেশ করাবেন না
 deepseek_auth_key_remove=DeepSeek API কী মুছে ফেলুন
+
+# Grok AI integration (BN)
+grok_ai_get_own_key_info = console.x.ai-এ নিবন্ধন করুন এবং ব্যালেন্স টপ-আপ করুন (যেমন ক্রেডিট কার্ডের মাধ্যমে)
+grok_ai_auth_key = Grok (X) প্ল্যাটফর্মে API-কী তৈরি করুন API-এর জন্য অ্যাক্সেস পেতে
+grok_ai_auth_key_warning = সতর্কতা: এই এক্সটেনশন উইন্ডো ছাড়া অন্য কোথাও আপনার API কী প্রবেশ করবেন না
+grok_ai_auth_key_remove = Grok API কী সরান

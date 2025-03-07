@@ -202,3 +202,9 @@ deepseek_get_own_key_info=Đăng ký tại platform.deepseek.com và nạp số 
 deepseek_auth_key=Tạo khóa truy cập API trên nền tảng DeepSeek và lưu nó tại đây trong cài đặt
 deepseek_auth_key_warning=Cảnh báo: KHÔNG nhập khóa API của bạn ở bất kỳ nơi nào khác ngoài cửa sổ tiện ích mở rộng này
 deepseek_auth_key_remove=Xóa khóa API DeepSeek
+
+# Grok AI integration (VI)
+grok_ai_get_own_key_info = Đăng ký tại console.x.ai và nạp tiền vào tài khoản (ví dụ: qua thẻ tín dụng)
+grok_ai_auth_key = Tạo khóa API tại nền tảng Grok (X) để truy cập API
+grok_ai_auth_key_warning = Cảnh báo: KHÔNG nhập khóa API của bạn vào bất kỳ nơi nào khác ngoài cửa sổ tiện ích mở rộng này
+grok_ai_auth_key_remove = Xóa khóa API Grok

@@ -7,11 +7,13 @@ export const enum VendorCodeName {
   DEEPL = "deepl",
   OPENAI = "openai",
   DEEPSEEK = "deepseek",
+  GROK = "grok-x-ai",
 }
 
 export * from './google.vendor'
 export * from './bing.vendor'
 export * from './yandex.vendor'
 export * from './deepl.vendor'
-export * from './open-ai.vendor'
 export * from './deepseek.vendor'
+export * from './open-ai.vendor'
+export * from './grok.vendor'

@@ -1,13 +1,12 @@
 import type { ITranslationResult, TranslatePayload } from "../vendors";
 import type { IHistoryItem } from "../components/user-history/history.storage";
-import { broadcastMessage, DeepSeekTranslatePayload, getActiveTab, isBackgroundWorker, Message, OpenAITextToSpeechPayload, OpenAITranslatePayload, sendMessage } from "./index";
+import { AITranslatePayload, broadcastMessage, getActiveTab, isBackgroundWorker, Message, OpenAITextToSpeechPayload, sendMessage } from "./index";
 import { isSystemPage } from "../common-vars";
 import { MessageType, ProxyRequestPayload, ProxyResponsePayload, ProxyResponseType, SaveToFavoritesPayload, SaveToHistoryPayload, StorageDeletePayload, StorageReadPayload, StorageSyncPayload, StorageWritePayload } from "./messages";
 import { handleProxyRequestPayload } from "../background/httpProxy.bgc";
 import { readFromExternalStorage, removeFromExternalStorage, writeToExternalStorage } from "../background/storage.bgc";
 import { getHistoryItemOffline, saveToFavorites, saveToHistory } from "../background/history.bgc";
-import { textToSpeech, translateText as translateTextOpenAi } from "../background/openai.bgc";
-import { translateText as translateTextDeepSeek } from "../background/deepseek.bgc";
+import { textToSpeech, translateText } from "../background/ai.bgc";
 import { toBinaryFile } from "../utils/binary";
 
 export async function getSelectedText(): Promise<string> {
@@ -133,39 +132,6 @@ export const syncExternalStorageUpdate = <T>(payload: StorageSyncPayload<T>) => 
   return broadcastMessage(msg);
 }
 
-export async function openAiTranslationAction<P extends OpenAITranslatePayload>(payload: P) {
-  if (isBackgroundWorker()) {
-    return translateTextOpenAi(payload);
-  }
-
-  return sendMessage<P>({
-    type: MessageType.OPENAI_TRANSLATION,
-    payload,
-  });
-}
-
-export async function openAiTextToSpeechAction<P extends OpenAITextToSpeechPayload>(payload: P) {
-  if (isBackgroundWorker()) {
-    return textToSpeech(payload);
-  }
-
-  return sendMessage<P>({
-    type: MessageType.OPENAI_TTS,
-    payload,
-  });
-}
-
-export async function deepSeekTranslationAction<P extends DeepSeekTranslatePayload>(payload: P) {
-  if (isBackgroundWorker()) {
-    return translateTextDeepSeek(payload);
-  }
-
-  return sendMessage<P>({
-    type: MessageType.DEEPSEEK_TRANSLATION,
-    payload,
-  });
-}
-
 export async function checkContextInvalidationError() {
   try {
     await sendMessage({
@@ -179,4 +145,26 @@ export async function checkContextInvalidationError() {
       err.message.includes("Extension context invalidated")
     );
   }
+}
+
+export async function aiTranslateAction<P extends AITranslatePayload>(payload: P) {
+  if (isBackgroundWorker()) {
+    return translateText(payload);
+  }
+
+  return sendMessage<P>({
+    type: MessageType.AI_TRANSLATION,
+    payload,
+  });
+}
+
+export async function aiTextToSpeechAction<P extends OpenAITextToSpeechPayload>(payload: P) {
+  if (isBackgroundWorker()) {
+    return textToSpeech(payload);
+  }
+
+  return sendMessage<P>({
+    type: MessageType.AI_TEXT_TO_SPEECH,
+    payload,
+  });
 }
