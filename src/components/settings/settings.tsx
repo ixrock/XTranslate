@@ -118,12 +118,12 @@ export class Settings extends React.Component {
 
         <SubTitle>{getMessage("settings_title_appearance")}</SubTitle>
         <article className={styles.grid}>
-          <Checkbox
+          {/*<Checkbox
             label={getMessage("pdf_use_custom_viewer")}
             tooltip={getMessage("pdf_use_custom_viewer_info")}
             checked={settings.customPdfViewer}
             onChange={v => settings.customPdfViewer = v}
-          />
+          />*/}
           <Checkbox
             label={getMessage("show_context_menu")}
             checked={settings.showInContextMenu}
