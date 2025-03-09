@@ -26,10 +26,10 @@ export class ContentScript extends React.Component {
 
   static start() {
     if (document.readyState !== "complete") {
-      window.addEventListener("load", async () => {
+      window.addEventListener("DOMContentLoaded", async () => {
         await delay(100); // give some time for react-hydration to finish work (react-error #418)
         void this.init();
-      });
+      }, { once: true });
     } else {
       void this.init();
     }
