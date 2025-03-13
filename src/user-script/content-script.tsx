@@ -42,6 +42,7 @@ export class ContentScript extends React.Component {
     ContentScript.rootElem = window.document.createElement("div");
     const appElem = ContentScript.rootElem;
     appElem.classList.add("XTranslate");
+    appElem.style.all = "unset"; // reset possible css-collisions with global page styles
 
     const shadowRoot = appElem.attachShadow({ mode: "closed" });
     const rootNode = createRoot(shadowRoot);
