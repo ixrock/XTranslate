@@ -24,11 +24,15 @@ auto_play_tts = Automatické prehrávanie prevodu textu na reč
 use_chrome_tts = Použiť funkciu prevodu textu na reč z Chromu
 use_chrome_tts_tooltip_info = Táto možnosť je povolená vždy, keď prekladač nemá k dispozícii nástroj na preklad
 use_dark_theme = Prepnúť tmavý motív pre toto okno
+tts_default_system_voice = Predvolený systémový hlas
+tts_select_voice_title = Vyberte hlas
+tts_play_demo_sound = Prehrať ukážku hlasu
+tts_play_demo_sound_edit = Upraviť text ukážky hlasu
 import_export_settings = Importovať alebo exportovať nastavenia
 export_settings_button_label = Exportovať nastavenia
 import_settings_button_label = Importovať nastavenia
 import_incorrect_file_format = Nesprávny formát súboru (mal by byť pravdepodobne { $fileNameJson })
-imported_setting_successful = Nastavenia pod kľúčom { $key } importované úspešne
+imported_setting_successful = Nastavenia rozšírenia úspešne importované pre { $key }
 show_context_menu = Zobraziť v kontextovej ponuke stránky
 display_icon_near_selection = Zobraziť ikonu prekladu vedľa vybraného textu
 show_tts_icon_inside_popup = Zobraziť ikonu prevodu textu na reč
@@ -54,6 +58,11 @@ popup_position_left_bottom = Ľavý dolný roh
 popup_position_right_bottom = Pravý dolný roh
 translation_delay = Oneskorenie prekladu
 translation_delay_info = Ak často dochádza k blokovaniu (chyba 503) zo strany Google alebo iných služieb, nastavte väčšiu hodnotu oneskorenia
+reverse_translate_select_placeholder = Spätný preklad jazyka
+reverse_translate_add_action = Pridať reverzný jazyk: { $lang } -> ? (použiteľné len pri voľbe "Automatické zistenie")
+reverse_translate_delete_action = Zrušiť nastavenie jazyka spätného prekladu
+skip_translation_vendor_in_rotation = Preskočiť preklad cez { $vendor } pri prechádzaní pomocou šípok alebo klávesov šípok (vo vyskakovacom okne)
+custom_font_select = Select custom font
 
 # theme
 popup_play_icon_title = Prehrať
@@ -133,12 +142,13 @@ rate_app_button = Hodnotiť v obchode s rozšíreniami
 rate_app_button_later = Pripomenúť mi to neskôr
 deepl_get_own_key_info = Zaregistrujte sa na stránke www.deepl.com a získajte vlastný bezplatný autentifikačný kľúč pre rozhranie API DeepL.
 deepl_insert_auth_key = Nastaviť autorizačný kľúč pre rozhranie DeepL API.
+deepl_insert_auth_key_warning = Upozornenie: NEZADÁVAJTE svoj kľúč API na iné miesto okrem tohto okna rozšírenia.
+deepl_insert_auth_key_remove = Odstrániť kľúč API DeepL
 target_lang_placeholder = Cieľové jazyky
 source_lang_placeholder = Zdrojové jazyky
 favorites_lang_title = Obľúbené
 favorites_info_tooltip = Ak chcete označiť/odznačiť jazyk ako obľúbený (zoznam sa zobrazí v hornej časti), použite { $hotkey } + klik
 donate_title = Prispieť
-donate_via = Prispieť cez
 donate_copy_wallet = Kopírovať adresu
 donate_description = Ak sa vám rozšírenie páči, zvážte možnosť prispieť vývojárom. Ďakujeme!
 service_unavailable = Služba je nedostupná. Skúste to znova po 5 - 25 minútach. Ak sa to deje neustále, zvýšte oneskorenie prekladu v nastaveniach.
@@ -148,51 +158,53 @@ service_confirm_not_a_robot = Môžete tiež prejsť na { $link } a potvrdiť, �
 privacy_policy_title_updated = Zásady ochrany osobných údajov boli aktualizované
 privacy_policy_accept_terms = Prijať zmluvné podmienky
 
-# mellowtel integration (SK)
-mellowtel_greetings=Ahoj, priateľ 👋
-mellowtel_text1=Ako možno viete, toto rozšírenie je zadarmo a je k dispozícii pre každého... ale aby sme ho mohli udržať, tentoraz vyžadujeme od vás určitú akciu!
-mellowtel_text2=Táto nová verzia obsahuje open-source knižnicu { $link }. Táto knižnica vám umožňuje zdieľať váš nevyužitý internet s dôveryhodnými AI laboratóriami a startupmi, ktoré ho využívajú na trénovanie svojich modelov.
-mellowtel_usage_title=Mellowtel využívame na:
-mellowtel_usage1=Sledovanie výpadkov služby
-mellowtel_usage2=Meranie kvality služby
-mellowtel_usage3=Ako vývojár tohto rozšírenia získate malý podiel z príjmov
-mellowtel_accept_all_info1=Ak si vyberiete 'Prijať všetko', využijeme aj Mellowtel API na: Umožniť dôveryhodným partnerom prístup k internetovým zdrojom tým, že časť ich prevádzky bude smerovaná cez váš uzol v sieti.
-mellowtel_accept_all_info2=Mellowtel zdieľa len vašu šírku pásma. Bezpečnosť a súkromie sú 100% zaručené a knižnica je open-source pre všetkých na prezeranie.
-mellowtel_regulation1=Neposkytuje, nezdieľa ani nepredáva osobné údaje (ani anonymizované dáta).
-mellowtel_regulation2=Je tiež prísne regulovaný: Mellowtel neustále komunikuje s regulátormi Chrome Web Store, aby zaručil bezpečný zážitok.
-mellowtel_regulation3=Taktiež poskytuje regulátorom CWS nástroje na monitorovanie a zabezpečenie dodržiavania pravidiel.
-mellowtel_button_decline=Odmietnuť voliteľné použitie
-mellowtel_button_accept=Prijať všetko
-mellowtel_dialog_footer=Ďakujeme, že ste si našli čas na prečítanie, tímy { $devs }.
+# mellowtel integration
+mellowtel_greetings = Ahoj, kamarát 👋
+mellowtel_text1 = Ako možno viete, toto rozšírenie je zadarmo a je k dispozícii pre každého... ale aby sme ho mohli udržať, tentoraz vyžadujeme od vás určitú akciu!
+mellowtel_text2 = Táto nová verzia obsahuje knižnicu s otvoreným kódom { $link }. Táto knižnica vám umožňuje zdieľať váš nevyužitý internet s dôveryhodnými AI laboratóriami a startupmi, ktoré ho využívajú na trénovanie svojich modelov.
+mellowtel_usage_title = Mellowtel využívame na:
+mellowtel_usage1 = Sledovanie výpadkov služby
+mellowtel_usage2 = Meranie kvality služby
+mellowtel_usage3 = Ako vývojár tohto rozšírenia získate malý podiel z príjmov
+mellowtel_accept_all_info1 = Ak zvolíte možnosť "Prijať všetko", budeme tiež používať rozhranie API spoločnosti Mellowtel na: umožní dôveryhodným partnerom prístup k internetovým zdrojom tým, že časť ich prevádzky bude smerovaná aj cez váš uzol v sieti.
+mellowtel_accept_all_info2 = Mellowtel zdieľa len vašu šírku pásma. Bezpečnosť a súkromie sú 100% zaručené a knižnica má otvorený kód pre všetkých na prezeranie.
+mellowtel_regulation1 = Neposkytuje, nezdieľa ani nepredáva osobné údaje (ani anonymizované údaje).
+mellowtel_regulation2 = Je tiež prísne regulovaný: Mellowtel neustále komunikuje s regulátormi Chrome Web Store, aby zaručil bezpečný zážitok.
+mellowtel_regulation3 = Taktiež poskytuje regulátorom CWS nástroje na monitorovanie a zabezpečenie dodržiavania pravidiel.
+mellowtel_button_decline = Odmietnuť voliteľné použitie
+mellowtel_button_accept = Prijať všetko
+mellowtel_dialog_footer = Ďakujeme, že ste si našli čas na prečítanie, tímy { $devs }.
 
-# various error messages (SK)
-error_403_auth_failed=Autorizácia zlyhala. Prosím, zadajte platný API kľúč v nastaveniach.
+# various error messages
+error_403_auth_failed = Autorizácia zlyhala. Prosím, zadajte platný kľúč API v nastaveniach.
 
-# open-ai integration (SK)
-open_ai_get_access_info=1) Zaregistrujte sa na platform.openai.com 2) Vytvorte API kľúč 3) Doplňte svoj zostatok (5$+)
-open_ai_insert_auth_key=Zadajte svoj API kľúč pre získanie prekladov od OpenAI
-open_ai_insert_auth_key_warning=Upozornenie: Nezadávajte svoj API kľúč nikde inde, okrem tohto okna rozšírenia
-open_ai_insert_auth_key_remove=Odstrániť OpenAI API kľúč
-open_ai_choose_model=Vyberte AI model
-open_ai_choose_model_cost_efficient=Najúspornejší z hľadiska nákladov
-open_ai_choose_model_optimal=Odporúčaný model
-open_ai_choose_model_chatgpt_like=ChatGPT (môže byť drahý)
-open_ai_choose_model_best_results=Najlepšie výsledky (najdrahší)
-open_ai_choose_model_reasoning=Model uvažovania (najnovší a nákladovo efektívny v sérii)
-open_ai_why_info_help=Pri použití vlastného účtu na platforme OpenAI a zadaní API kľúča ušetríte veľa peňazí, namiesto využívania služieb „prostredníka“ z iných aplikácií/rozšírení, kde zvyčajne platíte mesačné/ročné predplatné a kde ceny a limity používania nie sú vo vašej kontrole. Nezabudnite nastaviť limity používania na platform.openai.com a vypnúť automatické dobíjanie kreditnej karty.
+# open-ai integration
+open_ai_get_access_info =1) Zaregistrujte sa na platform.openai.com 2) Vytvorte kľúč API 3) Dobite si kredit (5$+)
+open_ai_insert_auth_key =Zadajte kľúč API na získanie prekladov od OpenAI
+open_ai_insert_auth_key_warning = Upozornenie: Nezadávajte kľúč API nikde inde, okrem tohto okna rozšírenia
+open_ai_insert_auth_key_remove = Odstrániť kľúč OpenAI API
+open_ai_choose_model = Vyberte AI model
+open_ai_choose_model_cost_efficient = Najúspornejší z hľadiska nákladov
+open_ai_choose_model_optimal = Odporúčaný model
+open_ai_choose_model_chatgpt_like = ChatGPT (môže byť drahý)
+open_ai_choose_model_best_results = Najlepšie výsledky (najdrahší)
+open_ai_why_info_help =
+Pri použití vlastného účtu na platforme OpenAI a zadaní kľúča API ušetríte veľa peňazí, namiesto využívania služieb „sprostredkovateľa“ z iných aplikácií/rozšírení,
+kde zvyčajne platíte mesačné/ročné predplatné a kde ceny a limity používania nie sú vo vašej kontrole.
+Nezabudnite nastaviť limity používania na platform.openai.com a vypnúť automatické dobíjanie kreditu.
 
-# PDF translations suppot via pdf.js (SK)
-pdf_use_custom_viewer=Podpora prekladov v PDF súboroch
-pdf_use_custom_viewer_info=Táto možnosť nahradí predvolený prehliadač PDF
+# PDF translations suppot via pdf.js
+pdf_use_custom_viewer = Podpora prekladov v PDF súboroch
+pdf_use_custom_viewer_info = Táto možnosť nahradí predvolený prehliadač PDF
 
-# DeepSeek AI integration (SK)
-deepseek_get_own_key_info=Zaregistrujte sa na platform.deepseek.com a dobite si kredit (napr. cez PayPal)
-deepseek_auth_key=Vytvorte si prístupový kľúč API na platforme DeepSeek a uložte ho sem do nastavení
-deepseek_auth_key_warning=Upozornenie: NEZADÁVAJTE svoj API kľúč nikde inde okrem tohto okna rozšírenia
-deepseek_auth_key_remove=Odstrániť API kľúč DeepSeek
+# DeepSeek AI integration
+deepseek_get_own_key_info = Zaregistrujte sa na platform.deepseek.com a dobite si kredit (napr. cez PayPal)
+deepseek_auth_key = Vytvorte si prístupový kľúč API na platforme DeepSeek a uložte ho sem do nastavení
+deepseek_auth_key_warning = Upozornenie: NEZADÁVAJTE svoj kľúč API nikde inde okrem tohto okna rozšírenia
+deepseek_auth_key_remove = Odstrániť kľúč API DeepSeek
 
-# Grok AI integration (SK)
-grok_ai_get_own_key_info = Zaregistrujte sa na console.x.ai a dobiť zostatok (napr. prostredníctvom kreditnej karty)
-grok_ai_auth_key = Vytvorte API kľúč na platforme Grok (X), aby ste získali prístup k API
-grok_ai_auth_key_warning = Varovanie: NEVKLADAJTE svoj API kľúč nikde inde okrem tohto okna rozšírenia
-grok_ai_auth_key_remove = Odstrániť API kľúč Grok
+# Grok AI integration
+grok_ai_get_own_key_info = Zaregistrujte sa na console.x.ai a dobite si kredit (napr. prostredníctvom kreditnej karty)
+grok_ai_auth_key = Vytvorte kľúč API na platforme Grok (X), aby ste získali prístup k API
+grok_ai_auth_key_warning = Upozornenie: NEVKLADAJTE svoj kľúč API nikde inde okrem tohto okna rozšírenia
+grok_ai_auth_key_remove = Odstrániť kľúč API Grok
