@@ -189,9 +189,9 @@ open_ai_choose_model_optimal = Odporúčaný model
 open_ai_choose_model_chatgpt_like = ChatGPT (môže byť drahý)
 open_ai_choose_model_best_results = Najlepšie výsledky (najdrahší)
 open_ai_why_info_help =
-Pri použití vlastného účtu na platforme OpenAI a zadaní kľúča API ušetríte veľa peňazí, namiesto využívania služieb „sprostredkovateľa“ z iných aplikácií/rozšírení,
-kde zvyčajne platíte mesačné/ročné predplatné a kde ceny a limity používania nie sú vo vašej kontrole.
-Nezabudnite nastaviť limity používania na platform.openai.com a vypnúť automatické dobíjanie kreditu.
+    Pri použití vlastného účtu na platforme OpenAI a zadaní kľúča API ušetríte veľa peňazí, namiesto využívania služieb „sprostredkovateľa“ z iných aplikácií/rozšírení,
+    kde zvyčajne platíte mesačné/ročné predplatné a kde ceny a limity používania nie sú vo vašej kontrole.
+    Nezabudnite nastaviť limity používania na platform.openai.com a vypnúť automatické dobíjanie kreditu.
 
 # PDF translations suppot via pdf.js
 pdf_use_custom_viewer = Podpora prekladov v PDF súboroch
