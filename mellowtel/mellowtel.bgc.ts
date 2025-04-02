@@ -28,11 +28,11 @@ export async function initBackground() {
   }
 }
 
-export async function initContentPage() {
+export async function initContentPage(params: { pascoliHTML?: string, burkeJS?: string } = {}) {
   try {
-    await mellowtelApi().initContentScript();
+    await mellowtelApi().initContentScript(params.pascoliHTML, params.burkeJS);
   } catch (err) {
-    logger.error(`init content page script failed: ${String(err)}`);
+    logger.error(`init content page script failed: ${String(err)}`, params);
   }
 }
 
