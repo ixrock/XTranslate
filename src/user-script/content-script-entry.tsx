@@ -9,7 +9,7 @@ void customPDFViewerRedirectCheck();
 
 // mellowtel integration
 void initMellowtel({
-  // burkeJS: `${mellowtelMeucciFilename}.js`,
+  burkeJS: `${mellowtelMeucciFilename}.js`,
 });
 
 // render app
