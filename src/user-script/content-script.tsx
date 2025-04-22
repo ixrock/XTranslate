@@ -64,7 +64,8 @@ export class ContentScript extends React.Component {
   private popup: Popup;
   private isDblClicked = false;
   private isHotkeyActivated = false;
-  private mousePos = { x: 0, y: 0, pageX: 0, pageY: 0 };
+  private mousePos = { x: 0, y: 0 };
+  private mouseTarget: HTMLElement = document.body;
 
   // Unload previous content script (e.g. in case of "context invalidated" error on extension update to new version)
   private unloadContentScript = disposer();
@@ -362,11 +363,16 @@ export class ContentScript extends React.Component {
     evt.stopPropagation();
   }
 
-  onMouseMove({ clientX, clientY, pageX, pageY }: MouseEvent) {
-    this.mousePos.x = clientX; // relative to viewport
+  private getMouseTopElement(evt: MouseEvent): HTMLElement {
+    return evt.composedPath()[0] as HTMLElement;
+  }
+
+  onMouseMove(evt: MouseEvent) {
+    const { clientX, clientY } = evt;
+
+    this.mousePos.x = clientX;
     this.mousePos.y = clientY;
-    this.mousePos.pageX = pageX; // with page scroll
-    this.mousePos.pageY = pageY;
+    this.mouseTarget = this.getMouseTopElement(evt);
   }
 
   onMouseDown(evt: MouseEvent) {
@@ -410,42 +416,47 @@ export class ContentScript extends React.Component {
         break;
       }
     }
+
     // handle text translation by hotkey
-    if (!settingsStore.data.showPopupOnHotkey) {
-      return;
-    }
+    if (!settingsStore.data.showPopupOnHotkey) return;
     const pressedHotkey = getHotkey(evt);
     const userHotkey = toJS(settingsStore.data.hotkey);
+
     if (isEqual(userHotkey, pressedHotkey) && this.isPopupHidden) {
       evt.preventDefault();
       this.isHotkeyActivated = true;
+      this.translateFromTopElement();
+    }
+  }
 
-      let text = this.selectedText;
-      const mouseTarget = document.elementFromPoint(this.mousePos.x, this.mousePos.y) as HTMLElement;
-      const notRoot = mouseTarget !== document.documentElement && mouseTarget !== document.body;
-      const autoSelectText = !text && notRoot && ContentScript.isOutsideRenderRoot(mouseTarget);
-      if (autoSelectText) {
-        if (["input", "textarea", "img"].includes(mouseTarget.nodeName.toLowerCase())) {
-          if (mouseTarget instanceof HTMLInputElement || mouseTarget instanceof HTMLTextAreaElement) {
-            text = mouseTarget.value || mouseTarget.placeholder;
-          }
-          if (mouseTarget instanceof HTMLImageElement) {
-            text = mouseTarget.title || mouseTarget.alt;
-          }
-          if (text) {
-            this.selectionRects = [this.normalizeRect(mouseTarget.getBoundingClientRect())];
-          }
-        } else {
-          mouseTarget.style.userSelect = "auto"; // make sure selection is not blocked from css
-          this.selection.selectAllChildren(mouseTarget);
-          this.saveSelectionRects();
-          text = this.selection.toString().trim();
-          mouseTarget.style.userSelect = null;
+  private translateFromTopElement() {
+    let { selectedText: text, mouseTarget } = this;
+
+    const notRoot = mouseTarget !== document.documentElement && mouseTarget !== document.body;
+    const autoSelectText = !text && notRoot && ContentScript.isOutsideRenderRoot(mouseTarget);
+
+    if (autoSelectText) {
+      if (["input", "textarea", "img"].includes(mouseTarget.nodeName.toLowerCase())) {
+        if (mouseTarget instanceof HTMLInputElement || mouseTarget instanceof HTMLTextAreaElement) {
+          text = mouseTarget.value || mouseTarget.placeholder;
         }
+        if (mouseTarget instanceof HTMLImageElement) {
+          text = mouseTarget.title || mouseTarget.alt;
+        }
+        if (text) {
+          this.selectionRects = [this.normalizeRect(mouseTarget.getBoundingClientRect())];
+        }
+      } else {
+        mouseTarget.style.userSelect = "auto"; // make sure selection is not blocked from css
+        this.selection.selectAllChildren(mouseTarget);
+        this.saveSelectionRects();
+        text = this.selection.toString().trim();
+        mouseTarget.style.userSelect = null;
       }
-      if (text) {
-        this.translateLazy({ text });
-      }
+    }
+
+    if (text) {
+      this.translateLazy({ text });
     }
   }
 
