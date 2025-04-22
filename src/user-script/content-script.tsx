@@ -261,9 +261,18 @@ export class ContentScript extends React.Component {
   }
 
   saveSelectionRects() {
-    if (this.selection.rangeCount > 0) {
-      let { anchorOffset, anchorNode, focusNode, focusOffset } = this.selection;
-      const range = this.selection.getRangeAt(0);
+    let { selection, mouseTarget } = this;
+    const rootParent = mouseTarget?.getRootNode();
+    const isShadowDOMInternals = rootParent instanceof ShadowRoot;
+
+    if (isShadowDOMInternals) {
+      // @ts-ignore "get text selection from shadow-root node"
+      selection = rootParent.getSelection();
+    }
+
+    if (selection.rangeCount > 0) {
+      let { anchorOffset, anchorNode, focusNode, focusOffset } = selection;
+      const range = selection.getRangeAt(0);
       if (anchorNode !== focusNode) {
         const commonAncestorText = range.commonAncestorContainer.textContent;
         anchorOffset = commonAncestorText.indexOf(anchorNode.textContent);
