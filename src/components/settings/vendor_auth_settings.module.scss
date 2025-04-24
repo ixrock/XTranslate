@@ -2,7 +2,7 @@
 
 .VendorAuthSettings {
   display: flex;
-  gap: var(--flex-gap);
+  gap: var(--theme-spacing);
   align-items: center;
 }
 
@@ -14,6 +14,6 @@
   @include pseudo-link;
 
   display: flex;
-  gap: var(--flex-gap);
+  gap: var(--theme-spacing);
   font-size: small;
 }

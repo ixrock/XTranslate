@@ -2,7 +2,6 @@
 @use "../theme" as *;
 
 @include theme-setup();
-@import "~flex.box/src/flexbox.css"; // TODO: get rid of outdated dependency
 
 *, *:before, *:after {
   box-sizing: border-box;
@@ -71,5 +70,47 @@ hr {
 
   .not-found {
     text-align: center;
+  }
+}
+
+.flex {
+  display: flex;
+
+  &.column {
+    flex-direction: column;
+  }
+
+  &.gaps {
+    gap: var(--flex-spacing, var(--theme-spacing));
+  }
+
+  &.auto > * {
+    flex: 1 1 0;
+  }
+
+  &.justify-center {
+    justify-content: center;
+  }
+
+  &.align-center {
+    align-items: center;
+  }
+
+  &.center {
+    margin: auto;
+  }
+
+  > .box {
+    &.grow {
+      flex: 1 0;
+    }
+
+    &.noshrink {
+      flex-shrink: 0;
+    }
+
+    &.center {
+      margin: auto;
+    }
   }
 }

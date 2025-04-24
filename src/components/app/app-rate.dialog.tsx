@@ -25,10 +25,10 @@ export class AppRateDialog extends React.Component {
   }
 
   visibilityCheck() {
-    var isRated = rateButtonClicked.get();
-    var delayLastTime = rateLastTimestamp.get();
-    var delayDuration = 1000 * 60 * 60 * 24 * 30 * 2; // 2 months
-    var isHidden = isRated || (delayLastTime + delayDuration > Date.now());
+    const isRated = rateButtonClicked.get();
+    const delayLastTime = rateLastTimestamp.get();
+    const delayDuration = 1000 * 60 * 60 * 24 * 30 * 2; // 2 months
+    const isHidden = isRated || (delayLastTime + delayDuration > Date.now());
     this.isOpen = !isHidden;
   }
 

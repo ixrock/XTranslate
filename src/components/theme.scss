@@ -2,7 +2,10 @@
 @use "./colors" as *;
 
 @mixin theme-vars() {
-  --flex-gap: var(--theme-spacing);
+  --theme-spacing: 10px;
+  --theme-spacing-half: calc(var(--theme-spacing) / 2);
+  --theme-spacing-double: calc(var(--theme-spacing) * 2);
+  --theme-border-radius: 5px;
   --theme-content-min-width: 600px;
   --theme-content-width: clamp(var(--theme-content-min-width), 1000px, 100%);
   --theme-content-height: 600px;
@@ -16,10 +19,6 @@
   --theme-color-success: #{$green-600};
   --theme-color-error: #{$red-500};
   --theme-border-color: rgba(from var(--theme-color-text) r g b / .5);
-  --theme-border-radius: 5px;
-  --theme-spacing: 10px;
-  --theme-spacing-half: calc(var(--theme-spacing) / 2);
-  --theme-spacing-double: calc(var(--theme-spacing) * 2);
   --theme-scrollbar-bgc: rgba(0, 0, 0, .25);
   --theme-scrollbar-size: var(--theme-spacing);
 }

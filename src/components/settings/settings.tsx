@@ -97,7 +97,7 @@ export class Settings extends React.Component {
                 [styles.vendorSkippedInRotation]: skipInRotation,
               });
               return (
-                <div key={name} className={cssNames(styles.vendor, "flex gaps")}>
+                <div key={name} className="vendor flex gaps align-center">
                   <Checkbox
                     checked={skipInRotation}
                     onChange={checked => settingsStore.data.skipVendorInRotation[name] = checked}

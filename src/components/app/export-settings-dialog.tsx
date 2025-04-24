@@ -28,14 +28,14 @@ export interface ImportExportSettings {
   favorites?: StorableSettings<FavoriteStorageModel>;
 }
 
-export interface Props extends DialogProps {
+export interface ImportExportSettingsDialogProps extends DialogProps {
 }
 
-const defaultProps: Partial<Props> = {};
+const defaultProps: Partial<ImportExportSettingsDialogProps> = {};
 
 @observer
-export class ExportImportSettingsDialog extends React.Component<Props> {
-  static defaultProps = defaultProps as unknown as Props;
+export class ImportExportSettingsDialog extends React.Component<ImportExportSettingsDialogProps> {
+  static defaultProps = defaultProps as unknown as ImportExportSettingsDialogProps;
 
   readonly fileNameJson = "xtranslate-settings.json";
   private fileInput: FileInput<string>;
@@ -43,7 +43,7 @@ export class ExportImportSettingsDialog extends React.Component<Props> {
   @observable.ref dialog: Dialog;
   @observable error = "";
 
-  constructor(props: Props) {
+  constructor(props: ImportExportSettingsDialogProps) {
     super(props);
     makeObservable(this);
   }

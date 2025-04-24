@@ -31,7 +31,7 @@
     position: relative;
     border-bottom: 1px solid var(--theme-border-color);
     display: flex;
-    gap: var(--flex-gap);
+    gap: var(--theme-spacing);
     align-items: center;
 
     &:after {
@@ -82,7 +82,7 @@
 
   .inputInfo {
     display: flex;
-    gap: var(--flex-gap);
+    gap: var(--theme-spacing);
 
     .errors {
       flex: 1;
