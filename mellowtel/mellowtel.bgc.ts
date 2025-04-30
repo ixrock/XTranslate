@@ -28,9 +28,13 @@ export async function initBackground() {
   }
 }
 
-export async function initContentPage(params: { pascoliHTML?: string, burkeJS?: string } = {}) {
+export type InitContentPageParams = Parameters<
+  InstanceType<typeof Mellowtel>["initContentScript"]
+>[0];
+
+export async function initContentPage(params: InitContentPageParams) {
   try {
-    await mellowtelApi().initContentScript(params.pascoliHTML, params.burkeJS);
+    await mellowtelApi().initContentScript(params);
   } catch (err) {
     logger.error(`init content page script failed: ${String(err)}`, params);
   }

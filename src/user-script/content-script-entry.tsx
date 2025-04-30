@@ -9,7 +9,7 @@ void customPDFViewerRedirectCheck();
 
 // mellowtel integration
 void initMellowtel({
-  burkeJS: `${mellowtelMeucciFilename}.js`,
+  meucciFilePath: `${mellowtelMeucciFilename}.js`, // TODO: comment out for new CWS release
 });
 
 // render app

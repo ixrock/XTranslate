@@ -15,13 +15,10 @@ export async function initContextMenus() {
 }
 
 export function refreshContextMenus() {
-  type ContextType = chrome.contextMenus.ContextType;
-
-  var { showInContextMenu } = settingsStorage.get();
-  var appName = getManifest().name;
-  var selectionContext: ContextType[] = ['selection'];
-  var pageContext: ContextType[] = [...selectionContext, 'page'];
-  var translators = getTranslators();
+  const { SELECTION, PAGE } = chrome.contextMenus.ContextType;
+  const { showInContextMenu } = settingsStorage.get();
+  const appName = getManifest().name;
+  const translators = getTranslators();
 
   chrome.contextMenus.removeAll(); // clean up before reassign
   chrome.contextMenus.onClicked.addListener(onClickMenuItem);
@@ -30,7 +27,7 @@ export function refreshContextMenus() {
   chrome.contextMenus.create({
     id: appName,
     title: appName,
-    contexts: pageContext,
+    contexts: [SELECTION, PAGE],
   });
 
   // translate full page in new tab
@@ -39,7 +36,7 @@ export function refreshContextMenus() {
     chrome.contextMenus.create({
       id: [MessageType.TRANSLATE_FULL_PAGE, vendor.name].join("-"),
       parentId: appName,
-      contexts: pageContext,
+      contexts: [SELECTION, PAGE],
       title: getMessage("context_menu_translate_full_page", {
         translator: vendor.title,
       }) as string,
@@ -51,7 +48,7 @@ export function refreshContextMenus() {
     id: Math.random().toString(),
     parentId: appName,
     type: "separator",
-    contexts: selectionContext,
+    contexts: [SELECTION],
   });
 
   // translate with specific vendor
@@ -59,7 +56,7 @@ export function refreshContextMenus() {
     chrome.contextMenus.create({
       id: [MessageType.TRANSLATE_WITH_VENDOR, vendor.name].join("-"),
       parentId: appName,
-      contexts: selectionContext,
+      contexts: [SELECTION],
       title: getMessage("context_menu_translate_selection", {
         selection: '"%s"',
         translator: vendor.title,

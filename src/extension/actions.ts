@@ -6,7 +6,7 @@ import { MessageType, ProxyRequestPayload, ProxyResponsePayload, ProxyResponseTy
 import { handleProxyRequestPayload } from "../background/httpProxy.bgc";
 import { readFromExternalStorage, removeFromExternalStorage, writeToExternalStorage } from "../background/storage.bgc";
 import { getHistoryItemOffline, saveToFavorites, saveToHistory } from "../background/history.bgc";
-import { textToSpeech, translateText } from "../background/ai.bgc";
+import { textToSpeech, translateText } from "../background/open-ai.bgc";
 import { toBinaryFile } from "../utils/binary";
 
 export async function getSelectedText(): Promise<string> {
