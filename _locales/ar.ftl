@@ -186,7 +186,6 @@ open_ai_insert_auth_key_remove = إزالة مفتاح API OpenAI
 open_ai_choose_model = اختر نموذج الذكاء الاصطناعي
 open_ai_choose_model_cost_efficient = الأكثر كفاءة من حيث التكلفة
 open_ai_choose_model_optimal = النموذج الموصى به
-open_ai_choose_model_chatgpt_like = ChatGPT (قد يكون مكلفًا)
 open_ai_choose_model_best_results = أفضل نتائج (الأكثر تكلفة)
 open_ai_why_info_help =
     من خلال استخدام حسابك الخاص في منصة OpenAI مباشرة وتقديم مفتاح API، يمكنك توفير الكثير من المال عوضًا عن استخدام خدمات "الوسيط" من تطبيقات أو إضافات أخرى،

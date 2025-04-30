@@ -193,7 +193,6 @@ open_ai_insert_auth_key_remove = Удалить ключ доступа OpenAI A
 open_ai_choose_model = Выберите AI-модель
 open_ai_choose_model_cost_efficient = Наиболее экономичная
 open_ai_choose_model_optimal = Рекомендуемая / оптимальная модель
-open_ai_choose_model_chatgpt_like = ChatGPT (может быть дорого)
 open_ai_choose_model_best_results = Лучшие результаты (наиболее дорогое)
 open_ai_why_info_help =
   Предоставляя свой собственный ключ API платформы OpenAI, вы экономите много денег, вместо использования услуг "посредников" из других приложений/расширений,

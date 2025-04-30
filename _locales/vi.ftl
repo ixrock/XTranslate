@@ -186,7 +186,6 @@ open_ai_insert_auth_key_remove = Xóa khóa API OpenAI
 open_ai_choose_model = Chọn mô hình AI
 open_ai_choose_model_cost_efficient = Tiết kiệm chi phí nhất
 open_ai_choose_model_optimal = Mô hình khuyến nghị
-open_ai_choose_model_chatgpt_like = ChatGPT (có thể tốn kém)
 open_ai_choose_model_best_results = Kết quả tốt nhất (tốn kém nhất)
 open_ai_why_info_help =
     Bằng cách sử dụng tài khoản của bạn trên nền tảng OpenAI trực tiếp và cung cấp khóa API, bạn có thể tiết kiệm rất nhiều tiền so với việc sử dụng các dịch vụ "trung gian" từ các ứng dụng hoặc tiện ích mở rộng khác,

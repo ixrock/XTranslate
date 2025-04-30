@@ -186,7 +186,6 @@ open_ai_insert_auth_key_remove = Remove OpenAI API key
 open_ai_choose_model = Choose AI model
 open_ai_choose_model_cost_efficient = Most cost-efficient
 open_ai_choose_model_optimal = Recommended model
-open_ai_choose_model_chatgpt_like = ChatGPT (might be expensive)
 open_ai_choose_model_best_results = Best results (most expensive)
 open_ai_why_info_help =
  By using your own OpenAI platform's account directly and proving api key you saves a lot of money instead of using "middle-of-the-man" services from other apps/extensions,

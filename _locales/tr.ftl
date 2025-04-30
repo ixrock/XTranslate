@@ -176,7 +176,6 @@ open_ai_insert_auth_key_remove=OpenAI API anahtarını kaldır
 open_ai_choose_model=AI modelini seçin
 open_ai_choose_model_cost_efficient=En maliyet etkin
 open_ai_choose_model_optimal=Önerilen model
-open_ai_choose_model_chatgpt_like=ChatGPT (pahalı olabilir)
 open_ai_choose_model_best_results=En iyi sonuçlar (en pahalı)
 open_ai_choose_model_reasoning=Akıl yürütme modeli (seride en yeni ve maliyet etkin)
 open_ai_why_info_help=Kendi OpenAI platform hesabınızı doğrudan kullanıp API anahtarınızı sağladığınızda, diğer uygulama/eklenti aracılığıyla "aracı hizmetler" kullanmak yerine çok para tasarrufu sağlarsınız; bu hizmetlerde genellikle aylık/yıllık abonelik ücreti ödersiniz ve tüm fiyatlar ile kullanım limitleri sizin kontrolünüzde olmaz. platform.openai.com'da kullanım limitlerini ayarlamayı ve kredi kartınızın otomatik bakiye yüklemesini devre dışı bırakmayı unutmayın.

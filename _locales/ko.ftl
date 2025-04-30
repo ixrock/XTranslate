@@ -186,7 +186,6 @@ open_ai_insert_auth_key_remove = OpenAI API 키 제거
 open_ai_choose_model = AI 모델 선택
 open_ai_choose_model_cost_efficient = 가장 비용 효율적인
 open_ai_choose_model_optimal = 권장 모델
-open_ai_choose_model_chatgpt_like = ChatGPT (비용이 많이 들 수 있음)
 open_ai_choose_model_best_results = 최고의 결과 (가장 비싼)
 open_ai_why_info_help =
  자신의 OpenAI 플랫폼 계정을 직접 사용하고 API 키를 제공함으로써, 다른 앱 또는 확장 프로그램의 "중개" 서비스를 사용하는 것보다 많은 돈을 절약할 수 있습니다.

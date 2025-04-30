@@ -186,7 +186,6 @@ open_ai_insert_auth_key_remove = Odstrániť kľúč OpenAI API
 open_ai_choose_model = Vyberte AI model
 open_ai_choose_model_cost_efficient = Najúspornejší z hľadiska nákladov
 open_ai_choose_model_optimal = Odporúčaný model
-open_ai_choose_model_chatgpt_like = ChatGPT (môže byť drahý)
 open_ai_choose_model_best_results = Najlepšie výsledky (najdrahší)
 open_ai_why_info_help =
     Pri použití vlastného účtu na platforme OpenAI a zadaní kľúča API ušetríte veľa peňazí, namiesto využívania služieb „sprostredkovateľa“ z iných aplikácií/rozšírení,
