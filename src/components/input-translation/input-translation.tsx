@@ -8,6 +8,7 @@ import { observer } from "mobx-react";
 import { getTranslator, getTranslators, isRTL, ITranslationError, ITranslationResult } from "../../vendors";
 import { getSelectedText, saveToFavoritesAction } from "../../extension/actions";
 import { bindGlobalHotkey, createLogger, cssNames, disposer, SimpleHotkey } from "../../utils";
+import { copyToClipboard } from "../../utils/copy-to-clipboard";
 import { SelectLanguage } from "../select-language";
 import { Input } from "../input";
 import { Option, Select } from "../select";
@@ -60,6 +61,7 @@ export class InputTranslation extends React.Component<Props> {
   @observable isLoading = false;
   @observable translation?: ITranslationResult;
   @observable error?: ITranslationError;
+  @observable copied = false;
 
   constructor(props: object) {
     super(props);
@@ -219,20 +221,34 @@ export class InputTranslation extends React.Component<Props> {
     this.input.focus();
   }
 
+  @action.bound
+  async copyToClipboard() {
+    await copyToClipboard(this.translation, { sourceText: false });
+    this.copied = true;
+    setTimeout(() => this.copied = false, 2500);
+  }
+
   renderTranslationResult() {
-    var { langTo, langDetected, translation, transcription, dictionary, spellCorrection, sourceLanguages, vendor } = this.translation;
-    var translator = getTranslator(vendor);
-    var favorite = isFavorite(this.translation);
+    const { langTo, langDetected, translation, transcription, dictionary, spellCorrection, sourceLanguages, vendor } = this.translation;
+    const translator = getTranslator(vendor);
+    const favorite = isFavorite(this.translation);
 
     return (
       <div className={cssNames("translation-results", { rtl: isRTL(langTo) })}>
         {translation ?
           <div className="translation flex gaps align-center">
-            <Icon
-              material="play_circle_outline"
-              title={getMessage("popup_play_icon_title")}
-              onClick={this.playText}
-            />
+            <div className="flex column gaps">
+              <Icon
+                material="play_circle_outline"
+                tooltip={getMessage("popup_play_icon_title")}
+                onClick={this.playText}
+              />
+              <Icon
+                material={this.copied ? "task_alt" : "content_copy"}
+                tooltip={getMessage("popup_copy_translation_title")}
+                onClick={this.copyToClipboard}
+              />
+            </div>
             <div className="value box grow">
               <span>{translation}</span>
               {transcription ? <i className="transcription">[{transcription}]</i> : null}

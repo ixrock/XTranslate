@@ -186,7 +186,6 @@ open_ai_insert_auth_key_remove = 移除 OpenAI API 金鑰
 open_ai_choose_model = 選擇 AI 模型
 open_ai_choose_model_cost_efficient = 最具成本效益
 open_ai_choose_model_optimal = 推薦模型
-open_ai_choose_model_chatgpt_like = ChatGPT（可能較昂貴）
 open_ai_choose_model_best_results = 最佳結果（最昂貴）
 open_ai_why_info_help =
 通過直接使用您自己的 OpenAI 平台帳戶並提供 API 金鑰，您可以節省大量金錢，而不是使用其他應用/擴充功能的“中間人”服務，

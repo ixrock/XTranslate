@@ -14,8 +14,7 @@ import { Footer } from './footer'
 import { Notifications } from "../notifications";
 import { getUrlParams } from "../../navigation";
 import { pageManager } from "./page-manager";
-import { DonationDialog } from "./donation-dialog";
-import { ExportImportSettingsDialog } from "./export-settings-dialog";
+import { ImportExportSettingsDialog } from "./export-settings-dialog";
 import { PrivacyDialog } from "./privacy-dialog";
 import { AppRateDialog } from "./app-rate.dialog";
 import { dialogsState } from "./dialogs-state";
@@ -63,11 +62,7 @@ export class App extends React.Component {
         />
         <Footer/>
         <Notifications/>
-        <DonationDialog
-          isOpen={dialogsState.showDonationDialog}
-          onClose={() => dialogsState.showDonationDialog = false}
-        />
-        <ExportImportSettingsDialog
+        <ImportExportSettingsDialog
           isOpen={dialogsState.showImportExportDialog}
           onClose={() => dialogsState.showImportExportDialog = false}
         />

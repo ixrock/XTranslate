@@ -42,16 +42,13 @@ export class PrivacyDialog extends React.Component<PrivacyDialogProps> {
           this.dialog = elem;
         }}
       >
-        <div className="flex column gaps">
-          <h3>{getMessage("privacy_policy_title_updated")}</h3>
-          {this.renderPolicyText()}
-          <Button
-            primary
-            className="box center"
-            label={getMessage("privacy_policy_accept_terms")}
-            onClick={this.accept}
-          />
-        </div>
+        <h3>{getMessage("privacy_policy_title_updated")}</h3>
+        {this.renderPolicyText()}
+        <Button
+          primary
+          label={getMessage("privacy_policy_accept_terms")}
+          onClick={this.accept}
+        />
       </Dialog>
     );
   }

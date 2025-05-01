@@ -2,12 +2,12 @@
   &, > article {
     display: flex;
     flex-direction: column;
-    gap: var(--flex-gap);
+    gap: var(--theme-spacing);
   }
 
   .grid {
     display: grid;
-    gap: var(--flex-gap);
+    gap: var(--theme-spacing);
     grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
 
     &:first-child {
@@ -16,16 +16,10 @@
   }
 
   .vendors {
-    --flex-gap: var(--theme-spacing-half);
     margin-right: var(--theme-spacing-double);
     display: flex;
     flex-direction: column;
-    gap: var(--flex-gap);
-  }
-
-  .vendor {
-    gap: 2px;
-    align-items: center;
+    gap: var(--theme-spacing-half);
   }
 
   .vendorSkippedInRotation {

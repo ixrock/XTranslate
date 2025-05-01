@@ -334,7 +334,7 @@ export class UserHistory extends React.Component {
     const reverseTranslationUrl = getTranslationPageUrl({ vendor, from: langTo, to: langFrom, text: translation });
 
     return (
-      <div className={cssNames("history-item", { showDetails })}>
+      <div className={`history-item ${cssNames({ showDetails })}`}>
         {showDetails && (
           <small className="translation-service-info">
             <span className="translation-vendor">{translator.title} </span>
@@ -451,7 +451,7 @@ export class UserHistory extends React.Component {
     var { historyEnabled, historySaveWordsOnly, historyPageSize } = settingsStore.data;
     return (
       <>
-        <div className="settings">
+        <div className="settings flex gaps justify-center">
           <Checkbox
             label={getMessage("history_enabled_flag")}
             checked={historyEnabled}
@@ -554,7 +554,7 @@ export class UserHistory extends React.Component {
 
   render() {
     return (
-      <div className="UserHistory">
+      <div className="UserHistory flex column">
         <FileInput
           accept="application/json"
           outputType="text"

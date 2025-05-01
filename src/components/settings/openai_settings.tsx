@@ -16,16 +16,12 @@ export class OpenAiSettings extends React.Component<OpenAiSettingsModelProps> {
   get modelsOptions(): ReactSelectOption<OpenAIModel>[] {
     return [
       {
-        value: OpenAIModel.MOST_COST_EFFECTIVE,
+        value: OpenAIModel.COST_EFFECTIVE,
         label: getMessage("open_ai_choose_model_cost_efficient"),
       },
       {
         value: OpenAIModel.RECOMMENDED,
         label: getMessage("open_ai_choose_model_optimal"),
-      },
-      {
-        value: OpenAIModel.CHAT_GPT,
-        label: getMessage("open_ai_choose_model_chatgpt_like"),
       },
     ]
   }

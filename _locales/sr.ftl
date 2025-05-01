@@ -188,7 +188,6 @@ open_ai_insert_auth_key_remove = Ukloni OpenAI API ključ
 open_ai_choose_model = Izaberi AI model
 open_ai_choose_model_cost_efficient = Najisplativije
 open_ai_choose_model_optimal = Preporučeni model
-open_ai_choose_model_chatgpt_like = ChatGPT (može biti skupo)
 open_ai_choose_model_best_results = Najbolji rezultati (najskuplje)
 open_ai_why_info_help =
  Direktnom upotrebom ličnog naloga na OpenAI platformi i obezbeđivanjem API ključa štedite dosta novca. Korišćenjem servisa od drugih aplikacija/proširenja koje služe kao "čovek u sredini",

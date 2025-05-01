@@ -6,8 +6,8 @@ import { initContextMenus } from "./contextMenu.bgc";
 import { listenStorageActions } from "./storage.bgc";
 import { listenProxyRequestActions } from "./httpProxy.bgc";
 import { listenTranslationHistoryActions } from "./history.bgc";
-import { listenAIRequests } from "./ai.bgc";
-// import { initBackground as initMellowtel, listenMellowtelActions } from "../../mellowtel";
+import { listenAIRequests } from "./open-ai.bgc";
+import { initBackground as initMellowtel, listenMellowtelActions } from "../../mellowtel";
 
 onInstall();
 initContextMenus();
@@ -19,5 +19,5 @@ listenTranslationHistoryActions();
 listenAIRequests();
 
 // Mellowtel integration
-// initMellowtel();
-// listenMellowtelActions();
+initMellowtel();
+listenMellowtelActions();

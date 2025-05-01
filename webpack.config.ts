@@ -3,7 +3,8 @@ import path from 'path'
 import HtmlWebpackPlugin from 'html-webpack-plugin'
 import CopyWebpackPlugin from 'copy-webpack-plugin'
 import MiniCssExtractPlugin from 'mini-css-extract-plugin'
-import { appEntry, serviceWorkerEntry, contentScriptEntry, pdfViewerEntry, isDevelopment, isFirefox } from "./src/common-vars";
+import { appEntry, contentScriptEntry, pdfViewerEntry, serviceWorkerEntry } from "./src/common-vars";
+import { mellowtelMeucciFilename } from "./mellowtel/mellowtel.config";
 
 const srcPath = path.resolve(__dirname, "src");
 const distPath = path.resolve(__dirname, "dist");
@@ -14,13 +15,14 @@ const configEntries: webpack.EntryObject = {
   [contentScriptEntry]: path.resolve(srcPath, "user-script/content-script-entry.tsx"),
   [serviceWorkerEntry]: path.resolve(srcPath, "background/background.ts"),
   [pdfViewerEntry]: path.resolve(srcPath, "pdf-viewer/pdf-viewer.tsx"),
+  [mellowtelMeucciFilename]: path.resolve(__dirname, "mellowtel/mellowtel-meucci.ts"),
 };
 
 interface WebpackConfigEnv {
   mode?: "development" | "production"; // must be provided inside `package.json` scripts
 }
 
-function webpackBaseConfig({ mode = "development" }: WebpackConfigEnv): webpack.Configuration {
+function webpackBaseConfig({ mode }: WebpackConfigEnv): webpack.Configuration {
   const isDevelopment = mode === "development";
 
   return {
@@ -190,6 +192,7 @@ export default [
     config.target = "web"
     config.entry = {
       [contentScriptEntry]: configEntries[contentScriptEntry],
+      [mellowtelMeucciFilename]: configEntries[mellowtelMeucciFilename],
     };
 
     config.externals = ["openai"];

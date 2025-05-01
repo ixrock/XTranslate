@@ -6,6 +6,7 @@ import { observer } from "mobx-react";
 import isEqual from "lodash/isEqual";
 import { iconMaterialFavorite, iconMaterialFavoriteOutlined } from "../../common-vars";
 import { cssNames, disposer, IClassName, noop, prevDefault } from "../../utils";
+import { copyToClipboard } from "../../utils/copy-to-clipboard";
 import { toCssColor } from "../../utils/toCssColor";
 import { getNextTranslator, getTranslator, isRTL, ITranslationError, ITranslationResult } from "../../vendors";
 import { Icon } from "../icon";
@@ -132,30 +133,9 @@ export class Popup extends React.Component<Props> {
 
   @action
   copyToClipboard = async () => {
-    const { translation, transcription, langTo, langDetected, vendor, dictionary, originalText, } = this.props.translation;
-
-    const translator = getTranslator(vendor);
-    const texts = [
-      originalText,
-      `${translation}${transcription ? `(${transcription})` : ""}`,
-
-      ...dictionary.map(({ wordType, meanings }) => {
-        return `${wordType}: ${meanings.map(({ word }) => word).join(", ")}`;
-      }),
-
-      getMessage("translated_with", {
-        translator: translator.title,
-        lang: translator.getLangPairTitle(langDetected, langTo),
-      }),
-    ];
-
-    try {
-      await navigator.clipboard.writeText(texts.join("\n"));
-      this.copied = true;
-      setTimeout(() => this.copied = false, 2500); // reset in 2,5 seconds
-    } catch (error) {
-      console.error(`failed to copy text to clipboard: ${error}`);
-    }
+    await copyToClipboard(this.props.translation);
+    this.copied = true;
+    setTimeout(() => this.copied = false, 2500); // reset in 2,5 seconds
   }
 
   @action

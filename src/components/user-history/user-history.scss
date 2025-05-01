@@ -1,12 +1,6 @@
 @use "../mixins" as *;
 
 .UserHistory {
-  .settings {
-    display: flex;
-    justify-content: center;
-    gap: var(--theme-spacing);
-  }
-
   .toolbar-icons {
     display: flex;
     gap: 1px;

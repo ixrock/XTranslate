@@ -15,13 +15,18 @@ export function base64Decode(base64: string, asBinary?: boolean): Uint8Array | s
 }
 
 export function base64Encode(content: Uint8Array | ArrayBuffer | string): string {
+  let bytes: Uint8Array;
+
   if (typeof content === "string") {
-    content = new TextEncoder().encode(content);
+    bytes = new TextEncoder().encode(content);
   } else if (content instanceof ArrayBuffer) {
-    content = new Uint8Array(content).reduce((data, byte) => data + String.fromCharCode(byte), "")
+    bytes = new Uint8Array(content);
   } else if (content instanceof Uint8Array) {
-    content = Array.from(content, (byte) => String.fromCodePoint(byte)).join("");
+    bytes = content;
+  } else {
+    throw new Error("Unexpected content type");
   }
 
-  return btoa(content as string);
+  const binaryString = Array.from(bytes, (byte) => String.fromCharCode(byte)).join("");
+  return btoa(binaryString);
 }

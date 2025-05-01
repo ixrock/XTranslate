@@ -9,9 +9,14 @@ import type { VendorAuthSettingsProps } from "../components/settings/vendor_auth
 
 // Read more about the prices: https://openai.com/api/pricing/
 export const enum OpenAIModel {
-  MOST_COST_EFFECTIVE = "gpt-4o-mini",
+  COST_EFFECTIVE = "gpt-4o-mini",
   RECOMMENDED = "gpt-4o",
-  CHAT_GPT = "chatgpt-4o-latest",
+  LATEST_OPTIMAL = "gpt-4.1-mini",
+}
+
+export const enum OpenAIModelTTS {
+  MINI = "gpt-4o-mini-tts",
+  OTHER = "tts-1",
 }
 
 class OpenAITranslator extends Translator {
@@ -56,7 +61,7 @@ class OpenAITranslator extends Translator {
     }
     const data = await aiTextToSpeechAction({
       vendor: this.name,
-      model: "tts-1",
+      model: OpenAIModelTTS.MINI,
       apiKey: this.#apiKey.get(),
       text,
       targetLanguage: lang,
