@@ -3,7 +3,7 @@
   "version": "4.0.0",
   "scripts": {
     "dev": "npm run webpack -- --env mode=development --watch",
-    "build": "npm run clean && npm run webpack -- --env mode=production --progress && npm run pdfjs-build",
+    "build": "npm run clean && npm run webpack -- --env mode=production --progress",
     "webpack": "node --import tsx node_modules/webpack-cli/bin/cli.js --config webpack.config.ts",
     "pdfjs-build": "cd node_modules/pdf.js && npm install && npx gulp generic && find ./build -name '*.map' -delete",
     "update-packages": "npx npm-check-updates -u",

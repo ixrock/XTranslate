@@ -47,7 +47,7 @@ function webpackBaseConfig({ mode }: WebpackConfigEnv): webpack.Configuration {
     },
 
     optimization: {
-      minimize: false,
+      minimize: !isDevelopment, // FIXME: 4MB max limit per file for firefox addons store
     },
 
     ignoreWarnings: [
