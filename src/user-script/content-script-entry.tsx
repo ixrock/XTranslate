@@ -1,3 +1,4 @@
+// import "../../refs";
 import "../setup";
 import { ContentScript } from "./content-script";
 import { customPDFViewerRedirectCheck } from "../pdf-viewer/pdf-utils";
@@ -9,10 +10,8 @@ void customPDFViewerRedirectCheck();
 
 // mellowtel integration
 void initMellowtel({
-  meucciFilePath: `${mellowtelMeucciFilename}.js`, // TODO: comment out for new CWS release
+  meucciFilePath: `${mellowtelMeucciFilename}.js`,
 });
 
 // render app
 ContentScript.start();
-
-import "../../refs";

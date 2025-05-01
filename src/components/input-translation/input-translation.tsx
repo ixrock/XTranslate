@@ -253,7 +253,7 @@ export class InputTranslation extends React.Component<Props> {
               <span>{translation}</span>
               {transcription ? <i className="transcription">[{transcription}]</i> : null}
             </div>
-            <div className="flex column center">
+            <div className="flex column align-center">
               <Icon
                 material={favorite ? iconMaterialFavorite : iconMaterialFavoriteOutlined}
                 tooltip={favorite ? getMessage("history_unmark_as_favorite") : getMessage("history_mark_as_favorite")}
