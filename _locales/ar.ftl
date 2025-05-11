@@ -183,14 +183,10 @@ open_ai_get_access_info = 1) تسجيل الدخول إلى platform.openai.com 
 open_ai_insert_auth_key = قدم مفتاح API الخاص بك للحصول على ترجمات OpenAI
 open_ai_insert_auth_key_warning = تحذير: لا تدخل مفتاح API الخاص بك في أي مكان آخر بخلاف نافذة هذه الإضافة
 open_ai_insert_auth_key_remove = إزالة مفتاح API OpenAI
-open_ai_choose_model = اختر نموذج الذكاء الاصطناعي
-open_ai_choose_model_cost_efficient = الأكثر كفاءة من حيث التكلفة
-open_ai_choose_model_optimal = النموذج الموصى به
-open_ai_choose_model_best_results = أفضل نتائج (الأكثر تكلفة)
-open_ai_why_info_help =
-    من خلال استخدام حسابك الخاص في منصة OpenAI مباشرة وتقديم مفتاح API، يمكنك توفير الكثير من المال عوضًا عن استخدام خدمات "الوسيط" من تطبيقات أو إضافات أخرى،
-     حيث تدفع عادة لاشتراك شهري/سنوي وحيث لا تكون جميع الأسعار وحدود الاستخدام تحت سيطرتك.
-     لا تنسى تعديل حدود الاستخدام على platform.openai.com وتعطيل إعادة تعبئة رصيد بطاقة الائتمان تلقائيًا.
+ai_choose_model = اختر نموذج الذكاء الاصطناعي
+ai_choose_model_cost_effective = الأكثر كفاءة من حيث التكلفة
+ai_choose_model_recommended = النموذج الموصى به
+ai_choose_model_best_results = أفضل نتائج (الأكثر تكلفة)
 
 # دعم ترجمة PDF عبر pdf.js
 pdf_use_custom_viewer = دعم الترجمات في ملفات PDF

@@ -173,12 +173,11 @@ open_ai_get_access_info=1) platform.openai.com'da kayıt olun 2) API erişim ana
 open_ai_insert_auth_key=OpenAI çevirileri almak için API anahtarınızı sağlayın
 open_ai_insert_auth_key_warning=Uyarı: API anahtarınızı bu eklenti penceresi dışında hiçbir yere girmeyin
 open_ai_insert_auth_key_remove=OpenAI API anahtarını kaldır
-open_ai_choose_model=AI modelini seçin
-open_ai_choose_model_cost_efficient=En maliyet etkin
-open_ai_choose_model_optimal=Önerilen model
-open_ai_choose_model_best_results=En iyi sonuçlar (en pahalı)
-open_ai_choose_model_reasoning=Akıl yürütme modeli (seride en yeni ve maliyet etkin)
-open_ai_why_info_help=Kendi OpenAI platform hesabınızı doğrudan kullanıp API anahtarınızı sağladığınızda, diğer uygulama/eklenti aracılığıyla "aracı hizmetler" kullanmak yerine çok para tasarrufu sağlarsınız; bu hizmetlerde genellikle aylık/yıllık abonelik ücreti ödersiniz ve tüm fiyatlar ile kullanım limitleri sizin kontrolünüzde olmaz. platform.openai.com'da kullanım limitlerini ayarlamayı ve kredi kartınızın otomatik bakiye yüklemesini devre dışı bırakmayı unutmayın.
+ai_choose_model=AI modelini seçin
+ai_choose_model_cost_effective=En maliyet etkin
+ai_choose_model_recommended=Önerilen model
+ai_choose_model_best_results=En iyi sonuçlar (en pahalı)
+ai_choose_model_reasoning=Akıl yürütme modeli (seride en yeni ve maliyet etkin)
 
 # PDF translations suppot via pdf.js (TR)
 pdf_use_custom_viewer=PDF dosyalarında çevirileri destekle

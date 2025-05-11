@@ -18,8 +18,10 @@ import { pageManager } from "../app/page-manager";
 import { getMessage } from "../../i18n";
 import { SelectVoice } from "../select-tts-voice";
 import { getTTSVoices, speak, stopSpeaking } from "../../tts";
-import { OpenAiSettings } from "./openai_settings";
+import { SelectAIModel } from "./select_ai_model";
 import { VendorAuthSettings } from "./vendor_auth_settings";
+import { OpenAIModel } from "../../vendors/open-ai.models";
+import { GrokAIModel } from "../../vendors/grok.models";
 
 @observer
 export class Settings extends React.Component {
@@ -28,8 +30,21 @@ export class Settings extends React.Component {
     makeObservable(this);
   }
 
-  private vendorSettings: Record<string/*name*/, React.ReactNode> = {
-    openai: <OpenAiSettings/>,
+  private vendorSettings: Partial<Record<VendorCodeName, React.ReactNode>> = {
+    openai: (
+      <SelectAIModel
+        modelOptions={OpenAIModel}
+        getValue={() => settingsStore.data.openAiModel}
+        onChange={value => settingsStore.data.openAiModel = value}
+      />
+    ),
+    grok: (
+      <SelectAIModel
+        modelOptions={GrokAIModel}
+        getValue={() => settingsStore.data.grokAiModel}
+        onChange={value => settingsStore.data.grokAiModel = value}
+      />
+    ),
   };
 
   private get iconPositions(): ReactSelectOption<XIconPosition>[] {

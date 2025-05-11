@@ -1,7 +1,9 @@
 import { action, makeObservable } from "mobx";
 import { Hotkey } from "../../utils/parseHotkey";
-import { getTranslator, OpenAIModel, VendorCodeName } from "../../vendors";
 import { createStorage } from "../../storage";
+import { getTranslator, VendorCodeName } from "../../vendors";
+import { OpenAIModel } from "../../vendors/open-ai.models";
+import { GrokAIModel } from "../../vendors/grok.models";
 
 export type PopupPosition = "" /*auto*/ | "left top" | "left bottom" | "right top" | "right bottom";
 
@@ -46,6 +48,7 @@ export const settingsStorage = createStorage("settings", {
     iconPosition: {} as XIconPosition,
     ttsVoiceIndex: 0,
     openAiModel: OpenAIModel.RECOMMENDED,
+    grokAiModel: GrokAIModel.RECOMMENDED,
     skipVendorInRotation: {} as Record<VendorCodeName, boolean>,
     customPdfViewer: false,
     hotkey: {

@@ -2,12 +2,9 @@ import LanguagesList from "./open-ai.json"
 import { ITranslationResult, sanitizeApiKey, TranslateParams, Translator, VendorCodeName } from "./index";
 import { getMessage } from "../i18n";
 import { createStorage } from "../storage";
-import type { VendorAuthSettingsProps } from "../components/settings/vendor_auth_settings";
+import { settingsStore } from "../components/settings/settings.storage";
 import { aiTranslateAction } from "../extension";
-
-export const enum GrokAIModel {
-  LATEST = "grok-2-latest",
-}
+import type { VendorAuthSettingsProps } from "../components/settings/vendor_auth_settings";
 
 class GrokTranslator extends Translator {
   public name = VendorCodeName.GROK;
@@ -36,7 +33,7 @@ class GrokTranslator extends Translator {
   async translate({ from, to, text }: TranslateParams): Promise<ITranslationResult> {
     return aiTranslateAction({
       vendor: this.name,
-      model: GrokAIModel.LATEST,
+      model: settingsStore.data.grokAiModel,
       apiKey: this.#apiKey.get(),
       targetLanguage: this.langTo[to],
       sourceLanguage: from !== "auto" ? this.langFrom[from] : undefined,

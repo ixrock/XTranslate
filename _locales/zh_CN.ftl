@@ -183,14 +183,10 @@ open_ai_get_access_info = 1) 在 platform.openai.com 注册 2) 创建API访问�
 open_ai_insert_auth_key = 提供您的API密钥以获取OpenAI翻译
 open_ai_insert_auth_key_warning = 警告：除了此扩展窗口外，请勿在任何其他地方输入您的API密钥
 open_ai_insert_auth_key_remove = 移除OpenAI API密钥
-open_ai_choose_model = 选择AI模型
-open_ai_choose_model_cost_efficient = 最具成本效益
-open_ai_choose_model_optimal = 推荐模型
-open_ai_choose_model_best_results = 最佳结果（最昂贵）
-open_ai_why_info_help =
-    直接使用您自己的OpenAI平台账户并提供API密钥，您可以节省很多钱，而不是使用其他应用程序/扩展中的“中间人”服务，
-      在那里您通常为每月/每年的订阅付费，而且所有价格和使用限制都不在您的控制之下。
-     不要忘记在 platform.openai.com 调整使用限制并禁用信用卡自动充值余额。
+ai_choose_model = 选择AI模型
+ai_choose_model_cost_effective = 最具成本效益
+ai_choose_model_recommended = 推荐模型
+ai_choose_model_best_results = 最佳结果（最昂贵）
 
 # 通过pdf.js支持PDF翻译
 pdf_use_custom_viewer = 支持在PDF文件中翻译

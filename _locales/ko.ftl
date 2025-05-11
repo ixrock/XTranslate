@@ -183,14 +183,10 @@ open_ai_get_access_info = 1) platform.openai.com 에 등록 2) API 접근 키 �
 open_ai_insert_auth_key = OpenAI 번역을 얻기 위해 API 키 제공
 open_ai_insert_auth_key_warning = 경고: 이 확장 프로그램 창 외에 다른 곳에 API 키를 입력하지 마세요
 open_ai_insert_auth_key_remove = OpenAI API 키 제거
-open_ai_choose_model = AI 모델 선택
-open_ai_choose_model_cost_efficient = 가장 비용 효율적인
-open_ai_choose_model_optimal = 권장 모델
-open_ai_choose_model_best_results = 최고의 결과 (가장 비싼)
-open_ai_why_info_help =
- 자신의 OpenAI 플랫폼 계정을 직접 사용하고 API 키를 제공함으로써, 다른 앱 또는 확장 프로그램의 "중개" 서비스를 사용하는 것보다 많은 돈을 절약할 수 있습니다.
-  여기서 일반적으로 월간/연간 구독료를 지불하고, 모든 가격과 사용 제한이 사용자의 통제 밖에 있습니다.
-  platform.openai.com 에서 사용 제한을 조정하고 신용 카드 자동 충전 잔액을 비활성화하는 것을 잊지 마세요.
+ai_choose_model = AI 모델 선택
+ai_choose_model_cost_effective = 가장 비용 효율적인
+ai_choose_model_recommended = 권장 모델
+ai_choose_model_best_results = 최고의 결과 (가장 비싼)
 
 # pdf.js를 통한 PDF 번역 지원
 pdf_use_custom_viewer = PDF 파일 내 번역 지원

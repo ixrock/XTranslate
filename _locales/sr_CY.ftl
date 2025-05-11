@@ -187,14 +187,10 @@ open_ai_get_access_info = 1) Региструј се на platform.openai.com 2)
 open_ai_insert_auth_key = Обезбеди API кључ за добијање OpenAI превода
 open_ai_insert_auth_key_warning = Упозорење: НЕ УНОСИ свој API кључ нигде осим у прозору овог проширења
 open_ai_insert_auth_key_remove = Уклони OpenAI API кључ
-open_ai_choose_model = Изабери AI модел
-open_ai_choose_model_cost_efficient = Најисплативије
-open_ai_choose_model_optimal = Препоручени модел
-open_ai_choose_model_best_results = Најбољи резултати (најскупље)
-open_ai_why_info_help =
- Директном употребом личног налога на OpenAI платформи и обезбеђивањем API кључа штедите доста новца. Коришћењем сервиса од других апликација/проширења које служе као "човек у средини",
-   често плаћате месечну/годишњу претплату, а цене и ограничења употребе нису под вашом контролом.
-   Не заборавите да прилагодите ограничења употребе на platform.openai.com и онемогућите аутоматску допуну средстава на кредитној картици.
+ai_choose_model = Изабери AI модел
+ai_choose_model_cost_effective = Најисплативије
+ai_choose_model_recommended = Препоручени модел
+ai_choose_model_best_results = Најбољи резултати (најскупље)
 
 # PDF translations suppot via pdf.js
 pdf_use_custom_viewer = Подршка за преводе у PDF фајловима

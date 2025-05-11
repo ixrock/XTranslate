@@ -183,14 +183,10 @@ open_ai_get_access_info = ১) platform.openai.com-তে নিবন্ধন 
 open_ai_insert_auth_key = OpenAI অনুবাদ পেতে আপনার API কী প্রদান করুন
 open_ai_insert_auth_key_warning = সতর্কতা: এই এক্সটেনশন উইন্ডো ছাড়া অন্য কোথাও আপনার API কী না দিন
 open_ai_insert_auth_key_remove = OpenAI API কী সরান
-open_ai_choose_model = AI মডেল বেছে নিন
-open_ai_choose_model_cost_efficient = সবচেয়ে কস্ট-কার্যকর
-open_ai_choose_model_optimal = সুপারিশকৃত মডেল
-open_ai_choose_model_best_results = সর্বোত্তম ফলাফল (সবচেয়ে মহঙ্গ)
-open_ai_why_info_help =
- আপনার নিজস্ব OpenAI প্ল্যাটফর্মের অ্যাকাউন্ট সরাসরি ব্যবহার করে এবং API কী প্রদান করে, আপনি অনেক টাকা সাশ্রয় করতে পারেন, অন্যান্য অ্যাপ বা এক্সটেনশনের "মধ্যস্থ" সার্ভিসগুলির তুলনায়,
-  যেখানে আপনি সাধারণত মাসিক/বার্ষিক সাবস্ক্রিপশনের জন্য পেমেন্ট করেন এবং যেখানে সব মূল্য এবং ব্যবহারের সীমাবদ্ধতা আপনার নিয়ন্ত্রণের বাইরে থাকে।
-  platform.openai.com-এ ব্যবহারের সীমাবদ্ধতা সেট করা এবং ক্রেডিট কার্ডের অটো-টপ-আপ ব্যালেন্স অক্ষম করা ভুলবেন না।
+ai_choose_model = AI মডেল বেছে নিন
+ai_choose_model_cost_effective = সবচেয়ে কস্ট-কার্যকর
+ai_choose_model_recommended = সুপারিশকৃত মডেল
+ai_choose_model_best_results = সর্বোত্তম ফলাফল (সবচেয়ে মহঙ্গ)
 
 # pdf.js-এর মাধ্যমে PDF অনুবাদ সমর্থন
 pdf_use_custom_viewer = PDF ফাইলে অনুবাদ সমর্থন করুন

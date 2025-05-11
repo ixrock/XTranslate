@@ -183,14 +183,10 @@ open_ai_get_access_info = 1) Register at platform.openai.com 2) Create api acces
 open_ai_insert_auth_key = Provide your api key for getting OpenAI translations
 open_ai_insert_auth_key_warning = Warning: DO NOT enter your API key in any other place except this extension window
 open_ai_insert_auth_key_remove = Remove OpenAI API key
-open_ai_choose_model = Choose AI model
-open_ai_choose_model_cost_efficient = Most cost-efficient
-open_ai_choose_model_optimal = Recommended model
-open_ai_choose_model_best_results = Best results (most expensive)
-open_ai_why_info_help =
- By using your own OpenAI platform's account directly and proving api key you saves a lot of money instead of using "middle-of-the-man" services from other apps/extensions,
-   where you usually pay for monthly/yearly subscription and where all prices and usage limits are not under your control.
-   Don't forget to adjust usage limits at platform.openai.com and disable credit card's auto-top-up balance.
+ai_choose_model = Choose AI model
+ai_choose_model_cost_effective = Most cost-efficient
+ai_choose_model_recommended = Recommended model
+ai_choose_model_best_results = Best results (most expensive)
 
 # PDF translations suppot via pdf.js
 pdf_use_custom_viewer = Support translations in PDF files

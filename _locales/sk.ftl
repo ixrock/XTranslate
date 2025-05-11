@@ -183,14 +183,10 @@ open_ai_get_access_info =1) Zaregistrujte sa na platform.openai.com 2) Vytvorte 
 open_ai_insert_auth_key =Zadajte kľúč API na získanie prekladov od OpenAI
 open_ai_insert_auth_key_warning = Upozornenie: Nezadávajte kľúč API nikde inde, okrem tohto okna rozšírenia
 open_ai_insert_auth_key_remove = Odstrániť kľúč OpenAI API
-open_ai_choose_model = Vyberte AI model
-open_ai_choose_model_cost_efficient = Najúspornejší z hľadiska nákladov
-open_ai_choose_model_optimal = Odporúčaný model
-open_ai_choose_model_best_results = Najlepšie výsledky (najdrahší)
-open_ai_why_info_help =
-    Pri použití vlastného účtu na platforme OpenAI a zadaní kľúča API ušetríte veľa peňazí, namiesto využívania služieb „sprostredkovateľa“ z iných aplikácií/rozšírení,
-    kde zvyčajne platíte mesačné/ročné predplatné a kde ceny a limity používania nie sú vo vašej kontrole.
-    Nezabudnite nastaviť limity používania na platform.openai.com a vypnúť automatické dobíjanie kreditu.
+ai_choose_model = Vyberte AI model
+ai_choose_model_cost_effective = Najúspornejší z hľadiska nákladov
+ai_choose_model_recommended = Odporúčaný model
+ai_choose_model_best_results = Najlepšie výsledky (najdrahší)
 
 # PDF translations suppot via pdf.js
 pdf_use_custom_viewer = Podpora prekladov v PDF súboroch

@@ -183,14 +183,10 @@ open_ai_get_access_info = 1) Đăng ký tại platform.openai.com 2) Tạo khóa
 open_ai_insert_auth_key = Cung cấp khóa API của bạn để nhận bản dịch từ OpenAI
 open_ai_insert_auth_key_warning = Cảnh báo: KHÔNG nhập khóa API của bạn ở bất kỳ nơi nào khác ngoài cửa sổ tiện ích mở rộng này
 open_ai_insert_auth_key_remove = Xóa khóa API OpenAI
-open_ai_choose_model = Chọn mô hình AI
-open_ai_choose_model_cost_efficient = Tiết kiệm chi phí nhất
-open_ai_choose_model_optimal = Mô hình khuyến nghị
-open_ai_choose_model_best_results = Kết quả tốt nhất (tốn kém nhất)
-open_ai_why_info_help =
-    Bằng cách sử dụng tài khoản của bạn trên nền tảng OpenAI trực tiếp và cung cấp khóa API, bạn có thể tiết kiệm rất nhiều tiền so với việc sử dụng các dịch vụ "trung gian" từ các ứng dụng hoặc tiện ích mở rộng khác,
-     nơi bạn thường phải trả tiền cho đăng ký hàng tháng/hàng năm và nơi mà tất cả các giá cả và giới hạn sử dụng không nằm dưới sự kiểm soát của bạn.
-     Đừng quên điều chỉnh giới hạn sử dụng tại platform.openai.com và tắt tính năng nạp tiền tự động của thẻ tín dụng.
+ai_choose_model = Chọn mô hình AI
+ai_choose_model_cost_effective = Tiết kiệm chi phí nhất
+ai_choose_model_recommended = Mô hình khuyến nghị
+ai_choose_model_best_results = Kết quả tốt nhất (tốn kém nhất)
 
 # Hỗ trợ dịch PDF qua pdf.js
 pdf_use_custom_viewer = Hỗ trợ dịch trong các tệp PDF

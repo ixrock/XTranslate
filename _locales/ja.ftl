@@ -183,14 +183,10 @@ open_ai_get_access_info = 1) platform.openai.com で登録 2) APIアクセスキ
 open_ai_insert_auth_key = OpenAI翻訳を取得するためのAPIキーを提供
 open_ai_insert_auth_key_warning = 警告: この拡張機能のウィンドウ以外にAPIキーを入力しないでください
 open_ai_insert_auth_key_remove = OpenAI APIキーを削除
-open_ai_choose_model = AIモデルを選択
-open_ai_choose_model_cost_efficient = 最もコスト効率の良い
-open_ai_choose_model_optimal = 推奨モデル
-open_ai_choose_model_best_results = 最良の結果（最も高価）
-open_ai_why_info_help =
-    直接自分のOpenAIプラットフォームのアカウントを使用し、APIキーを提供することで、他のアプリや拡張機能の「中間者」サービスを使用するよりも多くのお金を節約できます。
-     そこでは通常月間/年間サブスクリプションに対して支払い、価格や使用制限があなたのコントロール外にあります。
-     platform.openai.com で使用制限を調整し、クレジットカードの自動トップアップバランスを無効にするのを忘れないでください。
+ai_choose_model = AIモデルを選択
+ai_choose_model_cost_effective = 最もコスト効率の良い
+ai_choose_model_recommended = 推奨モデル
+ai_choose_model_best_results = 最良の結果（最も高価）
 
 # PDF翻訳サポート via pdf.js
 pdf_use_custom_viewer = PDFファイル内の翻訳をサポート

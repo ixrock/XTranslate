@@ -29,16 +29,6 @@ export const shareIcons: ShareIcon[] = [
     icon: require('../icon/vk.svg'),
     url: "https://vk.com/share.php?url={url}&title={title}",
   },
-  {
-    title: "LinkedIn",
-    icon: require('../icon/linked.svg'),
-    url: "https://www.linkedin.com/shareArticle?url={url}",
-  },
-  {
-    title: "Reddit",
-    icon: require('../icon/reddit.svg'),
-    url: "https://www.reddit.com/submit?url={url}&title={title}",
-  },
 ];
 
 export const shareTags = ["chrome", "extension", "xtranslate", "in_place_text_translator", "ai_text_translations"];

@@ -183,14 +183,10 @@ open_ai_get_access_info = 1）在 platform.openai.com 註冊 2）創建 API 訪�
 open_ai_insert_auth_key = 提供您的 API 金鑰以獲得 OpenAI 翻譯
 open_ai_insert_auth_key_warning = 警告：請勿在此擴充功能視窗以外的任何地方輸入您的 API 金鑰
 open_ai_insert_auth_key_remove = 移除 OpenAI API 金鑰
-open_ai_choose_model = 選擇 AI 模型
-open_ai_choose_model_cost_efficient = 最具成本效益
-open_ai_choose_model_optimal = 推薦模型
-open_ai_choose_model_best_results = 最佳結果（最昂貴）
-open_ai_why_info_help =
-通過直接使用您自己的 OpenAI 平台帳戶並提供 API 金鑰，您可以節省大量金錢，而不是使用其他應用/擴充功能的“中間人”服務，
-  在那裡您通常需要支付每月/每年的訂閱費，所有價格和使用限制都不在您的控制範圍內。
-  不要忘記在 platform.openai.com 上調整使用限制，並禁用信用卡的自動充值餘額。
+ai_choose_model = 選擇 AI 模型
+ai_choose_model_cost_effective = 最具成本效益
+ai_choose_model_recommended = 推薦模型
+ai_choose_model_best_results = 最佳結果（最昂貴）
 
 # PDF 翻譯支援通過 pdf.js
 pdf_use_custom_viewer = 支援 PDF 文件翻譯

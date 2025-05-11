@@ -183,14 +183,10 @@ open_ai_get_access_info = 1) Registrieren Sie sich bei platform.openai.com 2) Er
 open_ai_insert_auth_key = Geben Sie Ihren API-Schlüssel ein, um OpenAI-Übersetzungen zu erhalten
 open_ai_insert_auth_key_warning = Warnung: Geben Sie Ihren API-Schlüssel nirgendwo außer in diesem Erweiterungsfenster ein
 open_ai_insert_auth_key_remove = OpenAI API-Schlüssel entfernen
-open_ai_choose_model = KI-Modell auswählen
-open_ai_choose_model_cost_efficient = Kostenwirksamste Wahl
-open_ai_choose_model_optimal = Empfohlenes Modell
-open_ai_choose_model_best_results = Beste Ergebnisse (am teuersten)
-open_ai_why_info_help =
-    Durch direkte Nutzung Ihres eigenen OpenAI-Plattformkontos und Bereitstellung des API-Schlüssels können Sie viel Geld sparen im Vergleich zur Nutzung von "Mittelsmann"-Diensten anderer Apps/Erweiterungen,
-     wo Sie normalerweise für ein monatliches/jährliches Abonnement zahlen und wo alle Preise und Nutzungsgrenzen nicht unter Ihrer Kontrolle stehen.
-     Vergessen Sie nicht, die Nutzungsgrenzen auf platform.openai.com anzupassen und die automatische Aufladung des Guthabens Ihrer Kreditkarte zu deaktivieren.
+ai_choose_model = KI-Modell auswählen
+ai_choose_model_cost_effective = Kostenwirksamste Wahl
+ai_choose_model_recommended = Empfohlenes Modell
+ai_choose_model_best_results = Beste Ergebnisse (am teuersten)
 
 # Unterstützung für PDF-Übersetzungen via pdf.js
 pdf_use_custom_viewer = Unterstützung für Übersetzungen in PDF-Dateien

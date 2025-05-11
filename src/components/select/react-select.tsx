@@ -2,7 +2,9 @@ import "./react-select.scss";
 
 import React from "react";
 import { cssNames } from "../../utils";
-import ReactSelectComponent, { Props, GroupBase, MultiValue } from "react-select";
+import ReactSelectComponent, { GroupBase, MultiValue, Props } from "react-select";
+
+export { FormatOptionLabelMeta } from "react-select";
 
 export type ReactSelectGroup<T> = GroupBase<ReactSelectOption<T>>
 export type ReactSelectMultiValue<T> = MultiValue<ReactSelectOption<T>>

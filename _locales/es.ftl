@@ -183,14 +183,10 @@ open_ai_get_access_info = 1) Regístrate en platform.openai.com 2) Crea una clav
 open_ai_insert_auth_key = Proporciona tu clave de API para obtener traducciones de OpenAI
 open_ai_insert_auth_key_warning = Advertencia: NO ingreses tu clave de API en ningún otro lugar excepto en esta ventana de la extensión
 open_ai_insert_auth_key_remove = Eliminar la clave de API de OpenAI
-open_ai_choose_model = Elige el modelo de IA
-open_ai_choose_model_cost_efficient = Más eficiente en costos
-open_ai_choose_model_optimal = Modelo recomendado
-open_ai_choose_model_best_results = Mejores resultados (más costoso)
-open_ai_why_info_help =
- Al usar tu propia cuenta de la plataforma de OpenAI directamente y proporcionando la clave de API, ahorras mucho dinero en comparación con el uso de servicios de "intermediarios" de otras aplicaciones o extensiones,
-  donde generalmente pagas por una suscripción mensual/anual y donde todos los precios y límites de uso no están bajo tu control.
-  No olvides ajustar los límites de uso en platform.openai.com y desactivar la recarga automática de la tarjeta de crédito.
+ai_choose_model = Elige el modelo de IA
+ai_choose_model_cost_effective = Más eficiente en costos
+ai_choose_model_recommended = Modelo recomendado
+ai_choose_model_best_results = Mejores resultados (más costoso)
 
 # Soporte para traducciones de PDF mediante pdf.js
 pdf_use_custom_viewer = Soporte para traducciones en archivos PDF

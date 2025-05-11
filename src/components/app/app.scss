@@ -76,6 +76,10 @@ hr {
 .flex {
   display: flex;
 
+  &.inline {
+    display: inline-flex;
+  }
+
   &.column {
     flex-direction: column;
   }

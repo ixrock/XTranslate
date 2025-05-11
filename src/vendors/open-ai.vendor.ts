@@ -1,4 +1,4 @@
-import OpenAILanguages from "./open-ai.json"
+import LanguagesList from "./open-ai.json"
 import { ITranslationResult, sanitizeApiKey, TranslateParams, Translator, VendorCodeName } from "./index";
 import { getMessage } from "../i18n";
 import { createStorage } from "../storage";
@@ -6,18 +6,7 @@ import { aiTextToSpeechAction, aiTranslateAction } from "../extension";
 import { settingsStore } from "../components/settings/settings.storage";
 import { toBinaryFile } from "../utils/binary";
 import type { VendorAuthSettingsProps } from "../components/settings/vendor_auth_settings";
-
-// Read more about the prices: https://openai.com/api/pricing/
-export const enum OpenAIModel {
-  COST_EFFECTIVE = "gpt-4o-mini",
-  RECOMMENDED = "gpt-4o",
-  LATEST_OPTIMAL = "gpt-4.1-mini",
-}
-
-export const enum OpenAIModelTTS {
-  MINI = "gpt-4o-mini-tts",
-  OTHER = "tts-1",
-}
+import { OpenAIModelTTS } from "./open-ai.models";
 
 class OpenAITranslator extends Translator {
   public name = VendorCodeName.OPENAI;
@@ -27,7 +16,7 @@ class OpenAITranslator extends Translator {
   public ttsMaxLength = 4096;
 
   constructor() {
-    super(OpenAILanguages);
+    super(LanguagesList);
   }
 
   #apiKey = createStorage("openai_api_key", {

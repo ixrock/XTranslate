@@ -190,14 +190,10 @@ open_ai_get_access_info = 1) Зарегистрируйтесь на platform.op
 open_ai_insert_auth_key = Предоставьте свой API-ключ для получения переводов OpenAI
 open_ai_insert_auth_key_warning = Предупреждение: НЕ вводите свой API-ключ в других местах, кроме как из этого окна расширения.
 open_ai_insert_auth_key_remove = Удалить ключ доступа OpenAI API
-open_ai_choose_model = Выберите AI-модель
-open_ai_choose_model_cost_efficient = Наиболее экономичная
-open_ai_choose_model_optimal = Рекомендуемая / оптимальная модель
-open_ai_choose_model_best_results = Лучшие результаты (наиболее дорогое)
-open_ai_why_info_help =
-  Предоставляя свой собственный ключ API платформы OpenAI, вы экономите много денег, вместо использования услуг "посредников" из других приложений/расширений,
-  где вы обычно платите за ежемесячную/ежегодную подписку и где все цены и лимиты использования не находятся под вашим контролем.
-  Не забудьте настроить лимиты использования на platform.openai.com и отключить автоматическое пополнение баланса кредитной карты.
+ai_choose_model = Выберите AI-модель
+ai_choose_model_cost_effective = Наиболее экономичная
+ai_choose_model_recommended = Рекомендуемая / оптимальная модель
+ai_choose_model_best_results = Лучшие результаты (наиболее дорогое)
 
 # PDF translations suppot via pdf.js
 pdf_use_custom_viewer = Поддержка переводов в PDF файлах
