@@ -15,14 +15,14 @@
     }
   }
 
-  .vendors {
+  .providers {
     margin-right: var(--theme-spacing-double);
     display: flex;
     flex-direction: column;
     gap: var(--theme-spacing-half);
   }
 
-  .vendorSkippedInRotation {
+  .providerSkipRotation {
     opacity: .75;
     text-decoration: line-through;
   }

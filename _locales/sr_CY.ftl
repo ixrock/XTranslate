@@ -37,7 +37,6 @@ export_settings_button_label = Export подешавања
 import_settings_button_label = Import подешавања
 import_incorrect_file_format = Неисправан формат (требало би да буде { $fileNameJson })
 imported_setting_successful = Подешавања са кључем { $key } су успешно import-ована
-show_context_menu = Прикажи ставку у контекстном менију
 display_icon_near_selection = Прикажи иконицу поред изабраног текста
 show_tts_icon_inside_popup = Прикажи иконицу за претварање текста у говор
 show_next_vendor_icon_in_popup = Прикажи иконицу следећег преводиоца
@@ -134,7 +133,7 @@ history_import_success = Успешно увезених ставки истор
 history_import_file_error = Грешка у читању датотеке '{ $fileName }': { $errorInfo }
 
 # context menu
-context_menu_translate_full_page = Преведи целу страницу помоћу: { $translator }
+context_menu_translate_full_page = Преведи на { $lang }
 context_menu_translate_selection = Преведи { $selection } помоћу: { $translator }
 
 # other

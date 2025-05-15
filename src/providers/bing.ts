@@ -2,7 +2,7 @@ import BingLanguages from "./bing.json"
 import isEmpty from "lodash/isEmpty";
 import groupBy from "lodash/groupBy";
 import { ProxyRequestInit, ProxyResponseType } from "../extension";
-import { ITranslationError, ITranslationResult, TranslateParams, Translator, VendorCodeName } from "./index";
+import { ITranslationError, ITranslationResult, TranslateParams, Translator, ProviderCodeName } from "./index";
 import { createStorage } from "../storage";
 
 export interface BingApiAuthParams {
@@ -11,7 +11,7 @@ export interface BingApiAuthParams {
 }
 
 class Bing extends Translator {
-  public name = VendorCodeName.BING;
+  public name = ProviderCodeName.BING;
   public title = "Bing";
   public publicUrl = "https://www.bing.com/translator";
   public apiUrl = "https://api.cognitive.microsofttranslator.com";
@@ -185,4 +185,4 @@ interface DictTranslation {
   }[]
 }
 
-Translator.registerVendor(Bing);
+Translator.registerProvider(Bing);

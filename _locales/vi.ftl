@@ -33,7 +33,6 @@ export_settings_button_label = Xuất cài đặt
 import_settings_button_label = Nhập cài đặt
 import_incorrect_file_format = Định dạng tệp không đúng (có lẽ nên là { $fileNameJson })
 imported_setting_successful = Cài đặt dưới khóa { $key } đã được nhập thành công
-show_context_menu = Hiển thị trong menu ngữ cảnh của trang
 display_icon_near_selection = Hiển thị biểu tượng gần văn bản đã chọn
 show_tts_icon_inside_popup = Hiển thị biểu tượng văn bản thành giọng nói
 show_next_vendor_icon_in_popup = Hiển thị biểu tượng dịch tiếp theo
@@ -130,7 +129,7 @@ history_import_success = Đã nhập thành công { $itemsCount } mục lịch s
 history_import_file_error = Lỗi đọc tệp '{ $fileName }': { $errorInfo }
 
 # Menu ngữ cảnh
-context_menu_translate_full_page = Dịch toàn bộ trang với { $translator }
+context_menu_translate_full_page = Dịch sang { $lang }
 context_menu_translate_selection = Dịch { $selection } với { $translator }
 
 # Khác

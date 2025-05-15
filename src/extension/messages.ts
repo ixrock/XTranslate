@@ -1,12 +1,10 @@
 // [IPC]: inter-process communications for [options-page] <-> [background] <-> [content-pages]
-import { ITranslationResult, VendorCodeName } from "../vendors";
+import type { ITranslationResult, ProviderCodeName, TranslateParams } from "../providers";
 import type { IHistoryItem } from "../components/user-history/history.storage";
 
-export const enum MessageType {
+export enum MessageType {
   PROXY_REQUEST = "PROXY_REQUEST",
   GET_SELECTED_TEXT = "GET_SELECTED_TEXT",
-  TRANSLATE_WITH_VENDOR = "TRANSLATE_WITH_VENDOR",
-  TRANSLATE_FULL_PAGE = "TRANSLATE_FULL_PAGE",
   SAVE_TO_HISTORY = "SAVE_TO_HISTORY",
   SAVE_TO_FAVORITES = "SAVE_TO_FAVORITES",
   GET_FROM_HISTORY = "GET_TRANSLATION_FROM_CACHE",
@@ -50,11 +48,8 @@ export interface ProxyResponsePayload<Data> {
   data: Data;
 }
 
-export interface TranslateWithVendorPayload {
-  vendor: string;
-  text: string;
-  from?: string;
-  to?: string;
+export interface TranslatePayload extends TranslateParams {
+  provider: ProviderCodeName;
 }
 
 export interface SaveToHistoryPayload {
@@ -85,7 +80,7 @@ export interface StorageDeletePayload extends Omit<StorageWritePayload, "state">
 }
 
 export interface AITranslatePayload {
-  vendor: VendorCodeName;
+  provider: ProviderCodeName;
   apiKey: string;
   model: string;
   text: string;
@@ -94,7 +89,7 @@ export interface AITranslatePayload {
 }
 
 export interface AITextToSpeechPayload {
-  vendor: VendorCodeName;
+  provider: ProviderCodeName;
   model: string;
   apiKey: string;
   text: string;

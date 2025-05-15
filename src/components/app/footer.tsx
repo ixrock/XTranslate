@@ -1,4 +1,4 @@
-import * as styles from './footer.module.scss'
+import "./footer.scss"
 import React from "react";
 import { observer } from "mobx-react";
 import { getExtensionUrl } from "../../common-vars";
@@ -6,6 +6,9 @@ import { prevDefault } from '../../utils'
 import { getManifest } from '../../extension'
 import { getMessage } from "../../i18n";
 import { Icon } from "../icon";
+import { dialogsState } from "./dialogs-state";
+import { mellowtelOptOutTime } from "../../../mellowtel";
+import { action } from 'mobx';
 
 interface ShareIcon {
   title: string
@@ -53,12 +56,17 @@ export class Footer extends React.Component {
     });
   }
 
+  @action
+  supportDevelopers() {
+    dialogsState.showMellowtelDialog = true;
+    mellowtelOptOutTime.set(0);
+  }
+
   render() {
     return (
-      <div className={styles.Footer}>
+      <div className="Footer flex gaps align-center">
         <p>{getMessage("share_with_friends")}</p>
-
-        <div className={styles.socialIcons}>
+        <div className="socialIcons flex gaps">
           {shareIcons.map((share, i) => {
             const url = this.makeShareUrl(share.url);
             return (
@@ -68,6 +76,13 @@ export class Footer extends React.Component {
             )
           })}
         </div>
+        <Icon
+          small
+          material="volunteer_activism"
+          className="supportIcon box right"
+          tooltip={{ nowrap: true, children: getMessage("donate_title") }}
+          onClick={this.supportDevelopers}
+        />
       </div>
     );
   }

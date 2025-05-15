@@ -33,7 +33,6 @@ export_settings_button_label = تصدير الإعدادات
 import_settings_button_label = استيراد الإعدادات
 import_incorrect_file_format = صيغة الملف غير صحيحة (يجب أن تكون { $fileNameJson } ربما)
 imported_setting_successful = تم استيراد الإعدادات تحت المفتاح { $key } بنجاح
-show_context_menu = إظهار في قائمة سياق الصفحة
 display_icon_near_selection = إظهار الأيقونة بالقرب من النص المحدد
 show_tts_icon_inside_popup = إظهار أيقونة نص إلى كلام
 show_next_vendor_icon_in_popup = إظهار أيقونة الترجمة التالية
@@ -130,7 +129,7 @@ history_import_success = تم استيراد { $itemsCount } من مدخلات �
 history_import_file_error = خطأ في قراءة الملف '{ $fileName }': { $errorInfo }
 
 # قائمة السياق
-context_menu_translate_full_page = ترجمة الصفحة كاملة بواسطة { $translator }
+context_menu_translate_full_page = ترجم إلى { $lang }
 context_menu_translate_selection = ترجمة { $selection } بواسطة { $translator }
 
 # آخر
@@ -203,3 +202,4 @@ grok_ai_get_own_key_info = تسجيل في console.x.ai وتعبئة الرصي�
 grok_ai_auth_key = إنشاء مفتاح API في منصة Grok (X) للحصول على الوصول إلى API
 grok_ai_auth_key_warning = تحذير: لا تدخل مفتاح API الخاص بك في أي مكان آخر باستثناء نافذة الامتداد هذه
 grok_ai_auth_key_remove = إزالة مفتاح API الخاص بـ Grok
+

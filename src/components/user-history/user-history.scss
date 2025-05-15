@@ -87,7 +87,7 @@
 
         &.showDetails {
           padding: var(--theme-spacing);
-          border-top: 1px dotted; // adds line between vendor translations
+          border-top: 1px dotted; // adds line between results from different translators
 
           &:first-child {
             border-top: none;

@@ -1,17 +1,12 @@
 import LanguagesList from "./open-ai.json"
-import { ITranslationResult, sanitizeApiKey, TranslateParams, Translator, VendorCodeName } from "./index";
+import { ITranslationResult, sanitizeApiKey, TranslateParams, Translator, ProviderCodeName, DeepSeekAIModel } from "./index";
 import { getMessage } from "../i18n";
 import { createStorage } from "../storage";
 import { aiTranslateAction } from "../extension";
-import type { VendorAuthSettingsProps } from "../components/settings/vendor_auth_settings";
-
-export const enum DeepSeekAIModel {
-  CHAT = "deepseek-chat",
-  THINKER = "deepseek-reasoner"
-}
+import type { ProviderAuthSettingsProps } from "../components/settings/auth_settings";
 
 class DeepSeekTranslator extends Translator {
-  public name = VendorCodeName.DEEPSEEK;
+  public name = ProviderCodeName.DEEPSEEK;
   public title = "DeepSeek";
   public publicUrl = "https://platform.deepseek.com/";
   public apiUrl = "https://api.deepseek.com";
@@ -36,7 +31,7 @@ class DeepSeekTranslator extends Translator {
 
   async translate({ from, to, text }: TranslateParams): Promise<ITranslationResult> {
     return aiTranslateAction({
-      vendor: this.name,
+      provider: this.name,
       model: DeepSeekAIModel.CHAT,
       apiKey: this.#apiKey.get(),
       targetLanguage: this.langTo[to],
@@ -45,7 +40,7 @@ class DeepSeekTranslator extends Translator {
     })
   }
 
-  getAuthSettings(): VendorAuthSettingsProps {
+  getAuthSettings(): ProviderAuthSettingsProps {
     return {
       apiKeySanitized: sanitizeApiKey(this.#apiKey.get()),
       setupApiKey: this.setupApiKey,
@@ -58,4 +53,4 @@ class DeepSeekTranslator extends Translator {
   }
 }
 
-Translator.registerVendor(DeepSeekTranslator);
+Translator.registerProvider(DeepSeekTranslator);

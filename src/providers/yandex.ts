@@ -1,8 +1,8 @@
 import YandexLanguages from "./yandex.json"
-import { ITranslationDictionaryMeaning, ITranslationResult, TranslateParams, Translator, VendorCodeName } from "./index";
+import { ITranslationDictionaryMeaning, ITranslationResult, TranslateParams, Translator, ProviderCodeName } from "./index";
 
 class Yandex extends Translator {
-  public name = VendorCodeName.YANDEX;
+  public name = ProviderCodeName.YANDEX;
   public title = 'Yandex';
   public apiUrl = 'https://translate.yandex.net';
   public publicUrl = 'https://translate.yandex.com';
@@ -78,7 +78,7 @@ class Yandex extends Translator {
     return translation;
   }
 
-  getFullPageTranslationUrl(pageUrl: string, lang: string): string {
+  override getFullPageTranslationUrl(pageUrl: string, lang: string): string {
     return `https://translate.yandex.com/translate?lang=${lang}&url=${pageUrl}`
   }
 
@@ -145,4 +145,4 @@ export const supportedDictionary: Record<string, string[]> = {
   "uk": ["en", "ru", "uk"]
 };
 
-Translator.registerVendor(Yandex);
+Translator.registerProvider(Yandex);

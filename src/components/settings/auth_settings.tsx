@@ -1,9 +1,9 @@
-import * as styles from "./vendor_auth_settings.module.scss";
+import * as styles from "./auth_settings.module.scss";
 import React from "react";
 import { Icon } from "../icon";
 import { cssNames, prevDefault } from "../../utils";
 
-export interface VendorAuthSettingsProps extends React.PropsWithChildren {
+export interface ProviderAuthSettingsProps extends React.PropsWithChildren {
   className?: string;
   apiKeySanitized: string;
   setupApiKey: () => void;
@@ -14,12 +14,12 @@ export interface VendorAuthSettingsProps extends React.PropsWithChildren {
   clearKeyInfo: string;
 }
 
-export class VendorAuthSettings extends React.Component<VendorAuthSettingsProps> {
+export class ProviderAuthSettings extends React.Component<ProviderAuthSettingsProps> {
   render() {
     const { className, apiKeySanitized, setupApiKey, clearApiKey, accessInfo, accessInfo2, warningInfo, clearKeyInfo, children } = this.props;
 
     return (
-      <div className={cssNames(styles.VendorAuthSettings, className)}>
+      <div className={cssNames(styles.ProviderAuthSettings, className)}>
         {!apiKeySanitized && (
           <Icon small material="info_outline" tooltip={accessInfo}/>
         )}

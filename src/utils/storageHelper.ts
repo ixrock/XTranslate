@@ -7,10 +7,6 @@ import isPlainObject from "lodash/isPlainObject";
 import isEqual from "lodash/isEqual";
 import merge from "lodash/merge";
 
-export type DeepPartial<T> = {
-  [K in keyof T]?: T[K] extends object ? DeepPartial<T[K]> : T[K];
-}
-
 export interface StorageHelperOptions<T> {
   defaultValue?: T;
   autoLoad?: boolean; // preload data from persistent storage when `opts.storageProvider` (default: true)
@@ -191,6 +187,16 @@ export class StorageHelper<T> {
     }
 
     this.set(newValue, { silent });
+  }
+
+  sync(state: T) {
+    if (state === undefined) {
+      this.reset({ silent: true });
+    } else {
+      this.set(state, {
+        silent: true, // don't save back to persistent storage
+      });
+    }
   }
 
   toJS(): T {

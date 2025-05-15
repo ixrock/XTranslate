@@ -1,9 +1,7 @@
 import { action, makeObservable } from "mobx";
 import { Hotkey } from "../../utils/parseHotkey";
 import { createStorage } from "../../storage";
-import { getTranslator, VendorCodeName } from "../../vendors";
-import { OpenAIModel } from "../../vendors/open-ai.models";
-import { GrokAIModel } from "../../vendors/grok.models";
+import { getTranslator, GrokAIModel, OpenAIModel, ProviderCodeName } from "../../providers";
 
 export type PopupPosition = "" /*auto*/ | "left top" | "left bottom" | "right top" | "right bottom";
 
@@ -27,7 +25,6 @@ export const settingsStorage = createStorage("settings", {
     showClosePopupIcon: false,
     showCopyTranslationIcon: true,
     useDarkTheme: false,
-    showInContextMenu: true,
     showIconNearSelection: true,
     showPopupAfterSelection: false,
     showPopupOnClickBySelection: false,
@@ -36,7 +33,7 @@ export const settingsStorage = createStorage("settings", {
     showTranslatedFrom: true,
     rememberLastText: false,
     textInputTranslateDelayMs: 750,
-    vendor: "google" as VendorCodeName,
+    vendor: "google" as ProviderCodeName,
     langFrom: "auto",
     langTo: navigator.language.split('-')[0],
     langToReverse: "", // applied in case when `langFrom` == "auto" && `langDetected` == `langTo`
@@ -49,7 +46,7 @@ export const settingsStorage = createStorage("settings", {
     ttsVoiceIndex: 0,
     openAiModel: OpenAIModel.RECOMMENDED,
     grokAiModel: GrokAIModel.RECOMMENDED,
-    skipVendorInRotation: {} as Record<VendorCodeName, boolean>,
+    skipVendorInRotation: {} as Record<ProviderCodeName, boolean>,
     customPdfViewer: false,
     hotkey: {
       altKey: true,
@@ -63,7 +60,7 @@ export const settingsStorage = createStorage("settings", {
  * Favorites are shown on top of language-select list.
  */
 export interface FavoritesList {
-  [vendor: string]: Record<FavoriteLangDirection, string[]>;
+  [provider: string]: Record<FavoriteLangDirection, string[]>;
 }
 
 export type FavoriteLangDirection = "source" | "target";
@@ -81,22 +78,21 @@ export class SettingsStore {
     return settingsStorage.load(opts);
   }
 
-  getFavorites(vendor: string, sourceType: FavoriteLangDirection): string[] {
-    return this.data.favorites?.[vendor]?.[sourceType] ?? [];
+  getFavorites(provider: ProviderCodeName, sourceType: FavoriteLangDirection): string[] {
+    return this.data.favorites?.[provider]?.[sourceType] ?? [];
   }
 
   @action
-  toggleFavorite(params: { vendor: string, sourceType: FavoriteLangDirection, lang: string }) {
-    console.info("[SETTINGS-STORAGE]: updating favorite lang", params);
-    const { vendor, sourceType, lang } = params;
+  toggleFavorite(params: { provider: string, sourceType: FavoriteLangDirection, lang: string }) {
+    const { provider, sourceType, lang } = params;
 
     this.data.favorites ??= {};
-    this.data.favorites[vendor] ??= {
+    this.data.favorites[provider] ??= {
       source: [],
       target: [],
     };
 
-    const favorites = new Set(this.data.favorites[vendor][sourceType]);
+    const favorites = new Set(this.data.favorites[provider][sourceType]);
     if (favorites.has(lang)) {
       favorites.delete(lang)
     } else {
@@ -104,12 +100,12 @@ export class SettingsStore {
     }
 
     // save update to storage
-    this.data.favorites[vendor][sourceType] = Array.from(favorites);
+    this.data.favorites[provider][sourceType] = Array.from(favorites);
   }
 
-  setVendor(name: VendorCodeName) {
-    var translator = getTranslator(name);
-    var { vendor, langFrom, langTo } = this.data;
+  setProvider(name: ProviderCodeName) {
+    const translator = getTranslator(name);
+    const { vendor, langFrom, langTo } = this.data;
     if (vendor === name) return;
     if (!translator.langFrom[langFrom]) {
       this.data.langFrom = Object.keys(translator.langFrom)[0];

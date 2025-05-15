@@ -33,7 +33,6 @@ export_settings_button_label = 設定をエクスポート
 import_settings_button_label = 設定をインポート
 import_incorrect_file_format = ファイル形式が正しくありません（おそらく { $fileNameJson } であるべきです）
 imported_setting_successful = キー { $key } の下の設定が正常にインポートされました
-show_context_menu = ページのコンテキストメニューに表示
 display_icon_near_selection = 選択したテキストの近くにアイコンを表示
 show_tts_icon_inside_popup = テキスト読み上げアイコンを表示
 show_next_vendor_icon_in_popup = 次の翻訳アイコンを表示
@@ -130,7 +129,7 @@ history_import_success = { $itemsCount } 件の履歴エントリーを正常に
 history_import_file_error = ファイル '{ $fileName }' の読み取りエラー: { $errorInfo }
 
 # コンテキストメニュー
-context_menu_translate_full_page = { $translator } で全ページを翻訳
+context_menu_translate_full_page = { $lang } に翻訳する
 context_menu_translate_selection = { $translator } で { $selection } を翻訳
 
 # その他
@@ -203,3 +202,4 @@ grok_ai_get_own_key_info = console.x.ai に登録し、残高をチャージし�
 grok_ai_auth_key = Grok (X) プラットフォームで API キーを作成して API へのアクセスを取得
 grok_ai_auth_key_warning = 警告：この拡張ウィンドウ以外で API キーを入力しないでください
 grok_ai_auth_key_remove = Grok API キーを削除
+

@@ -1,6 +1,6 @@
 XTranslate
 ==========
-Chrome-extension for translating foreign languages at the viewing web page context.
+Chrome-extension for translating foreign languages at the viewing web-page context.
 Translate from 100+ foreign languages to your native directly on web-site you're reading or
 insert text in the action window (via extension's icon on chrome's toolbar).
 
@@ -30,7 +30,7 @@ In order to work with local files (e.g. `file://path/to/file.pdf`) you must allo
 - open extensions page `chrome://extensions/`, find **XTranslate** and click **(Details)** button
 - enable checkbox **"Allow access to file URLs"** 
 
-2) Listen text-to-speech (TTS) for all supported translation vendors
+2) Listen text-to-speech (TTS) for supported translation providers (e.g. `Google`, `OpenAI`)
 
 3) Create your unique design (theme) for the popup with translation results
 
@@ -49,7 +49,7 @@ Install extension:
 * [Microsoft Edge Add-ons](https://microsoftedge.microsoft.com/addons/detail/cinfaflgbaachkaamaeglolofeahelkd)
 * [Firefox addons](https://addons.mozilla.org/en-GB/firefox/addon/xtranslate-chrome/) _(might be not fully supported)_
 
-Available translation vendors:
+Available translation providers:
 -----------
 * [Google](http://translate.google.com/)
 * [Yandex](http://translate.yandex.com/)

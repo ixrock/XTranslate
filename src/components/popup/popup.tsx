@@ -8,7 +8,7 @@ import { iconMaterialFavorite, iconMaterialFavoriteOutlined } from "../../common
 import { cssNames, disposer, IClassName, noop, prevDefault } from "../../utils";
 import { copyToClipboard } from "../../utils/copy-to-clipboard";
 import { toCssColor } from "../../utils/toCssColor";
-import { getNextTranslator, getTranslator, isRTL, ITranslationError, ITranslationResult } from "../../vendors";
+import { getNextTranslator, getTranslator, isRTL, ITranslationError, ITranslationResult } from "../../providers";
 import { Icon } from "../icon";
 import { settingsStorage, settingsStore } from "../settings/settings.storage";
 import { themeStore } from "../theme-manager/theme.storage";

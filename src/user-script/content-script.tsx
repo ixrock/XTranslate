@@ -10,8 +10,8 @@ import isEmpty from 'lodash/isEmpty';
 import isEqual from 'lodash/isEqual';
 import orderBy from 'lodash/orderBy';
 import { autoBind, delay, disposer, getHotkey } from "../utils";
-import { checkContextInvalidationError, getManifest, getURL, MessageType, onMessage, proxyRequest, ProxyResponseType, TranslateWithVendorPayload } from "../extension";
-import { getNextTranslator, getTranslator, ITranslationError, ITranslationResult, TranslatePayload } from "../vendors";
+import { checkContextInvalidationError, getManifest, getURL, MessageType, onMessage, proxyRequest, ProxyResponseType, TranslatePayload } from "../extension";
+import { getNextTranslator, getTranslator, ITranslationError, ITranslationResult } from "../providers";
 import { XTranslateIcon } from "./xtranslate-icon";
 import { Popup } from "../components/popup/popup";
 import { preloadAppData } from "../preloadAppData";
@@ -112,20 +112,16 @@ export class ContentScript extends React.Component {
     window.addEventListener("resize", this.updatePopupPositionLazy, { signal });
 
     this.unloadContentScript.push(
-      () => {
+      function unmount() {
         ContentScript.rootElem.parentElement.removeChild(ContentScript.rootElem);
         ContentScript.rootNode.unmount();
       },
-
-      () => abortCtrl.abort(), // unbind DOM-events
-
+      function unbindDOMEvents() {
+        abortCtrl.abort();
+      },
       onMessage<void, string>(MessageType.GET_SELECTED_TEXT, () => {
         return this.selectedText;
       }),
-      onMessage(MessageType.TRANSLATE_WITH_VENDOR, ({ vendor, text }: TranslateWithVendorPayload) => {
-        this.hideIcon();
-        this.translate({ vendor, text });
-      })
     );
   }
 
@@ -167,9 +163,9 @@ export class ContentScript extends React.Component {
   translateLazy = debounce(this.translate, 250);
 
   @action
-  async translate({ vendor, from, to, text }: Partial<TranslatePayload> = {}) {
+  async translate({ provider, from, to, text }: Partial<TranslatePayload> = {}) {
     this.lastParams = {
-      vendor: vendor ?? settingsStore.data.vendor,
+      vendor: provider ?? settingsStore.data.vendor,
       langFrom: from ?? settingsStore.data.langFrom,
       langTo: to ?? settingsStore.data.langTo,
       originalText: text ?? this.selectedText.trim(),
@@ -193,10 +189,10 @@ export class ContentScript extends React.Component {
 
   translateNext(reverse = false) {
     const { vendor, langFrom, langTo, originalText } = this.lastParams;
+    const nextTranslator = getNextTranslator(vendor, langFrom, langTo, reverse);
 
-    const nextVendor = getNextTranslator(vendor, langFrom, langTo, reverse);
     return this.translate({
-      vendor: nextVendor.name,
+      provider: nextTranslator.name,
       from: langFrom,
       to: langTo,
       text: originalText,

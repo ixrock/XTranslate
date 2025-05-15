@@ -5,15 +5,15 @@ import { action, makeObservable } from "mobx";
 import { observer } from "mobx-react";
 import { ReactSelect, ReactSelectGroup, ReactSelectOption } from "../select";
 import { cssNames } from "../../utils";
-import { getTranslator } from "../../vendors";
+import { getTranslator, ProviderCodeName } from "../../providers";
 import { getMessage } from "../../i18n";
 import { Icon } from "../icon";
 import { FavoriteLangDirection, settingsStore } from "../settings/settings.storage";
 import { getFlagIcon } from "./flag-icons";
 
-export interface Props {
+export interface SelectLanguageProps {
   className?: string;
-  vendor?: string;
+  provider?: ProviderCodeName;
   from?: string;
   to?: string;
   showInfoIcon?: boolean;
@@ -23,8 +23,8 @@ export interface Props {
 }
 
 @observer
-export class SelectLanguage extends React.Component<Props> {
-  constructor(props: Props) {
+export class SelectLanguage extends React.Component<SelectLanguageProps> {
+  constructor(props: SelectLanguageProps) {
     super(props);
     makeObservable(this);
   }
@@ -37,20 +37,20 @@ export class SelectLanguage extends React.Component<Props> {
     return this.props.to ?? settingsStore.data.langTo;
   }
 
-  get vendor() {
-    return this.props.vendor ?? settingsStore.data.vendor;
+  get provider(): ProviderCodeName {
+    return this.props.provider ?? settingsStore.data.vendor;
   }
 
   get sourceFavorites(): string[] {
-    return settingsStore.getFavorites(this.vendor, "source")
+    return settingsStore.getFavorites(this.provider, "source")
   }
 
   get targetFavorites(): string[] {
-    return settingsStore.getFavorites(this.vendor, "target")
+    return settingsStore.getFavorites(this.provider, "target")
   }
 
   get sourceLanguageOptions(): ReactSelectGroup<string>[] {
-    var { langFrom: sourceLangList } = getTranslator(this.vendor);
+    var { langFrom: sourceLangList } = getTranslator(this.provider);
 
     var getOption = (lang: string): ReactSelectOption<string> => ({
       value: lang,
@@ -75,7 +75,7 @@ export class SelectLanguage extends React.Component<Props> {
   }
 
   get targetLanguageOptions(): ReactSelectGroup<string>[] {
-    var { langTo: targetLangList } = getTranslator(this.vendor);
+    var { langTo: targetLangList } = getTranslator(this.provider);
 
     var getOption = (lang: string): ReactSelectOption<string> => ({
       value: lang,
@@ -101,7 +101,7 @@ export class SelectLanguage extends React.Component<Props> {
 
   get reverseLanguageOptions(): ReactSelectOption<string>[] {
     var { langToReverse } = settingsStore.data;
-    var { langTo: targetLangList } = getTranslator(this.vendor);
+    var { langTo: targetLangList } = getTranslator(this.provider);
 
     var getOption = (lang: string): ReactSelectOption<string> => ({
       value: lang,
@@ -144,7 +144,7 @@ export class SelectLanguage extends React.Component<Props> {
 
     // save updated favorite to storage
     settingsStore.toggleFavorite({
-      vendor: this.vendor,
+      provider: this.provider,
       sourceType, lang
     });
 
@@ -172,12 +172,11 @@ export class SelectLanguage extends React.Component<Props> {
   }
 
   renderReverseTranslationSettingsPanel() {
-    var { showReverseTranslation } = this.props;
+    const { showReverseTranslation } = this.props;
     if (!showReverseTranslation) return;
-
-    var { langTo } = this;
-    const langToTitle = getTranslator(this.vendor).langTo[langTo];
-    const { langTo: targetLangList } = getTranslator(this.vendor);
+    const { langTo } = this;
+    const langToTitle = getTranslator(this.provider).langTo[langTo];
+    const { langTo: targetLangList } = getTranslator(this.provider);
     const initialReverseLang = langTo !== "en" ? "en" : Object.keys(targetLangList).filter(lang => lang !== "auto")[0] /*first*/;
 
     if (settingsStore.data.langToReverse) {

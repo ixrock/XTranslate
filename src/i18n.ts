@@ -86,9 +86,9 @@ export function getMessagePattern(key: string): MessagePattern {
   };
 }
 
-export function getMessage(key: string): string;
-export function getMessage(key: string, placeholders: Record<string, ReactNode>): ReactNode;
-export function getMessage(key: string, placeholders: Record<string, FluentVariable | any> = {}): ReactNode {
+export function getMessage(key: string, placeholders?: Record<string, string | FluentVariable>): string;
+export function getMessage(key: string, placeholders: Record<string, ReactNode | FluentVariable>): ReactNode[];
+export function getMessage(key: string, placeholders: Record<string, any> = {}): unknown {
   const { message, bundle } = getMessagePattern(key);
   if (!message) return;
 
@@ -101,7 +101,7 @@ export function getMessage(key: string, placeholders: Record<string, FluentVaria
         return placeholders[msgChunk.name];
       }
       return msgChunk;
-    })
+    });
   }
 
   return bundle.formatPattern(message, placeholders);

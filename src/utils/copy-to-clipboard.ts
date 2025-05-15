@@ -1,16 +1,16 @@
-import { getTranslator, ITranslationResult } from "../vendors";
+import { getTranslator, ITranslationResult } from "../providers";
 import { getMessage } from "../i18n";
 
 interface CopyToClipboardOptions {
   sourceText?: boolean;
-  withVendor?: boolean;
+  translatorInfo?: boolean;
 }
 
 export async function copyToClipboard(result: ITranslationResult, options: CopyToClipboardOptions = {}) {
-  const { translation, transcription, langTo, langDetected, vendor, dictionary, originalText, } = result;
-  const { sourceText, withVendor } = options;
+  const { translation, transcription, langTo, langDetected, vendor: provider, dictionary, originalText, } = result;
+  const { sourceText, translatorInfo } = options;
 
-  const translator = getTranslator(vendor);
+  const translator = getTranslator(provider);
   const texts = [
     sourceText ? originalText : "",
 
@@ -20,7 +20,7 @@ export async function copyToClipboard(result: ITranslationResult, options: CopyT
     }),
 
     // add "copied with ..." at the end
-    withVendor ? (
+    translatorInfo ? (
       getMessage("translated_with", {
         translator: translator.title,
         lang: translator.getLangPairTitle(langDetected, langTo),

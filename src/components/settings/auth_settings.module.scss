@@ -1,6 +1,6 @@
 @use "../mixins" as *;
 
-.VendorAuthSettings {
+.ProviderAuthSettings {
   display: flex;
   gap: var(--theme-spacing);
   align-items: center;

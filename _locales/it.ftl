@@ -33,7 +33,6 @@ export_settings_button_label = Esporta impostazioni
 import_settings_button_label = Importa impostazioni
 import_incorrect_file_format = Formato file errato (dovrebbe essere probabilmente { $fileNameJson })
 imported_setting_successful = Impostazioni sotto la chiave { $key } importate con successo
-show_context_menu = Mostra nel menu contestuale della pagina
 display_icon_near_selection = Mostra icona vicino al testo selezionato
 show_tts_icon_inside_popup = Mostra icona testo a voce
 show_next_vendor_icon_in_popup = Mostra icona traduzione successiva
@@ -130,7 +129,7 @@ history_import_success = { $itemsCount } voci di cronologia importate con succes
 history_import_file_error = Errore nella lettura del file '{ $fileName }': { $errorInfo }
 
 # menu contestuale
-context_menu_translate_full_page = Traduci tutta la pagina con { $translator }
+context_menu_translate_full_page = Traduci in { $lang }
 context_menu_translate_selection = Traduci { $selection } con { $translator }
 
 # altro
@@ -203,3 +202,4 @@ grok_ai_get_own_key_info = Registrati su console.x.ai e ricarica il saldo (ad es
 grok_ai_auth_key = Crea una chiave API sulla piattaforma Grok (X) per ottenere l'accesso all'API
 grok_ai_auth_key_warning = Attenzione: NON inserire la tua chiave API in nessun altro posto tranne questa finestra di estensione
 grok_ai_auth_key_remove = Rimuovi la chiave API di Grok
+

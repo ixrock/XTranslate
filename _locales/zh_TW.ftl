@@ -33,7 +33,6 @@ export_settings_button_label = 匯出設定
 import_settings_button_label = 匯入設定
 import_incorrect_file_format = 檔案格式不正確（應為 { $fileNameJson }）
 imported_setting_successful = 已成功匯入鍵值為 { $key } 的設定
-show_context_menu = 顯示在頁面上下文選單中
 display_icon_near_selection = 在選中文本附近顯示圖示
 show_tts_icon_inside_popup = 顯示語音合成圖示
 show_next_vendor_icon_in_popup = 顯示下個翻譯器圖示
@@ -130,7 +129,7 @@ history_import_success = 成功匯入 { $itemsCount } 條歷史記錄
 history_import_file_error = 讀取檔案 '{ $fileName }' 錯誤：{ $errorInfo }
 
 # 上下文選單
-context_menu_translate_full_page = 使用 { $translator } 翻譯整頁
+context_menu_translate_full_page = 翻譯成 { $lang }
 context_menu_translate_selection = 使用 { $translator } 翻譯 { $selection }
 
 # 其他

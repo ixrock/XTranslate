@@ -1,6 +1,6 @@
-import type { ITranslationResult, TranslatePayload } from "../vendors";
+import type { ITranslationResult } from "../providers";
 import type { IHistoryItem } from "../components/user-history/history.storage";
-import { AITranslatePayload, broadcastMessage, getActiveTab, isBackgroundWorker, Message, OpenAITextToSpeechPayload, sendMessage } from "./index";
+import { AITranslatePayload, broadcastMessage, getActiveTab, isBackgroundWorker, Message, OpenAITextToSpeechPayload, sendMessage, TranslatePayload } from "./index";
 import { isSystemPage } from "../common-vars";
 import { MessageType, ProxyRequestPayload, ProxyResponsePayload, ProxyResponseType, SaveToFavoritesPayload, SaveToHistoryPayload, StorageDeletePayload, StorageReadPayload, StorageSyncPayload, StorageWritePayload } from "./messages";
 import { handleProxyRequestPayload } from "../background/httpProxy.bgc";

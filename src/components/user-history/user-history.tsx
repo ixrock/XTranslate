@@ -6,7 +6,7 @@ import orderBy from "lodash/orderBy";
 import { action, computed, makeObservable, observable, reaction, runInAction } from "mobx";
 import { observer } from "mobx-react";
 import { bindGlobalHotkey, cssNames, disposer, fuzzyMatch, isHotkeyPressed, prevDefault, SimpleHotkey } from "../../utils";
-import { getTranslator, getTranslators, isRTL } from "../../vendors";
+import { getTranslator, getTranslators, isRTL, ProviderCodeName } from "../../providers";
 import { Checkbox } from "../checkbox";
 import { Menu, MenuItem } from "../menu";
 import { FileInput, ImportingFile, NumberInput, SearchInput } from "../input";
@@ -14,7 +14,7 @@ import { Option, Select } from "../select";
 import { Button } from "../button";
 import { settingsStore } from "../settings/settings.storage";
 import { pageManager } from "../app/page-manager";
-import { clearHistoryItem, exportHistory, HistoryRecord, historyStorage, HistoryTranslation, IHistoryItem, IHistoryItemId, IHistoryStorageItem, importHistory, toHistoryItem } from "./history.storage";
+import { clearHistoryItem, exportHistory, HistoryRecord, historyStorage, ProviderHistoryRecord, IHistoryItem, IHistoryItemId, IHistoryStorageItem, importHistory, toHistoryItem } from "./history.storage";
 import { Icon } from "../icon";
 import { Tab } from "../tabs";
 import { Spinner } from "../spinner";
@@ -114,14 +114,14 @@ export class UserHistory extends React.Component {
     // convert history items to runtime format (instead of more compressed storage-type format)
     Object.entries(translations).forEach(([itemId, translationsByVendor]) => {
       items[itemId] = Object.fromEntries(
-        Object.entries(translationsByVendor).map(([vendor, storageItem]) => {
-          const isFavorite = favorites[itemId]?.[vendor];
+        Object.entries(translationsByVendor).map(([providerName, storageItem]: [ProviderCodeName, IHistoryStorageItem]) => {
+          const isFavorite = favorites[itemId]?.[providerName];
 
           if (this.showOnlyFavorites && !isFavorite) {
             return;
           }
 
-          return [vendor, toHistoryItem(storageItem)];
+          return [providerName, toHistoryItem(storageItem)];
         }).filter(Boolean)
       );
     });
@@ -129,8 +129,8 @@ export class UserHistory extends React.Component {
     return items;
   }
 
-  @computed get itemsListSorted(): HistoryTranslation[] {
-    let items: HistoryTranslation[] = Object.values(this.items)
+  @computed get itemsListSorted(): ProviderHistoryRecord<IHistoryItem>[] {
+    let items: ProviderHistoryRecord<IHistoryItem>[] = Object.values(this.items)
       // has at least one result from translation vendor
       .filter(translation => Object.values(translation).length > 0);
 
@@ -146,14 +146,14 @@ export class UserHistory extends React.Component {
     )
   }
 
-  @computed get itemsGroupedByDay(): Map<number/*day*/, { [vendor: string]: IHistoryItem }[]> {
-    var items = this.itemsListSorted
+  @computed get itemsGroupedByDay(): Map<number/*day*/, ProviderHistoryRecord<IHistoryItem>[]> {
+    const items = this.itemsListSorted
       .slice(0, this.pageSize)
       // skip: might be empty after manual removing (to avoid invalid-date in lodash.groupBy)
       .filter(translations => Object.values(translations).length > 0);
 
     // group items per day
-    var itemsPerDay = groupBy(items, translations => {
+    const itemsPerDay = groupBy(items, translations => {
       const creationTimes = Object.values(translations).map(item => item.date);
       if (!creationTimes.length) return;
       const latestTime = Math.max(...creationTimes);
@@ -224,7 +224,7 @@ export class UserHistory extends React.Component {
   @action
   clearItemsByTimeFrame = () => {
     let items: { id: IHistoryItemId, date: number }[] = this.itemsListSorted
-      .map((translation: HistoryTranslation) => ({
+      .map((translation: ProviderHistoryRecord<IHistoryItem>) => ({
         id: Object.values(translation)[0].id,
         date: Math.max(...Object.values(translation).map(item => item.date)),
       }));
@@ -275,7 +275,7 @@ export class UserHistory extends React.Component {
               <div className="history-date">
                 {new Date(dayTime).toDateString()}
               </div>
-              {translations.map((translation: HistoryTranslation) => {
+              {translations.map((translation: ProviderHistoryRecord<IHistoryItem>) => {
                 const items = Object.values(translation);
                 if (!items.length) return; // might be empty group after manual item remove
 
@@ -300,8 +300,8 @@ export class UserHistory extends React.Component {
                     onKeyDown={onEnterKey}
                     ref={historyElem}
                   >
-                    {getTranslators().map(vendor => {
-                      const item = translation[vendor.name];
+                    {getTranslators().map(translator => {
+                      const item = translation[translator.name];
                       if (!item) return; // no results for this translation service yet
                       return <React.Fragment key={item.vendor}>{this.renderHistoryItem(item)}</React.Fragment>
                     })}
@@ -316,22 +316,22 @@ export class UserHistory extends React.Component {
   }
 
   renderHistoryItem(item: IHistoryItem): React.ReactNode {
-    var { id: itemId, vendor, from: langFrom, to: langTo, text, translation, transcription, dictionary } = item;
-    var showDetails = this.detailsVisible.has(itemId);
-    var translator = getTranslator(vendor);
-    var favorite = isFavorite(item);
+    const { id: itemId, vendor, from: langFrom, to: langTo, text, translation, transcription, dictionary } = item;
+    const showDetails = this.detailsVisible.has(itemId);
+    const translator = getTranslator(vendor);
+    const favorite = isFavorite(item);
 
-    var clearItem = prevDefault(() => {
+    const clearItem = prevDefault(() => {
       removeFavorite(item);
       clearHistoryItem(itemId, vendor);
     });
 
-    var toggleFavorite = prevDefault(() => {
+    const toggleFavorite = prevDefault(() => {
       saveToFavoritesAction(item, { isFavorite: !favorite });
     });
 
-    const sourceTextUrl = getTranslationPageUrl({ vendor, from: langFrom, to: langTo, text });
-    const reverseTranslationUrl = getTranslationPageUrl({ vendor, from: langTo, to: langFrom, text: translation });
+    const sourceTextUrl = getTranslationPageUrl({ provider: vendor, from: langFrom, to: langTo, text });
+    const reverseTranslationUrl = getTranslationPageUrl({ provider: vendor, from: langTo, to: langFrom, text: translation });
 
     return (
       <div className={`history-item ${cssNames({ showDetails })}`}>
@@ -389,7 +389,7 @@ export class UserHistory extends React.Component {
                     {dict.translation.map((wordTranslation, index, list) => {
                       const isLastItem = index === list.length - 1;
                       const reverseTranslationUrl = getTranslationPageUrl({
-                        vendor: vendor,
+                        provider: vendor,
                         from: langTo,
                         to: langFrom,
                         text: wordTranslation,

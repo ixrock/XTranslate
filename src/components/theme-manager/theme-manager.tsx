@@ -276,7 +276,7 @@ export class ThemeManager extends React.Component {
           </div>
         </div>
 
-        <div className="reset flex center">
+        <div className="reset flex justify-center">
           <FileInput
             accept=".ttf,.otf,.woff,.woff2"
             onImport={this.onImportCustomFont}

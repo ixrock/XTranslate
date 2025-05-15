@@ -3,8 +3,8 @@
 import { createLogger } from "./utils/createLogger";
 import { StorageAdapter, StorageHelper, StorageHelperOptions } from "./utils/storageHelper";
 import { readFromExternalStorageAction, removeFromExternalStorageAction, writeToExternalStorageAction } from "./extension/actions";
-import { MessageType, onMessage, StorageSyncPayload, StorageWritePayload } from "./extension";
-import { StorageArea } from "./background/storage.bgc";
+import { isBackgroundWorker, MessageType, onMessage, StorageSyncPayload, StorageWritePayload } from "./extension";
+import { listenExternalStorageChanges, StorageArea } from "./background/storage.bgc";
 
 const logger = createLogger({ systemPrefix: "STORAGE(helper)" });
 
@@ -45,27 +45,27 @@ export function createStorage<T>(key: string, options: ChromeStorageHelperOption
     storageAdapter,
   });
 
-  onMessage(MessageType.STORAGE_DATA_SYNC, async (payload: StorageSyncPayload<T>) => {
-    const currentOrigin = StorageHelper.getResourceOrigin();
+  // sync storage updates for background instances
+  if (isBackgroundWorker()) {
+    listenExternalStorageChanges(area, (changes) => {
+      if (key in changes) {
+        logger.info("background data sync", changes[key]);
+        storageHelper.sync(changes[key] as T);
+      }
+    });
+  }
 
-    const { key: evtKey, origin: evtOrigin, area: evtArea, state: evtState } = payload;
-    const storageKeyMatched = evtKey === storageHelper.key;
+  // sync storage updates for options-page (app) and content-script pages
+  onMessage(MessageType.STORAGE_DATA_SYNC, async (payload: StorageSyncPayload<T>) => {
+    const { key: evtKey, origin: evtOrigin, area: evtArea, state } = payload;
+    const origin = StorageHelper.getResourceOrigin();
+    const storageKeyMatched = evtKey === key;
     const isSameArea = evtArea === area;
-    const isDifferentOrigin = evtOrigin !== currentOrigin;
+    const isDifferentOrigin = evtOrigin !== origin;
 
     if (storageKeyMatched && isSameArea && isDifferentOrigin) {
-      logger.info("data sync", {
-        eventOrigin: currentOrigin,
-        payload,
-      });
-
-      if (evtState === undefined) {
-        storageHelper.reset({ silent: true });
-      } else {
-        storageHelper.set(evtState, {
-          silent: true, // don't save back to persistent storage
-        });
-      }
+      logger.info("page data sync", { origin, payload });
+      storageHelper.sync(state);
     }
   });
 

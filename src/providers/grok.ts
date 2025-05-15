@@ -1,13 +1,13 @@
 import LanguagesList from "./open-ai.json"
-import { ITranslationResult, sanitizeApiKey, TranslateParams, Translator, VendorCodeName } from "./index";
+import { ITranslationResult, sanitizeApiKey, TranslateParams, Translator, ProviderCodeName } from "./index";
 import { getMessage } from "../i18n";
 import { createStorage } from "../storage";
 import { settingsStore } from "../components/settings/settings.storage";
 import { aiTranslateAction } from "../extension";
-import type { VendorAuthSettingsProps } from "../components/settings/vendor_auth_settings";
+import type { ProviderAuthSettingsProps } from "../components/settings/auth_settings";
 
 class GrokTranslator extends Translator {
-  public name = VendorCodeName.GROK;
+  public name = ProviderCodeName.GROK;
   public title = "Grok";
   public publicUrl = "https://console.x.ai/";
   public apiUrl = "https://api.x.ai/v1";
@@ -32,7 +32,7 @@ class GrokTranslator extends Translator {
 
   async translate({ from, to, text }: TranslateParams): Promise<ITranslationResult> {
     return aiTranslateAction({
-      vendor: this.name,
+      provider: this.name,
       model: settingsStore.data.grokAiModel,
       apiKey: this.#apiKey.get(),
       targetLanguage: this.langTo[to],
@@ -41,7 +41,7 @@ class GrokTranslator extends Translator {
     })
   }
 
-  getAuthSettings(): VendorAuthSettingsProps {
+  getAuthSettings(): ProviderAuthSettingsProps {
     return {
       apiKeySanitized: sanitizeApiKey(this.#apiKey.get()),
       setupApiKey: this.setupApiKey,
@@ -54,4 +54,4 @@ class GrokTranslator extends Translator {
   }
 }
 
-Translator.registerVendor(GrokTranslator);
+Translator.registerProvider(GrokTranslator);

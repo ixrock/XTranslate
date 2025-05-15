@@ -33,7 +33,6 @@ export_settings_button_label = Exportar configuración
 import_settings_button_label = Importar configuración
 import_incorrect_file_format = Formato de archivo incorrecto (debería ser probablemente { $fileNameJson })
 imported_setting_successful = Configuración bajo la clave { $key } importada con éxito
-show_context_menu = Mostrar en el menú contextual de la página
 display_icon_near_selection = Mostrar icono cerca del texto seleccionado
 show_tts_icon_inside_popup = Mostrar icono de texto a voz
 show_next_vendor_icon_in_popup = Mostrar icono de traducción siguiente
@@ -130,7 +129,7 @@ history_import_success = { $itemsCount } entradas de historial importadas con é
 history_import_file_error = Error al leer el archivo '{ $fileName }': { $errorInfo }
 
 # menú contextual
-context_menu_translate_full_page = Traducir toda la página con { $translator }
+context_menu_translate_full_page = Traducir a { $lang }
 context_menu_translate_selection = Traducir { $selection } con { $translator }
 
 # otro
@@ -203,3 +202,4 @@ grok_ai_get_own_key_info = Regístrate en console.x.ai y recarga tu saldo (por e
 grok_ai_auth_key = Crea una clave API en la plataforma Grok (X) para obtener acceso a la API
 grok_ai_auth_key_warning = Advertencia: NO introduzcas tu clave API en ningún otro lugar excepto en esta ventana de extensión
 grok_ai_auth_key_remove = Eliminar la clave API de Grok
+

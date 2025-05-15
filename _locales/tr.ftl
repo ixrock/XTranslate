@@ -29,7 +29,6 @@ export_settings_button_label = Ayarları dışa aktar
 import_settings_button_label = Ayarları içe aktar
 import_incorrect_file_format = Yanlış dosya biçimi (muhtemelen { $fileNameJson } olmalıdır)
 imported_setting_successful = '{ $key }' anahtarının altındaki ayarlar başarılı bir şekilde içe aktarıldı
-show_context_menu = Sayfa içerik menüsünde göster
 display_icon_near_selection = Seçili metnin yanında çeviri simgesini göster
 show_tts_icon_inside_popup = Metin okuma simgesi göster
 show_next_vendor_icon_in_popup = Sonraki çeviri simgesi göster
@@ -121,7 +120,7 @@ history_import_success = { $itemsCount } geçmiş girişi başarıyla içe aktar
 history_import_file_error = '{ $fileName }' dosyası okuma hatası: { $errorInfo }
 
 # context menu
-context_menu_translate_full_page = Tüm sayfayı { $translator } ile çevir
+context_menu_translate_full_page = { $lang }'ye çevir
 context_menu_translate_selection = { $selection } { $translator } ile çevir
 
 # other

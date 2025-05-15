@@ -1,18 +1,16 @@
 import "./header.scss";
 import React from "react";
-import { action } from "mobx";
 import { observer } from "mobx-react";
 import { cssNames } from "../../utils/cssNames";
 import { getManifest } from "../../extension";
 import { settingsStore } from '../settings/settings.storage'
-import { Tab, Tabs } from "../tabs";
+import { Tabs } from "../tabs";
 import { Icon } from "../icon";
 import { getUrlParams, navigate, PageId } from "../../navigation";
 import { pageManager } from "./page-manager";
 import { getMessage } from "../../i18n";
 import { SelectLocaleIcon } from "../select-locale";
 import { dialogsState } from "./dialogs-state";
-import { mellowtelOptOutTime } from "../../../mellowtel/mellowtel.storage";
 
 @observer
 export class Header extends React.Component {
@@ -31,12 +29,6 @@ export class Header extends React.Component {
   onTabsChange = async (page: PageId) => {
     await navigate({ page });
     window.scrollTo(0, 0);
-  }
-
-  @action.bound
-  onSupport() {
-    dialogsState.showMellowtelDialog = true;
-    mellowtelOptOutTime.set(0);
   }
 
   render() {
@@ -69,12 +61,6 @@ export class Header extends React.Component {
             material="import_export"
             tooltip={{ nowrap: true, children: getMessage("import_export_settings") }}
             onClick={() => dialogsState.showImportExportDialog = true}
-          />
-          <Icon
-            small
-            material="support"
-            tooltip={{ nowrap: true, children: getMessage("donate_title") }}
-            onClick={this.onSupport}
           />
           <SelectLocaleIcon/>
         </header>

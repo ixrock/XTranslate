@@ -1,12 +1,12 @@
 import DeeplLanguages from "./deepl.json"
-import { ITranslationError, ITranslationResult, sanitizeApiKey, TranslateParams, Translator, TranslatorLanguages, VendorCodeName } from "./index";
+import { ITranslationError, ITranslationResult, sanitizeApiKey, TranslateParams, Translator, TranslatorLanguages, ProviderCodeName } from "./index";
 import { createStorage } from "../storage";
 import { ProxyRequestInit } from "../extension";
 import { getMessage } from "../i18n";
-import type { VendorAuthSettingsProps } from "../components/settings/vendor_auth_settings";
+import type { ProviderAuthSettingsProps } from "../components/settings/auth_settings";
 
 class Deepl extends Translator {
-  public name = VendorCodeName.DEEPL;
+  public name = ProviderCodeName.DEEPL;
   public title = "DeepL";
   public publicUrl = "https://www.deepl.com/translator";
 
@@ -82,7 +82,7 @@ class Deepl extends Translator {
     return this.request({ url });
   }
 
-  getAuthSettings(): VendorAuthSettingsProps {
+  getAuthSettings(): ProviderAuthSettingsProps {
     return {
       className: "deepl-settings",
       apiKeySanitized: sanitizeApiKey(this.#apiKey.get()),
@@ -176,4 +176,4 @@ export async function dump_deepl_json() {
   console.info("[[Deepl]]: supported languages", supportedLanguages);
 }
 
-Translator.registerVendor(Deepl);
+Translator.registerProvider(Deepl);

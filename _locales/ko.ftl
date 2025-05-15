@@ -33,7 +33,6 @@ export_settings_button_label = 설정 내보내기
 import_settings_button_label = 설정 가져오기
 import_incorrect_file_format = 파일 형식이 잘못되었습니다 (아마도 { $fileNameJson } 형식이어야 합니다)
 imported_setting_successful = 키 { $key } 아래의 설정이 성공적으로 가져왔습니다
-show_context_menu = 페이지 컨텍스트 메뉴에 표시
 display_icon_near_selection = 선택한 텍스트 근처에 아이콘 표시
 show_tts_icon_inside_popup = 텍스트 음성 변환 아이콘 표시
 show_next_vendor_icon_in_popup = 다음 번역 아이콘 표시
@@ -130,7 +129,7 @@ history_import_success = { $itemsCount } 개의 기록 항목이 성공적으로
 history_import_file_error = 파일 '{ $fileName }'을(를) 읽는 중 오류 발생: { $errorInfo }
 
 # 컨텍스트 메뉴
-context_menu_translate_full_page = { $translator }로 전체 페이지를 번역
+context_menu_translate_full_page = 페이지를 { $lang }로 번역
 context_menu_translate_selection = { $translator }로 { $selection }을(를) 번역
 
 # 기타

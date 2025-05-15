@@ -33,7 +33,6 @@ export_settings_button_label = 导出设置
 import_settings_button_label = 导入设置
 import_incorrect_file_format = 文件格式错误（应该是 { $fileNameJson }）
 imported_setting_successful = 成功导入键 { $key } 下的设置
-show_context_menu = 在页面上下文菜单中显示
 display_icon_near_selection = 在选中文本附近显示图标
 show_tts_icon_inside_popup = 显示文本转语音图标
 show_next_vendor_icon_in_popup = 显示下一翻译图标
@@ -130,7 +129,7 @@ history_import_success = 成功导入 { $itemsCount } 条历史记录
 history_import_file_error = 读取文件 '{ $fileName }' 时出错: { $errorInfo }
 
 # 上下文菜单
-context_menu_translate_full_page = 使用 { $translator } 翻译整个页面
+context_menu_translate_full_page = 翻译为 { $lang }
 context_menu_translate_selection = 使用 { $translator } 翻译 { $selection }
 
 # 其他

@@ -2,10 +2,9 @@
 
 import { runInAction } from "mobx";
 import { createLogger, disposer } from "../utils";
-import { MessageType, onMessage, SaveToFavoritesPayload, SaveToHistoryPayload } from '../extension'
+import { MessageType, onMessage, SaveToFavoritesPayload, SaveToHistoryPayload, TranslatePayload } from '../extension'
 import { settingsStorage } from "../components/settings/settings.storage";
 import { generateId, getHistoryItemId, historyStorage, IHistoryStorageItem, importHistory, toHistoryItem, toStorageItem, toTranslationResult } from "../components/user-history/history.storage";
-import { TranslatePayload } from "../vendors";
 import { favoritesStorage } from "../components/user-history/favorites.storage";
 
 const logger = createLogger({ systemPrefix: '[BACKGROUND(history)]' });
@@ -62,9 +61,9 @@ export async function saveToFavorites({ item, isFavorite }: SaveToFavoritesPaylo
 export async function getHistoryItemOffline(payload: TranslatePayload) {
   await historyStorage.load({ force: true });
 
-  const { text, from, to, vendor } = payload;
+  const { text, from, to, provider } = payload;
   const translationId = generateId(text, from, to);
-  const storageItem: IHistoryStorageItem = historyStorage.toJS().translations[translationId]?.[vendor];
+  const storageItem: IHistoryStorageItem = historyStorage.toJS().translations[translationId]?.[provider];
 
   if (storageItem) {
     const result = toTranslationResult(storageItem);

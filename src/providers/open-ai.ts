@@ -1,15 +1,14 @@
 import LanguagesList from "./open-ai.json"
-import { ITranslationResult, sanitizeApiKey, TranslateParams, Translator, VendorCodeName } from "./index";
+import { ITranslationResult, sanitizeApiKey, TranslateParams, Translator, ProviderCodeName, OpenAIModelTTS } from "./index";
 import { getMessage } from "../i18n";
 import { createStorage } from "../storage";
 import { aiTextToSpeechAction, aiTranslateAction } from "../extension";
 import { settingsStore } from "../components/settings/settings.storage";
 import { toBinaryFile } from "../utils/binary";
-import type { VendorAuthSettingsProps } from "../components/settings/vendor_auth_settings";
-import { OpenAIModelTTS } from "./open-ai.models";
+import type { ProviderAuthSettingsProps } from "../components/settings/auth_settings";
 
 class OpenAITranslator extends Translator {
-  public name = VendorCodeName.OPENAI;
+  public name = ProviderCodeName.OPENAI;
   public title = "OpenAI";
   public publicUrl = "https://platform.openai.com/";
   public apiUrl = "https://api.openai.com/v1";
@@ -35,7 +34,7 @@ class OpenAITranslator extends Translator {
 
   async translate({ from, to, text }: TranslateParams): Promise<ITranslationResult> {
     return aiTranslateAction({
-      vendor: this.name,
+      provider: this.name,
       model: settingsStore.data.openAiModel,
       apiKey: this.#apiKey.get(),
       targetLanguage: this.langTo[to],
@@ -49,7 +48,7 @@ class OpenAITranslator extends Translator {
       return;
     }
     const data = await aiTextToSpeechAction({
-      vendor: this.name,
+      provider: this.name,
       model: OpenAIModelTTS.MINI,
       apiKey: this.#apiKey.get(),
       text,
@@ -59,7 +58,7 @@ class OpenAITranslator extends Translator {
     return toBinaryFile(data, "audio/mpeg");
   }
 
-  getAuthSettings(): VendorAuthSettingsProps {
+  getAuthSettings(): ProviderAuthSettingsProps {
     return {
       apiKeySanitized: sanitizeApiKey(this.#apiKey.get()),
       setupApiKey: this.setupApiKey,
@@ -72,4 +71,4 @@ class OpenAITranslator extends Translator {
   }
 }
 
-Translator.registerVendor(OpenAITranslator);
+Translator.registerProvider(OpenAITranslator);

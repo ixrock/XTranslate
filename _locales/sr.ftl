@@ -35,7 +35,6 @@ export_settings_button_label = Export podešavanja
 import_settings_button_label = Import podešavanja
 import_incorrect_file_format = Neispravan format (trebalo bi da bude { $fileNameJson })
 imported_setting_successful = Podešavanja sa ključem { $key } su uspešno import-ovana
-show_context_menu = Prikaži stavku u kontekstnom meniju
 display_icon_near_selection = Prikaži ikonicu pored izabranog teksta
 show_tts_icon_inside_popup = Prikaži ikonicu za pretvaranje teksta u govor
 show_next_vendor_icon_in_popup = Prikaži ikonicu sledećeg prevodioca
@@ -132,7 +131,7 @@ history_import_success = Uspešno uvezenih stavki istorije: { $itemsCount }
 history_import_file_error = Greška u čitanju datoteke '{ $fileName }': { $errorInfo }
 
 # context menu
-context_menu_translate_full_page = Prevedi celu stranicu pomoću: { $translator }
+context_menu_translate_full_page = Prevedi na { $lang }
 context_menu_translate_selection = Prevedi { $selection } pomoću: { $translator }
 
 # other
@@ -205,3 +204,4 @@ grok_ai_get_own_key_info = Registrujte se na console.x.ai i dopunite stanje (npr
 grok_ai_auth_key = Kreirajte API ključ na Grok (X) platformi da biste dobili pristup API-ju
 grok_ai_auth_key_warning = Upozorenje: NEMOJTE unositi vaš API ključ bilo gde osim u ovom prozoru proširenja
 grok_ai_auth_key_remove = Uklonite Grok API ključ
+

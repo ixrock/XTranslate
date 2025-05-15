@@ -1,5 +1,5 @@
 import * as Mobx from "mobx";
-import { Translator } from "./vendors";
+import { Translator } from "./providers";
 
 // Global packages (NPM, etc.)
 Mobx.configure({

@@ -3,7 +3,7 @@ import React from "react";
 import { action, makeObservable, observable } from "mobx";
 import { observer } from "mobx-react";
 import isEqual from "lodash/isEqual";
-import { getTranslators, Translator, VendorCodeName } from "../../vendors";
+import { getTranslators, Translator, ProviderCodeName, OpenAIModel, GrokAIModel } from "../../providers";
 import { cssNames } from "../../utils";
 import { XTranslateIcon } from "../../user-script/xtranslate-icon";
 import { SelectLanguage } from "../select-language";
@@ -19,9 +19,7 @@ import { getMessage } from "../../i18n";
 import { SelectVoice } from "../select-tts-voice";
 import { getTTSVoices, speak, stopSpeaking } from "../../tts";
 import { SelectAIModel } from "./select_ai_model";
-import { VendorAuthSettings } from "./vendor_auth_settings";
-import { OpenAIModel } from "../../vendors/open-ai.models";
-import { GrokAIModel } from "../../vendors/grok.models";
+import { ProviderAuthSettings } from "./auth_settings";
 
 @observer
 export class Settings extends React.Component {
@@ -30,7 +28,7 @@ export class Settings extends React.Component {
     makeObservable(this);
   }
 
-  private vendorSettings: Partial<Record<VendorCodeName, React.ReactNode>> = {
+  private providerSettings: Partial<Record<ProviderCodeName, React.ReactNode>> = {
     openai: (
       <SelectAIModel
         modelOptions={OpenAIModel}
@@ -83,11 +81,11 @@ export class Settings extends React.Component {
     }
   }
 
-  renderVendorAuthWidget(vendor: Translator): React.ReactNode {
-    const content = this.vendorSettings[vendor.name];
-    const props = vendor.getAuthSettings();
+  renderAuthSettings(translator: Translator): React.ReactNode {
+    const content = this.providerSettings[translator.name];
+    const props = translator.getAuthSettings();
     if (props) {
-      return <VendorAuthSettings {...props} children={content}/>;
+      return <ProviderAuthSettings {...props} children={content}/>;
     }
   }
 
@@ -98,32 +96,32 @@ export class Settings extends React.Component {
         <article>
           <SelectLanguage showReverseTranslation showInfoIcon/>
           <RadioGroup
-            className={styles.vendors}
+            className={styles.providers}
             value={settings.vendor}
-            onChange={v => settingsStore.setVendor(v)}
+            onChange={v => settingsStore.setProvider(v)}
           >
-            {getTranslators().map(vendor => {
-              const vendorName = vendor.title;
-              const publicUrl = new URL(vendor.publicUrl);
-              const name = vendor.name as VendorCodeName;
+            {getTranslators().map(provider => {
+              const translatorName = provider.title;
+              const publicUrl = new URL(provider.publicUrl);
+              const name = provider.name as ProviderCodeName;
               const domain = publicUrl.hostname.replace(/^www\./, "") + publicUrl.pathname.replace(/\/$/, "");
               const skipInRotation = settingsStore.data.skipVendorInRotation[name];
               const disableInRotationClassName = cssNames({
-                [styles.vendorSkippedInRotation]: skipInRotation,
+                [styles.providerSkipRotation]: skipInRotation,
               });
               return (
-                <div key={name} className="vendor flex gaps align-center">
+                <div key={name} className="translator flex gaps align-center">
                   <Checkbox
                     checked={skipInRotation}
                     onChange={checked => settingsStore.data.skipVendorInRotation[name] = checked}
-                    tooltip={getMessage("skip_translation_vendor_in_rotation", { vendor: vendorName })}
+                    tooltip={getMessage("skip_translation_vendor_in_rotation", { vendor: translatorName })}
                   />
-                  <Radio value={name} label={<span className={disableInRotationClassName}>{vendorName}</span>}/>
+                  <Radio value={name} label={<span className={disableInRotationClassName}>{translatorName}</span>}/>
                   <a href={String(publicUrl)} target="_blank" tabIndex={-1}>
                     {domain}
                   </a>
                   <div className="flex gaps align-center">
-                    {this.renderVendorAuthWidget(vendor)}
+                    {this.renderAuthSettings(provider)}
                   </div>
                 </div>
               )
@@ -138,11 +136,6 @@ export class Settings extends React.Component {
             tooltip={getMessage("pdf_use_custom_viewer_info")}
             checked={settings.customPdfViewer}
             onChange={v => settings.customPdfViewer = v}
-          />
-          <Checkbox
-            label={getMessage("show_context_menu")}
-            checked={settings.showInContextMenu}
-            onChange={v => settingsStore.data.showInContextMenu = v}
           />
           <div className="flex gaps">
             <Checkbox

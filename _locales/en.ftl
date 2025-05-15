@@ -33,7 +33,6 @@ export_settings_button_label = Export settings
 import_settings_button_label = Import settings
 import_incorrect_file_format = Incorrect file format (should be probably { $fileNameJson })
 imported_setting_successful = Settings under the key { $key } imported successful
-show_context_menu = Show in page context menu
 display_icon_near_selection = Show icon near selected text
 show_tts_icon_inside_popup = Display text-to-speech icon
 show_next_vendor_icon_in_popup = Display next-translation icon
@@ -130,7 +129,7 @@ history_import_success = Successfully imported { $itemsCount } history entries
 history_import_file_error = Reading file '{ $fileName }' error: { $errorInfo }
 
 # context menu
-context_menu_translate_full_page = Translate full page with { $translator }
+context_menu_translate_full_page = Translate page to { $lang }
 context_menu_translate_selection = Translate { $selection } with { $translator }
 
 # other

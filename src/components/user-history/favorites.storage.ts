@@ -1,4 +1,4 @@
-import type { ITranslationResult } from "../../vendors";
+import type { ITranslationResult } from "../../providers";
 import type { HistoryRecord, IHistoryItem } from "./history.storage";
 import { getHistoryItemId } from "./history.storage";
 import { createStorage } from "../../storage";

@@ -33,7 +33,6 @@ export_settings_button_label = Exportovať nastavenia
 import_settings_button_label = Importovať nastavenia
 import_incorrect_file_format = Nesprávny formát súboru (mal by byť pravdepodobne { $fileNameJson })
 imported_setting_successful = Nastavenia rozšírenia úspešne importované pre { $key }
-show_context_menu = Zobraziť v kontextovej ponuke stránky
 display_icon_near_selection = Zobraziť ikonu prekladu vedľa vybraného textu
 show_tts_icon_inside_popup = Zobraziť ikonu prevodu textu na reč
 show_next_vendor_icon_in_popup = Zobraziť ikonu ďalšieho prekladu
@@ -130,7 +129,7 @@ history_import_success = Úspešne importované položky histórie { $itemsCount
 history_import_file_error = Chyba pri čítaní súboru '{ $fileName }': { $errorInfo }
 
 # context menu
-context_menu_translate_full_page = Preložiť celú stránku pomocou { $translator }
+context_menu_translate_full_page = Preložiť do { $lang }
 context_menu_translate_selection = Preložiť { $selection } pomocou { $translator }
 
 # other
@@ -193,13 +192,4 @@ pdf_use_custom_viewer = Podpora prekladov v PDF súboroch
 pdf_use_custom_viewer_info = Táto možnosť nahradí predvolený prehliadač PDF
 
 # DeepSeek AI integration
-deepseek_get_own_key_info = Zaregistrujte sa na platform.deepseek.com a dobite si kredit (napr. cez PayPal)
-deepseek_auth_key = Vytvorte si prístupový kľúč API na platforme DeepSeek a uložte ho sem do nastavení
-deepseek_auth_key_warning = Upozornenie: NEZADÁVAJTE svoj kľúč API nikde inde okrem tohto okna rozšírenia
-deepseek_auth_key_remove = Odstrániť kľúč API DeepSeek
-
-# Grok AI integration
-grok_ai_get_own_key_info = Zaregistrujte sa na console.x.ai a dobite si kredit (napr. prostredníctvom kreditnej karty)
-grok_ai_auth_key = Vytvorte kľúč API na platforme Grok (X), aby ste získali prístup k API
-grok_ai_auth_key_warning = Upozornenie: NEVKLADAJTE svoj kľúč API nikde inde okrem tohto okna rozšírenia
-grok_ai_auth_key_remove = Odstrániť kľúč API Grok
+deepseek_get_own_key_info = Zaregistrujte sa na platform

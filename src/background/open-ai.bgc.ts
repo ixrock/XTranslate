@@ -1,5 +1,5 @@
 import OpenAI from "openai";
-import { getTranslator, ITranslationError, ITranslationResult, VendorCodeName } from "../vendors";
+import { getTranslator, ITranslationError, ITranslationResult, ProviderCodeName } from "../providers";
 import { createLogger, disposer } from "../utils";
 import { AITranslatePayload, MessageType, onMessage, OpenAITextToSpeechPayload } from "../extension";
 
@@ -12,10 +12,10 @@ export function listenAIRequests() {
   );
 }
 
-export function getAPI(params: { apiKey: string, vendor: VendorCodeName }) {
+export function getAPI(params: { apiKey: string, provider: ProviderCodeName }) {
   return new OpenAI({
     apiKey: params.apiKey,
-    baseURL: getTranslator(params.vendor).apiUrl,
+    baseURL: getTranslator(params.provider).apiUrl,
     dangerouslyAllowBrowser: false, /* safe: since usage allowed *only* within service-worker */
     maxRetries: 0,
   });
@@ -33,7 +33,7 @@ export interface AITranslateTextResponse {
  */
 export async function translateText(params: AITranslatePayload): Promise<ITranslationResult> {
   const {
-    vendor,
+    provider,
     model,
     targetLanguage,
     sourceLanguage,
@@ -48,7 +48,7 @@ export async function translateText(params: AITranslatePayload): Promise<ITransl
     : `Translate from "${sourceLanguage}" to "${targetLanguage}" language of text: ${sanitizedText}`;
 
   try {
-    const response = await getAPI({ apiKey, vendor }).chat.completions.create({
+    const response = await getAPI({ apiKey, provider: provider }).chat.completions.create({
       model,
       n: 1,
       temperature: 1.3,
@@ -67,7 +67,7 @@ export async function translateText(params: AITranslatePayload): Promise<ITransl
     const { detectedLang, transcription, spellCorrection, translation } = data;
 
     const result: ITranslationResult = {
-      vendor,
+      vendor: provider,
       originalText: sanitizedText,
       translation: translation ?? sanitizedText,
       langDetected: detectedLang ?? sourceLanguage,
@@ -97,13 +97,13 @@ export async function translateText(params: AITranslatePayload): Promise<ITransl
  */
 export async function textToSpeech(params: OpenAITextToSpeechPayload): Promise<number[]> {
   const {
-    apiKey, text, model, vendor,
+    apiKey, text, model, provider,
     speed = 1,
     voice = "alloy",
     response_format = "mp3"
   } = params;
 
-  const speechFile = await getAPI({ apiKey, vendor }).audio.speech.create({
+  const speechFile = await getAPI({ apiKey, provider: provider }).audio.speech.create({
     model: model,
     voice: voice,
     input: text,

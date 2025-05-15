@@ -14,12 +14,12 @@ export function listenStorageActions() {
   );
 }
 
-function getExtensionStorageApi(area: StorageArea = "local") {
+export function getStorageApi(area: StorageArea = "local") {
   return chrome.storage[area];
 }
 
 export async function readFromExternalStorage<T>({ key, area }: StorageReadPayload): Promise<T> {
-  const storageApi = getExtensionStorageApi(area);
+  const storageApi = getStorageApi(area);
 
   const items = await storageApi.get(key) ?? {};
   return items[key];
@@ -27,7 +27,7 @@ export async function readFromExternalStorage<T>({ key, area }: StorageReadPaylo
 
 export async function writeToExternalStorage<T>(payload: StorageWritePayload, syncUpdate = true): Promise<void> {
   const { key, area, state } = payload;
-  const storageApi = getExtensionStorageApi(area);
+  const storageApi = getStorageApi(area);
 
   await storageApi.set({ [key]: state });
 
@@ -39,7 +39,7 @@ export async function writeToExternalStorage<T>(payload: StorageWritePayload, sy
 
 export async function removeFromExternalStorage(payload: StorageDeletePayload, syncUpdate = true): Promise<void> {
   const { key, area } = payload;
-  const storageApi = getExtensionStorageApi(area);
+  const storageApi = getStorageApi(area);
 
   await storageApi.remove(key);
 
@@ -49,4 +49,20 @@ export async function removeFromExternalStorage(payload: StorageDeletePayload, s
       state: undefined,
     });
   }
+}
+
+export function listenExternalStorageChanges(area: StorageArea, callback: (changes: Record<string/*key*/, unknown>) => void) {
+  const storageApi = getStorageApi(area);
+
+  const handleChange = (changes: Record<string/*key*/, chrome.storage.StorageChange>) => {
+    const newValues = Object.entries(changes).reduce((result, [key, { newValue }]) => {
+      result[key] = newValue;
+      return result;
+    }, {} as Record<string, unknown>);
+
+    callback(newValues);
+  };
+
+  storageApi.onChanged.addListener(handleChange);
+  return () => storageApi.onChanged.removeListener(handleChange);
 }

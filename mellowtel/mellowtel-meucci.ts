@@ -1,5 +1,4 @@
-// Integration for https://docs.mellowtel.com/browser-plugins/optional-integrations/burke
-// "Meucci" is a new brand name for MellowTel™'s Burke
+// Integration for https://docs.mellowtel.com/browser-plugins/optional-integrations/meucci
 import MellowtelMeucci from "@mellowtel/module-meucci";
 
 const meucci = new MellowtelMeucci();
