@@ -1,7 +1,6 @@
+// Global packages configuration & setup
 import * as Mobx from "mobx";
-import { Translator } from "./providers";
 
-// Global packages (NPM, etc.)
 Mobx.configure({
   enforceActions: "never",
   reactionRequiresObservable: true,
@@ -9,6 +8,3 @@ Mobx.configure({
   computedRequiresReaction: true,
   safeDescriptors: true,
 });
-
-// App's related init
-Translator.createInstances();

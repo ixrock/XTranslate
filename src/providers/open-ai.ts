@@ -1,5 +1,5 @@
 import LanguagesList from "./open-ai.json"
-import { ITranslationResult, sanitizeApiKey, TranslateParams, Translator, ProviderCodeName, OpenAIModelTTS } from "./index";
+import { ITranslationResult, OpenAIModelTTS, ProviderCodeName, sanitizeApiKey, TranslateParams, Translator } from "./index";
 import { getMessage } from "../i18n";
 import { createStorage } from "../storage";
 import { aiTextToSpeechAction, aiTranslateAction } from "../extension";
@@ -71,4 +71,4 @@ class OpenAITranslator extends Translator {
   }
 }
 
-Translator.registerProvider(OpenAITranslator);
+Translator.register(ProviderCodeName.OPENAI, OpenAITranslator);

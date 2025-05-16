@@ -1,5 +1,5 @@
 import LanguagesList from "./open-ai.json"
-import { ITranslationResult, sanitizeApiKey, TranslateParams, Translator, ProviderCodeName, DeepSeekAIModel } from "./index";
+import { DeepSeekAIModel, ITranslationResult, ProviderCodeName, sanitizeApiKey, TranslateParams, Translator } from "./index";
 import { getMessage } from "../i18n";
 import { createStorage } from "../storage";
 import { aiTranslateAction } from "../extension";
@@ -53,4 +53,4 @@ class DeepSeekTranslator extends Translator {
   }
 }
 
-Translator.registerProvider(DeepSeekTranslator);
+Translator.register(ProviderCodeName.DEEPSEEK, DeepSeekTranslator);

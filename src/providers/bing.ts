@@ -2,7 +2,7 @@ import BingLanguages from "./bing.json"
 import isEmpty from "lodash/isEmpty";
 import groupBy from "lodash/groupBy";
 import { ProxyRequestInit, ProxyResponseType } from "../extension";
-import { ITranslationError, ITranslationResult, TranslateParams, Translator, ProviderCodeName } from "./index";
+import { ITranslationError, ITranslationResult, ProviderCodeName, TranslateParams, Translator } from "./index";
 import { createStorage } from "../storage";
 
 export interface BingApiAuthParams {
@@ -191,4 +191,4 @@ interface DictTranslation {
   }[]
 }
 
-Translator.registerProvider(Bing);
+Translator.register(ProviderCodeName.BING, Bing);

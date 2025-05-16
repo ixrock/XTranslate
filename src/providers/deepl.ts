@@ -1,5 +1,5 @@
 import DeeplLanguages from "./deepl.json"
-import { ITranslationError, ITranslationResult, sanitizeApiKey, TranslateParams, Translator, TranslatorLanguages, ProviderCodeName } from "./index";
+import { ITranslationError, ITranslationResult, ProviderCodeName, sanitizeApiKey, TranslateParams, Translator, TranslatorLanguages } from "./index";
 import { createStorage } from "../storage";
 import { ProxyRequestInit } from "../extension";
 import { getMessage } from "../i18n";
@@ -176,4 +176,4 @@ export async function dump_deepl_json() {
   console.info("[[Deepl]]: supported languages", supportedLanguages);
 }
 
-Translator.registerProvider(Deepl);
+Translator.register(ProviderCodeName.DEEPL, Deepl);

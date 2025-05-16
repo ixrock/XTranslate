@@ -1,8 +1,7 @@
 // Base class for all translation providers
 
 import { observable } from "mobx";
-import { franc } from "franc";
-import { autoBind, createLogger, disposer, JsonResponseError } from "../utils";
+import { autoBind, createLogger, JsonResponseError } from "../utils";
 import { ProxyRequestPayload, ProxyResponseType } from "../extension/messages";
 import { getTranslationFromHistoryAction, proxyRequest, saveToHistoryAction } from "../extension/actions";
 import { settingsStore } from "../components/settings/settings.storage";
@@ -22,11 +21,11 @@ export interface TranslateParams {
 }
 
 export abstract class Translator {
-  static readonly instances = observable.set<Translator>();
-  static createInstances = disposer();
+  static readonly instances = observable.map<ProviderCodeName, Translator>([], { deep: false });
+  static readonly providers = observable.map<ProviderCodeName, { new(): Translator }>([], { deep: false });
 
-  static registerProvider = (instance: { new(): Translator }) => {
-    this.createInstances.push(() => this.instances.add(new instance()));
+  static register(name: ProviderCodeName, ctor: { new(): Translator }) {
+    this.providers.set(name, ctor);
   };
 
   abstract name: ProviderCodeName; // registered code name, e.g. "google"
@@ -291,22 +290,19 @@ export function isRTL(lang: string) {
   ].includes(lang);
 }
 
-/**
- * List of all registered translation providers
- */
 export function getTranslators(): Translator[] {
-  return Array.from(Translator.instances);
+  return Array.from(Translator.providers.keys()).map(getTranslator);
 }
 
-/**
- * Get registered translator
- * @param {string} name
- */
-export function getTranslator<T extends Translator>(name: string): T | undefined {
-  return (Array.from(Translator.instances) as T[]).find(provider => provider.name === name);
+export function getTranslator<T extends Translator>(name: ProviderCodeName): T | undefined {
+  const Provider = Translator.providers.get(name);
+  if (!Translator.instances.has(name) && Provider) {
+    Translator.instances.set(name, new Provider());
+  }
+  return Translator.instances.get(name) as T;
 }
 
-export function getNextTranslator(name: string, langFrom: string, langTo: string, reverse = false) {
+export function getNextTranslator(name: ProviderCodeName, langFrom: string, langTo: string, reverse = false) {
   let translator: Translator;
   const providers = getTranslators();
   const translators: Translator[] = [];

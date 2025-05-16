@@ -1,6 +1,6 @@
 import GoogleLanguages from "./google.json"
 import { ProxyRequestInit } from "../extension";
-import { isTranslationError, ITranslationResult, TranslateParams, Translator, ProviderCodeName } from "./index";
+import { isTranslationError, ITranslationResult, ProviderCodeName, TranslateParams, Translator } from "./index";
 import { delay } from "../utils";
 import { getMessage } from "../i18n";
 import { createStorage } from "../storage";
@@ -197,4 +197,4 @@ export interface GoogleTranslation {
   }
 }
 
-Translator.registerProvider(Google);
+Translator.register(ProviderCodeName.GOOGLE, Google);
