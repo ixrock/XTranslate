@@ -4,6 +4,7 @@ import type { IHistoryItem } from "../components/user-history/history.storage";
 
 export enum MessageType {
   PROXY_REQUEST = "PROXY_REQUEST",
+  TRANSLATE_FULL_PAGE = "TRANSLATE_FULL_PAGE",
   GET_SELECTED_TEXT = "GET_SELECTED_TEXT",
   SAVE_TO_HISTORY = "SAVE_TO_HISTORY",
   SAVE_TO_FAVORITES = "SAVE_TO_FAVORITES",
@@ -50,6 +51,10 @@ export interface ProxyResponsePayload<Data> {
 
 export interface TranslatePayload extends TranslateParams {
   provider: ProviderCodeName;
+}
+
+export interface TranslatePagePayload {
+  pageUrl: string;
 }
 
 export interface SaveToHistoryPayload {

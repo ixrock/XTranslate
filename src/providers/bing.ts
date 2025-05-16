@@ -14,8 +14,8 @@ class Bing extends Translator {
   public name = ProviderCodeName.BING;
   public title = "Bing";
   public publicUrl = "https://www.bing.com/translator";
-  public apiUrl = "https://api.cognitive.microsofttranslator.com";
   public authUrl = "https://edge.microsoft.com/translate/auth";
+  public apiUrl = "https://api-edge.cognitive.microsofttranslator.com";
 
   constructor() {
     super(BingLanguages);
@@ -53,10 +53,9 @@ class Bing extends Translator {
     }
   }
 
-  async translate(params: TranslateParams): Promise<ITranslationResult> {
+  private async getRequestParams(langFrom: string, langTo: string, texts: string[]) {
     await this.beforeRequest();
 
-    const { from: langFrom, to: langTo, text } = params;
     const { token } = this.apiParams.get();
 
     const requestInit: ProxyRequestInit = {
@@ -66,9 +65,7 @@ class Bing extends Translator {
         "Content-type": "application/json; charset=UTF-8",
         "User-Agent": navigator.userAgent,
       },
-      body: JSON.stringify(
-        [{ Text: text }]
-      ),
+      body: JSON.stringify(texts.map(text => ({ Text: text }))),
     };
 
     const queryParams = new URLSearchParams({
@@ -76,6 +73,15 @@ class Bing extends Translator {
       to: langTo,
       from: langFrom !== "auto" ? langFrom : "",
     });
+
+    return {
+      requestInit,
+      queryParams,
+    };
+  }
+
+  async translate({ from: langFrom, to: langTo, text }: TranslateParams): Promise<ITranslationResult> {
+    const { requestInit, queryParams } = await this.getRequestParams(langFrom, langTo, [text]);
 
     // API: https://learn.microsoft.com/en-gb/azure/ai-services/translator/reference/v3-0-translate
     const translationReq = async (): Promise<BingTranslation[]> => {

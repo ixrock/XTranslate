@@ -1,6 +1,6 @@
 // Helper utilities
 
-export const noop = () => ({});
+export const noop = () => {};
 
 export * from './autobind'
 export * from './cssNames'

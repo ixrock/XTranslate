@@ -1,3 +1,5 @@
+@use "../mixins" as *;
+
 .Footer {
   padding-top: var(--theme-spacing-half);
   border-top: 1px solid var(--theme-border-color);
@@ -6,13 +8,12 @@
     --flexGap: var(--theme-spacing-half) !important;
   }
 
-  .supportIcon {
-    border: 1px solid var(--theme-border-color);
-    border-radius: 50%;
-    padding: 5px;
+  .support {
+    font-size: small;
+    text-align: right;
 
-    &:hover {
-      border-color: currentColor;
+    a {
+      @include pseudo-link;
     }
   }
 }

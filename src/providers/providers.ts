@@ -3,8 +3,6 @@
 export enum ProviderCodeName {
   GOOGLE = "google",
   BING = "bing",
-  YANDEX = "yandex",
-  // Requires API-key
   DEEPL = "deepl",
   OPENAI = "openai",
   DEEPSEEK = "deepseek",

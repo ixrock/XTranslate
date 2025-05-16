@@ -1,6 +1,7 @@
 // Base class for all translation providers
 
 import { observable } from "mobx";
+import { franc } from "franc";
 import { autoBind, createLogger, disposer, JsonResponseError } from "../utils";
 import { ProxyRequestPayload, ProxyResponseType } from "../extension/messages";
 import { getTranslationFromHistoryAction, proxyRequest, saveToHistoryAction } from "../extension/actions";
@@ -151,7 +152,7 @@ export abstract class Translator {
     return swapParamsWith;
   };
 
-  getLangPairShortTitle(langFrom: string, langTo: string) {
+  static getLangPairTitleShort(langFrom: string, langTo: string) {
     return [langFrom, langTo].join(' → ').toUpperCase();
   }
 
@@ -162,8 +163,8 @@ export abstract class Translator {
     ].join(' → ');
   }
 
-  getFullPageTranslationUrl(pageUrl: string, lang: string): string {
-    return ""; // should be overridden in sub-classes if supported
+  async translateFullPage() {
+    console.log(`TODO: implement full-page translation with ${this.title}`);
   }
 
   speakSynth(text: string, voice?: TTSVoice) {
@@ -283,7 +284,7 @@ export function isTranslationError(error: ITranslationResult | ITranslationError
 export function isRTL(lang: string) {
   return [
     "ar", // arabic
-    "he", // hebrew (yandex, bing)
+    "he", // hebrew (bing)
     "iw", // hebrew (google)
     "fa", // persian
     "ur", // urdu
@@ -301,7 +302,7 @@ export function getTranslators(): Translator[] {
  * Get registered translator
  * @param {string} name
  */
-export function getTranslator<T extends Translator>(name: string): T {
+export function getTranslator<T extends Translator>(name: string): T | undefined {
   return (Array.from(Translator.instances) as T[]).find(provider => provider.name === name);
 }
 

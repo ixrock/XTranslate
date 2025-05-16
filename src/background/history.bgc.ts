@@ -19,8 +19,8 @@ export function listenTranslationHistoryActions() {
 
 export async function saveToHistory({ translation }: SaveToHistoryPayload) {
   await Promise.all([
-    settingsStorage.load({ force: true }),
-    historyStorage.load({ force: true }),
+    settingsStorage.load(),
+    historyStorage.load(),
   ]);
 
   const hasDictionary = translation.dictionary?.length > 0;
@@ -36,8 +36,8 @@ export async function saveToHistory({ translation }: SaveToHistoryPayload) {
 
 export async function saveToFavorites({ item, isFavorite }: SaveToFavoritesPayload) {
   await Promise.all([
-    historyStorage.load({ force: true }),
-    favoritesStorage.load({ force: true }),
+    historyStorage.load(),
+    favoritesStorage.load(),
   ]);
 
   const itemId = getHistoryItemId(item);
@@ -59,7 +59,7 @@ export async function saveToFavorites({ item, isFavorite }: SaveToFavoritesPaylo
 }
 
 export async function getHistoryItemOffline(payload: TranslatePayload) {
-  await historyStorage.load({ force: true });
+  await historyStorage.load();
 
   const { text, from, to, provider } = payload;
   const translationId = generateId(text, from, to);

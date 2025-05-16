@@ -52,7 +52,6 @@ Install extension:
 Available translation providers:
 -----------
 * [Google](http://translate.google.com/)
-* [Yandex](http://translate.yandex.com/)
 * [Bing](http://bing.com/translator/)
 * [DeepL](https://www.deepl.com/) _(requires own user key, register at https://www.deepl.com/en/signup/)_
 * [DeepSeek](https://platform.deepseek.com) _(register, top-up balance and create api-key)_

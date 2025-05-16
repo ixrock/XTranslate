@@ -8,7 +8,7 @@ import { createStorage } from "../storage";
 class Google extends Translator {
   public name = ProviderCodeName.GOOGLE;
   public title = 'Google';
-  public apiUrl = 'https://translate.googleapis.com';
+  public apiUrl = 'https://translate.googleapis.com'; // TODO: support more domains via settings
   public publicUrl = 'https://translate.google.com';
   public ttsMaxLength = 187;
 
@@ -21,17 +21,13 @@ class Google extends Translator {
     super(GoogleLanguages);
   }
 
-  override getFullPageTranslationUrl(pageUrl: string, lang: string): string {
-    return `https://translate.google.com/translate?tl=${lang}&u=${pageUrl}`
-  }
-
   // try to use next available api-client if google has blocked the traffic
   protected async refreshApiClient() {
     await delay(1000);
 
-    var apiClient = this.apiClient.get();
-    var index = this.apiClients.findIndex(client => client === apiClient);
-    var nextApiClient = this.apiClients[index + 1] ?? this.apiClients[0];
+    const apiClient = this.apiClient.get();
+    const index = this.apiClients.findIndex(client => client === apiClient);
+    const nextApiClient = this.apiClients[index + 1] ?? this.apiClients[0];
     this.apiClient.set(nextApiClient);
 
     this.logger.info("google api client refreshed", {
@@ -42,17 +38,18 @@ class Google extends Translator {
 
   getAudioUrl(text: string, lang: string) {
     if (text.length > this.ttsMaxLength) return;
-    var textEncoded = encodeURIComponent(text);
-    var apiClient = this.apiClient.get();
+    const textEncoded = encodeURIComponent(text);
+    const apiClient = this.apiClient.get();
     return this.apiUrl + `/translate_tts?client=${apiClient}&ie=UTF-8&tl=${lang}&q=${textEncoded}`;
   }
 
   async translate(params: TranslateParams): Promise<ITranslationResult> {
     await this.apiClient.load();
 
-    var { from: langFrom, to: langTo, text } = params;
-    var apiClientRefreshed = false;
-    var requestInit: ProxyRequestInit = {
+    const { from: langFrom, to: langTo, text } = params;
+    let apiClientRefreshed = false;
+
+    const requestInit: ProxyRequestInit = {
       method: "POST",
       headers: {
         "Content-type": "application/x-www-form-urlencoded"
@@ -72,13 +69,14 @@ class Google extends Translator {
         ["dt", "qca"],  // spelling correction
       ]).toString(),
     };
-    var request = async (): Promise<ITranslationResult> => {
-      var url = `${this.apiUrl}/translate_a/single`;
-      var result: GoogleTranslation = await this.request({ url, requestInit });
-      var { ld_result, sentences, dict, spell } = result;
-      var sourceLanguages = ld_result?.srclangs ?? [];
 
-      var translation: ITranslationResult = {
+    const request = async (): Promise<ITranslationResult> => {
+      const url = `${this.apiUrl}/translate_a/single`;
+      const result: GoogleTranslation = await this.request({ url, requestInit });
+      const { ld_result, sentences, dict, spell } = result;
+      const sourceLanguages = ld_result?.srclangs ?? [];
+
+      const translation: ITranslationResult = {
         langDetected: sourceLanguages[0] ?? result.src,
         translation: sentences.map(sentence => sentence.trans).join(''),
       };

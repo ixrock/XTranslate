@@ -3,10 +3,11 @@ import "./user-history.scss";
 import React from "react";
 import groupBy from "lodash/groupBy";
 import orderBy from "lodash/orderBy";
+import startCase from "lodash/startCase";
 import { action, computed, makeObservable, observable, reaction, runInAction } from "mobx";
 import { observer } from "mobx-react";
 import { bindGlobalHotkey, cssNames, disposer, fuzzyMatch, isHotkeyPressed, prevDefault, SimpleHotkey } from "../../utils";
-import { getTranslator, getTranslators, isRTL, ProviderCodeName } from "../../providers";
+import { getTranslator, isRTL, ProviderCodeName, Translator } from "../../providers";
 import { Checkbox } from "../checkbox";
 import { Menu, MenuItem } from "../menu";
 import { FileInput, ImportingFile, NumberInput, SearchInput } from "../input";
@@ -14,7 +15,7 @@ import { Option, Select } from "../select";
 import { Button } from "../button";
 import { settingsStore } from "../settings/settings.storage";
 import { pageManager } from "../app/page-manager";
-import { clearHistoryItem, exportHistory, HistoryRecord, historyStorage, ProviderHistoryRecord, IHistoryItem, IHistoryItemId, IHistoryStorageItem, importHistory, toHistoryItem } from "./history.storage";
+import { clearHistoryItem, exportHistory, HistoryRecord, historyStorage, IHistoryItem, IHistoryItemId, IHistoryStorageItem, importHistory, ProviderHistoryRecord, toHistoryItem } from "./history.storage";
 import { Icon } from "../icon";
 import { Tab } from "../tabs";
 import { Spinner } from "../spinner";
@@ -213,7 +214,7 @@ export class UserHistory extends React.Component {
   }
 
   toggleDetails(itemId: IHistoryItemId) {
-    var { detailsVisible: map } = this;
+    const { detailsVisible: map } = this;
     if (map.has(itemId)) {
       map.delete(itemId);
     } else {
@@ -276,35 +277,23 @@ export class UserHistory extends React.Component {
                 {new Date(dayTime).toDateString()}
               </div>
               {translations.map((translation: ProviderHistoryRecord<IHistoryItem>) => {
-                const items = Object.values(translation);
-                if (!items.length) return; // might be empty group after manual item remove
-
-                const historyElem = React.createRef<HTMLDivElement>();
-                const itemGroupId = items[0]?.id; // ID is the same for whole group
-                const isOpened = this.detailsVisible.has(itemGroupId);
-
-                const onEnterKey = (evt: React.KeyboardEvent) => {
-                  if (!isHotkeyPressed({ key: "Enter" }, evt)) return;
-
-                  if (evt.target === historyElem.current) {
-                    this.toggleDetails(itemGroupId);
-                  }
-                };
+                const historyItems = Object.values(translation);
+                if (!historyItems.length) {
+                  return; // might be empty group after manual items remove
+                }
+                const groupId = historyItems[0]?.id; // ID is the same for the whole group
+                const isOpened = this.detailsVisible.has(groupId);
+                const toggleGroup = () => this.toggleDetails(groupId);
 
                 return (
                   <div
-                    key={itemGroupId}
-                    className={cssNames("history-items", { isOpened })}
-                    onClick={() => this.toggleDetails(itemGroupId)}
-                    tabIndex={0} // make focusable via keyboard
-                    onKeyDown={onEnterKey}
-                    ref={historyElem}
+                    key={groupId}
+                    className={`history-items ${cssNames({ isOpened })}`}
+                    tabIndex={0} // make focusable
+                    onClick={toggleGroup}
+                    onKeyDown={(evt) => isHotkeyPressed({ key: "Enter" }, evt) && toggleGroup()}
                   >
-                    {getTranslators().map(translator => {
-                      const item = translation[translator.name];
-                      if (!item) return; // no results for this translation service yet
-                      return <React.Fragment key={item.vendor}>{this.renderHistoryItem(item)}</React.Fragment>
-                    })}
+                    {historyItems.map(this.renderHistoryItem)}
                   </div>
                 )
               })}
@@ -315,11 +304,13 @@ export class UserHistory extends React.Component {
     );
   }
 
-  renderHistoryItem(item: IHistoryItem): React.ReactNode {
+  renderHistoryItem = (item: IHistoryItem): React.ReactNode => {
     const { id: itemId, vendor, from: langFrom, to: langTo, text, translation, transcription, dictionary } = item;
     const showDetails = this.detailsVisible.has(itemId);
     const translator = getTranslator(vendor);
     const favorite = isFavorite(item);
+    const providerTitle = translator?.title ?? startCase(vendor);
+    const translationDirection = translator?.getLangPairTitle(langFrom, langTo) ?? Translator.getLangPairTitleShort(langFrom, langTo);
 
     const clearItem = prevDefault(() => {
       removeFavorite(item);
@@ -327,18 +318,18 @@ export class UserHistory extends React.Component {
     });
 
     const toggleFavorite = prevDefault(() => {
-      saveToFavoritesAction(item, { isFavorite: !favorite });
+      void saveToFavoritesAction(item, { isFavorite: !favorite });
     });
 
     const sourceTextUrl = getTranslationPageUrl({ provider: vendor, from: langFrom, to: langTo, text });
     const reverseTranslationUrl = getTranslationPageUrl({ provider: vendor, from: langTo, to: langFrom, text: translation });
 
     return (
-      <div className={`history-item ${cssNames({ showDetails })}`}>
+      <div key={vendor} className={`history-item ${cssNames({ showDetails })}`}>
         {showDetails && (
           <small className="translation-service-info">
-            <span className="translation-vendor">{translator.title} </span>
-            <span className="translation-direction">{translator.getLangPairTitle(langFrom, langTo)}</span>
+            <span className="translation-vendor">{providerTitle} </span>
+            <span className="translation-direction">{translationDirection}</span>
           </small>
         )}
         <div className="main-info flex gaps align-center">
@@ -566,7 +557,7 @@ export class UserHistory extends React.Component {
         {this.renderHeader()}
         {this.renderHistory()}
         {this.hasMore && (
-          <div className="load-more flex center">
+          <div className="load-more flex justify-center">
             <Button
               primary label={getMessage("history_button_show_more")}
               onClick={() => this.page++}

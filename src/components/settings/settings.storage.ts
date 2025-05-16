@@ -48,6 +48,13 @@ export const settingsStorage = createStorage("settings", {
     grokAiModel: GrokAIModel.RECOMMENDED,
     skipVendorInRotation: {} as Record<ProviderCodeName, boolean>,
     customPdfViewer: false,
+    fullPageTranslation: {
+      provider: "bing" as ProviderCodeName,
+      langFrom: "auto",
+      langTo: "en",
+      alwaysTranslateLang: [],
+      excludedPages: [],
+    },
     hotkey: {
       altKey: true,
       shiftKey: true,

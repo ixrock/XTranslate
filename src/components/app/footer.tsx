@@ -56,7 +56,7 @@ export class Footer extends React.Component {
     });
   }
 
-  @action
+  @action.bound
   supportDevelopers() {
     dialogsState.showMellowtelDialog = true;
     mellowtelOptOutTime.set(0);
@@ -64,9 +64,9 @@ export class Footer extends React.Component {
 
   render() {
     return (
-      <div className="Footer flex gaps align-center">
-        <p>{getMessage("share_with_friends")}</p>
-        <div className="socialIcons flex gaps">
+      <div className="Footer flex gaps">
+        <div className="socialIcons flex gaps align-center">
+          <p>{getMessage("share_with_friends")}</p>
           {shareIcons.map((share, i) => {
             const url = this.makeShareUrl(share.url);
             return (
@@ -76,13 +76,9 @@ export class Footer extends React.Component {
             )
           })}
         </div>
-        <Icon
-          small
-          material="volunteer_activism"
-          className="supportIcon box right"
-          tooltip={{ nowrap: true, children: getMessage("donate_title") }}
-          onClick={this.supportDevelopers}
-        />
+        <div className="support box right">
+          <a onClick={this.supportDevelopers}>{getMessage("donate_title")}</a>
+        </div>
       </div>
     );
   }

@@ -10,7 +10,7 @@ import isEmpty from 'lodash/isEmpty';
 import isEqual from 'lodash/isEqual';
 import orderBy from 'lodash/orderBy';
 import { autoBind, delay, disposer, getHotkey } from "../utils";
-import { checkContextInvalidationError, getManifest, getURL, MessageType, onMessage, proxyRequest, ProxyResponseType, TranslatePayload } from "../extension";
+import { checkContextInvalidationError, getManifest, getURL, MessageType, onMessage, proxyRequest, ProxyResponseType, TranslatePagePayload, TranslatePayload } from "../extension";
 import { getNextTranslator, getTranslator, ITranslationError, ITranslationResult } from "../providers";
 import { XTranslateIcon } from "./xtranslate-icon";
 import { Popup } from "../components/popup/popup";
@@ -119,9 +119,8 @@ export class ContentScript extends React.Component {
       function unbindDOMEvents() {
         abortCtrl.abort();
       },
-      onMessage<void, string>(MessageType.GET_SELECTED_TEXT, () => {
-        return this.selectedText;
-      }),
+      onMessage(MessageType.TRANSLATE_FULL_PAGE, this.translatePage),
+      onMessage(MessageType.GET_SELECTED_TEXT, () => this.selectedText),
     );
   }
 
@@ -197,6 +196,14 @@ export class ContentScript extends React.Component {
       to: langTo,
       text: originalText,
     });
+  }
+
+  // TODO: implement
+  translatePage({ pageUrl }: TranslatePagePayload) {
+    const { provider, langFrom, langTo } = settingsStore.data.fullPageTranslation;
+    const translator = getTranslator(provider);
+
+    void translator.translateFullPage();
   }
 
   playText() {

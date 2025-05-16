@@ -5,7 +5,7 @@ import isEqual from "lodash/isEqual";
 import React, { Fragment } from "react";
 import { action, comparer, computed, makeObservable, observable, reaction, toJS } from "mobx";
 import { observer } from "mobx-react";
-import { getTranslator, getTranslators, isRTL, ITranslationError, ITranslationResult, ProviderCodeName } from "../../providers";
+import { getTranslator, getTranslators, isRTL, ITranslationError, ITranslationResult, ProviderCodeName, Translator } from "../../providers";
 import { getSelectedText, saveToFavoritesAction } from "../../extension/actions";
 import { bindGlobalHotkey, createLogger, cssNames, disposer, SimpleHotkey } from "../../utils";
 import { copyToClipboard } from "../../utils/copy-to-clipboard";
@@ -232,6 +232,7 @@ export class InputTranslation extends React.Component<Props> {
     const { langTo, langDetected, translation, transcription, dictionary, spellCorrection, sourceLanguages, vendor } = this.translation;
     const translator = getTranslator(vendor);
     const favorite = isFavorite(this.translation);
+    const translationDirection = Translator.getLangPairTitleShort(langDetected, langTo);
 
     return (
       <div className={cssNames("translation-results", { rtl: isRTL(langTo) })}>
@@ -260,7 +261,7 @@ export class InputTranslation extends React.Component<Props> {
                 onClick={() => saveToFavoritesAction(this.translation, { isFavorite: !favorite })}
               />
               <div className="lang" id="translated_with">
-                {translator.getLangPairShortTitle(langDetected, langTo)}
+                {translationDirection}
                 <Tooltip anchorId="translated_with" following nowrap>
                   {getMessage("translated_with", {
                     translator: translator.title,
