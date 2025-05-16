@@ -30,6 +30,8 @@ class DeepSeekTranslator extends Translator {
   };
 
   async translate({ from, to, text }: TranslateParams): Promise<ITranslationResult> {
+    await this.#apiKey.load();
+
     return aiTranslateAction({
       provider: this.name,
       model: DeepSeekAIModel.CHAT,

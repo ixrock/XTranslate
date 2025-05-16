@@ -13,7 +13,7 @@ export async function initContextMenu() {
   await i18nInit();
 
   return autorun(() => {
-    const { provider, langTo } = settingsStorage.get().fullPageTranslation;
+    const { fullPageTranslation: { provider, langTo } } = settingsStorage.get();
     const translator = getTranslator(provider);
 
     chrome.contextMenus.removeAll(); // clean up for `autorun`

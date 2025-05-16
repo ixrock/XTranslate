@@ -31,6 +31,8 @@ class GrokTranslator extends Translator {
   };
 
   async translate({ from, to, text }: TranslateParams): Promise<ITranslationResult> {
+    await this.#apiKey.load();
+
     return aiTranslateAction({
       provider: this.name,
       model: settingsStore.data.grokAiModel,

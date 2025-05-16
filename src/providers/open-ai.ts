@@ -12,7 +12,6 @@ class OpenAITranslator extends Translator {
   public title = "OpenAI";
   public publicUrl = "https://platform.openai.com/";
   public apiUrl = "https://api.openai.com/v1";
-  public ttsMaxLength = 4096;
 
   constructor() {
     super(LanguagesList);
@@ -33,6 +32,8 @@ class OpenAITranslator extends Translator {
   };
 
   async translate({ from, to, text }: TranslateParams): Promise<ITranslationResult> {
+    await this.#apiKey.load();
+
     return aiTranslateAction({
       provider: this.name,
       model: settingsStore.data.openAiModel,
@@ -44,9 +45,8 @@ class OpenAITranslator extends Translator {
   }
 
   async getAudioFile(text: string, lang?: string): Promise<Blob> {
-    if (text.length >= this.ttsMaxLength) {
-      return;
-    }
+    await this.#apiKey.load();
+
     const data = await aiTextToSpeechAction({
       provider: this.name,
       model: OpenAIModelTTS.MINI,

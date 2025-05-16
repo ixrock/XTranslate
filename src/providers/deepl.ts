@@ -35,6 +35,8 @@ class Deepl extends Translator {
   };
 
   async translate(params: TranslateParams): Promise<ITranslationResult> {
+    await this.#apiKey.load();
+
     const { from: langFrom, to: langTo, text } = params;
     const reqInit: ProxyRequestInit = {
       method: "POST",
@@ -70,16 +72,6 @@ class Deepl extends Translator {
         message,
       };
     }
-  }
-
-  async getDataUsage(): Promise<DeeplUsageResponse> {
-    const url = `${this.apiUrl}/usage?auth_key=${this.#apiKey.get()}`;
-    return this.request({ url });
-  }
-
-  async getSupportedLanguages(type: "source" | "target"): Promise<DeeplSupportedLanguage[]> {
-    const url = `${this.apiUrl}/languages?type=${type}&auth_key=${this.#apiKey.get()}`;
-    return this.request({ url });
   }
 
   getAuthSettings(): ProviderAuthSettingsProps {
@@ -158,22 +150,6 @@ export interface DeeplSupportedLanguage {
   language: string; // The language code of the given language, e.g. "EN-US"
   name: string; // Name of the language in English.
   supports_formality?: boolean; // Only included for target languages
-}
-
-/**
- * Dumps to console supported list of languages by Deepl API
- */
-export async function dump_deepl_json() {
-  const supportedLanguages: TranslatorLanguages = {
-    from: { "auto": "Auto-detect" },
-    to: {},
-  };
-  const deepl = new Deepl();
-  const from = await deepl.getSupportedLanguages("source");
-  const to = await deepl.getSupportedLanguages("target");
-  from.forEach(({ name, language }) => supportedLanguages.from[language.toLowerCase()] = name);
-  to.forEach(({ name, language }) => supportedLanguages.to[language.toLowerCase()] = name);
-  console.info("[[Deepl]]: supported languages", supportedLanguages);
 }
 
 Translator.register(ProviderCodeName.DEEPL, Deepl);

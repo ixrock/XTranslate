@@ -2,9 +2,9 @@
 
 import { createLogger } from "./utils/createLogger";
 import { StorageAdapter, StorageHelper, StorageHelperOptions } from "./utils/storageHelper";
-import { readFromExternalStorageAction, removeFromExternalStorageAction, writeToExternalStorageAction } from "./extension/actions";
-import { isBackgroundWorker, MessageType, onMessage, StorageSyncPayload, StorageWritePayload } from "./extension";
-import { listenExternalStorageChanges, StorageArea } from "./background/storage.bgc";
+import { isBackgroundWorker, onMessage } from "./extension/runtime";
+import { MessageType, StorageSyncPayload, StorageWritePayload } from "./extension/messages";
+import { StorageArea, listenExternalStorageChanges } from "./background/storage.bgc";
 
 const logger = createLogger({ systemPrefix: "STORAGE(helper)" });
 
@@ -19,20 +19,23 @@ export function createStorage<T>(key: string, options: ChromeStorageHelperOption
   } = options;
 
   const storageAdapter: StorageAdapter<T> = {
-    setItem(key: string, value: T) {
+    async setItem(key: string, value: T) {
       const payload: StorageWritePayload<T> = {
         key, area,
         state: value,
         origin: StorageHelper.getResourceOrigin(),
       };
+      const { writeToExternalStorageAction } = await import("./extension");
       return writeToExternalStorageAction(payload);
     },
 
     async getItem(key: string): Promise<T> {
+      const { readFromExternalStorageAction } = await import("./extension");
       return readFromExternalStorageAction({ area, key });
     },
 
     async removeItem(key: string) {
+      const { removeFromExternalStorageAction } = await import("./extension");
       return removeFromExternalStorageAction({
         area, key,
         origin: StorageHelper.getResourceOrigin(),
