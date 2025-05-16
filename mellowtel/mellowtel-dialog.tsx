@@ -7,8 +7,9 @@ import { getMessage } from "../src/i18n";
 import { Button } from "../src/components/button";
 import { Icon } from "../src/components/icon";
 import { dialogsState } from "../src/components/app";
-import { mellowtelOptOutTime } from "./mellowtel.storage";
 import { mellowtelActivateAction, mellowtelDeactivateAction, mellowtelStatusAction } from "./mellowtel.actions";
+import { mellowtelOptOutTime } from "./mellowtel.storage";
+import { mellowtelOptInReminderDuration } from "./mellowtel.config";
 
 export interface MellowtelDialogProps extends Omit<DialogProps, "isOpen"> {
 }
@@ -24,7 +25,7 @@ export class MellowtelDialog extends React.Component<MellowtelDialogProps> {
     dialogsState.showMellowtelDialog = await this.checkDialogVisibility();
   }
 
-  async checkDialogVisibility() {
+  async checkDialogVisibility(): Promise<boolean> {
     await mellowtelOptOutTime.load();
     let lastOptOutTime = mellowtelOptOutTime.get();
 
@@ -34,11 +35,9 @@ export class MellowtelDialog extends React.Component<MellowtelDialogProps> {
     }
 
     const enabled = await mellowtelStatusAction();
-    const remindDuration = 1000 /*ms*/ * 3600 /*1h*/ * 24 /*1d*/ * 14; // every 2 weeks
-    const trialActive = lastOptOutTime + remindDuration > Date.now();
-    const isHidden = enabled || trialActive;
-
-    return Boolean(!isHidden);
+    const isOptOut = lastOptOutTime + mellowtelOptInReminderDuration > Date.now();
+    const isDialogHidden = enabled || isOptOut;
+    return !isDialogHidden;
   }
 
   optIn = async () => {

@@ -224,6 +224,7 @@ export class ContentScript extends React.Component {
     this.isIconVisible = false;
   }
 
+  @action
   hidePopup() {
     if (this.isPopupHidden) {
       return;
@@ -349,7 +350,7 @@ export class ContentScript extends React.Component {
     });
   }
 
-  onSelectionChange = debounce(() => {
+  onSelectionChange = debounce(action(() => {
     this.selectedText = this.selection.toString().trim();
     if (ContentScript.isEditableElement(document.activeElement) || !this.selectedText) {
       return;
@@ -367,7 +368,7 @@ export class ContentScript extends React.Component {
         this.showIcon();
       }
     }
-  }, 250);
+  }), 250);
 
   onIconClick(evt: React.MouseEvent) {
     this.hideIcon();
@@ -409,6 +410,7 @@ export class ContentScript extends React.Component {
     }
   }
 
+  @action
   onKeyDown = (evt: KeyboardEvent) => {
     if (!this.isPopupHidden) {
       switch (evt.code) {
@@ -472,10 +474,10 @@ export class ContentScript extends React.Component {
     }
   }
 
-  updatePopupPositionLazy = debounce(() => {
+  updatePopupPositionLazy = debounce(action(() => {
     if (!this.isPopupHidden) this.saveSelectionRects();
     this.refinePosition();
-  }, 250);
+  }), 250);
 
   render() {
     const { lastParams, translation, error, popupPosition, playText, translateNext, onIconClick, hidePopup, isIconVisible } = this;

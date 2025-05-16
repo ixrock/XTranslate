@@ -6,7 +6,7 @@ Mobx.configure({
   enforceActions: "never",
   reactionRequiresObservable: true,
   observableRequiresReaction: false, // TODO: enable in the future
-  computedRequiresReaction: false,  // TODO: enable in the future
+  computedRequiresReaction: true,
   safeDescriptors: true,
 });
 
