@@ -27,11 +27,6 @@ export const shareIcons: ShareIcon[] = [
     icon: require('../icon/fb.svg'),
     url: "https://www.facebook.com/sharer/sharer.php?u={url}&title={title}&quote={tags}",
   },
-  {
-    title: "VK",
-    icon: require('../icon/vk.svg'),
-    url: "https://vk.com/share.php?url={url}&title={title}",
-  },
 ];
 
 export const shareTags = ["chrome", "extension", "xtranslate", "in_place_text_translator", "ai_text_translations"];
@@ -66,7 +61,7 @@ export class Footer extends React.Component {
     return (
       <div className="Footer flex gaps">
         <div className="socialIcons flex gaps align-center">
-          <p>{getMessage("share_with_friends")}</p>
+          <p>{getMessage("share_with_friends")}:</p>
           {shareIcons.map((share, i) => {
             const url = this.makeShareUrl(share.url);
             return (
