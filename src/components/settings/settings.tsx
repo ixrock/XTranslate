@@ -165,37 +165,35 @@ export class Settings extends React.Component {
             checked={settings.autoPlayText}
             onChange={v => settings.autoPlayText = v}
           />
-          <Checkbox
-            label={getMessage("use_chrome_tts")}
-            checked={settings.useSpeechSynthesis}
-            onChange={v => settings.useSpeechSynthesis = v}
-            tooltip={getMessage("use_chrome_tts_tooltip_info")}
-          />
-          <label className="flex column">
-            <span className="box noshrink">{getMessage("tts_default_system_voice")}</span>
-            <div className="flex gaps align-center">
-              <SelectVoice
-                className="box grow"
-                currentIndex={settings.ttsVoiceIndex}
-                onChange={v => settings.ttsVoiceIndex = v}
-              />
-              <Icon
-                small
-                material="edit"
-                tooltip={{ nowrap: true, children: getMessage("tts_play_demo_sound_edit") }}
-                onClick={this.editDemoVoiceText}
-              />
-              <Icon
-                small
-                material={this.isSpeaking ? "pause_outline" : "play_circle_outline"}
-                tooltip={{
-                  nowrap: true,
-                  children: `${getMessage("tts_play_demo_sound")}: "${this.demoVoiceText}"`,
-                }}
-                onClick={this.speakDemoText}
-              />
-            </div>
-          </label>
+          <div className={`${styles.systemTts} flex gaps align-center`}>
+            <Checkbox
+              className="box noshrink"
+              label={getMessage("tts_default_system_voice")}
+              checked={settings.useSpeechSynthesis}
+              onChange={v => settings.useSpeechSynthesis = v}
+              tooltip={getMessage("use_chrome_tts_tooltip_info")}
+            />
+            <SelectVoice
+              className="box grow"
+              currentIndex={settings.ttsVoiceIndex}
+              onChange={v => settings.ttsVoiceIndex = v}
+            />
+            <Icon
+              small
+              material="edit"
+              tooltip={{ nowrap: true, children: getMessage("tts_play_demo_sound_edit") }}
+              onClick={this.editDemoVoiceText}
+            />
+            <Icon
+              small
+              material={this.isSpeaking ? "pause_outline" : "play_circle_outline"}
+              tooltip={{
+                nowrap: true,
+                children: `${getMessage("tts_play_demo_sound")}: "${this.demoVoiceText}"`,
+              }}
+              onClick={this.speakDemoText}
+            />
+          </div>
         </article>
       </main>
     );

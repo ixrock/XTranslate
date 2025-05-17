@@ -9,10 +9,15 @@
     display: grid;
     gap: var(--theme-spacing);
     grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
+    justify-items: start;
 
     &:first-child {
       padding-right: var(--theme-spacing-double);
     }
+  }
+
+  .systemTts {
+    width: 100%;
   }
 
   .providers {
