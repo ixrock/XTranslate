@@ -50,14 +50,16 @@ export class SelectLanguage extends React.Component<SelectLanguageProps> {
   }
 
   get sourceLanguageOptions(): ReactSelectGroup<string>[] {
-    var { langFrom: sourceLangList } = getTranslator(this.provider);
+    const { langFrom: sourceLangList } = getTranslator(this.provider);
 
-    var getOption = (lang: string): ReactSelectOption<string> => ({
-      value: lang,
-      isDisabled: lang == this.langTo,
-      isSelected: lang == this.langFrom,
-      label: sourceLangList[lang as keyof typeof sourceLangList],
-    });
+    const getOption = (lang: string): ReactSelectOption<string> => {
+      return {
+        value: lang,
+        isDisabled: lang == this.langTo,
+        isSelected: lang == this.langFrom,
+        label: sourceLangList[lang as keyof typeof sourceLangList],
+      }
+    };
 
     const sourceLanguageOptions = Object.keys(sourceLangList).map(getOption);
 
@@ -75,14 +77,16 @@ export class SelectLanguage extends React.Component<SelectLanguageProps> {
   }
 
   get targetLanguageOptions(): ReactSelectGroup<string>[] {
-    var { langTo: targetLangList } = getTranslator(this.provider);
+    const { langTo: targetLangList } = getTranslator(this.provider);
 
-    var getOption = (lang: string): ReactSelectOption<string> => ({
-      value: lang,
-      isDisabled: lang == this.langFrom,
-      isSelected: lang == this.langTo,
-      label: targetLangList[lang as keyof typeof targetLangList],
-    });
+    const getOption = (lang: string): ReactSelectOption<string> => {
+      return {
+        value: lang,
+        isDisabled: lang == this.langFrom,
+        isSelected: lang == this.langTo,
+        label: targetLangList[lang],
+      }
+    };
 
     const targetLanguageOptions = Object.keys(targetLangList).map(getOption);
 
@@ -100,15 +104,17 @@ export class SelectLanguage extends React.Component<SelectLanguageProps> {
   }
 
   get reverseLanguageOptions(): ReactSelectOption<string>[] {
-    var { langToReverse } = settingsStore.data;
-    var { langTo: targetLangList } = getTranslator(this.provider);
+    const { langToReverse } = settingsStore.data;
+    const { langTo: targetLangList } = getTranslator(this.provider);
 
-    var getOption = (lang: string): ReactSelectOption<string> => ({
-      value: lang,
-      isDisabled: lang == this.langTo,
-      isSelected: lang == langToReverse,
-      label: targetLangList[lang as keyof typeof targetLangList],
-    });
+    const getOption = (lang: string): ReactSelectOption<string> => {
+      return {
+        value: lang,
+        isDisabled: lang == this.langTo,
+        isSelected: lang == langToReverse,
+        label: targetLangList[lang],
+      }
+    };
 
     return Object.keys(targetLangList).map(getOption);
   }
@@ -212,8 +218,8 @@ export class SelectLanguage extends React.Component<SelectLanguageProps> {
   }
 
   render() {
-    var { langFrom, langTo } = this;
-    var { className, showInfoIcon } = this.props;
+    const { langFrom, langTo } = this;
+    const { className, showInfoIcon } = this.props;
 
     const sourceLang = this.sourceLanguageOptions
       .flatMap(group => group.options)
@@ -226,7 +232,6 @@ export class SelectLanguage extends React.Component<SelectLanguageProps> {
     return (
       <div className={cssNames("SelectLanguage flex gaps align-center", className)}>
         <ReactSelect<string>
-          // menuIsOpen={true}
           className="Select"
           placeholder={getMessage("source_lang_placeholder")}
           value={sourceLang}
@@ -245,7 +250,6 @@ export class SelectLanguage extends React.Component<SelectLanguageProps> {
         />
 
         <ReactSelect<string>
-          // menuIsOpen={true}
           className="Select"
           placeholder={getMessage("target_lang_placeholder")}
           value={targetLang}

@@ -35,9 +35,7 @@ export class SelectAIModel<Models extends AIModelMap> extends React.Component<Se
     const isValue = meta.context === "value";
     return (
       <>
-        {isValue && (
-          <>{value} <Icon small material="help_outline" tooltip={label}/></>
-        )}
+        {isValue && value}
         {isMenuOption && (
           <span>{label} <em>({value})</em></span>
         )}

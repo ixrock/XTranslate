@@ -1,0 +1,65 @@
+@use "../mixins" as *;
+
+.ReactSelect {
+  flex: 1;
+
+  .menuList {
+    @include custom-scrollbar($overlay: true) {
+      --theme-scrollbar-size: 7px;
+    }
+  }
+
+  // clickable arrow indicator
+  .dropdownIndicator {
+    padding: var(--theme-spacing-half);
+
+    svg {
+      color: var(--theme-color-text);
+    }
+  }
+
+  .inputContainer,
+  .singleValue {
+    color: var(--theme-color-text);
+  }
+
+  // clickable input view
+  .control {
+    border: 1px solid currentColor;
+    min-height: 32px;
+    box-shadow: none;
+    background: var(--theme-bgc);
+
+    &:focus-within {
+      border-color: var(--theme-color-primary);
+    }
+  }
+
+  .menu {
+    min-width: 100%;
+    width: max-content;
+    background: var(--theme-bgc);
+    border: 1px solid var(--theme-border-color);
+
+    &.menuRight {
+      right: 0;
+    }
+  }
+
+  .option {
+    color: var(--theme-color-text);
+    padding: var(--theme-spacing-half);
+
+    &:active, &:hover,
+    &:is(:global(.XTranslateReactSelect__option--is-selected)),
+    &:is(:global(.XTranslateReactSelect__option--is-focused)) {
+      color: white;
+      background: var(--theme-color-primary);
+    }
+
+    &:is(:global(.XTranslateReactSelect__option--is-disabled)) {
+      opacity: .75;
+      cursor: not-allowed;
+    }
+  }
+}

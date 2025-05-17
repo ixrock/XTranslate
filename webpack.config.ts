@@ -89,8 +89,8 @@ function webpackBaseConfig({ mode }: WebpackConfigEnv): webpack.Configuration {
               options: {
                 sourceMap: isDevelopment,
                 modules: {
-                  auto: /\.module\./i, // https://github.com/webpack-contrib/css-loader#auto
-                  mode: 'local', // :local(.selector) by default
+                  auto: true, // https://github.com/webpack-contrib/css-loader#auto
+                  mode: "local", // :local(.selector) by default
                   localIdentName: '[name]__[local]--[hash:base64:5]'
                 }
               }
