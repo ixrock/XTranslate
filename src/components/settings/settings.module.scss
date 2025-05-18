@@ -1,8 +1,6 @@
 .Settings {
-  &, > article {
-    display: flex;
-    flex-direction: column;
-    gap: var(--theme-spacing);
+  * {
+    --flexGap: var(--theme-spacing-half) !important;
   }
 
   .grid {
@@ -14,10 +12,6 @@
     &:first-child {
       padding-right: var(--theme-spacing-double);
     }
-  }
-
-  .translator {
-    --flexGap: var(--theme-spacing-half);
   }
 
   .systemTts {

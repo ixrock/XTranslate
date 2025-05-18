@@ -3,10 +3,10 @@ import React from "react";
 import { action, makeObservable, observable } from "mobx";
 import { observer } from "mobx-react";
 import isEqual from "lodash/isEqual";
-import { getTranslators, Translator, ProviderCodeName, OpenAIModel, GrokAIModel } from "../../providers";
+import { getTranslators, Translator, ProviderCodeName, OpenAIModel, GrokAIModel, getTranslator } from "../../providers";
 import { cssNames } from "../../utils";
 import { XTranslateIcon } from "../../user-script/xtranslate-icon";
-import { SelectLanguage } from "../select-language";
+import { SelectLanguage, SelectLanguageChangeEvent } from "../select-language";
 import { Checkbox } from "../checkbox";
 import { Radio, RadioGroup } from "../radio";
 import { ReactSelect, ReactSelectOption } from "../select";
@@ -21,6 +21,7 @@ import { getTTSVoices, speak, stopSpeaking } from "../../tts";
 import { SelectAIModel } from "./select_ai_model";
 import { ProviderAuthSettings } from "./auth_settings";
 import { materialIcons } from "../../common-vars";
+import { Button } from "../button";
 
 @observer
 export class Settings extends React.Component {
@@ -56,6 +57,11 @@ export class Settings extends React.Component {
     ];
   };
 
+  private fullPageProviders: ReactSelectOption<ProviderCodeName>[] = [
+    { value: ProviderCodeName.GOOGLE, label: getTranslator(ProviderCodeName.GOOGLE).title },
+    { value: ProviderCodeName.BING, label: getTranslator(ProviderCodeName.BING).title },
+  ];
+
   @observable demoVoiceText = "Quick brown fox jumps over the lazy dog";
   @observable isSpeaking = false;
 
@@ -90,17 +96,34 @@ export class Settings extends React.Component {
     }
   }
 
+  @action
+  onLanguageChange = ({ langTo, langFrom }: SelectLanguageChangeEvent) => {
+    settingsStore.data.langTo = langTo;
+    settingsStore.data.langFrom = langFrom;
+  }
+
+  @action
+  onFullPageLanguageChange = ({ langTo, langFrom }: SelectLanguageChangeEvent) => {
+    const { fullPageTranslation } = settingsStore.data;
+    fullPageTranslation.langTo = langTo;
+    fullPageTranslation.langFrom = langFrom;
+  }
+
   render() {
     const settings = settingsStore.data;
+    const { fullPageTranslation } = settings;
+
     return (
-      <main className={styles.Settings}>
-        <article>
-          <SelectLanguage showReverseTranslation showInfoIcon/>
-          <RadioGroup
-            className={styles.providers}
-            value={settings.vendor}
-            onChange={v => settingsStore.setProvider(v)}
-          >
+      <main className={`${styles.Settings} flex column gaps`}>
+        <article className="flex column gaps">
+          <SelectLanguage
+            showReverseTranslation showInfoIcon
+            provider={settings.vendor}
+            from={settings.langFrom}
+            to={settings.langTo}
+            onChange={this.onLanguageChange}
+          />
+          <RadioGroup className={styles.providers} value={settings.vendor} onChange={v => settingsStore.setProvider(v)}>
             {getTranslators().map(provider => {
               const translatorName = provider.title;
               const publicUrl = new URL(provider.publicUrl);
@@ -111,7 +134,7 @@ export class Settings extends React.Component {
                 [styles.providerSkipRotation]: skipInRotation,
               });
               return (
-                <div key={name} className={`${styles.translator} flex gaps align-center`}>
+                <div key={name} className={`flex gaps align-center`}>
                   <Checkbox
                     checked={skipInRotation}
                     onChange={checked => settingsStore.data.skipVendorInRotation[name] = checked}
@@ -130,14 +153,53 @@ export class Settings extends React.Component {
           </RadioGroup>
         </article>
 
+        <SubTitle>{getMessage("settings_title_full_page_translation")}</SubTitle>
+
+        <article className="flex column gaps">
+          <div className="flex gaps align-center">
+            <SelectLanguage
+              className="box grow"
+              provider={fullPageTranslation.provider}
+              from={fullPageTranslation.langFrom}
+              to={fullPageTranslation.langTo}
+              onChange={this.onFullPageLanguageChange}
+            />
+            <ReactSelect<ProviderCodeName>
+              value={this.fullPageProviders.find(opt => opt.value === fullPageTranslation.provider)}
+              options={this.fullPageProviders}
+              onChange={({ value }) => fullPageTranslation.provider = value}
+            />
+          </div>
+          <div className="excludedPages flex gaps align-center">
+            <span>{getMessage("settings_title_full_page_excluded_pages")}</span>
+            <ReactSelect<string>
+              className="box grow"
+              placeholder={getMessage("settings_title_full_page_empty_list")}
+              options={fullPageTranslation.excludedPages.map(value => ({ value, label: value }))}
+            />
+            <Button
+              primary
+              label={getMessage("settings_title_full_page_add_url")}
+              onClick={() => window.prompt(getMessage("settings_title_full_page_excluded_pages"))}
+            />
+          </div>
+          <div className="alwaysTranslatePages flex gaps align-center">
+            <span>{getMessage("settings_title_full_page_always_translate")}</span>
+            <ReactSelect<string>
+              className="box grow"
+              placeholder={getMessage("settings_title_full_page_empty_list")}
+              options={fullPageTranslation.alwaysTranslatePages.map(value => ({ value, label: value }))}
+            />
+            <Button
+              primary
+              label={getMessage("settings_title_full_page_add_url")}
+              onClick={() => window.prompt(getMessage("settings_title_full_page_always_translate"))}
+            />
+          </div>
+        </article>
+
         <SubTitle>{getMessage("settings_title_appearance")}</SubTitle>
         <article className={styles.grid}>
-          <Checkbox
-            label={getMessage("pdf_use_custom_viewer")}
-            tooltip={getMessage("pdf_use_custom_viewer_info")}
-            checked={settings.customPdfViewer}
-            onChange={v => settings.customPdfViewer = v}
-          />
           <div className="flex gaps">
             <Checkbox
               label={getMessage("display_icon_near_selection")}
@@ -146,17 +208,21 @@ export class Settings extends React.Component {
               tooltip={{ children: <XTranslateIcon style={{ position: "static" }}/> }}
             />
             {settings.showIconNearSelection && (
-              <label>
-                <span>{getMessage("position_of_x_translate_icon")}</span>
-                <ReactSelect
-                  menuPlacement="auto"
-                  options={this.iconPositions}
-                  value={this.iconPositions.find(pos => isEqual(pos.value, settings.iconPosition))}
-                  onChange={(opt: ReactSelectOption<XIconPosition>) => settings.iconPosition = opt.value}
-                />
-              </label>
+              <ReactSelect
+                menuPlacement="auto"
+                className="box noshrink"
+                options={this.iconPositions}
+                value={this.iconPositions.find(pos => isEqual(pos.value, settings.iconPosition))}
+                onChange={(opt: ReactSelectOption<XIconPosition>) => settings.iconPosition = opt.value}
+              />
             )}
           </div>
+          <Checkbox
+            label={getMessage("pdf_use_custom_viewer")}
+            tooltip={getMessage("pdf_use_custom_viewer_info")}
+            checked={settings.customPdfViewer}
+            onChange={v => settings.customPdfViewer = v}
+          />
         </article>
 
         <SubTitle>{getMessage("settings_title_tts")}</SubTitle>

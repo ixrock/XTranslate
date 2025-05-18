@@ -130,7 +130,7 @@ export class StorageHelper<T> {
         let migratedData = callback(data);
         if (migratedData !== undefined) data = migratedData as T;
       }
-      this.merge(data);
+      this.merge(data, { deep: true });
     }
 
     this.loaded = true;

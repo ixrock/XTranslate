@@ -1,8 +1,6 @@
 @use "../mixins" as *;
 
 .ReactSelect {
-  flex: 1;
-
   .placeholder {
     white-space: nowrap;
     overflow-x: hidden;

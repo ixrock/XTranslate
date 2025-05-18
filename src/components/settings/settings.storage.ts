@@ -51,7 +51,7 @@ export const settingsStorage = createStorage("settings", {
       provider: "bing" as ProviderCodeName,
       langFrom: "auto",
       langTo: "en",
-      alwaysTranslateLang: [],
+      alwaysTranslatePages: [],
       excludedPages: [],
     },
     hotkey: {

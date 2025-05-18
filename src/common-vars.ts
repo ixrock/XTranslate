@@ -51,5 +51,5 @@ export function isEdge(): boolean {
 }
 
 export function isSystemPage(pageUrl = ""): boolean {
-  return !!pageUrl.match(/^(chrome|edge):\/\//i);
+  return !!pageUrl.match(/^(chrome(-extension)?|edge):\/\//i);
 }
