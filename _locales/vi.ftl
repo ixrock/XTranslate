@@ -39,7 +39,6 @@ show_next_vendor_icon_in_popup = Hiển thị biểu tượng dịch tiếp theo
 show_copy_translation_icon = Hiển thị biểu tượng sao chép bản dịch
 show_save_as_favorite_icon = Hiển thị biểu tượng lưu làm yêu thích
 show_close_popup_button = Hiển thị nút đóng bật lên ở góc phải
-show_close_popup_button_title = Đóng
 show_detected_language_block = Hiển thị ngôn ngữ đã phát hiện
 display_on_click_by_selected_text = Hiển thị khi nhấp vào văn bản đã chọn
 display_popup_after_text_selected = Hiển thị ngay sau khi chọn văn bản

@@ -39,7 +39,6 @@ show_next_vendor_icon_in_popup = Mostra icona traduzione successiva
 show_copy_translation_icon = Mostra icona per copiare la traduzione
 show_save_as_favorite_icon = Mostra icona per salvare come preferito
 show_close_popup_button = Mostra pulsante di chiusura del pop-up nell'angolo in alto a destra
-show_close_popup_button_title = Chiudi
 show_detected_language_block = Mostra lingua rilevata
 display_on_click_by_selected_text = Mostra al clic sulla selezione
 display_popup_after_text_selected = Mostra subito dopo la selezione del testo

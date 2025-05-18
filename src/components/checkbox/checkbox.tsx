@@ -99,8 +99,9 @@ export class Checkbox extends React.Component<CheckboxProps> {
         ref={this.bindRef}
       >
         <i className={cssNames(styles.tickBox, tickBoxClass)}/>
-        {label && <div className={cssNames(labelClass)}>{label}</div>}
-        {children}
+        <div className={cssNames(labelClass)}>
+          {label} {children}
+        </div>
         {this.renderTooltip()}
       </label>
     );

@@ -14,9 +14,8 @@
     flex-direction: column;
 
     > * {
-      --size: 22px;
-      --bgc-active: none;
-      --color-active: var(--theme-color-primary);
+      --icon-bgc-active: none;
+      --icon-color-active: var(--theme-color-primary);
 
       position: relative;
       flex: 1;

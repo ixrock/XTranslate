@@ -20,7 +20,7 @@ import { Tab } from "../tabs";
 import { Spinner } from "../spinner";
 import { Notifications } from "../notifications";
 import { getMessage } from "../../i18n";
-import { iconMaterialFavorite, iconMaterialFavoriteOutlined, isMac } from "../../common-vars";
+import { isMac, materialIcons } from "../../common-vars";
 import { favoritesStorage } from "./favorites.storage";
 import { UserHistoryItem } from "./user-history-item";
 
@@ -359,7 +359,7 @@ export class UserHistory extends React.Component {
             />
             <Icon
               className="favorites"
-              material={showOnlyFavorites ? iconMaterialFavorite : iconMaterialFavoriteOutlined}
+              material={showOnlyFavorites ? materialIcons.favorite : materialIcons.unfavorite}
               active={showOnlyFavorites}
               tooltip={getMessage("history_show_favorites_only")}
               onClick={() => this.showOnlyFavorites = !showOnlyFavorites}

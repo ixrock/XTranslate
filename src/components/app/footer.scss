@@ -4,12 +4,8 @@
   padding-top: var(--theme-spacing-half);
   border-top: 1px solid var(--theme-border-color);
 
-  .socialIcons {
-    --flexGap: var(--theme-spacing-half);
-  }
-
   .support {
-    --flexGap: var(--theme-spacing-half);
+    --flexGap: var(--theme-spacing-half) !important;
 
     cursor: pointer;
 

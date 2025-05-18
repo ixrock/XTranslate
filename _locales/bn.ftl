@@ -39,7 +39,6 @@ show_next_vendor_icon_in_popup = পরবর্তী অনুবাদ আই
 show_copy_translation_icon = অনুবাদ কপি করার আইকন দেখান
 show_save_as_favorite_icon = ফেভারিটে সংরক্ষণ করার আইকন দেখান
 show_close_popup_button = ডান কোণায় পপআপ বন্ধ করার বাটন দেখান
-show_close_popup_button_title = বন্ধ করুন
 show_detected_language_block = শনাক্তকৃত ভাষা দেখান
 display_on_click_by_selected_text = নির্বাচনে ক্লিক করলে দেখান
 display_popup_after_text_selected = টেক্সট নির্বাচন করার পর দেখান

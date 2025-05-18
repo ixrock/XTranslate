@@ -15,8 +15,15 @@ export const pdfViewerEntry = "pdf-viewer";
 export const pdfViewerSkipUrlHash = "#pdf-raw";
 
 // Icons, see also: https://fonts.google.com/icons
-export const iconMaterialFavorite = "star";
-export const iconMaterialFavoriteOutlined = "star_outline";
+export const materialIcons = {
+  ttsPlay: "play_circle_outline",
+  ttsPause: "pause_outline",
+  copyTranslation: "content_copy",
+  copiedTranslation: "task_alt",
+  favorite: "star",
+  unfavorite: "star_outline",
+  nextTranslation: "arrow_forward",
+};
 
 //
 // Env-specific data helpers

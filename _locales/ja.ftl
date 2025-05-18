@@ -39,7 +39,6 @@ show_next_vendor_icon_in_popup = 次の翻訳アイコンを表示
 show_copy_translation_icon = 翻訳をコピーするアイコンを表示
 show_save_as_favorite_icon = お気に入りに保存するアイコンを表示
 show_close_popup_button = 右上のポップアップを閉じるボタンを表示
-show_close_popup_button_title = 閉じる
 show_detected_language_block = 検出された言語を表示
 display_on_click_by_selected_text = 選択テキストをクリックしたときに表示
 display_popup_after_text_selected = テキストが選択された直後に表示

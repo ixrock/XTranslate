@@ -16,6 +16,10 @@
     }
   }
 
+  .translator {
+    --flexGap: var(--theme-spacing-half);
+  }
+
   .systemTts {
     width: 100%;
   }

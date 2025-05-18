@@ -39,7 +39,6 @@ show_next_vendor_icon_in_popup = 다음 번역 아이콘 표시
 show_copy_translation_icon = 번역 복사 아이콘 표시
 show_save_as_favorite_icon = 즐겨찾기로 저장 아이콘 표시
 show_close_popup_button = 오른쪽 상단에 팝업 닫기 버튼 표시
-show_close_popup_button_title = 닫기
 show_detected_language_block = 감지된 언어 표시
 display_on_click_by_selected_text = 선택한 텍스트를 클릭할 때 표시
 display_popup_after_text_selected = 텍스트 선택 후 바로 표시

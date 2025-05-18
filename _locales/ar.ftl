@@ -39,7 +39,6 @@ show_next_vendor_icon_in_popup = إظهار أيقونة الترجمة التا
 show_copy_translation_icon = إظهار أيقونة نسخ الترجمة
 show_save_as_favorite_icon = إظهار أيقونة حفظ كمفضل
 show_close_popup_button = إظهار زر إغلاق المنبثق في الزاوية اليمنى
-show_close_popup_button_title = إغلاق
 show_detected_language_block = إظهار اللغة المكتشفة
 display_on_click_by_selected_text = عرض عند النقر على الاختيار
 display_popup_after_text_selected = عرض بعد تحديد النص

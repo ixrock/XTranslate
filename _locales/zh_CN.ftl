@@ -39,7 +39,6 @@ show_next_vendor_icon_in_popup = 显示下一翻译图标
 show_copy_translation_icon = 显示复制翻译图标
 show_save_as_favorite_icon = 显示添加到收藏图标
 show_close_popup_button = 在右上角显示关闭弹出框按钮
-show_close_popup_button_title = 关闭
 show_detected_language_block = 显示检测到的语言
 display_on_click_by_selected_text = 点击选中文本时显示
 display_popup_after_text_selected = 文本选中后立即显示

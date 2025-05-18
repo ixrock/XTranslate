@@ -1,7 +1,6 @@
 .Select {
-  --icon-size: 24px;
-  --line-color: var(--theme-border-color);
-  --line-color-active: var(--theme-color-primary);
+  --select-line-color: var(--theme-border-color);
+  --select-line-color-active: var(--theme-color-primary);
 
   position: relative;
   display: flex;
@@ -14,14 +13,14 @@
     border-radius: 0;
     font: inherit;
     line-height: 1.6;
-    padding-right: var(--icon-size);
-    box-shadow: 0 1px var(--line-color);
+    padding-right: var(--theme-spacing);
+    box-shadow: 0 1px var(--select-line-color);
 
     &:focus {
-      box-shadow: 0 2px var(--line-color-active);
+      box-shadow: 0 2px var(--select-line-color-active);
 
       ~ .arrowIcon {
-        color: var(--line-color-active);
+        color: var(--select-line-color-active);
       }
     }
 
@@ -33,7 +32,8 @@
   }
 
   .arrowIcon {
-    --size: var(--icon-size);
+    --icon-size: 24px;
+
     position: absolute;
     right: 0;
     top: 50%;

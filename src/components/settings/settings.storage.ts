@@ -22,7 +22,6 @@ export const settingsStorage = createStorage("settings", {
     showTextToSpeechIcon: true,
     showSaveToFavoriteIcon: true,
     showNextVendorIcon: false,
-    showClosePopupIcon: false,
     showCopyTranslationIcon: true,
     useDarkTheme: false,
     showIconNearSelection: true,

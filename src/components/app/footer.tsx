@@ -52,9 +52,9 @@ export class Footer extends React.Component {
 
   render() {
     return (
-      <div className="Footer flex">
-        <div className="socialIcons flex gaps align-center">
-          <p>{getMessage("share_with_friends")}:</p>
+      <div className="Footer flex gaps">
+        <div className="social-icons">
+          {getMessage("share_with_friends")}:
           {this.shareIcons.map((share, i) => {
             const url = this.makeShareUrl(share.url);
             return (

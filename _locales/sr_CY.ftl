@@ -43,7 +43,6 @@ show_next_vendor_icon_in_popup = Прикажи иконицу следећег 
 show_copy_translation_icon = Прикажи иконицу за копирање превода
 show_save_as_favorite_icon = Прикажи иконицу за чување у омиљено
 show_close_popup_button = Прикажи иконицу за затварање искачућег прозора у десном углу
-show_close_popup_button_title = Затвори
 show_detected_language_block = Прикажи откривени језик
 display_on_click_by_selected_text = Прикажи кликом на изабрани текст
 display_popup_after_text_selected = Прикажи након избора текста

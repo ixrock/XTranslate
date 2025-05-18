@@ -47,8 +47,8 @@
   }
 
   .icon {
-    --size: 1.6em;
-    --bgc-active: none;
+    --icon-size: 1.6em;
+    --icon-bgc-active: none;
 
     width: auto;
     height: auto;
@@ -65,7 +65,7 @@
   }
 
   .translationResult {
-    --flex-gap: var(--theme-spacing-half);
+    --flexGap: var(--theme-spacing-half);
 
     @include custom-scrollbar($borderSpace: 1px) {
       --theme-scrollbar-size: .5em;
@@ -75,7 +75,7 @@
 
     .translation {
       display: flex;
-      gap: var(--flex-gap);
+      gap: var(--flexGap);
 
       .value {
         padding: 2px 0;
@@ -111,7 +111,7 @@
   .translationError {
     display: flex;
     align-items: center;
-    gap: var(--flex-gap);
+    gap: var(--flexGap);
 
     .errorInfo {
       flex: 1;

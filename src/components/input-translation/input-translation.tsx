@@ -21,7 +21,7 @@ import { Tooltip } from "../tooltip";
 import { getUrlParams, navigation, TranslationPageParams } from "../../navigation";
 import { createStorage } from "../../storage";
 import { getMessage } from "../../i18n";
-import { iconMaterialFavorite, iconMaterialFavoriteOutlined, isMac } from "../../common-vars";
+import { isMac, materialIcons } from "../../common-vars";
 import { isFavorite } from "../user-history/favorites.storage";
 import { saveToFavoritesAction } from "../../background/history.bgc";
 
@@ -223,12 +223,12 @@ export class InputTranslation extends React.Component {
           <div className="translation flex gaps align-center">
             <div className="flex column gaps">
               <Icon
-                material="play_circle_outline"
+                material={materialIcons.ttsPlay}
                 tooltip={getMessage("popup_play_icon_title")}
                 onClick={this.playText}
               />
               <Icon
-                material={this.copied ? "task_alt" : "content_copy"}
+                material={this.copied ? materialIcons.copiedTranslation : materialIcons.copyTranslation}
                 tooltip={getMessage("popup_copy_translation_title")}
                 onClick={this.copyToClipboard}
               />
@@ -239,7 +239,7 @@ export class InputTranslation extends React.Component {
             </div>
             <div className="flex column align-center">
               <Icon
-                material={favorite ? iconMaterialFavorite : iconMaterialFavoriteOutlined}
+                material={favorite ? materialIcons.favorite : materialIcons.unfavorite}
                 tooltip={favorite ? getMessage("history_unmark_as_favorite") : getMessage("history_mark_as_favorite")}
                 onClick={() => saveToFavoritesAction(this.translation, { isFavorite: !favorite })}
               />

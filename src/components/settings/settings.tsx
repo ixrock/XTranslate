@@ -20,6 +20,7 @@ import { SelectVoice } from "../select-tts-voice";
 import { getTTSVoices, speak, stopSpeaking } from "../../tts";
 import { SelectAIModel } from "./select_ai_model";
 import { ProviderAuthSettings } from "./auth_settings";
+import { materialIcons } from "../../common-vars";
 
 @observer
 export class Settings extends React.Component {
@@ -110,7 +111,7 @@ export class Settings extends React.Component {
                 [styles.providerSkipRotation]: skipInRotation,
               });
               return (
-                <div key={name} className="translator flex gaps align-center">
+                <div key={name} className={`${styles.translator} flex gaps align-center`}>
                   <Checkbox
                     checked={skipInRotation}
                     onChange={checked => settingsStore.data.skipVendorInRotation[name] = checked}
@@ -186,7 +187,7 @@ export class Settings extends React.Component {
             />
             <Icon
               small
-              material={this.isSpeaking ? "pause_outline" : "play_circle_outline"}
+              material={this.isSpeaking ? materialIcons.ttsPause : materialIcons.ttsPlay}
               tooltip={{
                 nowrap: true,
                 children: `${getMessage("tts_play_demo_sound")}: "${this.demoVoiceText}"`,

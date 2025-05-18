@@ -35,7 +35,6 @@ show_next_vendor_icon_in_popup = Sonraki çeviri simgesi göster
 show_copy_translation_icon = Çeviriyi kopyala simgesi göster
 show_save_as_favorite_icon = Sık kullanılanlara kaydet simgesi göster
 show_close_popup_button = Sağ köşede pencereyi kapat simgesi göster
-show_close_popup_button_title = Kapat
 show_detected_language_block = Algılanan dili göster
 display_on_click_by_selected_text = Seçime göre tıklamada göster
 display_popup_after_text_selected = Metin seçiminden hemen sonra göster

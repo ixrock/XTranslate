@@ -39,7 +39,6 @@ show_next_vendor_icon_in_popup = Zobraziť ikonu ďalšieho prekladu
 show_copy_translation_icon = Zobraziť ikonu kopírovania a prekladu
 show_save_as_favorite_icon = Zobraziť ikonu uloženia do obľúbených
 show_close_popup_button = Zobraziť ikonu zatvorenia v pravom rohu
-show_close_popup_button_title = Zatvoriť
 show_detected_language_block = Zobraziť rozpoznaný jazyk
 display_on_click_by_selected_text = Zobraziť po kliknutí na výber
 display_popup_after_text_selected = Zobraziť hneď po výbere textu
