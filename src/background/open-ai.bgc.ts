@@ -1,7 +1,7 @@
 import OpenAI from "openai";
 import { getTranslator, ITranslationError, ITranslationResult, ProviderCodeName } from "../providers";
 import { createLogger, disposer } from "../utils";
-import { AITranslatePayload, MessageType, onMessage, OpenAITextToSpeechPayload } from "../extension";
+import { AITranslatePayload, isBackgroundWorker, MessageType, onMessage, OpenAITextToSpeechPayload, sendMessage } from "../extension";
 
 const logger = createLogger({ systemPrefix: "AI_TRANSLATION(helper)" });
 
@@ -115,4 +115,26 @@ export async function textToSpeech(params: OpenAITextToSpeechPayload): Promise<n
   const transferableDataContainer = new Uint8Array(buffer);
 
   return Array.from(transferableDataContainer);
+}
+
+export async function aiTranslateAction<P extends AITranslatePayload>(payload: P) {
+  if (isBackgroundWorker()) {
+    return translateText(payload);
+  }
+
+  return sendMessage<P>({
+    type: MessageType.AI_TRANSLATION,
+    payload,
+  });
+}
+
+export async function aiTextToSpeechAction<P extends OpenAITextToSpeechPayload>(payload: P) {
+  if (isBackgroundWorker()) {
+    return textToSpeech(payload);
+  }
+
+  return sendMessage<P>({
+    type: MessageType.AI_TEXT_TO_SPEECH,
+    payload,
+  });
 }

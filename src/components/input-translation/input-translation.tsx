@@ -6,8 +6,8 @@ import React, { Fragment } from "react";
 import { action, comparer, computed, makeObservable, observable, reaction, toJS } from "mobx";
 import { observer } from "mobx-react";
 import { getTranslator, getTranslators, isRTL, ITranslationError, ITranslationResult, ProviderCodeName, Translator } from "../../providers";
-import { getSelectedText, saveToFavoritesAction } from "../../extension/actions";
-import { bindGlobalHotkey, createLogger, cssNames, disposer, SimpleHotkey } from "../../utils";
+import { getSelectedText } from "../../extension/actions";
+import { createLogger, cssNames, disposer } from "../../utils";
 import { copyToClipboard } from "../../utils/copy-to-clipboard";
 import { SelectLanguage } from "../select-language";
 import { Input } from "../input";
@@ -23,24 +23,14 @@ import { createStorage } from "../../storage";
 import { getMessage } from "../../i18n";
 import { iconMaterialFavorite, iconMaterialFavoriteOutlined, isMac } from "../../common-vars";
 import { isFavorite } from "../user-history/favorites.storage";
+import { saveToFavoritesAction } from "../../background/history.bgc";
 
 export const lastInputText = createStorage("last_input_text", {
   defaultValue: "",
 });
 
-interface Props {
-  hotkey?: SimpleHotkey;
-}
-
 @observer
-export class InputTranslation extends React.Component<Props> {
-  static defaultProps: Props = {
-    hotkey: {
-      ctrlOrCmd: true,
-      key: "KeyF",
-    }
-  };
-
+export class InputTranslation extends React.Component {
   private dispose = disposer();
   private logger = createLogger({ systemPrefix: "[INPUT-TRANSLATION]" });
   private input?: Input;
@@ -73,7 +63,6 @@ export class InputTranslation extends React.Component<Props> {
 
     // bind event handlers
     this.dispose.push(
-      this.bindGlobalHotkey(),
       this.bindAutoSaveLatestUserInputText(),
       this.syncParamsWithUrl(),
     );
@@ -96,12 +85,6 @@ export class InputTranslation extends React.Component<Props> {
         origin: location.href,
       });
     }
-  }
-
-  private bindGlobalHotkey() {
-    return bindGlobalHotkey(this.props.hotkey, (evt: KeyboardEvent) => {
-      this.input?.focus();
-    });
   }
 
   private syncParamsWithUrl() {

@@ -2,7 +2,7 @@ import LanguagesList from "./open-ai.json"
 import { DeepSeekAIModel, ITranslationResult, ProviderCodeName, sanitizeApiKey, TranslateParams, Translator } from "./index";
 import { getMessage } from "../i18n";
 import { createStorage } from "../storage";
-import { aiTranslateAction } from "../extension";
+import { aiTranslateAction } from "../background/open-ai.bgc";
 import type { ProviderAuthSettingsProps } from "../components/settings/auth_settings";
 
 class DeepSeekTranslator extends Translator {

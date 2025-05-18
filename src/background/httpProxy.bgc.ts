@@ -1,7 +1,8 @@
 //-- Network proxy (to avoid CORS errors in `options` and `content-script` pages)
 
-import { blobToBase64DataUrl, createLogger, parseJson } from "../utils";
-import { MessageType, onMessage, ProxyRequestPayload, ProxyResponsePayload, ProxyResponseType } from '../extension'
+import { blobToBase64DataUrl, createLogger, parseJson, toBinaryFile } from "../utils";
+import { isBackgroundWorker, onMessage, sendMessage } from "../extension/runtime"
+import { MessageType, ProxyRequestPayload, ProxyResponsePayload, ProxyResponseType } from "../extension/messages"
 
 const logger = createLogger({ systemPrefix: '[BACKGROUND(proxy)]' });
 
@@ -43,3 +44,27 @@ export async function handleProxyRequestPayload<Response>({ url, responseType, r
   return payload as Response;
 }
 
+export async function proxyRequest<Response>(payload: ProxyRequestPayload): Promise<Response> {
+  let response: ProxyResponsePayload<Response>;
+
+  if (isBackgroundWorker()) {
+    response = await handleProxyRequestPayload(payload);
+  } else {
+    response = await sendMessage<ProxyRequestPayload>({
+      type: MessageType.PROXY_REQUEST,
+      payload: {
+        responseType: ProxyResponseType.JSON, /*default*/
+        ...payload,
+      },
+    });
+  }
+
+  if (payload.responseType === ProxyResponseType.BLOB) {
+    return toBinaryFile(
+      response.data as Uint8Array,
+      response.headers["content-type"]
+    ) as Response;
+  }
+
+  return response.data;
+}

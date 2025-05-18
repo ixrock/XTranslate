@@ -55,6 +55,7 @@ export function ReactSelect<T>(props: ReactSelectProps<T>) {
         }),
         menuList: () => styles.menuList,
         input: () => styles.inputContainer,
+        placeholder: () => styles.placeholder,
         singleValue: () => styles.singleValue,
         option: () => styles.option,
         dropdownIndicator: () => styles.dropdownIndicator,

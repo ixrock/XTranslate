@@ -14,7 +14,7 @@ import { settingsStorage, settingsStore } from "../settings/settings.storage";
 import { themeStore } from "../theme-manager/theme.storage";
 import { isFavorite } from "../user-history/favorites.storage";
 import { getMessage, getLocale } from "../../i18n";
-import { saveToFavoritesAction } from "../../extension";
+import { saveToFavoritesAction } from "../../background/history.bgc";
 
 interface Props extends Omit<React.HTMLProps<any>, "className"> {
   previewMode?: boolean;

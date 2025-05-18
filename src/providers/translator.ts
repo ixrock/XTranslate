@@ -3,11 +3,12 @@
 import { observable } from "mobx";
 import { autoBind, createLogger, JsonResponseError } from "../utils";
 import { ProxyRequestPayload, ProxyResponseType } from "../extension/messages";
-import { getTranslationFromHistoryAction, proxyRequest, saveToHistoryAction } from "../extension/actions";
+import { proxyRequest } from "../background/httpProxy.bgc";
 import { settingsStore } from "../components/settings/settings.storage";
 import { getTTSVoices, speak, stopSpeaking, TTSVoice } from "../tts";
 import { ProviderCodeName } from "./providers";
 import type { ProviderAuthSettingsProps } from "../components/settings/auth_settings";
+import { getTranslationFromHistoryAction, saveToHistoryAction } from "../background/history.bgc";
 
 export interface TranslatorLanguages {
   from: { [locale: string]: string; auto?: string };

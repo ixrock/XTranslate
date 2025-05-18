@@ -3,7 +3,7 @@ import { ITranslationResult, ProviderCodeName, sanitizeApiKey, TranslateParams, 
 import { getMessage } from "../i18n";
 import { createStorage } from "../storage";
 import { settingsStore } from "../components/settings/settings.storage";
-import { aiTranslateAction } from "../extension";
+import { aiTranslateAction } from "../background/open-ai.bgc";
 import type { ProviderAuthSettingsProps } from "../components/settings/auth_settings";
 
 class GrokTranslator extends Translator {

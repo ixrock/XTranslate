@@ -5,7 +5,8 @@ import type { ReactNode } from "react";
 import type { Pattern, PatternElement } from "@fluent/bundle/esm/ast"
 import { FluentBundle, FluentResource, FluentVariable } from "@fluent/bundle"
 import { observable } from "mobx";
-import { getURL, proxyRequest, ProxyResponseType } from "./extension";
+import { getURL, ProxyResponseType } from "./extension";
+import { proxyRequest } from "./background/httpProxy.bgc";
 import { createLogger } from "./utils/createLogger";
 import { createStorage } from "./storage";
 

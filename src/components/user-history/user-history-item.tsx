@@ -5,9 +5,9 @@ import { getTranslator, isRTL, Translator } from "../../providers";
 import { clearHistoryItem, IHistoryItem } from "./history.storage";
 import { Icon } from "../icon";
 import { iconMaterialFavorite, iconMaterialFavoriteOutlined } from "../../common-vars";
-import { saveToFavoritesAction } from "../../extension";
 import { isFavorite, removeFavorite } from "./favorites.storage";
 import { getTranslationPageUrl, navigate } from "../../navigation";
+import { saveToFavoritesAction } from "../../background/history.bgc";
 
 export interface UserHistoryItemProps {
   item: IHistoryItem;

@@ -5,13 +5,15 @@
   border-top: 1px solid var(--theme-border-color);
 
   .socialIcons {
-    --flexGap: var(--theme-spacing-half) !important;
+    --flexGap: var(--theme-spacing-half);
   }
 
   .support {
-    text-align: right;
+    --flexGap: var(--theme-spacing-half);
 
-    a {
+    cursor: pointer;
+
+    .text {
       @include pseudo-link;
     }
   }

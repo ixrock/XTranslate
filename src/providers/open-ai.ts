@@ -2,7 +2,7 @@ import LanguagesList from "./open-ai.json"
 import { ITranslationResult, OpenAIModelTTS, ProviderCodeName, sanitizeApiKey, TranslateParams, Translator } from "./index";
 import { getMessage } from "../i18n";
 import { createStorage } from "../storage";
-import { aiTextToSpeechAction, aiTranslateAction } from "../extension";
+import { aiTranslateAction, aiTextToSpeechAction } from "../background/open-ai.bgc";
 import { settingsStore } from "../components/settings/settings.storage";
 import { toBinaryFile } from "../utils/binary";
 import type { ProviderAuthSettingsProps } from "../components/settings/auth_settings";

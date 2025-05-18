@@ -124,7 +124,7 @@ context_menu_translate_full_page = { $lang }'ye çevir
 context_menu_translate_selection = { $selection } { $translator } ile çevir
 
 # other
-share_with_friends = Uygulamayı beğendiyseniz arkadaşlarınızla paylaşabilirsiniz:
+share_with_friends = Uygulamayı beğendiyseniz arkadaşlarınızla paylaşabilirsiniz
 translation_data_failed = Veri yükleme başarısız oldu
 rate_app_info1 = Uygulamayı kullanmaktan zevk alıyor musunuz? Lütfen bizi 5 yıldızla derecelendirin!
 rate_app_info2 = Diğer kullanıcıların uzantıyı bulmasına ve güzellikleri yaymasına yardımcı olacaktır.

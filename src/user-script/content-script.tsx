@@ -9,14 +9,16 @@ import debounce from 'lodash/debounce';
 import isEmpty from 'lodash/isEmpty';
 import isEqual from 'lodash/isEqual';
 import orderBy from 'lodash/orderBy';
+import { contentScriptEntry } from "../common-vars";
+import { preloadAppData } from "../preloadAppData";
 import { autoBind, delay, disposer, getHotkey } from "../utils";
-import { checkContextInvalidationError, getManifest, getURL, MessageType, onMessage, proxyRequest, ProxyResponseType, TranslatePagePayload, TranslatePayload } from "../extension";
+import { getManifest, getURL, MessageType, onMessage, ProxyResponseType, TranslatePagePayload, TranslatePayload } from "../extension";
+import { proxyRequest } from "../background/httpProxy.bgc";
+import { checkContextInvalidationError } from "../background/contextInvalidated.bgc";
+import { settingsStore } from "../components/settings/settings.storage";
 import { getNextTranslator, getTranslator, ITranslationError, ITranslationResult } from "../providers";
 import { XTranslateIcon } from "./xtranslate-icon";
 import { Popup } from "../components/popup/popup";
-import { preloadAppData } from "../preloadAppData";
-import { settingsStore } from "../components/settings/settings.storage";
-import { contentScriptEntry } from "../common-vars";
 
 @observer
 export class ContentScript extends React.Component {

@@ -3,6 +3,12 @@
 .ReactSelect {
   flex: 1;
 
+  .placeholder {
+    white-space: nowrap;
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+  }
+
   .menuList {
     @include custom-scrollbar($overlay: true) {
       --theme-scrollbar-size: 7px;

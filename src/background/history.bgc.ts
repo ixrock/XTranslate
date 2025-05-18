@@ -2,9 +2,11 @@
 
 import { runInAction } from "mobx";
 import { createLogger, disposer } from "../utils";
-import { MessageType, onMessage, SaveToFavoritesPayload, SaveToHistoryPayload, TranslatePayload } from '../extension'
+import type { ITranslationResult } from "../providers/translator";
+import { MessageType, SaveToFavoritesPayload, SaveToHistoryPayload, TranslatePayload } from '../extension/messages'
+import { isBackgroundWorker, onMessage, sendMessage } from '../extension/runtime'
 import { settingsStorage } from "../components/settings/settings.storage";
-import { generateId, getHistoryItemId, historyStorage, IHistoryStorageItem, importHistory, toHistoryItem, toStorageItem, toTranslationResult } from "../components/user-history/history.storage";
+import { generateId, getHistoryItemId, historyStorage, type IHistoryItem, IHistoryStorageItem, importHistory, toHistoryItem, toStorageItem, toTranslationResult } from "../components/user-history/history.storage";
 import { favoritesStorage } from "../components/user-history/favorites.storage";
 
 const logger = createLogger({ systemPrefix: '[BACKGROUND(history)]' });
@@ -72,3 +74,44 @@ export async function getHistoryItemOffline(payload: TranslatePayload) {
   }
 }
 
+export function saveToHistoryAction(translation: ITranslationResult | IHistoryItem) {
+  if (isBackgroundWorker()) {
+    return saveToHistory({ translation });
+  }
+
+  return sendMessage<SaveToHistoryPayload, ITranslationResult>({
+    type: MessageType.SAVE_TO_HISTORY,
+    payload: {
+      translation,
+    },
+  });
+}
+
+export function saveToFavoritesAction(item: ITranslationResult | IHistoryItem, { isFavorite = true } = {}) {
+  if (isBackgroundWorker()) {
+    return saveToFavorites({ item, isFavorite });
+  }
+
+  return sendMessage<SaveToFavoritesPayload>({
+    type: MessageType.SAVE_TO_FAVORITES,
+    payload: {
+      item: item,
+      isFavorite: isFavorite,
+    },
+  });
+}
+
+export async function getTranslationFromHistoryAction(payload: TranslatePayload) {
+  if (payload.from === "auto") {
+    return; // skip: source-language always saved as detected-language in history
+  }
+
+  if (isBackgroundWorker()) {
+    return getHistoryItemOffline(payload);
+  }
+
+  return sendMessage<TranslatePayload, ITranslationResult | void>({
+    type: MessageType.GET_FROM_HISTORY,
+    payload,
+  });
+}

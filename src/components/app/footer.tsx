@@ -16,24 +16,17 @@ interface ShareIcon {
   url: string
 }
 
-export const shareIcons: ShareIcon[] = [
-  {
-    title: "X (Twitter)",
-    icon: require('../icon/x.svg'),
-    url: "https://twitter.com/intent/tweet?url={url}&text={title}&hashtags={tags}",
-  },
-  {
-    title: "Facebook",
-    icon: require('../icon/fb.svg'),
-    url: "https://www.facebook.com/sharer/sharer.php?u={url}&title={title}&quote={tags}",
-  },
-];
-
-export const shareTags = ["chrome", "extension", "xtranslate", "in_place_text_translator", "ai_text_translations"];
-
 @observer
 export class Footer extends React.Component {
-  private manifest = getManifest();
+  private appName = getManifest().name;
+  private shareTags = ["chrome", "extension", "xtranslate", "in_place_text_translator", "ai_text_translations"];
+  private shareIcons: ShareIcon[] = [
+    {
+      title: "X (Twitter)",
+      icon: require('../icon/x.svg'),
+      url: "https://twitter.com/intent/tweet?url={url}&text={title}&hashtags={tags}",
+    },
+  ];
 
   shareUrl(url: string) {
     window.open(url, "share", "width=650,height=550,resizable=1");
@@ -42,8 +35,8 @@ export class Footer extends React.Component {
   private makeShareUrl(socialNetworkURLMask: string) {
     const params: Record<string, string> = {
       url: getExtensionUrl(),
-      title: [this.manifest.name, getMessage("short_description")].join(' - '),
-      tags: shareTags.join(','),
+      title: [this.appName, getMessage("short_description")].join(' - '),
+      tags: this.shareTags.join(','),
     };
 
     return socialNetworkURLMask.replace(/\{(.*?)}/g, (matchedParamMask, paramName) => {
@@ -59,10 +52,10 @@ export class Footer extends React.Component {
 
   render() {
     return (
-      <div className="Footer flex gaps">
+      <div className="Footer flex">
         <div className="socialIcons flex gaps align-center">
           <p>{getMessage("share_with_friends")}:</p>
-          {shareIcons.map((share, i) => {
+          {this.shareIcons.map((share, i) => {
             const url = this.makeShareUrl(share.url);
             return (
               <a key={i} href={url} onClick={prevDefault(() => this.shareUrl(url))}>
@@ -71,9 +64,10 @@ export class Footer extends React.Component {
             )
           })}
         </div>
-        <div className="support box right">
-          <a onClick={this.supportDevelopers}>{getMessage("donate_title")}</a>
-        </div>
+        <a className="support box right noshrink flex gaps align-center" onClick={this.supportDevelopers}>
+          <Icon material="rocket_launcher" small/>
+          <span className="text">{getMessage("donate_title")}</span>
+        </a>
       </div>
     );
   }

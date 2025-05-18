@@ -2,7 +2,9 @@
 // Currently used `chrome.storage.*` APIs
 
 import { disposer } from "../utils/disposer";
-import { MessageType, onMessage, StorageDeletePayload, StorageReadPayload, StorageWritePayload, syncExternalStorageUpdate } from '../extension'
+import { Message, MessageType, StorageDeletePayload, StorageReadPayload, StorageSyncPayload, StorageWritePayload } from '../extension/messages'
+import { isBackgroundWorker, onMessage, sendMessage, } from '../extension/runtime'
+import { broadcastMessage } from '../extension/tabs'
 
 export type StorageArea = chrome.storage.AreaName;
 
@@ -65,4 +67,46 @@ export function listenExternalStorageChanges(area: StorageArea, callback: (chang
 
   storageApi.onChanged.addListener(handleChange);
   return () => storageApi.onChanged.removeListener(handleChange);
+}
+
+export async function writeToExternalStorageAction(payload: StorageWritePayload) {
+  if (isBackgroundWorker()) {
+    return writeToExternalStorage(payload);
+  }
+
+  return sendMessage<StorageWritePayload>({
+    type: MessageType.STORAGE_DATA_WRITE,
+    payload,
+  });
+}
+
+export async function readFromExternalStorageAction(payload: StorageReadPayload) {
+  if (isBackgroundWorker()) {
+    return readFromExternalStorage(payload);
+  }
+
+  return sendMessage<StorageReadPayload>({
+    type: MessageType.STORAGE_DATA_READ,
+    payload,
+  });
+}
+
+export async function removeFromExternalStorageAction(payload: StorageDeletePayload) {
+  if (isBackgroundWorker()) {
+    return removeFromExternalStorage(payload);
+  }
+
+  return sendMessage<StorageDeletePayload>({
+    type: MessageType.STORAGE_DATA_REMOVE,
+    payload,
+  });
+}
+
+export function syncExternalStorageUpdate<T>(payload: StorageSyncPayload<T>) {
+  const msg: Message<StorageSyncPayload<T>> = {
+    type: MessageType.STORAGE_DATA_SYNC,
+    payload,
+  };
+
+  return broadcastMessage(msg);
 }

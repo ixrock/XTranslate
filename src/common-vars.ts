@@ -12,6 +12,7 @@ export const appEntry = "app";
 export const serviceWorkerEntry = "background"; // keep in sync with manifest.json
 export const contentScriptEntry = "content-script"; // keep in sync with manifest.json
 export const pdfViewerEntry = "pdf-viewer";
+export const pdfViewerSkipUrlHash = "#pdf-raw";
 
 // Icons, see also: https://fonts.google.com/icons
 export const iconMaterialFavorite = "star";
@@ -28,8 +29,10 @@ export function isMac(): boolean {
   return !!navigator.userAgent.match(/AppleWebKit|Macintosh/);
 }
 
-export function isPdf(): boolean {
-  return document.contentType === "application/pdf";
+export function useCustomPdfViewer(): boolean {
+  const isPdf = document.contentType === "application/pdf";
+  const skip = new URL(location.href).hash === pdfViewerSkipUrlHash;
+  return isPdf && !skip;
 }
 
 export function isChrome(): boolean {
