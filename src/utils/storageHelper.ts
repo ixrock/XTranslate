@@ -9,10 +9,11 @@ import merge from "lodash/merge";
 
 export interface StorageHelperOptions<T> {
   defaultValue?: T;
-  autoLoad?: boolean; // preload data from persistent storage when `opts.storageProvider` (default: true)
+  autoLoad?: boolean; // preload data from persistent storage when `opts.storageProvider`, default: true
   migrations?: StorageMigrationCallback<T>[]; // handle model upgrades during app's lifetime
   storageAdapter?: StorageAdapter<T>; // handle saving and loading state from external storage
   autoSaveOptions?: IReactionOptions<T, boolean>;
+  deepMergeOnLoad?: boolean; // deep merge with `defaultValue`, set to `false` for dynamic fields (e.g. hotkey-object), default: true
 }
 
 export type StorageMigrationCallback<T> = (data: T | any) => T | void;
@@ -50,6 +51,7 @@ export class StorageHelper<T> {
     // setup default options
     this.options = {
       autoLoad: true,
+      deepMergeOnLoad: true,
       ...options
     };
     this.#data.set(this.defaultValue);
@@ -130,7 +132,9 @@ export class StorageHelper<T> {
         let migratedData = callback(data);
         if (migratedData !== undefined) data = migratedData as T;
       }
-      this.merge(data, { deep: true });
+      this.merge(data, {
+        deep: this.options.deepMergeOnLoad,
+      });
     }
 
     this.loaded = true;

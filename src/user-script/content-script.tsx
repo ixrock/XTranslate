@@ -15,7 +15,7 @@ import { autoBind, delay, disposer, getHotkey } from "../utils";
 import { getManifest, getURL, MessageType, onMessage, ProxyResponseType, TranslatePagePayload, TranslatePayload } from "../extension";
 import { proxyRequest } from "../background/httpProxy.bgc";
 import { checkContextInvalidationError } from "../background/contextInvalidated.bgc";
-import { settingsStore } from "../components/settings/settings.storage";
+import { popupHotkey, settingsStore } from "../components/settings/settings.storage";
 import { getNextTranslator, getTranslator, ITranslationError, ITranslationResult } from "../providers";
 import { XTranslateIcon } from "./xtranslate-icon";
 import { Popup } from "../components/popup/popup";
@@ -436,7 +436,7 @@ export class ContentScript extends React.Component {
     // handle text translation by hotkey
     if (!settingsStore.data.showPopupOnHotkey) return;
     const pressedHotkey = getHotkey(evt);
-    const userHotkey = toJS(settingsStore.data.hotkey);
+    const userHotkey = toJS(popupHotkey.get().hotkey);
 
     if (isEqual(userHotkey, pressedHotkey) && this.isPopupHidden) {
       evt.preventDefault();

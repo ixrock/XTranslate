@@ -21,6 +21,7 @@ export interface HistoryStorageModel {
 export const historyStorage = createStorage<HistoryStorageModel>("history", {
   area: "local",
   autoLoad: false, // manual loading before saving data or listing items
+  deepMergeOnLoad: false,
   defaultValue: {
     translations: {},
   },

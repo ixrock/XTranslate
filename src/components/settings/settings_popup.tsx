@@ -7,7 +7,7 @@ import { Input } from "../input";
 import { Checkbox } from "../checkbox";
 import { ReactSelect, ReactSelectOption } from "../select";
 import { Icon } from "../icon";
-import { PopupPosition, settingsStore } from "./settings.storage";
+import { popupHotkey, PopupPosition, settingsStore } from "./settings.storage";
 import { getMessage } from "../../i18n";
 import { materialIcons } from "../../common-vars";
 
@@ -32,13 +32,13 @@ export class SettingsPopup extends React.Component {
     const nativeEvent = evt.nativeEvent;
     const hotkey = parseHotkey(nativeEvent);
     if (hotkey.code) {
-      settingsStore.data.hotkey = getHotkey(nativeEvent);
+      popupHotkey.set({ hotkey: getHotkey(nativeEvent) })
     }
   }
 
   render() {
     const settings = settingsStore.data;
-    const hotKey = parseHotkey(settings.hotkey);
+    const hotKey = parseHotkey(popupHotkey.get().hotkey);
 
     return (
       <div className={`${styles.SettingsPopup} flex auto gaps`}>

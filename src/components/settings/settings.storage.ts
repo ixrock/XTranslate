@@ -54,11 +54,19 @@ export const settingsStorage = createStorage("settings", {
       alwaysTranslatePages: [],
       excludedPages: [],
     },
+  }
+});
+
+export const popupHotkey = createStorage("popup_hotkey", {
+  area: "sync",
+  autoLoad: true,
+  deepMergeOnLoad: false,
+  defaultValue: {
     hotkey: {
       altKey: true,
       shiftKey: true,
-      code: "X"
-    } as Hotkey,
+      code: "X",
+    } as Hotkey
   }
 });
 
