@@ -1,7 +1,7 @@
 // Global browser's context menu
 
 import { autorun } from "mobx";
-import { getActiveTab, getManifest, MessageType, sendMessageToTab, TranslatePagePayload } from "../extension";
+import { getManifest, translateActivePage } from "../extension";
 import { settingsStorage } from "../components/settings/settings.storage";
 import { getTranslator } from "../providers";
 import { getMessage, i18nInit } from "../i18n";
@@ -29,13 +29,6 @@ export async function initContextMenu() {
   })
 }
 
-async function onContextMenuClick({ pageUrl }: chrome.contextMenus.OnClickData) {
-  const activeTab = await getActiveTab();
-
-  void sendMessageToTab<TranslatePagePayload>(activeTab.id, {
-    type: MessageType.TRANSLATE_FULL_PAGE,
-    payload: {
-      pageUrl,
-    }
-  });
+function onContextMenuClick(opts: chrome.contextMenus.OnClickData) {
+  void translateActivePage();
 }
