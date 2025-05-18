@@ -6,6 +6,7 @@ import { Message, MessageType, StorageDeletePayload, StorageReadPayload, Storage
 import { isBackgroundWorker, onMessage, sendMessage, } from '../extension/runtime'
 import { broadcastMessage } from '../extension/tabs'
 
+export type StorageKey = string;
 export type StorageArea = chrome.storage.AreaName;
 
 export function listenStorageActions() {
@@ -53,14 +54,14 @@ export async function removeFromExternalStorage(payload: StorageDeletePayload, s
   }
 }
 
-export function listenExternalStorageChanges(area: StorageArea, callback: (changes: Record<string/*key*/, unknown>) => void) {
+export function listenExternalStorageChanges(area: StorageArea, callback: (changes: Record<StorageKey, unknown>) => void) {
   const storageApi = getStorageApi(area);
 
-  const handleChange = (changes: Record<string/*key*/, chrome.storage.StorageChange>) => {
+  const handleChange = (changes: Record<StorageKey, chrome.storage.StorageChange>) => {
     const newValues = Object.entries(changes).reduce((result, [key, { newValue }]) => {
       result[key] = newValue;
       return result;
-    }, {} as Record<string, unknown>);
+    }, {} as Record<StorageKey, unknown>);
 
     callback(newValues);
   };

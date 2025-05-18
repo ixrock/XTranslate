@@ -57,14 +57,13 @@ export function createStorage<T>(key: string, options: ChromeStorageHelperOption
 
   // sync storage updates for options-page (app) and content-script pages
   onMessage(MessageType.STORAGE_DATA_SYNC, async (payload: StorageSyncPayload<T>) => {
-    const { key: evtKey, origin: evtOrigin, area: evtArea, state } = payload;
+    const { key: evtKey, area: evtArea, state } = payload;
     const origin = StorageHelper.getResourceOrigin();
     const storageKeyMatched = evtKey === key;
     const isSameArea = evtArea === area;
-    const isDifferentOrigin = evtOrigin !== origin;
 
-    if (storageKeyMatched && isSameArea && isDifferentOrigin) {
-      logger.info("page data sync", { origin, payload });
+    if (storageKeyMatched && isSameArea) {
+      logger.info("SYNC", { origin, payload });
       storageHelper.sync(state);
     }
   });
