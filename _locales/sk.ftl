@@ -20,6 +20,12 @@ setting_title_popup = Vyskakovacia ponuka
 setting_title_translator_service = Služba
 settings_title_tts = Prevod textu na reč
 settings_title_appearance = Vzhľad
+settings_title_in_place_translation = Preklad textu na mieste
+settings_title_full_page_translation = Preklad celej stránky
+settings_title_full_page_excluded_pages = Vylúčené stránky
+settings_title_full_page_always_translate = Vždy preložiť
+settings_title_full_page_empty_list = Prázdny zoznam
+settings_title_full_page_add_url = Pridať adresu URL
 auto_play_tts = Automatické prehrávanie prevodu textu na reč
 use_chrome_tts = Použiť funkciu prevodu textu na reč z Chromu
 use_chrome_tts_tooltip_info = Táto možnosť je povolená vždy, keď prekladač nemá k dispozícii nástroj na preklad
@@ -191,4 +197,13 @@ pdf_use_custom_viewer = Podpora prekladov v PDF súboroch
 pdf_use_custom_viewer_info = Táto možnosť nahradí predvolený prehliadač PDF
 
 # DeepSeek AI integration
-deepseek_get_own_key_info = Zaregistrujte sa na platform
+deepseek_get_own_key_info = Zaregistrujte sa na platform.deepseek.com a dobite si kredit (napr. cez PayPal)
+deepseek_auth_key = Vytvorte si prístupový kľúč API na platforme DeepSeek a uložte ho sem do nastavení
+deepseek_auth_key_warning = Upozornenie: NEZADÁVAJTE svoj kľúč API nikde inde okrem tohto okna rozšírenia
+deepseek_auth_key_remove = Odstrániť kľúč API DeepSeek
+
+# Grok AI integration
+grok_ai_get_own_key_info = Zaregistrujte sa na console.x.ai a dobite si kredit (napr. prostredníctvom kreditnej karty)
+grok_ai_auth_key = Vytvorte kľúč API na platforme Grok (X), aby ste získali prístup k API
+grok_ai_auth_key_warning = Upozornenie: NEVKLADAJTE svoj kľúč API nikde inde okrem tohto okna rozšírenia
+grok_ai_auth_key_remove = Odstrániť kľúč API Grok
