@@ -177,10 +177,6 @@ mellowtel_dialog_footer = Cảm ơn bạn đã dành thời gian đọc, các đ
 error_403_auth_failed = Xác thực thất bại. Vui lòng cung cấp khóa API hợp lệ trong cài đặt.
 
 # Tích hợp OpenAI
-open_ai_get_access_info = 1) Đăng ký tại platform.openai.com 2) Tạo khóa truy cập API 3) Nạp tiền vào tài khoản (5$+)
-open_ai_insert_auth_key = Cung cấp khóa API của bạn để nhận bản dịch từ OpenAI
-open_ai_insert_auth_key_warning = Cảnh báo: KHÔNG nhập khóa API của bạn ở bất kỳ nơi nào khác ngoài cửa sổ tiện ích mở rộng này
-open_ai_insert_auth_key_remove = Xóa khóa API OpenAI
 ai_choose_model = Chọn mô hình AI
 ai_choose_model_cost_effective = Tiết kiệm chi phí nhất
 ai_choose_model_recommended = Mô hình khuyến nghị
@@ -189,15 +185,3 @@ ai_choose_model_best_results = Kết quả tốt nhất (tốn kém nhất)
 # Hỗ trợ dịch PDF qua pdf.js
 pdf_use_custom_viewer = Hỗ trợ dịch trong các tệp PDF
 pdf_use_custom_viewer_info = Tùy chọn này sẽ thay thế trình xem PDF mặc định
-
-# DeepSeek AI integration (VI)
-deepseek_get_own_key_info=Đăng ký tại platform.deepseek.com và nạp số dư (ví dụ: qua PayPal)
-deepseek_auth_key=Tạo khóa truy cập API trên nền tảng DeepSeek và lưu nó tại đây trong cài đặt
-deepseek_auth_key_warning=Cảnh báo: KHÔNG nhập khóa API của bạn ở bất kỳ nơi nào khác ngoài cửa sổ tiện ích mở rộng này
-deepseek_auth_key_remove=Xóa khóa API DeepSeek
-
-# Grok AI integration (VI)
-grok_ai_get_own_key_info = Đăng ký tại console.x.ai và nạp tiền vào tài khoản (ví dụ: qua thẻ tín dụng)
-grok_ai_auth_key = Tạo khóa API tại nền tảng Grok (X) để truy cập API
-grok_ai_auth_key_warning = Cảnh báo: KHÔNG nhập khóa API của bạn vào bất kỳ nơi nào khác ngoài cửa sổ tiện ích mở rộng này
-grok_ai_auth_key_remove = Xóa khóa API Grok

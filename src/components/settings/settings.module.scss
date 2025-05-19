@@ -19,10 +19,10 @@
   }
 
   .providers {
-    margin-right: var(--theme-spacing-double);
     display: flex;
     flex-direction: column;
     gap: var(--theme-spacing-half);
+    padding: var(--theme-spacing) 0;
   }
 
   .providerSkipRotation {

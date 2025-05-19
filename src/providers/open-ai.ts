@@ -1,35 +1,20 @@
 import LanguagesList from "./open-ai.json"
-import { ITranslationResult, OpenAIModelTTS, ProviderCodeName, sanitizeApiKey, TranslateParams, Translator } from "./index";
-import { getMessage } from "../i18n";
+import { ITranslationResult, OpenAIModelTTS, ProviderCodeName, TranslateParams, Translator } from "./index";
 import { createStorage } from "../storage";
-import { aiTranslateAction, aiTextToSpeechAction } from "../background/open-ai.bgc";
+import { aiTextToSpeechAction, aiTranslateAction } from "../background/open-ai.bgc";
 import { settingsStore } from "../components/settings/settings.storage";
 import { toBinaryFile } from "../utils/binary";
-import type { ProviderAuthSettingsProps } from "../components/settings/auth_settings";
 
 class OpenAITranslator extends Translator {
   public name = ProviderCodeName.OPENAI;
   public title = "OpenAI";
   public publicUrl = "https://platform.openai.com/";
   public apiUrl = "https://api.openai.com/v1";
+  #apiKey = createStorage<string>("openai_api_key");
 
   constructor() {
     super(LanguagesList);
   }
-
-  #apiKey = createStorage("openai_api_key", {
-    defaultValue: "", // register at https://platform.openai.com/ and get own access api-key + top-up balance (5-10$)
-  });
-
-  private setupApiKey = () => {
-    const newKey = window.prompt("OpenAI API Key");
-    if (newKey === null) return;
-    this.#apiKey.set(newKey || this.#apiKey.defaultValue);
-  };
-
-  private clearApiKey = () => {
-    this.#apiKey.set("");
-  };
 
   async translate({ from, to, text }: TranslateParams): Promise<ITranslationResult> {
     await this.#apiKey.load();
@@ -58,15 +43,21 @@ class OpenAITranslator extends Translator {
     return toBinaryFile(data, "audio/mpeg");
   }
 
-  getAuthSettings(): ProviderAuthSettingsProps {
+  private setupApiKey = () => {
+    const newKey = window.prompt("OpenAI API Key");
+    if (newKey === null) return;
+    this.#apiKey.set(newKey || this.#apiKey.defaultValue);
+  };
+
+  private clearApiKey = () => {
+    this.#apiKey.set("");
+  };
+
+  getAuthSettings() {
     return {
-      apiKeySanitized: sanitizeApiKey(this.#apiKey.get()),
+      apiKeySanitized: this.sanitizeApiKey(this.#apiKey.get()),
       setupApiKey: this.setupApiKey,
       clearApiKey: this.clearApiKey,
-      accessInfo: getMessage("open_ai_get_access_info"),
-      accessInfo2: getMessage("open_ai_insert_auth_key"),
-      warningInfo: getMessage("open_ai_insert_auth_key_warning"),
-      clearKeyInfo: getMessage("open_ai_insert_auth_key_remove"),
     };
   }
 }

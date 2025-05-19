@@ -167,10 +167,6 @@ mellowtel_dialog_footer=Okuduğunuz için teşekkürler, { $devs } ekipleri.
 error_403_auth_failed=Yetkilendirme başarısız. Lütfen ayarlarda geçerli bir API anahtarı girin.
 
 # open-ai integration (TR)
-open_ai_get_access_info=1) platform.openai.com'da kayıt olun 2) API erişim anahtarı oluşturun 3) Bakiyenizi yükleyin (5$+)
-open_ai_insert_auth_key=OpenAI çevirileri almak için API anahtarınızı sağlayın
-open_ai_insert_auth_key_warning=Uyarı: API anahtarınızı bu eklenti penceresi dışında hiçbir yere girmeyin
-open_ai_insert_auth_key_remove=OpenAI API anahtarını kaldır
 ai_choose_model=AI modelini seçin
 ai_choose_model_cost_effective=En maliyet etkin
 ai_choose_model_recommended=Önerilen model
@@ -180,15 +176,3 @@ ai_choose_model_reasoning=Akıl yürütme modeli (seride en yeni ve maliyet etki
 # PDF translations suppot via pdf.js (TR)
 pdf_use_custom_viewer=PDF dosyalarında çevirileri destekle
 pdf_use_custom_viewer_info=Bu seçenek varsayılan PDF görüntüleyicisini değiştirecektir
-
-# DeepSeek AI integration (TR)
-deepseek_get_own_key_info=platform.deepseek.com adresinden kaydolun ve bakiyenizi doldurun (örneğin, PayPal aracılığıyla)
-deepseek_auth_key=DeepSeek platformunda bir API erişim anahtarı oluşturun ve bunu ayarlara kaydedin
-deepseek_auth_key_warning=Uyarı: API anahtarınızı bu uzantı penceresi dışında başka bir yere GİRMEYİN
-deepseek_auth_key_remove=DeepSeek API Anahtarını Kaldırın
-
-# Grok AI integration (TR)
-grok_ai_get_own_key_info = console.x.ai'de kaydolun ve bakiyenizi doldurun (örneğin kredi kartıyla)
-grok_ai_auth_key = Grok (X) platformunda API anahtarı oluşturun ve API'ye erişim sağlayın
-grok_ai_auth_key_warning = Uyarı: API anahtarınızı bu eklenti penceresi dışında başka bir yere GİRMEMELİSİNİZ
-grok_ai_auth_key_remove = Grok API anahtarını kaldır

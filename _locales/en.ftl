@@ -20,10 +20,10 @@ setting_title_popup = Popup
 setting_title_translator_service = Service
 settings_title_tts = Text-to-speech
 settings_title_appearance = Appearance
-settings_title_in_place_translation = In-place text translation
 settings_title_full_page_translation = Full-page translation
-settings_title_full_page_excluded_pages = Excluded pages
+settings_title_full_page_excluded_pages = Never translate
 settings_title_full_page_always_translate = Always translate
+settings_title_full_page_show_original_onmouseover = Show original text on mouseover
 settings_title_full_page_empty_list = Empty list
 settings_title_full_page_add_url = Add URL
 auto_play_tts = Auto-play text-to-speech
@@ -182,28 +182,19 @@ mellowtel_dialog_footer = Thanks for taking the time to read, teams { $devs }.
 # various error messages
 error_403_auth_failed = Authorization failed. Please supply a valid auth api key in the settings
 
-# open-ai integration
-open_ai_get_access_info = 1) Register at platform.openai.com 2) Create api access key 3) Top-up your balance (5$+)
-open_ai_insert_auth_key = Provide your api key for getting OpenAI translations
-open_ai_insert_auth_key_warning = Warning: DO NOT enter your API key in any other place except this extension window
-open_ai_insert_auth_key_remove = Remove OpenAI API key
+# PDF translations suppot via pdf.js
+pdf_use_custom_viewer = Support translations in PDF files
+pdf_use_custom_viewer_info = This option will replace default PDF viewer
+
+# AI integrations
 ai_choose_model = Choose AI model
 ai_choose_model_cost_effective = Most cost-efficient
 ai_choose_model_recommended = Recommended model
 ai_choose_model_best_results = Best results (most expensive)
 
-# PDF translations suppot via pdf.js
-pdf_use_custom_viewer = Support translations in PDF files
-pdf_use_custom_viewer_info = This option will replace default PDF viewer
-
-# DeepSeek AI integration
-deepseek_get_own_key_info = Register at platform.deepseek.com and top-up balance (e.g. via Paypal)
-deepseek_auth_key = Create api-key at DeepSeek's platform to get access
-deepseek_auth_key_warning = Warning: DO NOT enter your API key in any other place except this extension window
-deepseek_auth_key_remove = Remove DeepSeek API Key
-
-# Grok AI integration
-grok_ai_get_own_key_info = Register at console.x.ai and top-up balance (e.g. via Credit card)
-grok_ai_auth_key = Create api-key at Grok (X) platform to get access for API
-grok_ai_auth_key_warning = Warning: DO NOT enter your API key in any other place except this extension window
-grok_ai_auth_key_remove = Remove Grok API Key
+auth_access_info_steps_openai = 1) Register at platform.openai.com 2) Create api access key 3) Top-up your balance (5$+)
+auth_access_info_steps_grok = Register at console.x.ai and top-up balance (e.g. via Credit card)
+auth_access_info_steps_deepseek = Register at platform.deepseek.com and top-up balance (e.g. via Paypal)
+auth_access_info_api_key = Provide your api key for getting { $provider } translations
+auth_clear_key_info = Remove { $provider } API key
+auth_safety_warning_info = Warning: DO NOT enter your API key in any other place except this extension window

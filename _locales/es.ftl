@@ -177,10 +177,6 @@ mellowtel_dialog_footer = Gracias por tomarte el tiempo de leer, equipos { $devs
 error_403_auth_failed = Fallo de autorización. Por favor, proporciona una clave de API válida en la configuración
 
 # integración de OpenAI
-open_ai_get_access_info = 1) Regístrate en platform.openai.com 2) Crea una clave de acceso a la API 3) Recarga tu saldo (5$+)
-open_ai_insert_auth_key = Proporciona tu clave de API para obtener traducciones de OpenAI
-open_ai_insert_auth_key_warning = Advertencia: NO ingreses tu clave de API en ningún otro lugar excepto en esta ventana de la extensión
-open_ai_insert_auth_key_remove = Eliminar la clave de API de OpenAI
 ai_choose_model = Elige el modelo de IA
 ai_choose_model_cost_effective = Más eficiente en costos
 ai_choose_model_recommended = Modelo recomendado
@@ -189,16 +185,3 @@ ai_choose_model_best_results = Mejores resultados (más costoso)
 # Soporte para traducciones de PDF mediante pdf.js
 pdf_use_custom_viewer = Soporte para traducciones en archivos PDF
 pdf_use_custom_viewer_info = Esta opción reemplazará el visor de PDF predeterminado
-
-# DeepSeek AI integration (ES)
-deepseek_get_own_key_info=Regístrate en platform.deepseek.com y recarga tu saldo (por ejemplo, a través de PayPal)
-deepseek_auth_key=Crea una clave de acceso API en la plataforma DeepSeek y guárdala aquí en la configuración
-deepseek_auth_key_warning=Advertencia: NO introduzcas tu clave API en ningún otro lugar excepto en esta ventana de la extensión
-deepseek_auth_key_remove=Eliminar clave API de DeepSeek
-
-# Grok AI integration (ES)
-grok_ai_get_own_key_info = Regístrate en console.x.ai y recarga tu saldo (por ejemplo, con tarjeta de crédito)
-grok_ai_auth_key = Crea una clave API en la plataforma Grok (X) para obtener acceso a la API
-grok_ai_auth_key_warning = Advertencia: NO introduzcas tu clave API en ningún otro lugar excepto en esta ventana de extensión
-grok_ai_auth_key_remove = Eliminar la clave API de Grok
-

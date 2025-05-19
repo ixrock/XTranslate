@@ -177,10 +177,6 @@ mellowtel_dialog_footer = Ďakujeme, že ste si našli čas na prečítanie, tí
 error_403_auth_failed = Autorizácia zlyhala. Prosím, zadajte platný kľúč API v nastaveniach.
 
 # open-ai integration
-open_ai_get_access_info =1) Zaregistrujte sa na platform.openai.com 2) Vytvorte kľúč API 3) Dobite si kredit (5$+)
-open_ai_insert_auth_key =Zadajte kľúč API na získanie prekladov od OpenAI
-open_ai_insert_auth_key_warning = Upozornenie: Nezadávajte kľúč API nikde inde, okrem tohto okna rozšírenia
-open_ai_insert_auth_key_remove = Odstrániť kľúč OpenAI API
 ai_choose_model = Vyberte AI model
 ai_choose_model_cost_effective = Najúspornejší z hľadiska nákladov
 ai_choose_model_recommended = Odporúčaný model
@@ -189,6 +185,3 @@ ai_choose_model_best_results = Najlepšie výsledky (najdrahší)
 # PDF translations suppot via pdf.js
 pdf_use_custom_viewer = Podpora prekladov v PDF súboroch
 pdf_use_custom_viewer_info = Táto možnosť nahradí predvolený prehliadač PDF
-
-# DeepSeek AI integration
-deepseek_get_own_key_info = Zaregistrujte sa na platform

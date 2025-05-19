@@ -88,11 +88,21 @@ export class Settings extends React.Component {
     }
   }
 
-  renderAuthSettings(translator: Translator): React.ReactNode {
-    const content = this.providerSettings[translator.name];
-    const props = translator.getAuthSettings();
-    if (props) {
-      return <ProviderAuthSettings {...props} children={content}/>;
+  renderAuthSettings({ name: provider, title, getAuthSettings }: Translator): React.ReactNode {
+    const authParams = getAuthSettings();
+    if (authParams) {
+      return (
+        <ProviderAuthSettings
+          {...authParams}
+          provider={provider}
+          accessInfo={getMessage(`auth_access_info_steps_${provider}`)}
+          accessInfo2={getMessage(`auth_access_info_api_key`, { provider: title })}
+          clearKeyInfo={getMessage(`auth_clear_key_info`, { provider: title })}
+          warningInfo={getMessage(`auth_safety_warning_info`)}
+        >
+          {this.providerSettings[provider]}
+        </ProviderAuthSettings>
+      );
     }
   }
 
@@ -196,6 +206,11 @@ export class Settings extends React.Component {
               onClick={() => window.prompt(getMessage("settings_title_full_page_always_translate"))}
             />
           </div>
+          <Checkbox
+            label={getMessage("settings_title_full_page_show_original_onmouseover")}
+            checked={fullPageTranslation.showOriginalOnMouseOver}
+            onChange={val => fullPageTranslation.showOriginalOnMouseOver = val}
+          />
         </article>
 
         <SubTitle>{getMessage("settings_title_appearance")}</SubTitle>

@@ -181,10 +181,6 @@ mellowtel_dialog_footer = Хвала што сте издвојили време
 error_403_auth_failed = Ауторизација није успела. Унеси валидан API кључ за аутентификацију у подешавањима
 
 # open-ai integration
-open_ai_get_access_info = 1) Региструј се на platform.openai.com 2) Креирај кључ за приступ API-ју 3) Допуни своја новчана средства (5$+)
-open_ai_insert_auth_key = Обезбеди API кључ за добијање OpenAI превода
-open_ai_insert_auth_key_warning = Упозорење: НЕ УНОСИ свој API кључ нигде осим у прозору овог проширења
-open_ai_insert_auth_key_remove = Уклони OpenAI API кључ
 ai_choose_model = Изабери AI модел
 ai_choose_model_cost_effective = Најисплативије
 ai_choose_model_recommended = Препоручени модел
@@ -193,15 +189,3 @@ ai_choose_model_best_results = Најбољи резултати (најскуп
 # PDF translations suppot via pdf.js
 pdf_use_custom_viewer = Подршка за преводе у PDF фајловима
 pdf_use_custom_viewer_info = Ова опција ће прегазити подразумевани PDF прегледач
-
-# DeepSeek AI integration
-deepseek_get_own_key_info = Региструјте се на platform.deepseek.com и допуните средства (нпр. преко PayPal-а)
-deepseek_auth_key = Креирајте API кључ на платформи DeepSeek да бисте добили приступ
-deepseek_auth_key_warning = Упозорење: НЕ УНОСИ свој API кључ нигде осим у прозору овог проширења
-deepseek_auth_key_remove = Уклони DeepSeek API кључ
-
-# Grok AI integration (SR_CY)
-grok_ai_get_own_key_info = Региструјте се на console.x.ai и допуните стање (нпр. путем кредитне картице)
-grok_ai_auth_key = Креирајте API кључ на Grok (X) платформи да бисте добили приступ API-ју
-grok_ai_auth_key_warning = Упозорење: НЕ УНОСИ свој API кључ нигде осим у прозору овог проширења
-grok_ai_auth_key_remove = Уклоните Grok API кључ

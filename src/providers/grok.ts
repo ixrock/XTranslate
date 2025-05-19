@@ -1,34 +1,19 @@
 import LanguagesList from "./open-ai.json"
-import { ITranslationResult, ProviderCodeName, sanitizeApiKey, TranslateParams, Translator } from "./index";
-import { getMessage } from "../i18n";
+import { ITranslationResult, ProviderCodeName, TranslateParams, Translator } from "./index";
 import { createStorage } from "../storage";
 import { settingsStore } from "../components/settings/settings.storage";
 import { aiTranslateAction } from "../background/open-ai.bgc";
-import type { ProviderAuthSettingsProps } from "../components/settings/auth_settings";
 
 class GrokTranslator extends Translator {
   public name = ProviderCodeName.GROK;
   public title = "Grok";
   public publicUrl = "https://console.x.ai/";
   public apiUrl = "https://api.x.ai/v1";
+  #apiKey = createStorage<string>("grok_x_api_key");
 
   constructor() {
     super(LanguagesList);
   }
-
-  #apiKey = createStorage("grok_x_api_key", {
-    defaultValue: ""
-  });
-
-  private setupApiKey = () => {
-    const newKey = window.prompt(`${this.title} API Key`);
-    if (newKey === null) return;
-    this.#apiKey.set(newKey || this.#apiKey.defaultValue);
-  };
-
-  private clearApiKey = () => {
-    this.#apiKey.set("");
-  };
 
   async translate({ from, to, text }: TranslateParams): Promise<ITranslationResult> {
     await this.#apiKey.load();
@@ -43,15 +28,21 @@ class GrokTranslator extends Translator {
     })
   }
 
-  getAuthSettings(): ProviderAuthSettingsProps {
+  private setupApiKey = () => {
+    const newKey = window.prompt(`${this.title} API Key`);
+    if (newKey === null) return;
+    this.#apiKey.set(newKey || this.#apiKey.defaultValue);
+  };
+
+  private clearApiKey = () => {
+    this.#apiKey.set("");
+  };
+
+  getAuthSettings() {
     return {
-      apiKeySanitized: sanitizeApiKey(this.#apiKey.get()),
+      apiKeySanitized: this.sanitizeApiKey(this.#apiKey.get()),
       setupApiKey: this.setupApiKey,
       clearApiKey: this.clearApiKey,
-      accessInfo: getMessage("grok_ai_get_own_key_info"),
-      accessInfo2: getMessage("grok_ai_auth_key"),
-      warningInfo: getMessage("grok_ai_auth_key_warning"),
-      clearKeyInfo: getMessage("grok_ai_auth_key_remove"),
     };
   }
 }

@@ -7,7 +7,6 @@ import { proxyRequest } from "../background/httpProxy.bgc";
 import { settingsStore } from "../components/settings/settings.storage";
 import { getTTSVoices, speak, stopSpeaking, TTSVoice } from "../tts";
 import { ProviderCodeName } from "./providers";
-import type { ProviderAuthSettingsProps } from "../components/settings/auth_settings";
 import { getTranslationFromHistoryAction, saveToHistoryAction } from "../background/history.bgc";
 
 export interface TranslatorLanguages {
@@ -39,7 +38,7 @@ export abstract class Translator {
   public audioDataUrl = "";
   protected logger = createLogger({ systemPrefix: "[TRANSLATOR]" });
 
-  constructor({ from: langFrom, to: langTo }: TranslatorLanguages) {
+  protected constructor({ from: langFrom, to: langTo }: TranslatorLanguages) {
     autoBind(this);
 
     const { auto, ...langToFallback } = langFrom;
@@ -163,10 +162,6 @@ export abstract class Translator {
     ].join(' → ');
   }
 
-  async translateFullPage() {
-    console.log(`TODO: implement full-page translation with ${this.title}`);
-  }
-
   speakSynth(text: string, voice?: TTSVoice) {
     try {
       speak(text, voice); // // tts-play
@@ -235,14 +230,20 @@ export abstract class Translator {
     return !!(this.langFrom[langFrom] && this.langTo[langTo]);
   }
 
-  getAuthSettings(): ProviderAuthSettingsProps {
+  getAuthSettings(): TranslatorAuthParams {
     return;
+  }
+
+  protected sanitizeApiKey(apiKey: string) {
+    if (!apiKey) return "";
+    return apiKey.substring(0, 4) + "-****-" + apiKey.substring(apiKey.length - 4);
   }
 }
 
-export function sanitizeApiKey(apiKey: string) {
-  if (!apiKey) return "";
-  return apiKey.substring(0, 4) + "-****-" + apiKey.substring(apiKey.length - 4);
+export interface TranslatorAuthParams {
+  apiKeySanitized: string;
+  setupApiKey(): void;
+  clearApiKey(): void;
 }
 
 export interface ITranslationResult {

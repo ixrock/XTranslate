@@ -204,8 +204,7 @@ export class ContentScript extends React.Component {
   translatePage({ pageUrl }: TranslatePagePayload) {
     const { provider, langFrom, langTo } = settingsStore.data.fullPageTranslation;
     const translator = getTranslator(provider);
-
-    void translator.translateFullPage();
+    console.log(`[TRANSLATE]: full-page with ${translator.title}`, { pageUrl, langFrom, langTo })
   }
 
   playText() {

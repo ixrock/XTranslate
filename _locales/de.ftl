@@ -176,11 +176,6 @@ mellowtel_dialog_footer = Danke, dass Sie sich die Zeit genommen haben zu lesen,
 # Verschiedene Fehlermeldungen
 error_403_auth_failed = Authentifizierung fehlgeschlagen. Bitte geben Sie einen gültigen Authentifizierungs-API-Schlüssel in den Einstellungen an.
 
-# OpenAI Integration
-open_ai_get_access_info = 1) Registrieren Sie sich bei platform.openai.com 2) Erstellen Sie einen API-Zugriffsschlüssel 3) Beladen Sie Ihr Guthaben (5$+)
-open_ai_insert_auth_key = Geben Sie Ihren API-Schlüssel ein, um OpenAI-Übersetzungen zu erhalten
-open_ai_insert_auth_key_warning = Warnung: Geben Sie Ihren API-Schlüssel nirgendwo außer in diesem Erweiterungsfenster ein
-open_ai_insert_auth_key_remove = OpenAI API-Schlüssel entfernen
 ai_choose_model = KI-Modell auswählen
 ai_choose_model_cost_effective = Kostenwirksamste Wahl
 ai_choose_model_recommended = Empfohlenes Modell
@@ -189,16 +184,3 @@ ai_choose_model_best_results = Beste Ergebnisse (am teuersten)
 # Unterstützung für PDF-Übersetzungen via pdf.js
 pdf_use_custom_viewer = Unterstützung für Übersetzungen in PDF-Dateien
 pdf_use_custom_viewer_info = Diese Option ersetzt den Standard-PDF-Viewer
-
-# DeepSeek AI integration (DE)
-deepseek_get_own_key_info=Registrieren Sie sich auf platform.deepseek.com und laden Sie Ihr Guthaben auf (z. B. über PayPal)
-deepseek_auth_key=Erstellen Sie einen API-Zugangsschlüssel auf der DeepSeek-Plattform und speichern Sie ihn hier in den Einstellungen
-deepseek_auth_key_warning=Warnung: Geben Sie Ihren API-Schlüssel NICHT an einem anderen Ort als in diesem Erweiterungsfenster ein
-deepseek_auth_key_remove=DeepSeek-API-Schlüssel entfernen
-
-# Grok AI integration (DE)
-grok_ai_get_own_key_info = Registrieren Sie sich bei console.x.ai und laden Sie Ihr Guthaben auf (z. B. per Kreditkarte)
-grok_ai_auth_key = Erstellen Sie einen API-Schlüssel auf der Grok (X)-Plattform, um Zugriff auf die API zu erhalten
-grok_ai_auth_key_warning = Warnung: Geben Sie Ihren API-Schlüssel NIRGENDWO anders ein außer in diesem Erweiterungsfenster
-grok_ai_auth_key_remove = Grok API-Schlüssel entfernen
-
