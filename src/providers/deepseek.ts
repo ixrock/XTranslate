@@ -1,4 +1,4 @@
-import LanguagesList from "./open-ai.json"
+import AILanguagesList from "./open-ai.json"
 import { DeepSeekAIModel, ITranslationResult, ProviderCodeName, TranslateParams, Translator } from "./index";
 import { createStorage } from "../storage";
 import { aiTranslateAction } from "../background/open-ai.bgc";
@@ -11,7 +11,7 @@ class DeepSeekTranslator extends Translator {
   #apiKey = createStorage<string>("deepseek_api_key");
 
   constructor() {
-    super(LanguagesList);
+    super({ languages: AILanguagesList });
   }
 
   async translate({ from, to, text }: TranslateParams): Promise<ITranslationResult> {

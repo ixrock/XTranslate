@@ -11,7 +11,7 @@ class Deepl extends Translator {
   #apiKey = createStorage<string>("deepl_api_auth_key");
 
   constructor() {
-    super(DeeplLanguages);
+    super({ languages: DeeplLanguages });
   }
 
   get apiUrl() {

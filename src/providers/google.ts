@@ -18,7 +18,7 @@ class Google extends Translator {
   });
 
   constructor() {
-    super(GoogleLanguages);
+    super({ languages: GoogleLanguages });
   }
 
   // try to use next available api-client if google has blocked the traffic

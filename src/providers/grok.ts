@@ -1,4 +1,4 @@
-import LanguagesList from "./open-ai.json"
+import AILanguagesList from "./open-ai.json"
 import { ITranslationResult, ProviderCodeName, TranslateParams, Translator } from "./index";
 import { createStorage } from "../storage";
 import { settingsStore } from "../components/settings/settings.storage";
@@ -12,7 +12,7 @@ class GrokTranslator extends Translator {
   #apiKey = createStorage<string>("grok_x_api_key");
 
   constructor() {
-    super(LanguagesList);
+    super({languages: AILanguagesList});
   }
 
   async translate({ from, to, text }: TranslateParams): Promise<ITranslationResult> {

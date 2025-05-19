@@ -2,15 +2,15 @@
 // Happens on extension new version updates, content-script stops working (not re-connected automatically)
 
 import { contentScriptEntry } from "../common-vars";
-import { getContentScriptInjectableTabs } from "../extension/tabs";
+import { getInjectableTabs } from "../extension/tabs";
 import { MessageType } from "../extension/messages";
 import { sendMessage } from "../extension/runtime";
 
 export async function onContextInvalidated() {
-  const tabsForUpdateScript = await getContentScriptInjectableTabs();
+  const tabsWithContentScript = await getInjectableTabs();
 
   await Promise.allSettled(
-    tabsForUpdateScript.map((tab) => {
+    tabsWithContentScript.map((tab) => {
       return chrome.scripting.executeScript({
         target: { tabId: tab.id },
         files: [`${contentScriptEntry}.js`],

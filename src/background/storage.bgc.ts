@@ -4,7 +4,8 @@
 import { disposer } from "../utils/disposer";
 import { Message, MessageType, StorageDeletePayload, StorageReadPayload, StorageSyncPayload, StorageWritePayload } from '../extension/messages'
 import { isBackgroundWorker, onMessage, sendMessage, } from '../extension/runtime'
-import { broadcastMessage } from '../extension/tabs'
+import { broadcastMessage, BrowserTab } from '../extension/tabs'
+import { isSystemPage } from "../common-vars";
 
 export type StorageKey = string;
 export type StorageArea = chrome.storage.AreaName;
@@ -49,7 +50,7 @@ export async function removeFromExternalStorage(payload: StorageDeletePayload, s
   if (syncUpdate) {
     void syncExternalStorageUpdate({
       ...payload,
-      state: undefined,
+      state: undefined
     });
   }
 }
@@ -109,5 +110,7 @@ export function syncExternalStorageUpdate<T>(payload: StorageSyncPayload<T>) {
     payload,
   };
 
-  return broadcastMessage(msg);
+  return broadcastMessage(msg, {
+    filter: (tab: BrowserTab) => !isSystemPage(tab.url)
+  });
 }

@@ -4,7 +4,7 @@ import { createLogger } from "./utils/createLogger";
 import { StorageAdapter, StorageHelper, StorageHelperOptions } from "./utils/storageHelper";
 import { isBackgroundWorker, onMessage } from "./extension/runtime";
 import { MessageType, StorageSyncPayload, StorageWritePayload } from "./extension/messages";
-import { StorageArea, listenExternalStorageChanges, removeFromExternalStorageAction, readFromExternalStorageAction, writeToExternalStorageAction } from "./background/storage.bgc";
+import { listenExternalStorageChanges, readFromExternalStorageAction, removeFromExternalStorageAction, StorageArea, writeToExternalStorageAction } from "./background/storage.bgc";
 
 const logger = createLogger({ systemPrefix: "STORAGE(helper)" });
 
@@ -19,12 +19,8 @@ export function createStorage<T>(key: string, options: ChromeStorageHelperOption
   } = options;
 
   const storageAdapter: StorageAdapter<T> = {
-    async setItem(key: string, value: T) {
-      const payload: StorageWritePayload<T> = {
-        key, area,
-        state: value,
-        origin: StorageHelper.getResourceOrigin(),
-      };
+    async setItem(key: string, state: T) {
+      const payload: StorageWritePayload<T> = { key, area, state };
       return writeToExternalStorageAction(payload);
     },
 
@@ -33,10 +29,7 @@ export function createStorage<T>(key: string, options: ChromeStorageHelperOption
     },
 
     async removeItem(key: string) {
-      return removeFromExternalStorageAction({
-        area, key,
-        origin: StorageHelper.getResourceOrigin(),
-      });
+      return removeFromExternalStorageAction({ area, key });
     },
   };
 
@@ -49,7 +42,7 @@ export function createStorage<T>(key: string, options: ChromeStorageHelperOption
   if (isBackgroundWorker()) {
     listenExternalStorageChanges(area, (changes) => {
       if (key in changes) {
-        logger.info("background data sync", changes[key]);
+        logger.info("BACKGROUND SYNC", changes[key]);
         storageHelper.sync(changes[key] as T);
       }
     });
@@ -58,12 +51,11 @@ export function createStorage<T>(key: string, options: ChromeStorageHelperOption
   // sync storage updates for options-page (app) and content-script pages
   onMessage(MessageType.STORAGE_DATA_SYNC, async (payload: StorageSyncPayload<T>) => {
     const { key: evtKey, area: evtArea, state } = payload;
-    const origin = StorageHelper.getResourceOrigin();
     const storageKeyMatched = evtKey === key;
     const isSameArea = evtArea === area;
 
     if (storageKeyMatched && isSameArea) {
-      logger.info("SYNC", { origin, payload });
+      logger.info("PAGE SYNC", payload);
       storageHelper.sync(state);
     }
   });

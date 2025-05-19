@@ -3,6 +3,8 @@ import type { Message } from './messages'
 import { sendMessage } from "./runtime";
 import { isSystemPage } from "../common-vars";
 
+export type BrowserTab = chrome.tabs.Tab;
+
 export function createTab(url: string, active = true): Promise<chrome.tabs.Tab> {
   return chrome.tabs.create({ url, active });
 }
@@ -11,17 +13,17 @@ export function sendMessageToTab<Request, Response = unknown>(tabId: number, mes
   return chrome.tabs.sendMessage(tabId, message);
 }
 
-export async function sendMessageToAllTabs<P>(message: Message<P>, filter?: (tabUrl: string) => boolean) {
-  let tabs = await chrome.tabs.query({});
+export async function sendMessageToTabs<P>(message: Message<P>, params: { filter?: (tab: BrowserTab) => boolean } = {}) {
+  const tabs = await chrome.tabs.query({});
 
   return Promise.allSettled(
     tabs
-      .filter(filter ? tab => filter(tab.url) : () => true)
+      .filter(params.filter ?? (() => true))
       .map(tab => sendMessageToTab(tab.id, message))
   );
 }
 
-export async function getContentScriptInjectableTabs(): Promise<chrome.tabs.Tab[]> {
+export async function getInjectableTabs(): Promise<chrome.tabs.Tab[]> {
   return new Promise(resolve => {
     chrome.tabs.query({}, function (tabs) {
       resolve(
@@ -42,10 +44,14 @@ export function getActiveTab(): Promise<chrome.tabs.Tab> {
   });
 }
 
+export interface BroadcastMessageParams {
+  filter?: (tab: BrowserTab) => boolean;
+}
+
 /**
  * Broadcast message to all window tabs (context pages) and extension windows (options page)
  */
-export async function broadcastMessage<T>(msg: Message<T>) {
+export async function broadcastMessage<T>(msg: Message<T>, { filter }: BroadcastMessageParams = {}) {
   try {
     await sendMessage<T>(msg);
   } catch (err) {
@@ -56,5 +62,5 @@ export async function broadcastMessage<T>(msg: Message<T>) {
     }
   }
 
-  return sendMessageToAllTabs<T>(msg);
+  return sendMessageToTabs<T>(msg, { filter });
 }

@@ -18,7 +18,7 @@ class Bing extends Translator {
   public apiUrl = "https://api-edge.cognitive.microsofttranslator.com";
 
   constructor() {
-    super(BingLanguages);
+    super({ languages: BingLanguages });
   }
 
   protected apiParams = createStorage<BingApiAuthParams>("bing_auth_params", {
@@ -116,7 +116,8 @@ class Bing extends Translator {
       }
 
       // dictionary results
-      const dictRes = await dictionaryReq(result.langDetected).catch(() => {});
+      const dictRes = await dictionaryReq(result.langDetected).catch(() => {
+      });
       if (dictRes) {
         const dictGroups = groupBy<DictTranslation>(dictRes[0].translations, trans => trans.posTag)
         result.dictionary = Object.keys(dictGroups).map(wordType => {

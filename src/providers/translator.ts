@@ -8,8 +8,9 @@ import { settingsStore } from "../components/settings/settings.storage";
 import { getTTSVoices, speak, stopSpeaking, TTSVoice } from "../tts";
 import { ProviderCodeName } from "./providers";
 import { getTranslationFromHistoryAction, saveToHistoryAction } from "../background/history.bgc";
+import type { PageTranslator } from "./page-translator";
 
-export interface TranslatorLanguages {
+export interface ProviderLanguagesApiMap {
   from: { [locale: string]: string; auto?: string };
   to?: { [locale: string]: string };
 }
@@ -18,6 +19,11 @@ export interface TranslateParams {
   from: string;
   to: string;
   text: string;
+}
+
+export interface TranslatorParams {
+  languages: ProviderLanguagesApiMap;
+  fullPageTranslator?: PageTranslator;
 }
 
 export abstract class Translator {
@@ -37,13 +43,15 @@ export abstract class Translator {
   public audio: HTMLAudioElement;
   public audioDataUrl = "";
   protected logger = createLogger({ systemPrefix: "[TRANSLATOR]" });
+  protected pageTranslator?: PageTranslator | undefined;
 
-  protected constructor({ from: langFrom, to: langTo }: TranslatorLanguages) {
+  protected constructor({ languages: { from: langFrom, to: langTo }, fullPageTranslator }: TranslatorParams) {
     autoBind(this);
 
     const { auto, ...langToFallback } = langFrom;
     this.langFrom = langFrom;
     this.langTo = langTo ?? langToFallback;
+    this.pageTranslator = fullPageTranslator;
 
     this.translate = new Proxy(this.translate, {
       apply: async (translate, callContext, [params]: [TranslateParams]): Promise<ITranslationResult> => {
