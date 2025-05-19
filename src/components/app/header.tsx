@@ -2,7 +2,8 @@ import "./header.scss";
 import React from "react";
 import { observer } from "mobx-react";
 import { cssNames } from "../../utils/cssNames";
-import { getManifest } from "../../extension";
+import { getTranslator } from "../../providers";
+import { getManifest, translateActivePage } from "../../extension";
 import { settingsStore } from '../settings/settings.storage'
 import { Tabs } from "../tabs";
 import { Icon } from "../icon";
@@ -26,7 +27,12 @@ export class Header extends React.Component {
     });
   }
 
-  onTabsChange = async (page: PageId) => {
+  private translateActivePage = () => {
+    void translateActivePage();
+    window.close();
+  }
+
+  private onTabsChange = async (page: PageId) => {
     await navigate({ page });
     window.scrollTo(0, 0);
   }
@@ -34,7 +40,10 @@ export class Header extends React.Component {
   render() {
     const { name, version } = getManifest();
     const { page: pageId } = getUrlParams();
-    const { useDarkTheme } = settingsStore.data;
+    const { useDarkTheme, fullPageTranslation } = settingsStore.data;
+    const translateFullPageTooltip = getMessage("context_menu_translate_full_page", {
+      lang: getTranslator(fullPageTranslation.provider).langTo[fullPageTranslation.langTo]
+    });
 
     return (
       <div className="Header">
@@ -42,6 +51,12 @@ export class Header extends React.Component {
           <div className="app-title box grow">
             {name} <sup className="app-version">{version}</sup>
           </div>
+          <Icon
+            small
+            material="g_translate"
+            tooltip={{ children: translateFullPageTooltip, nowrap: true }}
+            onClick={this.translateActivePage}
+          />
           <Icon
             small
             svg="moon"

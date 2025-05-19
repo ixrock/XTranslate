@@ -1,14 +1,14 @@
 import DeeplLanguages from "./deepl.json"
-import { ITranslationError, ITranslationResult, ProviderCodeName, sanitizeApiKey, TranslateParams, Translator, TranslatorLanguages } from "./index";
+import { ITranslationError, ITranslationResult, ProviderCodeName, TranslateParams, Translator } from "./index";
 import { createStorage } from "../storage";
 import { ProxyRequestInit } from "../extension";
 import { getMessage } from "../i18n";
-import type { ProviderAuthSettingsProps } from "../components/settings/auth_settings";
 
 class Deepl extends Translator {
   public name = ProviderCodeName.DEEPL;
   public title = "DeepL";
   public publicUrl = "https://www.deepl.com/translator";
+  #apiKey = createStorage<string>("deepl_api_auth_key");
 
   constructor() {
     super(DeeplLanguages);
@@ -23,16 +23,6 @@ class Deepl extends Translator {
     }
     return "https://api.deepl.com/v2";
   }
-
-  #apiKey = createStorage("deepl_api_auth_key", {
-    defaultValue: "", // free or paid subscription key (example: "b05afc95-d4ea-2bee-07e6-e81469c588f2:fx")
-  });
-
-  private setupAuthApiKey = () => {
-    const newKey = window.prompt("DeepL API Key");
-    if (newKey === null) return;
-    this.#apiKey.set(newKey || this.#apiKey.defaultValue);
-  };
 
   async translate(params: TranslateParams): Promise<ITranslationResult> {
     await this.#apiKey.load();
@@ -74,16 +64,17 @@ class Deepl extends Translator {
     }
   }
 
-  getAuthSettings(): ProviderAuthSettingsProps {
+  private setupAuthApiKey = () => {
+    const newKey = window.prompt("DeepL API Key");
+    if (newKey === null) return;
+    this.#apiKey.set(newKey || this.#apiKey.defaultValue);
+  };
+
+  getAuthSettings() {
     return {
-      className: "deepl-settings",
-      apiKeySanitized: sanitizeApiKey(this.#apiKey.get()),
+      apiKeySanitized: this.sanitizeApiKey(this.#apiKey.get()),
       setupApiKey: this.setupAuthApiKey,
       clearApiKey: () => this.#apiKey.set(""),
-      accessInfo: getMessage("deepl_get_own_key_info"),
-      accessInfo2: getMessage("deepl_insert_auth_key"),
-      warningInfo: getMessage("deepl_insert_auth_key_warning"),
-      clearKeyInfo: getMessage("deepl_insert_auth_key_remove"),
     };
   }
 }

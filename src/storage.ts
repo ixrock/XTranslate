@@ -12,7 +12,7 @@ export interface ChromeStorageHelperOptions<T> extends Omit<StorageHelperOptions
   area?: StorageArea;
 }
 
-export function createStorage<T>(key: string, options: ChromeStorageHelperOptions<T>) {
+export function createStorage<T>(key: string, options: ChromeStorageHelperOptions<T> = {}) {
   const {
     area = "local",
     ...storageOptions

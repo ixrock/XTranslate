@@ -177,10 +177,6 @@ mellowtel_dialog_footer = 感謝您花時間閱讀，開發團隊 { $devs }。
 error_403_auth_failed = 授權失敗。請在設定中提供有效的 API 金鑰
 
 # OpenAI 整合
-open_ai_get_access_info = 1）在 platform.openai.com 註冊 2）創建 API 訪問金鑰 3）充值您的帳戶餘額（5 美元以上）
-open_ai_insert_auth_key = 提供您的 API 金鑰以獲得 OpenAI 翻譯
-open_ai_insert_auth_key_warning = 警告：請勿在此擴充功能視窗以外的任何地方輸入您的 API 金鑰
-open_ai_insert_auth_key_remove = 移除 OpenAI API 金鑰
 ai_choose_model = 選擇 AI 模型
 ai_choose_model_cost_effective = 最具成本效益
 ai_choose_model_recommended = 推薦模型
@@ -189,15 +185,3 @@ ai_choose_model_best_results = 最佳結果（最昂貴）
 # PDF 翻譯支援通過 pdf.js
 pdf_use_custom_viewer = 支援 PDF 文件翻譯
 pdf_use_custom_viewer_info = 此選項將替換預設的 PDF 檢視器
-
-# DeepSeek AI integration (ZH_TW)
-deepseek_get_own_key_info=在 platform.deepseek.com 註冊並充值餘額（例如通過 PayPal）
-deepseek_auth_key=在 DeepSeek 平台建立 API 存取金鑰，並將其保存於此設定中
-deepseek_auth_key_warning=警告：請勿將您的 API 金鑰輸入至此擴展視窗以外的任何地方
-deepseek_auth_key_remove=刪除 DeepSeek API 金鑰
-
-# Grok AI integration (ZH_TW)
-grok_ai_get_own_key_info = 在 console.x.ai 註冊並充值餘額（例如通過信用卡）
-grok_ai_auth_key = 在 Grok (X) 平台創建 API 密鑰以獲取 API 訪問權限
-grok_ai_auth_key_warning = 警告：請勿在此擴展窗口以外的任何地方輸入您的 API 密鑰
-grok_ai_auth_key_remove = 移除 Grok API 密鑰

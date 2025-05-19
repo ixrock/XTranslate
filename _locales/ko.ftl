@@ -177,10 +177,6 @@ mellowtel_dialog_footer = 읽어 주셔서 감사합니다, { $devs } 팀.
 error_403_auth_failed = 인증 실패. 설정에서 유효한 인증 API 키를 제공하세요.
 
 # OpenAI 통합
-open_ai_get_access_info = 1) platform.openai.com 에 등록 2) API 접근 키 생성 3) 잔액 충전 (5$+)
-open_ai_insert_auth_key = OpenAI 번역을 얻기 위해 API 키 제공
-open_ai_insert_auth_key_warning = 경고: 이 확장 프로그램 창 외에 다른 곳에 API 키를 입력하지 마세요
-open_ai_insert_auth_key_remove = OpenAI API 키 제거
 ai_choose_model = AI 모델 선택
 ai_choose_model_cost_effective = 가장 비용 효율적인
 ai_choose_model_recommended = 권장 모델
@@ -189,15 +185,3 @@ ai_choose_model_best_results = 최고의 결과 (가장 비싼)
 # pdf.js를 통한 PDF 번역 지원
 pdf_use_custom_viewer = PDF 파일 내 번역 지원
 pdf_use_custom_viewer_info = 이 옵션은 기본 PDF 뷰어를 대체합니다
-
-# DeepSeek AI integration (KO)
-deepseek_get_own_key_info=platform.deepseek.com에 등록하고 잔액을 충전하세요 (예: PayPal 사용)
-deepseek_auth_key=DeepSeek 플랫폼에서 API 액세스 키를 생성하고 설정에 저장하세요
-deepseek_auth_key_warning=경고: 이 확장 프로그램 창 이외의 장소에 API 키를 입력하지 마세요
-deepseek_auth_key_remove=DeepSeek API 키 제거
-
-# Grok AI integration (KO)
-grok_ai_get_own_key_info = console.x.ai에 등록하고 잔액을 충전하세요 (예: 신용카드 사용)
-grok_ai_auth_key = Grok (X) 플랫폼에서 API 키를 생성하여 API에 액세스하세요
-grok_ai_auth_key_warning = 경고: 이 확장 창 외의 다른 곳에 API 키를 입력하지 마세요
-grok_ai_auth_key_remove = Grok API 키 제거

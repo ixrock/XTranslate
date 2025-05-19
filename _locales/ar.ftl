@@ -177,10 +177,6 @@ mellowtel_dialog_footer = شكرًا لأخذك الوقت للقراءة، فر
 error_403_auth_failed = فشل في التوثيق. يرجى توفير مفتاح API صحيح في الإعدادات.
 
 # تكامل OpenAI
-open_ai_get_access_info = 1) تسجيل الدخول إلى platform.openai.com 2) إنشاء مفتاح وصول API 3) إعادة تعبئة رصيدك (5$+)
-open_ai_insert_auth_key = قدم مفتاح API الخاص بك للحصول على ترجمات OpenAI
-open_ai_insert_auth_key_warning = تحذير: لا تدخل مفتاح API الخاص بك في أي مكان آخر بخلاف نافذة هذه الإضافة
-open_ai_insert_auth_key_remove = إزالة مفتاح API OpenAI
 ai_choose_model = اختر نموذج الذكاء الاصطناعي
 ai_choose_model_cost_effective = الأكثر كفاءة من حيث التكلفة
 ai_choose_model_recommended = النموذج الموصى به
@@ -189,16 +185,3 @@ ai_choose_model_best_results = أفضل نتائج (الأكثر تكلفة)
 # دعم ترجمة PDF عبر pdf.js
 pdf_use_custom_viewer = دعم الترجمات في ملفات PDF
 pdf_use_custom_viewer_info = ستستبدل هذه الخيار عارض PDF الافتراضي
-
-# DeepSeek AI integration (AR)
-deepseek_get_own_key_info=قم بالتسجيل في platform.deepseek.com وقم بشحن الرصيد (مثلًا عبر PayPal)
-deepseek_auth_key=قم بإنشاء مفتاح وصول API على منصة DeepSeek واحفظه هنا في الإعدادات
-deepseek_auth_key_warning=تحذير: لا تدخل مفتاح API الخاص بك في أي مكان آخر باستثناء نافذة هذا الامتداد
-deepseek_auth_key_remove=إزالة مفتاح API الخاص بـ DeepSeek
-
-# Grok AI integration (AR)
-grok_ai_get_own_key_info = تسجيل في console.x.ai وتعبئة الرصيد (مثلاً عبر بطاقة الائتمان)
-grok_ai_auth_key = إنشاء مفتاح API في منصة Grok (X) للحصول على الوصول إلى API
-grok_ai_auth_key_warning = تحذير: لا تدخل مفتاح API الخاص بك في أي مكان آخر باستثناء نافذة الامتداد هذه
-grok_ai_auth_key_remove = إزالة مفتاح API الخاص بـ Grok
-

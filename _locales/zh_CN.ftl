@@ -177,10 +177,6 @@ mellowtel_dialog_footer = 感谢您花时间阅读，{ $devs } 团队。
 error_403_auth_failed = 授权失败。请在设置中提供有效的认证API密钥
 
 # OpenAI集成
-open_ai_get_access_info = 1) 在 platform.openai.com 注册 2) 创建API访问密钥 3) 充值您的余额（5$+）
-open_ai_insert_auth_key = 提供您的API密钥以获取OpenAI翻译
-open_ai_insert_auth_key_warning = 警告：除了此扩展窗口外，请勿在任何其他地方输入您的API密钥
-open_ai_insert_auth_key_remove = 移除OpenAI API密钥
 ai_choose_model = 选择AI模型
 ai_choose_model_cost_effective = 最具成本效益
 ai_choose_model_recommended = 推荐模型
@@ -189,15 +185,3 @@ ai_choose_model_best_results = 最佳结果（最昂贵）
 # 通过pdf.js支持PDF翻译
 pdf_use_custom_viewer = 支持在PDF文件中翻译
 pdf_use_custom_viewer_info = 此选项将替换默认的PDF查看器
-
-# DeepSeek AI integration (ZH_CN)
-deepseek_get_own_key_info=在 platform.deepseek.com 注册并充值余额（例如通过 PayPal）
-deepseek_auth_key=在 DeepSeek 平台创建 API 访问密钥，并将其保存在此设置中
-deepseek_auth_key_warning=警告：请勿将您的 API 密钥输入到此扩展窗口以外的任何地方
-deepseek_auth_key_remove=删除 DeepSeek API 密钥
-
-# Grok AI integration (ZH_CN)
-grok_ai_get_own_key_info = 在 console.x.ai 注册并充值余额（例如通过信用卡）
-grok_ai_auth_key = 在 Grok (X) 平台创建 API 密钥以获取 API 访问权限
-grok_ai_auth_key_warning = 警告：请勿在此扩展窗口以外的任何地方输入您的 API 密钥
-grok_ai_auth_key_remove = 删除 Grok API 密钥

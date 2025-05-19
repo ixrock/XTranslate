@@ -21,12 +21,12 @@ setting_title_popup = Попап
 setting_title_text_input = Переводчик
 settings_title_tts = Воспроизведение речи
 settings_title_appearance = Видимость
-settings_title_in_place_translation = Перевод выделенного текста
 settings_title_full_page_translation = Перевод всей страницы
-settings_title_full_page_excluded_pages = Не переводить
+settings_title_full_page_excluded_pages = Никогда не переводить
 settings_title_full_page_always_translate = Всегда переводить
 settings_title_full_page_empty_list = Пустой список
 settings_title_full_page_add_url = Добавить URL
+settings_title_full_page_show_original_onmouseover = Отображать оригинальный текст при наведении курсора мыши
 auto_play_tts = Автовоспроизведение текста в речь
 use_chrome_tts = Использовать системный преобразователь текста в речь
 use_chrome_tts_tooltip_info = Эта опция используется по умолчанию когда поставщик перевода не имеет доступную систему озвучки текста
@@ -189,28 +189,19 @@ mellowtel_dialog_footer = Спасибо за то, что прочли досю
 # various error messages
 error_403_auth_failed = Авторизация не удалась. Пожалуйста, предоставьте действительный ключ авторизации в настройках
 
-# open-ai integration
-open_ai_get_access_info = 1) Зарегистрируйтесь на platform.openai.com 2) Создайте ключ доступа к API 3) Пополните баланс (минимально 5$)
-open_ai_insert_auth_key = Предоставьте свой API-ключ для получения переводов OpenAI
-open_ai_insert_auth_key_warning = Предупреждение: НЕ вводите свой API-ключ в других местах, кроме как из этого окна расширения.
-open_ai_insert_auth_key_remove = Удалить ключ доступа OpenAI API
+# PDF translations suppot via pdf.js
+pdf_use_custom_viewer = Поддержка переводов в PDF файлах
+pdf_use_custom_viewer_info = Эта опция заменит стандартный просмоторщик PDF файлов
+
+# AI integrations
 ai_choose_model = Выберите AI-модель
 ai_choose_model_cost_effective = Наиболее экономичная
 ai_choose_model_recommended = Рекомендуемая / оптимальная модель
 ai_choose_model_best_results = Лучшие результаты (наиболее дорогое)
 
-# PDF translations suppot via pdf.js
-pdf_use_custom_viewer = Поддержка переводов в PDF файлах
-pdf_use_custom_viewer_info = Эта опция заменит стандартный просмоторщик PDF файлов
-
-# DeepSeek AI integration
-deepseek_get_own_key_info = Зарегистрируйтесь на platform.deepseek.com и пополните баланс (2$+)
-deepseek_auth_key = Создайте API-ключ на платформе DeepSeek
-deepseek_auth_key_warning = Предупреждение: НЕ вводите свой API-ключ в других местах, кроме как из этого окна расширения
-deepseek_auth_key_remove = Удалить API-ключ DeepSeek
-
-# Grok AI integration (RU)
-grok_ai_get_own_key_info = Зарегистрируйтесь на console.x.ai и пополните баланс (например, с помощью кредитной карты)
-grok_ai_auth_key = Создайте API-ключ на платформе Grok (X), чтобы получить доступ к API
-grok_ai_auth_key_warning = Предупреждение: НЕ вводите ваш API-ключ нигде, кроме этого окна расширения
-grok_ai_auth_key_remove = Удалить API-ключ Grok
+auth_access_info_steps_openai = 1) Зарегистрируйтесь на platform.openai.com 2) Создайте ключ доступа к API 3) Пополните баланс (минимально 5$)
+auth_access_info_steps_grok = Зарегистрируйтесь на console.x.ai и пополните баланс (например, с помощью кредитной карты)
+auth_access_info_steps_deepseek = Зарегистрируйтесь на platform.deepseek.com и пополните баланс (2$+)
+auth_access_info_api_key = Предоставьте свой API-ключ для получения переводов { $provider }
+auth_clear_key_info = Удалить API-ключ доступа { $provider }
+auth_safety_warning_info = Предупреждение: НЕ вводите свой API-ключ в других местах, кроме как из этого окна расширения

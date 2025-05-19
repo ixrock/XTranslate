@@ -1,7 +1,7 @@
 import { isSystemPage } from "../common-vars";
-import { getActiveTab } from "./tabs";
+import { getActiveTab, sendMessageToTab } from "./tabs";
 import { sendMessage } from "./runtime";
-import { MessageType } from "./messages";
+import { MessageType, TranslatePagePayload } from "./messages";
 
 export async function getSelectedText(): Promise<string> {
   const activeTab = await getActiveTab();
@@ -14,5 +14,16 @@ export async function getSelectedText(): Promise<string> {
   return sendMessage<void, string>({
     type: MessageType.GET_SELECTED_TEXT,
     tabId: activeTab.id,
+  });
+}
+
+export async function translateActivePage() {
+  const activeTab = await getActiveTab();
+
+  void sendMessageToTab<TranslatePagePayload>(activeTab.id, {
+    type: MessageType.TRANSLATE_FULL_PAGE,
+    payload: {
+      pageUrl: activeTab.url,
+    }
   });
 }
