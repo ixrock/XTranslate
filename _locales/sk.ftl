@@ -26,6 +26,7 @@ settings_title_full_page_always_translate = Vždy preložiť
 settings_title_full_page_show_original_onmouseover = Pri prechode myšou zobraziť pôvodný text
 settings_title_full_page_empty_list = Prázdny zoznam
 settings_title_full_page_add_url = Pridať adresu URL
+settings_title_full_page_add_url_error = Pokúsiť sa pridať neplatnú adresu URL
 auto_play_tts = Automatické prehrávanie prevodu textu na reč
 use_chrome_tts = Použiť funkciu prevodu textu na reč z Chromu
 use_chrome_tts_tooltip_info = Táto možnosť je povolená vždy, keď prekladač nemá k dispozícii nástroj na preklad
