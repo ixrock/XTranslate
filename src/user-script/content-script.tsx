@@ -200,11 +200,11 @@ export class ContentScript extends React.Component {
     });
   }
 
-  // TODO: implement
-  translatePage({ pageUrl }: TranslatePagePayload) {
-    const { provider, langFrom, langTo } = settingsStore.data.fullPageTranslation;
+  // TODO: render fixed/top widget with full-page translation settings
+  translatePage(payload: TranslatePagePayload) {
+    const { provider } = settingsStore.data.fullPageTranslation;
     const translator = getTranslator(provider);
-    console.log(`[TRANSLATE]: full-page with ${translator.title}`, { pageUrl, langFrom, langTo })
+    translator.pageTranslator.startAutoTranslation();
   }
 
   playText() {

@@ -21,7 +21,7 @@ export async function initContextMenu() {
       id: appName,
       contexts: [chrome.contextMenus.ContextType.ALL],
       title: getMessage("context_menu_translate_full_page", {
-        lang: translator.langTo[langTo],
+        lang: translator.langTo[langTo] ?? langTo,
       }),
     });
 

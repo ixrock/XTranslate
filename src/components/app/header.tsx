@@ -40,9 +40,10 @@ export class Header extends React.Component {
   render() {
     const { name, version } = getManifest();
     const { page: pageId } = getUrlParams();
-    const { useDarkTheme, fullPageTranslation } = settingsStore.data;
+    const { useDarkTheme, fullPageTranslation: { provider, langTo } } = settingsStore.data;
+
     const translateFullPageTooltip = getMessage("context_menu_translate_full_page", {
-      lang: getTranslator(fullPageTranslation.provider).langTo[fullPageTranslation.langTo]
+      lang: getTranslator(provider).langTo[langTo] ?? langTo
     });
 
     return (

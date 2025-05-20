@@ -118,17 +118,16 @@ export class SettingsStore {
     this.data.favorites[provider][sourceType] = Array.from(favorites);
   }
 
+  @action
   setProvider(name: ProviderCodeName) {
     const translator = getTranslator(name);
     const { vendor, langFrom, langTo } = this.data;
     if (vendor === name) return;
-    if (!translator.langFrom[langFrom]) {
-      this.data.langFrom = Object.keys(translator.langFrom)[0];
-    }
-    if (!translator.langTo[langTo]) {
-      this.data.langTo = Object.keys(translator.langTo)[0];
-    }
+
+    const supportedLanguages = translator.getSupportedLanguages({ langFrom, langTo });
     this.data.vendor = name;
+    this.data.langFrom = supportedLanguages.langFrom;
+    this.data.langTo = supportedLanguages.langTo;
   }
 }
 

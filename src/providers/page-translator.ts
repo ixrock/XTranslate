@@ -5,9 +5,9 @@ import { ProviderCodeName } from "./providers";
 import type { TranslateParams } from "./translator";
 import { settingsStore } from "../components/settings/settings.storage";
 
-export type LangFrom = string;
-export type LangTo = string;
-export type TranslatorParamsHashId = `${ProviderCodeName}_${LangFrom}_${LangTo}`;
+export type LangSource = string;
+export type LangTarget = string;
+export type TranslatorParamsHashId = `${ProviderCodeName}_${LangSource}_${LangTarget}`;
 
 export interface PageTranslatorParams {
 }
@@ -15,10 +15,10 @@ export interface PageTranslatorParams {
 export class PageTranslator {
   private textNodes = new Set<Node>();
   private translations: Map<TranslatorParamsHashId, WeakMap<Node, string/*translation*/>> = new Map();
-  private nodesDetectedLang = new WeakMap<Node, string>();
+  private detectedLanguages = new WeakMap<Node, string>();
   private dispose = disposer();
 
-  constructor(protected initParams: PageTranslatorParams = {}) {
+  constructor(private params: PageTranslatorParams = {}) {
     autoBind(this);
   }
 
@@ -27,50 +27,73 @@ export class PageTranslator {
     return { provider, langFrom, langTo };
   }
 
-  getParamsHashId(params = this.getParams()): TranslatorParamsHashId {
+  getTranslationSettingsHashId(params = this.getParams()): TranslatorParamsHashId {
     const { provider, langFrom, langTo } = params;
     return `${provider}_${langFrom}_${langTo}`;
   }
 
-  async translatePage() {
-    const textNodes = await this.collectPageTextsNodes();
-    textNodes.forEach(this.handleTranslation);
+  startAutoTranslation() {
+    const textNodes = this.collectPageTextsNodes();
+    this.processNodes(textNodes);
 
     this.dispose.push(
-      reaction(this.getParams, this.refreshPage, { delay: 250 }),
-      this.createTextNodeWatcher(),
+      reaction(this.getParams, this.refreshTranslations, { delay: 250 }),
+      this.watchNewDOMTextNodes(),
     );
   }
 
-  private refreshPage = async () => {
-    return Promise.all(
-      Array.from(this.textNodes).map(this.handleTranslation)
+  stopAutoTranslation() {
+    this.textNodes.clear();
+    this.dispose();
+  }
+
+  private async refreshTranslations() {
+    return Promise.allSettled(
+      Array.from(this.textNodes).map(this.translateNode)
     );
   };
 
-  private handleTranslation = (textNode: Node) => {
-    const id = this.getParamsHashId(this.getParams());
+  private processNodes(textNodes: Node[]) {
+    queueMicrotask(() => {
+      const freshNodes = textNodes.filter(node => !this.textNodes.has(node));
+      freshNodes.forEach(node => {
+        console.log('[PROCESS-TEXT-NODE]', node);
+        this.textNodes.add(node);
+        // this.detectLanguage(node);
+        // void this.translateNode(node);
+      });
+    })
+  };
 
-    if (!this.translations.has(id)) {
-      this.translations.set(id, new WeakMap());
+  private async translateNode(textNode: Node) {
+    const key = this.getTranslationSettingsHashId(this.getParams());
+
+    if (!this.translations.has(key)) {
+      this.translations.set(key, new WeakMap());
     }
 
-    const translation = this.translations.get(id).get(textNode);
+    const translation = this.translations.get(key).get(textNode);
     if (!translation) {
-      queueMicrotask(async () => {
-        let detectedLang = this.detectLanguage(textNode);
-        if (!detectedLang) {
-          detectedLang = this.detectLanguage(textNode);
-          this.nodesDetectedLang.set(textNode, detectedLang);
-        }
-        const apiResponse = await Promise.resolve(textNode.textContent); // TODO: make real api-call + check persistent/session cache
-        this.translations.get(id).set(textNode, apiResponse);
-      })
+      const apiResponse = await Promise.resolve(textNode.textContent); // TODO: make real api-call + check persistent/session cache
+      this.translations.get(key).set(textNode, apiResponse);
     }
   }
 
-  private async collectPageTextsNodes(rootElem = document.body): Promise<Node[]> {
-    const skipTags = new Set(['SCRIPT', 'STYLE', 'NOSCRIPT', 'TEXTAREA', 'CODE', 'PRE']);
+  hasDetectedLanguage(textNode: Node): boolean {
+    return this.detectedLanguages.has(textNode);
+  }
+
+  detectLanguage(textNode: Node): string {
+    if (!this.hasDetectedLanguage(textNode)) {
+      const detectedLang = textNode.parentElement.closest(`[lang]`)?.getAttribute("lang") || franc(textNode.textContent);
+      this.detectedLanguages.set(textNode, detectedLang);
+      return detectedLang;
+    }
+    return this.detectedLanguages.get(textNode);
+  }
+
+  private collectPageTextsNodes(rootElem = document.body): Node[] {
+    const skipTags = new Set(["SCRIPT", "STYLE", "NOSCRIPT", "TEXTAREA", "CODE", "PRE"]);
 
     const treeWalker = document.createTreeWalker(rootElem, NodeFilter.SHOW_TEXT, {
         acceptNode(node) {
@@ -87,11 +110,7 @@ export class PageTranslator {
     return nodes;
   }
 
-  detectLanguage(textNode: Node): string {
-    return textNode.parentElement.closest(`[lang]`)?.getAttribute("lang") || franc(textNode.textContent);
-  }
-
-  private createTextNodeWatcher(rootElem = document.body): () => void {
+  private watchNewDOMTextNodes(rootElem = document.body): () => void {
     const observer = new MutationObserver(mutations => {
       const newTextNodes: Node[] = [];
 
@@ -102,9 +121,7 @@ export class PageTranslator {
         newTextNodes.push(...textNodes);
       });
 
-      queueMicrotask(() => {
-        newTextNodes.forEach(this.handleTranslation);
-      });
+      this.processNodes(newTextNodes);
     });
 
     observer.observe(rootElem, { subtree: true, childList: true });

@@ -54,6 +54,7 @@ export interface TranslatePayload extends TranslateParams {
 }
 
 export interface TranslatePagePayload {
+  tabId: number;
   pageUrl: string;
 }
 

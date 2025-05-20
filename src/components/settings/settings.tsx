@@ -3,7 +3,7 @@ import React from "react";
 import { action, makeObservable, observable } from "mobx";
 import { observer } from "mobx-react";
 import isEqual from "lodash/isEqual";
-import { getTranslators, Translator, ProviderCodeName, OpenAIModel, GrokAIModel, getTranslator } from "../../providers";
+import { getTranslator, getTranslators, GrokAIModel, OpenAIModel, ProviderCodeName, Translator } from "../../providers";
 import { cssNames } from "../../utils";
 import { XTranslateIcon } from "../../user-script/xtranslate-icon";
 import { SelectLanguage, SelectLanguageChangeEvent } from "../select-language";
@@ -21,6 +21,7 @@ import { getTTSVoices, speak, stopSpeaking } from "../../tts";
 import { SelectAIModel } from "./select_ai_model";
 import { ProviderAuthSettings } from "./auth_settings";
 import { materialIcons } from "../../common-vars";
+import { Notifications } from "../notifications";
 import { Button } from "../button";
 
 @observer
@@ -57,10 +58,9 @@ export class Settings extends React.Component {
     ];
   };
 
-  private fullPageProviders: ReactSelectOption<ProviderCodeName>[] = [
-    { value: ProviderCodeName.GOOGLE, label: getTranslator(ProviderCodeName.GOOGLE).title },
-    { value: ProviderCodeName.BING, label: getTranslator(ProviderCodeName.BING).title },
-  ];
+  private fullPageTranslateProvidersOptions: ReactSelectOption<ProviderCodeName>[] = getTranslators()
+    .filter(translator => translator.canTranslateFullPage())
+    .map(({ name, title }) => ({ value: name, label: title }));
 
   @observable demoVoiceText = "Quick brown fox jumps over the lazy dog";
   @observable isSpeaking = false;
@@ -119,9 +119,55 @@ export class Settings extends React.Component {
     fullPageTranslation.langFrom = langFrom;
   }
 
+  @action
+  onFullPageProviderChange = (provider: ProviderCodeName) => {
+    const { fullPageTranslation } = settingsStore.data;
+    const translator = getTranslator(provider);
+    const supportedLanguages = translator.getSupportedLanguages(fullPageTranslation)
+    fullPageTranslation.provider = provider;
+    fullPageTranslation.langFrom = supportedLanguages.langFrom;
+    fullPageTranslation.langTo = supportedLanguages.langTo;
+  };
+
+  private addPageException(pageAddr: string, list: string[]) {
+    try {
+      const pageUrl = String(new URL(pageAddr));
+      const alreadyExists = list.find(url => pageUrl === url);
+      if (!alreadyExists) list.push(pageUrl);
+    } catch (err) {
+      Notifications.error(`${getMessage("settings_title_full_page_add_url_error")}: ${pageAddr}`);
+    }
+  }
+
+  private formatPageUrlLabel(pageUrl: string, list: string[]): React.ReactNode {
+    const removeItem = () => {
+      const index = list.indexOf(pageUrl);
+      if (index > -1) list.splice(index, 1);
+    };
+    return (
+      <div className="page-url-exception flex gaps">
+        <span className="box grow">{pageUrl}</span>
+        <Icon small material="clear" onClick={removeItem}/>
+      </div>
+    )
+  }
+
+  @action
+  addExcludedTranslationPage = (pageUrl?: string) => {
+    pageUrl ??= window.prompt(getMessage("settings_title_full_page_excluded_pages"));
+    this.addPageException(pageUrl, settingsStore.data.fullPageTranslation.excludedPages);
+  }
+
+  @action
+  addAlwaysTranslatePage(pageUrl?: string) {
+    pageUrl ??= window.prompt(getMessage("settings_title_full_page_always_translate"));
+    this.addPageException(pageUrl, settingsStore.data.fullPageTranslation.alwaysTranslatePages);
+  }
+
   render() {
     const settings = settingsStore.data;
     const { fullPageTranslation } = settings;
+    const { excludedPages, alwaysTranslatePages } = fullPageTranslation;
 
     return (
       <main className={`${styles.Settings} flex column gaps`}>
@@ -174,36 +220,44 @@ export class Settings extends React.Component {
               to={fullPageTranslation.langTo}
               onChange={this.onFullPageLanguageChange}
             />
-            <ReactSelect<ProviderCodeName>
-              value={this.fullPageProviders.find(opt => opt.value === fullPageTranslation.provider)}
-              options={this.fullPageProviders}
-              onChange={({ value }) => fullPageTranslation.provider = value}
+            <ReactSelect
+              value={this.fullPageTranslateProvidersOptions.find(opt => opt.value === fullPageTranslation.provider)}
+              options={this.fullPageTranslateProvidersOptions}
+              onChange={({ value }) => this.onFullPageProviderChange(value)}
             />
           </div>
           <div className="excludedPages flex gaps align-center">
-            <span>{getMessage("settings_title_full_page_excluded_pages")}</span>
-            <ReactSelect<string>
+            <span>{getMessage("settings_title_full_page_excluded_pages")}: {excludedPages.length}</span>
+            <ReactSelect
+              value={null}
               className="box grow"
-              placeholder={getMessage("settings_title_full_page_empty_list")}
-              options={fullPageTranslation.excludedPages.map(value => ({ value, label: value }))}
+              menuNowrap={false}
+              closeMenuOnSelect={false}
+              noOptionsMessage={() => getMessage("settings_title_full_page_empty_list")}
+              options={excludedPages.map(value => ({ value, label: value }))}
+              formatOptionLabel={({ value }: ReactSelectOption<string>) => this.formatPageUrlLabel(value, excludedPages)}
             />
             <Button
               primary
               label={getMessage("settings_title_full_page_add_url")}
-              onClick={() => window.prompt(getMessage("settings_title_full_page_excluded_pages"))}
+              onClick={() => this.addExcludedTranslationPage()}
             />
           </div>
           <div className="alwaysTranslatePages flex gaps align-center">
-            <span>{getMessage("settings_title_full_page_always_translate")}</span>
-            <ReactSelect<string>
+            <span>{getMessage("settings_title_full_page_always_translate")}: {alwaysTranslatePages.length}</span>
+            <ReactSelect
+              value={null}
               className="box grow"
-              placeholder={getMessage("settings_title_full_page_empty_list")}
-              options={fullPageTranslation.alwaysTranslatePages.map(value => ({ value, label: value }))}
+              menuNowrap={false}
+              closeMenuOnSelect={false}
+              noOptionsMessage={() => getMessage("settings_title_full_page_empty_list")}
+              options={alwaysTranslatePages.map(value => ({ value, label: value }))}
+              formatOptionLabel={({ value }: ReactSelectOption<string>) => this.formatPageUrlLabel(value, alwaysTranslatePages)}
             />
             <Button
               primary
               label={getMessage("settings_title_full_page_add_url")}
-              onClick={() => window.prompt(getMessage("settings_title_full_page_always_translate"))}
+              onClick={() => this.addAlwaysTranslatePage()}
             />
           </div>
           <Checkbox

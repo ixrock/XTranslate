@@ -1,7 +1,7 @@
 import * as styles from "./react-select.module.scss";
 import React from "react";
 import { cssNames } from "../../utils";
-import ReactSelectComponent, { GroupBase, Props, SelectInstance } from "react-select";
+import ReactSelectComponent, { GroupBase, Props, PropsValue, OptionsOrGroups, SelectInstance } from "react-select";
 
 export { FormatOptionLabelMeta } from "react-select";
 
@@ -12,28 +12,38 @@ export interface ReactSelectOption<T = unknown> {
   label?: React.ReactNode;
   isDisabled?: boolean;
   isSelected?: boolean;
-  isFocused?: boolean;
 }
 
-export interface ReactSelectProps<T> extends Omit<Props, "onChange"> {
-  menuPositionHorizontal?: "auto" /*default*/ | "left" | "right";
-  onChange?(value: ReactSelectOption<T>): void;
+export interface ReactSelectProps<Value> extends Omit<Props, "onChange"> {
+  menuNowrap?: boolean; /* default: true*/
+  menuPositionHorizontal?: "left" | "right" | "auto"; /*default: auto*/
+  value: PropsValue<ReactSelectOption<Value>>;
+  options: OptionsOrGroups<ReactSelectOption<Value>, ReactSelectGroup<Value>>;
+  onChange?(value: ReactSelectOption<Value>): void;
 }
 
 export function ReactSelect<T>(props: ReactSelectProps<T>) {
+  const classNamePrefixGlobal = "XTranslateReactSelect";
   const selectRef = React.useRef<SelectInstance>(null);
   const {
     className,
     classNamePrefix,
+    menuNowrap = true,
     menuPositionHorizontal = "auto",
     ...selectProps
   } = props;
 
   function onMenuOpen() {
-    props.onMenuOpen?.();
-    if (menuPositionHorizontal === "auto") {
-      window.requestAnimationFrame(adjustHorizontalPosition);
-    }
+    window.requestAnimationFrame(() => {
+      props.onMenuOpen?.();
+      scrollToSelectedOption();
+      if (menuPositionHorizontal === "auto") adjustHorizontalPosition();
+    });
+  }
+
+  function scrollToSelectedOption() {
+    const selectedOptElem = selectRef.current.menuListRef.querySelector(`.${classNamePrefixGlobal}__option--is-selected`);
+    selectedOptElem?.scrollIntoView({ block: "nearest" });
   }
 
   function adjustHorizontalPosition() {
@@ -47,11 +57,12 @@ export function ReactSelect<T>(props: ReactSelectProps<T>) {
     <ReactSelectComponent
       {...selectProps}
       className={cssNames(styles.ReactSelect, className)}
-      classNamePrefix={cssNames("XTranslateReactSelect", classNamePrefix)}
+      classNamePrefix={cssNames(classNamePrefixGlobal, classNamePrefix)}
       classNames={{
         control: () => styles.control,
         menu: () => cssNames(styles.menu, {
-          [styles.menuRight]: menuPositionHorizontal === "right"
+          [styles.menuNoWrap]: menuNowrap,
+          [styles.menuRight]: menuPositionHorizontal === "right",
         }),
         menuList: () => styles.menuList,
         input: () => styles.inputContainer,

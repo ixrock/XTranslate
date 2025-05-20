@@ -23,7 +23,7 @@ export interface TranslateParams {
 
 export interface TranslatorParams {
   languages: ProviderLanguagesApiMap;
-  fullPageTranslator?: PageTranslator;
+  pageTranslator?: PageTranslator;
 }
 
 export abstract class Translator {
@@ -43,15 +43,15 @@ export abstract class Translator {
   public audio: HTMLAudioElement;
   public audioDataUrl = "";
   protected logger = createLogger({ systemPrefix: "[TRANSLATOR]" });
-  protected pageTranslator?: PageTranslator | undefined;
+  public pageTranslator?: PageTranslator;
 
-  protected constructor({ languages: { from: langFrom, to: langTo }, fullPageTranslator }: TranslatorParams) {
+  protected constructor({ languages: { from: langFrom, to: langTo }, pageTranslator }: TranslatorParams) {
     autoBind(this);
 
     const { auto, ...langToFallback } = langFrom;
     this.langFrom = langFrom;
     this.langTo = langTo ?? langToFallback;
-    this.pageTranslator = fullPageTranslator;
+    this.pageTranslator = pageTranslator;
 
     this.translate = new Proxy(this.translate, {
       apply: async (translate, callContext, [params]: [TranslateParams]): Promise<ITranslationResult> => {
@@ -236,6 +236,22 @@ export abstract class Translator {
 
   canTranslate(langFrom: string, langTo: string) {
     return !!(this.langFrom[langFrom] && this.langTo[langTo]);
+  }
+
+  canTranslateFullPage(): boolean {
+    return !!this.pageTranslator;
+  }
+
+  getSupportedLanguages(desired: { langFrom: string, langTo: string }) {
+    let { langFrom, langTo } = desired;
+    if (!this.langFrom[langFrom]) {
+      langFrom = Object.keys(this.langFrom)[0] ?? "auto";
+    }
+    if (!this.langTo[langTo]) {
+      const navLang = navigator.language;
+      langTo = [navLang, navLang.split("-")[0], "en"].find(langTo => this.langTo[langTo]);
+    }
+    return { langFrom, langTo }
   }
 
   getAuthSettings(): TranslatorAuthParams {

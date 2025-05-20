@@ -26,6 +26,7 @@ settings_title_full_page_excluded_pages = Никогда не переводит
 settings_title_full_page_always_translate = Всегда переводить
 settings_title_full_page_empty_list = Пустой список
 settings_title_full_page_add_url = Добавить URL
+settings_title_full_page_add_url_error = Попытка добавить некорректный URL
 settings_title_full_page_show_original_onmouseover = Отображать оригинальный текст при наведении курсора мыши
 auto_play_tts = Автовоспроизведение текста в речь
 use_chrome_tts = Использовать системный преобразователь текста в речь

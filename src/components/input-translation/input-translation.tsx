@@ -190,17 +190,13 @@ export class InputTranslation extends React.Component {
   @action
   onProviderChange = (name: ProviderCodeName) => {
     const translator = getTranslator(name);
+    const supportedLanguages = translator.getSupportedLanguages({
+      langFrom: this.params.from,
+      langTo: this.params.to,
+    });
     this.params.provider = name;
-
-    if (!translator.langFrom[this.params.from]) {
-      this.params.from = "auto";
-    }
-    if (!translator.langTo[this.params.to]) {
-      const navLang = navigator.language.split("-");
-      if (translator.langTo[navLang.join("-")]) this.params.to = navLang.join("-");
-      else if (translator.langTo[navLang[0]]) this.params.to = navLang[0];
-      else this.params.to = "en";
-    }
+    this.params.from = supportedLanguages.langFrom;
+    this.params.to = supportedLanguages.langTo;
     this.input.focus();
   }
 

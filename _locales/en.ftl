@@ -26,6 +26,7 @@ settings_title_full_page_always_translate = Always translate
 settings_title_full_page_show_original_onmouseover = Show original text on mouseover
 settings_title_full_page_empty_list = Empty list
 settings_title_full_page_add_url = Add URL
+settings_title_full_page_add_url_error = Attempt to add invalid URL
 auto_play_tts = Auto-play text-to-speech
 use_chrome_tts = Force to use system text-to-speech engine
 use_chrome_tts_tooltip_info = This option is auto-enabled when translator don't have its own TTS engine

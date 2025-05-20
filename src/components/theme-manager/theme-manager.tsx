@@ -65,7 +65,7 @@ export class ThemeManager extends React.Component {
     });
 
     return (
-      <ReactSelect<string>
+      <ReactSelect
         className="box grow"
         options={options}
         value={options.find(opt => opt.value === this.theme.fontFamily)}
@@ -98,7 +98,7 @@ export class ThemeManager extends React.Component {
     const options: ReactSelectOption<string>[] = themeStore.borderStyle.map(value => ({ value, label: value }));
 
     return (
-      <ReactSelect<string>
+      <ReactSelect
         className="box grow"
         options={options}
         value={options.find(opt => opt.value === theme.borderStyle)}

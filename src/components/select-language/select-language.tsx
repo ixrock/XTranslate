@@ -117,7 +117,7 @@ export class SelectLanguage extends React.Component<SelectLanguageProps> {
   @action
   private onChange = (update: { sourceLang?: string, targetLang?: string } = {}) => {
     const { from, to, onChange } = this.props;
-    const { sourceLang = from, targetLang = to, } = update;
+    const { sourceLang = from, targetLang = to } = update;
     onChange({ langFrom: sourceLang, langTo: targetLang });
   }
 
@@ -166,7 +166,7 @@ export class SelectLanguage extends React.Component<SelectLanguageProps> {
       return (
         <>
           <Icon small material="arrow_forward"/>
-          <ReactSelect<string>
+          <ReactSelect
             className="Select"
             placeholder={getMessage("reverse_translate_select_placeholder")}
             value={this.reverseLanguageOptions.find(opt => opt.value === settingsStore.data.langToReverse)}
@@ -211,7 +211,7 @@ export class SelectLanguage extends React.Component<SelectLanguageProps> {
 
     return (
       <div className={cssNames("SelectLanguage flex gaps align-center", className)}>
-        <ReactSelect<string>
+        <ReactSelect
           className="Select"
           menuPlacement="top"
           placeholder={getMessage("source_lang_placeholder")}
@@ -228,7 +228,7 @@ export class SelectLanguage extends React.Component<SelectLanguageProps> {
           onClick={this.onSwap}
         />
 
-        <ReactSelect<string>
+        <ReactSelect
           className="Select"
           menuPlacement="top"
           placeholder={getMessage("target_lang_placeholder")}

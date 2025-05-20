@@ -23,6 +23,7 @@ export async function translateActivePage() {
   void sendMessageToTab<TranslatePagePayload>(activeTab.id, {
     type: MessageType.TRANSLATE_FULL_PAGE,
     payload: {
+      tabId: activeTab.id,
       pageUrl: activeTab.url,
     }
   });
