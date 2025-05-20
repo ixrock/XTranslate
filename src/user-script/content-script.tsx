@@ -96,6 +96,7 @@ export class ContentScript extends React.Component {
 
   componentDidMount() {
     this.bindEvents();
+    this.translatePage(); // FIXME: remove
   }
 
   private bindEvents() {
@@ -201,10 +202,10 @@ export class ContentScript extends React.Component {
   }
 
   // TODO: render fixed/top widget with full-page translation settings
-  translatePage(payload: TranslatePagePayload) {
+  translatePage() {
     const { provider } = settingsStore.data.fullPageTranslation;
     const translator = getTranslator(provider);
-    translator.pageTranslator.startAutoTranslation();
+    return translator.pageTranslator.startAutoTranslation();
   }
 
   playText() {

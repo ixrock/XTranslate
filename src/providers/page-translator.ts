@@ -1,6 +1,6 @@
 import { reaction } from "mobx";
 import { franc } from "franc";
-import { autoBind, disposer } from "../utils";
+import { autoBind, disposer, sha256Hex, createLogger } from "../utils";
 import { ProviderCodeName } from "./providers";
 import type { TranslateParams } from "./translator";
 import { settingsStore } from "../components/settings/settings.storage";
@@ -13,23 +13,32 @@ export interface PageTranslatorParams {
 }
 
 export class PageTranslator {
+  static readonly RX_LETTER = /\p{L}/u;
+  static readonly SKIP_TAGS = new Set(["SCRIPT", "STYLE", "NOSCRIPT", "TEXTAREA", "CODE", "PRE"]);
+  static readonly API_REQUEST_MAX_CHARS = 5000;
+
   private textNodes = new Set<Node>();
   private translations: Map<TranslatorParamsHashId, WeakMap<Node, string/*translation*/>> = new Map();
   private detectedLanguages = new WeakMap<Node, string>();
-  private dispose = disposer();
+  protected logger = createLogger({ systemPrefix: "[PAGE-TRANSLATOR]" });
+  protected dispose = disposer();
 
   constructor(private params: PageTranslatorParams = {}) {
     autoBind(this);
   }
 
-  getParams() {
+  getSettingsParams() {
     const { provider, langFrom, langTo } = settingsStore.data.fullPageTranslation;
     return { provider, langFrom, langTo };
   }
 
-  getTranslationSettingsHashId(params = this.getParams()): TranslatorParamsHashId {
+  getHashId(params = this.getSettingsParams()): TranslatorParamsHashId {
     const { provider, langFrom, langTo } = params;
     return `${provider}_${langFrom}_${langTo}`;
+  }
+
+  getSettingsHashIdParams() {
+    return this.getHashId(this.getSettingsParams());
   }
 
   startAutoTranslation() {
@@ -37,14 +46,14 @@ export class PageTranslator {
     this.processNodes(textNodes);
 
     this.dispose.push(
-      reaction(this.getParams, this.refreshTranslations, { delay: 250 }),
+      reaction(this.getSettingsParams, this.refreshTranslations, { delay: 250 }),
       this.watchNewDOMTextNodes(),
     );
-  }
 
-  stopAutoTranslation() {
-    this.textNodes.clear();
-    this.dispose();
+    return () => {
+      this.textNodes.clear();
+      this.dispose();
+    }
   }
 
   private async refreshTranslations() {
@@ -57,54 +66,75 @@ export class PageTranslator {
     queueMicrotask(() => {
       const freshNodes = textNodes.filter(node => !this.textNodes.has(node));
       freshNodes.forEach(node => {
-        console.log('[PROCESS-TEXT-NODE]', node);
+        const text = node.nodeValue;
+        const textLength = Array.from(text).length; // TODO: pack for api-requests with <= `API_REQUEST_MAX_CHARS`
         this.textNodes.add(node);
-        // this.detectLanguage(node);
-        // void this.translateNode(node);
+
+        this.translateNode(node).then(() => {
+          const translation = this.getTranslationByNode(node);
+          this.logger.info(node.nodeValue, {
+            translation, textNode: node
+          })
+        });
       });
     })
   };
 
-  private async translateNode(textNode: Node) {
-    const key = this.getTranslationSettingsHashId(this.getParams());
-
-    if (!this.translations.has(key)) {
-      this.translations.set(key, new WeakMap());
+  getTranslationByNode(textNode: Node, hashId = this.getSettingsHashIdParams()): string {
+    if (!this.translations.has(hashId)) {
+      this.translations.set(hashId, new WeakMap());
     }
-
-    const translation = this.translations.get(key).get(textNode);
-    if (!translation) {
-      const apiResponse = await Promise.resolve(textNode.textContent); // TODO: make real api-call + check persistent/session cache
-      this.translations.get(key).set(textNode, apiResponse);
-    }
+    return this.translations.get(hashId).get(textNode) ?? "";
   }
 
-  hasDetectedLanguage(textNode: Node): boolean {
-    return this.detectedLanguages.has(textNode);
+  private async translateNode(textNode: Node): Promise<string> {
+    const hashId = this.getSettingsHashIdParams();
+    const translation = this.getTranslationByNode(textNode, hashId);
+    if (translation) {
+      return translation;
+    }
+    const text = textNode.textContent;
+    const textHash = await sha256Hex(text);
+    const apiResponse = await Promise.resolve(textHash); // TODO: make real api-call + check persistent/session cache
+
+    this.translations.get(hashId).set(textNode, apiResponse);
+    return apiResponse;
   }
 
-  detectLanguage(textNode: Node): string {
-    if (!this.hasDetectedLanguage(textNode)) {
-      const detectedLang = textNode.parentElement.closest(`[lang]`)?.getAttribute("lang") || franc(textNode.textContent);
+  private detectLanguage(textNode: Node): string {
+    const isDetected = this.detectedLanguages.has(textNode);
+    if (!isDetected) {
+      const text = textNode.textContent;
+      let detectedLang = franc(text, { minLength: 2 });
+      if (detectedLang === "und") {
+        detectedLang = textNode.parentElement.closest(`[lang]`)?.getAttribute("lang");
+      }
       this.detectedLanguages.set(textNode, detectedLang);
       return detectedLang;
     }
     return this.detectedLanguages.get(textNode);
   }
 
-  private collectPageTextsNodes(rootElem = document.body): Node[] {
-    const skipTags = new Set(["SCRIPT", "STYLE", "NOSCRIPT", "TEXTAREA", "CODE", "PRE"]);
+  private textNodesFilter(node: Node): boolean {
+    const parentElem = node.parentElement;
+    const fastSkip = !parentElem || PageTranslator.SKIP_TAGS.has(parentElem.tagName);
+    if (fastSkip) {
+      return false;
+    }
+    const text = node.nodeValue.trim();
+    const empty = !text.length;
+    const hasWords = PageTranslator.RX_LETTER.test(text);
+    return !empty && hasWords;
+  }
 
+  private collectPageTextsNodes(rootElem = document.body): Node[] {
     const treeWalker = document.createTreeWalker(rootElem, NodeFilter.SHOW_TEXT, {
-        acceptNode(node) {
-          const elem = node.parentElement;
-          if (!elem || skipTags.has(elem.tagName)) return NodeFilter.FILTER_REJECT;
-          if (!node.nodeValue.trim()) return NodeFilter.FILTER_REJECT;
-          return NodeFilter.FILTER_ACCEPT;
+        acceptNode: (node) => {
+          const accepted = this.textNodesFilter(node);
+          return accepted ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
         },
       }
     );
-
     const nodes = [];
     while (treeWalker.nextNode()) nodes.push(treeWalker.currentNode);
     return nodes;
@@ -118,7 +148,7 @@ export class PageTranslator {
         const textNodes = Array
           .from(addedNodes.values())
           .filter((node: Node) => node.nodeType === Node.TEXT_NODE);
-        newTextNodes.push(...textNodes);
+        newTextNodes.push(...textNodes.filter(this.textNodesFilter));
       });
 
       this.processNodes(newTextNodes);
@@ -128,6 +158,7 @@ export class PageTranslator {
     return () => observer.disconnect();
   }
 
+  // TODO: keep translations temporary in window.sessionStorage
   private persistTranslation(provider: ProviderCodeName, params: TranslateParams) {
 
   }
