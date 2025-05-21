@@ -8,11 +8,13 @@ import { listenProxyRequestActions } from "./httpProxy.bgc";
 import { listenTranslationHistoryActions } from "./history.bgc";
 import { listenAIRequests } from "./open-ai.bgc";
 import { initBackground as initMellowtel, listenMellowtelActions } from "../../mellowtel";
+import { listenScriptingActions } from "./scripting.bgc";
 
 onInstall();
 initContextMenu();
 
 // Listen IPC messages from "options-page" (extension window) or "content-script" pages
+listenScriptingActions();
 listenStorageActions();
 listenProxyRequestActions()
 listenTranslationHistoryActions();

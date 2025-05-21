@@ -12,9 +12,8 @@ import orderBy from 'lodash/orderBy';
 import { contentScriptEntry } from "../common-vars";
 import { preloadAppData } from "../preloadAppData";
 import { autoBind, delay, disposer, getHotkey } from "../utils";
-import { getManifest, getURL, MessageType, onMessage, ProxyResponseType, TranslatePagePayload, TranslatePayload } from "../extension";
+import { getManifest, getURL, MessageType, onMessage, ProxyResponseType, runtimeCheckContextInvalidated, TranslatePayload } from "../extension";
 import { proxyRequest } from "../background/httpProxy.bgc";
-import { checkContextInvalidationError } from "../background/contextInvalidated.bgc";
 import { popupHotkey, settingsStore } from "../components/settings/settings.storage";
 import { getNextTranslator, getTranslator, ITranslationError, ITranslationResult } from "../providers";
 import { XTranslateIcon } from "./xtranslate-icon";
@@ -70,7 +69,7 @@ export class ContentScript extends React.Component {
   private mouseTarget: HTMLElement = document.body;
 
   // Unload previous content script (e.g. in case of "context invalidated" error on extension update to new version)
-  private unloadContentScript = disposer();
+  private unload = disposer();
 
   @observable.ref translation: ITranslationResult;
   @observable.ref error: ITranslationError;
@@ -114,7 +113,7 @@ export class ContentScript extends React.Component {
     window.addEventListener("scroll", this.updatePopupPositionLazy, { signal });
     window.addEventListener("resize", this.updatePopupPositionLazy, { signal });
 
-    this.unloadContentScript.push(
+    this.unload.push(
       function unmount() {
         ContentScript.rootElem.parentElement.removeChild(ContentScript.rootElem);
         ContentScript.rootNode.unmount();
@@ -127,9 +126,9 @@ export class ContentScript extends React.Component {
     );
   }
 
-  async checkContextInvalidationError() {
-    const isInvalidated = await checkContextInvalidationError();
-    if (isInvalidated) this.unloadContentScript();
+  async checkContextInvalidationError(): Promise<void> {
+    const isInvalidated = await runtimeCheckContextInvalidated();
+    if (isInvalidated) this.unload();
   }
 
   @computed get isPopupHidden() {
@@ -166,14 +165,14 @@ export class ContentScript extends React.Component {
 
   @action
   async translate({ provider, from, to, text }: Partial<TranslatePayload> = {}) {
+    void this.checkContextInvalidationError();
+
     this.lastParams = {
       vendor: provider ?? settingsStore.data.vendor,
       langFrom: from ?? settingsStore.data.langFrom,
       langTo: to ?? settingsStore.data.langTo,
       originalText: text ?? this.selectedText.trim(),
     };
-
-    void this.checkContextInvalidationError();
 
     try {
       const { vendor, langTo: to, langFrom: from, originalText: text } = this.lastParams;

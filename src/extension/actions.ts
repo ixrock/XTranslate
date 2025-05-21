@@ -34,3 +34,15 @@ export async function translateActivePage<Payload>(): Promise<Payload | false> {
     }
   });
 }
+
+export async function runtimeCheckContextInvalidated() {
+  try {
+    await sendMessage({
+      type: MessageType.RUNTIME_CHECK_CONTEXT_INVALIDATED,
+    });
+
+    return false;
+  } catch (err) {
+    return String(err).includes("Extension context invalidated");
+  }
+}

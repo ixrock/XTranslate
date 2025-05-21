@@ -18,7 +18,8 @@ export enum MessageType {
   MELLOWTEL_STATUS = "MELLOWTEL_STATUS",
   MELLOWTEL_ACTIVATE = "MELLOWTEL_ACTIVATE",
   MELLOWTEL_DEACTIVATE = "MELLOWTEL_DEACTIVATE",
-  CONTEXT_INVALIDATION_CHECK = "CONTEXT_INVALIDATION_CHECK",
+  RUNTIME_CHECK_CONTEXT_INVALIDATED = "RUNTIME_CHECK_CONTEXT_INVALIDATED",
+  INJECT_CONTENT_SCRIPT = "INJECT_CONTENT_SCRIPT",
 }
 
 export interface Message<Payload = any /*json-serializable*/> {
@@ -47,6 +48,10 @@ export interface ProxyResponsePayload<Data> {
   url: string;
   headers: { [header: string]: string; "content-type"?: string };
   data: Data;
+}
+
+export interface InjectContentScriptPayload {
+  tabId?: number;
 }
 
 export interface TranslatePayload extends TranslateParams {

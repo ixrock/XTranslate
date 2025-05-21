@@ -1,11 +1,11 @@
 // Chrome tabs apis
-import type { Message } from './messages'
+import { Message } from './messages'
 import { sendMessage } from "./runtime";
 import { isSystemPage } from "../common-vars";
 
 export type BrowserTab = chrome.tabs.Tab;
 
-export function createTab(url: string, active = true): Promise<chrome.tabs.Tab> {
+export function createTab(url: string, active = true): Promise<BrowserTab> {
   return chrome.tabs.create({ url, active });
 }
 
@@ -18,17 +18,15 @@ export async function sendMessageToTabs<P>(message: Message<P>, params: { filter
 
   return Promise.allSettled(
     tabs
-      .filter(params.filter ?? (() => true))
+      .filter(params.filter ?? ((tab) => !isSystemPage(tab.url)))
       .map(tab => sendMessageToTab(tab.id, message))
   );
 }
 
-export async function getInjectableTabs(): Promise<chrome.tabs.Tab[]> {
+export async function getInjectableTabs(): Promise<BrowserTab[]> {
   return new Promise(resolve => {
     chrome.tabs.query({}, function (tabs) {
-      resolve(
-        tabs.filter(tab => tab.url && !isSystemPage(tab.url))
-      );
+      resolve(tabs.filter(tab => !isSystemPage(tab.url)));
     });
   });
 }
@@ -36,7 +34,7 @@ export async function getInjectableTabs(): Promise<chrome.tabs.Tab[]> {
 // Works differently than `chrome.tabs.getCurrent()`
 // Only "activeTab" permission is enabled in manifest.json
 // e.g. show translation in extension's window when some text selected at webpage
-export function getActiveTab(): Promise<chrome.tabs.Tab> {
+export function getActiveTab(): Promise<BrowserTab> {
   return new Promise(resolve => {
     chrome.tabs.query({ active: true }, function (tabs) {
       resolve(tabs[0]);
@@ -45,21 +43,28 @@ export function getActiveTab(): Promise<chrome.tabs.Tab> {
 }
 
 export interface BroadcastMessageParams {
-  filter?: (tab: BrowserTab) => boolean;
+  acceptFilter?: (tab: BrowserTab) => boolean;
 }
 
 /**
  * Broadcast message to all window tabs (context pages) and extension windows (options page)
  */
-export async function broadcastMessage<T>(msg: Message<T>, { filter }: BroadcastMessageParams = {}) {
+export async function broadcastMessage<T>(msg: Message<T>, { acceptFilter }: BroadcastMessageParams = {}) {
+  acceptFilter ??= (tab) => !isSystemPage(tab.url);
+
   const activeTab = await getActiveTab();
 
-  // skip system pages by default, e.g. `chrome://` or `chrome-extension://`
-  filter ??= (tab: BrowserTab) => isSystemPage(activeTab.url);
-
-  if (filter(activeTab)) {
-    await sendMessage<T>(msg);
+  if (acceptFilter(activeTab)) {
+    try {
+      await sendMessage<T>(msg);
+    } catch (err) {
+      if (!String(err).includes("Could not establish connection. Receiving end does not exist.")) {
+        throw err;
+      }
+    }
   }
 
-  return sendMessageToTabs<T>(msg, { filter });
+  return sendMessageToTabs<T>(msg, {
+    filter: acceptFilter,
+  });
 }
