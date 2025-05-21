@@ -3,7 +3,7 @@ import path from 'path'
 import HtmlWebpackPlugin from 'html-webpack-plugin'
 import CopyWebpackPlugin from 'copy-webpack-plugin'
 import MiniCssExtractPlugin from 'mini-css-extract-plugin'
-import { appEntry, contentScriptEntry, pdfViewerEntry, serviceWorkerEntry } from "./src/common-vars";
+import { appEntry, contentScriptEntry, contentScriptInjectable, pdfViewerEntry, serviceWorkerEntry } from "./src/common-vars";
 import { mellowtelMeucciFilename } from "./mellowtel/mellowtel.config";
 
 const srcPath = path.resolve(__dirname, "src");
@@ -13,6 +13,7 @@ const componentsDir = path.resolve(srcPath, "components");
 const configEntries: webpack.EntryObject = {
   [appEntry]: path.resolve(componentsDir, "app/index.tsx"),
   [contentScriptEntry]: path.resolve(srcPath, "user-script/content-script-entry.tsx"),
+  [contentScriptInjectable]: path.resolve(srcPath, "user-script/content-script.tsx"),
   [serviceWorkerEntry]: path.resolve(srcPath, "background/background.ts"),
   [pdfViewerEntry]: path.resolve(srcPath, "pdf-viewer/pdf-viewer.tsx"),
   [mellowtelMeucciFilename]: path.resolve(__dirname, "mellowtel/mellowtel-meucci.ts"),
@@ -192,6 +193,7 @@ export default [
     config.target = "web"
     config.entry = {
       [contentScriptEntry]: configEntries[contentScriptEntry],
+      [contentScriptInjectable]: configEntries[contentScriptInjectable],
       [mellowtelMeucciFilename]: configEntries[mellowtelMeucciFilename],
     };
 

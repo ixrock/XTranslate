@@ -30,12 +30,12 @@ export class PdfViewer extends React.Component {
   constructor(props: React.PropsWithChildren) {
     super(props);
     makeObservable(this);
-    this.autoPopulateFrameFonts();
     void this.preloadPdf();
   }
 
   private onPdfViewerReady = action(() => {
     this.isPdfReady = true;
+    this.autoPopulateDocumentFontsToFrame();
     void this.bindContentScript();
     void this.correctPdfDownloadFilename();
     void this.addChromeNativePdfViewerIconButton();
@@ -78,8 +78,10 @@ export class PdfViewer extends React.Component {
     await ContentScript.init(this.iframe.contentWindow as Window);
   };
 
-  private autoPopulateFrameFonts() {
-    return themeStore.events.on("fontLoaded", font => this.iframe.contentDocument.fonts.add(font));
+  private autoPopulateDocumentFontsToFrame() {
+    const addFont = (font: FontFace) => this.iframe.contentDocument.fonts.add(font);
+    Array.from(document.fonts).forEach(addFont);
+    return themeStore.events.on("fontLoaded", addFont);
   }
 
   get fileName(): string {

@@ -1,7 +1,7 @@
 // Injectable script actions
 
 import { getActiveTab, InjectContentScriptPayload, isBackgroundWorker, MessageType, onMessage, sendMessage } from "../extension";
-import { contentScriptEntry } from "../common-vars";
+import { contentScriptInjectable } from "../common-vars";
 import { disposer } from "../utils/disposer";
 import { getInjectableTabs } from "../extension/tabs";
 import { createLogger } from "../utils/createLogger";
@@ -22,7 +22,7 @@ export async function injectContentScript({ tabId }: InjectContentScriptPayload 
 
     return chrome.scripting.executeScript({
       target: { tabId, allFrames: true },
-      files: [`${contentScriptEntry}.js`],
+      files: [`${contentScriptInjectable}.js`],
     });
   }
 

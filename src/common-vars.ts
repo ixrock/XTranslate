@@ -10,7 +10,8 @@ export const edgeAddonsURL = 'https://microsoftedge.microsoft.com/addons/detail/
 // Webpack: app build, generated output filenames without extension (*.js, *.css)
 export const appEntry = "app";
 export const serviceWorkerEntry = "background"; // keep in sync with manifest.json
-export const contentScriptEntry = "content-script"; // keep in sync with manifest.json
+export const contentScriptEntry = "content-script-entry"; // keep in sync with manifest.json
+export const contentScriptInjectable = "content-script-injectable";
 export const pdfViewerEntry = "pdf-viewer";
 export const pdfViewerSkipUrlHash = "#pdf-raw";
 

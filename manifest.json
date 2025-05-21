@@ -35,7 +35,7 @@
     {
       "all_frames": true,
       "run_at": "document_start",
-      "js": ["content-script.js"],
+      "js": ["content-script-entry.js"],
       "matches": [
         "<all_urls>",
         "https://*/*",

@@ -1,5 +1,6 @@
-//-- Content script (injected at every webpage/frame)
+//-- Injectable content-script (refreshed on every page reload without extension-reload)
 
+import "../setup";
 import "./content-script.scss";
 import React from "react";
 import { createRoot, Root } from "react-dom/client";
@@ -9,9 +10,9 @@ import debounce from 'lodash/debounce';
 import isEmpty from 'lodash/isEmpty';
 import isEqual from 'lodash/isEqual';
 import orderBy from 'lodash/orderBy';
-import { contentScriptEntry } from "../common-vars";
+import { contentScriptInjectable } from "../common-vars";
 import { preloadAppData } from "../preloadAppData";
-import { autoBind, delay, disposer, getHotkey } from "../utils";
+import { autoBind, disposer, getHotkey } from "../utils";
 import { getManifest, getURL, MessageType, onMessage, ProxyResponseType, runtimeCheckContextInvalidated, TranslatePayload } from "../extension";
 import { proxyRequest } from "../background/httpProxy.bgc";
 import { popupHotkey, settingsStore } from "../components/settings/settings.storage";
@@ -24,17 +25,6 @@ export class ContentScript extends React.Component {
   static window: Window;
   static rootElem: HTMLElement;
   static rootNode: Root;
-
-  static start() {
-    if (document.readyState !== "complete") {
-      window.addEventListener("DOMContentLoaded", async () => {
-        await delay(100); // give some time for react-hydration to finish work (react-error #418)
-        void this.init();
-      }, { once: true });
-    } else {
-      void this.init();
-    }
-  }
 
   static async init(window: Window = globalThis.window.self) {
     await preloadAppData(); // wait for dependent data before first render
@@ -84,7 +74,7 @@ export class ContentScript extends React.Component {
 
   async preloadCss() {
     const styles = await proxyRequest<string>({
-      url: getURL(`${contentScriptEntry}.css`),
+      url: getURL(`${contentScriptInjectable}.css`),
       responseType: ProxyResponseType.TEXT,
     });
 
@@ -513,3 +503,6 @@ export class ContentScript extends React.Component {
     )
   }
 }
+
+// render app
+await ContentScript.init();
