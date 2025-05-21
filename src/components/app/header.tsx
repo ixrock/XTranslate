@@ -27,9 +27,9 @@ export class Header extends React.Component {
     });
   }
 
-  private translateActivePage = () => {
-    void translateActivePage();
-    window.close();
+  private translateActivePage = async () => {
+    const ok = await translateActivePage();
+    if (ok !== false) window.close();
   }
 
   private onTabsChange = async (page: PageId) => {

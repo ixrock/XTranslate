@@ -52,14 +52,13 @@ export interface BroadcastMessageParams {
  * Broadcast message to all window tabs (context pages) and extension windows (options page)
  */
 export async function broadcastMessage<T>(msg: Message<T>, { filter }: BroadcastMessageParams = {}) {
-  try {
+  const activeTab = await getActiveTab();
+
+  // skip system pages by default, e.g. `chrome://` or `chrome-extension://`
+  filter ??= (tab: BrowserTab) => isSystemPage(activeTab.url);
+
+  if (filter(activeTab)) {
     await sendMessage<T>(msg);
-  } catch (err) {
-    if (String(err).includes("Could not establish connection. Receiving end does not exist.")) {
-      // do nothing: this error might happen when options page extension window is not opened
-    } else {
-      throw err;
-    }
   }
 
   return sendMessageToTabs<T>(msg, { filter });

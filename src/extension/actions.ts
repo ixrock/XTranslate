@@ -1,13 +1,14 @@
 import { isSystemPage } from "../common-vars";
-import { getActiveTab, sendMessageToTab } from "./tabs";
+import { getActiveTab } from "./tabs";
 import { sendMessage } from "./runtime";
 import { MessageType, TranslatePagePayload } from "./messages";
 
 export async function getSelectedText(): Promise<string> {
   const activeTab = await getActiveTab();
 
-  // fix: Uncaught (in promise) Error: Could not establish connection. Receiving end does not exist
-  if (!activeTab.url || isSystemPage(activeTab.url)) {
+  // avoid error "Uncaught (in promise) Error: Could not establish connection. Receiving end does not exist"
+  // happens in communication app <-> system page (e.g. `chrome://*` or `chrome-extension://*`)
+  if (isSystemPage(activeTab.url)) {
     return "";
   }
 
@@ -17,10 +18,15 @@ export async function getSelectedText(): Promise<string> {
   });
 }
 
-export async function translateActivePage() {
+export async function translateActivePage<Payload>(): Promise<Payload | false> {
   const activeTab = await getActiveTab();
 
-  void sendMessageToTab<TranslatePagePayload>(activeTab.id, {
+  if (isSystemPage(activeTab.url)) {
+    return false;
+  }
+
+  return sendMessage<TranslatePagePayload>({
+    tabId: activeTab.id,
     type: MessageType.TRANSLATE_FULL_PAGE,
     payload: {
       tabId: activeTab.id,

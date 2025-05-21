@@ -4,8 +4,7 @@
 import { disposer } from "../utils/disposer";
 import { Message, MessageType, StorageDeletePayload, StorageReadPayload, StorageSyncPayload, StorageWritePayload } from '../extension/messages'
 import { isBackgroundWorker, onMessage, sendMessage, } from '../extension/runtime'
-import { broadcastMessage, BrowserTab } from '../extension/tabs'
-import { isSystemPage } from "../common-vars";
+import { broadcastMessage } from '../extension/tabs'
 
 export type StorageKey = string;
 export type StorageArea = chrome.storage.AreaName;
@@ -110,7 +109,5 @@ export function syncExternalStorageUpdate<T>(payload: StorageSyncPayload<T>) {
     payload,
   };
 
-  return broadcastMessage(msg, {
-    filter: (tab: BrowserTab) => !isSystemPage(tab.url)
-  });
+  return broadcastMessage(msg);
 }
