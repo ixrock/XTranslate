@@ -15,7 +15,7 @@ export interface PageTranslatorParams {
 export class PageTranslator {
   static readonly RX_LETTER = /\p{L}/u;
   static readonly SKIP_TAGS = new Set(["SCRIPT", "STYLE", "NOSCRIPT", "TEXTAREA", "CODE", "PRE"]);
-  static readonly API_REQUEST_MAX_CHARS = 5000;
+  static readonly API_MAX_CHARS_LIMIT_PER_REQUEST = 5000;
 
   private textNodes = new Set<Node>();
   private translations: Map<TranslatorParamsHashId, WeakMap<Node, string/*translation*/>> = new Map();
@@ -59,26 +59,41 @@ export class PageTranslator {
   private async refreshTranslations() {
     return Promise.allSettled(
       Array.from(this.textNodes).map(this.translateNode)
-    );
+    )
   };
 
   private processNodes(textNodes: Node[]) {
-    queueMicrotask(() => {
-      const freshNodes = textNodes.filter(node => !this.textNodes.has(node));
-      freshNodes.forEach(node => {
-        const text = node.nodeValue;
-        const textLength = Array.from(text).length; // TODO: pack for api-requests with <= `API_REQUEST_MAX_CHARS`
-        this.textNodes.add(node);
+    const limit = PageTranslator.API_MAX_CHARS_LIMIT_PER_REQUEST;
+    const packs: Node[][] = [];
 
-        this.translateNode(node).then(() => {
-          const translation = this.getTranslationByNode(node);
-          this.logger.info(node.nodeValue, {
-            translation, textNode: node
-          })
-        });
-      });
-    })
-  };
+    let bufferLen = 0; // in code-points
+    let current: Node[] = [];
+
+    const freshNodes = textNodes.filter(n => !this.textNodes.has(n));
+
+    for (const node of freshNodes) {
+      const txt = node.nodeValue ?? "";
+      const len = [...txt].length; // safe for chars like: 😊 𐍈 等
+
+      this.textNodes.add(node);
+
+      if (bufferLen + len > limit) {
+        if (current.length) packs.push(current);
+        current = [];
+        bufferLen = 0;
+      }
+      current.push(node);
+      bufferLen += len;
+    }
+
+    if (current.length) {
+      packs.push(current); // add tail (if any)
+    }
+
+    // TODO: send to translation API by text-groups
+    const textGroups = packs.map(nodes => nodes.map(node => node.nodeValue));
+    console.log(`[PROCESS-NODES-PACK]: ${packs.length}`, textGroups);
+  }
 
   getTranslationByNode(textNode: Node, hashId = this.getSettingsHashIdParams()): string {
     if (!this.translations.has(hashId)) {
@@ -90,14 +105,20 @@ export class PageTranslator {
   private async translateNode(textNode: Node): Promise<string> {
     const hashId = this.getSettingsHashIdParams();
     const translation = this.getTranslationByNode(textNode, hashId);
-    if (translation) {
-      return translation;
-    }
+    if (translation) return translation;
+
     const text = textNode.textContent;
     const textHash = await sha256Hex(text);
-    const apiResponse = await Promise.resolve(textHash); // TODO: make real api-call + check persistent/session cache
+
+    // TODO: make real api-call + check persistent/session cache
+    const apiResponse = await Promise.resolve(textHash).then((data) => {
+      const translation = this.getTranslationByNode(textNode);
+      this.logger.info(textNode, { translation, textNode })
+      return data;
+    });
 
     this.translations.get(hashId).set(textNode, apiResponse);
+
     return apiResponse;
   }
 
@@ -151,7 +172,9 @@ export class PageTranslator {
         newTextNodes.push(...textNodes.filter(this.textNodesFilter));
       });
 
-      this.processNodes(newTextNodes);
+      if (newTextNodes.length) {
+        this.processNodes(newTextNodes);
+      }
     });
 
     observer.observe(rootElem, { subtree: true, childList: true });
