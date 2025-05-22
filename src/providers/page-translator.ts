@@ -65,7 +65,7 @@ export class PageTranslator {
 
   protected importNodes(nodes: Node[]) {
     nodes.forEach(textNode => {
-      const txt = textNode.nodeValue.trim(); // cut redundant empty spaces
+      const txt = this.normalizeText(textNode); // cut redundant empty spaces
       this.textNodes.add(textNode);
       this.originalTexts.set(textNode, txt);
     })
@@ -163,6 +163,10 @@ export class PageTranslator {
     return translations;
   }
 
+  normalizeText(node: Node): string {
+    return node.nodeValue.trim();
+  }
+
   acceptTextNodeFilter(node: Node): boolean {
     if (node.nodeType !== Node.TEXT_NODE) return false;
 
@@ -170,7 +174,7 @@ export class PageTranslator {
     const skippedByParentTag = !parentElem || PageTranslator.SKIP_TAGS.has(parentElem.tagName);
     if (skippedByParentTag) return false;
 
-    const text = node.nodeValue.trim();
+    const text = this.normalizeText(node);
     const empty = !text.length;
     const hasWords = PageTranslator.RX_LETTER.test(text);
     return !empty && hasWords;
