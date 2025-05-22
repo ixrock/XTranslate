@@ -98,15 +98,21 @@ export class PageTranslator {
     return packs;
   }
 
+  protected updateDataAttrs(textNode: Node, dataset: Record<TranslationHashId, string/*translation*/>) {
+    const parentElem = textNode.parentElement as HTMLElement;
+    if (!parentElem) return;
+    Object.assign(parentElem.dataset, dataset);
+  }
+
   protected async processNodes(textNodes: Node[]): Promise<string[]> {
     const providerParams = this.getProviderParams();
     const providerHashId = this.getProviderHashId(providerParams);
-    const freshNodes = textNodes.filter(node => !this.getTranslationByNode(node, providerHashId));
-    const packedNodes = this.packNodes(freshNodes);
-    this.logger.info(`PACKED NODES: ${packedNodes.length}`, packedNodes);
-
     try {
-      const result = (
+      const freshNodes = textNodes.filter(node => !this.getTranslationByNode(node, providerHashId));
+      const packedNodes = this.packNodes(freshNodes);
+      this.logger.info(`PROCESSING NODE GROUPS: ${packedNodes.length}`, packedNodes);
+
+      const translations = (
         await Promise.all(
           packedNodes.map(async nodes => {
             const translationTexts = await this.translateApiRequest(nodes);
@@ -115,10 +121,19 @@ export class PageTranslator {
           })
         )
       ).flat();
-      this.logger.info(`PROCESSING DONE`, result);
-      return result;
+
+      window.requestIdleCallback(() => {
+        textNodes.forEach(node => {
+          this.updateDataAttrs(node, {
+            [providerHashId]: this.translations.get(node)[providerHashId]
+          });
+        });
+      });
+
+      this.logger.info(`TRANSLATED`, translations);
+      return translations;
     } catch (err) {
-      this.logger.error(`PROCESSING FAILED`, err, providerParams);
+      this.logger.error(`TRANSLATION FAILED`, err, providerParams);
       throw err;
     }
   }
@@ -127,11 +142,15 @@ export class PageTranslator {
     if (!this.translations.has(textNode)) {
       this.translations.set(textNode, {});
     }
-    let memoryCache = this.translations.get(textNode)[hashId];
-    if (!memoryCache && this.params.persistent) {
-      memoryCache = this.getStorageCache(textNode, hashId);
+    let translation = this.translations.get(textNode)[hashId];
+    if (!translation && this.params.persistent) {
+      const storageCache = this.getStorageCache(textNode, hashId);
+      if (storageCache) {
+        translation = storageCache; // restore to memory-cache from storage (sync)
+        this.translations.get(textNode)[hashId] = storageCache;
+      }
     }
-    return memoryCache ?? "";
+    return translation ?? "";
   }
 
   async translateApiRequest(textNodes: Node[], params = this.getProviderParams()): Promise<string[]> {
