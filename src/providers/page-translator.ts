@@ -44,7 +44,7 @@ export class PageTranslator {
   }
 
   startAutoTranslation() {
-    const textNodes = this.collectPageTextsNodes();
+    const textNodes = this.collectDOMTextNodes();
     this.importNodes(textNodes);
     void this.processNodes(textNodes);
 
@@ -98,7 +98,7 @@ export class PageTranslator {
     return packs;
   }
 
-  protected async processNodes(textNodes: Node[]): Promise<string[][]> {
+  protected async processNodes(textNodes: Node[]): Promise<string[]> {
     const providerParams = this.getProviderParams();
     const providerHashId = this.getProviderHashId(providerParams);
     const freshNodes = textNodes.filter(node => !this.getTranslationByNode(node, providerHashId));
@@ -106,13 +106,15 @@ export class PageTranslator {
     this.logger.info(`PACKED NODES: ${packedNodes.length}`, packedNodes);
 
     try {
-      const result = await Promise.all(
-        packedNodes.map(async nodes => {
-          const translationTexts = await this.translateApiRequest(nodes);
-          if (this.params.persistent) this.saveStorageCache(nodes, translationTexts, providerHashId);
-          return translationTexts;
-        })
-      )
+      const result = (
+        await Promise.all(
+          packedNodes.map(async nodes => {
+            const translationTexts = await this.translateApiRequest(nodes);
+            if (this.params.persistent) this.saveStorageCache(nodes, translationTexts, providerHashId);
+            return translationTexts;
+          })
+        )
+      ).flat();
       this.logger.info(`PROCESSING DONE`, result);
       return result;
     } catch (err) {
@@ -180,7 +182,7 @@ export class PageTranslator {
     return !empty && hasWords;
   }
 
-  collectPageTextsNodes(rootElem = document.body): Node[] {
+  collectDOMTextNodes(rootElem = document.body): Node[] {
     const treeWalker = document.createTreeWalker(rootElem, NodeFilter.SHOW_TEXT, {
         acceptNode: (node) => {
           const accepted = this.acceptTextNodeFilter(node);
