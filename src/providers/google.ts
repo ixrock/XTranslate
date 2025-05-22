@@ -1,6 +1,6 @@
 import GoogleLanguages from "./google.json"
 import { ProxyRequestInit } from "../extension";
-import { isTranslationError, ITranslationResult, PageTranslator, ProviderCodeName, TranslateParams, Translator } from "./index";
+import { isTranslationError, ITranslationResult, PageTranslator, ProviderCodeName, TranslateParams, TranslateParamsMany, Translator } from "./index";
 import { delay } from "../utils";
 import { getMessage } from "../i18n";
 import { createStorage } from "../storage";
@@ -44,6 +44,37 @@ class Google extends Translator {
     const textEncoded = encodeURIComponent(text);
     const apiClient = this.apiClient.get();
     return this.apiUrl + `/translate_tts?client=${apiClient}&ie=UTF-8&tl=${lang}&q=${textEncoded}`;
+  }
+
+  async translateMany({ langTo, langFrom, texts }: TranslateParamsMany): Promise<string[]> {
+    const queryParams = new URLSearchParams({
+      client: this.apiClient.get(),
+      sl: langFrom,
+      tl: langTo
+    });
+    const url = `${this.apiUrl}/translate_a/t?${queryParams}`;
+
+    const requestInit: ProxyRequestInit = {
+      method: "POST",
+      headers: {
+        "Content-type": "application/x-www-form-urlencoded"
+      },
+      body: new URLSearchParams(
+        texts.map(text => ["q", text])
+      ).toString(),
+    };
+
+    const translations: string[] = [];
+    const response = await this.request({ url, requestInit });
+
+    if (langFrom === "auto") {
+      const autoDetectedResults = response as [text: string, locale: string][];
+      translations.push(...autoDetectedResults.map(([text]) => text));
+    } else {
+      translations.push(...response as string[]);
+    }
+
+    return translations;
   }
 
   async translate(params: TranslateParams): Promise<ITranslationResult> {

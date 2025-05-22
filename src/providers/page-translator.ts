@@ -1,21 +1,23 @@
 import { reaction } from "mobx";
 import { franc } from "franc";
 import { md5 } from "js-md5";
-import { autoBind, createLogger, disposer, LoggerColor, sha256Hex } from "../utils";
+import { autoBind, createLogger, disposer, LoggerColor } from "../utils";
 import { ProviderCodeName } from "./providers";
 import { settingsStore } from "../components/settings/settings.storage";
+import { getTranslator } from "./translator";
 
 export type LangSource = string;
 export type LangTarget = string;
 export type TranslationHashId = `${ProviderCodeName}_${LangSource}_${LangTarget}`;
 
 export interface PageTranslatorParams {
+  persistent?: boolean; // cache page translations per window tab in `sessionStorage`, default: true
 }
 
 export class PageTranslator {
   static readonly RX_LETTER = /\p{L}/u;
   static readonly SKIP_TAGS = new Set(["SCRIPT", "STYLE", "NOSCRIPT", "TEXTAREA", "CODE", "PRE"]);
-  static readonly API_MAX_CHARS_LIMIT_PER_REQUEST = 4000;
+  static readonly API_MAX_CHARS_LIMIT_PER_REQUEST = 5000;
 
   protected textNodes = new Set<Node>();
   protected translations = new WeakMap<Node, Record<TranslationHashId, string /*translation*/>>();
@@ -26,6 +28,9 @@ export class PageTranslator {
 
   constructor(private params: PageTranslatorParams = {}) {
     autoBind(this);
+
+    const { persistent = true } = params;
+    this.params = { persistent };
   }
 
   getProviderParams() {
@@ -98,19 +103,20 @@ export class PageTranslator {
     const providerHashId = this.getProviderHashId(providerParams);
     const freshNodes = textNodes.filter(node => !this.getTranslationByNode(node, providerHashId));
     const packedNodes = this.packNodes(freshNodes);
+    this.logger.info(`PACKED NODES: ${packedNodes.length}`, packedNodes);
 
     try {
       const result = await Promise.all(
         packedNodes.map(async nodes => {
           const translationTexts = await this.translateApiRequest(nodes);
-          this.saveStorageCache(nodes, translationTexts, providerHashId);
+          if (this.params.persistent) this.saveStorageCache(nodes, translationTexts, providerHashId);
           return translationTexts;
         })
       )
       this.logger.info(`PROCESSING DONE`, result);
       return result;
     } catch (err) {
-      this.logger.error(`PROCESSING FAILED: ${err}`, providerParams);
+      this.logger.error(`PROCESSING FAILED`, err, providerParams);
       throw err;
     }
   }
@@ -119,20 +125,25 @@ export class PageTranslator {
     if (!this.translations.has(textNode)) {
       this.translations.set(textNode, {});
     }
-    const memoryCache = this.translations.get(textNode)[hashId];
-    return memoryCache ?? this.getStorageCache(textNode, hashId)
+    let memoryCache = this.translations.get(textNode)[hashId];
+    if (!memoryCache && this.params.persistent) {
+      memoryCache = this.getStorageCache(textNode, hashId);
+    }
+    return memoryCache ?? "";
   }
 
   async translateApiRequest(textNodes: Node[], params = this.getProviderParams()): Promise<string[]> {
     const hashId = this.getProviderHashId(params);
     const texts = textNodes.map(node => this.originalTexts.get(node));
+    const translator = getTranslator(params.provider);
 
     this.logger.info(`TRANSLATE API REQUEST for ${texts.length} items`, { ...params, texts });
 
-    // FIXME: use real translation provider api
-    const translations = await Promise.all(
-      textNodes.map(async (node, index) => sha256Hex(texts[index]))
-    );
+    const translations = await translator.translateMany({
+      langFrom: params.langFrom,
+      langTo: params.langTo,
+      texts,
+    });
 
     // save to memory cache
     translations.forEach((translation, index) => {

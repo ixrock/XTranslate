@@ -2,7 +2,7 @@ import BingLanguages from "./bing.json"
 import isEmpty from "lodash/isEmpty";
 import groupBy from "lodash/groupBy";
 import { ProxyRequestInit, ProxyResponseType } from "../extension";
-import { ITranslationError, ITranslationResult, PageTranslator, ProviderCodeName, TranslateParams, Translator } from "./index";
+import { ITranslationError, ITranslationResult, PageTranslator, ProviderCodeName, TranslateParams, TranslateParamsMany, Translator } from "./index";
 import { createStorage } from "../storage";
 
 export interface BingApiAuthParams {
@@ -56,7 +56,7 @@ class Bing extends Translator {
     }
   }
 
-  private async getRequestParams(langFrom: string, langTo: string, texts: string[]) {
+  private async getRequestParams(params: TranslateParamsMany) {
     await this.beforeRequest();
 
     const { token } = this.apiParams.get();
@@ -68,13 +68,13 @@ class Bing extends Translator {
         "Content-type": "application/json; charset=UTF-8",
         "User-Agent": navigator.userAgent,
       },
-      body: JSON.stringify(texts.map(text => ({ Text: text }))),
+      body: JSON.stringify(params.texts.map(text => ({ Text: text }))),
     };
 
     const queryParams = new URLSearchParams({
       "api-version": "3.0",
-      to: langTo,
-      from: langFrom !== "auto" ? langFrom : "",
+      to: params.langTo,
+      from: params.langFrom !== "auto" ? params.langFrom : "",
     });
 
     return {
@@ -83,8 +83,22 @@ class Bing extends Translator {
     };
   }
 
+  async translateMany(params: TranslateParamsMany): Promise<string[]> {
+    const { requestInit, queryParams } = await this.getRequestParams(params);
+
+    const result: BingTranslation[] = await this.request({
+      url: this.apiUrl + `/translate?${queryParams}`,
+      requestInit,
+    });
+
+    return result.map(translation => translation.translations[0].text); // string[]
+  }
+
   async translate({ from: langFrom, to: langTo, text }: TranslateParams): Promise<ITranslationResult> {
-    const { requestInit, queryParams } = await this.getRequestParams(langFrom, langTo, [text]);
+    const { requestInit, queryParams } = await this.getRequestParams({
+      langFrom, langTo,
+      texts: [text],
+    });
 
     // API: https://learn.microsoft.com/en-gb/azure/ai-services/translator/reference/v3-0-translate
     const translationReq = async (): Promise<BingTranslation[]> => {

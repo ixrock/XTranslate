@@ -21,6 +21,12 @@ export interface TranslateParams {
   text: string;
 }
 
+export interface TranslateParamsMany {
+  langFrom: string,
+  langTo: string,
+  texts: string[]
+}
+
 export interface TranslatorParams {
   languages: ProviderLanguagesApiMap;
   pageTranslator?: PageTranslator;
@@ -61,6 +67,11 @@ export abstract class Translator {
   }
 
   abstract translate(params: TranslateParams): Promise<ITranslationResult>;
+
+  async translateMany(params: TranslateParamsMany): Promise<string[]> {
+    this.logger.error(`translation for multi texts is not implemented for ${this.title}`);
+    return [];
+  }
 
   protected async request<Response>(payload: ProxyRequestPayload): Promise<Response> {
     const response = await proxyRequest<Response>(payload);
