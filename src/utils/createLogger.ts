@@ -1,7 +1,13 @@
 // Basic logger for outputting system logs to console or other source
 import { isDevelopment } from "../common-vars";
 
+export enum LoggerColor {
+  INFO_DEFAULT = "#ca22b5",
+  INFO_SYSTEM = "#2b6afb",
+}
+
 export interface CreateLoggerOptions {
+  prefixColor?: LoggerColor;
   systemPrefix?: string; // system part logger with own prefix
 }
 
@@ -14,13 +20,17 @@ export interface Logger {
   }
 }
 
-export function createLogger({ systemPrefix = "[APP]" }: CreateLoggerOptions = {}): Logger {
+export function createLogger(
+  {
+    systemPrefix = "[APP]",
+    prefixColor = LoggerColor.INFO_DEFAULT,
+  }: CreateLoggerOptions = {}): Logger {
   const prefix = `${systemPrefix}:`;
 
   return {
     info(...args) {
       if (!isDevelopment) return;
-      console.info(`%c ${prefix}`, "color: #942486; font-weight: bold;", ...args);
+      console.info(`%c ${prefix}`, `color: ${prefixColor}; font-weight: bold;`, ...args);
     },
     error(...args) {
       if (!isDevelopment) return;

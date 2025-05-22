@@ -7,10 +7,10 @@ import { FluentBundle, FluentResource, FluentVariable } from "@fluent/bundle"
 import { observable } from "mobx";
 import { getURL, ProxyResponseType } from "./extension";
 import { proxyRequest } from "./background/httpProxy.bgc";
-import { createLogger } from "./utils/createLogger";
+import { createLogger, LoggerColor } from "./utils/createLogger";
 import { createStorage } from "./storage";
 
-const logger = createLogger({ systemPrefix: "[I18N-LOCALE]" });
+const logger = createLogger({ systemPrefix: "[I18N-LOCALE]", prefixColor: LoggerColor.INFO_SYSTEM });
 
 export type Locale = keyof typeof SupportedLocalesList;
 export const availableLocales = SupportedLocalesList;

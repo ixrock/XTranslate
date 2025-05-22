@@ -2,7 +2,7 @@ import { EventEmitter } from "events"
 import { reaction } from "mobx";
 import { Color } from "react-color"
 import { getURL } from "../../extension";
-import { createLogger, disposer } from "../../utils";
+import { createLogger, disposer, LoggerColor } from "../../utils";
 import { createStorage } from "../../storage";
 
 export type ThemeStorageModel = typeof themeStorage.defaultValue;
@@ -58,7 +58,7 @@ export interface ThemeStoreEvents {
 export class ThemeStore {
   public events = new EventEmitter<ThemeStoreEvents>();
   private storage = themeStorage;
-  private logger = createLogger({ systemPrefix: `[THEME]` });
+  private logger = createLogger({ systemPrefix: `[THEME]`, prefixColor: LoggerColor.INFO_SYSTEM });
   private dispose = disposer();
 
   public iconsFont: IThemeFont = {
