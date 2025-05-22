@@ -1,13 +1,13 @@
 import { reaction } from "mobx";
 import { franc } from "franc";
-import { autoBind, disposer, sha256Hex, createLogger } from "../utils";
+import { md5 } from "js-md5";
+import { autoBind, createLogger, disposer, LoggerColor, sha256Hex } from "../utils";
 import { ProviderCodeName } from "./providers";
-import type { TranslateParams } from "./translator";
 import { settingsStore } from "../components/settings/settings.storage";
 
 export type LangSource = string;
 export type LangTarget = string;
-export type TranslatorParamsHashId = `${ProviderCodeName}_${LangSource}_${LangTarget}`;
+export type TranslationHashId = `${ProviderCodeName}_${LangSource}_${LangTarget}`;
 
 export interface PageTranslatorParams {
 }
@@ -15,38 +15,36 @@ export interface PageTranslatorParams {
 export class PageTranslator {
   static readonly RX_LETTER = /\p{L}/u;
   static readonly SKIP_TAGS = new Set(["SCRIPT", "STYLE", "NOSCRIPT", "TEXTAREA", "CODE", "PRE"]);
-  static readonly API_MAX_CHARS_LIMIT_PER_REQUEST = 5000;
+  static readonly API_MAX_CHARS_LIMIT_PER_REQUEST = 4000;
 
-  private textNodes = new Set<Node>();
-  private translations: Map<TranslatorParamsHashId, WeakMap<Node, string/*translation*/>> = new Map();
-  private detectedLanguages = new WeakMap<Node, string>();
-  protected logger = createLogger({ systemPrefix: "[PAGE-TRANSLATOR]" });
+  protected textNodes = new Set<Node>();
+  protected translations = new WeakMap<Node, Record<TranslationHashId, string /*translation*/>>();
+  protected originalTexts = new WeakMap<Node, string>();
+  protected detectedLanguages = new WeakMap<Node, string>();
+  protected logger = createLogger({ systemPrefix: "[PAGE-TRANSLATOR]", prefixColor: LoggerColor.INFO_SYSTEM });
   protected dispose = disposer();
 
   constructor(private params: PageTranslatorParams = {}) {
     autoBind(this);
   }
 
-  getSettingsParams() {
+  getProviderParams() {
     const { provider, langFrom, langTo } = settingsStore.data.fullPageTranslation;
     return { provider, langFrom, langTo };
   }
 
-  getHashId(params = this.getSettingsParams()): TranslatorParamsHashId {
+  getProviderHashId(params = this.getProviderParams()): TranslationHashId {
     const { provider, langFrom, langTo } = params;
     return `${provider}_${langFrom}_${langTo}`;
   }
 
-  getSettingsHashIdParams() {
-    return this.getHashId(this.getSettingsParams());
-  }
-
   startAutoTranslation() {
     const textNodes = this.collectPageTextsNodes();
-    this.processNodes(textNodes);
+    this.importNodes(textNodes);
+    void this.processNodes(textNodes);
 
     this.dispose.push(
-      reaction(this.getSettingsParams, this.refreshTranslations, { delay: 250 }),
+      reaction(this.getProviderParams, this.refreshTranslations, { delay: 250 }),
       this.watchNewDOMTextNodes(),
     );
 
@@ -56,73 +54,150 @@ export class PageTranslator {
     }
   }
 
-  private async refreshTranslations() {
-    return Promise.allSettled(
-      Array.from(this.textNodes).map(this.translateNode)
-    )
+  async refreshTranslations() {
+    return this.processNodes([...this.textNodes]);
   };
 
-  private processNodes(textNodes: Node[]) {
-    const limit = PageTranslator.API_MAX_CHARS_LIMIT_PER_REQUEST;
+  protected importNodes(nodes: Node[]) {
+    nodes.forEach(textNode => {
+      const txt = textNode.nodeValue.trim(); // cut redundant empty spaces
+      this.textNodes.add(textNode);
+      this.originalTexts.set(textNode, txt);
+    })
+  }
+
+  protected packNodes(textNodes: Node[], {
+    limit = PageTranslator.API_MAX_CHARS_LIMIT_PER_REQUEST,
+  } = {}): Node[][] {
     const packs: Node[][] = [];
-
+    let currentPack: Node[] = [];
     let bufferLen = 0; // in code-points
-    let current: Node[] = [];
 
-    const freshNodes = textNodes.filter(n => !this.textNodes.has(n));
-
-    for (const node of freshNodes) {
-      const txt = node.nodeValue ?? "";
+    for (const node of textNodes) {
+      const txt = this.originalTexts.get(node);
       const len = [...txt].length; // safe for chars like: 😊 𐍈 等
 
-      this.textNodes.add(node);
-
       if (bufferLen + len > limit) {
-        if (current.length) packs.push(current);
-        current = [];
+        if (currentPack.length) packs.push(currentPack);
+        currentPack = [];
         bufferLen = 0;
       }
-      current.push(node);
+      currentPack.push(node);
       bufferLen += len;
     }
 
-    if (current.length) {
-      packs.push(current); // add tail (if any)
+    if (currentPack.length) {
+      packs.push(currentPack); // add tail (if any)
     }
 
-    // TODO: send to translation API by text-groups
-    const textGroups = packs.map(nodes => nodes.map(node => node.nodeValue));
-    console.log(`[PROCESS-NODES-PACK]: ${packs.length}`, textGroups);
+    return packs;
   }
 
-  getTranslationByNode(textNode: Node, hashId = this.getSettingsHashIdParams()): string {
-    if (!this.translations.has(hashId)) {
-      this.translations.set(hashId, new WeakMap());
+  protected async processNodes(textNodes: Node[]): Promise<string[][]> {
+    const providerParams = this.getProviderParams();
+    const providerHashId = this.getProviderHashId(providerParams);
+    const freshNodes = textNodes.filter(node => !this.getTranslationByNode(node, providerHashId));
+    const packedNodes = this.packNodes(freshNodes);
+
+    try {
+      const result = await Promise.all(
+        packedNodes.map(async nodes => {
+          const translationTexts = await this.translateApiRequest(nodes);
+          this.saveStorageCache(nodes, translationTexts, providerHashId);
+          return translationTexts;
+        })
+      )
+      this.logger.info(`PROCESSING DONE`, result);
+      return result;
+    } catch (err) {
+      this.logger.error(`PROCESSING FAILED: ${err}`, providerParams);
+      throw err;
     }
-    return this.translations.get(hashId).get(textNode) ?? "";
   }
 
-  private async translateNode(textNode: Node): Promise<string> {
-    const hashId = this.getSettingsHashIdParams();
-    const translation = this.getTranslationByNode(textNode, hashId);
-    if (translation) return translation;
+  getTranslationByNode(textNode: Node, hashId = this.getProviderHashId()): string {
+    if (!this.translations.has(textNode)) {
+      this.translations.set(textNode, {});
+    }
+    const memoryCache = this.translations.get(textNode)[hashId];
+    return memoryCache ?? this.getStorageCache(textNode, hashId)
+  }
 
-    const text = textNode.textContent;
-    const textHash = await sha256Hex(text);
+  async translateApiRequest(textNodes: Node[], params = this.getProviderParams()): Promise<string[]> {
+    const hashId = this.getProviderHashId(params);
+    const texts = textNodes.map(node => this.originalTexts.get(node));
 
-    // TODO: make real api-call + check persistent/session cache
-    const apiResponse = await Promise.resolve(textHash).then((data) => {
-      const translation = this.getTranslationByNode(textNode);
-      this.logger.info(textNode, { translation, textNode })
-      return data;
+    this.logger.info(`TRANSLATE API REQUEST for ${texts.length} items`, { ...params, texts });
+
+    // FIXME: use real translation provider api
+    const translations = await Promise.all(
+      textNodes.map(async (node, index) => sha256Hex(texts[index]))
+    );
+
+    // save to memory cache
+    translations.forEach((translation, index) => {
+      const text = texts[index];
+      const node = textNodes[index];
+
+      if (!this.translations.has(node)) this.translations.set(node, {});
+      this.translations.get(node)[hashId] = translation;
+
+      this.logger.info(`TRANSLATION MEM-CACHED: ${text}`, {
+        ...params,
+        originalText: text,
+        translationCache: this.translations.get(node)[hashId],
+      })
     });
 
-    this.translations.get(hashId).set(textNode, apiResponse);
-
-    return apiResponse;
+    return translations;
   }
 
-  private detectLanguage(textNode: Node): string {
+  acceptTextNodeFilter(node: Node): boolean {
+    if (node.nodeType !== Node.TEXT_NODE) return false;
+
+    const parentElem = node.parentElement;
+    const skippedByParentTag = !parentElem || PageTranslator.SKIP_TAGS.has(parentElem.tagName);
+    if (skippedByParentTag) return false;
+
+    const text = node.nodeValue.trim();
+    const empty = !text.length;
+    const hasWords = PageTranslator.RX_LETTER.test(text);
+    return !empty && hasWords;
+  }
+
+  collectPageTextsNodes(rootElem = document.body): Node[] {
+    const treeWalker = document.createTreeWalker(rootElem, NodeFilter.SHOW_TEXT, {
+        acceptNode: (node) => {
+          const accepted = this.acceptTextNodeFilter(node);
+          return accepted ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
+        },
+      }
+    );
+    const nodes = [];
+    while (treeWalker.nextNode()) nodes.push(treeWalker.currentNode);
+    return nodes;
+  }
+
+  watchNewDOMTextNodes(rootElem = document.body): () => void {
+    const observer = new MutationObserver(mutations => {
+      const newTextNodes: Node[] = [];
+
+      mutations.forEach(({ addedNodes }) => {
+        const textNodes = Array.from(addedNodes.values()).filter(this.acceptTextNodeFilter);
+        newTextNodes.push(...textNodes);
+      });
+
+      if (newTextNodes.length) {
+        this.importNodes(newTextNodes);
+        void this.processNodes(newTextNodes);
+      }
+    });
+
+    observer.observe(rootElem, { subtree: true, childList: true });
+    return () => observer.disconnect();
+  }
+
+  detectLanguage(textNode: Node): string {
     const isDetected = this.detectedLanguages.has(textNode);
     if (!isDetected) {
       const text = textNode.textContent;
@@ -136,53 +211,27 @@ export class PageTranslator {
     return this.detectedLanguages.get(textNode);
   }
 
-  private textNodesFilter(node: Node): boolean {
-    const parentElem = node.parentElement;
-    const fastSkip = !parentElem || PageTranslator.SKIP_TAGS.has(parentElem.tagName);
-    if (fastSkip) {
-      return false;
-    }
-    const text = node.nodeValue.trim();
-    const empty = !text.length;
-    const hasWords = PageTranslator.RX_LETTER.test(text);
-    return !empty && hasWords;
+  protected getStorageHashId(text: string, providerHashId = this.getProviderHashId()) {
+    return `${providerHashId}--${md5(text)}`;
   }
 
-  private collectPageTextsNodes(rootElem = document.body): Node[] {
-    const treeWalker = document.createTreeWalker(rootElem, NodeFilter.SHOW_TEXT, {
-        acceptNode: (node) => {
-          const accepted = this.textNodesFilter(node);
-          return accepted ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
-        },
-      }
-    );
-    const nodes = [];
-    while (treeWalker.nextNode()) nodes.push(treeWalker.currentNode);
-    return nodes;
-  }
-
-  private watchNewDOMTextNodes(rootElem = document.body): () => void {
-    const observer = new MutationObserver(mutations => {
-      const newTextNodes: Node[] = [];
-
-      mutations.forEach(({ addedNodes }) => {
-        const textNodes = Array
-          .from(addedNodes.values())
-          .filter((node: Node) => node.nodeType === Node.TEXT_NODE);
-        newTextNodes.push(...textNodes.filter(this.textNodesFilter));
-      });
-
-      if (newTextNodes.length) {
-        this.processNodes(newTextNodes);
-      }
+  protected saveStorageCache(textNodes: Node[], translations: string[], providerHashId = this.getProviderHashId()): void {
+    queueMicrotask(() => {
+      textNodes.forEach((textNode, index) => {
+        const originalText = this.originalTexts.get(textNode);
+        if (originalText) {
+          const translationCacheId = this.getStorageHashId(originalText, providerHashId);
+          sessionStorage.setItem(translationCacheId, translations[index]);
+        }
+      })
     });
-
-    observer.observe(rootElem, { subtree: true, childList: true });
-    return () => observer.disconnect();
   }
 
-  // TODO: keep translations temporary in window.sessionStorage
-  private persistTranslation(provider: ProviderCodeName, params: TranslateParams) {
-
+  protected getStorageCache(textNode: Node, providerHashId = this.getProviderHashId()): string | undefined {
+    const text = this.originalTexts.get(textNode);
+    if (text) {
+      const storageCacheId = this.getStorageHashId(text, providerHashId);
+      return sessionStorage.getItem(storageCacheId);
+    }
   }
 }

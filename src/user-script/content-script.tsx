@@ -85,7 +85,6 @@ export class ContentScript extends React.Component {
 
   componentDidMount() {
     this.bindEvents();
-    this.translatePage(); // FIXME: remove
   }
 
   private bindEvents() {
