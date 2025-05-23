@@ -1,4 +1,5 @@
 import "../setup";
+import "./content-script-entry.scss";
 import { customPDFViewerRedirectCheck } from "../pdf-viewer/pdf-utils";
 import { initContentPage as initMellowtel } from "../../mellowtel/mellowtel.bgc";
 import { mellowtelMeucciFilename } from "../../mellowtel/mellowtel.config";

@@ -1,0 +1,9 @@
+/* XTranslate global injectable CSS-styles */
+@use "../components/theme" as *;
+
+.XTranslate {
+  @include theme-vars;
+}
+
+[data-translation] {
+}

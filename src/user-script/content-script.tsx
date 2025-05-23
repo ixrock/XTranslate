@@ -1,7 +1,7 @@
 //-- Injectable content-script (refreshed on every page reload without extension-reload)
 
 import "../setup";
-import "./content-script.scss";
+import "./content-script-entry.scss";
 import React from "react";
 import { createRoot, Root } from "react-dom/client";
 import { action, computed, makeObservable, observable, toJS } from "mobx";
@@ -10,7 +10,7 @@ import debounce from 'lodash/debounce';
 import isEmpty from 'lodash/isEmpty';
 import isEqual from 'lodash/isEqual';
 import orderBy from 'lodash/orderBy';
-import { contentScriptInjectable } from "../common-vars";
+import { contentScriptEntry, contentScriptInjectable } from "../common-vars";
 import { preloadAppData } from "../preloadAppData";
 import { autoBind, disposer, getHotkey } from "../utils";
 import { getManifest, getURL, MessageType, onMessage, ProxyResponseType, runtimeCheckContextInvalidated, TranslatePayload } from "../extension";
@@ -37,10 +37,24 @@ export class ContentScript extends React.Component {
 
     const shadowRoot = appElem.attachShadow({ mode: "closed" });
     const rootNode = createRoot(shadowRoot);
+    const appRootNode = createRoot(appElem);
     window.document.documentElement.appendChild(appElem);
     ContentScript.rootNode = rootNode;
 
+    const cssUrl = await this.getGlobalCssUrl();
+    appRootNode.render(<link rel="stylesheet" href={cssUrl}/>);
     rootNode.render(<ContentScript/>);
+  }
+
+  static async getGlobalCssUrl(): Promise<string> {
+    const globalDomStyles = await proxyRequest<string>({
+      url: getURL(`${contentScriptEntry}.css`),
+      responseType: ProxyResponseType.TEXT,
+    });
+
+    return URL.createObjectURL(
+      new Blob([globalDomStyles], { type: "text/css" }),
+    );
   }
 
   constructor(props: object) {
@@ -70,16 +84,15 @@ export class ContentScript extends React.Component {
   @observable isRtlSelection = false;
   @observable isIconVisible = false;
   @observable isLoading = false;
-  @observable stylesUrl = "";
+  @observable shadowDomCssUrl = "";
 
   async preloadCss() {
-    const styles = await proxyRequest<string>({
+    const shadowDomStyles = await proxyRequest<string>({
       url: getURL(`${contentScriptInjectable}.css`),
       responseType: ProxyResponseType.TEXT,
     });
-
-    this.stylesUrl = URL.createObjectURL(
-      new Blob([styles], { type: "text/css" }),
+    this.shadowDomCssUrl = URL.createObjectURL(
+      new Blob([shadowDomStyles], { type: "text/css" }),
     );
   }
 
@@ -475,8 +488,8 @@ export class ContentScript extends React.Component {
     const translator = getTranslator(vendor);
     return (
       <>
-        {this.stylesUrl && (
-          <link rel="stylesheet" href={this.stylesUrl} crossOrigin="anonymous"/>
+        {this.shadowDomCssUrl && (
+          <link rel="stylesheet" href={this.shadowDomCssUrl} crossOrigin="anonymous"/>
         )}
         {isIconVisible && (
           <XTranslateIcon

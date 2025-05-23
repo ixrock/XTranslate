@@ -98,12 +98,6 @@ export class PageTranslator {
     return packs;
   }
 
-  protected updateDataAttrs(textNode: Node, dataset: Record<TranslationHashId, string/*translation*/>) {
-    const parentElem = textNode.parentElement as HTMLElement;
-    if (!parentElem) return;
-    Object.assign(parentElem.dataset, dataset);
-  }
-
   protected async processNodes(textNodes: Node[]): Promise<string[]> {
     const providerParams = this.getProviderParams();
     const providerHashId = this.getProviderHashId(providerParams);
@@ -124,9 +118,9 @@ export class PageTranslator {
 
       window.requestIdleCallback(() => {
         textNodes.forEach(node => {
-          this.updateDataAttrs(node, {
-            [providerHashId]: this.translations.get(node)[providerHashId]
-          });
+          const translation = this.getTranslationByNode(node, providerHashId);
+          node.parentElement.dataset["translation"] = translation;
+          node.parentElement.dataset[providerHashId] = translation;
         });
       });
 
@@ -174,10 +168,10 @@ export class PageTranslator {
       if (!this.translations.has(node)) this.translations.set(node, {});
       this.translations.get(node)[hashId] = translation;
 
-      this.logger.info(`TRANSLATION MEM-CACHED: ${text}`, {
+      this.logger.info(`TRANSLATION LOADED: ${text}`, {
         ...params,
         originalText: text,
-        translationCache: this.translations.get(node)[hashId],
+        translationCache: translation,
       })
     });
 
