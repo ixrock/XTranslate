@@ -46,7 +46,7 @@ export class PageTranslator {
   startAutoTranslation() {
     const textNodes = this.collectDOMTextNodes();
     this.importNodes(textNodes);
-    void this.processNodes(textNodes);
+    void this.translateNodes(textNodes);
 
     this.dispose.push(
       reaction(this.getProviderParams, this.refreshTranslations, { delay: 250 }),
@@ -59,22 +59,39 @@ export class PageTranslator {
     }
   }
 
-  protected updateDOMTranslations(textNodes: Node[], providerHashId = this.getProviderHashId()) {
+  protected updateDOMResults(textNodes: Node[], providerHashId = this.getProviderHashId()) {
+    const {
+      showOriginalOnHover,
+      showTranslationOnHover,
+      showTranslationInDOM,
+    } = settingsStore.data.fullPageTranslation;
+
     window.requestAnimationFrame(() => {
       textNodes.forEach(node => {
         const translation = this.getTranslationByNode(node, providerHashId);
         const parentElem: HTMLElement = node.parentElement;
-        const tooltipElem: HTMLElement = parentElem.closest(`[data-translation]`) ?? parentElem;
+        const tooltipElem: HTMLElement = parentElem.closest(`[data-original], [data-translation]`) ?? parentElem;
 
         const originalText = this.originalTexts.get(node);
         const prevTranslation = tooltipElem.dataset.translation ?? "";
         const prevOriginal = tooltipElem.dataset.original ?? "";
-        tooltipElem.dataset.translation = `${prevTranslation} ${translation}`;
-        tooltipElem.dataset.original = `${prevOriginal} ${originalText}`;
 
-        if (parentElem != tooltipElem) {
-          parentElem.dataset.translation = translation;
-          parentElem.dataset.original = originalText;
+        tooltipElem.dataset.showTooltip = String(!!(showOriginalOnHover || showTranslationOnHover));
+
+        if (showTranslationInDOM) {
+          node.nodeValue = translation; // replace with new text translation
+        }
+        if (showOriginalOnHover) {
+          tooltipElem.dataset.original = `${prevOriginal} ${originalText}`;
+          if (parentElem != tooltipElem) {
+            parentElem.dataset.original = originalText;
+          }
+        }
+        if (showTranslationOnHover) {
+          tooltipElem.dataset.translation = `${prevTranslation} ${translation}`;
+          if (parentElem != tooltipElem) {
+            parentElem.dataset.translation = translation;
+          }
         }
       });
     });
@@ -86,7 +103,7 @@ export class PageTranslator {
       delete node.parentElement.dataset.translation;
       delete node.parentElement.dataset.original;
     })
-    return this.processNodes(availableNodes);
+    return this.translateNodes(availableNodes);
   };
 
   protected importNodes(nodes: Node[]) {
@@ -124,7 +141,7 @@ export class PageTranslator {
     return packs;
   }
 
-  protected async processNodes(textNodes: Node[]): Promise<string[]> {
+  protected async translateNodes(textNodes: Node[]): Promise<string[]> {
     const providerParams = this.getProviderParams();
     const providerHashId = this.getProviderHashId(providerParams);
     try {
@@ -142,7 +159,7 @@ export class PageTranslator {
         )
       ).flat();
 
-      this.updateDOMTranslations(textNodes, providerHashId);
+      this.updateDOMResults(textNodes, providerHashId);
       this.logger.info(`TRANSLATED`, translations);
       return translations;
     } catch (err) {
@@ -229,7 +246,7 @@ export class PageTranslator {
 
   watchNewDOMTextNodes(rootElem = document.body): () => void {
     const observer = new MutationObserver(mutations => {
-      const newTextNodes: Node[] = [];
+      let newTextNodes: Node[] = [];
 
       mutations.forEach(({ addedNodes }) => {
         const textNodes = Array.from(addedNodes.values()).filter(this.acceptTextNodeFilter);
@@ -237,8 +254,9 @@ export class PageTranslator {
       });
 
       if (newTextNodes.length) {
+        this.logger.info('DOM-WATCH NEW NODES', newTextNodes);
         this.importNodes(newTextNodes);
-        void this.processNodes(newTextNodes);
+        void this.translateNodes(newTextNodes);
       }
     });
 

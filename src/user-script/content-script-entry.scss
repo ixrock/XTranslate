@@ -1,28 +1,29 @@
 /* XTranslate global injectable CSS-styles */
 @use "../components/theme" as *;
 
-.XTranslate {
-  @include theme-vars;
-}
-
-[data-translation]:hover [data-translation]::after {
+[data-show-tooltip="true"]:hover [data-show-tooltip="true"]::after {
   z-index: 2;
 }
 
-[data-translation] {
+[data-show-tooltip="true"] {
   @include theme-vars;
   position: relative;
 
-  &:hover::after {
-    visibility: visible;
-    opacity: 1;
+  &:hover {
+    text-decoration: underline;
+    text-decoration-style: dotted;
+
+    &::after {
+      visibility: visible;
+      opacity: 1;
+    }
   }
 
   &::after {
-    content: attr(data-translation);
+    content: attr(data-original) attr(data-translation);
     opacity: 0;
     visibility: hidden;
-    transition: opacity 250ms;
+    transition: opacity 500ms;
     color: white;
     background: black;
     padding: var(--theme-spacing);

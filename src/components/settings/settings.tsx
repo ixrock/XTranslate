@@ -190,7 +190,7 @@ export class Settings extends React.Component {
                 [styles.providerSkipRotation]: skipInRotation,
               });
               return (
-                <div key={name} className={`flex gaps align-center`}>
+                <div key={name} className={`${styles.provider} flex gaps align-center`}>
                   <Checkbox
                     checked={skipInRotation}
                     onChange={checked => settingsStore.data.skipVendorInRotation[name] = checked}
@@ -210,7 +210,6 @@ export class Settings extends React.Component {
         </article>
 
         <SubTitle>{getMessage("settings_title_full_page_translation")}</SubTitle>
-
         <article className="flex column gaps">
           <div className="flex gaps align-center">
             <SelectLanguage
@@ -260,15 +259,27 @@ export class Settings extends React.Component {
               onClick={() => this.addAlwaysTranslatePage()}
             />
           </div>
-          <Checkbox
-            label={getMessage("settings_title_full_page_show_original_onmouseover")}
-            checked={fullPageTranslation.showOriginalOnMouseOver}
-            onChange={val => fullPageTranslation.showOriginalOnMouseOver = val}
-          />
+          <div className={styles.grid}>
+            <Checkbox
+              label={getMessage("settings_title_full_page_show_original_onmouseover")}
+              checked={fullPageTranslation.showOriginalOnHover}
+              onChange={val => fullPageTranslation.showOriginalOnHover = val}
+            />
+            <Checkbox
+              label={getMessage("settings_title_full_page_show_translation_onmouseover")}
+              checked={fullPageTranslation.showTranslationOnHover}
+              onChange={val => fullPageTranslation.showTranslationOnHover = val}
+            />
+            <Checkbox
+              label={getMessage("settings_title_full_page_show_replace_texts")}
+              checked={fullPageTranslation.showTranslationInDOM}
+              onChange={val => fullPageTranslation.showTranslationInDOM = val}
+            />
+          </div>
         </article>
 
         <SubTitle>{getMessage("settings_title_appearance")}</SubTitle>
-        <article className={styles.grid}>
+        <article className="flex column gaps">
           <div className="flex gaps">
             <Checkbox
               label={getMessage("display_icon_near_selection")}
@@ -295,7 +306,7 @@ export class Settings extends React.Component {
         </article>
 
         <SubTitle>{getMessage("settings_title_tts")}</SubTitle>
-        <article className={styles.grid}>
+        <article className="flex column gaps">
           <Checkbox
             label={getMessage("auto_play_tts")}
             checked={settings.autoPlayText}
