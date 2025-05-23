@@ -59,8 +59,34 @@ export class PageTranslator {
     }
   }
 
+  protected updateDOMTranslations(textNodes: Node[], providerHashId = this.getProviderHashId()) {
+    window.requestAnimationFrame(() => {
+      textNodes.forEach(node => {
+        const translation = this.getTranslationByNode(node, providerHashId);
+        const parentElem: HTMLElement = node.parentElement;
+        const tooltipElem: HTMLElement = parentElem.closest(`[data-translation]`) ?? parentElem;
+
+        const originalText = this.originalTexts.get(node);
+        const prevTranslation = tooltipElem.dataset.translation ?? "";
+        const prevOriginal = tooltipElem.dataset.original ?? "";
+        tooltipElem.dataset.translation = `${prevTranslation} ${translation}`;
+        tooltipElem.dataset.original = `${prevOriginal} ${originalText}`;
+
+        if (parentElem != tooltipElem) {
+          parentElem.dataset.translation = translation;
+          parentElem.dataset.original = originalText;
+        }
+      });
+    });
+  }
+
   async refreshTranslations() {
-    return this.processNodes([...this.textNodes]);
+    const availableNodes = [...this.textNodes];
+    availableNodes.forEach(node => {
+      delete node.parentElement.dataset.translation;
+      delete node.parentElement.dataset.original;
+    })
+    return this.processNodes(availableNodes);
   };
 
   protected importNodes(nodes: Node[]) {
@@ -116,14 +142,7 @@ export class PageTranslator {
         )
       ).flat();
 
-      window.requestIdleCallback(() => {
-        textNodes.forEach(node => {
-          const translation = this.getTranslationByNode(node, providerHashId);
-          node.parentElement.dataset["translation"] = translation;
-          node.parentElement.dataset[providerHashId] = translation;
-        });
-      });
-
+      this.updateDOMTranslations(textNodes, providerHashId);
       this.logger.info(`TRANSLATED`, translations);
       return translations;
     } catch (err) {

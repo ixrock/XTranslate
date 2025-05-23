@@ -5,5 +5,33 @@
   @include theme-vars;
 }
 
+[data-translation]:hover [data-translation]::after {
+  z-index: 2;
+}
+
 [data-translation] {
+  @include theme-vars;
+  position: relative;
+
+  &:hover::after {
+    visibility: visible;
+    opacity: 1;
+  }
+
+  &::after {
+    content: attr(data-translation);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 250ms;
+    color: white;
+    background: black;
+    padding: var(--theme-spacing);
+    border-radius: var(--theme-border-radius);
+    border: 1px solid;
+    position: absolute;
+    text-align: left;
+    left: 0;
+    top: 100%;
+    z-index: 1;
+  }
 }
