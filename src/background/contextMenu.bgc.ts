@@ -20,7 +20,7 @@ export async function initContextMenu() {
     chrome.contextMenus.create({
       id: appName,
       contexts: [chrome.contextMenus.ContextType.ALL],
-      title: getMessage("context_menu_translate_full_page", {
+      title: getMessage("context_menu_translate_full_page_context_menu", {
         lang: translator.langTo[langTo] ?? langTo,
       }),
     });

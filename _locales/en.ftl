@@ -137,7 +137,8 @@ history_import_success = Successfully imported { $itemsCount } history entries
 history_import_file_error = Reading file '{ $fileName }' error: { $errorInfo }
 
 # context menu
-context_menu_translate_full_page = Translate page to { $lang }
+context_menu_translate_full_page_context_menu = Translate page to { $lang }
+context_menu_translate_full_page = Translate page "{ $pageTitle }" to { $lang }
 context_menu_translate_selection = Translate { $selection } with { $translator }
 
 # other

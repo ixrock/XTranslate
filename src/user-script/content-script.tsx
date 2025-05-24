@@ -13,7 +13,7 @@ import orderBy from 'lodash/orderBy';
 import { contentScriptEntry, contentScriptInjectable } from "../common-vars";
 import { preloadAppData } from "../preloadAppData";
 import { autoBind, disposer, getHotkey } from "../utils";
-import { getManifest, getURL, MessageType, onMessage, ProxyResponseType, runtimeCheckContextInvalidated, TranslatePagePayload, TranslatePayload } from "../extension";
+import { getManifest, getURL, MessageType, onMessage, ProxyResponseType, isRuntimeContextInvalidatedAction, TranslatePagePayload, TranslatePayload } from "../extension";
 import { proxyRequest } from "../background/httpProxy.bgc";
 import { popupHotkey, SettingsStorageFullPage, settingsStore } from "../components/settings/settings.storage";
 import { getNextTranslator, getTranslator, ITranslationError, ITranslationResult } from "../providers";
@@ -142,7 +142,7 @@ export class ContentScript extends React.Component {
   }
 
   async checkContextInvalidationError(): Promise<void> {
-    const isInvalidated = await runtimeCheckContextInvalidated();
+    const isInvalidated = await isRuntimeContextInvalidatedAction();
     if (isInvalidated) this.unload();
   }
 
@@ -219,6 +219,7 @@ export class ContentScript extends React.Component {
     return this.selectedText;
   }
 
+  // TODO: show/hide full-page translation top-widget
   private translatePageAction({ pageUrl }: TranslatePagePayload) {
     if (!this.pageTranslator.hasEnabledAutoTranslation(pageUrl)) {
       this.startPageAutoTranslation(pageUrl);

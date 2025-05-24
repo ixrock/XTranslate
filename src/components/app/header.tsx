@@ -1,9 +1,10 @@
 import "./header.scss";
 import React from "react";
+import { action, makeObservable, observable } from "mobx";
 import { observer } from "mobx-react";
 import { cssNames } from "../../utils/cssNames";
 import { getTranslator } from "../../providers";
-import { getManifest, translateActivePage } from "../../extension";
+import { BrowserTab, getActiveTab, getManifest, translateActivePage } from "../../extension";
 import { settingsStore } from '../settings/settings.storage'
 import { Tabs } from "../tabs";
 import { Icon } from "../icon";
@@ -12,9 +13,22 @@ import { pageManager } from "./page-manager";
 import { getMessage } from "../../i18n";
 import { SelectLocaleIcon } from "../select-locale";
 import { dialogsState } from "./dialogs-state";
+import { isSystemPage } from "../../common-vars";
 
 @observer
 export class Header extends React.Component {
+  @observable activeTab: BrowserTab = undefined;
+
+  constructor(props: object) {
+    super(props);
+    makeObservable(this);
+  }
+
+  @action
+  async componentDidMount() {
+    this.activeTab = await getActiveTab();
+  }
+
   detachWindow = () => {
     chrome.windows.create({
       url: location.href,
@@ -41,9 +55,11 @@ export class Header extends React.Component {
     const { name, version } = getManifest();
     const { page: pageId } = getUrlParams();
     const { useDarkTheme, fullPageTranslation: { provider, langTo } } = settingsStore.data;
+    const runtimeInteractive = !isSystemPage(this.activeTab?.url);
 
-    const translateFullPageTooltip = getMessage("context_menu_translate_full_page", {
-      lang: getTranslator(provider).langTo[langTo] ?? langTo
+    const translateFullPageTooltip = runtimeInteractive && getMessage("context_menu_translate_full_page", {
+      lang: getTranslator(provider).langTo[langTo] ?? langTo,
+      pageTitle: this.activeTab?.title ?? "Untitled",
     });
 
     return (
@@ -52,12 +68,14 @@ export class Header extends React.Component {
           <div className="app-title box grow">
             {name} <sup className="app-version">{version}</sup>
           </div>
-          <Icon
-            small
-            material="g_translate"
-            tooltip={{ children: translateFullPageTooltip, nowrap: true }}
-            onClick={this.translateActivePage}
-          />
+          {runtimeInteractive && (
+            <Icon
+              small
+              material="g_translate"
+              tooltip={translateFullPageTooltip}
+              onClick={this.translateActivePage}
+            />
+          )}
           <Icon
             small
             svg="moon"

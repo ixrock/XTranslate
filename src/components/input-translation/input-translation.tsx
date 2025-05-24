@@ -6,7 +6,6 @@ import React, { Fragment } from "react";
 import { action, comparer, computed, makeObservable, observable, reaction, toJS } from "mobx";
 import { observer } from "mobx-react";
 import { getTranslator, getTranslators, isRTL, ITranslationError, ITranslationResult, ProviderCodeName, Translator } from "../../providers";
-import { getSelectedText } from "../../extension/actions";
 import { createLogger, cssNames, disposer } from "../../utils";
 import { copyToClipboard } from "../../utils/copy-to-clipboard";
 import { SelectLanguage } from "../select-language";
@@ -21,9 +20,10 @@ import { Tooltip } from "../tooltip";
 import { getUrlParams, navigation, TranslationPageParams } from "../../navigation";
 import { createStorage } from "../../storage";
 import { getMessage } from "../../i18n";
-import { isMac, materialIcons } from "../../common-vars";
+import { isMac, isSystemPage, materialIcons } from "../../common-vars";
 import { isFavorite } from "../user-history/favorites.storage";
 import { saveToFavoritesAction } from "../../background/history.bgc";
+import { getActiveTab, getSelectedText } from "../../extension";
 
 export const lastInputText = createStorage("last_input_text", {
   defaultValue: "",
@@ -59,7 +59,7 @@ export class InputTranslation extends React.Component {
   }
 
   async componentDidMount() {
-    await this.translateSelectedTextFromActiveWindow();
+    void this.translateSelectedTextFromActiveTabIfAny();
 
     // bind event handlers
     this.dispose.push(
@@ -72,18 +72,14 @@ export class InputTranslation extends React.Component {
     this.dispose();
   }
 
-  // auto-translate selected text from active browser's page
-  private translateSelectedTextFromActiveWindow = async () => {
-    try {
+  private async translateSelectedTextFromActiveTabIfAny() {
+    const activePage = await getActiveTab();
+    const isSystemPageRuntime = isSystemPage(activePage.url);
+    if (!isSystemPageRuntime) {
       const selectedText = await getSelectedText();
       if (selectedText) {
         this.translateText(selectedText);
       }
-    } catch (err) {
-      this.logger.info(`cannot obtain selected text: "${err.message}"`, {
-        err: err,
-        origin: location.href,
-      });
     }
   }
 
