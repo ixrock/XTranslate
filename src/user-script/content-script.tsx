@@ -13,7 +13,7 @@ import orderBy from 'lodash/orderBy';
 import { contentScriptEntry, contentScriptInjectable } from "../common-vars";
 import { preloadAppData } from "../preloadAppData";
 import { autoBind, disposer, getHotkey } from "../utils";
-import { getManifest, getURL, MessageType, onMessage, ProxyResponseType, isRuntimeContextInvalidatedAction, TranslatePagePayload, TranslatePayload } from "../extension";
+import { getManifest, getURL, isRuntimeContextInvalidatedAction, MessageType, onMessage, ProxyResponseType, TranslatePagePayload, TranslatePayload } from "../extension";
 import { proxyRequest } from "../background/httpProxy.bgc";
 import { popupHotkey, SettingsStorageFullPage, settingsStore } from "../components/settings/settings.storage";
 import { getNextTranslator, getTranslator, ITranslationError, ITranslationResult } from "../providers";
@@ -107,7 +107,7 @@ export class ContentScript extends React.Component {
   componentDidMount() {
     this.bindEvents();
 
-    if (this.pageTranslator.hasEnabledAutoTranslation(location.href)) {
+    if (this.pageTranslator.isAlwaysTranslate(location.href)) {
       this.startPageAutoTranslation();
     }
   }
@@ -135,9 +135,9 @@ export class ContentScript extends React.Component {
       function unbindDOMEvents() {
         abortCtrl.abort();
       },
-      () => this.stopPageAutoTranslation(),
       onMessage(MessageType.TRANSLATE_FULL_PAGE, this.togglePageAutoTranslation),
       onMessage(MessageType.GET_SELECTED_TEXT, this.getSelectedTextAction),
+      () => this.stopPageAutoTranslation(),
     );
   }
 
@@ -221,7 +221,7 @@ export class ContentScript extends React.Component {
 
   // TODO: show/hide full-page translation top-widget
   private togglePageAutoTranslation({ pageUrl }: TranslatePagePayload) {
-    if (this.pageTranslator.hasEnabledAutoTranslation(pageUrl)) {
+    if (this.pageTranslator.isAlwaysTranslate(pageUrl)) {
       this.stopPageAutoTranslation(pageUrl);
     } else {
       this.startPageAutoTranslation(pageUrl);

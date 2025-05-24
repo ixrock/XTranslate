@@ -145,6 +145,7 @@ history_import_file_error = Ошибка чтения файла '{ $fileName }'
 # ________context_menu_____________
 
 context_menu_translate_full_page_context_menu = Перевести страницу на { $lang }
+context_menu_translate_full_page_context_menu_stop = Остановить перевод страниц для { $site }
 context_menu_translate_full_page = Перевести страницу "{ $pageTitle }" на { $lang }
 context_menu_translate_selection = Перевести { $selection } с { $translator }
 

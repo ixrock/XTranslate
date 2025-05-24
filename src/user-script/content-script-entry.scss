@@ -8,7 +8,6 @@
 [data-tooltip="true"] {
   @include theme-vars;
   position: relative;
-  display: inline-block;
 
   &:hover {
     text-decoration: underline;

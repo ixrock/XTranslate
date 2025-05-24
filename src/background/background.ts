@@ -9,8 +9,10 @@ import { listenTranslationHistoryActions } from "./history.bgc";
 import { listenAIRequests } from "./open-ai.bgc";
 import { initBackground as initMellowtel, listenMellowtelActions } from "../../mellowtel";
 import { listenScriptingActions } from "./scripting.bgc";
+import { initActiveTabWatcher } from "./tabs.bgc";
 
 onInstall();
+initActiveTabWatcher();
 initContextMenu();
 
 // Listen IPC messages from "options-page" (extension window) or "content-script" pages

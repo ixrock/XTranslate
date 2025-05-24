@@ -1,11 +1,11 @@
 import "./header.scss";
 import React from "react";
-import { action, makeObservable, observable } from "mobx";
+import { makeObservable } from "mobx";
 import { observer } from "mobx-react";
 import { cssNames } from "../../utils/cssNames";
 import { getTranslator } from "../../providers";
-import { BrowserTab, getActiveTab, getManifest, translateActivePage } from "../../extension";
-import { settingsStore } from '../settings/settings.storage'
+import { getManifest, translateActivePage } from "../../extension";
+import { activeTabStorage, settingsStore } from '../settings/settings.storage'
 import { Tabs } from "../tabs";
 import { Icon } from "../icon";
 import { getUrlParams, navigate, PageId } from "../../navigation";
@@ -17,16 +17,11 @@ import { isSystemPage } from "../../common-vars";
 
 @observer
 export class Header extends React.Component {
-  @observable activeTab: BrowserTab = undefined;
+  private activeTab = activeTabStorage.get();
 
   constructor(props: object) {
     super(props);
     makeObservable(this);
-  }
-
-  @action
-  async componentDidMount() {
-    this.activeTab = await getActiveTab();
   }
 
   detachWindow = () => {
@@ -54,13 +49,22 @@ export class Header extends React.Component {
   render() {
     const { name, version } = getManifest();
     const { page: pageId } = getUrlParams();
-    const { useDarkTheme, fullPageTranslation: { provider, langTo } } = settingsStore.data;
-    const runtimeInteractive = !isSystemPage(this.activeTab?.url);
+    const { useDarkTheme, fullPageTranslation } = settingsStore.data;
+    const { provider, langTo, alwaysTranslatePages } = fullPageTranslation;
+    const isTranslatedPage = alwaysTranslatePages.includes(new URL(this.activeTab.url || location.href).origin);
+    let translateFullPageTooltip: string;
 
-    const translateFullPageTooltip = runtimeInteractive && getMessage("context_menu_translate_full_page", {
-      lang: getTranslator(provider).langTo[langTo] ?? langTo,
-      pageTitle: this.activeTab?.title ?? "Untitled",
-    });
+    const runtimeInteractive = !isSystemPage(this.activeTab.url);
+    if (runtimeInteractive) {
+      const translatePageTitle = getMessage("context_menu_translate_full_page", {
+        lang: getTranslator(provider).langTo[langTo] ?? langTo,
+        pageTitle: this.activeTab.title,
+      });
+      const stopTranslationTitle = getMessage("context_menu_translate_full_page_context_menu_stop", {
+        site: `"${this.activeTab.title}" - ${this.activeTab.url}`,
+      });
+      translateFullPageTooltip = isTranslatedPage ? stopTranslationTitle : translatePageTitle;
+    }
 
     return (
       <div className="Header">
@@ -72,6 +76,7 @@ export class Header extends React.Component {
             <Icon
               small
               material="g_translate"
+              active={isTranslatedPage}
               tooltip={translateFullPageTooltip}
               onClick={this.translateActivePage}
             />

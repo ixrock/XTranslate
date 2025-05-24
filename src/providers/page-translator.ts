@@ -48,7 +48,7 @@ export class PageTranslator {
     return `${provider}_${langFrom}_${langTo}`;
   }
 
-  hasEnabledAutoTranslation(url: string): boolean {
+  isAlwaysTranslate(url: string): boolean {
     return this.settings.alwaysTranslatePages.includes(this.normalizeUrl(url));
   }
 
@@ -97,7 +97,8 @@ export class PageTranslator {
       textNodes.forEach(node => {
         const translation = this.getTranslationByNode(node, providerHashId);
         const parentElem: HTMLElement = node.parentElement;
-        const tooltipElem: HTMLElement = parentElem.closest(`[data-tooltip]`) ?? parentElem;
+        const tooltipElem: HTMLElement = parentElem?.closest(`[data-tooltip]`) ?? parentElem;
+        if (!tooltipElem) return;
 
         const originalText = this.originalText.get(node);
         const prevTranslation = tooltipElem.dataset.translation ?? "";

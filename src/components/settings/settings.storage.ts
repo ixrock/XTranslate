@@ -73,6 +73,15 @@ export const popupHotkey = createStorage("popup_hotkey", {
   }
 });
 
+export const activeTabStorage = createStorage("tabs_selected_text", {
+  defaultValue: {
+    tabId: -1,
+    title: "",
+    selectedText: "",
+    url: location.href,
+  },
+});
+
 /**
  * Favorites are shown on top of language-select list.
  */
