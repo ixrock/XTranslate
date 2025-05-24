@@ -225,23 +225,6 @@ export class Settings extends React.Component {
               onChange={({ value }) => this.onFullPageProviderChange(value)}
             />
           </div>
-          <div className="excludedPages flex gaps align-center">
-            <span>{getMessage("settings_title_full_page_excluded_pages")}: {excludedPages.length}</span>
-            <ReactSelect
-              value={null}
-              className="box grow"
-              menuNowrap={false}
-              closeMenuOnSelect={false}
-              noOptionsMessage={() => getMessage("settings_title_full_page_empty_list")}
-              options={excludedPages.map(value => ({ value, label: value }))}
-              formatOptionLabel={({ value }: ReactSelectOption<string>) => this.formatPageUrlLabel(value, excludedPages)}
-            />
-            <Button
-              primary
-              label={getMessage("settings_title_full_page_add_url")}
-              onClick={() => this.addExcludedTranslationPage()}
-            />
-          </div>
           <div className="alwaysTranslatePages flex gaps align-center">
             <span>{getMessage("settings_title_full_page_always_translate")}: {alwaysTranslatePages.length}</span>
             <ReactSelect
@@ -257,6 +240,23 @@ export class Settings extends React.Component {
               primary
               label={getMessage("settings_title_full_page_add_url")}
               onClick={() => this.addAlwaysTranslatePage()}
+            />
+          </div>
+          <div className="excludedPages flex gaps align-center">
+            <span>{getMessage("settings_title_full_page_excluded_pages")}: {excludedPages.length}</span>
+            <ReactSelect
+              value={null}
+              className="box grow"
+              menuNowrap={false}
+              closeMenuOnSelect={false}
+              noOptionsMessage={() => getMessage("settings_title_full_page_empty_list")}
+              options={excludedPages.map(value => ({ value, label: value }))}
+              formatOptionLabel={({ value }: ReactSelectOption<string>) => this.formatPageUrlLabel(value, excludedPages)}
+            />
+            <Button
+              primary
+              label={getMessage("settings_title_full_page_add_url")}
+              onClick={() => this.addExcludedTranslationPage()}
             />
           </div>
           <div className={styles.grid}>

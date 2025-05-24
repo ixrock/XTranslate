@@ -1,11 +1,11 @@
 /* XTranslate global injectable CSS-styles */
 @use "../components/theme" as *;
 
-[data-show-tooltip="true"]:hover [data-show-tooltip="true"]::after {
+[data-tooltip="true"]:hover [data-tooltip="true"]::after {
   z-index: 2;
 }
 
-[data-show-tooltip="true"] {
+[data-tooltip="true"] {
   @include theme-vars;
   position: relative;
 

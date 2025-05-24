@@ -13,9 +13,9 @@ import orderBy from 'lodash/orderBy';
 import { contentScriptEntry, contentScriptInjectable } from "../common-vars";
 import { preloadAppData } from "../preloadAppData";
 import { autoBind, disposer, getHotkey } from "../utils";
-import { getManifest, getURL, MessageType, onMessage, ProxyResponseType, runtimeCheckContextInvalidated, TranslatePayload } from "../extension";
+import { getManifest, getURL, MessageType, onMessage, ProxyResponseType, runtimeCheckContextInvalidated, TranslatePagePayload, TranslatePayload } from "../extension";
 import { proxyRequest } from "../background/httpProxy.bgc";
-import { popupHotkey, settingsStore } from "../components/settings/settings.storage";
+import { popupHotkey, SettingsStorageFullPage, settingsStore } from "../components/settings/settings.storage";
 import { getNextTranslator, getTranslator, ITranslationError, ITranslationResult } from "../providers";
 import { XTranslateIcon } from "./xtranslate-icon";
 import { Popup } from "../components/popup/popup";
@@ -96,8 +96,20 @@ export class ContentScript extends React.Component {
     );
   }
 
+  get pageTranslator() {
+    return getTranslator(this.fullPageSettings.provider).pageTranslator;
+  }
+
+  get fullPageSettings(): SettingsStorageFullPage {
+    return settingsStore.data.fullPageTranslation;
+  }
+
   componentDidMount() {
     this.bindEvents();
+
+    if (this.pageTranslator.hasEnabledAutoTranslation(location.href)) {
+      this.startPageAutoTranslation();
+    }
   }
 
   private bindEvents() {
@@ -123,8 +135,9 @@ export class ContentScript extends React.Component {
       function unbindDOMEvents() {
         abortCtrl.abort();
       },
-      onMessage(MessageType.TRANSLATE_FULL_PAGE, this.translatePage),
-      onMessage(MessageType.GET_SELECTED_TEXT, () => this.selectedText),
+      () => this.stopPageAutoTranslation(),
+      onMessage(MessageType.TRANSLATE_FULL_PAGE, this.translatePageAction),
+      onMessage(MessageType.GET_SELECTED_TEXT, this.getSelectedTextAction),
     );
   }
 
@@ -202,11 +215,28 @@ export class ContentScript extends React.Component {
     });
   }
 
-  // TODO: render fixed/top widget with full-page translation settings
-  translatePage() {
-    const { provider } = settingsStore.data.fullPageTranslation;
-    const translator = getTranslator(provider);
-    return translator.pageTranslator.startAutoTranslation();
+  private getSelectedTextAction() {
+    return this.selectedText;
+  }
+
+  private translatePageAction({ pageUrl }: TranslatePagePayload) {
+    if (!this.pageTranslator.hasEnabledAutoTranslation(pageUrl)) {
+      this.startPageAutoTranslation(pageUrl);
+    } else {
+      this.stopPageAutoTranslation(pageUrl);
+    }
+  }
+
+  @action
+  private startPageAutoTranslation(pageUrl?: string) {
+    if (pageUrl) this.pageTranslator.setAutoTranslateSettingUrl({ enabled: [pageUrl] });
+    this.pageTranslator.startAutoTranslation();
+  }
+
+  @action
+  private stopPageAutoTranslation(pageUrl?: string) {
+    if (pageUrl) this.pageTranslator.setAutoTranslateSettingUrl({ disabled: [pageUrl] });
+    this.pageTranslator.stopAutoTranslation();
   }
 
   playText() {

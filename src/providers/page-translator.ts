@@ -21,7 +21,8 @@ export class PageTranslator {
 
   protected textNodes = new Set<Node>();
   protected translations = new WeakMap<Node, Record<TranslationHashId, string /*translation*/>>();
-  protected originalTexts = new WeakMap<Node, string>();
+  protected originalText = new WeakMap<Node, string>();
+  protected originalTextRaw = new WeakMap<Node, string>();
   protected detectedLanguages = new WeakMap<Node, string>();
   protected logger = createLogger({ systemPrefix: "[PAGE-TRANSLATOR]", prefixColor: LoggerColor.INFO_SYSTEM });
   protected dispose = disposer();
@@ -33,14 +34,42 @@ export class PageTranslator {
     this.params = { persistent };
   }
 
+  get settings() {
+    return settingsStore.data.fullPageTranslation;
+  }
+
   getProviderParams() {
-    const { provider, langFrom, langTo } = settingsStore.data.fullPageTranslation;
+    const { provider, langFrom, langTo } = this.settings;
     return { provider, langFrom, langTo };
   }
 
   getProviderHashId(params = this.getProviderParams()): TranslationHashId {
     const { provider, langFrom, langTo } = params;
     return `${provider}_${langFrom}_${langTo}`;
+  }
+
+  hasEnabledAutoTranslation(url: string): boolean {
+    return this.settings.alwaysTranslatePages.includes(this.normalizeUrl(url));
+  }
+
+  normalizeUrl(url: string): string {
+    return new URL(url).origin;
+  }
+
+  setAutoTranslateSettingUrl(urls: { enabled?: string[], disabled?: string[] }) {
+    if (urls.enabled) {
+      const uniqUrls = new Set([
+        ...this.settings.alwaysTranslatePages,
+        ...urls.enabled.map(this.normalizeUrl),
+      ]);
+      this.settings.alwaysTranslatePages = Array.from(uniqUrls);
+    }
+    if (urls.disabled) {
+      const excludedUrls = new Set(this.settings.alwaysTranslatePages);
+      const excludingUrls = new Set(urls.disabled.map(this.normalizeUrl))
+      const uniqUrls = excludedUrls.difference(excludingUrls);
+      this.settings.alwaysTranslatePages = Array.from(uniqUrls);
+    }
   }
 
   startAutoTranslation() {
@@ -50,37 +79,37 @@ export class PageTranslator {
 
     this.dispose.push(
       reaction(this.getProviderParams, this.refreshTranslations, { delay: 250 }),
-      this.watchNewDOMTextNodes(),
+      this.watchDOMTextNodes(),
+      () => this.textNodes.clear(),
     );
+  }
 
-    return () => {
-      this.textNodes.clear();
-      this.dispose();
-    }
+  stopAutoTranslation() {
+    const textNodes = [...this.textNodes];
+    this.restoreDOM(textNodes, { restoreOriginalText: true });
+    this.dispose();
   }
 
   protected updateDOMResults(textNodes: Node[], providerHashId = this.getProviderHashId()) {
-    const {
-      showOriginalOnHover,
-      showTranslationOnHover,
-      showTranslationInDOM,
-    } = settingsStore.data.fullPageTranslation;
+    const { showOriginalOnHover, showTranslationOnHover, showTranslationInDOM } = this.settings;
 
     window.requestAnimationFrame(() => {
       textNodes.forEach(node => {
         const translation = this.getTranslationByNode(node, providerHashId);
         const parentElem: HTMLElement = node.parentElement;
-        const tooltipElem: HTMLElement = parentElem.closest(`[data-original], [data-translation]`) ?? parentElem;
+        const tooltipElem: HTMLElement = parentElem.closest(`[data-tooltip]`) ?? parentElem;
 
-        const originalText = this.originalTexts.get(node);
+        const originalText = this.originalTextRaw.get(node);
         const prevTranslation = tooltipElem.dataset.translation ?? "";
         const prevOriginal = tooltipElem.dataset.original ?? "";
 
-        tooltipElem.dataset.showTooltip = String(!!(showOriginalOnHover || showTranslationOnHover));
+        tooltipElem.dataset.tooltip = String(!!(showOriginalOnHover || showTranslationOnHover));
 
         if (showTranslationInDOM) {
-          node.nodeValue = translation; // replace with new text translation
+          const { leadingSpaces, trailingSpaces } = this.getNodeSpaces(node);
+          node.nodeValue = `${leadingSpaces}${translation}${trailingSpaces}`;
         }
+
         if (showOriginalOnHover) {
           tooltipElem.dataset.original = `${prevOriginal} ${originalText}`;
           if (parentElem != tooltipElem) {
@@ -97,21 +126,45 @@ export class PageTranslator {
     });
   }
 
+  restoreDOM(textNodes: Node[], { restoreOriginalText = false } = {}) {
+    window.requestAnimationFrame(() => {
+      textNodes.forEach(node => {
+        delete node.parentElement.dataset.tooltip;
+        delete node.parentElement.dataset.translation;
+        delete node.parentElement.dataset.original;
+        if (restoreOriginalText) {
+          node.nodeValue = this.originalTextRaw.get(node);
+        }
+      });
+    });
+  };
+
   async refreshTranslations() {
-    const availableNodes = [...this.textNodes];
-    availableNodes.forEach(node => {
-      delete node.parentElement.dataset.translation;
-      delete node.parentElement.dataset.original;
-    })
-    return this.translateNodes(availableNodes);
+    const textNodes = [...this.textNodes];
+    this.restoreDOM(textNodes);
+    return this.translateNodes(textNodes);
   };
 
   protected importNodes(nodes: Node[]) {
     nodes.forEach(textNode => {
       const txt = this.normalizeText(textNode); // cut redundant empty spaces
       this.textNodes.add(textNode);
-      this.originalTexts.set(textNode, txt);
+      this.originalText.set(textNode, txt);
+      this.originalTextRaw.set(textNode, textNode.nodeValue);
+      this.logger.info(`IMPORT NODE: ${txt}`, textNode);
     })
+  }
+
+  protected getNodeSpaces(node: Node) {
+    const text = this.originalText.get(node);
+    const textRaw = this.originalTextRaw.get(node);
+    const spaces = { leadingSpaces: "", trailingSpaces: "" };
+
+    if (text && textRaw && text !== textRaw) {
+      spaces.leadingSpaces = textRaw.slice(0, textRaw.indexOf(text));
+      spaces.trailingSpaces = textRaw.slice(spaces.leadingSpaces.length + text.length);
+    }
+    return spaces;
   }
 
   protected packNodes(textNodes: Node[], {
@@ -122,7 +175,7 @@ export class PageTranslator {
     let bufferLen = 0; // in code-points
 
     for (const node of textNodes) {
-      const txt = this.originalTexts.get(node);
+      const txt = this.originalText.get(node);
       const len = [...txt].length; // safe for chars like: 😊 𐍈 等
 
       if (bufferLen + len > limit) {
@@ -185,7 +238,7 @@ export class PageTranslator {
 
   async translateApiRequest(textNodes: Node[], params = this.getProviderParams()): Promise<string[]> {
     const hashId = this.getProviderHashId(params);
-    const texts = textNodes.map(node => this.originalTexts.get(node));
+    const texts = textNodes.map(node => this.originalText.get(node));
     const translator = getTranslator(params.provider);
 
     this.logger.info(`TRANSLATE API REQUEST for ${texts.length} items`, { ...params, texts });
@@ -244,7 +297,7 @@ export class PageTranslator {
     return nodes;
   }
 
-  watchNewDOMTextNodes(rootElem = document.body): () => void {
+  watchDOMTextNodes(rootElem = document.body): () => void {
     const observer = new MutationObserver(mutations => {
       let newTextNodes: Node[] = [];
 
@@ -285,7 +338,7 @@ export class PageTranslator {
   protected saveStorageCache(textNodes: Node[], translations: string[], providerHashId = this.getProviderHashId()): void {
     queueMicrotask(() => {
       textNodes.forEach((textNode, index) => {
-        const originalText = this.originalTexts.get(textNode);
+        const originalText = this.originalText.get(textNode);
         if (originalText) {
           const translationCacheId = this.getStorageHashId(originalText, providerHashId);
           sessionStorage.setItem(translationCacheId, translations[index]);
@@ -295,7 +348,7 @@ export class PageTranslator {
   }
 
   protected getStorageCache(textNode: Node, providerHashId = this.getProviderHashId()): string | undefined {
-    const text = this.originalTexts.get(textNode);
+    const text = this.originalText.get(textNode);
     if (text) {
       const storageCacheId = this.getStorageHashId(text, providerHashId);
       return sessionStorage.getItem(storageCacheId);
