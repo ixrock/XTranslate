@@ -42,8 +42,8 @@ export class Header extends React.Component {
   }
 
   private translateActivePage = async () => {
-    const ok = await translateActivePage();
-    if (ok !== false) window.close();
+    await translateActivePage();
+    window.close();
   }
 
   private onTabsChange = async (page: PageId) => {

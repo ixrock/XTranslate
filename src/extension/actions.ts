@@ -11,7 +11,7 @@ export async function getSelectedText(): Promise<string> {
   });
 }
 
-export async function translateActivePage<Payload>(): Promise<Payload | false> {
+export async function translateActivePage<Payload>(): Promise<Payload & TranslatePagePayload> {
   const activeTab = await getActiveTab();
 
   return sendMessage<TranslatePagePayload>({
