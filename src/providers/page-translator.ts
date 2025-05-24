@@ -298,22 +298,28 @@ export class PageTranslator {
   }
 
   watchDOMTextNodes(rootElem = document.body): () => void {
-    const observer = new MutationObserver(mutations => {
-      let newTextNodes: Node[] = [];
+    const observer = new MutationObserver(muts => {
+      const fresh: Node[] = [];
 
-      mutations.forEach(({ addedNodes }) => {
-        const textNodes = Array.from(addedNodes.values()).filter(this.acceptTextNodeFilter);
-        newTextNodes.push(...textNodes);
-      });
+      for (const m of muts) {
+        m.addedNodes.forEach(node => {
+          if (this.acceptTextNodeFilter(node)) fresh.push(node);
 
-      if (newTextNodes.length) {
-        this.logger.info('DOM-WATCH NEW NODES', newTextNodes);
-        this.importNodes(newTextNodes);
-        void this.translateNodes(newTextNodes);
+          if (node.nodeType === Node.ELEMENT_NODE) {
+            const innerTexts = this.collectDOMTextNodes(node as HTMLElement);
+            fresh.push(...innerTexts);
+          }
+        });
+      }
+
+      if (fresh.length) {
+        this.logger.info('DOM-WATCH new', fresh);
+        this.importNodes(fresh);
+        void this.translateNodes(fresh);
       }
     });
 
-    observer.observe(rootElem, { subtree: true, childList: true });
+    observer.observe(rootElem, { subtree: true, childList: true, characterData: false });
     return () => observer.disconnect();
   }
 
