@@ -99,7 +99,7 @@ export class PageTranslator {
         const parentElem: HTMLElement = node.parentElement;
         const tooltipElem: HTMLElement = parentElem.closest(`[data-tooltip]`) ?? parentElem;
 
-        const originalText = this.originalTextRaw.get(node);
+        const originalText = this.originalText.get(node);
         const prevTranslation = tooltipElem.dataset.translation ?? "";
         const prevOriginal = tooltipElem.dataset.original ?? "";
 
@@ -111,13 +111,13 @@ export class PageTranslator {
         }
 
         if (showOriginalOnHover) {
-          tooltipElem.dataset.original = `${prevOriginal} ${originalText}`;
+          tooltipElem.dataset.original = `${prevOriginal} ${originalText}`.trim();
           if (parentElem != tooltipElem) {
             parentElem.dataset.original = originalText;
           }
         }
         if (showTranslationOnHover) {
-          tooltipElem.dataset.translation = `${prevTranslation} ${translation}`;
+          tooltipElem.dataset.translation = `${prevTranslation} ${translation}`.trim();
           if (parentElem != tooltipElem) {
             parentElem.dataset.translation = translation;
           }
