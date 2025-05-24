@@ -25,6 +25,7 @@ settings_title_full_page_translation = Перевод всей страницы
 settings_title_full_page_excluded_pages = Никогда не переводить
 settings_title_full_page_always_translate = Всегда переводить
 settings_title_full_page_empty_list = Пустой список
+settings_title_full_page_see_edit_list = Нажмите для просмотра и редактирования списка
 settings_title_full_page_add_url = Добавить URL
 settings_title_full_page_add_url_error = Попытка добавить некорректный URL
 settings_title_full_page_show_original_onmouseover = Отображать оригинальный текст при наведении курсора мыши

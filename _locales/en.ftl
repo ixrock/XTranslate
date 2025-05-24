@@ -27,6 +27,7 @@ settings_title_full_page_show_original_onmouseover = Show original text on mouse
 settings_title_full_page_show_translation_onmouseover = Show translation text on mouseover
 settings_title_full_page_show_replace_texts = Replace document texts with translations
 settings_title_full_page_empty_list = Empty list
+settings_title_full_page_see_edit_list = Click to see and edit the list
 settings_title_full_page_add_url = Add URL
 settings_title_full_page_add_url_error = Attempt to add invalid URL
 auto_play_tts = Auto-play text-to-speech

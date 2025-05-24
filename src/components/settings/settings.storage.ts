@@ -56,7 +56,6 @@ export const settingsStorage = createStorage("settings", {
       showTranslationOnHover: false,
       showTranslationInDOM: true,
       alwaysTranslatePages: [],
-      excludedPages: [],
     },
   }
 });

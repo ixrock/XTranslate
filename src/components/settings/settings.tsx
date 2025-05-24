@@ -153,21 +153,15 @@ export class Settings extends React.Component {
   }
 
   @action
-  addExcludedTranslationPage = (pageUrl?: string) => {
-    pageUrl ??= window.prompt(getMessage("settings_title_full_page_excluded_pages"));
-    this.addPageException(pageUrl, settingsStore.data.fullPageTranslation.excludedPages);
-  }
-
-  @action
   addAlwaysTranslatePage(pageUrl?: string) {
     pageUrl ??= window.prompt(getMessage("settings_title_full_page_always_translate"));
-    this.addPageException(pageUrl, settingsStore.data.fullPageTranslation.alwaysTranslatePages);
+    if (pageUrl) this.addPageException(pageUrl, settingsStore.data.fullPageTranslation.alwaysTranslatePages);
   }
 
   render() {
     const settings = settingsStore.data;
     const { fullPageTranslation } = settings;
-    const { excludedPages, alwaysTranslatePages } = fullPageTranslation;
+    const { alwaysTranslatePages } = fullPageTranslation;
 
     return (
       <main className={`${styles.Settings} flex column gaps`}>
@@ -226,12 +220,13 @@ export class Settings extends React.Component {
             />
           </div>
           <div className="alwaysTranslatePages flex gaps align-center">
-            <span>{getMessage("settings_title_full_page_always_translate")}: {alwaysTranslatePages.length}</span>
+            <span>{getMessage("settings_title_full_page_always_translate")} <b>({alwaysTranslatePages.length})</b></span>
             <ReactSelect
               value={null}
               className="box grow"
               menuNowrap={false}
               closeMenuOnSelect={false}
+              placeholder={getMessage("settings_title_full_page_see_edit_list")}
               noOptionsMessage={() => getMessage("settings_title_full_page_empty_list")}
               options={alwaysTranslatePages.map(value => ({ value, label: value }))}
               formatOptionLabel={({ value }: ReactSelectOption<string>) => this.formatPageUrlLabel(value, alwaysTranslatePages)}
@@ -240,23 +235,6 @@ export class Settings extends React.Component {
               primary
               label={getMessage("settings_title_full_page_add_url")}
               onClick={() => this.addAlwaysTranslatePage()}
-            />
-          </div>
-          <div className="excludedPages flex gaps align-center">
-            <span>{getMessage("settings_title_full_page_excluded_pages")}: {excludedPages.length}</span>
-            <ReactSelect
-              value={null}
-              className="box grow"
-              menuNowrap={false}
-              closeMenuOnSelect={false}
-              noOptionsMessage={() => getMessage("settings_title_full_page_empty_list")}
-              options={excludedPages.map(value => ({ value, label: value }))}
-              formatOptionLabel={({ value }: ReactSelectOption<string>) => this.formatPageUrlLabel(value, excludedPages)}
-            />
-            <Button
-              primary
-              label={getMessage("settings_title_full_page_add_url")}
-              onClick={() => this.addExcludedTranslationPage()}
             />
           </div>
           <div className={styles.grid}>
