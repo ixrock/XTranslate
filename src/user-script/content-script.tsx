@@ -136,7 +136,7 @@ export class ContentScript extends React.Component {
         abortCtrl.abort();
       },
       () => this.stopPageAutoTranslation(),
-      onMessage(MessageType.TRANSLATE_FULL_PAGE, this.translatePageAction),
+      onMessage(MessageType.TRANSLATE_FULL_PAGE, this.togglePageAutoTranslation),
       onMessage(MessageType.GET_SELECTED_TEXT, this.getSelectedTextAction),
     );
   }
@@ -220,11 +220,11 @@ export class ContentScript extends React.Component {
   }
 
   // TODO: show/hide full-page translation top-widget
-  private translatePageAction({ pageUrl }: TranslatePagePayload) {
-    if (!this.pageTranslator.hasEnabledAutoTranslation(pageUrl)) {
-      this.startPageAutoTranslation(pageUrl);
-    } else {
+  private togglePageAutoTranslation({ pageUrl }: TranslatePagePayload) {
+    if (this.pageTranslator.hasEnabledAutoTranslation(pageUrl)) {
       this.stopPageAutoTranslation(pageUrl);
+    } else {
+      this.startPageAutoTranslation(pageUrl);
     }
   }
 
