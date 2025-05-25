@@ -22,6 +22,7 @@ export interface SelectLanguageProps {
 }
 
 export interface SelectLanguageChangeEvent {
+  provider: ProviderCodeName;
   langFrom: string;
   langTo: string;
 }
@@ -118,9 +119,9 @@ export class SelectLanguage extends React.Component<SelectLanguageProps> {
 
   @action
   private onChange = (update: { sourceLang?: string, targetLang?: string } = {}) => {
-    const { from, to, onChange } = this.props;
+    const { from, to, provider, onChange } = this.props;
     const { sourceLang = from, targetLang = to } = update;
-    onChange({ langFrom: sourceLang, langTo: targetLang });
+    onChange({ provider, langFrom: sourceLang, langTo: targetLang });
   }
 
   @action

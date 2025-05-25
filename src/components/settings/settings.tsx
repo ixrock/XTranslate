@@ -185,8 +185,10 @@ export class Settings extends React.Component {
   }
 
   @action
-  onFullPageLanguageChange = ({ langTo, langFrom }: SelectLanguageChangeEvent) => {
+  onFullPageLanguageChange = ({ provider, ...langParams }: SelectLanguageChangeEvent) => {
     const { fullPageTranslation } = settingsStore.data;
+    const translator = getTranslator(provider);
+    const { langFrom, langTo } = translator.getSupportedLanguages(langParams);
     fullPageTranslation.langTo = langTo;
     fullPageTranslation.langFrom = langFrom;
   }

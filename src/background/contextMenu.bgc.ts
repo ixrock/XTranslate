@@ -20,7 +20,7 @@ export async function initContextMenu() {
     const url = new URL(activeTab.url || location.href);
 
     const startTranslatePageTitle = getMessage("context_menu_translate_full_page_context_menu", {
-      lang: translator.langTo[langTo] ?? langTo,
+      lang: translator.langTo[langTo] ?? langTo ?? "",
     });
     const stopTranslatePageTitle = getMessage("context_menu_translate_full_page_context_menu_stop", {
       site: `"${activeTab.title}" - ${activeTab.url}`,

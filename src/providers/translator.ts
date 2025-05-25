@@ -250,11 +250,13 @@ export abstract class Translator {
   getSupportedLanguages(desired: { langFrom: string, langTo: string }) {
     let { langFrom, langTo } = desired;
     if (!this.langFrom[langFrom]) {
-      langFrom = Object.keys(this.langFrom)[0] ?? "auto";
+      const firstLangFrom = Object.keys(this.langFrom)[0];
+      langFrom = firstLangFrom ?? "auto";
     }
     if (!this.langTo[langTo]) {
       const navLang = navigator.language;
-      langTo = [navLang, navLang.split("-")[0], "en"].find(langTo => this.langTo[langTo]);
+      const firstLangTo = Object.keys(this.langTo)[0];
+      langTo = [navLang, navLang.split("-")[0], "en"].find(lang => this.langTo[lang]) ?? firstLangTo;
     }
     return { langFrom, langTo }
   }
