@@ -1,6 +1,6 @@
 import GoogleLanguages from "./google.json"
 import { ProxyRequestInit } from "../extension";
-import { isTranslationError, ITranslationResult, PageTranslator, ProviderCodeName, TranslateParams, Translator } from "./index";
+import { isTranslationError, ITranslationResult, ProviderCodeName, TranslateParams, Translator } from "./index";
 import { delay } from "../utils";
 import { getMessage } from "../i18n";
 import { createStorage } from "../storage";
@@ -24,7 +24,6 @@ class Google extends Translator {
   constructor() {
     super({
       languages: GoogleLanguages,
-      pageTranslator: new PageTranslator(),
     });
   }
 

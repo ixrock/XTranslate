@@ -8,7 +8,6 @@ import { settingsStore } from "../components/settings/settings.storage";
 import { getTTSVoices, speak, stopSpeaking, TTSVoice } from "../tts";
 import { ProviderCodeName } from "./providers";
 import { getTranslationFromHistoryAction, saveToHistoryAction } from "../background/history.bgc";
-import type { PageTranslator } from "./page-translator";
 
 export interface ProviderLanguagesApiMap {
   from: { [locale: string]: string; auto?: string };
@@ -24,7 +23,6 @@ export interface TranslateParams {
 
 export interface TranslatorParams {
   languages: ProviderLanguagesApiMap;
-  pageTranslator?: PageTranslator;
 }
 
 export abstract class Translator {
@@ -46,7 +44,7 @@ export abstract class Translator {
   public audioDataUrl = "";
   protected logger = createLogger({ systemPrefix: "[TRANSLATOR]" });
 
-  protected constructor({ languages: { from: langFrom, to: langTo }, pageTranslator }: TranslatorParams) {
+  protected constructor({ languages: { from: langFrom, to: langTo } }: TranslatorParams) {
     autoBind(this);
 
     const { auto, ...langToFallback } = langFrom;

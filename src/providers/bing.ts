@@ -2,7 +2,7 @@ import BingLanguages from "./bing.json"
 import isEmpty from "lodash/isEmpty";
 import groupBy from "lodash/groupBy";
 import { ProxyRequestInit, ProxyResponseType } from "../extension";
-import { ITranslationError, ITranslationResult, PageTranslator, ProviderCodeName, TranslateParams, Translator } from "./index";
+import { ITranslationError, ITranslationResult, ProviderCodeName, TranslateParams, Translator } from "./index";
 import { createStorage } from "../storage";
 
 export interface BingApiAuthParams {
@@ -21,7 +21,6 @@ class Bing extends Translator {
   constructor() {
     super({
       languages: BingLanguages,
-      pageTranslator: new PageTranslator(),
     });
   }
 
