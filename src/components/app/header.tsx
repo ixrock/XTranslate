@@ -17,8 +17,6 @@ import { isSystemPage } from "../../common-vars";
 
 @observer
 export class Header extends React.Component {
-  private activeTab = activeTabStorage.get();
-
   constructor(props: object) {
     super(props);
     makeObservable(this);
@@ -49,19 +47,21 @@ export class Header extends React.Component {
   render() {
     const { name, version } = getManifest();
     const { page: pageId } = getUrlParams();
+    const activeTab = activeTabStorage.get();
     const { useDarkTheme, fullPageTranslation } = settingsStore.data;
     const { provider, langTo, alwaysTranslatePages } = fullPageTranslation;
-    const isTranslatedPage = alwaysTranslatePages.includes(new URL(this.activeTab.url || location.href).origin);
+    const isTranslatedPage = alwaysTranslatePages.includes(new URL(activeTab.url || location.href).origin);
     let translateFullPageTooltip: string;
 
-    const runtimeInteractive = !isSystemPage(this.activeTab.url);
+    const isHomePageNewTab = activeTab.url === "";
+    const runtimeInteractive = isHomePageNewTab || !isSystemPage(activeTab.url);
     if (runtimeInteractive) {
       const translatePageTitle = getMessage("context_menu_translate_full_page", {
         lang: getTranslator(provider).langTo[langTo] ?? langTo,
-        pageTitle: this.activeTab.title,
+        pageTitle: activeTab.title,
       });
       const stopTranslationTitle = getMessage("context_menu_translate_full_page_context_menu_stop", {
-        site: `"${this.activeTab.title}" - ${this.activeTab.url}`,
+        site: `"${activeTab.title}" - ${activeTab.url}`,
       });
       translateFullPageTooltip = isTranslatedPage ? stopTranslationTitle : translatePageTitle;
     }
