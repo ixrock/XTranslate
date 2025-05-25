@@ -242,7 +242,8 @@ export class Settings extends React.Component {
       <main className={`${styles.Settings} flex column gaps`}>
         <article className="flex column gaps">
           <SelectLanguage
-            showReverseTranslation showInfoIcon
+            showInfoIcon
+            showReverseTranslation
             provider={settings.vendor}
             from={settings.langFrom}
             to={settings.langTo}

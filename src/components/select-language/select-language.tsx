@@ -2,6 +2,7 @@ import "./select-language.scss";
 
 import React from "react";
 import { action } from "mobx";
+import { observer } from "mobx-react";
 import { ReactSelect, ReactSelectGroup, ReactSelectOption } from "../select";
 import { cssNames } from "../../utils";
 import { getTranslator, ProviderCodeName } from "../../providers";
@@ -25,6 +26,7 @@ export interface SelectLanguageChangeEvent {
   langTo: string;
 }
 
+@observer
 export class SelectLanguage extends React.Component<SelectLanguageProps> {
   get sourceFavorites(): string[] {
     return settingsStore.getFavorites(this.props.provider, "source")
@@ -151,16 +153,13 @@ export class SelectLanguage extends React.Component<SelectLanguageProps> {
     )
   }
 
-  @action
-  private setReverseTranslateLanguage(lang: string) {
-    settingsStore.data.langToReverse = lang;
-  }
 
   renderReverseTranslationSettingsPanel() {
     const { to: langTo, provider } = this.props;
     const langToTitle = getTranslator(provider).langTo[langTo];
     const { langTo: targetLangList } = getTranslator(provider);
     const initialReverseLang = langTo !== "en" ? "en" : Object.keys(targetLangList).filter(lang => lang !== "auto")[0] /*first*/;
+    const setReverseTranslateLanguage = action((val: string) => settingsStore.data.langToReverse = val);
 
     if (settingsStore.data.langToReverse) {
       return (
@@ -171,14 +170,14 @@ export class SelectLanguage extends React.Component<SelectLanguageProps> {
             placeholder={getMessage("reverse_translate_select_placeholder")}
             value={this.reverseLanguageOptions.find(opt => opt.value === settingsStore.data.langToReverse)}
             options={this.reverseLanguageOptions}
-            onChange={opt => this.setReverseTranslateLanguage(opt.value)}
+            onChange={opt => setReverseTranslateLanguage(opt.value)}
             formatOptionLabel={({ label, value: lang }) => this.formatLanguageLabel({ lang, title: label })}
           />
           <Icon
             small
             material="clear"
             tooltip={getMessage("reverse_translate_delete_action")}
-            onClick={() => this.setReverseTranslateLanguage("")}
+            onClick={() => setReverseTranslateLanguage("")}
           />
         </>
       )
@@ -189,7 +188,7 @@ export class SelectLanguage extends React.Component<SelectLanguageProps> {
         small
         material="arrow_forward"
         tooltip={getMessage("reverse_translate_add_action", { lang: langToTitle })}
-        onClick={() => this.setReverseTranslateLanguage(initialReverseLang)}
+        onClick={() => setReverseTranslateLanguage(initialReverseLang)}
       />
     );
   }
