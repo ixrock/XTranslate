@@ -8,9 +8,10 @@ class Deepl extends Translator {
   static MAX_BYTES_PER_REQUEST = 128 * 1024; /*128K*/
   static MAX_TEXTS_PER_REQUEST = 30;
 
-  public name = ProviderCodeName.DEEPL;
-  public title = "DeepL";
-  public publicUrl = "https://www.deepl.com/translator";
+  override name = ProviderCodeName.DEEPL;
+  override title = "DeepL";
+  override publicUrl = "https://www.deepl.com/translator";
+  override isRequireApiKey = true;
   #apiKey = createStorage<string>("deepl_api_auth_key");
 
   constructor() {

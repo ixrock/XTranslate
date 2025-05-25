@@ -10,11 +10,12 @@ export const googleApiDomain = createStorage<string>("google_api_domain", {
 });
 
 class Google extends Translator {
-  public name = ProviderCodeName.GOOGLE;
-  public title = 'Google';
-  public publicUrl = 'https://translate.google.com';
-  protected apiClients = ["gtx", "dict-chrome-exß"];
-  public ttsMaxLength = 187;
+  override name = ProviderCodeName.GOOGLE;
+  override title = 'Google';
+  override publicUrl = 'https://translate.google.com';
+  protected apiClients = ["gtx", "dict-chrome-ex"];
+  protected ttsMaxLength = 187;
+  override isRequireApiKey = false;
 
   protected apiClient = createStorage<string>("google_api_client", {
     defaultValue: this.apiClients[0],

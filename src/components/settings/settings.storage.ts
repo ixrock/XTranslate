@@ -33,6 +33,7 @@ export const settingsStorage = createStorage("settings", {
     showTranslatedFrom: true,
     rememberLastText: false,
     textInputTranslateDelayMs: 750,
+    showAdvancedProviders: false, // e.g. "advanced" == requires at least api-key from user-input to start working
     vendor: "google" as ProviderCodeName,
     langFrom: "auto",
     langTo: navigator.language.split('-')[0],

@@ -39,6 +39,7 @@ export abstract class Translator {
   abstract title: string; // human readable name, e.g. "Google"
   abstract publicUrl: string; // public translation service page
   abstract apiUrl: string; // service api url
+  abstract isRequireApiKey: boolean; // require to bring api-key to work
   public langFrom: Record<string, string> = {};
   public langTo: Record<string, string> = {};
   public audio: HTMLAudioElement;
@@ -264,8 +265,8 @@ export abstract class Translator {
 
   protected sanitizeApiKey(apiKey: string) {
     if (!apiKey) return "";
-    const tail = 2;
-    return apiKey.substring(0, tail) + "**" + apiKey.substring(apiKey.length - tail);
+    const tail = 4;
+    return apiKey.substring(0, tail) + "*-*" + apiKey.substring(apiKey.length - tail);
   }
 
   protected packGroups(texts: string[], { groupSize = 50, maxBytesPerGroup = 0 } = {}): string[][] {

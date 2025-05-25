@@ -6,10 +6,11 @@ import { settingsStore } from "../components/settings/settings.storage";
 import { toBinaryFile } from "../utils/binary";
 
 class OpenAITranslator extends Translator {
-  public name = ProviderCodeName.OPENAI;
-  public title = "OpenAI";
-  public publicUrl = "https://platform.openai.com/";
-  public apiUrl = "https://api.openai.com/v1";
+  override name = ProviderCodeName.OPENAI;
+  override title = "OpenAI";
+  override publicUrl = "https://platform.openai.com/";
+  override apiUrl = "https://api.openai.com/v1";
+  override isRequireApiKey = true;
   #apiKey = createStorage<string>("openai_api_key");
 
   constructor() {

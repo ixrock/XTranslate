@@ -8,6 +8,7 @@ class DeepSeekTranslator extends Translator {
   public title = "DeepSeek";
   public publicUrl = "https://platform.deepseek.com/";
   public apiUrl = "https://api.deepseek.com";
+  override isRequireApiKey = true;
   #apiKey = createStorage<string>("deepseek_api_key");
 
   constructor() {

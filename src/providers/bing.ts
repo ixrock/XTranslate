@@ -11,11 +11,12 @@ export interface BingApiAuthParams {
 }
 
 class Bing extends Translator {
-  public name = ProviderCodeName.BING;
-  public title = "Bing";
-  public publicUrl = "https://www.bing.com/translator";
-  public authUrl = "https://edge.microsoft.com/translate/auth";
-  public apiUrl = "https://api-edge.cognitive.microsofttranslator.com";
+  override name = ProviderCodeName.BING;
+  override title = "Bing";
+  override publicUrl = "https://www.bing.com/translator";
+  override apiUrl = "https://api-edge.cognitive.microsofttranslator.com";
+  private authUrl = "https://edge.microsoft.com/translate/auth";
+  override isRequireApiKey = false;
 
   constructor() {
     super({

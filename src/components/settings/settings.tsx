@@ -60,7 +60,7 @@ export class Settings extends React.Component {
         </>
       ),
       openai: (
-        <div className="flex gaps align-center">
+        <div className="openai_settings flex gaps align-center">
           <SelectAIModel
             className={styles.providerSelect}
             modelOptions={OpenAIModel}
@@ -78,6 +78,7 @@ export class Settings extends React.Component {
       ),
       grok: (
         <SelectAIModel
+          className="grok_settings"
           modelOptions={GrokAIModel}
           getValue={() => settingsStore.data.grokAiModel}
           onChange={value => settingsStore.data.grokAiModel = value}
@@ -127,15 +128,18 @@ export class Settings extends React.Component {
   }
 
   renderProviderSettings({ name: provider, title, getAuthSettings }: Translator): React.ReactNode {
-    const hasProvidedAuthSettings = !isEmpty(getAuthSettings());
+    const authSettings = getAuthSettings()
+    const hasProvidedAuthSettings = !isEmpty(authSettings);
+    const keyProvided = !!authSettings.apiKeySanitized;
+
     return (
-      <>
-        <div className={`${styles.providerSettings} flex align-center box grow`}>
+      <div className={`${styles.providerSettings} flex gaps ${!keyProvided ? "column" : ""}`}>
+        <div className={`flex align-center box grow`}>
           {this.providerSettings[provider]}
         </div>
         {hasProvidedAuthSettings && (
           <ProviderAuthSettings
-            {...getAuthSettings()}
+            {...authSettings}
             provider={provider}
             accessInfo={getMessage(`auth_access_info_steps_${provider}`)}
             accessInfo2={getMessage(`auth_access_info_api_key`, { provider: title })}
@@ -143,7 +147,7 @@ export class Settings extends React.Component {
             warningInfo={getMessage(`auth_safety_warning_info`)}
           />
         )}
-      </>
+      </div>
     )
   }
 
@@ -228,8 +232,11 @@ export class Settings extends React.Component {
 
   render() {
     const settings = settingsStore.data;
-    const { fullPageTranslation } = settings;
+    const { fullPageTranslation, showAdvancedProviders } = settings;
     const { alwaysTranslatePages } = fullPageTranslation;
+    const providers = showAdvancedProviders
+      ? getTranslators() // show all
+      : getTranslators().filter(providers => !providers.isRequireApiKey);
 
     return (
       <main className={`${styles.Settings} flex column gaps`}>
@@ -242,8 +249,15 @@ export class Settings extends React.Component {
             onChange={this.onLanguageChange}
           />
           <RadioGroup className={styles.providers} value={settings.vendor} onChange={v => settingsStore.setProvider(v)}>
-            {getTranslators().map(this.renderProvider, this)}
+            {providers.map(this.renderProvider, this)}
           </RadioGroup>
+          <a className={`${styles.showAdvanced} flex gaps`} onClick={() => settings.showAdvancedProviders = !settings.showAdvancedProviders}>
+            <Icon material={settings.showAdvancedProviders ? "expand_less" : "expand_more"}/>
+            <span>
+              {!settings.showAdvancedProviders && getMessage("settings_title_advanced_providers_list_show")}
+              {settings.showAdvancedProviders && getMessage("settings_title_advanced_providers_list_hide")}
+            </span>
+          </a>
         </article>
 
         <SubTitle>{getMessage("settings_title_full_page_translation")}</SubTitle>

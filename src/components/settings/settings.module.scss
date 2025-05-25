@@ -1,3 +1,5 @@
+@use "../mixins" as *;
+
 .Settings {
   .grid {
     display: grid;
@@ -32,6 +34,11 @@
 
   .provider {
     display: flex;
+  }
+
+  .showAdvanced {
+    @include pseudo-link;
+    font-size: small;
   }
 
   .providerSkipRotation {

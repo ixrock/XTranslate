@@ -5,10 +5,11 @@ import { settingsStore } from "../components/settings/settings.storage";
 import { aiTranslateAction } from "../background/open-ai.bgc";
 
 class GrokTranslator extends Translator {
-  public name = ProviderCodeName.GROK;
-  public title = "Grok";
-  public publicUrl = "https://console.x.ai/";
-  public apiUrl = "https://api.x.ai/v1";
+  override name = ProviderCodeName.GROK;
+  override title = "Grok";
+  override publicUrl = "https://console.x.ai/";
+  override apiUrl = "https://api.x.ai/v1";
+  override isRequireApiKey = true;
   #apiKey = createStorage<string>("grok_x_api_key");
 
   constructor() {

@@ -17,7 +17,7 @@ export class ProviderAuthSettings extends React.Component<ProviderAuthSettingsPr
     const { provider, apiKeySanitized, setupApiKey, clearApiKey, accessInfo, accessInfo2, warningInfo, clearKeyInfo, children } = this.props;
 
     return (
-      <>
+      <div className="ProviderAuthSettings flex gaps align-center">
         {!apiKeySanitized && (
           <Icon small material="info_outline" tooltip={accessInfo}/>
         )}
@@ -35,7 +35,7 @@ export class ProviderAuthSettings extends React.Component<ProviderAuthSettingsPr
           tooltip={clearKeyInfo}
         />}
         {apiKeySanitized && children}
-      </>
+      </div>
     )
   }
 }
