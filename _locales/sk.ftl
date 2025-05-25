@@ -27,6 +27,7 @@ settings_title_full_page_show_original_onmouseover = Pri prechode myšou zobrazi
 settings_title_full_page_show_translation_onmouseover = Pri prechode myšou zobraziť preložený text
 settings_title_full_page_show_replace_texts = Nahradiť text dokumentu prekladom
 settings_title_full_page_empty_list = Prázdny zoznam
+settings_title_full_page_see_edit_list = Kliknutím zobrazíte a upravíte zoznam
 settings_title_full_page_add_url = Pridať adresu URL
 settings_title_full_page_add_url_error = Pokúsiť sa pridať neplatnú adresu URL
 auto_play_tts = Automatické prehrávanie prevodu textu na reč
@@ -137,7 +138,9 @@ history_import_success = Úspešne importované položky histórie { $itemsCount
 history_import_file_error = Chyba pri čítaní súboru '{ $fileName }': { $errorInfo }
 
 # context menu
-context_menu_translate_full_page = Preložiť do { $lang }
+context_menu_translate_full_page_context_menu = Preložiť stranu do { $lang }
+context_menu_translate_full_page_context_menu_stop = Zastaviť automatický preklad pre { $site }
+context_menu_translate_full_page = Preložiť stranu "{ $pageTitle }" do { $lang }
 context_menu_translate_selection = Preložiť { $selection } pomocou { $translator }
 
 # other
