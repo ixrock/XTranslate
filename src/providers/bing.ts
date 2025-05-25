@@ -2,7 +2,7 @@ import BingLanguages from "./bing.json"
 import isEmpty from "lodash/isEmpty";
 import groupBy from "lodash/groupBy";
 import { ProxyRequestInit, ProxyResponseType } from "../extension";
-import { ITranslationError, ITranslationResult, PageTranslator, ProviderCodeName, TranslateParams, TranslateParamsMany, Translator } from "./index";
+import { ITranslationError, ITranslationResult, PageTranslator, ProviderCodeName, TranslateParams, Translator } from "./index";
 import { createStorage } from "../storage";
 
 export interface BingApiAuthParams {
@@ -56,7 +56,7 @@ class Bing extends Translator {
     }
   }
 
-  private async getRequestParams(params: TranslateParamsMany) {
+  private async getRequestParams({ from: langFrom, to: langTo, text, texts = [text] }: TranslateParams) {
     await this.beforeRequest();
 
     const { token } = this.apiParams.get();
@@ -68,13 +68,13 @@ class Bing extends Translator {
         "Content-type": "application/json; charset=UTF-8",
         "User-Agent": navigator.userAgent,
       },
-      body: JSON.stringify(params.texts.map(text => ({ Text: text }))),
+      body: JSON.stringify(texts.map(text => ({ Text: text }))),
     };
 
     const queryParams = new URLSearchParams({
       "api-version": "3.0",
-      to: params.langTo,
-      from: params.langFrom !== "auto" ? params.langFrom : "",
+      from: langFrom !== "auto" ? langFrom : "",
+      to: langTo,
     });
 
     return {
@@ -83,7 +83,7 @@ class Bing extends Translator {
     };
   }
 
-  async translateMany(params: TranslateParamsMany): Promise<string[]> {
+  async translateMany(params: TranslateParams): Promise<string[]> {
     const { requestInit, queryParams } = await this.getRequestParams(params);
 
     const result: BingTranslation[] = await this.request({
@@ -94,11 +94,8 @@ class Bing extends Translator {
     return result.map(translation => translation.translations[0].text); // string[]
   }
 
-  async translate({ from: langFrom, to: langTo, text }: TranslateParams): Promise<ITranslationResult> {
-    const { requestInit, queryParams } = await this.getRequestParams({
-      langFrom, langTo,
-      texts: [text],
-    });
+  async translate(params: TranslateParams): Promise<ITranslationResult> {
+    const { requestInit, queryParams } = await this.getRequestParams(params);
 
     // API: https://learn.microsoft.com/en-gb/azure/ai-services/translator/reference/v3-0-translate
     const translationReq = async (): Promise<BingTranslation[]> => {
@@ -124,11 +121,11 @@ class Bing extends Translator {
 
       const { translations, detectedLanguage } = response[0];
       const result: ITranslationResult = {
-        langDetected: detectedLanguage?.language ?? langFrom,
+        langDetected: detectedLanguage?.language ?? params.from,
         translation: translations.length ? translations[0].text : "",
       };
 
-      if (text.split(" ").length > 3) {
+      if (params.text.split(" ").length > 3) {
         return result; // basic text translation, no dictionary lookup
       }
 

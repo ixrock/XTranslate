@@ -1,7 +1,7 @@
 import { reaction } from "mobx";
 import { franc } from "franc";
 import { md5 } from "js-md5";
-import { autoBind, createLogger, disposer, LoggerColor } from "../utils";
+import { autoBind, createLogger, disposer, LoggerColor, strLengthCodePoints } from "../utils";
 import { ProviderCodeName } from "./providers";
 import { settingsStore } from "../components/settings/settings.storage";
 import { getTranslator } from "./translator";
@@ -17,7 +17,7 @@ export interface PageTranslatorParams {
 export class PageTranslator {
   static readonly RX_LETTER = /\p{L}/u;
   static readonly SKIP_TAGS = new Set(["SCRIPT", "STYLE", "NOSCRIPT", "TEXTAREA", "CODE", "PRE"]);
-  static readonly API_MAX_CHARS_LIMIT_PER_REQUEST = 5000;
+  static readonly MAX_API_LIMIT_CHARS_PER_REQUEST = 5000;
 
   protected textNodes = new Set<Node>();
   protected translations = new WeakMap<Node, Record<TranslationHashId, string /*translation*/>>();
@@ -96,6 +96,8 @@ export class PageTranslator {
     window.requestAnimationFrame(() => {
       textNodes.forEach(node => {
         const translation = this.getTranslationByNode(node, providerHashId);
+        if (!translation) return;
+
         const parentElem: HTMLElement = node.parentElement;
         const tooltipElem: HTMLElement = parentElem?.closest(`[data-tooltip]`) ?? parentElem;
         if (!tooltipElem) return;
@@ -168,16 +170,14 @@ export class PageTranslator {
     return spaces;
   }
 
-  protected packNodes(textNodes: Node[], {
-    limit = PageTranslator.API_MAX_CHARS_LIMIT_PER_REQUEST,
-  } = {}): Node[][] {
+  protected packNodes(textNodes: Node[], limit = PageTranslator.MAX_API_LIMIT_CHARS_PER_REQUEST): Node[][] {
     const packs: Node[][] = [];
     let currentPack: Node[] = [];
     let bufferLen = 0; // in code-points
 
     for (const node of textNodes) {
       const txt = this.originalText.get(node);
-      const len = [...txt].length; // safe for chars like: 😊 𐍈 等
+      const len = strLengthCodePoints(txt); // safe for chars like: 😊 𐍈 等
 
       if (bufferLen + len > limit) {
         if (currentPack.length) packs.push(currentPack);
@@ -188,10 +188,7 @@ export class PageTranslator {
       bufferLen += len;
     }
 
-    if (currentPack.length) {
-      packs.push(currentPack); // add tail (if any)
-    }
-
+    if (currentPack.length) packs.push(currentPack);
     return packs;
   }
 
@@ -206,9 +203,9 @@ export class PageTranslator {
       const translations = (
         await Promise.all(
           packedNodes.map(async nodes => {
-            const translationTexts = await this.translateApiRequest(nodes);
-            if (this.params.persistent) this.saveStorageCache(nodes, translationTexts, providerHashId);
-            return translationTexts;
+            const translations = await this.translateApiRequest(nodes);
+            if (this.params.persistent) this.saveStorageCache(nodes, translations, providerHashId);
+            return translations;
           })
         )
       ).flat();
@@ -245,12 +242,11 @@ export class PageTranslator {
     this.logger.info(`TRANSLATE API REQUEST for ${texts.length} items`, { ...params, texts });
 
     const translations = await translator.translateMany({
-      langFrom: params.langFrom,
-      langTo: params.langTo,
+      from: params.langFrom,
+      to: params.langTo,
       texts,
     });
 
-    // save to memory cache
     translations.forEach((translation, index) => {
       const text = texts[index];
       const node = textNodes[index];
@@ -347,8 +343,11 @@ export class PageTranslator {
       textNodes.forEach((textNode, index) => {
         const originalText = this.originalText.get(textNode);
         if (originalText) {
-          const translationCacheId = this.getStorageHashId(originalText, providerHashId);
-          sessionStorage.setItem(translationCacheId, translations[index]);
+          const translation = translations[index];
+          if (translation) {
+            const translationCacheId = this.getStorageHashId(originalText, providerHashId);
+            sessionStorage.setItem(translationCacheId, translation);
+          }
         }
       })
     });

@@ -15,8 +15,8 @@ import { preloadAppData } from "../preloadAppData";
 import { autoBind, disposer, getHotkey } from "../utils";
 import { getManifest, getURL, isRuntimeContextInvalidatedAction, MessageType, onMessage, ProxyResponseType, TranslatePagePayload, TranslatePayload } from "../extension";
 import { proxyRequest } from "../background/httpProxy.bgc";
-import { popupHotkey, SettingsStorageFullPage, settingsStore } from "../components/settings/settings.storage";
-import { getNextTranslator, getTranslator, ITranslationError, ITranslationResult } from "../providers";
+import { popupHotkey, settingsStore } from "../components/settings/settings.storage";
+import { getNextTranslator, getTranslator, ITranslationError, ITranslationResult, PageTranslator } from "../providers";
 import { XTranslateIcon } from "./xtranslate-icon";
 import { Popup } from "../components/popup/popup";
 
@@ -71,6 +71,7 @@ export class ContentScript extends React.Component {
   private isHotkeyActivated = false;
   private mousePos = { x: 0, y: 0 };
   private mouseTarget: HTMLElement = document.body;
+  private pageTranslator = new PageTranslator();
 
   // Unload previous content script (e.g. in case of "context invalidated" error on extension update to new version)
   private unload = disposer();
@@ -94,14 +95,6 @@ export class ContentScript extends React.Component {
     this.shadowDomCssUrl = URL.createObjectURL(
       new Blob([shadowDomStyles], { type: "text/css" }),
     );
-  }
-
-  get pageTranslator() {
-    return getTranslator(this.fullPageSettings.provider).pageTranslator;
-  }
-
-  get fullPageSettings(): SettingsStorageFullPage {
-    return settingsStore.data.fullPageTranslation;
   }
 
   componentDidMount() {

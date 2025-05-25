@@ -1,7 +1,7 @@
 // Base class for all translation providers
 
 import { observable } from "mobx";
-import { autoBind, createLogger, JsonResponseError } from "../utils";
+import { autoBind, createLogger, JsonResponseError, strLengthInBytes } from "../utils";
 import { ProxyRequestPayload, ProxyResponseType } from "../extension/messages";
 import { proxyRequest } from "../background/httpProxy.bgc";
 import { settingsStore } from "../components/settings/settings.storage";
@@ -18,13 +18,8 @@ export interface ProviderLanguagesApiMap {
 export interface TranslateParams {
   from: string;
   to: string;
-  text: string;
-}
-
-export interface TranslateParamsMany {
-  langFrom: string,
-  langTo: string,
-  texts: string[]
+  text?: string;
+  texts?: string[]; // for multi-translate
 }
 
 export interface TranslatorParams {
@@ -49,7 +44,6 @@ export abstract class Translator {
   public audio: HTMLAudioElement;
   public audioDataUrl = "";
   protected logger = createLogger({ systemPrefix: "[TRANSLATOR]" });
-  public pageTranslator?: PageTranslator;
 
   protected constructor({ languages: { from: langFrom, to: langTo }, pageTranslator }: TranslatorParams) {
     autoBind(this);
@@ -57,7 +51,6 @@ export abstract class Translator {
     const { auto, ...langToFallback } = langFrom;
     this.langFrom = langFrom;
     this.langTo = langTo ?? langToFallback;
-    this.pageTranslator = pageTranslator;
 
     this.translate = new Proxy(this.translate, {
       apply: async (translate, callContext, [params]: [TranslateParams]): Promise<ITranslationResult> => {
@@ -68,7 +61,7 @@ export abstract class Translator {
 
   abstract translate(params: TranslateParams): Promise<ITranslationResult>;
 
-  async translateMany(params: TranslateParamsMany): Promise<string[]> {
+  async translateMany(params: TranslateParams): Promise<string[]> {
     this.logger.error(`translation for multi texts is not implemented for ${this.title}`);
     return [];
   }
@@ -250,7 +243,7 @@ export abstract class Translator {
   }
 
   canTranslateFullPage(): boolean {
-    return !!this.pageTranslator;
+    return Translator.prototype.translateMany !== this.constructor.prototype.translateMany;
   }
 
   getSupportedLanguages(desired: { langFrom: string, langTo: string }) {
@@ -272,6 +265,26 @@ export abstract class Translator {
   protected sanitizeApiKey(apiKey: string) {
     if (!apiKey) return "";
     return apiKey.substring(0, 4) + "-****-" + apiKey.substring(apiKey.length - 4);
+  }
+
+  protected packGroups(texts: string[], { groupSize = 50, maxBytesPerGroup = 0 } = {}): string[][] {
+    const packs = [];
+    let buf = [];
+    let sizeBytes = 0;
+
+    for (const str of texts) {
+      const len = strLengthInBytes(str);
+
+      if (sizeBytes + len > maxBytesPerGroup || buf.length >= groupSize) {
+        packs.push(buf);
+        buf = [];
+        sizeBytes = 0;
+      }
+      buf.push(str);
+      sizeBytes += len;
+    }
+    if (buf.length) packs.push(buf);
+    return packs;
   }
 }
 

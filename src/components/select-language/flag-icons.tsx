@@ -1,6 +1,9 @@
 // Mapping language locale to country flag in "flag-icons" package
 
-export const flagIconToLangMap: Record<string/*flag-icon-name*/, string | string[] /*locale*/> = {
+export type FlagIconFilename = string;
+export type FlagLocale = string;
+
+export const flagIconToLangMap: Record<FlagIconFilename, FlagLocale | FlagLocale[]> = {
   "al": "sq", // Albanian
   "am": "hy", // Armenian
   "ph": "ce", // Cebuano (Philippines)
@@ -27,13 +30,15 @@ export const flagIconToLangMap: Record<string/*flag-icon-name*/, string | string
   "iq": "ku", // Iraq, Kurdistan Region
   "nz": "ma", // Maori (New Zealand)
   "ke": "sw", // Swahili (Kenya, Rwanda, Tanzania, Uganda)
-  "cn": ["zh-CN", "zh-Hans"], // Chinese (Simplified)
+  "cn": ["zh-CN", "zh-Hans", "lzh", "zh"], // Chinese
   "tw": ["zh-TW", "zh-Hant"], // Chinese (Taiwan)
   "ng": "yo", // Yoruba (Nigeria)
   "za": ["zu", "xh"], // Zulu (South Africa), Xhosa (South Africa)
   "vn": "vi", // Vietnamese
-  "sa": "ar", // Arabic
+  "arab": ["ar", "arz", "ary", "arb"], // Arabic
   "rs": "sr", // Serbian
+  "no": "nb", // Norwegian
+  "pt": ["pt-pt", "pt-br"], // Portuguese
 };
 
 export function getFlagIcon(locale: string): string | undefined {

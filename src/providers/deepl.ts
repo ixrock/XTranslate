@@ -5,6 +5,9 @@ import { ProxyRequestInit } from "../extension";
 import { getMessage } from "../i18n";
 
 class Deepl extends Translator {
+  static MAX_BYTES_PER_REQUEST = 128 * 1024; /*128K*/
+  static MAX_TEXTS_PER_REQUEST = 30;
+
   public name = ProviderCodeName.DEEPL;
   public title = "DeepL";
   public publicUrl = "https://www.deepl.com/translator";
@@ -24,26 +27,59 @@ class Deepl extends Translator {
     return "https://api.deepl.com/v2";
   }
 
-  async translate(params: TranslateParams): Promise<ITranslationResult> {
+  protected async getRequestParams({ from: langFrom, to: langTo, text, texts = [text] }: TranslateParams) {
     await this.#apiKey.load();
 
-    const { from: langFrom, to: langTo, text } = params;
+    const queryParams = new URLSearchParams({
+      source_lang: langFrom == "auto" ? "" : langFrom,
+      target_lang: langTo,
+    });
+
     const reqInit: ProxyRequestInit = {
       method: "POST",
       headers: {
         "Authorization": `DeepL-Auth-Key ${this.#apiKey.get()}`,
         "Content-type": "application/x-www-form-urlencoded",
       },
-      body: new URLSearchParams({
-        text,
-        source_lang: langFrom == "auto" ? "" : langFrom,
-        target_lang: langTo,
-      } as DeeplTranslationRequestParams).toString(),
+      body: new URLSearchParams(texts.map(text => ["text", text])).toString(),
     };
+
+    return { queryParams, reqInit };
+  }
+
+  async translateMany(params: TranslateParams): Promise<string[]> {
+    const request = async (texts?: string[]) => {
+      const { reqInit, queryParams } = await this.getRequestParams({ ...params, texts });
+
+      const { translations }: DeeplTranslationResponse = await this.request({
+        url: `${this.apiUrl}/translate?${queryParams}`,
+        requestInit: reqInit,
+      });
+
+      return translations.map(tr => tr.text);
+    }
+
+    if (params.texts.length >= Deepl.MAX_TEXTS_PER_REQUEST) {
+      const textGroups: string[][] = this.packGroups(params.texts, {
+        groupSize: Deepl.MAX_TEXTS_PER_REQUEST,
+        maxBytesPerGroup: Deepl.MAX_BYTES_PER_REQUEST,
+      });
+
+      const translations = await Promise.all(
+        textGroups.map(texts => request(texts).catch(() => Array(texts.length).fill(undefined)))
+      );
+      return translations.flat();
+    }
+
+    return request();
+  }
+
+  async translate(params: TranslateParams): Promise<ITranslationResult> {
+    const { reqInit, queryParams } = await this.getRequestParams(params);
 
     try {
       const { translations }: DeeplTranslationResponse = await this.request({
-        url: `${this.apiUrl}/translate`,
+        url: `${this.apiUrl}/translate?${queryParams}`,
         requestInit: reqInit,
       });
       return {
@@ -87,12 +123,12 @@ export interface DeeplUsageResponse {
 
 // See also: https://www.deepl.com/docs-api/translating-text/request/
 export interface DeeplTranslationRequestParams {
-  [param: string]: string;
+  [param: string]: any;
 
   // Text to be translated. Only UTF8-encoded plain text is supported.
   // The parameter may be specified multiple times and translations are returned in the same order as they are requested.
   // Up to 50 texts can be sent for translation in one request.
-  text: string;
+  text: string | string[];
 
   // Language of the text to be translated. When param omitted language auto-detection is applied.
   source_lang?: string;

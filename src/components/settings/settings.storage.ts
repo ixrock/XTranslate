@@ -77,8 +77,8 @@ export const activeTabStorage = createStorage("tabs_selected_text", {
   defaultValue: {
     tabId: -1,
     title: "",
+    url: "",
     selectedText: "",
-    url: location.href,
   },
 });
 

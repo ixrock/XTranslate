@@ -17,7 +17,7 @@ export async function initContextMenu() {
     const { fullPageTranslation: { provider, langTo, alwaysTranslatePages } } = settingsStorage.get();
     const translator = getTranslator(provider);
     const activeTab = activeTabStorage.get();
-    const url = new URL(activeTab.url);
+    const url = new URL(activeTab.url || location.href);
 
     const startTranslatePageTitle = getMessage("context_menu_translate_full_page_context_menu", {
       lang: translator.langTo[langTo] ?? langTo,

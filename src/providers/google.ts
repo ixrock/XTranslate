@@ -1,6 +1,6 @@
 import GoogleLanguages from "./google.json"
 import { ProxyRequestInit } from "../extension";
-import { isTranslationError, ITranslationResult, PageTranslator, ProviderCodeName, TranslateParams, TranslateParamsMany, Translator } from "./index";
+import { isTranslationError, ITranslationResult, PageTranslator, ProviderCodeName, TranslateParams, Translator } from "./index";
 import { delay } from "../utils";
 import { getMessage } from "../i18n";
 import { createStorage } from "../storage";
@@ -46,7 +46,7 @@ class Google extends Translator {
     return this.apiUrl + `/translate_tts?client=${apiClient}&ie=UTF-8&tl=${lang}&q=${textEncoded}`;
   }
 
-  async translateMany({ langTo, langFrom, texts }: TranslateParamsMany): Promise<string[]> {
+  async translateMany({ from: langFrom, to: langTo, texts }: TranslateParams): Promise<string[]> {
     const queryParams = new URLSearchParams({
       client: this.apiClient.get(),
       sl: langFrom,
