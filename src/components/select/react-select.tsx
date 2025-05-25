@@ -30,6 +30,7 @@ export function ReactSelect<T>(props: ReactSelectProps<T>) {
     classNamePrefix,
     menuNowrap = true,
     menuPositionHorizontal = "auto",
+    menuPlacement = "auto",
     ...selectProps
   } = props;
 
@@ -56,6 +57,7 @@ export function ReactSelect<T>(props: ReactSelectProps<T>) {
   return (
     <ReactSelectComponent
       {...selectProps}
+      menuPlacement={menuPlacement}
       className={cssNames(styles.ReactSelect, className)}
       classNamePrefix={cssNames(classNamePrefixGlobal, classNamePrefix)}
       classNames={{

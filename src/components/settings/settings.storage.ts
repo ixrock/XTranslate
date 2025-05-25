@@ -1,7 +1,7 @@
 import { action, makeObservable } from "mobx";
 import { Hotkey } from "../../utils/parseHotkey";
 import { createStorage } from "../../storage";
-import { getTranslator, GrokAIModel, OpenAIModel, ProviderCodeName } from "../../providers";
+import { getTranslator, GrokAIModel, OpenAIModel, OpenAIVoiceTTS, ProviderCodeName } from "../../providers";
 
 export type PopupPosition = "" /*auto*/ | "left top" | "left bottom" | "right top" | "right bottom";
 
@@ -44,6 +44,7 @@ export const settingsStorage = createStorage("settings", {
     popupPosition: "" as PopupPosition,
     iconPosition: {} as XIconPosition,
     ttsVoiceIndex: 0,
+    openAiTtsVoice: OpenAIVoiceTTS.ALLOY,
     openAiModel: OpenAIModel.RECOMMENDED,
     grokAiModel: GrokAIModel.RECOMMENDED,
     skipVendorInRotation: {} as Record<ProviderCodeName, boolean>,

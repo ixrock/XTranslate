@@ -36,6 +36,7 @@ class OpenAITranslator extends Translator {
       provider: this.name,
       model: OpenAIModelTTS.MINI,
       apiKey: this.#apiKey.get(),
+      voice: settingsStore.data.openAiTtsVoice,
       text,
       targetLanguage: lang,
     });

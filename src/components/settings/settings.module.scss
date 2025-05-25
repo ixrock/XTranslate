@@ -18,12 +18,20 @@
   .providers {
     display: flex;
     flex-direction: column;
-    gap: var(--theme-spacing-half);
+    gap: var(--theme-spacing);
     padding: var(--theme-spacing) 0;
   }
 
+  .providerSelect {
+    min-width: 100px;
+  }
+
+  .providerSettings {
+    font-size: small;
+  }
+
   .provider {
-    --flexGap: var(--theme-spacing-half) !important;
+    display: flex;
   }
 
   .providerSkipRotation {

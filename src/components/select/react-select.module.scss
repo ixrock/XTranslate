@@ -59,10 +59,15 @@
     padding: var(--theme-spacing-half);
 
     &:active, &:hover,
-    &:is(:global(.XTranslateReactSelect__option--is-selected)),
     &:is(:global(.XTranslateReactSelect__option--is-focused)) {
       color: white;
       background: var(--theme-color-primary);
+    }
+
+    &:is(:global(.XTranslateReactSelect__option--is-selected)) {
+      color: var(--theme-color-text);
+      background: initial;
+      opacity: .75;
     }
 
     &:is(:global(.XTranslateReactSelect__option--is-disabled)) {

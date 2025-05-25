@@ -1,19 +1,16 @@
 @use "../mixins" as *;
 
-.ProviderAuthSettings {
-  display: flex;
-  gap: var(--theme-spacing);
-  align-items: center;
-}
-
-.key {
-  white-space: nowrap;
-}
-
 .setupApiKey {
   @include pseudo-link;
 
   display: flex;
   gap: var(--theme-spacing);
   font-size: small;
+  font-weight: bold;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+:global(.openai_apiKey) {
+  //max-width: 40px;
 }

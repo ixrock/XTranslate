@@ -5,14 +5,17 @@ import { delay } from "../utils";
 import { getMessage } from "../i18n";
 import { createStorage } from "../storage";
 
+export const googleApiDomain = createStorage<string>("google_api_domain", {
+  defaultValue: "com",
+});
+
 class Google extends Translator {
   public name = ProviderCodeName.GOOGLE;
   public title = 'Google';
-  public apiUrl = 'https://translate.googleapis.com'; // TODO: support more domains via settings
   public publicUrl = 'https://translate.google.com';
+  protected apiClients = ["gtx", "dict-chrome-exß"];
   public ttsMaxLength = 187;
 
-  protected apiClients = ["gtx", "dict-chrome-ex"];
   protected apiClient = createStorage<string>("google_api_client", {
     defaultValue: this.apiClients[0],
   });
@@ -22,6 +25,11 @@ class Google extends Translator {
       languages: GoogleLanguages,
       pageTranslator: new PageTranslator(),
     });
+  }
+
+  get apiUrl() {
+    const domain = googleApiDomain.get();
+    return this.publicUrl.replace(".com", "." + domain);
   }
 
   // try to use next available api-client if google has blocked the traffic
@@ -52,7 +60,6 @@ class Google extends Translator {
       sl: langFrom,
       tl: langTo
     });
-    const url = `${this.apiUrl}/translate_a/t?${queryParams}`;
 
     const requestInit: ProxyRequestInit = {
       method: "POST",
@@ -64,8 +71,9 @@ class Google extends Translator {
       ).toString(),
     };
 
-    const translations: string[] = [];
+    const url = `${this.apiUrl}/translate_a/t?${queryParams}`;
     const response = await this.request({ url, requestInit });
+    const translations: string[] = [];
 
     if (langFrom === "auto") {
       const autoDetectedResults = response as [text: string, locale: string][];
@@ -78,6 +86,7 @@ class Google extends Translator {
   }
 
   async translate(params: TranslateParams): Promise<ITranslationResult> {
+    await googleApiDomain.load();
     await this.apiClient.load();
 
     const { from: langFrom, to: langTo, text } = params;
@@ -164,6 +173,31 @@ class Google extends Translator {
     }
   }
 }
+
+export interface GoogleApiDomain {
+  domain: string;
+  title: string;
+}
+
+export const googleApiDomains: GoogleApiDomain[] = [
+  { domain: "com", title: "com (Default)" },
+  { domain: "ca", title: "ca (Canada)" },
+  { domain: "com.hk", title: "com.hk (香港)" },
+  { domain: "com.tr", title: "com.tr (Türkiye)" },
+  { domain: "com.tw", title: "com.tw (台湾)" },
+  { domain: "com.ua", title: "com.ua (Україна)" },
+  { domain: "com.vn", title: "com.vn (Việt Nam)" },
+  { domain: "co.in", title: "co.in (India)" },
+  { domain: "co.jp", title: "co.jp (日本)" },
+  { domain: "co.kr", title: "co.kr (한국)" },
+  { domain: "co.uk", title: "co.uk (UK)" },
+  { domain: "cn", title: "cn (中国)" },
+  { domain: "de", title: "de (Deutschland)" },
+  { domain: "fr", title: "fr (France)" },
+  { domain: "it", title: "it (Italia)" },
+  { domain: "pl", title: "pl (Polska)" },
+  { domain: "ru", title: "ru (Россия)" }
+];
 
 export interface GoogleTranslation {
   src: string // lang detected

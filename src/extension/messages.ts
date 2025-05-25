@@ -1,5 +1,5 @@
 // [IPC]: inter-process communications for [options-page] <-> [background] <-> [content-pages]
-import type { ITranslationResult, ProviderCodeName, TranslateParams } from "../providers";
+import { ITranslationResult, OpenAIVoiceTTS, ProviderCodeName, TranslateParams } from "../providers";
 import type { IHistoryItem } from "../components/user-history/history.storage";
 
 export enum MessageType {
@@ -111,5 +111,5 @@ export interface AITextToSpeechPayload {
 }
 
 export interface OpenAITextToSpeechPayload extends AITextToSpeechPayload {
-  voice?: 'alloy' | 'echo' | 'fable' | 'onyx' | 'nova' | 'shimmer';
+  voice?: OpenAIVoiceTTS;
 }

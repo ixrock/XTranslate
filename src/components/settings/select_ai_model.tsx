@@ -1,14 +1,12 @@
-import * as styles from "./select_ai_model.module.scss";
-
 import React from "react";
 import { observer } from "mobx-react";
 import { ReactSelect, ReactSelectOption, FormatOptionLabelMeta } from "../select";
 import { getMessage } from "../../i18n";
-import { Icon } from "../icon";
 
 export type AIModelMap = Record<string, string>;
 
 export interface SelectAIModelProps<Models extends AIModelMap> {
+  className?: string;
   modelOptions: Models; // e.g. `OpenAIModel`
   getValue: () => ValueOf<Models>;
   onChange(value: ValueOf<Models>): void;
@@ -44,9 +42,10 @@ export class SelectAIModel<Models extends AIModelMap> extends React.Component<Se
   };
 
   render() {
+    const { className } = this.props;
     return (
       <ReactSelect
-        className={styles.SelectAIModel}
+        className={className}
         placeholder={getMessage("ai_choose_model")}
         value={this.selectedOption}
         options={this.modelOptions}

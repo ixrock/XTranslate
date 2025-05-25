@@ -2,10 +2,9 @@ import * as styles from "./auth_settings.module.scss";
 import React from "react";
 import { Icon } from "../icon";
 import { ProviderCodeName, TranslatorAuthParams } from "../../providers";
-import { cssNames, prevDefault } from "../../utils";
+import { prevDefault } from "../../utils";
 
 export interface ProviderAuthSettingsProps extends TranslatorAuthParams, React.PropsWithChildren {
-  className?: string;
   provider: ProviderCodeName;
   accessInfo: string;
   accessInfo2: string;
@@ -15,20 +14,20 @@ export interface ProviderAuthSettingsProps extends TranslatorAuthParams, React.P
 
 export class ProviderAuthSettings extends React.Component<ProviderAuthSettingsProps> {
   render() {
-    const { className, apiKeySanitized, setupApiKey, clearApiKey, accessInfo, accessInfo2, warningInfo, clearKeyInfo, children } = this.props;
+    const { provider, apiKeySanitized, setupApiKey, clearApiKey, accessInfo, accessInfo2, warningInfo, clearKeyInfo, children } = this.props;
 
     return (
-      <div className={cssNames(styles.ProviderAuthSettings, className)}>
+      <>
         {!apiKeySanitized && (
           <Icon small material="info_outline" tooltip={accessInfo}/>
         )}
-        <div className={styles.setupApiKey} onClick={prevDefault(setupApiKey)}>
+        <a className={styles.setupApiKey} onClick={prevDefault(setupApiKey)}>
           {!apiKeySanitized && <>
             <Icon small material="warning_amber" tooltip={warningInfo}/>
             <em>{accessInfo2}</em>
           </>}
-          {apiKeySanitized && <b className={styles.key}>{apiKeySanitized}</b>}
-        </div>
+          <span className={`${provider}_apiKey`}>{apiKeySanitized}</span>
+        </a>
         {apiKeySanitized && <Icon
           small
           material="clear"
@@ -36,7 +35,7 @@ export class ProviderAuthSettings extends React.Component<ProviderAuthSettingsPr
           tooltip={clearKeyInfo}
         />}
         {apiKeySanitized && children}
-      </div>
+      </>
     )
   }
 }

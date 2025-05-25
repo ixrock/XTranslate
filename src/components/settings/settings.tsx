@@ -3,7 +3,9 @@ import React from "react";
 import { action, makeObservable, observable } from "mobx";
 import { observer } from "mobx-react";
 import isEqual from "lodash/isEqual";
-import { getTranslator, getTranslators, GrokAIModel, OpenAIModel, ProviderCodeName, Translator } from "../../providers";
+import isEmpty from "lodash/isEmpty";
+import startCase from "lodash/startCase";
+import { getTranslator, getTranslators, googleApiDomain, googleApiDomains, GrokAIModel, OpenAIModel, OpenAIVoiceTTS, ProviderCodeName, Translator } from "../../providers";
 import { cssNames } from "../../utils";
 import { XTranslateIcon } from "../../user-script/xtranslate-icon";
 import { SelectLanguage, SelectLanguageChangeEvent } from "../select-language";
@@ -26,26 +28,62 @@ import { Button } from "../button";
 
 @observer
 export class Settings extends React.Component {
+  private openAiVoiceOptions: ReactSelectOption<OpenAIVoiceTTS>[] = Object.values(OpenAIVoiceTTS)
+    .map((voice: OpenAIVoiceTTS) => {
+      return {
+        value: voice,
+        label: startCase(voice),
+      } as ReactSelectOption<OpenAIVoiceTTS>;
+    });
+
+  private googleApiDomainOptions: ReactSelectOption<string>[] = googleApiDomains.map(({ domain, title }) => {
+    return {
+      value: domain,
+      label: title,
+    } as ReactSelectOption<string>;
+  });
+
   constructor(props: object) {
     super(props);
     makeObservable(this);
   }
 
-  private providerSettings: Partial<Record<ProviderCodeName, React.ReactNode>> = {
-    openai: (
-      <SelectAIModel
-        modelOptions={OpenAIModel}
-        getValue={() => settingsStore.data.openAiModel}
-        onChange={value => settingsStore.data.openAiModel = value}
-      />
-    ),
-    grok: (
-      <SelectAIModel
-        modelOptions={GrokAIModel}
-        getValue={() => settingsStore.data.grokAiModel}
-        onChange={value => settingsStore.data.grokAiModel = value}
-      />
-    ),
+  get providerSettings(): Partial<Record<ProviderCodeName, React.ReactNode>> {
+    return {
+      google: (
+        <>
+          <ReactSelect
+            options={this.googleApiDomainOptions}
+            value={this.googleApiDomainOptions.find(({ value }) => value === googleApiDomain.get())}
+            onChange={({ value }) => googleApiDomain.set(value)}
+          />
+        </>
+      ),
+      openai: (
+        <div className="flex gaps align-center">
+          <SelectAIModel
+            className={styles.providerSelect}
+            modelOptions={OpenAIModel}
+            getValue={() => settingsStore.data.openAiModel}
+            onChange={value => settingsStore.data.openAiModel = value}
+          />
+          <ReactSelect
+            className={styles.providerSelect}
+            placeholder={getMessage("tts_select_voice_title")}
+            options={this.openAiVoiceOptions}
+            value={this.openAiVoiceOptions.find(voiceOpt => voiceOpt.value === settingsStore.data.openAiTtsVoice)}
+            onChange={({ value }) => settingsStore.data.openAiTtsVoice = value}
+          />
+        </div>
+      ),
+      grok: (
+        <SelectAIModel
+          modelOptions={GrokAIModel}
+          getValue={() => settingsStore.data.grokAiModel}
+          onChange={value => settingsStore.data.grokAiModel = value}
+        />
+      ),
+    }
   };
 
   private get iconPositions(): ReactSelectOption<XIconPosition>[] {
@@ -88,22 +126,52 @@ export class Settings extends React.Component {
     }
   }
 
-  renderAuthSettings({ name: provider, title, getAuthSettings }: Translator): React.ReactNode {
-    const authParams = getAuthSettings();
-    if (authParams) {
-      return (
-        <ProviderAuthSettings
-          {...authParams}
-          provider={provider}
-          accessInfo={getMessage(`auth_access_info_steps_${provider}`)}
-          accessInfo2={getMessage(`auth_access_info_api_key`, { provider: title })}
-          clearKeyInfo={getMessage(`auth_clear_key_info`, { provider: title })}
-          warningInfo={getMessage(`auth_safety_warning_info`)}
-        >
+  renderProviderSettings({ name: provider, title, getAuthSettings }: Translator): React.ReactNode {
+    const hasProvidedAuthSettings = !isEmpty(getAuthSettings());
+    return (
+      <>
+        <div className={`${styles.providerSettings} flex align-center box grow`}>
           {this.providerSettings[provider]}
-        </ProviderAuthSettings>
-      );
-    }
+        </div>
+        {hasProvidedAuthSettings && (
+          <ProviderAuthSettings
+            {...getAuthSettings()}
+            provider={provider}
+            accessInfo={getMessage(`auth_access_info_steps_${provider}`)}
+            accessInfo2={getMessage(`auth_access_info_api_key`, { provider: title })}
+            clearKeyInfo={getMessage(`auth_clear_key_info`, { provider: title })}
+            warningInfo={getMessage(`auth_safety_warning_info`)}
+          />
+        )}
+      </>
+    )
+  }
+
+  renderProvider(provider: Translator) {
+    const { name, title } = provider;
+    const publicUrl = new URL(provider.publicUrl);
+    const domain = publicUrl.hostname.replace(/^www\./, "") + publicUrl.pathname.replace(/\/$/, "");
+    const skipInRotation = settingsStore.data.skipVendorInRotation[name];
+    const disableInRotationClassName = cssNames({
+      [styles.providerSkipRotation]: skipInRotation,
+    });
+
+    return (
+      <div key={name} className={`${styles.provider} flex gaps align-center`}>
+        <Checkbox
+          checked={skipInRotation}
+          onChange={checked => settingsStore.data.skipVendorInRotation[name] = checked}
+          tooltip={getMessage("skip_translation_vendor_in_rotation", { vendor: title })}
+        />
+        <Radio value={name} label={<span className={disableInRotationClassName}>{title}</span>}/>
+        <a href={String(publicUrl)} target="_blank" tabIndex={-1}>
+          {domain}
+        </a>
+        <div className="provider-settings flex gaps align-center">
+          {this.renderProviderSettings(provider)}
+        </div>
+      </div>
+    )
   }
 
   @action
@@ -174,32 +242,7 @@ export class Settings extends React.Component {
             onChange={this.onLanguageChange}
           />
           <RadioGroup className={styles.providers} value={settings.vendor} onChange={v => settingsStore.setProvider(v)}>
-            {getTranslators().map(provider => {
-              const translatorName = provider.title;
-              const publicUrl = new URL(provider.publicUrl);
-              const name = provider.name as ProviderCodeName;
-              const domain = publicUrl.hostname.replace(/^www\./, "") + publicUrl.pathname.replace(/\/$/, "");
-              const skipInRotation = settingsStore.data.skipVendorInRotation[name];
-              const disableInRotationClassName = cssNames({
-                [styles.providerSkipRotation]: skipInRotation,
-              });
-              return (
-                <div key={name} className={`${styles.provider} flex gaps align-center`}>
-                  <Checkbox
-                    checked={skipInRotation}
-                    onChange={checked => settingsStore.data.skipVendorInRotation[name] = checked}
-                    tooltip={getMessage("skip_translation_vendor_in_rotation", { vendor: translatorName })}
-                  />
-                  <Radio value={name} label={<span className={disableInRotationClassName}>{translatorName}</span>}/>
-                  <a href={String(publicUrl)} target="_blank" tabIndex={-1}>
-                    {domain}
-                  </a>
-                  <div className="flex gaps align-center">
-                    {this.renderAuthSettings(provider)}
-                  </div>
-                </div>
-              )
-            })}
+            {getTranslators().map(this.renderProvider, this)}
           </RadioGroup>
         </article>
 

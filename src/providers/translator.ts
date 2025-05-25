@@ -259,12 +259,13 @@ export abstract class Translator {
   }
 
   getAuthSettings(): TranslatorAuthParams {
-    return;
+    return {} as TranslatorAuthParams;
   }
 
   protected sanitizeApiKey(apiKey: string) {
     if (!apiKey) return "";
-    return apiKey.substring(0, 4) + "-****-" + apiKey.substring(apiKey.length - 4);
+    const tail = 2;
+    return apiKey.substring(0, tail) + "**" + apiKey.substring(apiKey.length - tail);
   }
 
   protected packGroups(texts: string[], { groupSize = 50, maxBytesPerGroup = 0 } = {}): string[][] {
