@@ -132,9 +132,10 @@ export class PageTranslator {
   restoreDOM(textNodes: Node[], { restoreOriginalText = false } = {}) {
     window.requestAnimationFrame(() => {
       textNodes.forEach(node => {
-        delete node.parentElement.dataset.tooltip;
-        delete node.parentElement.dataset.translation;
-        delete node.parentElement.dataset.original;
+        const parentElem = node.parentElement as HTMLElement | null;
+        delete parentElem?.dataset.tooltip;
+        delete parentElem?.dataset.translation;
+        delete parentElem?.dataset.original;
         if (restoreOriginalText) {
           node.nodeValue = this.originalTextRaw.get(node);
         }
