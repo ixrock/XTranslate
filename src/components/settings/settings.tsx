@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 import isEqual from "lodash/isEqual";
 import isEmpty from "lodash/isEmpty";
 import startCase from "lodash/startCase";
-import { getTranslator, getTranslators, googleApiDomain, googleApiDomains, GrokAIModel, OpenAIModel, OpenAIVoiceTTS, ProviderCodeName, Translator } from "../../providers";
+import { getFullPageTranslators, getTranslator, getTranslators, googleApiDomain, googleApiDomains, GrokAIModel, OpenAIModel, OpenAIVoiceTTS, ProviderCodeName, Translator } from "../../providers";
 import { cssNames } from "../../utils";
 import { XTranslateIcon } from "../../user-script/xtranslate-icon";
 import { SelectLanguage, SelectLanguageChangeEvent } from "../select-language";
@@ -97,9 +97,9 @@ export class Settings extends React.Component {
     ];
   };
 
-  private fullPageTranslateProvidersOptions: ReactSelectOption<ProviderCodeName>[] = getTranslators()
-    .filter(translator => translator.canTranslateFullPage())
-    .map(({ name, title }) => ({ value: name, label: title }));
+  get fullPageTranslateProvidersOptions(): ReactSelectOption<ProviderCodeName>[] {
+    return getFullPageTranslators().map(({ name, title }) => ({ value: name, label: title }))
+  }
 
   @observable demoVoiceText = "Quick brown fox jumps over the lazy dog";
   @observable isSpeaking = false;
