@@ -2,9 +2,8 @@ import { reaction } from "mobx";
 import { franc } from "franc";
 import { md5 } from "js-md5";
 import { autoBind, createLogger, disposer, LoggerColor, strLengthCodePoints } from "../utils";
-import { ProviderCodeName } from "./providers";
 import { settingsStore } from "../components/settings/settings.storage";
-import { getTranslator } from "./translator";
+import { getTranslator, ProviderCodeName } from "../providers";
 
 export type LangSource = string;
 export type LangTarget = string;

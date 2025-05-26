@@ -1,6 +1,5 @@
 export * from "./providers"
 export * from "./translator"
-export * from "./page-translator"
 
 export * from './google'
 export * from './bing'

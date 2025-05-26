@@ -16,9 +16,10 @@ import { autoBind, disposer, getHotkey } from "../utils";
 import { getManifest, getURL, isRuntimeContextInvalidatedAction, MessageType, onMessage, ProxyResponseType, TranslatePagePayload, TranslatePayload } from "../extension";
 import { proxyRequest } from "../background/httpProxy.bgc";
 import { popupHotkey, settingsStore } from "../components/settings/settings.storage";
-import { getNextTranslator, getTranslator, ITranslationError, ITranslationResult, PageTranslator } from "../providers";
+import { getNextTranslator, getTranslator, ITranslationError, ITranslationResult } from "../providers";
 import { XTranslateIcon } from "./xtranslate-icon";
 import { Popup } from "../components/popup/popup";
+import { PageTranslator } from "./page-translator";
 
 @observer
 export class ContentScript extends React.Component {
