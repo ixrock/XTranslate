@@ -32,8 +32,8 @@ export enum OpenAIModelTTS {
 
 // Grok models (x.ai)
 export enum GrokAIModel {
-  COST_EFFECTIVE = "grok-3-mini-beta",
-  RECOMMENDED = "grok-3-beta",
+  COST_EFFECTIVE = "grok-3-mini",
+  RECOMMENDED = "grok-3",
 }
 
 // DeepSeek models

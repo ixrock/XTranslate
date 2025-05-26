@@ -1,4 +1,5 @@
 import OpenAI from "openai";
+import type { ResponseFormatJSONObject } from "openai/resources";
 import { getTranslator, ITranslationError, ITranslationResult, ProviderCodeName } from "../providers";
 import { createLogger, disposer } from "../utils";
 import { AITranslatePayload, isBackgroundWorker, MessageType, onMessage, OpenAITextToSpeechPayload, sendMessage } from "../extension";
@@ -39,6 +40,7 @@ export async function translateText(params: AITranslatePayload): Promise<ITransl
     sourceLanguage,
     text = "",
   } = params;
+
   const { apiKey, ...sanitizedParams } = params;
   const isAutoDetect = !sourceLanguage;
   const sanitizedText = text.trim();
@@ -47,14 +49,18 @@ export async function translateText(params: AITranslatePayload): Promise<ITransl
     ? `Translate to "${targetLanguage}" and auto-detect source language of text: ${sanitizedText}`
     : `Translate from "${sourceLanguage}" to "${targetLanguage}" language of text: ${sanitizedText}`;
 
+  const responseFormatJson: ResponseFormatJSONObject = {
+    type: "json_object",
+  };
+  const notSupportStructuredJsonResponse = [ProviderCodeName.GROK];
+  const responseFormat = notSupportStructuredJsonResponse.includes(provider) ? undefined : responseFormatJson;
+
   try {
     const response = await getAPI({ apiKey, provider: provider }).chat.completions.create({
       model,
       n: 1,
       temperature: 1.3,
-      response_format: {
-        type: "json_object"
-      },
+      response_format: responseFormat,
       messages: [
         { role: "system", content: `You are professional languages translator assistant.` },
         { role: "system", content: `Add transcription ONLY when provided full text is dictionary word, phrasal verbs.` },
