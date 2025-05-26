@@ -35,6 +35,9 @@ export class Header extends React.Component {
   }
 
   private translateActivePage = async () => {
+    const activeTab = activeTabStorage.get();
+    if (isSystemPage(activeTab.url)) return; // noop
+
     await translateActivePage();
     window.close();
   }
@@ -53,8 +56,7 @@ export class Header extends React.Component {
     const isTranslatedPage = alwaysTranslatePages.includes(new URL(activeTab.url || location.href).origin);
     let translateFullPageTooltip: string;
 
-    const isHomePageNewTab = activeTab.url === "";
-    const runtimeInteractive = isHomePageNewTab || !isSystemPage(activeTab.url);
+    const runtimeInteractive = !isSystemPage(activeTab.url);
     if (runtimeInteractive) {
       const translatePageTitle = getMessage("context_menu_translate_full_page", {
         lang: getTranslator(provider).langTo[langTo] ?? langTo ?? "",

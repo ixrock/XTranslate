@@ -74,13 +74,10 @@ export class InputTranslation extends React.Component {
 
   private async translateSelectedTextFromActiveTabIfAny() {
     const activePage = await getActiveTab();
-    const isSystemPageRuntime = isSystemPage(activePage.url);
-    if (!isSystemPageRuntime) {
-      const selectedText = await getSelectedText();
-      if (selectedText) {
-        this.translateText(selectedText);
-      }
-    }
+    if (isSystemPage(activePage.url)) return; // noop
+
+    const selectedText = await getSelectedText();
+    if (selectedText) this.translateText(selectedText);
   }
 
   private syncParamsWithUrl() {
