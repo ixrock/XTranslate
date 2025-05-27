@@ -93,19 +93,24 @@ export function getMessage(key: string, placeholders: Record<string, any> = {}):
   const { message, bundle } = getMessagePattern(key);
   if (!message) return;
 
+  const placeholdersSafeString = Object.entries(placeholders).reduce((obj, [name, replacement]) => {
+    obj[name] = replacement ?? "";
+    return obj;
+  }, {} as Record<string, ReactNode>);
+
   const hasReactNodes = Object.values(placeholders ?? {}).some(item => typeof item === "object");
   if (hasReactNodes) {
     return Array.from(message).map((msgChunk: PatternElement) => {
       if (typeof msgChunk == "string") {
         return msgChunk;
       } else if (msgChunk.type === "var") {
-        return placeholders[msgChunk.name];
+        return placeholdersSafeString[msgChunk.name];
       }
       return msgChunk;
     });
   }
 
-  return bundle.formatPattern(message, placeholders);
+  return bundle.formatPattern(message, placeholdersSafeString);
 }
 
 export async function setLocale(lang: Locale) {

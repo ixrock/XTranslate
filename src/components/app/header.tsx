@@ -59,7 +59,7 @@ export class Header extends React.Component {
     const runtimeInteractive = !isSystemPage(activeTab.url);
     if (runtimeInteractive) {
       const translatePageTitle = getMessage("context_menu_translate_full_page", {
-        lang: getTranslator(provider).langTo[langTo] ?? langTo ?? "",
+        lang: getTranslator(provider).langTo[langTo] ?? langTo,
         pageTitle: activeTab.title,
       });
       const stopTranslationTitle = getMessage("context_menu_translate_full_page_context_menu_stop", {
