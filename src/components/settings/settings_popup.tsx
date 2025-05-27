@@ -18,7 +18,7 @@ export class SettingsPopup extends React.Component {
     makeObservable(this);
   }
 
-  private get popupPositions(): ReactSelectOption<string>[] {
+  private get popupPositions(): ReactSelectOption<PopupPosition>[] {
     return [
       { value: "", label: getMessage("popup_position_auto") },
       { value: "left top", label: getMessage("popup_position_left_top") },

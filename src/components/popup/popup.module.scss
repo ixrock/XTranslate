@@ -1,12 +1,14 @@
 @use "../mixins" as *;
+@use "../theme" as *;
 
 .Popup {
+  @include theme-vars;
   --theme-spacing: .6em;
 
-  position: relative;
-  padding: var(--theme-spacing);
+  position: absolute;
   visibility: hidden;
   opacity: 0;
+  padding: var(--theme-spacing);
   transition: opacity 100ms ease-out;
   transition-delay: 100ms;
   line-height: normal;
@@ -14,11 +16,12 @@
   -webkit-font-smoothing: antialiased;
 
   &.previewMode {
+    position: relative;
     margin: auto;
   }
 
   &.fixedPos {
-    position: fixed !important;
+    position: fixed;
     margin: var(--theme-spacing);
 
     &:global {

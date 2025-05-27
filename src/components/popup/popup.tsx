@@ -85,7 +85,7 @@ export class Popup extends React.Component<Props> {
   }
 
   get popupStyle(): CSSProperties {
-    var {
+    const {
       bgcMain, bgcLinear, bgcSecondary,
       borderRadius, fontFamily, fontSize, textColor,
       borderWidth, borderStyle, borderColor,
@@ -94,7 +94,6 @@ export class Popup extends React.Component<Props> {
     } = themeStore.data;
 
     return {
-      position: this.isPreviewMode ? "relative" : "absolute",
       background: bgcLinear
         ? `linear-gradient(180deg, ${toCssColor(bgcMain)}, ${toCssColor(bgcSecondary)})`
         : toCssColor(bgcMain),
@@ -300,12 +299,13 @@ export class Popup extends React.Component<Props> {
   }
 
   render() {
-    var { popupPosition } = settingsStore.data;
-    var { translation, error, className, style: customStyle } = this.props;
-    var isVisible = !!(translation || error);
-    var popupClass = cssNames(styles.Popup, className, popupPosition, {
+    const { popupPosition } = settingsStore.data;
+    const { translation, error, className, style: customStyle } = this.props;
+    const hasAutoPosition = popupPosition === "";
+    const isVisible = !!(translation || error);
+    const popupClass = cssNames(styles.Popup, className, popupPosition, {
       [styles.visible]: isVisible,
-      [styles.fixedPos]: !this.isPreviewMode && popupPosition,
+      [styles.fixedPos]: !this.isPreviewMode && !hasAutoPosition,
       [styles.previewMode]: this.isPreviewMode,
     });
 

@@ -279,7 +279,7 @@ export class ContentScript extends React.Component {
     return !ContentScript.rootElem.contains(elem);
   }
 
-  normalizeRect(rect: DOMRect, { withScroll = false } = {}): WritableDOMRect {
+  normalizeRect(rect: DOMRect, { withScroll = true } = {}): WritableDOMRect {
     let { left, top, width, height } = rect;
     if (withScroll) {
       left += ContentScript.window.scrollX;
@@ -330,7 +330,8 @@ export class ContentScript extends React.Component {
 
   @action
   refinePosition() {
-    if (settingsStore.data.popupPosition || !this.selectionRects) {
+    const hasAutoPosition = settingsStore.data.popupPosition === "";
+    if (!hasAutoPosition || !this.selectionRects) {
       return; // skip: no position refining is needed
     }
 
