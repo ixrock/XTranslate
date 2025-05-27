@@ -3,7 +3,6 @@ import React from "react";
 import { action, makeObservable, observable } from "mobx";
 import { observer } from "mobx-react";
 import isEqual from "lodash/isEqual";
-import isEmpty from "lodash/isEmpty";
 import startCase from "lodash/startCase";
 import { getFullPageTranslators, getTranslator, getTranslators, googleApiDomain, googleApiDomains, GrokAIModel, OpenAIModel, OpenAIVoiceTTS, ProviderCodeName, Translator } from "../../providers";
 import { cssNames } from "../../utils";
@@ -237,145 +236,138 @@ export class Settings extends React.Component {
       : getTranslators().filter(providers => !providers.isRequireApiKey);
 
     return (
-      <main className={`${styles.Settings} flex column gaps`}>
-        <article className="flex column gaps">
-          <SelectLanguage
-            showInfoIcon
-            showReverseTranslation
-            provider={settings.vendor}
-            from={settings.langFrom}
-            to={settings.langTo}
-            onChange={this.onLanguageChange}
-          />
-          <RadioGroup className={styles.providers} value={settings.vendor} onChange={v => settingsStore.setProvider(v)}>
-            {providers.map(this.renderProvider, this)}
-          </RadioGroup>
-          <a className={`${styles.showAdvanced} flex gaps`} onClick={() => settings.showAdvancedProviders = !settings.showAdvancedProviders}>
-            <Icon material={settings.showAdvancedProviders ? "expand_less" : "expand_more"}/>
-            <span>
+      <main className={styles.Settings}>
+        <SelectLanguage
+          showInfoIcon
+          showReverseTranslation
+          provider={settings.vendor}
+          from={settings.langFrom}
+          to={settings.langTo}
+          onChange={this.onLanguageChange}
+        />
+        <RadioGroup className={styles.providers} value={settings.vendor} onChange={v => settingsStore.setProvider(v)}>
+          {providers.map(this.renderProvider, this)}
+        </RadioGroup>
+        <a className={`${styles.showAdvanced} flex gaps`} onClick={() => settings.showAdvancedProviders = !settings.showAdvancedProviders}>
+          <Icon material={settings.showAdvancedProviders ? "expand_less" : "expand_more"}/>
+          <span>
               {!settings.showAdvancedProviders && getMessage("settings_title_advanced_providers_list_show")}
-              {settings.showAdvancedProviders && getMessage("settings_title_advanced_providers_list_hide")}
+            {settings.showAdvancedProviders && getMessage("settings_title_advanced_providers_list_hide")}
             </span>
-          </a>
-        </article>
+        </a>
 
         <SubTitle>{getMessage("settings_title_full_page_translation")}</SubTitle>
-        <article className="flex column gaps">
-          <div className="flex gaps align-center">
-            <SelectLanguage
-              className="box grow"
-              provider={fullPageTranslation.provider}
-              from={fullPageTranslation.langFrom}
-              to={fullPageTranslation.langTo}
-              onChange={this.onFullPageLanguageChange}
-            />
-            <ReactSelect
-              value={this.fullPageTranslateProvidersOptions.find(opt => opt.value === fullPageTranslation.provider)}
-              options={this.fullPageTranslateProvidersOptions}
-              onChange={({ value }) => this.onFullPageProviderChange(value)}
-            />
-          </div>
-          <div className="alwaysTranslatePages flex gaps align-center">
-            <span>{getMessage("settings_title_full_page_always_translate")} <b>({alwaysTranslatePages.length})</b></span>
-            <ReactSelect
-              value={null}
-              className="box grow"
-              menuNowrap={false}
-              closeMenuOnSelect={false}
-              placeholder={getMessage("settings_title_full_page_see_edit_list")}
-              noOptionsMessage={() => getMessage("settings_title_full_page_empty_list")}
-              options={alwaysTranslatePages.map(value => ({ value, label: value }))}
-              formatOptionLabel={({ value }: ReactSelectOption<string>) => this.formatPageUrlLabel(value, alwaysTranslatePages)}
-            />
-            <Button
-              primary
-              label={getMessage("settings_title_full_page_add_url")}
-              onClick={() => this.addAlwaysTranslatePage()}
-            />
-          </div>
-          <div className={styles.grid}>
-            <Checkbox
-              label={getMessage("settings_title_full_page_show_original_onmouseover")}
-              checked={fullPageTranslation.showOriginalOnHover}
-              onChange={val => fullPageTranslation.showOriginalOnHover = val}
-            />
-            <Checkbox
-              label={getMessage("settings_title_full_page_show_translation_onmouseover")}
-              checked={fullPageTranslation.showTranslationOnHover}
-              onChange={val => fullPageTranslation.showTranslationOnHover = val}
-            />
-            <Checkbox
-              label={getMessage("settings_title_full_page_show_replace_texts")}
-              checked={fullPageTranslation.showTranslationInDOM}
-              onChange={val => fullPageTranslation.showTranslationInDOM = val}
-            />
-          </div>
-        </article>
+        <div className="flex gaps align-center">
+          <SelectLanguage
+            className="box grow"
+            provider={fullPageTranslation.provider}
+            from={fullPageTranslation.langFrom}
+            to={fullPageTranslation.langTo}
+            onChange={this.onFullPageLanguageChange}
+          />
+          <ReactSelect
+            value={this.fullPageTranslateProvidersOptions.find(opt => opt.value === fullPageTranslation.provider)}
+            options={this.fullPageTranslateProvidersOptions}
+            onChange={({ value }) => this.onFullPageProviderChange(value)}
+          />
+        </div>
+        <div className="alwaysTranslatePages flex gaps align-center">
+          <span>{getMessage("settings_title_full_page_always_translate")} <b>({alwaysTranslatePages.length})</b></span>
+          <ReactSelect
+            value={null}
+            className="box grow"
+            menuNowrap={false}
+            closeMenuOnSelect={false}
+            placeholder={getMessage("settings_title_full_page_see_edit_list")}
+            noOptionsMessage={() => getMessage("settings_title_full_page_empty_list")}
+            options={alwaysTranslatePages.map(value => ({ value, label: value }))}
+            formatOptionLabel={({ value }: ReactSelectOption<string>) => this.formatPageUrlLabel(value, alwaysTranslatePages)}
+          />
+          <Button
+            primary
+            label={getMessage("settings_title_full_page_add_url")}
+            onClick={() => this.addAlwaysTranslatePage()}
+          />
+        </div>
+        <div className={styles.grid}>
+          <Checkbox
+            label={getMessage("settings_title_full_page_show_original_onmouseover")}
+            checked={fullPageTranslation.showOriginalOnHover}
+            onChange={val => fullPageTranslation.showOriginalOnHover = val}
+          />
+          <Checkbox
+            label={getMessage("settings_title_full_page_show_translation_onmouseover")}
+            checked={fullPageTranslation.showTranslationOnHover}
+            onChange={val => fullPageTranslation.showTranslationOnHover = val}
+          />
+          <Checkbox
+            label={getMessage("settings_title_full_page_show_replace_texts")}
+            checked={fullPageTranslation.showTranslationInDOM}
+            onChange={val => fullPageTranslation.showTranslationInDOM = val}
+          />
+        </div>
 
         <SubTitle>{getMessage("settings_title_appearance")}</SubTitle>
-        <article className="flex column gaps">
-          <div className="flex gaps">
-            <Checkbox
-              label={getMessage("display_icon_near_selection")}
-              checked={settings.showIconNearSelection}
-              onChange={v => settings.showIconNearSelection = v}
-              tooltip={{ children: <XTranslateIcon style={{ position: "static" }}/> }}
-            />
-            {settings.showIconNearSelection && (
-              <ReactSelect
-                menuPlacement="auto"
-                className="box noshrink"
-                options={this.iconPositions}
-                value={this.iconPositions.find(pos => isEqual(pos.value, settings.iconPosition))}
-                onChange={(opt: ReactSelectOption<XIconPosition>) => settings.iconPosition = opt.value}
-              />
-            )}
-          </div>
+        <Checkbox
+          className={styles.inline}
+          label={getMessage("pdf_use_custom_viewer")}
+          tooltip={getMessage("pdf_use_custom_viewer_info")}
+          checked={settings.customPdfViewer}
+          onChange={v => settings.customPdfViewer = v}
+        />
+        <div className="flex gaps">
           <Checkbox
-            label={getMessage("pdf_use_custom_viewer")}
-            tooltip={getMessage("pdf_use_custom_viewer_info")}
-            checked={settings.customPdfViewer}
-            onChange={v => settings.customPdfViewer = v}
+            label={getMessage("display_icon_near_selection")}
+            checked={settings.showIconNearSelection}
+            onChange={v => settings.showIconNearSelection = v}
+            tooltip={{ children: <XTranslateIcon style={{ position: "static" }}/> }}
           />
-        </article>
+          {settings.showIconNearSelection && (
+            <ReactSelect
+              menuPlacement="auto"
+              className="box noshrink"
+              options={this.iconPositions}
+              value={this.iconPositions.find(pos => isEqual(pos.value, settings.iconPosition))}
+              onChange={(opt: ReactSelectOption<XIconPosition>) => settings.iconPosition = opt.value}
+            />
+          )}
+        </div>
 
         <SubTitle>{getMessage("settings_title_tts")}</SubTitle>
-        <article className="flex column gaps">
+        <Checkbox
+          className={styles.inline}
+          label={getMessage("auto_play_tts")}
+          checked={settings.autoPlayText}
+          onChange={v => settings.autoPlayText = v}
+        />
+        <div className={`${styles.inline} flex gaps align-center`}>
           <Checkbox
-            label={getMessage("auto_play_tts")}
-            checked={settings.autoPlayText}
-            onChange={v => settings.autoPlayText = v}
+            className="box noshrink"
+            label={getMessage("tts_default_system_voice")}
+            checked={settings.useSpeechSynthesis}
+            onChange={v => settings.useSpeechSynthesis = v}
+            tooltip={getMessage("use_chrome_tts_tooltip_info")}
           />
-          <div className={`${styles.systemTts} flex gaps align-center`}>
-            <Checkbox
-              className="box noshrink"
-              label={getMessage("tts_default_system_voice")}
-              checked={settings.useSpeechSynthesis}
-              onChange={v => settings.useSpeechSynthesis = v}
-              tooltip={getMessage("use_chrome_tts_tooltip_info")}
-            />
-            <SelectVoice
-              className="box grow"
-              currentIndex={settings.ttsVoiceIndex}
-              onChange={v => settings.ttsVoiceIndex = v}
-            />
-            <Icon
-              small
-              material="edit"
-              tooltip={{ nowrap: true, children: getMessage("tts_play_demo_sound_edit") }}
-              onClick={this.editDemoVoiceText}
-            />
-            <Icon
-              small
-              material={this.isSpeaking ? materialIcons.ttsPause : materialIcons.ttsPlay}
-              tooltip={{
-                nowrap: true,
-                children: `${getMessage("tts_play_demo_sound")}: "${this.demoVoiceText}"`,
-              }}
-              onClick={this.speakDemoText}
-            />
-          </div>
-        </article>
+          <SelectVoice
+            currentIndex={settings.ttsVoiceIndex}
+            onChange={v => settings.ttsVoiceIndex = v}
+          />
+          <Icon
+            small
+            material="edit"
+            tooltip={{ nowrap: true, children: getMessage("tts_play_demo_sound_edit") }}
+            onClick={this.editDemoVoiceText}
+          />
+          <Icon
+            small
+            material={this.isSpeaking ? materialIcons.ttsPause : materialIcons.ttsPlay}
+            tooltip={{
+              nowrap: true,
+              children: `${getMessage("tts_play_demo_sound")}: "${this.demoVoiceText}"`,
+            }}
+            onClick={this.speakDemoText}
+          />
+        </div>
       </main>
     );
   }

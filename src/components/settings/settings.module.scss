@@ -1,20 +1,29 @@
 @use "../mixins" as *;
 
 .Settings {
+  display: flex;
+  flex-direction: column;
+  gap: var(--theme-spacing);
+  align-items: flex-start;
+
+  > * {
+    display: flex;
+    width: 100%;
+  }
+
   .grid {
     display: grid;
     gap: var(--theme-spacing);
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     justify-items: start;
-    align-items: center;
 
     &:first-child {
       padding-right: var(--theme-spacing-double);
     }
   }
 
-  .systemTts {
-    width: 100%;
+  .inline {
+    width: auto;
   }
 
   .providers {
@@ -48,6 +57,7 @@
   .showAdvanced {
     @include pseudo-link;
     font-size: small;
+    width: auto;
   }
 
   .providerSkipRotation {
