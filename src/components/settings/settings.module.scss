@@ -29,11 +29,20 @@
   }
 
   .providerSettings {
+    display: flex;
+    gap: var(--theme-spacing);
     font-size: small;
   }
 
   .provider {
-    display: flex;
+    position: relative;
+  }
+
+  .providerUrl {
+    flex: 0 1 auto;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
   }
 
   .showAdvanced {

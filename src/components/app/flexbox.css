@@ -46,6 +46,14 @@
       flex: 1 0;
     }
 
+    &.nogrow {
+      flex: 0 1;
+    }
+
+    &.shrink {
+      flex-shrink: 0;
+    }
+
     &.noshrink {
       flex-shrink: 0;
     }

@@ -1,5 +1,11 @@
 @use "../mixins" as *;
 
+.ProviderAuthSettings {
+  &.hasKey {
+    white-space: nowrap;
+  }
+}
+
 .setupApiKey {
   @include pseudo-link;
 

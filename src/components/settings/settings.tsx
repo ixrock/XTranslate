@@ -128,16 +128,13 @@ export class Settings extends React.Component {
   }
 
   renderProviderSettings({ name: provider, title, getAuthSettings }: Translator): React.ReactNode {
-    const authSettings = getAuthSettings()
-    const hasProvidedAuthSettings = !isEmpty(authSettings);
-    const keyProvided = !!authSettings.apiKeySanitized;
+    const authSettings = getAuthSettings();
+    const translator = getTranslator(provider);
+    const showProviderSettings = translator.hasProvidedOrNotRequiredApiKey();
 
     return (
-      <div className={`${styles.providerSettings} flex gaps ${!keyProvided ? "column" : ""}`}>
-        <div className={`flex align-center box grow`}>
-          {this.providerSettings[provider]}
-        </div>
-        {hasProvidedAuthSettings && (
+      <div className={styles.providerSettings}>
+        {translator.isRequireApiKey && (
           <ProviderAuthSettings
             {...authSettings}
             provider={provider}
@@ -147,6 +144,7 @@ export class Settings extends React.Component {
             warningInfo={getMessage(`auth_safety_warning_info`)}
           />
         )}
+        {showProviderSettings && this.providerSettings[provider]}
       </div>
     )
   }
@@ -154,7 +152,7 @@ export class Settings extends React.Component {
   renderProvider(provider: Translator) {
     const { name, title } = provider;
     const publicUrl = new URL(provider.publicUrl);
-    const domain = publicUrl.hostname.replace(/^www\./, "") + publicUrl.pathname.replace(/\/$/, "");
+    const providerUrl = publicUrl.hostname.replace(/^www\./, "") + publicUrl.pathname.replace(/\/$/, "");
     const skipInRotation = settingsStore.data.skipVendorInRotation[name];
     const disableInRotationClassName = cssNames({
       [styles.providerSkipRotation]: skipInRotation,
@@ -168,12 +166,10 @@ export class Settings extends React.Component {
           tooltip={getMessage("skip_translation_vendor_in_rotation", { vendor: title })}
         />
         <Radio value={name} label={<span className={disableInRotationClassName}>{title}</span>}/>
-        <a href={String(publicUrl)} target="_blank" tabIndex={-1}>
-          {domain}
+        <a className={styles.providerUrl} href={String(publicUrl)} target="_blank" tabIndex={-1}>
+          {providerUrl}
         </a>
-        <div className="provider-settings flex gaps align-center">
-          {this.renderProviderSettings(provider)}
-        </div>
+        {this.renderProviderSettings(provider)}
       </div>
     )
   }
