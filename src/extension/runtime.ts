@@ -73,6 +73,10 @@ export async function openOptionsPage() {
   return chrome.runtime.openOptionsPage();
 }
 
+export async function getRuntimeContexts(filter: chrome.runtime.ContextFilter = {}) {
+  return chrome.runtime.getContexts(filter)
+}
+
 export function onInstallExtension(callback: (reason: "install" | "update" | "chrome_update", details: InstalledDetails) => void) {
   const callbackWrapper = (event: InstalledDetails) => {
     callback(event.reason as "update", event);
