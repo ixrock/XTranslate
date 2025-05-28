@@ -281,7 +281,7 @@ export class PageTranslator {
     return !empty && hasWords;
   }
 
-  collectDOMTextNodes(rootElem = document.body): Node[] {
+  collectDOMTextNodes(rootElem: HTMLElement | ShadowRoot = document.body, collector: Node[] = []): Node[] {
     const treeWalker = document.createTreeWalker(rootElem, NodeFilter.SHOW_TEXT, {
         acceptNode: (node) => {
           const accepted = this.acceptTextNodeFilter(node);
@@ -289,9 +289,24 @@ export class PageTranslator {
         },
       }
     );
-    const nodes = [];
-    while (treeWalker.nextNode()) nodes.push(treeWalker.currentNode);
-    return nodes;
+
+    while (treeWalker.nextNode()) collector.push(treeWalker.currentNode);
+    this.processShadowDOMTextNodes(rootElem, collector);
+    return collector;
+  }
+
+  // Get text nodes from shadow-DOM elements
+  protected processShadowDOMTextNodes(rootElem: HTMLElement | ShadowRoot, collector: Node[] = []) {
+    const shadowDomElements = Array.from(rootElem.querySelectorAll("*")).filter(elem => elem.shadowRoot) as HTMLElement[];
+
+    if (shadowDomElements.length) {
+      this.logger.info("collecting text-nodes from shadow-DOM", shadowDomElements);
+    }
+    shadowDomElements.forEach(elem => {
+      this.collectDOMTextNodes(elem.shadowRoot, collector);
+    });
+
+    return collector;
   }
 
   watchDOMTextNodes(rootElem = document.body): () => void {
