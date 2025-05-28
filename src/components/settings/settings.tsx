@@ -165,7 +165,7 @@ export class Settings extends React.Component {
           tooltip={getMessage("skip_translation_vendor_in_rotation", { vendor: title })}
         />
         <Radio value={name} label={<span className={disableInRotationClassName}>{title}</span>}/>
-        <a className={styles.providerUrl} href={String(publicUrl)} target="_blank" tabIndex={-1}>
+        <a className={styles.providerUrl} href={publicUrl.toString()} title={publicUrl.origin} target="_blank" tabIndex={-1}>
           {providerUrl}
         </a>
         {this.renderProviderSettings(provider)}
