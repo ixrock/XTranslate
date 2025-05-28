@@ -93,35 +93,35 @@ export function getMessage(key: string, placeholders: Record<string, any> = {}):
   const { message, bundle } = getMessagePattern(key);
   if (!message) return;
 
-  const locale = bundle.locales[0];
-  const hasReactNodes = Object.values(placeholders ?? {}).some(item => typeof item === "object");
+  const errors: Error[] = [];
+  const formatted = bundle.formatPattern(message, placeholders, errors);
+  const hasReactPlaceholders = errors.some(isFluentVariableUnsupportedError);
 
-  const formattedStringChunksRaw: ReactNode[] = Array.from(message).map((msgChunk: PatternElement) => {
-    if (typeof msgChunk == "string") {
-      return msgChunk;
-    } else if (msgChunk.type === "var") {
-      const paramName = msgChunk.name;
-      const placeholder = placeholders[paramName]; // ReactNode|string
-      if (placeholder == null) {
-        logger.error(`FORMATTING LOCALIZATION PARAM FAILED, missing $${paramName} in i18n string="${key}", see "${locale}.ftl"`, {
-          key,
-          paramName,
-          message,
-          bundle,
-          placeholders,
-          hasReactNodes,
+  if (errors.length) {
+    errors
+      .filter(error => !isFluentVariableUnsupportedError(error)) // filter out errors related to ReactNode-placeholders
+      .forEach(error => {
+        logger.error(`format key="${key}" errors: ${errors.map(String)}`, {
+          errors, placeholders,
+          message, bundle,
+          formatted,
         });
-      }
-      return placeholder ?? ""; // empty placeholder in case of missing
-    }
-    return msgChunk;
-  });
-
-  if (hasReactNodes) {
-    return formattedStringChunksRaw; // React.Children element
+      });
   }
 
-  return formattedStringChunksRaw.join(""); // plain-string
+  // prepare `React.Children` or `React.Fragment[]` in case of formatting errors with `ReactNode`-placeholders
+  if (hasReactPlaceholders) {
+    return Array.from(message).map((msgChunk: PatternElement) => {
+      if (typeof msgChunk == "string") {
+        return msgChunk;
+      } else if (msgChunk.type === "var") {
+        const paramName = msgChunk.name;
+        return placeholders[paramName]; // ReactNode | React.Fragment
+      }
+    });
+  }
+
+  return formatted;
 }
 
 export async function setLocale(lang: Locale) {
@@ -141,4 +141,8 @@ export function getSystemLocale(): Locale {
 
   const locale = systemLocale.split(/_-/)[0] as Locale; // handle "en-GB", etc.
   return availableLocales[locale] ? locale : fallbackLocale;
+}
+
+export function isFluentVariableUnsupportedError(error: Error | string) {
+  return String(error).includes("Variable type not supported");
 }
