@@ -305,6 +305,12 @@ export class Settings extends React.Component {
             checked={fullPageTranslation.showTranslationInDOM}
             onChange={val => fullPageTranslation.showTranslationInDOM = val}
           />
+          <Checkbox
+            label={getMessage("settings_title_full_page_show_traffic_save_mode")}
+            tooltip={getMessage("settings_title_full_page_show_traffic_save_mode_info")}
+            checked={fullPageTranslation.trafficSaveMode}
+            onChange={val => fullPageTranslation.trafficSaveMode = val}
+          />
         </div>
 
         <SubTitle>{getMessage("settings_title_appearance")}</SubTitle>
