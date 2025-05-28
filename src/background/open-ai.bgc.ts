@@ -1,6 +1,6 @@
 import OpenAI from "openai";
 import type { ResponseFormatJSONObject } from "openai/resources";
-import { getTranslator, ITranslationError, ITranslationResult, ProviderCodeName } from "../providers";
+import { getTranslator, ITranslationError, ITranslationResult, ProviderCodeName, TranslateParams } from "../providers";
 import { createLogger, disposer } from "../utils";
 import { AITranslatePayload, isBackgroundWorker, MessageType, onMessage, OpenAITextToSpeechPayload, sendMessage } from "../extension";
 
@@ -42,30 +42,24 @@ export async function translateText(params: AITranslatePayload): Promise<ITransl
   } = params;
 
   const { apiKey, ...sanitizedParams } = params;
-  const isAutoDetect = !sourceLanguage;
   const sanitizedText = text.trim();
-
-  const prompt = isAutoDetect
-    ? `Translate to "${targetLanguage}" and auto-detect source language of text: ${sanitizedText}`
-    : `Translate from "${sourceLanguage}" to "${targetLanguage}" language of text: ${sanitizedText}`;
-
-  const responseFormatJson: ResponseFormatJSONObject = {
-    type: "json_object",
-  };
-  const notSupportStructuredJsonResponse = [ProviderCodeName.GROK];
-  const responseFormat = notSupportStructuredJsonResponse.includes(provider) ? undefined : responseFormatJson;
+  const responseFormatJson: ResponseFormatJSONObject = { type: "json_object" };
+  const responseFormat = ![ProviderCodeName.GROK].includes(provider) ? responseFormatJson : undefined;
 
   try {
+    const { userPrompt, systemPrompt } = getTranslationPrompts({
+      from: sourceLanguage,
+      to: targetLanguage,
+      text: sanitizedText,
+    });
     const response = await getAPI({ apiKey, provider: provider }).chat.completions.create({
       model,
       n: 1,
-      temperature: 1.3,
+      temperature: .95,
       response_format: responseFormat,
       messages: [
-        { role: "system", content: `You are professional languages translator assistant.` },
-        { role: "system", content: `Add transcription ONLY when provided full text is dictionary word, phrasal verbs.` },
-        { role: "system", content: `Output JSON {translation, detectedLang, transcription?, spellCorrection?}` },
-        { role: "user", content: prompt },
+        { role: "system", content: systemPrompt },
+        { role: "user", content: userPrompt },
       ],
     });
 
@@ -84,7 +78,7 @@ export async function translateText(params: AITranslatePayload): Promise<ITransl
       dictionary: [],
     };
 
-    logger.info({ result, prompt, params: sanitizedParams });
+    logger.info({ response, data, result, params: sanitizedParams });
     return result;
 
   } catch (err) {
@@ -93,7 +87,7 @@ export async function translateText(params: AITranslatePayload): Promise<ITransl
       statusCode: err.statusCode || err.status,
     };
 
-    logger.error({ error, params: sanitizedParams, prompt });
+    logger.error({ error, params: sanitizedParams });
     throw error;
   }
 }
@@ -143,4 +137,40 @@ export async function aiTextToSpeechAction<P extends OpenAITextToSpeechPayload>(
     type: MessageType.AI_TEXT_TO_SPEECH,
     payload,
   });
+}
+
+export function getTranslationPrompts({ from: sourceLang, to: targetLang, text }: Partial<TranslateParams>) {
+  const systemPrompt = `
+  
+You are a professional translation assistant.
+Return EXACTLY one JSON object with the following shape:
+
+{
+  "translation":   string,          // text translated to "${targetLang}"
+  "detectedLang":  ISO-639-1 code,  // e.g. "en", "fi"
+  "transcription": string|null,     // ONLY for single dictionary word or phrasal verb
+  "spellCorrection": string|null    // non-empty if you fixed typos
+}
+
+Rules:
+- Do NOT wrap the JSON in triple backticks.
+- Do NOT add comments or additional keys.
+- Preserve markup, punctuation and line breaks.
+- If translation == original, still output JSON but keep "translation" unchanged.
+`.trim();
+
+  const userPrompt = `
+  
+Source language: ${sourceLang ?? "auto-detect"}
+Target language: ${targetLang}
+
+TEXT_TO_TRANSLATE:
+<<<
+${text}
+>>>`.trim();
+
+  return {
+    systemPrompt,
+    userPrompt,
+  };
 }
