@@ -10,7 +10,7 @@ import { proxyRequest } from "./background/httpProxy.bgc";
 import { createLogger, LoggerColor } from "./utils/createLogger";
 import { createStorage } from "./storage";
 
-const logger = createLogger({ systemPrefix: "[I18N-LOCALE]", prefixColor: LoggerColor.INFO_SYSTEM });
+const logger = createLogger({ systemPrefix: "[I18N]", prefixColor: LoggerColor.INFO_SYSTEM });
 
 export type Locale = keyof typeof SupportedLocalesList;
 export const availableLocales = SupportedLocalesList;
@@ -93,24 +93,35 @@ export function getMessage(key: string, placeholders: Record<string, any> = {}):
   const { message, bundle } = getMessagePattern(key);
   if (!message) return;
 
-  const placeholdersSafeString = Object.entries(placeholders).reduce((obj, [name, replacement]) => {
-    obj[name] = replacement ?? "";
-    return obj;
-  }, {} as Record<string, ReactNode>);
-
+  const locale = bundle.locales[0];
   const hasReactNodes = Object.values(placeholders ?? {}).some(item => typeof item === "object");
-  if (hasReactNodes) {
-    return Array.from(message).map((msgChunk: PatternElement) => {
-      if (typeof msgChunk == "string") {
-        return msgChunk;
-      } else if (msgChunk.type === "var") {
-        return placeholdersSafeString[msgChunk.name];
-      }
+
+  const formattedStringChunksRaw: ReactNode[] = Array.from(message).map((msgChunk: PatternElement) => {
+    if (typeof msgChunk == "string") {
       return msgChunk;
-    });
+    } else if (msgChunk.type === "var") {
+      const paramName = msgChunk.name;
+      const placeholder = placeholders[paramName]; // ReactNode|string
+      if (placeholder == null) {
+        logger.error(`FORMATTING LOCALIZATION PARAM FAILED, missing $${paramName} in i18n string="${key}", see "${locale}.ftl"`, {
+          key,
+          paramName,
+          message,
+          bundle,
+          placeholders,
+          hasReactNodes,
+        });
+      }
+      return placeholder ?? ""; // empty placeholder in case of missing
+    }
+    return msgChunk;
+  });
+
+  if (hasReactNodes) {
+    return formattedStringChunksRaw; // React.Children element
   }
 
-  return bundle.formatPattern(message, placeholdersSafeString);
+  return formattedStringChunksRaw.join(""); // plain-string
 }
 
 export async function setLocale(lang: Locale) {
