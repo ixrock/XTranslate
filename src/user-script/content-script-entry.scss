@@ -1,11 +1,11 @@
 /* XTranslate global injectable CSS-styles */
 @use "../components/theme" as *;
 
-[data-tooltip="true"]:hover [data-tooltip="true"]::after {
+[data-tooltip]:hover [data-tooltip]::after {
   z-index: 2;
 }
 
-[data-tooltip="true"] {
+[data-tooltip] {
   @include theme-vars;
   position: relative;
 
@@ -20,7 +20,8 @@
   }
 
   &::after {
-    content: attr(data-original) attr(data-translation);
+    white-space: pre-wrap;
+    content: attr(data-original) "\A" attr(data-translation);
     opacity: 0;
     visibility: hidden;
     transition: opacity 500ms;
@@ -33,6 +34,9 @@
     text-align: left;
     left: 0;
     top: 100%;
+    width: 100%;
+    min-width: min-content;
+    max-width: max-content;
     z-index: 1;
   }
 }

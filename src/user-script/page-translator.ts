@@ -15,7 +15,7 @@ export interface PageTranslatorParams {
 }
 
 export interface WatchViewportTextNodesOpts {
-  onVisible?(nodes: Text[]): void;
+  onVisible?(elem: HTMLElement): void;
 }
 
 export class PageTranslator {
@@ -25,7 +25,7 @@ export class PageTranslator {
 
   protected textNodes = observable.set<Text>();
   protected textNodesViewport = observable.set<Text>();
-  protected parentNodes = new WeakMap<HTMLElement, Text[]>();
+  protected parentNodes = new WeakMap<HTMLElement, Set<Text>>();
   protected translations = new WeakMap<Text, Record<TranslationHashId, string /*translation*/>>();
   protected originalText = new WeakMap<Text, string>();
   protected originalTextRaw = new WeakMap<Text, string>();
@@ -82,7 +82,7 @@ export class PageTranslator {
 
   startAutoTranslation() {
     const textNodes = this.collectTextNodes();
-    this.processNodes(textNodes);
+    this.processTextNodes(textNodes);
 
     this.dispose.push(
       this.bindAutoTranslationOfCollectedTexts(),
@@ -119,44 +119,43 @@ export class PageTranslator {
   }
 
   protected updateDOMResults(textNodes: Text[], providerHashId = this.getProviderHashId()) {
-    const { showOriginalOnHover, showTranslationOnHover, showTranslationInDOM } = this.settings;
+    const { showTranslationInDOM, showOriginalOnHover, showTranslationOnHover } = this.settings;
+    const showTooltip = Boolean(showOriginalOnHover || showTranslationOnHover);
 
-    this.restoreDOM(textNodes);
-
-    window.requestAnimationFrame(() => {
-      textNodes.forEach(node => {
-        const translation = this.getTranslationByNode(node, providerHashId);
-        if (!translation) return;
-
-        const parentElem: HTMLElement = node.parentElement;
-        const tooltipElem: HTMLElement = parentElem?.closest(`[data-tooltip]`) ?? parentElem;
-        if (!tooltipElem) return;
-
-        const originalText = this.originalText.get(node);
-        const prevTranslation = tooltipElem.dataset.translation ?? "";
-        const prevOriginal = tooltipElem.dataset.original ?? "";
-
-        tooltipElem.dataset.tooltip = String(!!(showOriginalOnHover || showTranslationOnHover));
-
-        if (showTranslationInDOM) {
-          const { leadingSpaces, trailingSpaces } = this.getNodeSpaces(node);
-          node.nodeValue = `${leadingSpaces}${translation}${trailingSpaces}`;
-        }
-
-        if (showOriginalOnHover) {
-          tooltipElem.dataset.original = `${prevOriginal} ${originalText}`.trim();
-          if (parentElem != tooltipElem) {
-            parentElem.dataset.original = originalText;
-          }
-        }
-        if (showTranslationOnHover) {
-          tooltipElem.dataset.translation = `${prevTranslation} ${translation}`.trim();
-          if (parentElem != tooltipElem) {
-            parentElem.dataset.translation = translation;
-          }
-        }
-      });
+    this.restoreDOM(textNodes, {
+      restoreOriginalText: !showTranslationInDOM,
     });
+
+    textNodes.forEach(node => {
+      if (showTranslationInDOM) {
+        const translation = this.getTranslationByNode(node, providerHashId);
+        const { leadingSpaces, trailingSpaces } = this.getNodeSpaces(node);
+        node.nodeValue = `${leadingSpaces}${translation}${trailingSpaces}`;
+      }
+      if (showTooltip) {
+        const tooltipElem = node.parentElement as HTMLElement;
+        const tooltipNodes = this.parentNodes.get(tooltipElem);
+        if (tooltipNodes) {
+          this.setTooltip(tooltipElem, [...tooltipNodes], providerHashId);
+        }
+      }
+    })
+  }
+
+  protected setTooltip(elem: HTMLElement, textNodes: Text[], providerHashId = this.getProviderHashId()) {
+    elem.dataset.tooltip = "";
+
+    if (this.settings.showOriginalOnHover) {
+      elem.dataset.original = textNodes
+        .map((node: Text) => this.originalText.get(node) || node.nodeValue)
+        .join(" ")
+    }
+
+    if (this.settings.showTranslationOnHover) {
+      elem.dataset.translation = textNodes
+        .map((node: Text) => this.getTranslationByNode(node, providerHashId) || node.nodeValue)
+        .join(" ")
+    }
   }
 
   restoreDOM(textNodes: Text[], { restoreOriginalText = false } = {}) {
@@ -178,18 +177,23 @@ export class PageTranslator {
     return this.translateNodes(nodes);
   };
 
-  protected processNodes(nodes: Text[]) {
-    nodes.forEach(textNode => {
-      const { parentElement } = textNode;
-      if (!this.parentNodes.get(parentElement)) this.parentNodes.set(parentElement, []);
-      this.parentNodes.get(parentElement).push(textNode); // group text nodes by parent-element
+  protected processTextNodes(nodes: Text[]) {
+    nodes.forEach(node => {
+      const parentElem = node.parentElement;
+      if (parentElem) {
+        if (!this.parentNodes.get(parentElem)) {
+          const childrenTexts = nodes.filter(text => parentElem.contains(text));
+          this.parentNodes.set(parentElem, new Set(childrenTexts));
+        }
+        this.parentNodes.get(parentElem).add(node);
+      }
 
-      const txt = this.normalizeText(textNode); // cut redundant empty spaces
-      this.textNodes.add(textNode);
-      this.originalText.set(textNode, txt);
-      this.originalTextRaw.set(textNode, textNode.nodeValue);
+      const txt = this.normalizeText(node); // cut redundant empty spaces
+      this.textNodes.add(node);
+      this.originalText.set(node, txt);
+      this.originalTextRaw.set(node, node.nodeValue);
 
-      this.logger.info(`IMPORTED NODE: ${txt}`, { textNode, parentElement });
+      this.logger.info(`IMPORTED NODE: ${txt}`, { textNode: node, parentElem });
     });
 
     if (this.settings.trafficSaveMode) {
@@ -365,7 +369,7 @@ export class PageTranslator {
 
       if (fresh.length) {
         this.logger.info("NEW TEXT NODES", fresh);
-        this.processNodes(fresh);
+        this.processTextNodes(fresh);
       }
     });
 
@@ -380,7 +384,7 @@ export class PageTranslator {
             const target = entry.target as HTMLElement;
             const texts = this.parentNodes.get(target);
             if (texts) {
-              onVisible?.(texts);
+              onVisible?.(target);
               texts.forEach((text) => this.textNodesViewport.add(text));
               intersectionObserver.unobserve(target); // children texts processed, stop watching
             }
