@@ -1,11 +1,11 @@
 /* XTranslate global injectable CSS-styles */
 @use "../components/theme" as *;
 
-[data-tooltip]:hover [data-tooltip]::after {
+[data-xtranslate-tooltip]:hover [data-xtranslate-tooltip]::after {
   z-index: 2;
 }
 
-[data-tooltip] {
+[data-xtranslate-tooltip] {
   @include theme-vars;
   position: relative;
 
@@ -20,7 +20,7 @@
   }
 
   &::after {
-    content: attr(data-original) "\A" attr(data-translation);
+    content: attr(data-xtranslate-original) "\A" attr(data-xtranslate-translation);
     white-space: pre-wrap;
     pointer-events: none;
     opacity: 0;

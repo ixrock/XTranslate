@@ -146,16 +146,16 @@ export class PageTranslator {
   }
 
   protected setTooltip(elem: HTMLElement, textNodes: Text[], providerHashId = this.getProviderHashId()) {
-    elem.dataset.tooltip = "";
+    elem.dataset.xtranslateTooltip = "";
 
     if (this.settings.showOriginalOnHover) {
-      elem.dataset.original = textNodes
+      elem.dataset.xtranslateOriginal = textNodes
         .map((node: Text) => this.originalText.get(node) || node.nodeValue)
         .join(" ")
     }
 
     if (this.settings.showTranslationOnHover) {
-      elem.dataset.translation = textNodes
+      elem.dataset.xtranslateTranslation = textNodes
         .map((node: Text) => this.getTranslationByNode(node, providerHashId) || node.nodeValue)
         .join(" ")
     }
@@ -164,9 +164,9 @@ export class PageTranslator {
   restoreDOM(textNodes: Text[], { restoreOriginalText = false } = {}) {
     textNodes.forEach(node => {
       const parentElem = node.parentElement as HTMLElement | null;
-      delete parentElem?.dataset.tooltip;
-      delete parentElem?.dataset.translation;
-      delete parentElem?.dataset.original;
+      delete parentElem?.dataset.xtranslateTooltip;
+      delete parentElem?.dataset.xtranslateOriginal;
+      delete parentElem?.dataset.xtranslateTranslation;
       if (restoreOriginalText) {
         node.nodeValue = this.originalTextRaw.get(node);
       }
