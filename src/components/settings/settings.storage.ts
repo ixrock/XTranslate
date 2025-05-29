@@ -57,7 +57,7 @@ export const settingsStorage = createStorage("settings", {
       showOriginalOnHover: true,
       showTranslationOnHover: false,
       showTranslationInDOM: true,
-      trafficSaveMode: false,
+      trafficSaveMode: true,
       alwaysTranslatePages: [],
     },
   }

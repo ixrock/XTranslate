@@ -20,11 +20,11 @@ export enum MessageType {
   MELLOWTEL_DEACTIVATE = "MELLOWTEL_DEACTIVATE",
   INJECT_CONTENT_SCRIPT = "INJECT_CONTENT_SCRIPT",
   RUNTIME_ERROR_CONTEXT_INVALIDATED = "RUNTIME_ERROR_CONTEXT_INVALIDATED",
-  RUNTIME_ERROR_CONNECTION_FAILED = "RUNTIME_ERROR_CONNECTION_FAILED",
 }
 
 export interface Message<Payload = any /*json-serializable*/> {
   type: MessageType;
+  tabId?: number;
   payload?: Payload;
 }
 

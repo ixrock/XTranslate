@@ -117,23 +117,23 @@ export async function textToSpeech(params: OpenAITextToSpeechPayload): Promise<n
   return Array.from(transferableDataContainer);
 }
 
-export async function aiTranslateAction<P extends AITranslatePayload>(payload: P) {
+export async function aiTranslateAction(payload: AITranslatePayload): Promise<ITranslationResult> {
   if (isBackgroundWorker()) {
     return translateText(payload);
   }
 
-  return sendMessage<P>({
+  return sendMessage<AITranslatePayload, ITranslationResult>({
     type: MessageType.AI_TRANSLATION,
     payload,
   });
 }
 
-export async function aiTextToSpeechAction<P extends OpenAITextToSpeechPayload>(payload: P) {
+export async function aiTextToSpeechAction(payload: OpenAITextToSpeechPayload): Promise<Uint8Array | number[]> {
   if (isBackgroundWorker()) {
     return textToSpeech(payload);
   }
 
-  return sendMessage<P>({
+  return sendMessage({
     type: MessageType.AI_TEXT_TO_SPEECH,
     payload,
   });

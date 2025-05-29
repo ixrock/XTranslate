@@ -70,34 +70,34 @@ export function listenExternalStorageChanges(area: StorageArea, callback: (chang
   return () => storageApi.onChanged.removeListener(handleChange);
 }
 
-export async function writeToExternalStorageAction(payload: StorageWritePayload) {
+export async function writeToExternalStorageAction(payload: StorageWritePayload): Promise<void> {
   if (isBackgroundWorker()) {
     return writeToExternalStorage(payload);
   }
 
-  return sendMessage<StorageWritePayload>({
+  return sendMessage<StorageWritePayload, void>({
     type: MessageType.STORAGE_DATA_WRITE,
     payload,
   });
 }
 
-export async function readFromExternalStorageAction(payload: StorageReadPayload) {
+export async function readFromExternalStorageAction<Request extends StorageReadPayload, Response>(payload: Request): Promise<Response> {
   if (isBackgroundWorker()) {
     return readFromExternalStorage(payload);
   }
 
-  return sendMessage<StorageReadPayload>({
+  return sendMessage<Request, Response>({
     type: MessageType.STORAGE_DATA_READ,
     payload,
   });
 }
 
-export async function removeFromExternalStorageAction(payload: StorageDeletePayload) {
+export async function removeFromExternalStorageAction(payload: StorageDeletePayload): Promise<void> {
   if (isBackgroundWorker()) {
     return removeFromExternalStorage(payload);
   }
 
-  return sendMessage<StorageDeletePayload>({
+  return sendMessage<StorageDeletePayload, void>({
     type: MessageType.STORAGE_DATA_REMOVE,
     payload,
   });

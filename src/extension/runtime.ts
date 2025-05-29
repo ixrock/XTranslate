@@ -22,7 +22,7 @@ export function isOptionsPage(): boolean {
   return location.href.startsWith(getURL(optionsHtmlPage));
 }
 
-export async function sendMessage<Request, Response = any, Error = any>({ tabId, ...message }: Message<Request> & { tabId?: number }): Promise<Response> {
+export async function sendMessage<Request, Response = unknown, Error = unknown>({ tabId, ...message }: Message<Request>): Promise<Response> {
   let response: { data?: Response, error?: Error };
 
   if (tabId) {
@@ -35,6 +35,15 @@ export async function sendMessage<Request, Response = any, Error = any>({ tabId,
     return response.data;
   } else if (response?.error) {
     throw response.error;
+  }
+}
+
+export async function sendMessageSafe<Payload, Response = unknown>(msg: Message<Payload>): Promise<Response> {
+  try {
+    return await sendMessage(msg);
+  } catch (err) {
+    if (isRuntimeConnectionFailedError(err)) return; // noop
+    throw err;
   }
 }
 
@@ -73,14 +82,18 @@ export async function openOptionsPage() {
   return chrome.runtime.openOptionsPage();
 }
 
-export async function getRuntimeContexts(filter: chrome.runtime.ContextFilter = {}) {
-  return chrome.runtime.getContexts(filter)
-}
-
 export function onInstallExtension(callback: (reason: "install" | "update" | "chrome_update", details: InstalledDetails) => void) {
   const callbackWrapper = (event: InstalledDetails) => {
     callback(event.reason as "update", event);
   };
   chrome.runtime.onInstalled.addListener(callbackWrapper);
   return () => chrome.runtime.onInstalled.removeListener(callbackWrapper);
+}
+
+export function isContextInvalidatedError(err: Error) {
+  return String(err).includes("Extension context invalidated");
+}
+
+export function isRuntimeConnectionFailedError(err: Error) {
+  return String(err).includes("Could not establish connection. Receiving end does not exist");
 }

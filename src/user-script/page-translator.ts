@@ -64,19 +64,19 @@ export class PageTranslator {
     return new URL(url).origin;
   }
 
-  setAutoTranslateSettingUrl(urls: { enabled?: string[], disabled?: string[] }) {
+  setAutoTranslatingPages(urls: { enabled?: string[], disabled?: string[] }) {
     if (urls.enabled) {
       const uniqUrls = new Set([
         ...this.settings.alwaysTranslatePages,
         ...urls.enabled.map(this.normalizeUrl),
       ]);
-      this.settings.alwaysTranslatePages = Array.from(uniqUrls);
+      this.settings.alwaysTranslatePages = [...uniqUrls];
     }
     if (urls.disabled) {
-      const excludedUrls = new Set(this.settings.alwaysTranslatePages);
-      const excludingUrls = new Set(urls.disabled.map(this.normalizeUrl))
-      const uniqUrls = excludedUrls.difference(excludingUrls);
-      this.settings.alwaysTranslatePages = Array.from(uniqUrls);
+      const translatingUrls = new Set(this.settings.alwaysTranslatePages);
+      const excludedUrls = new Set(urls.disabled.map(this.normalizeUrl))
+      const uniqUrls = translatingUrls.difference(excludedUrls);
+      this.settings.alwaysTranslatePages = [...uniqUrls];
     }
   }
 

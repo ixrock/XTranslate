@@ -50,7 +50,7 @@ export async function proxyRequest<Response>(payload: ProxyRequestPayload): Prom
   if (isBackgroundWorker()) {
     response = await handleProxyRequestPayload(payload);
   } else {
-    response = await sendMessage<ProxyRequestPayload>({
+    response = await sendMessage<ProxyRequestPayload, ProxyResponsePayload<Response>>({
       type: MessageType.PROXY_REQUEST,
       payload: {
         responseType: ProxyResponseType.JSON, /*default*/

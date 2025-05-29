@@ -20,10 +20,10 @@ import { Tooltip } from "../tooltip";
 import { getUrlParams, navigation, TranslationPageParams } from "../../navigation";
 import { createStorage } from "../../storage";
 import { getMessage } from "../../i18n";
-import { isMac, isSystemPage, materialIcons } from "../../common-vars";
+import { isMac, materialIcons } from "../../common-vars";
 import { isFavorite } from "../user-history/favorites.storage";
 import { saveToFavoritesAction } from "../../background/history.bgc";
-import { getActiveTab, getSelectedText } from "../../extension";
+import { getSelectedText } from "../../extension";
 
 export const lastInputText = createStorage("last_input_text", {
   defaultValue: "",
@@ -73,9 +73,6 @@ export class InputTranslation extends React.Component {
   }
 
   private async translateSelectedTextFromActiveTabIfAny() {
-    const activePage = await getActiveTab();
-    if (isSystemPage(activePage.url)) return; // noop
-
     const selectedText = await getSelectedText();
     if (selectedText) this.translateText(selectedText);
   }

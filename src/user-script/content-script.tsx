@@ -13,7 +13,7 @@ import orderBy from 'lodash/orderBy';
 import { contentScriptEntry, contentScriptInjectable } from "../common-vars";
 import { preloadAppData } from "../preloadAppData";
 import { autoBind, disposer, getHotkey } from "../utils";
-import { getManifest, getURL, isRuntimeContextInvalidatedAction, MessageType, onMessage, ProxyResponseType, TranslatePagePayload, TranslatePayload } from "../extension";
+import { getManifest, getURL, isRuntimeContextInvalidated, MessageType, onMessage, ProxyResponseType, TranslatePagePayload, TranslatePayload } from "../extension";
 import { proxyRequest } from "../background/httpProxy.bgc";
 import { popupHotkey, settingsStore } from "../components/settings/settings.storage";
 import { getNextTranslator, getTranslator, ITranslationError, ITranslationResult } from "../providers";
@@ -136,7 +136,7 @@ export class ContentScript extends React.Component {
   }
 
   async checkContextInvalidationError(): Promise<void> {
-    const isInvalidated = await isRuntimeContextInvalidatedAction();
+    const isInvalidated = await isRuntimeContextInvalidated();
     if (isInvalidated) this.unload();
   }
 
@@ -213,7 +213,6 @@ export class ContentScript extends React.Component {
     return this.selectedText;
   }
 
-  // TODO: show/hide full-page translation top-widget
   private togglePageAutoTranslation({ pageUrl }: TranslatePagePayload) {
     if (this.pageTranslator.isAlwaysTranslate(pageUrl)) {
       this.stopPageAutoTranslation(pageUrl);
@@ -224,13 +223,13 @@ export class ContentScript extends React.Component {
 
   @action
   private startPageAutoTranslation(pageUrl?: string) {
-    if (pageUrl) this.pageTranslator.setAutoTranslateSettingUrl({ enabled: [pageUrl] });
+    if (pageUrl) this.pageTranslator.setAutoTranslatingPages({ enabled: [pageUrl] });
     this.pageTranslator.startAutoTranslation();
   }
 
   @action
   private stopPageAutoTranslation(pageUrl?: string) {
-    if (pageUrl) this.pageTranslator.setAutoTranslateSettingUrl({ disabled: [pageUrl] });
+    if (pageUrl) this.pageTranslator.setAutoTranslatingPages({ disabled: [pageUrl] });
     this.pageTranslator.stopAutoTranslation();
   }
 
