@@ -26,7 +26,7 @@ export class PageTranslator {
   protected textNodes = observable.set<Text>();
   protected textNodesViewport = observable.set<Text>();
   protected parentNodes = new WeakMap<HTMLElement, Set<Text>>();
-  protected translations = new WeakMap<Text, Record<TranslationHashId, string /*translation*/>>();
+  protected translations = new WeakMap<Text, Record<TranslationHashId, string>>();
   protected originalText = new WeakMap<Text, string>();
   protected originalTextRaw = new WeakMap<Text, string>();
   protected detectedLanguages = new WeakMap<Text, string>();
@@ -85,24 +85,24 @@ export class PageTranslator {
     this.processTextNodes(textNodes);
 
     this.dispose.push(
-      this.bindAutoTranslationOfCollectedTexts(),
-      this.bindAutoRefreshTranslationsOnParamsChange(),
+      this.bindDocumentTextsAutoTranslation(),
+      this.bindRefreshTranslationsOnParamsChange(),
       this.watchDOMTextNodes(),
-      () => this.clearAllCollectedNodes(),
+      () => this.clearCollectedNodes(),
     );
   }
 
   stopAutoTranslation() {
-    const textNodes = [...this.textNodes];
+    const textNodes = Array.from(this.textNodes);
     this.restoreDOM(textNodes, { restoreOriginalText: true });
     this.dispose();
   }
 
-  protected bindAutoRefreshTranslationsOnParamsChange = () => {
+  protected bindRefreshTranslationsOnParamsChange = () => {
     return reaction(this.getProviderParams, this.refreshTranslations);
   }
 
-  protected bindAutoTranslationOfCollectedTexts = () => {
+  protected bindDocumentTextsAutoTranslation = () => {
     const getTexts = (): Text[] => {
       if (this.settings.trafficSaveMode) return [...this.textNodesViewport];
       return [...this.textNodes];
@@ -113,7 +113,7 @@ export class PageTranslator {
     });
   }
 
-  protected clearAllCollectedNodes() {
+  protected clearCollectedNodes() {
     this.textNodes.clear();
     this.textNodesViewport.clear();
   }
@@ -173,11 +173,11 @@ export class PageTranslator {
     });
   };
 
-  async refreshTranslations() {
-    const textNodesAll = [...this.textNodes];
-    const nodes = this.settings.trafficSaveMode ? textNodesAll : [...this.textNodesViewport];
+  refreshTranslations() {
+    const textNodesAll = Array.from(this.textNodes);
+    const nodes = this.settings.trafficSaveMode ? Array.from(this.textNodesViewport) : textNodesAll;
     this.restoreDOM(textNodesAll);
-    return this.translateNodes(nodes);
+    void this.translateNodes(nodes);
   };
 
   protected processTextNodes(nodes: Text[]) {
@@ -255,7 +255,7 @@ export class PageTranslator {
       )
     ).flat();
 
-    window.requestAnimationFrame(() => this.updateDOMResults(textNodes, providerHashId));
+    requestAnimationFrame(() => this.updateDOMResults(textNodes, providerHashId));
     return translations;
   }
 
