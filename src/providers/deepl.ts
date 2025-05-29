@@ -6,7 +6,7 @@ import { getMessage } from "../i18n";
 
 class Deepl extends Translator {
   static MAX_BYTES_PER_REQUEST = 128 * 1024; /*128K*/
-  static MAX_TEXTS_PER_REQUEST = 30;
+  static MAX_TEXTS_PER_REQUEST = 25;
 
   override name = ProviderCodeName.DEEPL;
   override title = "DeepL";
@@ -48,9 +48,9 @@ class Deepl extends Translator {
     return { queryParams, reqInit };
   }
 
-  async translateMany(params: TranslateParams): Promise<string[]> {
-    const request = async (texts?: string[]) => {
-      const { reqInit, queryParams } = await this.getRequestParams({ ...params, texts });
+  async translateMany({ texts, from, to }: TranslateParams): Promise<string[]> {
+    const request = async (texts: string[]) => {
+      const { reqInit, queryParams } = await this.getRequestParams({ from, to, texts });
 
       const { translations }: DeeplTranslationResponse = await this.request({
         url: `${this.apiUrl}/translate?${queryParams}`,
@@ -60,8 +60,8 @@ class Deepl extends Translator {
       return translations.map(tr => tr.text);
     }
 
-    if (params.texts.length >= Deepl.MAX_TEXTS_PER_REQUEST) {
-      const textGroups: string[][] = this.packGroups(params.texts, {
+    if (texts.length >= Deepl.MAX_TEXTS_PER_REQUEST) {
+      const textGroups: string[][] = this.packGroups(texts, {
         groupSize: Deepl.MAX_TEXTS_PER_REQUEST,
         maxBytesPerGroup: Deepl.MAX_BYTES_PER_REQUEST,
       });
@@ -72,7 +72,7 @@ class Deepl extends Translator {
       return translations.flat();
     }
 
-    return request();
+    return request(texts);
   }
 
   async translate(params: TranslateParams): Promise<ITranslationResult> {

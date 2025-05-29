@@ -1,4 +1,4 @@
-import { reaction, observable } from "mobx";
+import { observable, reaction } from "mobx";
 import { franc } from "franc";
 import { md5 } from "js-md5";
 import { autoBind, createLogger, disposer, LoggerColor, strLengthCodePoints } from "../utils";
@@ -127,8 +127,11 @@ export class PageTranslator {
     });
 
     textNodes.forEach(node => {
+      const translation = this.getTranslationByNode(node, providerHashId);
+      if (!translation) {
+        return;
+      }
       if (showTranslationInDOM) {
-        const translation = this.getTranslationByNode(node, providerHashId);
         const { leadingSpaces, trailingSpaces } = this.getNodeSpaces(node);
         node.nodeValue = `${leadingSpaces}${translation}${trailingSpaces}`;
       }
@@ -239,28 +242,21 @@ export class PageTranslator {
   protected async translateNodes(textNodes: Text[]): Promise<string[]> {
     const providerParams = this.getProviderParams();
     const providerHashId = this.getProviderHashId(providerParams);
-    try {
-      const freshNodes = textNodes.filter(node => !this.getTranslationByNode(node, providerHashId));
-      const packedNodes = this.packNodes(freshNodes);
-      this.logger.info(`PROCESSING NODE GROUPS: ${packedNodes.length}`, packedNodes);
+    const freshNodes = textNodes.filter(node => !this.getTranslationByNode(node, providerHashId));
+    const packedNodes = this.packNodes(freshNodes);
 
-      const translations = (
-        await Promise.all(
-          packedNodes.map(async nodes => {
-            const translations = await this.translateApiRequest(nodes);
-            if (this.params.persistent) this.saveStorageCache(nodes, translations, providerHashId);
-            return translations;
-          })
-        )
-      ).flat();
+    const translations = (
+      await Promise.all(
+        packedNodes.map(async nodes => {
+          const translations = await this.translateApiRequest(nodes);
+          if (this.params.persistent) this.saveStorageCache(nodes, translations, providerHashId);
+          return translations;
+        })
+      )
+    ).flat();
 
-      this.updateDOMResults(textNodes, providerHashId);
-      this.logger.info(`TRANSLATED`, translations);
-      return translations;
-    } catch (err) {
-      this.logger.error(`TRANSLATION FAILED`, err, providerParams);
-      throw err;
-    }
+    window.requestAnimationFrame(() => this.updateDOMResults(textNodes, providerHashId));
+    return translations;
   }
 
   getTranslationByNode(textNode: Text, hashId = this.getProviderHashId()): string {
@@ -283,29 +279,28 @@ export class PageTranslator {
     const texts = textNodes.map(node => this.originalText.get(node));
     const translator = getTranslator(params.provider);
 
-    this.logger.info(`TRANSLATE API REQUEST for ${texts.length} items`, { ...params, texts });
+    try {
+      const translations = await translator.translateMany({
+        from: params.langFrom,
+        to: params.langTo,
+        texts,
+      });
 
-    const translations = await translator.translateMany({
-      from: params.langFrom,
-      to: params.langTo,
-      texts,
-    });
+      const result = texts.map((originalText, i) => [originalText, translations[i]]);
+      this.logger.info(`TRANSLATED TEXTS: ${textNodes.length}`, { params, result });
 
-    translations.forEach((translation, index) => {
-      const text = texts[index];
-      const node = textNodes[index];
+      translations.forEach((translation, index) => {
+        const node = textNodes[index];
+        if (!this.translations.has(node)) this.translations.set(node, {});
+        this.translations.get(node)[hashId] = translation;
+      });
 
-      if (!this.translations.has(node)) this.translations.set(node, {});
-      this.translations.get(node)[hashId] = translation;
+      return translations;
+    } catch (err) {
+      this.logger.error(`TRANSLATION FAILED: ${err}`, { params, texts });
+    }
 
-      this.logger.info(`TRANSLATION LOADED: ${text}`, {
-        ...params,
-        originalText: text,
-        translationCache: translation,
-      })
-    });
-
-    return translations;
+    return [];
   }
 
   normalizeText(node: Text): string {
@@ -354,22 +349,22 @@ export class PageTranslator {
 
   watchDOMTextNodes(rootElem = document.body): () => void {
     const observer = new MutationObserver(mutations => {
-      const fresh: Text[] = [];
+      const freshNodes: Text[] = [];
 
       for (const m of mutations) {
         m.addedNodes.forEach(node => {
-          if (this.acceptTextNodeFilter(node)) fresh.push(node as Text);
+          if (this.acceptTextNodeFilter(node)) freshNodes.push(node as Text);
 
           if (node.nodeType === Node.ELEMENT_NODE) {
             const innerTexts = this.collectTextNodes(node as HTMLElement);
-            fresh.push(...innerTexts);
+            freshNodes.push(...innerTexts);
           }
         });
       }
 
-      if (fresh.length) {
-        this.logger.info("NEW TEXT NODES", fresh);
-        this.processTextNodes(fresh);
+      if (freshNodes.length) {
+        this.logger.info("NEW TEXT NODES", freshNodes);
+        this.processTextNodes(freshNodes);
       }
     });
 
@@ -377,7 +372,7 @@ export class PageTranslator {
     return () => observer.disconnect();
   }
 
-  watchVisibleTextNodes(nodes: Text[], { onVisible }: WatchViewportTextNodesOpts = {}) {
+  watchVisibleTextNodes(textNodes: Text[], { onVisible }: WatchViewportTextNodesOpts = {}) {
     const intersectionObserver = new IntersectionObserver(entries => {
         for (const entry of entries) {
           if (entry.isIntersecting) {
@@ -396,7 +391,7 @@ export class PageTranslator {
       }
     );
 
-    const textParents = new Set(nodes.filter(text => text.parentElement).map(text => text.parentElement));
+    const textParents = new Set(textNodes.map(text => text.parentElement).filter(Boolean));
     textParents.forEach(elem => intersectionObserver.observe(elem)); // subscribe
     return () => intersectionObserver.disconnect(); // unsubscribe
   }

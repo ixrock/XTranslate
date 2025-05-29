@@ -13,7 +13,6 @@ import { pageManager } from "./page-manager";
 import { getMessage } from "../../i18n";
 import { SelectLocaleIcon } from "../select-locale";
 import { dialogsState } from "./dialogs-state";
-import { isSystemPage } from "../../common-vars";
 
 @observer
 export class Header extends React.Component {
@@ -67,15 +66,13 @@ export class Header extends React.Component {
           <div className="app-title box grow">
             {name} <sup className="app-version">{version}</sup>
           </div>
-          {!isSystemPage(activeTab.url) && (
-            <Icon
-              small
-              material="g_translate"
-              active={isAutoTranslatingPage}
-              tooltip={translatePageActionTooltip}
-              onClick={this.translateActivePage}
-            />
-          )}
+          <Icon
+            small
+            material="g_translate"
+            active={isAutoTranslatingPage}
+            tooltip={translatePageActionTooltip}
+            onClick={this.translateActivePage}
+          />
           <Icon
             small
             svg="moon"

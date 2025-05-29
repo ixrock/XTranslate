@@ -20,8 +20,9 @@
   }
 
   &::after {
-    white-space: pre-wrap;
     content: attr(data-original) "\A" attr(data-translation);
+    white-space: pre-wrap;
+    pointer-events: none;
     opacity: 0;
     visibility: hidden;
     transition: opacity 500ms;
