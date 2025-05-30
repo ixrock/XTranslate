@@ -1,6 +1,6 @@
 {
   "name": "xtranslate",
-  "version": "4.0.0",
+  "version": "5.0.0",
   "scripts": {
     "dev": "npm run webpack -- --env mode=development --watch",
     "build": "npm run clean && npm run webpack -- --env mode=production --progress",
@@ -40,8 +40,7 @@
   "dependencies": {
     "@fluent/bundle": "^0.19.1",
     "@fluent/dom": "^0.10.1",
-    "@mellowtel/module-meucci": "^1.0.0",
-    "@types/chrome": "^0.0.317",
+    "@types/chrome": "^0.0.322",
     "@types/hoist-non-react-statics": "^3.3.6",
     "@types/html-webpack-plugin": "^3.2.9",
     "@types/jest": "^29.5.14",
@@ -58,6 +57,7 @@
     "copy-webpack-plugin": "^13.0.0",
     "css-loader": "^7.1.2",
     "flag-icons": "^7.3.2",
+    "franc": "^6.2.0",
     "hoist-non-react-statics": "^3.3.2",
     "html-webpack-plugin": "^5.6.3",
     "jest": "^29.7.0",
@@ -65,7 +65,6 @@
     "js-md5": "^0.8.3",
     "lodash": "^4.17.21",
     "marked": "^15.0.11",
-    "mellowtel": "^1.6.2",
     "mini-css-extract-plugin": "^2.9.2",
     "mobx": "^6.13.7",
     "mobx-observable-history": "^2.0.3",

@@ -33,14 +33,12 @@ export_settings_button_label = Xuất cài đặt
 import_settings_button_label = Nhập cài đặt
 import_incorrect_file_format = Định dạng tệp không đúng (có lẽ nên là { $fileNameJson })
 imported_setting_successful = Cài đặt dưới khóa { $key } đã được nhập thành công
-show_context_menu = Hiển thị trong menu ngữ cảnh của trang
 display_icon_near_selection = Hiển thị biểu tượng gần văn bản đã chọn
 show_tts_icon_inside_popup = Hiển thị biểu tượng văn bản thành giọng nói
 show_next_vendor_icon_in_popup = Hiển thị biểu tượng dịch tiếp theo
 show_copy_translation_icon = Hiển thị biểu tượng sao chép bản dịch
 show_save_as_favorite_icon = Hiển thị biểu tượng lưu làm yêu thích
 show_close_popup_button = Hiển thị nút đóng bật lên ở góc phải
-show_close_popup_button_title = Đóng
 show_detected_language_block = Hiển thị ngôn ngữ đã phát hiện
 display_on_click_by_selected_text = Hiển thị khi nhấp vào văn bản đã chọn
 display_popup_after_text_selected = Hiển thị ngay sau khi chọn văn bản
@@ -130,7 +128,7 @@ history_import_success = Đã nhập thành công { $itemsCount } mục lịch s
 history_import_file_error = Lỗi đọc tệp '{ $fileName }': { $errorInfo }
 
 # Menu ngữ cảnh
-context_menu_translate_full_page = Dịch toàn bộ trang với { $translator }
+context_menu_translate_full_page = Dịch sang { $lang }
 context_menu_translate_selection = Dịch { $selection } với { $translator }
 
 # Khác
@@ -179,31 +177,11 @@ mellowtel_dialog_footer = Cảm ơn bạn đã dành thời gian đọc, các đ
 error_403_auth_failed = Xác thực thất bại. Vui lòng cung cấp khóa API hợp lệ trong cài đặt.
 
 # Tích hợp OpenAI
-open_ai_get_access_info = 1) Đăng ký tại platform.openai.com 2) Tạo khóa truy cập API 3) Nạp tiền vào tài khoản (5$+)
-open_ai_insert_auth_key = Cung cấp khóa API của bạn để nhận bản dịch từ OpenAI
-open_ai_insert_auth_key_warning = Cảnh báo: KHÔNG nhập khóa API của bạn ở bất kỳ nơi nào khác ngoài cửa sổ tiện ích mở rộng này
-open_ai_insert_auth_key_remove = Xóa khóa API OpenAI
-open_ai_choose_model = Chọn mô hình AI
-open_ai_choose_model_cost_efficient = Tiết kiệm chi phí nhất
-open_ai_choose_model_optimal = Mô hình khuyến nghị
-open_ai_choose_model_best_results = Kết quả tốt nhất (tốn kém nhất)
-open_ai_why_info_help =
-    Bằng cách sử dụng tài khoản của bạn trên nền tảng OpenAI trực tiếp và cung cấp khóa API, bạn có thể tiết kiệm rất nhiều tiền so với việc sử dụng các dịch vụ "trung gian" từ các ứng dụng hoặc tiện ích mở rộng khác,
-     nơi bạn thường phải trả tiền cho đăng ký hàng tháng/hàng năm và nơi mà tất cả các giá cả và giới hạn sử dụng không nằm dưới sự kiểm soát của bạn.
-     Đừng quên điều chỉnh giới hạn sử dụng tại platform.openai.com và tắt tính năng nạp tiền tự động của thẻ tín dụng.
+ai_choose_model = Chọn mô hình AI
+ai_choose_model_cost_effective = Tiết kiệm chi phí nhất
+ai_choose_model_recommended = Mô hình khuyến nghị
+ai_choose_model_best_results = Kết quả tốt nhất (tốn kém nhất)
 
 # Hỗ trợ dịch PDF qua pdf.js
 pdf_use_custom_viewer = Hỗ trợ dịch trong các tệp PDF
 pdf_use_custom_viewer_info = Tùy chọn này sẽ thay thế trình xem PDF mặc định
-
-# DeepSeek AI integration (VI)
-deepseek_get_own_key_info=Đăng ký tại platform.deepseek.com và nạp số dư (ví dụ: qua PayPal)
-deepseek_auth_key=Tạo khóa truy cập API trên nền tảng DeepSeek và lưu nó tại đây trong cài đặt
-deepseek_auth_key_warning=Cảnh báo: KHÔNG nhập khóa API của bạn ở bất kỳ nơi nào khác ngoài cửa sổ tiện ích mở rộng này
-deepseek_auth_key_remove=Xóa khóa API DeepSeek
-
-# Grok AI integration (VI)
-grok_ai_get_own_key_info = Đăng ký tại console.x.ai và nạp tiền vào tài khoản (ví dụ: qua thẻ tín dụng)
-grok_ai_auth_key = Tạo khóa API tại nền tảng Grok (X) để truy cập API
-grok_ai_auth_key_warning = Cảnh báo: KHÔNG nhập khóa API của bạn vào bất kỳ nơi nào khác ngoài cửa sổ tiện ích mở rộng này
-grok_ai_auth_key_remove = Xóa khóa API Grok

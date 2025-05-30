@@ -1,11 +1,16 @@
 @use "../theme" as *;
 
 .Icon {
-  $defaultSize: 22px;
-  --small-size: 18px;
-  --big-size: 26px;
-  --color-active: black;
-  --bgc-active: transparent;
+  $size: var(--icon-size, 22px);
+
+  --icon-size-small: 18px;
+  --icon-size-big: 26px;
+  --icon-color-active: black;
+  --icon-bgc-active: transparent;
+
+  font-size: $size;
+  width: $size;
+  height: $size;
 
   display: inline-flex;
   flex-shrink: 0;
@@ -17,20 +22,18 @@
   user-select: none;
   box-sizing: content-box; // allow to use padding for outer spacing
 
-  font-size: var(--size, #{$defaultSize});
-  width: var(--size, #{$defaultSize});
-  height: var(--size, #{$defaultSize});
-
   &.small {
-    font-size: var(--size, var(--small-size));
-    width: var(--size, var(--small-size));
-    height: var(--size, var(--small-size));
+    $size: var(--icon-size, var(--icon-size-small));
+    font-size: $size;
+    width: $size;
+    height: $size;
   }
 
   &.big {
-    font-size: var(--size, var(--big-size));
-    width: var(--size, var(--big-size));
-    height: var(--size, var(--big-size));
+    $size: var(--icon-size, var(--icon-size-big));
+    font-size: $size;
+    width: $size;
+    height: $size;
   }
 
   > span {
@@ -98,9 +101,9 @@
   }
 
   &.active {
-    color: var(--color-active);
-    box-shadow: 0 0 0 3px var(--bgc-active);
-    background-color: var(--bgc-active);
+    color: var(--icon-color-active);
+    box-shadow: 0 0 0 3px var(--icon-bgc-active);
+    background-color: var(--icon-bgc-active);
   }
 
   &.interactive {
@@ -120,6 +123,6 @@
 
 @include theme-dark {
   .Icon {
-    --color-active: white;
+    --icon-color-active: white;
   }
 }

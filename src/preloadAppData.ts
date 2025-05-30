@@ -3,13 +3,13 @@
  */
 
 import { i18nInit } from "./i18n";
-import { createLogger } from "./utils/createLogger";
+import { createLogger, LoggerColor } from "./utils/createLogger";
 import { settingsStore } from "./components/settings/settings.storage";
 import { themeStore } from "./components/theme-manager/theme.storage";
 import { favoritesStorage } from "./components/user-history/favorites.storage";
 
 export async function preloadAppData() {
-  const logger = createLogger({ systemPrefix: `[PRELOAD]` });
+  const logger = createLogger({ systemPrefix: `[PRELOAD]`, prefixColor: LoggerColor.INFO_SYSTEM });
   const loadingTimer = logger.time("preloadAppData()");
 
   try {

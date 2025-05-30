@@ -33,14 +33,12 @@ export_settings_button_label = 설정 내보내기
 import_settings_button_label = 설정 가져오기
 import_incorrect_file_format = 파일 형식이 잘못되었습니다 (아마도 { $fileNameJson } 형식이어야 합니다)
 imported_setting_successful = 키 { $key } 아래의 설정이 성공적으로 가져왔습니다
-show_context_menu = 페이지 컨텍스트 메뉴에 표시
 display_icon_near_selection = 선택한 텍스트 근처에 아이콘 표시
 show_tts_icon_inside_popup = 텍스트 음성 변환 아이콘 표시
 show_next_vendor_icon_in_popup = 다음 번역 아이콘 표시
 show_copy_translation_icon = 번역 복사 아이콘 표시
 show_save_as_favorite_icon = 즐겨찾기로 저장 아이콘 표시
 show_close_popup_button = 오른쪽 상단에 팝업 닫기 버튼 표시
-show_close_popup_button_title = 닫기
 show_detected_language_block = 감지된 언어 표시
 display_on_click_by_selected_text = 선택한 텍스트를 클릭할 때 표시
 display_popup_after_text_selected = 텍스트 선택 후 바로 표시
@@ -130,7 +128,7 @@ history_import_success = { $itemsCount } 개의 기록 항목이 성공적으로
 history_import_file_error = 파일 '{ $fileName }'을(를) 읽는 중 오류 발생: { $errorInfo }
 
 # 컨텍스트 메뉴
-context_menu_translate_full_page = { $translator }로 전체 페이지를 번역
+context_menu_translate_full_page = 페이지를 { $lang }로 번역
 context_menu_translate_selection = { $translator }로 { $selection }을(를) 번역
 
 # 기타
@@ -179,31 +177,11 @@ mellowtel_dialog_footer = 읽어 주셔서 감사합니다, { $devs } 팀.
 error_403_auth_failed = 인증 실패. 설정에서 유효한 인증 API 키를 제공하세요.
 
 # OpenAI 통합
-open_ai_get_access_info = 1) platform.openai.com 에 등록 2) API 접근 키 생성 3) 잔액 충전 (5$+)
-open_ai_insert_auth_key = OpenAI 번역을 얻기 위해 API 키 제공
-open_ai_insert_auth_key_warning = 경고: 이 확장 프로그램 창 외에 다른 곳에 API 키를 입력하지 마세요
-open_ai_insert_auth_key_remove = OpenAI API 키 제거
-open_ai_choose_model = AI 모델 선택
-open_ai_choose_model_cost_efficient = 가장 비용 효율적인
-open_ai_choose_model_optimal = 권장 모델
-open_ai_choose_model_best_results = 최고의 결과 (가장 비싼)
-open_ai_why_info_help =
- 자신의 OpenAI 플랫폼 계정을 직접 사용하고 API 키를 제공함으로써, 다른 앱 또는 확장 프로그램의 "중개" 서비스를 사용하는 것보다 많은 돈을 절약할 수 있습니다.
-  여기서 일반적으로 월간/연간 구독료를 지불하고, 모든 가격과 사용 제한이 사용자의 통제 밖에 있습니다.
-  platform.openai.com 에서 사용 제한을 조정하고 신용 카드 자동 충전 잔액을 비활성화하는 것을 잊지 마세요.
+ai_choose_model = AI 모델 선택
+ai_choose_model_cost_effective = 가장 비용 효율적인
+ai_choose_model_recommended = 권장 모델
+ai_choose_model_best_results = 최고의 결과 (가장 비싼)
 
 # pdf.js를 통한 PDF 번역 지원
 pdf_use_custom_viewer = PDF 파일 내 번역 지원
 pdf_use_custom_viewer_info = 이 옵션은 기본 PDF 뷰어를 대체합니다
-
-# DeepSeek AI integration (KO)
-deepseek_get_own_key_info=platform.deepseek.com에 등록하고 잔액을 충전하세요 (예: PayPal 사용)
-deepseek_auth_key=DeepSeek 플랫폼에서 API 액세스 키를 생성하고 설정에 저장하세요
-deepseek_auth_key_warning=경고: 이 확장 프로그램 창 이외의 장소에 API 키를 입력하지 마세요
-deepseek_auth_key_remove=DeepSeek API 키 제거
-
-# Grok AI integration (KO)
-grok_ai_get_own_key_info = console.x.ai에 등록하고 잔액을 충전하세요 (예: 신용카드 사용)
-grok_ai_auth_key = Grok (X) 플랫폼에서 API 키를 생성하여 API에 액세스하세요
-grok_ai_auth_key_warning = 경고: 이 확장 창 외의 다른 곳에 API 키를 입력하지 마세요
-grok_ai_auth_key_remove = Grok API 키 제거

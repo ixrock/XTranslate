@@ -1,12 +1,10 @@
 import "../setup";
-import { ContentScript } from "./content-script";
-import { initContentPage as initMellowtel } from "../../mellowtel/mellowtel.bgc";
-import { mellowtelMeucciFilename } from "../../mellowtel/mellowtel.config";
+import "./content-script-entry.scss";
+import { customPDFViewerRedirectCheck } from "../pdf-viewer/pdf-utils";
+import { injectContentScript } from "../background/scripting.bgc";
 
-// mellowtel integration
-void initMellowtel({
-  meucciFilePath: `${mellowtelMeucciFilename}.js`,
-});
+// handle translation in PDF-files
+void customPDFViewerRedirectCheck();
 
 // render app
-ContentScript.start();
+await injectContentScript();

@@ -65,7 +65,8 @@ export class ThemeManager extends React.Component {
     });
 
     return (
-      <ReactSelect<string>
+      <ReactSelect
+        className="box grow"
         options={options}
         value={options.find(opt => opt.value === this.theme.fontFamily)}
         onChange={onChange}
@@ -82,24 +83,27 @@ export class ThemeManager extends React.Component {
     this.theme.fontFamily = this.customFont.fileName; // save as current font
   };
 
+  private formatBorderStyleOptions = ({ label, value }: ReactSelectOption<string>) => {
+    const theme = themeStore.data;
+    return (
+      <div className="flex gaps align-center">
+        <span>{label}</span>
+        <span className="box grow" style={{ height: 0, borderTop: `${theme.borderWidth}px ${value}` }}/>
+      </div>
+    )
+  };
+
   renderPopupBorderStyles() {
     const theme = themeStore.data;
-
-    const options: ReactSelectOption<string>[] = themeStore.borderStyle.map(style => {
-      return { value: style, label: style }
-    });
+    const options: ReactSelectOption<string>[] = themeStore.borderStyle.map(value => ({ value, label: value }));
 
     return (
-      <ReactSelect<string>
-        formatOptionLabel={({ label, value }: ReactSelectOption<string>) => (
-          <div className="flex gaps align-center">
-            <span>{label}</span>
-            <span className="box grow" style={{ height: 0, borderTop: `${theme.borderWidth}px ${value}` }}/>
-          </div>
-        )}
+      <ReactSelect
+        className="box grow"
         options={options}
         value={options.find(opt => opt.value === theme.borderStyle)}
         onChange={({ value }) => theme.borderStyle = value}
+        formatOptionLabel={this.formatBorderStyleOptions}
       />
     )
   }
@@ -276,7 +280,7 @@ export class ThemeManager extends React.Component {
           </div>
         </div>
 
-        <div className="reset flex center">
+        <div className="reset flex justify-center">
           <FileInput
             accept=".ttf,.otf,.woff,.woff2"
             onImport={this.onImportCustomFont}

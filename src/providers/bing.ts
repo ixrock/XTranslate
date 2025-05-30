@@ -2,7 +2,7 @@ import BingLanguages from "./bing.json"
 import isEmpty from "lodash/isEmpty";
 import groupBy from "lodash/groupBy";
 import { ProxyRequestInit, ProxyResponseType } from "../extension";
-import { ITranslationError, ITranslationResult, TranslateParams, Translator, VendorCodeName } from "./index";
+import { ITranslationError, ITranslationResult, ProviderCodeName, TranslateParams, Translator } from "./index";
 import { createStorage } from "../storage";
 
 export interface BingApiAuthParams {
@@ -11,14 +11,17 @@ export interface BingApiAuthParams {
 }
 
 class Bing extends Translator {
-  public name = VendorCodeName.BING;
-  public title = "Bing";
-  public publicUrl = "https://www.bing.com/translator";
-  public apiUrl = "https://api.cognitive.microsofttranslator.com";
-  public authUrl = "https://edge.microsoft.com/translate/auth";
+  override name = ProviderCodeName.BING;
+  override title = "Bing";
+  override publicUrl = "https://www.bing.com/translator";
+  override apiUrl = "https://api-edge.cognitive.microsofttranslator.com";
+  private authUrl = "https://edge.microsoft.com/translate/auth";
+  override isRequireApiKey = false;
 
   constructor() {
-    super(BingLanguages);
+    super({
+      languages: BingLanguages,
+    });
   }
 
   protected apiParams = createStorage<BingApiAuthParams>("bing_auth_params", {
@@ -53,10 +56,9 @@ class Bing extends Translator {
     }
   }
 
-  async translate(params: TranslateParams): Promise<ITranslationResult> {
+  private async getRequestParams({ from: langFrom, to: langTo, text, texts = [text] }: TranslateParams) {
     await this.beforeRequest();
 
-    const { from: langFrom, to: langTo, text } = params;
     const { token } = this.apiParams.get();
 
     const requestInit: ProxyRequestInit = {
@@ -66,16 +68,34 @@ class Bing extends Translator {
         "Content-type": "application/json; charset=UTF-8",
         "User-Agent": navigator.userAgent,
       },
-      body: JSON.stringify(
-        [{ Text: text }]
-      ),
+      body: JSON.stringify(texts.map(text => ({ Text: text }))),
     };
 
     const queryParams = new URLSearchParams({
       "api-version": "3.0",
-      to: langTo,
       from: langFrom !== "auto" ? langFrom : "",
+      to: langTo,
     });
+
+    return {
+      requestInit,
+      queryParams,
+    };
+  }
+
+  async translateMany(params: TranslateParams): Promise<string[]> {
+    const { requestInit, queryParams } = await this.getRequestParams(params);
+
+    const result: BingTranslation[] = await this.request({
+      url: this.apiUrl + `/translate?${queryParams}`,
+      requestInit,
+    });
+
+    return result.map(translation => translation.translations[0].text); // string[]
+  }
+
+  async translate(params: TranslateParams): Promise<ITranslationResult> {
+    const { requestInit, queryParams } = await this.getRequestParams(params);
 
     // API: https://learn.microsoft.com/en-gb/azure/ai-services/translator/reference/v3-0-translate
     const translationReq = async (): Promise<BingTranslation[]> => {
@@ -101,16 +121,17 @@ class Bing extends Translator {
 
       const { translations, detectedLanguage } = response[0];
       const result: ITranslationResult = {
-        langDetected: detectedLanguage?.language ?? langFrom,
+        langDetected: detectedLanguage?.language ?? params.from,
         translation: translations.length ? translations[0].text : "",
       };
 
-      if (text.split(" ").length > 3) {
+      if (params.text.split(" ").length > 3) {
         return result; // basic text translation, no dictionary lookup
       }
 
       // dictionary results
-      const dictRes = await dictionaryReq(result.langDetected).catch(() => {});
+      const dictRes = await dictionaryReq(result.langDetected).catch(() => {
+      });
       if (dictRes) {
         const dictGroups = groupBy<DictTranslation>(dictRes[0].translations, trans => trans.posTag)
         result.dictionary = Object.keys(dictGroups).map(wordType => {
@@ -185,4 +206,4 @@ interface DictTranslation {
   }[]
 }
 
-Translator.registerVendor(Bing);
+Translator.register(ProviderCodeName.BING, Bing);

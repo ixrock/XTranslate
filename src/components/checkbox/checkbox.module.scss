@@ -1,20 +1,20 @@
 .Checkbox {
-  --size: 17px;
-  --color: currentColor;
-  --color-hover: var(--theme-bgc-invert);
-  --color-focus: var(--theme-color-primary);
-  --flex-gap: calc(var(--theme-spacing) / 1.5);
+  --flexGap: calc(var(--theme-spacing) / 1.5);
+  --checkbox-size: 17px;
+  --checkbox-color: currentColor;
+  --checkbox-color-hover: var(--theme-bgc-invert);
+  --checkbox-color-focus: var(--theme-color-primary);
 
   display: flex;
   align-items: center;
-  gap: var(--flex-gap);
+  gap: var(--flexGap);
 
   &:hover {
-    color: var(--color-hover);
+    color: var(--checkbox-color-hover);
   }
 
   &:focus {
-    color: var(--color-focus);
+    color: var(--checkbox-color-focus);
   }
 
   &:not(.disabled) {
@@ -25,7 +25,7 @@
   }
 
   &.disabled {
-    color: var(--color);
+    color: var(--checkbox-color);
     opacity: .5 !important;
     cursor: not-allowed;
   }
@@ -38,8 +38,8 @@
 
   .tickBox {
     position: relative;
-    width: var(--size);
-    height: var(--size);
+    width: var(--checkbox-size);
+    height: var(--checkbox-size);
     color: currentColor;
     border: 2px solid currentColor;
     border-radius: 2px;

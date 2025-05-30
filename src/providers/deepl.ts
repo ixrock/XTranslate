@@ -1,17 +1,21 @@
 import DeeplLanguages from "./deepl.json"
-import { ITranslationError, ITranslationResult, sanitizeApiKey, TranslateParams, Translator, TranslatorLanguages, VendorCodeName } from "./index";
+import { ITranslationError, ITranslationResult, ProviderCodeName, TranslateParams, Translator } from "./index";
 import { createStorage } from "../storage";
 import { ProxyRequestInit } from "../extension";
 import { getMessage } from "../i18n";
-import type { VendorAuthSettingsProps } from "../components/settings/vendor_auth_settings";
 
 class Deepl extends Translator {
-  public name = VendorCodeName.DEEPL;
-  public title = "DeepL";
-  public publicUrl = "https://www.deepl.com/translator";
+  static MAX_BYTES_PER_REQUEST = 128 * 1024; /*128K*/
+  static MAX_TEXTS_PER_REQUEST = 25;
+
+  override name = ProviderCodeName.DEEPL;
+  override title = "DeepL";
+  override publicUrl = "https://www.deepl.com/translator";
+  override isRequireApiKey = true;
+  #apiKey = createStorage<string>("deepl_api_auth_key");
 
   constructor() {
-    super(DeeplLanguages);
+    super({ languages: DeeplLanguages });
   }
 
   get apiUrl() {
@@ -24,34 +28,59 @@ class Deepl extends Translator {
     return "https://api.deepl.com/v2";
   }
 
-  #apiKey = createStorage("deepl_api_auth_key", {
-    defaultValue: "", // free or paid subscription key (example: "b05afc95-d4ea-2bee-07e6-e81469c588f2:fx")
-  });
+  protected async getRequestParams({ from: langFrom, to: langTo, text, texts = [text] }: TranslateParams) {
+    await this.#apiKey.load();
 
-  private setupAuthApiKey = () => {
-    const newKey = window.prompt("DeepL API Key");
-    if (newKey === null) return;
-    this.#apiKey.set(newKey || this.#apiKey.defaultValue);
-  };
+    const queryParams = new URLSearchParams({
+      source_lang: langFrom == "auto" ? "" : langFrom,
+      target_lang: langTo,
+    });
 
-  async translate(params: TranslateParams): Promise<ITranslationResult> {
-    const { from: langFrom, to: langTo, text } = params;
     const reqInit: ProxyRequestInit = {
       method: "POST",
       headers: {
         "Authorization": `DeepL-Auth-Key ${this.#apiKey.get()}`,
         "Content-type": "application/x-www-form-urlencoded",
       },
-      body: new URLSearchParams({
-        text,
-        source_lang: langFrom == "auto" ? "" : langFrom,
-        target_lang: langTo,
-      } as DeeplTranslationRequestParams).toString(),
+      body: new URLSearchParams(texts.map(text => ["text", text])).toString(),
     };
+
+    return { queryParams, reqInit };
+  }
+
+  async translateMany({ texts, from, to }: TranslateParams): Promise<string[]> {
+    const request = async (texts: string[]) => {
+      const { reqInit, queryParams } = await this.getRequestParams({ from, to, texts });
+
+      const { translations }: DeeplTranslationResponse = await this.request({
+        url: `${this.apiUrl}/translate?${queryParams}`,
+        requestInit: reqInit,
+      });
+
+      return translations.map(tr => tr.text);
+    }
+
+    if (texts.length >= Deepl.MAX_TEXTS_PER_REQUEST) {
+      const textGroups: string[][] = this.packGroups(texts, {
+        groupSize: Deepl.MAX_TEXTS_PER_REQUEST,
+        maxBytesPerGroup: Deepl.MAX_BYTES_PER_REQUEST,
+      });
+
+      const translations = await Promise.all(
+        textGroups.map(texts => request(texts).catch(() => Array(texts.length).fill(undefined)))
+      );
+      return translations.flat();
+    }
+
+    return request(texts);
+  }
+
+  async translate(params: TranslateParams): Promise<ITranslationResult> {
+    const { reqInit, queryParams } = await this.getRequestParams(params);
 
     try {
       const { translations }: DeeplTranslationResponse = await this.request({
-        url: `${this.apiUrl}/translate`,
+        url: `${this.apiUrl}/translate?${queryParams}`,
         requestInit: reqInit,
       });
       return {
@@ -72,26 +101,17 @@ class Deepl extends Translator {
     }
   }
 
-  async getDataUsage(): Promise<DeeplUsageResponse> {
-    const url = `${this.apiUrl}/usage?auth_key=${this.#apiKey.get()}`;
-    return this.request({ url });
-  }
+  private setupAuthApiKey = () => {
+    const newKey = window.prompt("DeepL API Key");
+    if (newKey === null) return;
+    this.#apiKey.set(newKey || this.#apiKey.defaultValue);
+  };
 
-  async getSupportedLanguages(type: "source" | "target"): Promise<DeeplSupportedLanguage[]> {
-    const url = `${this.apiUrl}/languages?type=${type}&auth_key=${this.#apiKey.get()}`;
-    return this.request({ url });
-  }
-
-  getAuthSettings(): VendorAuthSettingsProps {
+  getAuthSettings() {
     return {
-      className: "deepl-settings",
-      apiKeySanitized: sanitizeApiKey(this.#apiKey.get()),
+      apiKeySanitized: this.sanitizeApiKey(this.#apiKey.get()),
       setupApiKey: this.setupAuthApiKey,
       clearApiKey: () => this.#apiKey.set(""),
-      accessInfo: getMessage("deepl_get_own_key_info"),
-      accessInfo2: getMessage("deepl_insert_auth_key"),
-      warningInfo: getMessage("deepl_insert_auth_key_warning"),
-      clearKeyInfo: getMessage("deepl_insert_auth_key_remove"),
     };
   }
 }
@@ -104,12 +124,12 @@ export interface DeeplUsageResponse {
 
 // See also: https://www.deepl.com/docs-api/translating-text/request/
 export interface DeeplTranslationRequestParams {
-  [param: string]: string;
+  [param: string]: any;
 
   // Text to be translated. Only UTF8-encoded plain text is supported.
   // The parameter may be specified multiple times and translations are returned in the same order as they are requested.
   // Up to 50 texts can be sent for translation in one request.
-  text: string;
+  text: string | string[];
 
   // Language of the text to be translated. When param omitted language auto-detection is applied.
   source_lang?: string;
@@ -160,20 +180,4 @@ export interface DeeplSupportedLanguage {
   supports_formality?: boolean; // Only included for target languages
 }
 
-/**
- * Dumps to console supported list of languages by Deepl API
- */
-export async function dump_deepl_json() {
-  const supportedLanguages: TranslatorLanguages = {
-    from: { "auto": "Auto-detect" },
-    to: {},
-  };
-  const deepl = new Deepl();
-  const from = await deepl.getSupportedLanguages("source");
-  const to = await deepl.getSupportedLanguages("target");
-  from.forEach(({ name, language }) => supportedLanguages.from[language.toLowerCase()] = name);
-  to.forEach(({ name, language }) => supportedLanguages.to[language.toLowerCase()] = name);
-  console.info("[[Deepl]]: supported languages", supportedLanguages);
-}
-
-Translator.registerVendor(Deepl);
+Translator.register(ProviderCodeName.DEEPL, Deepl);

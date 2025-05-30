@@ -1,0 +1,17 @@
+@use "../mixins" as *;
+
+.Footer {
+  padding-top: var(--theme-spacing-half);
+  border-top: 1px solid var(--theme-border-color);
+
+  .support {
+    --flexGap: var(--theme-spacing-half) !important;
+
+    text-decoration: none;
+    cursor: pointer;
+
+    .text {
+      @include bold-link;
+    }
+  }
+}

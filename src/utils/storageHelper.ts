@@ -7,16 +7,13 @@ import isPlainObject from "lodash/isPlainObject";
 import isEqual from "lodash/isEqual";
 import merge from "lodash/merge";
 
-export type DeepPartial<T> = {
-  [K in keyof T]?: T[K] extends object ? DeepPartial<T[K]> : T[K];
-}
-
 export interface StorageHelperOptions<T> {
   defaultValue?: T;
-  autoLoad?: boolean; // preload data from persistent storage when `opts.storageProvider` (default: true)
+  autoLoad?: boolean; // preload data from persistent storage when `opts.storageProvider`, default: true
   migrations?: StorageMigrationCallback<T>[]; // handle model upgrades during app's lifetime
   storageAdapter?: StorageAdapter<T>; // handle saving and loading state from external storage
   autoSaveOptions?: IReactionOptions<T, boolean>;
+  deepMergeOnLoad?: boolean; // deep merge with `defaultValue`, set to `false` for dynamic fields (e.g. hotkey-object), default: true
 }
 
 export type StorageMigrationCallback<T> = (data: T | any) => T | void;
@@ -54,6 +51,7 @@ export class StorageHelper<T> {
     // setup default options
     this.options = {
       autoLoad: true,
+      deepMergeOnLoad: true,
       ...options
     };
     this.#data.set(this.defaultValue);
@@ -134,7 +132,9 @@ export class StorageHelper<T> {
         let migratedData = callback(data);
         if (migratedData !== undefined) data = migratedData as T;
       }
-      this.merge(data);
+      this.merge(data, {
+        deep: this.options.deepMergeOnLoad,
+      });
     }
 
     this.loaded = true;
@@ -191,6 +191,16 @@ export class StorageHelper<T> {
     }
 
     this.set(newValue, { silent });
+  }
+
+  sync(state: T) {
+    if (state === undefined) {
+      this.reset({ silent: true });
+    } else {
+      this.set(state, {
+        silent: true, // don't save back to persistent storage
+      });
+    }
   }
 
   toJS(): T {

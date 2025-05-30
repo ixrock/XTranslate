@@ -97,7 +97,7 @@ export class Icon extends React.PureComponent<IconProps> {
       onClick: isInteractive ? this.onClick : undefined,
       onKeyDown: isInteractive ? this.onKeyDown : undefined,
       tabIndex: isInteractive && focusable && !disabled ? 0 : undefined,
-      style: size ? { "--size": `${size}${typeof size === "number" ? "px" : ""}` } as React.CSSProperties : undefined,
+      style: size ? { "--icon-size": `${size}${typeof size === "number" ? "px" : ""}` } as React.CSSProperties : undefined,
       ref: this.bindRef,
       ...elemProps,
     };

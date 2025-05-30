@@ -1,3 +1,4 @@
+@use "./flexbox" as *;
 @use "../mixins" as *;
 @use "../theme" as *;
 
@@ -35,7 +36,7 @@ input, select, textarea {
   }
 }
 
-a {
+:link {
   color: var(--theme-color-text2);
 
   &:focus,
@@ -70,47 +71,5 @@ hr {
 
   .not-found {
     text-align: center;
-  }
-}
-
-.flex {
-  display: flex;
-
-  &.column {
-    flex-direction: column;
-  }
-
-  &.gaps {
-    gap: var(--flex-spacing, var(--theme-spacing));
-  }
-
-  &.auto > * {
-    flex: 1 1 0;
-  }
-
-  &.justify-center {
-    justify-content: center;
-  }
-
-  &.align-center {
-    align-items: center;
-  }
-
-  &.center {
-    margin: auto;
-  }
-
-  > .box {
-    &.grow {
-      flex: 1 0;
-    }
-
-    &.noshrink {
-      flex-shrink: 0;
-    }
-
-    &.center {
-      margin: auto;
-    }
   }
 }

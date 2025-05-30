@@ -2,10 +2,11 @@
 
 import { runInAction } from "mobx";
 import { createLogger, disposer } from "../utils";
-import { MessageType, onMessage, SaveToFavoritesPayload, SaveToHistoryPayload } from '../extension'
+import type { ITranslationResult } from "../providers/translator";
+import { MessageType, SaveToFavoritesPayload, SaveToHistoryPayload, TranslatePayload } from '../extension/messages'
+import { isBackgroundWorker, onMessage, sendMessage } from '../extension/runtime'
 import { settingsStorage } from "../components/settings/settings.storage";
-import { generateId, getHistoryItemId, historyStorage, IHistoryStorageItem, importHistory, toHistoryItem, toStorageItem, toTranslationResult } from "../components/user-history/history.storage";
-import { TranslatePayload } from "../vendors";
+import { generateId, getHistoryItemId, historyStorage, type IHistoryItem, IHistoryStorageItem, importHistory, toHistoryItem, toStorageItem, toTranslationResult } from "../components/user-history/history.storage";
 import { favoritesStorage } from "../components/user-history/favorites.storage";
 
 const logger = createLogger({ systemPrefix: '[BACKGROUND(history)]' });
@@ -20,8 +21,8 @@ export function listenTranslationHistoryActions() {
 
 export async function saveToHistory({ translation }: SaveToHistoryPayload) {
   await Promise.all([
-    settingsStorage.load({ force: true }),
-    historyStorage.load({ force: true }),
+    settingsStorage.load(),
+    historyStorage.load(),
   ]);
 
   const hasDictionary = translation.dictionary?.length > 0;
@@ -37,8 +38,8 @@ export async function saveToHistory({ translation }: SaveToHistoryPayload) {
 
 export async function saveToFavorites({ item, isFavorite }: SaveToFavoritesPayload) {
   await Promise.all([
-    historyStorage.load({ force: true }),
-    favoritesStorage.load({ force: true }),
+    historyStorage.load(),
+    favoritesStorage.load(),
   ]);
 
   const itemId = getHistoryItemId(item);
@@ -60,11 +61,11 @@ export async function saveToFavorites({ item, isFavorite }: SaveToFavoritesPaylo
 }
 
 export async function getHistoryItemOffline(payload: TranslatePayload) {
-  await historyStorage.load({ force: true });
+  await historyStorage.load();
 
-  const { text, from, to, vendor } = payload;
+  const { text, from, to, provider } = payload;
   const translationId = generateId(text, from, to);
-  const storageItem: IHistoryStorageItem = historyStorage.toJS().translations[translationId]?.[vendor];
+  const storageItem: IHistoryStorageItem = historyStorage.toJS().translations[translationId]?.[provider];
 
   if (storageItem) {
     const result = toTranslationResult(storageItem);
@@ -73,3 +74,44 @@ export async function getHistoryItemOffline(payload: TranslatePayload) {
   }
 }
 
+export function saveToHistoryAction(translation: ITranslationResult | IHistoryItem) {
+  if (isBackgroundWorker()) {
+    return saveToHistory({ translation });
+  }
+
+  return sendMessage<SaveToHistoryPayload, ITranslationResult>({
+    type: MessageType.SAVE_TO_HISTORY,
+    payload: {
+      translation,
+    },
+  });
+}
+
+export function saveToFavoritesAction(item: ITranslationResult | IHistoryItem, { isFavorite = true } = {}) {
+  if (isBackgroundWorker()) {
+    return saveToFavorites({ item, isFavorite });
+  }
+
+  return sendMessage<SaveToFavoritesPayload>({
+    type: MessageType.SAVE_TO_FAVORITES,
+    payload: {
+      item: item,
+      isFavorite: isFavorite,
+    },
+  });
+}
+
+export async function getTranslationFromHistoryAction(payload: TranslatePayload) {
+  if (payload.from === "auto") {
+    return; // skip: source-language always saved as detected-language in history
+  }
+
+  if (isBackgroundWorker()) {
+    return getHistoryItemOffline(payload);
+  }
+
+  return sendMessage<TranslatePayload, ITranslationResult | void>({
+    type: MessageType.GET_FROM_HISTORY,
+    payload,
+  });
+}

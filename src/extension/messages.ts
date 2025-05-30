@@ -1,29 +1,27 @@
 // [IPC]: inter-process communications for [options-page] <-> [background] <-> [content-pages]
-import { ITranslationResult, VendorCodeName } from "../vendors";
+import { ITranslationResult, OpenAIVoiceTTS, ProviderCodeName, TranslateParams } from "../providers";
 import type { IHistoryItem } from "../components/user-history/history.storage";
 
-export const enum MessageType {
+export enum MessageType {
   PROXY_REQUEST = "PROXY_REQUEST",
-  GET_SELECTED_TEXT = "GET_SELECTED_TEXT",
-  TRANSLATE_WITH_VENDOR = "TRANSLATE_WITH_VENDOR",
   TRANSLATE_FULL_PAGE = "TRANSLATE_FULL_PAGE",
+  GET_SELECTED_TEXT = "GET_SELECTED_TEXT",
   SAVE_TO_HISTORY = "SAVE_TO_HISTORY",
   SAVE_TO_FAVORITES = "SAVE_TO_FAVORITES",
   GET_FROM_HISTORY = "GET_TRANSLATION_FROM_CACHE",
-  STORAGE_DATA_READ = "READ_FROM_LOCAL_OR_EXTERNAL_STORAGE",
-  STORAGE_DATA_WRITE = "SAVE_TO_LOCAL_OR_EXTERNAL_STORAGE",
-  STORAGE_DATA_REMOVE = "REMOVE_ITEM_FROM_STORAGE",
-  STORAGE_DATA_SYNC = "SYNC_DATA_FROM_STORAGE",
+  STORAGE_DATA_READ = "READ_FROM_EXTERNAL_STORAGE",
+  STORAGE_DATA_WRITE = "WRITE_TO_EXTERNAL_STORAGE",
+  STORAGE_DATA_REMOVE = "REMOVE_FROM_EXTERNAL_STORAGE",
+  STORAGE_DATA_SYNC = "SYNC_STORAGE",
   AI_TRANSLATION = "AI_TRANSLATION",
   AI_TEXT_TO_SPEECH = "AI_TEXT_TO_SPEECH",
-  MELLOWTEL_STATUS = "MELLOWTEL_STATUS",
-  MELLOWTEL_ACTIVATE = "MELLOWTEL_ACTIVATE",
-  MELLOWTEL_DEACTIVATE = "MELLOWTEL_DEACTIVATE",
-  CONTEXT_INVALIDATION_CHECK = "CONTEXT_INVALIDATION_CHECK",
+  INJECT_CONTENT_SCRIPT = "INJECT_CONTENT_SCRIPT",
+  RUNTIME_ERROR_CONTEXT_INVALIDATED = "RUNTIME_ERROR_CONTEXT_INVALIDATED",
 }
 
-export interface Message<Payload = any /*json-serializable*/> {
+export interface Message<Payload = {}> {
   type: MessageType;
+  tabId?: number;
   payload?: Payload;
 }
 
@@ -50,11 +48,17 @@ export interface ProxyResponsePayload<Data> {
   data: Data;
 }
 
-export interface TranslateWithVendorPayload {
-  vendor: string;
-  text: string;
-  from?: string;
-  to?: string;
+export interface InjectContentScriptPayload {
+  tabId?: number;
+}
+
+export interface TranslatePayload extends TranslateParams {
+  provider: ProviderCodeName;
+}
+
+export interface TranslatePagePayload {
+  tabId: number;
+  pageUrl: string;
 }
 
 export interface SaveToHistoryPayload {
@@ -75,7 +79,6 @@ export interface StorageWritePayload<T = any> {
   key: string;
   area: chrome.storage.AreaName;
   state: T;
-  origin: string; // location URL or unique window/resource ID where action happened
 }
 
 export interface StorageSyncPayload<T = any> extends StorageWritePayload<T> {
@@ -85,7 +88,7 @@ export interface StorageDeletePayload extends Omit<StorageWritePayload, "state">
 }
 
 export interface AITranslatePayload {
-  vendor: VendorCodeName;
+  provider: ProviderCodeName;
   apiKey: string;
   model: string;
   text: string;
@@ -94,7 +97,7 @@ export interface AITranslatePayload {
 }
 
 export interface AITextToSpeechPayload {
-  vendor: VendorCodeName;
+  provider: ProviderCodeName;
   model: string;
   apiKey: string;
   text: string;
@@ -105,5 +108,5 @@ export interface AITextToSpeechPayload {
 }
 
 export interface OpenAITextToSpeechPayload extends AITextToSpeechPayload {
-  voice?: 'alloy' | 'echo' | 'fable' | 'onyx' | 'nova' | 'shimmer';
+  voice?: OpenAIVoiceTTS;
 }

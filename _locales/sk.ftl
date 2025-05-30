@@ -20,10 +20,26 @@ setting_title_popup = Vyskakovacia ponuka
 setting_title_translator_service = Služba
 settings_title_tts = Prevod textu na reč
 settings_title_appearance = Vzhľad
+settings_title_full_page_translation = Preklad celej stránky
+settings_title_full_page_excluded_pages = Nikdy neprekladať
+settings_title_full_page_always_translate = Vždy preložiť
+settings_title_full_page_show_original_onmouseover = Pri prechode myšou zobraziť pôvodný text
+settings_title_full_page_show_translation_onmouseover = Pri prechode myšou zobraziť preložený text
+settings_title_full_page_show_replace_texts = Nahradiť text dokumentu prekladom
+settings_title_full_page_show_traffic_save_mode = Zapnúť režim "úspora dát"
+settings_title_full_page_show_traffic_save_mode_info = Šetrenie siete/API prekladaním iba zobrazených textov webovej stránky
+settings_title_full_page_empty_list = Prázdny zoznam
+settings_title_full_page_see_edit_list = Kliknutím zobrazíte a upravíte zoznam
+settings_title_full_page_add_url = Pridať adresu URL
+settings_title_full_page_add_url_error = Pokúsiť sa pridať neplatnú adresu URL
 auto_play_tts = Automatické prehrávanie prevodu textu na reč
 use_chrome_tts = Použiť funkciu prevodu textu na reč z Chromu
 use_chrome_tts_tooltip_info = Táto možnosť je povolená vždy, keď prekladač nemá k dispozícii nástroj na preklad
 use_dark_theme = Prepnúť tmavý motív pre toto okno
+settings_title_advanced_providers_list = Rozšírený zoznam prekladačov
+settings_title_advanced_providers_list_show = Zobraziť rozšírený zoznam prekladačov
+settings_title_advanced_providers_list_hide = Skryť rozšírený zoznam prekladačov
+settings_title_voice = Hlas
 tts_default_system_voice = Predvolený systémový hlas
 tts_select_voice_title = Vyberte hlas
 tts_play_demo_sound = Prehrať ukážku hlasu
@@ -33,14 +49,12 @@ export_settings_button_label = Exportovať nastavenia
 import_settings_button_label = Importovať nastavenia
 import_incorrect_file_format = Nesprávny formát súboru (mal by byť pravdepodobne { $fileNameJson })
 imported_setting_successful = Nastavenia rozšírenia úspešne importované pre { $key }
-show_context_menu = Zobraziť v kontextovej ponuke stránky
 display_icon_near_selection = Zobraziť ikonu prekladu vedľa vybraného textu
 show_tts_icon_inside_popup = Zobraziť ikonu prevodu textu na reč
 show_next_vendor_icon_in_popup = Zobraziť ikonu ďalšieho prekladu
 show_copy_translation_icon = Zobraziť ikonu kopírovania a prekladu
 show_save_as_favorite_icon = Zobraziť ikonu uloženia do obľúbených
 show_close_popup_button = Zobraziť ikonu zatvorenia v pravom rohu
-show_close_popup_button_title = Zatvoriť
 show_detected_language_block = Zobraziť rozpoznaný jazyk
 display_on_click_by_selected_text = Zobraziť po kliknutí na výber
 display_popup_after_text_selected = Zobraziť hneď po výbere textu
@@ -130,7 +144,9 @@ history_import_success = Úspešne importované položky histórie { $itemsCount
 history_import_file_error = Chyba pri čítaní súboru '{ $fileName }': { $errorInfo }
 
 # context menu
-context_menu_translate_full_page = Preložiť celú stránku pomocou { $translator }
+context_menu_translate_full_page_context_menu = Preložiť stranu do { $lang }
+context_menu_translate_full_page_context_menu_stop = Zastaviť automatický preklad pre { $site }
+context_menu_translate_full_page = Preložiť stranu "{ $pageTitle }" do { $lang }
 context_menu_translate_selection = Preložiť { $selection } pomocou { $translator }
 
 # other
@@ -178,32 +194,19 @@ mellowtel_dialog_footer = Ďakujeme, že ste si našli čas na prečítanie, tí
 # various error messages
 error_403_auth_failed = Autorizácia zlyhala. Prosím, zadajte platný kľúč API v nastaveniach.
 
-# open-ai integration
-open_ai_get_access_info =1) Zaregistrujte sa na platform.openai.com 2) Vytvorte kľúč API 3) Dobite si kredit (5$+)
-open_ai_insert_auth_key =Zadajte kľúč API na získanie prekladov od OpenAI
-open_ai_insert_auth_key_warning = Upozornenie: Nezadávajte kľúč API nikde inde, okrem tohto okna rozšírenia
-open_ai_insert_auth_key_remove = Odstrániť kľúč OpenAI API
-open_ai_choose_model = Vyberte AI model
-open_ai_choose_model_cost_efficient = Najúspornejší z hľadiska nákladov
-open_ai_choose_model_optimal = Odporúčaný model
-open_ai_choose_model_best_results = Najlepšie výsledky (najdrahší)
-open_ai_why_info_help =
-    Pri použití vlastného účtu na platforme OpenAI a zadaní kľúča API ušetríte veľa peňazí, namiesto využívania služieb „sprostredkovateľa“ z iných aplikácií/rozšírení,
-    kde zvyčajne platíte mesačné/ročné predplatné a kde ceny a limity používania nie sú vo vašej kontrole.
-    Nezabudnite nastaviť limity používania na platform.openai.com a vypnúť automatické dobíjanie kreditu.
-
 # PDF translations suppot via pdf.js
 pdf_use_custom_viewer = Podpora prekladov v PDF súboroch
 pdf_use_custom_viewer_info = Táto možnosť nahradí predvolený prehliadač PDF
 
-# DeepSeek AI integration
-deepseek_get_own_key_info = Zaregistrujte sa na platform.deepseek.com a dobite si kredit (napr. cez PayPal)
-deepseek_auth_key = Vytvorte si prístupový kľúč API na platforme DeepSeek a uložte ho sem do nastavení
-deepseek_auth_key_warning = Upozornenie: NEZADÁVAJTE svoj kľúč API nikde inde okrem tohto okna rozšírenia
-deepseek_auth_key_remove = Odstrániť kľúč API DeepSeek
+# AI integrations
+ai_choose_model = Vyberte AI model
+ai_choose_model_cost_effective = Najúspornejší z hľadiska nákladov
+ai_choose_model_recommended = Odporúčaný model
+ai_choose_model_best_results = Najlepšie výsledky (najdrahší)
 
-# Grok AI integration
-grok_ai_get_own_key_info = Zaregistrujte sa na console.x.ai a dobite si kredit (napr. prostredníctvom kreditnej karty)
-grok_ai_auth_key = Vytvorte kľúč API na platforme Grok (X), aby ste získali prístup k API
-grok_ai_auth_key_warning = Upozornenie: NEVKLADAJTE svoj kľúč API nikde inde okrem tohto okna rozšírenia
-grok_ai_auth_key_remove = Odstrániť kľúč API Grok
+auth_access_info_steps_openai = 1) Zaregistrujte sa na platform.openai.com 2) Vytvorte prístupový kľúč API 3) Dobite si kredit (5$+)
+auth_access_info_steps_grok = Zaregistrujte sa na adrese console.x.ai a dobit si kredit (napr. prostredníctvom kreditnej karty)
+auth_access_info_steps_deepseek = Zaregistrujte sa na platform.deepseek.com a dobit si kredit (napr. cez Paypal)
+auth_access_info_api_key = Zadajte  kľúč API na získanie prekladov { $provider }
+auth_clear_key_info = Odstrániť kľúč API { $provider }
+auth_safety_warning_info = Upozornenie: NEVKLADAJTE svoj kľúč API nikde inde okrem tohto okna rozšírenia

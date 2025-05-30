@@ -29,14 +29,12 @@ export_settings_button_label = Ayarları dışa aktar
 import_settings_button_label = Ayarları içe aktar
 import_incorrect_file_format = Yanlış dosya biçimi (muhtemelen { $fileNameJson } olmalıdır)
 imported_setting_successful = '{ $key }' anahtarının altındaki ayarlar başarılı bir şekilde içe aktarıldı
-show_context_menu = Sayfa içerik menüsünde göster
 display_icon_near_selection = Seçili metnin yanında çeviri simgesini göster
 show_tts_icon_inside_popup = Metin okuma simgesi göster
 show_next_vendor_icon_in_popup = Sonraki çeviri simgesi göster
 show_copy_translation_icon = Çeviriyi kopyala simgesi göster
 show_save_as_favorite_icon = Sık kullanılanlara kaydet simgesi göster
 show_close_popup_button = Sağ köşede pencereyi kapat simgesi göster
-show_close_popup_button_title = Kapat
 show_detected_language_block = Algılanan dili göster
 display_on_click_by_selected_text = Seçime göre tıklamada göster
 display_popup_after_text_selected = Metin seçiminden hemen sonra göster
@@ -121,11 +119,11 @@ history_import_success = { $itemsCount } geçmiş girişi başarıyla içe aktar
 history_import_file_error = '{ $fileName }' dosyası okuma hatası: { $errorInfo }
 
 # context menu
-context_menu_translate_full_page = Tüm sayfayı { $translator } ile çevir
+context_menu_translate_full_page = { $lang }'ye çevir
 context_menu_translate_selection = { $selection } { $translator } ile çevir
 
 # other
-share_with_friends = Uygulamayı beğendiyseniz arkadaşlarınızla paylaşabilirsiniz:
+share_with_friends = Uygulamayı beğendiyseniz arkadaşlarınızla paylaşabilirsiniz
 translation_data_failed = Veri yükleme başarısız oldu
 rate_app_info1 = Uygulamayı kullanmaktan zevk alıyor musunuz? Lütfen bizi 5 yıldızla derecelendirin!
 rate_app_info2 = Diğer kullanıcıların uzantıyı bulmasına ve güzellikleri yaymasına yardımcı olacaktır.
@@ -169,29 +167,12 @@ mellowtel_dialog_footer=Okuduğunuz için teşekkürler, { $devs } ekipleri.
 error_403_auth_failed=Yetkilendirme başarısız. Lütfen ayarlarda geçerli bir API anahtarı girin.
 
 # open-ai integration (TR)
-open_ai_get_access_info=1) platform.openai.com'da kayıt olun 2) API erişim anahtarı oluşturun 3) Bakiyenizi yükleyin (5$+)
-open_ai_insert_auth_key=OpenAI çevirileri almak için API anahtarınızı sağlayın
-open_ai_insert_auth_key_warning=Uyarı: API anahtarınızı bu eklenti penceresi dışında hiçbir yere girmeyin
-open_ai_insert_auth_key_remove=OpenAI API anahtarını kaldır
-open_ai_choose_model=AI modelini seçin
-open_ai_choose_model_cost_efficient=En maliyet etkin
-open_ai_choose_model_optimal=Önerilen model
-open_ai_choose_model_best_results=En iyi sonuçlar (en pahalı)
-open_ai_choose_model_reasoning=Akıl yürütme modeli (seride en yeni ve maliyet etkin)
-open_ai_why_info_help=Kendi OpenAI platform hesabınızı doğrudan kullanıp API anahtarınızı sağladığınızda, diğer uygulama/eklenti aracılığıyla "aracı hizmetler" kullanmak yerine çok para tasarrufu sağlarsınız; bu hizmetlerde genellikle aylık/yıllık abonelik ücreti ödersiniz ve tüm fiyatlar ile kullanım limitleri sizin kontrolünüzde olmaz. platform.openai.com'da kullanım limitlerini ayarlamayı ve kredi kartınızın otomatik bakiye yüklemesini devre dışı bırakmayı unutmayın.
+ai_choose_model=AI modelini seçin
+ai_choose_model_cost_effective=En maliyet etkin
+ai_choose_model_recommended=Önerilen model
+ai_choose_model_best_results=En iyi sonuçlar (en pahalı)
+ai_choose_model_reasoning=Akıl yürütme modeli (seride en yeni ve maliyet etkin)
 
 # PDF translations suppot via pdf.js (TR)
 pdf_use_custom_viewer=PDF dosyalarında çevirileri destekle
 pdf_use_custom_viewer_info=Bu seçenek varsayılan PDF görüntüleyicisini değiştirecektir
-
-# DeepSeek AI integration (TR)
-deepseek_get_own_key_info=platform.deepseek.com adresinden kaydolun ve bakiyenizi doldurun (örneğin, PayPal aracılığıyla)
-deepseek_auth_key=DeepSeek platformunda bir API erişim anahtarı oluşturun ve bunu ayarlara kaydedin
-deepseek_auth_key_warning=Uyarı: API anahtarınızı bu uzantı penceresi dışında başka bir yere GİRMEYİN
-deepseek_auth_key_remove=DeepSeek API Anahtarını Kaldırın
-
-# Grok AI integration (TR)
-grok_ai_get_own_key_info = console.x.ai'de kaydolun ve bakiyenizi doldurun (örneğin kredi kartıyla)
-grok_ai_auth_key = Grok (X) platformunda API anahtarı oluşturun ve API'ye erişim sağlayın
-grok_ai_auth_key_warning = Uyarı: API anahtarınızı bu eklenti penceresi dışında başka bir yere GİRMEMELİSİNİZ
-grok_ai_auth_key_remove = Grok API anahtarını kaldır

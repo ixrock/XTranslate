@@ -18,8 +18,7 @@ import { ImportExportSettingsDialog } from "./export-settings-dialog";
 import { PrivacyDialog } from "./privacy-dialog";
 import { AppRateDialog } from "./app-rate.dialog";
 import { dialogsState } from "./dialogs-state";
-// import { MellowtelDialog } from "../../../mellowtel/mellowtel-dialog";
-import { isRTL } from "../../vendors";
+import { isRTL } from "../../providers";
 import { getLocale } from "../../i18n";
 
 @observer
@@ -71,7 +70,6 @@ export class App extends React.Component {
           onTermsAccepted={() => dialogsState.showPrivacyDialog = false}
         />
         <AppRateDialog/>
-        {/*<MellowtelDialog/>*/}
       </div>
     );
   }

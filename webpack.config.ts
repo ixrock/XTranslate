@@ -3,8 +3,7 @@ import path from 'path'
 import HtmlWebpackPlugin from 'html-webpack-plugin'
 import CopyWebpackPlugin from 'copy-webpack-plugin'
 import MiniCssExtractPlugin from 'mini-css-extract-plugin'
-import { appEntry, contentScriptEntry, pdfViewerEntry, serviceWorkerEntry } from "./src/common-vars";
-import { mellowtelMeucciFilename } from "./mellowtel/mellowtel.config";
+import { appEntry, contentScriptEntry, contentScriptInjectable, pdfViewerEntry, serviceWorkerEntry } from "./src/common-vars";
 
 const srcPath = path.resolve(__dirname, "src");
 const distPath = path.resolve(__dirname, "dist");
@@ -13,9 +12,9 @@ const componentsDir = path.resolve(srcPath, "components");
 const configEntries: webpack.EntryObject = {
   [appEntry]: path.resolve(componentsDir, "app/index.tsx"),
   [contentScriptEntry]: path.resolve(srcPath, "user-script/content-script-entry.tsx"),
+  [contentScriptInjectable]: path.resolve(srcPath, "user-script/content-script.tsx"),
   [serviceWorkerEntry]: path.resolve(srcPath, "background/background.ts"),
   [pdfViewerEntry]: path.resolve(srcPath, "pdf-viewer/pdf-viewer.tsx"),
-  [mellowtelMeucciFilename]: path.resolve(__dirname, "mellowtel/mellowtel-meucci.ts"),
 };
 
 interface WebpackConfigEnv {
@@ -89,8 +88,8 @@ function webpackBaseConfig({ mode }: WebpackConfigEnv): webpack.Configuration {
               options: {
                 sourceMap: isDevelopment,
                 modules: {
-                  auto: /\.module\./i, // https://github.com/webpack-contrib/css-loader#auto
-                  mode: 'local', // :local(.selector) by default
+                  auto: true, // https://github.com/webpack-contrib/css-loader#auto
+                  mode: "local", // :local(.selector) by default
                   localIdentName: '[name]__[local]--[hash:base64:5]'
                 }
               }
@@ -180,7 +179,7 @@ export default [
     ]);
 
     // exclude non-UI dependencies from final bundle
-    config.externals = ["openai", "mellowtel"];
+    config.externals = ["openai"];
 
     return config;
   },
@@ -192,7 +191,7 @@ export default [
     config.target = "web"
     config.entry = {
       [contentScriptEntry]: configEntries[contentScriptEntry],
-      [mellowtelMeucciFilename]: configEntries[mellowtelMeucciFilename],
+      [contentScriptInjectable]: configEntries[contentScriptInjectable],
     };
 
     config.externals = ["openai"];

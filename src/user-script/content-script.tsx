@@ -1,6 +1,7 @@
-//-- Content script (injected at every webpage/frame)
+//-- Injectable content-script (refreshed on every page reload without extension-reload)
 
-import "./content-script.scss";
+import "../setup";
+import "./content-script-entry.scss";
 import React from "react";
 import { createRoot, Root } from "react-dom/client";
 import { action, computed, makeObservable, observable, toJS } from "mobx";
@@ -9,34 +10,27 @@ import debounce from 'lodash/debounce';
 import isEmpty from 'lodash/isEmpty';
 import isEqual from 'lodash/isEqual';
 import orderBy from 'lodash/orderBy';
-import { autoBind, delay, disposer, getHotkey } from "../utils";
-import { checkContextInvalidationError, getManifest, getURL, MessageType, onMessage, proxyRequest, ProxyResponseType, TranslateWithVendorPayload } from "../extension";
-import { getNextTranslator, getTranslator, ITranslationError, ITranslationResult, TranslatePayload } from "../vendors";
+import { contentScriptEntry, contentScriptInjectable } from "../common-vars";
+import { preloadAppData } from "../preloadAppData";
+import { autoBind, disposer, getHotkey } from "../utils";
+import { getManifest, getURL, isRuntimeContextInvalidated, MessageType, onMessage, ProxyResponseType, TranslatePagePayload, TranslatePayload } from "../extension";
+import { proxyRequest } from "../background/httpProxy.bgc";
+import { popupHotkey, settingsStore } from "../components/settings/settings.storage";
+import { getNextTranslator, getTranslator, ITranslationError, ITranslationResult } from "../providers";
 import { XTranslateIcon } from "./xtranslate-icon";
 import { Popup } from "../components/popup/popup";
-import { preloadAppData } from "../preloadAppData";
-import { settingsStore } from "../components/settings/settings.storage";
-import { contentScriptEntry } from "../common-vars";
+import { PageTranslator } from "./page-translator";
 
 @observer
 export class ContentScript extends React.Component {
   static window: Window;
   static rootElem: HTMLElement;
   static rootNode: Root;
-
-  static start() {
-    if (document.readyState !== "complete") {
-      window.addEventListener("DOMContentLoaded", async () => {
-        await delay(100); // give some time for react-hydration to finish work (react-error #418)
-        void this.init();
-      }, { once: true });
-    } else {
-      void this.init();
-    }
-  }
+  static globalCssStyles: string;
 
   static async init(window: Window = globalThis.window.self) {
     await preloadAppData(); // wait for dependent data before first render
+    await this.preloadGlobalStyles();
 
     ContentScript.window = window;
     ContentScript.rootElem = window.document.createElement("div");
@@ -46,10 +40,19 @@ export class ContentScript extends React.Component {
 
     const shadowRoot = appElem.attachShadow({ mode: "closed" });
     const rootNode = createRoot(shadowRoot);
+    const appRootNode = createRoot(appElem);
     window.document.documentElement.appendChild(appElem);
     ContentScript.rootNode = rootNode;
 
+    appRootNode.render(<style type="text/css">{this.globalCssStyles}</style>);
     rootNode.render(<ContentScript/>);
+  }
+
+  static async preloadGlobalStyles() {
+    this.globalCssStyles = await proxyRequest<string>({
+      url: getURL(`${contentScriptEntry}.css`),
+      responseType: ProxyResponseType.TEXT,
+    });
   }
 
   constructor(props: object) {
@@ -66,9 +69,10 @@ export class ContentScript extends React.Component {
   private isHotkeyActivated = false;
   private mousePos = { x: 0, y: 0 };
   private mouseTarget: HTMLElement = document.body;
+  private pageTranslator = new PageTranslator();
 
   // Unload previous content script (e.g. in case of "context invalidated" error on extension update to new version)
-  private unloadContentScript = disposer();
+  private unload = disposer();
 
   @observable.ref translation: ITranslationResult;
   @observable.ref error: ITranslationError;
@@ -79,21 +83,37 @@ export class ContentScript extends React.Component {
   @observable isRtlSelection = false;
   @observable isIconVisible = false;
   @observable isLoading = false;
-  @observable stylesUrl = "";
+  @observable shadowDomCssUrl = "";
 
   async preloadCss() {
-    const styles = await proxyRequest<string>({
-      url: getURL(`${contentScriptEntry}.css`),
+    const shadowDomStyles = await proxyRequest<string>({
+      url: getURL(`${contentScriptInjectable}.css`),
       responseType: ProxyResponseType.TEXT,
     });
-
-    this.stylesUrl = URL.createObjectURL(
-      new Blob([styles], { type: "text/css" }),
+    this.shadowDomCssUrl = URL.createObjectURL(
+      new Blob([shadowDomStyles], { type: "text/css" }),
     );
   }
 
   componentDidMount() {
     this.bindEvents();
+    this.applyShadowDomGlobalStyles();
+
+    if (this.pageTranslator.isAlwaysTranslate(location.href)) {
+      this.startPageAutoTranslation();
+    }
+  }
+
+  private getShadowDomElements(rootElem = document.body) {
+    return Array.from(rootElem.querySelectorAll("*")).filter(elem => elem.shadowRoot) as HTMLElement[];
+  }
+
+  private applyShadowDomGlobalStyles() {
+    this.getShadowDomElements().forEach(({ shadowRoot }) => {
+      const style = new CSSStyleSheet();
+      style.replaceSync(ContentScript.globalCssStyles);
+      shadowRoot.adoptedStyleSheets.push(style);
+    });
   }
 
   private bindEvents() {
@@ -111,27 +131,23 @@ export class ContentScript extends React.Component {
     window.addEventListener("scroll", this.updatePopupPositionLazy, { signal });
     window.addEventListener("resize", this.updatePopupPositionLazy, { signal });
 
-    this.unloadContentScript.push(
-      () => {
+    this.unload.push(
+      function unmount() {
         ContentScript.rootElem.parentElement.removeChild(ContentScript.rootElem);
         ContentScript.rootNode.unmount();
       },
-
-      () => abortCtrl.abort(), // unbind DOM-events
-
-      onMessage<void, string>(MessageType.GET_SELECTED_TEXT, () => {
-        return this.selectedText;
-      }),
-      onMessage(MessageType.TRANSLATE_WITH_VENDOR, ({ vendor, text }: TranslateWithVendorPayload) => {
-        this.hideIcon();
-        this.translate({ vendor, text });
-      })
+      function unbindDOMEvents() {
+        abortCtrl.abort();
+      },
+      onMessage(MessageType.TRANSLATE_FULL_PAGE, this.togglePageAutoTranslation),
+      onMessage(MessageType.GET_SELECTED_TEXT, this.getSelectedTextAction),
+      () => this.stopPageAutoTranslation(),
     );
   }
 
-  async checkContextInvalidationError() {
-    const isInvalidated = await checkContextInvalidationError();
-    if (isInvalidated) this.unloadContentScript();
+  async checkContextInvalidationError(): Promise<void> {
+    const isInvalidated = await isRuntimeContextInvalidated();
+    if (isInvalidated) this.unload();
   }
 
   @computed get isPopupHidden() {
@@ -167,15 +183,15 @@ export class ContentScript extends React.Component {
   translateLazy = debounce(this.translate, 250);
 
   @action
-  async translate({ vendor, from, to, text }: Partial<TranslatePayload> = {}) {
+  async translate({ provider, from, to, text }: Partial<TranslatePayload> = {}) {
+    void this.checkContextInvalidationError();
+
     this.lastParams = {
-      vendor: vendor ?? settingsStore.data.vendor,
+      vendor: provider ?? settingsStore.data.vendor,
       langFrom: from ?? settingsStore.data.langFrom,
       langTo: to ?? settingsStore.data.langTo,
       originalText: text ?? this.selectedText.trim(),
     };
-
-    void this.checkContextInvalidationError();
 
     try {
       const { vendor, langTo: to, langFrom: from, originalText: text } = this.lastParams;
@@ -193,14 +209,38 @@ export class ContentScript extends React.Component {
 
   translateNext(reverse = false) {
     const { vendor, langFrom, langTo, originalText } = this.lastParams;
+    const nextTranslator = getNextTranslator(vendor, langFrom, langTo, reverse);
 
-    const nextVendor = getNextTranslator(vendor, langFrom, langTo, reverse);
     return this.translate({
-      vendor: nextVendor.name,
+      provider: nextTranslator.name,
       from: langFrom,
       to: langTo,
       text: originalText,
     });
+  }
+
+  private getSelectedTextAction() {
+    return this.selectedText;
+  }
+
+  private togglePageAutoTranslation({ pageUrl }: TranslatePagePayload) {
+    if (this.pageTranslator.isAlwaysTranslate(pageUrl)) {
+      this.stopPageAutoTranslation(pageUrl);
+    } else {
+      this.startPageAutoTranslation(pageUrl);
+    }
+  }
+
+  @action
+  private startPageAutoTranslation(pageUrl?: string) {
+    if (pageUrl) this.pageTranslator.setAutoTranslatingPages({ enabled: [pageUrl] });
+    this.pageTranslator.startAutoTranslation();
+  }
+
+  @action
+  private stopPageAutoTranslation(pageUrl?: string) {
+    if (pageUrl) this.pageTranslator.setAutoTranslatingPages({ disabled: [pageUrl] });
+    this.pageTranslator.stopAutoTranslation();
   }
 
   playText() {
@@ -221,6 +261,7 @@ export class ContentScript extends React.Component {
     this.isIconVisible = false;
   }
 
+  @action
   hidePopup() {
     if (this.isPopupHidden) {
       return;
@@ -247,7 +288,7 @@ export class ContentScript extends React.Component {
     return !ContentScript.rootElem.contains(elem);
   }
 
-  normalizeRect(rect: DOMRect, { withScroll = false } = {}): WritableDOMRect {
+  normalizeRect(rect: DOMRect, { withScroll = true } = {}): WritableDOMRect {
     let { left, top, width, height } = rect;
     if (withScroll) {
       left += ContentScript.window.scrollX;
@@ -298,7 +339,8 @@ export class ContentScript extends React.Component {
 
   @action
   refinePosition() {
-    if (settingsStore.data.popupPosition || !this.selectionRects) {
+    const hasAutoPosition = settingsStore.data.popupPosition === "";
+    if (!hasAutoPosition || !this.selectionRects) {
       return; // skip: no position refining is needed
     }
 
@@ -346,7 +388,7 @@ export class ContentScript extends React.Component {
     });
   }
 
-  onSelectionChange = debounce(() => {
+  onSelectionChange = debounce(action(() => {
     this.selectedText = this.selection.toString().trim();
     if (ContentScript.isEditableElement(document.activeElement) || !this.selectedText) {
       return;
@@ -364,7 +406,7 @@ export class ContentScript extends React.Component {
         this.showIcon();
       }
     }
-  }, 250);
+  }), 250);
 
   onIconClick(evt: React.MouseEvent) {
     this.hideIcon();
@@ -406,6 +448,7 @@ export class ContentScript extends React.Component {
     }
   }
 
+  @action
   onKeyDown = (evt: KeyboardEvent) => {
     if (!this.isPopupHidden) {
       switch (evt.code) {
@@ -429,7 +472,7 @@ export class ContentScript extends React.Component {
     // handle text translation by hotkey
     if (!settingsStore.data.showPopupOnHotkey) return;
     const pressedHotkey = getHotkey(evt);
-    const userHotkey = toJS(settingsStore.data.hotkey);
+    const userHotkey = toJS(popupHotkey.get().hotkey);
 
     if (isEqual(userHotkey, pressedHotkey) && this.isPopupHidden) {
       evt.preventDefault();
@@ -469,10 +512,10 @@ export class ContentScript extends React.Component {
     }
   }
 
-  updatePopupPositionLazy = debounce(() => {
+  updatePopupPositionLazy = debounce(action(() => {
     if (!this.isPopupHidden) this.saveSelectionRects();
     this.refinePosition();
-  }, 250);
+  }), 250);
 
   render() {
     const { lastParams, translation, error, popupPosition, playText, translateNext, onIconClick, hidePopup, isIconVisible } = this;
@@ -480,8 +523,8 @@ export class ContentScript extends React.Component {
     const translator = getTranslator(vendor);
     return (
       <>
-        {this.stylesUrl && (
-          <link rel="stylesheet" href={this.stylesUrl} crossOrigin="anonymous"/>
+        {this.shadowDomCssUrl && (
+          <link rel="stylesheet" href={this.shadowDomCssUrl} crossOrigin="anonymous"/>
         )}
         {isIconVisible && (
           <XTranslateIcon
@@ -507,3 +550,6 @@ export class ContentScript extends React.Component {
     )
   }
 }
+
+// render app
+await ContentScript.init();

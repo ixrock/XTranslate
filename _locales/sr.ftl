@@ -35,14 +35,12 @@ export_settings_button_label = Export podešavanja
 import_settings_button_label = Import podešavanja
 import_incorrect_file_format = Neispravan format (trebalo bi da bude { $fileNameJson })
 imported_setting_successful = Podešavanja sa ključem { $key } su uspešno import-ovana
-show_context_menu = Prikaži stavku u kontekstnom meniju
 display_icon_near_selection = Prikaži ikonicu pored izabranog teksta
 show_tts_icon_inside_popup = Prikaži ikonicu za pretvaranje teksta u govor
 show_next_vendor_icon_in_popup = Prikaži ikonicu sledećeg prevodioca
 show_copy_translation_icon = Prikaži ikonicu za kopiranje prevoda
 show_save_as_favorite_icon = Prikaži ikonicu za čuvanje u omiljeno
 show_close_popup_button = Prikaži ikonicu za zatvaranje iskačućeg prozora u desnom uglu
-show_close_popup_button_title = Zatvori
 show_detected_language_block = Prikaži otkriveni jezik
 display_on_click_by_selected_text = Prikaži klikom na izabrani tekst
 display_popup_after_text_selected = Prikaži nakon izbora teksta
@@ -132,7 +130,7 @@ history_import_success = Uspešno uvezenih stavki istorije: { $itemsCount }
 history_import_file_error = Greška u čitanju datoteke '{ $fileName }': { $errorInfo }
 
 # context menu
-context_menu_translate_full_page = Prevedi celu stranicu pomoću: { $translator }
+context_menu_translate_full_page = Prevedi na { $lang }
 context_menu_translate_selection = Prevedi { $selection } pomoću: { $translator }
 
 # other
@@ -181,31 +179,11 @@ mellowtel_dialog_footer = Hvala što ste izdvojili vreme da pročitate, timovi {
 error_403_auth_failed = Autorizacija nije uspela. Unesi validan API ključ za autentifikaciju u podešavanjima
 
 # open-ai integration
-open_ai_get_access_info = 1) Registruj se na platform.openai.com 2) Kreiraj ključ za pristup API-ju 3) Dopuni svoja novčana sredstva (5$+)
-open_ai_insert_auth_key = Obezbedi API ključ za dobijanje OpenAI prevoda
-open_ai_insert_auth_key_warning = Upozorenje: NE UNOSI svoj API ključ nigde osim u prozoru ovog proširenja
-open_ai_insert_auth_key_remove = Ukloni OpenAI API ključ
-open_ai_choose_model = Izaberi AI model
-open_ai_choose_model_cost_efficient = Najisplativije
-open_ai_choose_model_optimal = Preporučeni model
-open_ai_choose_model_best_results = Najbolji rezultati (najskuplje)
-open_ai_why_info_help =
- Direktnom upotrebom ličnog naloga na OpenAI platformi i obezbeđivanjem API ključa štedite dosta novca. Korišćenjem servisa od drugih aplikacija/proširenja koje služe kao "čovek u sredini",
-   često plaćate mesečnu/godišnju pretplatu, a cene i ograničenja upotrebe nisu pod vašom kontrolom.
-   Ne zaboravite da prilagodite ograničenja upotrebe na platform.openai.com i onemogućite automatsku dopunu sredstava na kreditnoj kartici.
+ai_choose_model = Izaberi AI model
+ai_choose_model_cost_effective = Najisplativije
+ai_choose_model_recommended = Preporučeni model
+ai_choose_model_best_results = Najbolji rezultati (najskuplje)
 
 # PDF translations suppot via pdf.js
 pdf_use_custom_viewer = Podrška za prevode u PDF fajlovima
 pdf_use_custom_viewer_info = Ova opcija će pregaziti podrazumevani PDF pregledač
-
-# DeepSeek AI integration
-deepseek_get_own_key_info = Registrujte se na platform.deepseek.com i dopunite sredstva (npr. preko PayPal-a)
-deepseek_auth_key = Kreirajte API ključ na platformi DeepSeek da biste dobili pristup
-deepseek_auth_key_warning = Upozorenje: NE UNOSI svoj API ključ nigde osim u prozoru ovog proširenja
-deepseek_auth_key_remove = Ukloni DeepSeek API ključ
-
-# Grok AI integration (SR)
-grok_ai_get_own_key_info = Registrujte se na console.x.ai i dopunite stanje (npr. putem kreditne kartice)
-grok_ai_auth_key = Kreirajte API ključ na Grok (X) platformi da biste dobili pristup API-ju
-grok_ai_auth_key_warning = Upozorenje: NEMOJTE unositi vaš API ključ bilo gde osim u ovom prozoru proširenja
-grok_ai_auth_key_remove = Uklonite Grok API ključ

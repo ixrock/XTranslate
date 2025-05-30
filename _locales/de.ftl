@@ -33,14 +33,12 @@ export_settings_button_label = Einstellungen exportieren
 import_settings_button_label = Einstellungen importieren
 import_incorrect_file_format = Falscher Dateiformat (sollte wahrscheinlich { $fileNameJson } sein)
 imported_setting_successful = Einstellungen unter dem Schlüssel { $key } erfolgreich importiert
-show_context_menu = Im Kontextmenü der Seite anzeigen
 display_icon_near_selection = Symbol in der Nähe des ausgewählten Textes anzeigen
 show_tts_icon_inside_popup = Text-zu-Sprache-Symbol anzeigen
 show_next_vendor_icon_in_popup = Nächstes-Übersetzungssymbol anzeigen
 show_copy_translation_icon = Symbol zum Kopieren der Übersetzung anzeigen
 show_save_as_favorite_icon = Symbol zum Speichern als Favorit anzeigen
 show_close_popup_button = Schließen-Button für Popup in der rechten Ecke anzeigen
-show_close_popup_button_title = Schließen
 show_detected_language_block = Erkannte Sprache anzeigen
 display_on_click_by_selected_text = Beim Klicken auf die Auswahl anzeigen
 display_popup_after_text_selected = Direkt nach Textauswahl anzeigen
@@ -130,7 +128,7 @@ history_import_success = { $itemsCount } Verlaufseinträge erfolgreich importier
 history_import_file_error = Fehler beim Lesen der Datei '{ $fileName }': { $errorInfo }
 
 # Kontextmenü
-context_menu_translate_full_page = Ganze Seite mit { $translator } übersetzen
+context_menu_translate_full_page = Übersetze in { $lang }
 context_menu_translate_selection = { $selection } mit { $translator } übersetzen
 
 # Sonstiges
@@ -178,32 +176,11 @@ mellowtel_dialog_footer = Danke, dass Sie sich die Zeit genommen haben zu lesen,
 # Verschiedene Fehlermeldungen
 error_403_auth_failed = Authentifizierung fehlgeschlagen. Bitte geben Sie einen gültigen Authentifizierungs-API-Schlüssel in den Einstellungen an.
 
-# OpenAI Integration
-open_ai_get_access_info = 1) Registrieren Sie sich bei platform.openai.com 2) Erstellen Sie einen API-Zugriffsschlüssel 3) Beladen Sie Ihr Guthaben (5$+)
-open_ai_insert_auth_key = Geben Sie Ihren API-Schlüssel ein, um OpenAI-Übersetzungen zu erhalten
-open_ai_insert_auth_key_warning = Warnung: Geben Sie Ihren API-Schlüssel nirgendwo außer in diesem Erweiterungsfenster ein
-open_ai_insert_auth_key_remove = OpenAI API-Schlüssel entfernen
-open_ai_choose_model = KI-Modell auswählen
-open_ai_choose_model_cost_efficient = Kostenwirksamste Wahl
-open_ai_choose_model_optimal = Empfohlenes Modell
-open_ai_choose_model_best_results = Beste Ergebnisse (am teuersten)
-open_ai_why_info_help =
-    Durch direkte Nutzung Ihres eigenen OpenAI-Plattformkontos und Bereitstellung des API-Schlüssels können Sie viel Geld sparen im Vergleich zur Nutzung von "Mittelsmann"-Diensten anderer Apps/Erweiterungen,
-     wo Sie normalerweise für ein monatliches/jährliches Abonnement zahlen und wo alle Preise und Nutzungsgrenzen nicht unter Ihrer Kontrolle stehen.
-     Vergessen Sie nicht, die Nutzungsgrenzen auf platform.openai.com anzupassen und die automatische Aufladung des Guthabens Ihrer Kreditkarte zu deaktivieren.
+ai_choose_model = KI-Modell auswählen
+ai_choose_model_cost_effective = Kostenwirksamste Wahl
+ai_choose_model_recommended = Empfohlenes Modell
+ai_choose_model_best_results = Beste Ergebnisse (am teuersten)
 
 # Unterstützung für PDF-Übersetzungen via pdf.js
 pdf_use_custom_viewer = Unterstützung für Übersetzungen in PDF-Dateien
 pdf_use_custom_viewer_info = Diese Option ersetzt den Standard-PDF-Viewer
-
-# DeepSeek AI integration (DE)
-deepseek_get_own_key_info=Registrieren Sie sich auf platform.deepseek.com und laden Sie Ihr Guthaben auf (z. B. über PayPal)
-deepseek_auth_key=Erstellen Sie einen API-Zugangsschlüssel auf der DeepSeek-Plattform und speichern Sie ihn hier in den Einstellungen
-deepseek_auth_key_warning=Warnung: Geben Sie Ihren API-Schlüssel NICHT an einem anderen Ort als in diesem Erweiterungsfenster ein
-deepseek_auth_key_remove=DeepSeek-API-Schlüssel entfernen
-
-# Grok AI integration (DE)
-grok_ai_get_own_key_info = Registrieren Sie sich bei console.x.ai und laden Sie Ihr Guthaben auf (z. B. per Kreditkarte)
-grok_ai_auth_key = Erstellen Sie einen API-Schlüssel auf der Grok (X)-Plattform, um Zugriff auf die API zu erhalten
-grok_ai_auth_key_warning = Warnung: Geben Sie Ihren API-Schlüssel NIRGENDWO anders ein außer in diesem Erweiterungsfenster
-grok_ai_auth_key_remove = Grok API-Schlüssel entfernen

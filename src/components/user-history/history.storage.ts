@@ -2,27 +2,26 @@ import { runInAction } from "mobx";
 import { md5 } from "js-md5";
 import { download } from "../../utils/downloadFile";
 import { createStorage } from "../../storage";
-import { getTranslator, ITranslationResult } from "../../vendors/translator";
+import { getTranslator, ITranslationResult } from "../../providers/translator";
+import type { ProviderCodeName } from "../../providers";
 
 export type IHistoryItemId = string;
 
-export interface HistoryRecord<DataItem> {
-  [id: IHistoryItemId]: {
-    [vendor: string]: DataItem;
-  }
+export type ProviderHistoryRecord<Data = IHistoryItem | IHistoryStorageItem | boolean> =
+  Partial<Record<ProviderCodeName, Data>>;
+
+export interface HistoryRecord<Data> {
+  [id: IHistoryItemId]: ProviderHistoryRecord<Data>;
 }
 
 export interface HistoryStorageModel {
   translations: HistoryRecord<IHistoryStorageItem>;
 }
 
-export interface HistoryTranslation {
-  [vendor: string]: IHistoryItem;
-}
-
 export const historyStorage = createStorage<HistoryStorageModel>("history", {
   area: "local",
-  autoLoad: false, // manual loading: before saving data or listing items
+  autoLoad: false, // manual loading before saving data or listing items
+  deepMergeOnLoad: false,
   defaultValue: {
     translations: {},
   },
@@ -53,13 +52,13 @@ export function importHistory(data: IHistoryItem | IHistoryStorageItem) {
   });
 }
 
-export function clearHistoryItem(id: IHistoryItemId, vendor?: string) {
+export function clearHistoryItem(id: IHistoryItemId, provider?: ProviderCodeName) {
   const { translations } = historyStorage.get();
   if (!translations[id]) return; // not found
-  if (vendor) {
-    delete translations[id][vendor];
+  if (provider) {
+    delete translations[id][provider];
   } else {
-    delete translations[id]; // clear translations for all vendors
+    delete translations[id]; // clear translations for all translation providers
   }
 }
 
@@ -133,7 +132,8 @@ export function toHistoryItem(data: IHistoryStorageItem): IHistoryItem {
     const [date, vendor, from, to, text, translation, transcription, dict] = data;
     return {
       id: generateId(text, from, to),
-      date, vendor, from, to, text, translation, transcription,
+      date, from, to, text, translation, transcription,
+      vendor: vendor as ProviderCodeName,
       dictionary: dict.map(dict => ({
         wordType: dict[0],
         translation: dict[1],
@@ -145,7 +145,8 @@ export function toHistoryItem(data: IHistoryStorageItem): IHistoryItem {
     const { date, vendor, from, to, text, tr, ts, dict: dictionary = [] } = data;
     return {
       id: generateId(text, from, to),
-      date, vendor, from, to, text,
+      date, from, to, text,
+      vendor: vendor as ProviderCodeName,
       translation: tr,
       transcription: ts,
       dictionary: dictionary.map(dict => ({
@@ -167,8 +168,8 @@ export function isStorageItem(data: any | IHistoryStorageItemVersion2): data is 
 
 export interface IHistoryItem {
   id: IHistoryItemId;
+  vendor: ProviderCodeName;
   date: number
-  vendor: string
   from: string
   to: string
   text: string
@@ -201,7 +202,7 @@ export interface IHistoryStorageItemVersion1 {
 
 export type IHistoryStorageItemVersion2 = [
   number, // 0 - time
-  string, // 1 - vendor
+  string, // 1 - translation provider aka "vendor"
   string, // 2 - lang from
   string, // 3 - lang to
   string, // 4 - original text

@@ -33,14 +33,12 @@ export_settings_button_label = 設定をエクスポート
 import_settings_button_label = 設定をインポート
 import_incorrect_file_format = ファイル形式が正しくありません（おそらく { $fileNameJson } であるべきです）
 imported_setting_successful = キー { $key } の下の設定が正常にインポートされました
-show_context_menu = ページのコンテキストメニューに表示
 display_icon_near_selection = 選択したテキストの近くにアイコンを表示
 show_tts_icon_inside_popup = テキスト読み上げアイコンを表示
 show_next_vendor_icon_in_popup = 次の翻訳アイコンを表示
 show_copy_translation_icon = 翻訳をコピーするアイコンを表示
 show_save_as_favorite_icon = お気に入りに保存するアイコンを表示
 show_close_popup_button = 右上のポップアップを閉じるボタンを表示
-show_close_popup_button_title = 閉じる
 show_detected_language_block = 検出された言語を表示
 display_on_click_by_selected_text = 選択テキストをクリックしたときに表示
 display_popup_after_text_selected = テキストが選択された直後に表示
@@ -130,7 +128,7 @@ history_import_success = { $itemsCount } 件の履歴エントリーを正常に
 history_import_file_error = ファイル '{ $fileName }' の読み取りエラー: { $errorInfo }
 
 # コンテキストメニュー
-context_menu_translate_full_page = { $translator } で全ページを翻訳
+context_menu_translate_full_page = { $lang } に翻訳する
 context_menu_translate_selection = { $translator } で { $selection } を翻訳
 
 # その他
@@ -178,32 +176,11 @@ mellowtel_dialog_footer = 読んでくれてありがとう、{ $devs } チー�
 # 各種エラーメッセージ
 error_403_auth_failed = 認証に失敗しました。設定で有効な認証APIキーを指定してください。
 
-# OpenAI統合
-open_ai_get_access_info = 1) platform.openai.com で登録 2) APIアクセスキーを作成 3) 残高をトップアップ（5$+）
-open_ai_insert_auth_key = OpenAI翻訳を取得するためのAPIキーを提供
-open_ai_insert_auth_key_warning = 警告: この拡張機能のウィンドウ以外にAPIキーを入力しないでください
-open_ai_insert_auth_key_remove = OpenAI APIキーを削除
-open_ai_choose_model = AIモデルを選択
-open_ai_choose_model_cost_efficient = 最もコスト効率の良い
-open_ai_choose_model_optimal = 推奨モデル
-open_ai_choose_model_best_results = 最良の結果（最も高価）
-open_ai_why_info_help =
-    直接自分のOpenAIプラットフォームのアカウントを使用し、APIキーを提供することで、他のアプリや拡張機能の「中間者」サービスを使用するよりも多くのお金を節約できます。
-     そこでは通常月間/年間サブスクリプションに対して支払い、価格や使用制限があなたのコントロール外にあります。
-     platform.openai.com で使用制限を調整し、クレジットカードの自動トップアップバランスを無効にするのを忘れないでください。
+ai_choose_model = AIモデルを選択
+ai_choose_model_cost_effective = 最もコスト効率の良い
+ai_choose_model_recommended = 推奨モデル
+ai_choose_model_best_results = 最良の結果（最も高価）
 
 # PDF翻訳サポート via pdf.js
 pdf_use_custom_viewer = PDFファイル内の翻訳をサポート
 pdf_use_custom_viewer_info = このオプションはデフォルトのPDFビューアを置き換えます
-
-# DeepSeek AI integration (JA)
-deepseek_get_own_key_info=platform.deepseek.com に登録して、残高をチャージしてください（例：PayPal 経由）
-deepseek_auth_key=DeepSeek プラットフォームで API アクセスキーを作成し、設定内でここに保存してください
-deepseek_auth_key_warning=警告：この拡張ウィンドウ以外の場所に API キーを入力しないでください
-deepseek_auth_key_remove=DeepSeek API キーを削除する
-
-# Grok AI integration (JA)
-grok_ai_get_own_key_info = console.x.ai に登録し、残高をチャージしてください（例：クレジットカード経由）
-grok_ai_auth_key = Grok (X) プラットフォームで API キーを作成して API へのアクセスを取得
-grok_ai_auth_key_warning = 警告：この拡張ウィンドウ以外で API キーを入力しないでください
-grok_ai_auth_key_remove = Grok API キーを削除

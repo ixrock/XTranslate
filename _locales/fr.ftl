@@ -33,14 +33,12 @@ export_settings_button_label = Exporter les paramètres
 import_settings_button_label = Importer les paramètres
 import_incorrect_file_format = Format de fichier incorrect (devrait probablement être { $fileNameJson })
 imported_setting_successful = Paramètres sous la clé { $key } importés avec succès
-show_context_menu = Afficher dans le menu contextuel de la page
 display_icon_near_selection = Afficher l'icône près du texte sélectionné
 show_tts_icon_inside_popup = Afficher l'icône de texte à parole
 show_next_vendor_icon_in_popup = Afficher l'icône de traduction suivante
 show_copy_translation_icon = Afficher l'icône de copie de traduction
 show_save_as_favorite_icon = Afficher l'icône pour sauvegarder comme favori
 show_close_popup_button = Afficher le bouton de fermeture du pop-up en haut à droite
-show_close_popup_button_title = Fermer
 show_detected_language_block = Afficher la langue détectée
 display_on_click_by_selected_text = Afficher en cliquant sur la sélection
 display_popup_after_text_selected = Afficher juste après la sélection du texte
@@ -130,7 +128,7 @@ history_import_success = { $itemsCount } entrées d'historique importées avec s
 history_import_file_error = Erreur de lecture du fichier '{ $fileName }': { $errorInfo }
 
 # menu contextuel
-context_menu_translate_full_page = Traduire toute la page avec { $translator }
+context_menu_translate_full_page = Traduire en { $lang }
 context_menu_translate_selection = Traduire { $selection } avec { $translator }
 
 # autre
@@ -179,31 +177,11 @@ mellowtel_dialog_footer = Merci d'avoir pris le temps de lire, équipes { $devs 
 error_403_auth_failed = Échec de l'autorisation. Veuillez fournir une clé API valide dans les paramètres
 
 # intégration OpenAI
-open_ai_get_access_info = 1) Inscrivez-vous sur platform.openai.com 2) Créez une clé d'accès API 3) Rechargez votre solde (5$+)
-open_ai_insert_auth_key = Fournissez votre clé API pour obtenir des traductions OpenAI
-open_ai_insert_auth_key_warning = Attention : NE SAISISSEZ PAS votre clé API ailleurs que dans cette fenêtre d'extension
-open_ai_insert_auth_key_remove = Supprimer la clé API OpenAI
-open_ai_choose_model = Choisissez le modèle d'IA
-open_ai_choose_model_cost_efficient = Le plus économique
-open_ai_choose_model_optimal = Modèle recommandé
-open_ai_choose_model_best_results = Meilleurs résultats (le plus coûteux)
-open_ai_why_info_help =
-    En utilisant directement votre propre compte de la plateforme OpenAI et en fournissant la clé API, vous économisez beaucoup d'argent comparé à l'utilisation de services "intermédiaires" d'autres applications ou extensions,
-     où vous payez généralement pour un abonnement mensuel/annuel et où tous les prix et les limites d'utilisation ne sont pas sous votre contrôle.
-     N'oubliez pas d'ajuster les limites d'utilisation sur platform.openai.com et de désactiver le rechargement automatique de votre carte de crédit.
+ai_choose_model = Choisissez le modèle d'IA
+ai_choose_model_cost_effective = Le plus économique
+ai_choose_model_recommended = Modèle recommandé
+ai_choose_model_best_results = Meilleurs résultats (le plus coûteux)
 
 # Support pour les traductions de PDF via pdf.js
 pdf_use_custom_viewer = Support pour les traductions dans les fichiers PDF
 pdf_use_custom_viewer_info = Cette option remplacera le visualisateur de PDF par défaut
-
-# DeepSeek AI integration (FR)
-deepseek_get_own_key_info=Inscrivez-vous sur platform.deepseek.com et rechargez votre solde (par exemple via PayPal)
-deepseek_auth_key=Créez une clé d'accès API sur la plateforme DeepSeek et enregistrez-la ici dans les paramètres
-deepseek_auth_key_warning=Avertissement: NE saisissez PAS votre clé API ailleurs que dans la fenêtre de cette extension
-deepseek_auth_key_remove=Supprimer la clé API DeepSeek
-
-# Grok AI integration (FR)
-grok_ai_get_own_key_info = Inscrivez-vous sur console.x.ai et rechargez votre solde (par exemple avec une carte de crédit)
-grok_ai_auth_key = Créez une clé API sur la plateforme Grok (X) pour accéder à l'API
-grok_ai_auth_key_warning = Avertissement : N'entrez PAS votre clé API ailleurs qu dans cette fenêtre d'extension
-grok_ai_auth_key_remove = Supprimer la clé API Grok

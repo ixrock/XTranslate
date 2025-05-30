@@ -14,15 +14,15 @@ interface HotkeyChunk {
   title: string
 }
 
-export function parseHotkey(hotkey: Hotkey) {
-  var metaKeys: HotkeyChunk[] = [];
+export function parseHotkey(hotkey: Hotkey | KeyboardEvent | React.KeyboardEvent) {
+  const metaKeys: HotkeyChunk[] = [];
   if (hotkey.metaKey) metaKeys.push({ char: '⌘', title: "Cmd" });
   if (hotkey.ctrlKey) metaKeys.push({ char: '⌃', title: "Ctrl" });
   if (hotkey.altKey) metaKeys.push({ char: '⌥', title: "Alt" });
   if (hotkey.shiftKey) metaKeys.push({ char: '⇧', title: "Shift" });
 
-  var code = normalizeKeyboardCode(hotkey.code);
-  var data = metaKeys.concat({ char: code, title: code });
+  const code = normalizeKeyboardCode(hotkey.code);
+  const data = metaKeys.concat({ char: code, title: code });
   return {
     code: !code.match(/Control|Meta|Alt|Shift|Tab|Enter/) ? code : null,
     metaKeys: metaKeys,
@@ -31,14 +31,14 @@ export function parseHotkey(hotkey: Hotkey) {
   };
 }
 
-export function getHotkey(e: KeyboardEvent | React.KeyboardEvent) {
-  var hotkey: Hotkey = {
-    code: normalizeKeyboardCode(e.code),
+export function getHotkey(evt: KeyboardEvent | React.KeyboardEvent) {
+  const hotkey: Hotkey = {
+    code: normalizeKeyboardCode(evt.code),
   };
-  if (e.altKey) hotkey.altKey = true;
-  if (e.ctrlKey) hotkey.ctrlKey = true;
-  if (e.metaKey) hotkey.metaKey = true;
-  if (e.shiftKey) hotkey.shiftKey = true;
+  if (evt.altKey) hotkey.altKey = true;
+  if (evt.ctrlKey) hotkey.ctrlKey = true;
+  if (evt.metaKey) hotkey.metaKey = true;
+  if (evt.shiftKey) hotkey.shiftKey = true;
   return hotkey;
 }
 

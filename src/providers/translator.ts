@@ -1,50 +1,50 @@
-// Base class for all translation vendors
+// Base class for all translation providers
 
 import { observable } from "mobx";
-import { autoBind, createLogger, disposer, JsonResponseError } from "../utils";
+import { autoBind, createLogger, JsonResponseError, strLengthInBytes } from "../utils";
 import { ProxyRequestPayload, ProxyResponseType } from "../extension/messages";
-import { getTranslationFromHistoryAction, proxyRequest, saveToHistoryAction } from "../extension/actions";
+import { proxyRequest } from "../background/httpProxy.bgc";
 import { settingsStore } from "../components/settings/settings.storage";
 import { getTTSVoices, speak, stopSpeaking, TTSVoice } from "../tts";
-import type { VendorCodeName } from "./index";
-import type { VendorAuthSettingsProps } from "../components/settings/vendor_auth_settings";
+import { ProviderCodeName } from "./providers";
+import { getTranslationFromHistoryAction, saveToHistoryAction } from "../background/history.bgc";
 
-export interface TranslatorLanguages {
-  from: Record<string/*locale*/, string> & { auto?: string };
-  to?: Record<string, string>;
+export interface ProviderLanguagesApiMap {
+  from: { [locale: string]: string; auto?: string };
+  to?: { [locale: string]: string };
 }
 
 export interface TranslateParams {
   from: string;
   to: string;
-  text: string;
+  text?: string;
+  texts?: string[]; // for multi-translate
 }
 
-export interface TranslatePayload extends TranslateParams {
-  vendor: string;
+export interface TranslatorParams {
+  languages: ProviderLanguagesApiMap;
 }
 
 export abstract class Translator {
-  static readonly instances = observable.set<Translator>();
-  static createInstances = disposer();
+  static readonly instances = observable.map<ProviderCodeName, Translator>([], { deep: false });
+  static readonly providers = observable.map<ProviderCodeName, { new(): Translator }>([], { deep: false });
 
-  static registerVendor = (instance: { new(): Translator }) => {
-    this.createInstances.push(
-      () => this.instances.add(new instance())
-    );
+  static register(name: ProviderCodeName, ctor: { new(): Translator }) {
+    this.providers.set(name, ctor);
   };
 
-  abstract name: VendorCodeName; // registered code name, e.g. "google"
+  abstract name: ProviderCodeName; // registered code name, e.g. "google"
   abstract title: string; // human readable name, e.g. "Google"
   abstract publicUrl: string; // public translation service page
   abstract apiUrl: string; // service api url
+  abstract isRequireApiKey: boolean; // require to bring api-key to work
   public langFrom: Record<string, string> = {};
   public langTo: Record<string, string> = {};
   public audio: HTMLAudioElement;
   public audioDataUrl = "";
   protected logger = createLogger({ systemPrefix: "[TRANSLATOR]" });
 
-  constructor({ from: langFrom, to: langTo }: TranslatorLanguages) {
+  protected constructor({ languages: { from: langFrom, to: langTo } }: TranslatorParams) {
     autoBind(this);
 
     const { auto, ...langToFallback } = langFrom;
@@ -60,6 +60,11 @@ export abstract class Translator {
 
   abstract translate(params: TranslateParams): Promise<ITranslationResult>;
 
+  async translateMany(params: TranslateParams): Promise<string[]> {
+    this.logger.error(`translation for multi texts is not implemented for ${this.title}`);
+    return [];
+  }
+
   protected async request<Response>(payload: ProxyRequestPayload): Promise<Response> {
     const response = await proxyRequest<Response>(payload);
 
@@ -73,7 +78,7 @@ export abstract class Translator {
     originalTranslate: (params: TranslateParams) => Promise<ITranslationResult>,
     params: TranslateParams,
   ): Promise<ITranslationResult> {
-    let translation = await getTranslationFromHistoryAction({ vendor: this.name, ...params }) as ITranslationResult;
+    let translation = await getTranslationFromHistoryAction({ provider: this.name, ...params }) as ITranslationResult;
     if (translation) translation = this.normalize(translation, params);
 
     // get result via network
@@ -157,7 +162,7 @@ export abstract class Translator {
     return swapParamsWith;
   };
 
-  getLangPairShortTitle(langFrom: string, langTo: string) {
+  static getLangPairTitleShort(langFrom: string, langTo: string) {
     return [langFrom, langTo].join(' → ').toUpperCase();
   }
 
@@ -166,10 +171,6 @@ export abstract class Translator {
       this.langFrom[langFrom] ?? langFrom,
       this.langTo[langTo] ?? langTo
     ].join(' → ');
-  }
-
-  getFullPageTranslationUrl(pageUrl: string, lang: string): string {
-    return null; // should be overridden in sub-classes if supported
   }
 
   speakSynth(text: string, voice?: TTSVoice) {
@@ -223,7 +224,7 @@ export abstract class Translator {
 
   stopSpeaking() {
     this.logger.info(`[TTS]: stop speaking`);
-    getTranslators().forEach(vendor => vendor.audio?.pause());
+    getTranslators().forEach(translator => translator.audio?.pause());
     stopSpeaking(); // tts-stop
     URL.revokeObjectURL(this.audioDataUrl);
   }
@@ -240,19 +241,70 @@ export abstract class Translator {
     return !!(this.langFrom[langFrom] && this.langTo[langTo]);
   }
 
-  getAuthSettings(): VendorAuthSettingsProps {
-    return;
+  canTranslateFullPage(): boolean {
+    return Translator.prototype.translateMany !== this.constructor.prototype.translateMany;
+  }
+
+  getSupportedLanguages(desired: { langFrom: string, langTo: string }) {
+    let { langFrom, langTo } = desired;
+    if (!this.langFrom[langFrom]) {
+      const firstLangFrom = Object.keys(this.langFrom)[0];
+      langFrom = firstLangFrom ?? "auto";
+    }
+    if (!this.langTo[langTo]) {
+      const navLang = navigator.language;
+      const firstLangTo = Object.keys(this.langTo)[0];
+      langTo = [navLang, navLang.split("-")[0], "en"].find(lang => this.langTo[lang]) ?? firstLangTo;
+    }
+    return { langFrom, langTo }
+  }
+
+  hasProvidedOrNotRequiredApiKey(): boolean {
+    const hasFilledApiKey = this.getAuthSettings().apiKeySanitized !== "";
+
+    return Boolean(!this.isRequireApiKey || this.isRequireApiKey && hasFilledApiKey);
+  }
+
+  getAuthSettings(): TranslatorAuthParams {
+    return {} as TranslatorAuthParams;
+  }
+
+  protected sanitizeApiKey(apiKey: string) {
+    if (!apiKey) return "";
+    const tail = 4;
+    return apiKey.substring(0, tail) + "*-*" + apiKey.substring(apiKey.length - tail);
+  }
+
+  protected packGroups(texts: string[], { groupSize = 50, maxBytesPerGroup = 0 } = {}): string[][] {
+    const packs = [];
+    let buf = [];
+    let sizeBytes = 0;
+
+    for (const str of texts) {
+      const len = strLengthInBytes(str);
+
+      if (sizeBytes + len > maxBytesPerGroup || buf.length >= groupSize) {
+        packs.push(buf);
+        buf = [];
+        sizeBytes = 0;
+      }
+      buf.push(str);
+      sizeBytes += len;
+    }
+    if (buf.length) packs.push(buf);
+    return packs;
   }
 }
 
-export function sanitizeApiKey(apiKey: string) {
-  if (!apiKey) return "";
-  return apiKey.substring(0, 4) + "-****-" + apiKey.substring(apiKey.length - 4);
+export interface TranslatorAuthParams {
+  apiKeySanitized: string;
+  setupApiKey(): void;
+  clearApiKey(): void;
 }
 
 export interface ITranslationResult {
   // auto-added normalized fields
-  vendor?: string
+  vendor?: ProviderCodeName
   langFrom?: string
   langTo?: string
   originalText?: string
@@ -289,47 +341,48 @@ export function isTranslationError(error: ITranslationResult | ITranslationError
 export function isRTL(lang: string) {
   return [
     "ar", // arabic
-    "he", // hebrew (yandex, bing)
+    "he", // hebrew (bing)
     "iw", // hebrew (google)
     "fa", // persian
     "ur", // urdu
   ].includes(lang);
 }
 
-/**
- * List of all registered vendors (translators)
- */
 export function getTranslators(): Translator[] {
-  return Array.from(Translator.instances);
+  return Array.from(Translator.providers.keys()).map(getTranslator);
 }
 
-/**
- * Get registered vendor (translator) if any or nothing
- * @param {string} name
- */
-export function getTranslator<T extends Translator>(name: string): T {
-  return (Array.from(Translator.instances) as T[]).find(vendor => vendor.name === name);
+export function getFullPageTranslators<T extends Translator>(): T[] {
+  return getTranslators(
+  ).filter(translator => translator.canTranslateFullPage() && translator.hasProvidedOrNotRequiredApiKey()) as T[];
 }
 
-export function getNextTranslator(name: string, langFrom: string, langTo: string, reverse = false) {
-  var vendors = getTranslators();
-  var vendor: Translator;
-  var list: Translator[] = [];
-  var index = vendors.findIndex(vendor => vendor.name === name);
-  var beforeCurrent = vendors.slice(0, index);
-  var afterCurrent = vendors.slice(index + 1);
-  if (reverse) {
-    list.push(...beforeCurrent.reverse(), ...afterCurrent.reverse());
-  } else {
-    list.push(...afterCurrent, ...beforeCurrent)
+export function getTranslator<T extends Translator>(name: ProviderCodeName): T | undefined {
+  const Provider = Translator.providers.get(name);
+  if (!Translator.instances.has(name) && Provider) {
+    Translator.instances.set(name, new Provider());
   }
-  while ((vendor = list.shift())) {
-    const vendorName = vendor.name;
-    if (settingsStore.data.skipVendorInRotation[vendorName]) {
+  return Translator.instances.get(name) as T;
+}
+
+export function getNextTranslator(name: ProviderCodeName, langFrom: string, langTo: string, reverse = false) {
+  let translator: Translator;
+  const providers = getTranslators();
+  const translators: Translator[] = [];
+  const index = providers.findIndex(translator => translator.name === name);
+  const beforeCurrent = providers.slice(0, index);
+  const afterCurrent = providers.slice(index + 1);
+  if (reverse) {
+    translators.push(...beforeCurrent.reverse(), ...afterCurrent.reverse());
+  } else {
+    translators.push(...afterCurrent, ...beforeCurrent)
+  }
+  while ((translator = translators.shift())) {
+    if (settingsStore.data.skipVendorInRotation[translator.name]) {
       continue;
     }
-    if (vendor.canTranslate(langFrom, langTo)) {
-      return vendor;
+    if (translator.canTranslate(langFrom, langTo)) {
+      return translator;
     }
   }
   return null;

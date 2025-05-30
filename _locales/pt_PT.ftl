@@ -33,14 +33,12 @@ export_settings_button_label = Exportar configurações
 import_settings_button_label = Importar configurações
 import_incorrect_file_format = Formato de arquivo incorreto (provavelmente deveria ser { $fileNameJson })
 imported_setting_successful = Configurações sob a chave { $key } importadas com sucesso
-show_context_menu = Mostrar no menu de contexto da página
 display_icon_near_selection = Mostrar ícone perto do texto selecionado
 show_tts_icon_inside_popup = Mostrar ícone de texto para fala
 show_next_vendor_icon_in_popup = Mostrar ícone de próxima tradução
 show_copy_translation_icon = Mostrar ícone de copiar tradução
 show_save_as_favorite_icon = Mostrar ícone de salvar como favorito
 show_close_popup_button = Mostrar botão de fechar pop-up no canto direito
-show_close_popup_button_title = Fechar
 show_detected_language_block = Mostrar idioma detectado
 display_on_click_by_selected_text = Mostrar ao clicar na seleção
 display_popup_after_text_selected = Mostrar logo após a seleção do texto
@@ -130,7 +128,7 @@ history_import_success = { $itemsCount } entradas de histórico importadas com s
 history_import_file_error = Erro ao ler o arquivo '{ $fileName }': { $errorInfo }
 
 # menu de contexto
-context_menu_translate_full_page = Traduzir toda a página com { $translator }
+context_menu_translate_full_page = Traduzir para { $lang }
 context_menu_translate_selection = Traduzir { $selection } com { $translator }
 
 # outros
@@ -179,31 +177,11 @@ mellowtel_dialog_footer = Obrigado por dedicar tempo para ler, equipes { $devs }
 error_403_auth_failed = Falha na autorização. Por favor, forneça uma chave de API válida nas configurações.
 
 # integração com OpenAI
-open_ai_get_access_info = 1) Registre-se em platform.openai.com 2) Crie uma chave de acesso à API 3) Recarregue seu saldo (5$+)
-open_ai_insert_auth_key = Forneça sua chave de API para obter traduções do OpenAI
-open_ai_insert_auth_key_warning = Aviso: NÃO insira sua chave de API em nenhum outro lugar exceto nesta janela da extensão
-open_ai_insert_auth_key_remove = Remover chave de API do OpenAI
-open_ai_choose_model = Escolha o modelo de IA
-open_ai_choose_model_cost_efficient = Mais eficiente em termos de custo
-open_ai_choose_model_optimal = Modelo recomendado
-open_ai_choose_model_best_results = Melhores resultados (mais caro)
-open_ai_why_info_help =
- Ao usar diretamente sua própria conta na plataforma OpenAI e fornecendo a chave de API, você economiza muito dinheiro em comparação com o uso de serviços "intermediários" de outros aplicativos ou extensões,
-  onde você geralmente paga por uma assinatura mensal/anual e onde todos os preços e limites de uso não estão sob seu controle.
-  Não se esqueça de ajustar os limites de uso em platform.openai.com e desativar o reabastecimento automático do saldo do cartão de crédito.
+ai_choose_model = Escolha o modelo de IA
+ai_choose_model_cost_effective = Mais eficiente em termos de custo
+ai_choose_model_recommended = Modelo recomendado
+ai_choose_model_best_results = Melhores resultados (mais caro)
 
 # Suporte para tradução de PDF via pdf.js
 pdf_use_custom_viewer = Suporte para traduções em arquivos PDF
 pdf_use_custom_viewer_info = Esta opção substituirá o visualizador de PDF padrão
-
-# DeepSeek AI integration (PT_PT)
-deepseek_get_own_key_info=Registe-se em platform.deepseek.com e carregue o saldo (por exemplo, via PayPal)
-deepseek_auth_key=Crie uma chave de acesso API na plataforma DeepSeek e guarde-a aqui nas definições
-deepseek_auth_key_warning=Aviso: NÃO insira a sua chave API em nenhum outro lugar exceto nesta janela da extensão
-deepseek_auth_key_remove=Remover chave API do DeepSeek
-
-# Grok AI integration (PT_PT)
-grok_ai_get_own_key_info = Registe-se em console.x.ai e recarregue o saldo (por exemplo, via cartão de crédito)
-grok_ai_auth_key = Crie uma chave API na plataforma Grok (X) para obter acesso à API
-grok_ai_auth_key_warning = Aviso: NÃO insira a sua chave API em nenhum outro lugar exceto nesta janela de extensão
-grok_ai_auth_key_remove = Remover a chave API do Grok

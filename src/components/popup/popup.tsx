@@ -4,17 +4,17 @@ import React, { CSSProperties } from "react";
 import { action, computed, makeObservable, observable } from "mobx";
 import { observer } from "mobx-react";
 import isEqual from "lodash/isEqual";
-import { iconMaterialFavorite, iconMaterialFavoriteOutlined } from "../../common-vars";
+import { materialIcons } from "../../common-vars";
 import { cssNames, disposer, IClassName, noop, prevDefault } from "../../utils";
 import { copyToClipboard } from "../../utils/copy-to-clipboard";
 import { toCssColor } from "../../utils/toCssColor";
-import { getNextTranslator, getTranslator, isRTL, ITranslationError, ITranslationResult } from "../../vendors";
+import { getNextTranslator, getTranslator, isRTL, ITranslationError, ITranslationResult } from "../../providers";
 import { Icon } from "../icon";
 import { settingsStorage, settingsStore } from "../settings/settings.storage";
 import { themeStore } from "../theme-manager/theme.storage";
 import { isFavorite } from "../user-history/favorites.storage";
-import { getMessage, getLocale } from "../../i18n";
-import { saveToFavoritesAction } from "../../extension";
+import { getLocale, getMessage } from "../../i18n";
+import { saveToFavoritesAction } from "../../background/history.bgc";
 
 interface Props extends Omit<React.HTMLProps<any>, "className"> {
   previewMode?: boolean;
@@ -85,7 +85,7 @@ export class Popup extends React.Component<Props> {
   }
 
   get popupStyle(): CSSProperties {
-    var {
+    const {
       bgcMain, bgcLinear, bgcSecondary,
       borderRadius, fontFamily, fontSize, textColor,
       borderWidth, borderStyle, borderColor,
@@ -94,7 +94,6 @@ export class Popup extends React.Component<Props> {
     } = themeStore.data;
 
     return {
-      position: this.isPreviewMode ? "relative" : "absolute",
       background: bgcLinear
         ? `linear-gradient(180deg, ${toCssColor(bgcMain)}, ${toCssColor(bgcSecondary)})`
         : toCssColor(bgcMain),
@@ -152,7 +151,7 @@ export class Popup extends React.Component<Props> {
     return (
       <Icon
         className={styles.icon}
-        material={this.isFavorite ? iconMaterialFavorite : iconMaterialFavoriteOutlined}
+        material={this.isFavorite ? materialIcons.favorite : materialIcons.unfavorite}
         tooltip={{
           className: styles.iconTooltip,
           children: getMessage("history_mark_as_favorite"),
@@ -170,7 +169,7 @@ export class Popup extends React.Component<Props> {
     return (
       <Icon
         className={styles.icon}
-        material={this.copied ? "task_alt" : "content_copy"}
+        material={this.copied ? materialIcons.copiedTranslation : materialIcons.copyTranslation}
         tooltip={{
           className: styles.iconTooltip,
           children: getMessage("popup_copy_translation_title"),
@@ -188,7 +187,7 @@ export class Popup extends React.Component<Props> {
     return (
       <Icon
         className={styles.icon}
-        material="play_circle_outline"
+        material={materialIcons.ttsPlay}
         tooltip={{
           className: styles.iconTooltip,
           children: getMessage("popup_play_icon_title"),
@@ -211,29 +210,13 @@ export class Popup extends React.Component<Props> {
     return (
       <Icon
         className={styles.icon}
-        material="arrow_forward"
+        material={materialIcons.nextTranslation}
         tooltip={{
           className: styles.iconTooltip,
           children: iconTitle,
           parentElement: this.props.tooltipParent,
         }}
         onClick={prevDefault(this.props.onTranslateNext)}
-      />
-    )
-  }
-
-  renderClosePopupIcon() {
-    if (!settingsStore.data.showClosePopupIcon) return;
-
-    return (
-      <Icon
-        material="close"
-        className={styles.icon}
-        tooltip={{
-          className: styles.iconTooltip,
-          children: getMessage("show_close_popup_button_title"),
-        }}
-        onClick={this.props.onClose}
       />
     )
   }
@@ -264,7 +247,6 @@ export class Popup extends React.Component<Props> {
             {this.renderSaveToFavoritesIcon()}
             {this.renderCopyTranslationIcon()}
             {this.renderNextTranslationIcon()}
-            {this.renderClosePopupIcon()}
           </div>
         </div>
         {dictionary.map(({ wordType, meanings }) =>
@@ -317,12 +299,13 @@ export class Popup extends React.Component<Props> {
   }
 
   render() {
-    var { popupPosition } = settingsStore.data;
-    var { translation, error, className, style: customStyle } = this.props;
-    var isVisible = !!(translation || error);
-    var popupClass = cssNames(styles.Popup, className, popupPosition, {
+    const { popupPosition } = settingsStore.data;
+    const { translation, error, className, style: customStyle } = this.props;
+    const hasAutoPosition = popupPosition === "";
+    const isVisible = !!(translation || error);
+    const popupClass = cssNames(styles.Popup, className, popupPosition, {
       [styles.visible]: isVisible,
-      [styles.fixedPos]: !this.isPreviewMode && popupPosition,
+      [styles.fixedPos]: !this.isPreviewMode && !hasAutoPosition,
       [styles.previewMode]: this.isPreviewMode,
     });
 

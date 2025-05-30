@@ -1,13 +1,9 @@
 @use "../mixins" as *;
 
-.VendorAuthSettings {
-  display: flex;
-  gap: var(--theme-spacing);
-  align-items: center;
-}
-
-.key {
-  white-space: nowrap;
+.ProviderAuthSettings {
+  &.hasKey {
+    white-space: nowrap;
+  }
 }
 
 .setupApiKey {
@@ -16,4 +12,8 @@
   display: flex;
   gap: var(--theme-spacing);
   font-size: small;
+}
+
+:global(.openai_apiKey) {
+  //max-width: 40px;
 }

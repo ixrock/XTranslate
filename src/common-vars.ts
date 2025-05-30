@@ -4,18 +4,28 @@ export const isDevelopment = process.env.NODE_ENV === "development";
 
 // Extension's public urls for different browsers besides Chrome, e.g. Brave, MS Edge, etc.
 export const websiteURL = 'https://xtranslate.dev';
+export const paypalLink = 'https://paypal.me/romanesca';
 export const chromeStoreURL = 'https://chrome.google.com/webstore/detail/gfgpkepllngchpmcippidfhmbhlljhoo';
 export const edgeAddonsURL = 'https://microsoftedge.microsoft.com/addons/detail/cinfaflgbaachkaamaeglolofeahelkd';
 
 // Webpack: app build, generated output filenames without extension (*.js, *.css)
 export const appEntry = "app";
 export const serviceWorkerEntry = "background"; // keep in sync with manifest.json
-export const contentScriptEntry = "content-script"; // keep in sync with manifest.json
+export const contentScriptEntry = "content-script-entry"; // keep in sync with manifest.json
+export const contentScriptInjectable = "content-script-injectable";
 export const pdfViewerEntry = "pdf-viewer";
+export const pdfViewerSkipUrlHash = "#pdf-raw";
 
 // Icons, see also: https://fonts.google.com/icons
-export const iconMaterialFavorite = "star";
-export const iconMaterialFavoriteOutlined = "star_outline";
+export const materialIcons = {
+  ttsPlay: "play_circle_outline",
+  ttsPause: "pause_outline",
+  copyTranslation: "content_copy",
+  copiedTranslation: "task_alt",
+  favorite: "star",
+  unfavorite: "star_outline",
+  nextTranslation: "arrow_forward",
+};
 
 //
 // Env-specific data helpers
@@ -28,8 +38,10 @@ export function isMac(): boolean {
   return !!navigator.userAgent.match(/AppleWebKit|Macintosh/);
 }
 
-export function isPdf(): boolean {
-  return document.contentType === "application/pdf";
+export function useCustomPdfViewer(): boolean {
+  const isPdf = document.contentType === "application/pdf";
+  const skip = new URL(location.href).hash === pdfViewerSkipUrlHash;
+  return isPdf && !skip;
 }
 
 export function isFirefox(): boolean {
@@ -41,5 +53,5 @@ export function isEdge(): boolean {
 }
 
 export function isSystemPage(pageUrl = ""): boolean {
-  return !!pageUrl.match(/^(chrome|edge):\/\//i);
+  return !pageUrl || (/^(chrome(-extension)?|edge):\/\//i).test(pageUrl);
 }

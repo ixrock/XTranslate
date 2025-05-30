@@ -1,37 +1,44 @@
 import GoogleLanguages from "./google.json"
 import { ProxyRequestInit } from "../extension";
-import { isTranslationError, ITranslationResult, TranslateParams, Translator, VendorCodeName } from "./index";
+import { isTranslationError, ITranslationResult, ProviderCodeName, TranslateParams, Translator } from "./index";
 import { delay } from "../utils";
 import { getMessage } from "../i18n";
 import { createStorage } from "../storage";
 
-class Google extends Translator {
-  public name = VendorCodeName.GOOGLE;
-  public title = 'Google';
-  public apiUrl = 'https://translate.googleapis.com';
-  public publicUrl = 'https://translate.google.com';
-  public ttsMaxLength = 187;
+export const googleApiDomain = createStorage<string>("google_api_domain", {
+  defaultValue: "com",
+});
 
+class Google extends Translator {
+  override name = ProviderCodeName.GOOGLE;
+  override title = 'Google';
+  override publicUrl = 'https://translate.google.com';
   protected apiClients = ["gtx", "dict-chrome-ex"];
+  protected ttsMaxLength = 187;
+  override isRequireApiKey = false;
+
   protected apiClient = createStorage<string>("google_api_client", {
     defaultValue: this.apiClients[0],
   });
 
   constructor() {
-    super(GoogleLanguages);
+    super({
+      languages: GoogleLanguages,
+    });
   }
 
-  getFullPageTranslationUrl(pageUrl: string, lang: string): string {
-    return `https://translate.google.com/translate?tl=${lang}&u=${pageUrl}`
+  get apiUrl() {
+    const domain = googleApiDomain.get();
+    return this.publicUrl.replace(".com", "." + domain);
   }
 
   // try to use next available api-client if google has blocked the traffic
   protected async refreshApiClient() {
     await delay(1000);
 
-    var apiClient = this.apiClient.get();
-    var index = this.apiClients.findIndex(client => client === apiClient);
-    var nextApiClient = this.apiClients[index + 1] ?? this.apiClients[0];
+    const apiClient = this.apiClient.get();
+    const index = this.apiClients.findIndex(client => client === apiClient);
+    const nextApiClient = this.apiClients[index + 1] ?? this.apiClients[0];
     this.apiClient.set(nextApiClient);
 
     this.logger.info("google api client refreshed", {
@@ -42,17 +49,50 @@ class Google extends Translator {
 
   getAudioUrl(text: string, lang: string) {
     if (text.length > this.ttsMaxLength) return;
-    var textEncoded = encodeURIComponent(text);
-    var apiClient = this.apiClient.get();
+    const textEncoded = encodeURIComponent(text);
+    const apiClient = this.apiClient.get();
     return this.apiUrl + `/translate_tts?client=${apiClient}&ie=UTF-8&tl=${lang}&q=${textEncoded}`;
   }
 
+  async translateMany({ from: langFrom, to: langTo, texts }: TranslateParams): Promise<string[]> {
+    const queryParams = new URLSearchParams({
+      client: this.apiClient.get(),
+      sl: langFrom,
+      tl: langTo
+    });
+
+    const requestInit: ProxyRequestInit = {
+      method: "POST",
+      headers: {
+        "Content-type": "application/x-www-form-urlencoded"
+      },
+      body: new URLSearchParams(
+        texts.map(text => ["q", text])
+      ).toString(),
+    };
+
+    const url = `${this.apiUrl}/translate_a/t?${queryParams}`;
+    const response = await this.request({ url, requestInit });
+    const translations: string[] = [];
+
+    if (langFrom === "auto") {
+      const autoDetectedResults = response as [text: string, locale: string][];
+      translations.push(...autoDetectedResults.map(([text]) => text));
+    } else {
+      translations.push(...response as string[]);
+    }
+
+    return translations;
+  }
+
   async translate(params: TranslateParams): Promise<ITranslationResult> {
+    await googleApiDomain.load();
     await this.apiClient.load();
 
-    var { from: langFrom, to: langTo, text } = params;
-    var apiClientRefreshed = false;
-    var requestInit: ProxyRequestInit = {
+    const { from: langFrom, to: langTo, text } = params;
+    let apiClientRefreshed = false;
+
+    const requestInit: ProxyRequestInit = {
       method: "POST",
       headers: {
         "Content-type": "application/x-www-form-urlencoded"
@@ -72,13 +112,14 @@ class Google extends Translator {
         ["dt", "qca"],  // spelling correction
       ]).toString(),
     };
-    var request = async (): Promise<ITranslationResult> => {
-      var url = `${this.apiUrl}/translate_a/single`;
-      var result: GoogleTranslation = await this.request({ url, requestInit });
-      var { ld_result, sentences, dict, spell } = result;
-      var sourceLanguages = ld_result?.srclangs ?? [];
 
-      var translation: ITranslationResult = {
+    const request = async (): Promise<ITranslationResult> => {
+      const url = `${this.apiUrl}/translate_a/single`;
+      const result: GoogleTranslation = await this.request({ url, requestInit });
+      const { ld_result, sentences, dict, spell } = result;
+      const sourceLanguages = ld_result?.srclangs ?? [];
+
+      const translation: ITranslationResult = {
         langDetected: sourceLanguages[0] ?? result.src,
         translation: sentences.map(sentence => sentence.trans).join(''),
       };
@@ -132,6 +173,31 @@ class Google extends Translator {
     }
   }
 }
+
+export interface GoogleApiDomain {
+  domain: string;
+  title: string;
+}
+
+export const googleApiDomains: GoogleApiDomain[] = [
+  { domain: "com", title: "com (Default)" },
+  { domain: "ca", title: "ca (Canada)" },
+  { domain: "com.hk", title: "com.hk (香港)" },
+  { domain: "com.tr", title: "com.tr (Türkiye)" },
+  { domain: "com.tw", title: "com.tw (台湾)" },
+  { domain: "com.ua", title: "com.ua (Україна)" },
+  { domain: "com.vn", title: "com.vn (Việt Nam)" },
+  { domain: "co.in", title: "co.in (India)" },
+  { domain: "co.jp", title: "co.jp (日本)" },
+  { domain: "co.kr", title: "co.kr (한국)" },
+  { domain: "co.uk", title: "co.uk (UK)" },
+  { domain: "cn", title: "cn (中国)" },
+  { domain: "de", title: "de (Deutschland)" },
+  { domain: "fr", title: "fr (France)" },
+  { domain: "it", title: "it (Italia)" },
+  { domain: "pl", title: "pl (Polska)" },
+  { domain: "ru", title: "ru (Россия)" }
+];
 
 export interface GoogleTranslation {
   src: string // lang detected
@@ -199,4 +265,4 @@ export interface GoogleTranslation {
   }
 }
 
-Translator.registerVendor(Google);
+Translator.register(ProviderCodeName.GOOGLE, Google);

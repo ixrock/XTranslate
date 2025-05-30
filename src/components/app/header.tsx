@@ -1,21 +1,26 @@
 import "./header.scss";
 import React from "react";
-import { action } from "mobx";
+import { makeObservable } from "mobx";
 import { observer } from "mobx-react";
 import { cssNames } from "../../utils/cssNames";
-import { getManifest } from "../../extension";
-import { settingsStore } from '../settings/settings.storage'
-import { Tab, Tabs } from "../tabs";
+import { getTranslator } from "../../providers";
+import { getManifest, translateActivePage } from "../../extension";
+import { activeTabStorage, settingsStore } from '../settings/settings.storage'
+import { Tabs } from "../tabs";
 import { Icon } from "../icon";
 import { getUrlParams, navigate, PageId } from "../../navigation";
 import { pageManager } from "./page-manager";
 import { getMessage } from "../../i18n";
 import { SelectLocaleIcon } from "../select-locale";
 import { dialogsState } from "./dialogs-state";
-import { mellowtelOptOutTime } from "../../../mellowtel/mellowtel.storage";
 
 @observer
 export class Header extends React.Component {
+  constructor(props: object) {
+    super(props);
+    makeObservable(this);
+  }
+
   detachWindow = () => {
     chrome.windows.create({
       url: location.href,
@@ -28,21 +33,32 @@ export class Header extends React.Component {
     });
   }
 
-  onTabsChange = async (page: PageId) => {
-    await navigate({ page });
-    window.scrollTo(0, 0);
+  private translateActivePage = async () => {
+    await translateActivePage();
+    window.close();
   }
 
-  @action.bound
-  onSupport() {
-    dialogsState.showMellowtelDialog = true;
-    mellowtelOptOutTime.set(0);
+  private onTabsChange = async (page: PageId) => {
+    await navigate({ page });
+    window.scrollTo(0, 0);
   }
 
   render() {
     const { name, version } = getManifest();
     const { page: pageId } = getUrlParams();
-    const { useDarkTheme } = settingsStore.data;
+    const activeTab = activeTabStorage.get();
+    const { useDarkTheme, fullPageTranslation } = settingsStore.data;
+    const { provider, langTo, alwaysTranslatePages } = fullPageTranslation;
+    const isAutoTranslatingPage = alwaysTranslatePages.includes(new URL(activeTab.url || location.href).origin);
+
+    const translatePageActionTooltip = isAutoTranslatingPage
+      ? getMessage("context_menu_translate_full_page_context_menu_stop", {
+        site: `"${activeTab.title}" - ${activeTab.url}`,
+      })
+      : getMessage("context_menu_translate_full_page", {
+        lang: getTranslator(provider).langTo[langTo] ?? langTo,
+        pageTitle: activeTab.title,
+      });
 
     return (
       <div className="Header">
@@ -50,6 +66,13 @@ export class Header extends React.Component {
           <div className="app-title box grow">
             {name} <sup className="app-version">{version}</sup>
           </div>
+          <Icon
+            small
+            material="g_translate"
+            active={isAutoTranslatingPage}
+            tooltip={translatePageActionTooltip}
+            onClick={this.translateActivePage}
+          />
           <Icon
             small
             svg="moon"
@@ -70,12 +93,6 @@ export class Header extends React.Component {
             tooltip={{ nowrap: true, children: getMessage("import_export_settings") }}
             onClick={() => dialogsState.showImportExportDialog = true}
           />
-          {/*<Icon
-            small
-            material="support"
-            tooltip={{ nowrap: true, children: getMessage("donate_title") }}
-            onClick={this.onSupport}
-          />*/}
           <SelectLocaleIcon/>
         </header>
         <Tabs className="Tabs" value={pageId} onChange={this.onTabsChange}>

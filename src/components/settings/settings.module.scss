@@ -1,28 +1,66 @@
+@use "../mixins" as *;
+
 .Settings {
-  &, > article {
+  display: flex;
+  flex-direction: column;
+  gap: var(--theme-spacing);
+  align-items: flex-start;
+
+  > * {
     display: flex;
-    flex-direction: column;
-    gap: var(--theme-spacing);
+    width: 100%;
   }
 
   .grid {
     display: grid;
     gap: var(--theme-spacing);
-    grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    justify-items: start;
 
     &:first-child {
       padding-right: var(--theme-spacing-double);
     }
   }
 
-  .vendors {
-    margin-right: var(--theme-spacing-double);
-    display: flex;
-    flex-direction: column;
-    gap: var(--theme-spacing-half);
+  .inline {
+    width: auto;
   }
 
-  .vendorSkippedInRotation {
+  .providers {
+    display: flex;
+    flex-direction: column;
+    gap: var(--theme-spacing);
+    padding: var(--theme-spacing) 0;
+  }
+
+  .providerSelect {
+    min-width: 100px;
+  }
+
+  .providerSettings {
+    display: flex;
+    gap: var(--theme-spacing);
+    font-size: small;
+  }
+
+  .provider {
+    position: relative;
+  }
+
+  .providerUrl {
+    flex: 0 1 auto;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .showAdvanced {
+    @include pseudo-link;
+    font-size: small;
+    width: auto;
+  }
+
+  .providerSkipRotation {
     opacity: .75;
     text-decoration: line-through;
   }

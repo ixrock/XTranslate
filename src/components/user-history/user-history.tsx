@@ -5,8 +5,8 @@ import groupBy from "lodash/groupBy";
 import orderBy from "lodash/orderBy";
 import { action, computed, makeObservable, observable, reaction, runInAction } from "mobx";
 import { observer } from "mobx-react";
-import { bindGlobalHotkey, cssNames, disposer, fuzzyMatch, isHotkeyPressed, prevDefault, SimpleHotkey } from "../../utils";
-import { getTranslator, getTranslators, isRTL } from "../../vendors";
+import { bindGlobalHotkey, cssNames, disposer, fuzzyMatch, isHotkeyPressed, SimpleHotkey } from "../../utils";
+import { ProviderCodeName } from "../../providers";
 import { Checkbox } from "../checkbox";
 import { Menu, MenuItem } from "../menu";
 import { FileInput, ImportingFile, NumberInput, SearchInput } from "../input";
@@ -14,16 +14,15 @@ import { Option, Select } from "../select";
 import { Button } from "../button";
 import { settingsStore } from "../settings/settings.storage";
 import { pageManager } from "../app/page-manager";
-import { clearHistoryItem, exportHistory, HistoryRecord, historyStorage, HistoryTranslation, IHistoryItem, IHistoryItemId, IHistoryStorageItem, importHistory, toHistoryItem } from "./history.storage";
+import { exportHistory, HistoryRecord, historyStorage, IHistoryItem, IHistoryItemId, IHistoryStorageItem, importHistory, ProviderHistoryRecord, toHistoryItem } from "./history.storage";
 import { Icon } from "../icon";
 import { Tab } from "../tabs";
 import { Spinner } from "../spinner";
 import { Notifications } from "../notifications";
 import { getMessage } from "../../i18n";
-import { iconMaterialFavorite, iconMaterialFavoriteOutlined, isMac } from "../../common-vars";
-import { saveToFavoritesAction } from "../../extension";
-import { favoritesStorage, isFavorite, removeFavorite } from "./favorites.storage";
-import { getTranslationPageUrl, navigate } from "../../navigation";
+import { isMac, materialIcons } from "../../common-vars";
+import { favoritesStorage } from "./favorites.storage";
+import { UserHistoryItem } from "./user-history-item";
 
 enum HistoryTimeFrame {
   HOUR = "hour",
@@ -114,14 +113,14 @@ export class UserHistory extends React.Component {
     // convert history items to runtime format (instead of more compressed storage-type format)
     Object.entries(translations).forEach(([itemId, translationsByVendor]) => {
       items[itemId] = Object.fromEntries(
-        Object.entries(translationsByVendor).map(([vendor, storageItem]) => {
-          const isFavorite = favorites[itemId]?.[vendor];
+        Object.entries(translationsByVendor).map(([providerName, storageItem]: [ProviderCodeName, IHistoryStorageItem]) => {
+          const isFavorite = favorites[itemId]?.[providerName];
 
           if (this.showOnlyFavorites && !isFavorite) {
             return;
           }
 
-          return [vendor, toHistoryItem(storageItem)];
+          return [providerName, toHistoryItem(storageItem)];
         }).filter(Boolean)
       );
     });
@@ -129,8 +128,8 @@ export class UserHistory extends React.Component {
     return items;
   }
 
-  @computed get itemsListSorted(): HistoryTranslation[] {
-    let items: HistoryTranslation[] = Object.values(this.items)
+  @computed get itemsListSorted(): ProviderHistoryRecord<IHistoryItem>[] {
+    let items: ProviderHistoryRecord<IHistoryItem>[] = Object.values(this.items)
       // has at least one result from translation vendor
       .filter(translation => Object.values(translation).length > 0);
 
@@ -146,14 +145,14 @@ export class UserHistory extends React.Component {
     )
   }
 
-  @computed get itemsGroupedByDay(): Map<number/*day*/, { [vendor: string]: IHistoryItem }[]> {
-    var items = this.itemsListSorted
+  @computed get itemsGroupedByDay(): Map<number/*day*/, ProviderHistoryRecord<IHistoryItem>[]> {
+    const items = this.itemsListSorted
       .slice(0, this.pageSize)
       // skip: might be empty after manual removing (to avoid invalid-date in lodash.groupBy)
       .filter(translations => Object.values(translations).length > 0);
 
     // group items per day
-    var itemsPerDay = groupBy(items, translations => {
+    const itemsPerDay = groupBy(items, translations => {
       const creationTimes = Object.values(translations).map(item => item.date);
       if (!creationTimes.length) return;
       const latestTime = Math.max(...creationTimes);
@@ -191,7 +190,7 @@ export class UserHistory extends React.Component {
     return searchResults.map(([itemId]) => itemId);
   }
 
-  private highlightSearch(text: string): string {
+  private highlightSearch = (text: string): string => {
     if (!this.searchText) {
       return text;
     }
@@ -213,7 +212,7 @@ export class UserHistory extends React.Component {
   }
 
   toggleDetails(itemId: IHistoryItemId) {
-    var { detailsVisible: map } = this;
+    const { detailsVisible: map } = this;
     if (map.has(itemId)) {
       map.delete(itemId);
     } else {
@@ -224,7 +223,7 @@ export class UserHistory extends React.Component {
   @action
   clearItemsByTimeFrame = () => {
     let items: { id: IHistoryItemId, date: number }[] = this.itemsListSorted
-      .map((translation: HistoryTranslation) => ({
+      .map((translation: ProviderHistoryRecord<IHistoryItem>) => ({
         id: Object.values(translation)[0].id,
         date: Math.max(...Object.values(translation).map(item => item.date)),
       }));
@@ -275,143 +274,37 @@ export class UserHistory extends React.Component {
               <div className="history-date">
                 {new Date(dayTime).toDateString()}
               </div>
-              {translations.map((translation: HistoryTranslation) => {
-                const items = Object.values(translation);
-                if (!items.length) return; // might be empty group after manual item remove
-
-                const historyElem = React.createRef<HTMLDivElement>();
-                const itemGroupId = items[0]?.id; // ID is the same for whole group
-                const isOpened = this.detailsVisible.has(itemGroupId);
-
-                const onEnterKey = (evt: React.KeyboardEvent) => {
-                  if (!isHotkeyPressed({ key: "Enter" }, evt)) return;
-
-                  if (evt.target === historyElem.current) {
-                    this.toggleDetails(itemGroupId);
-                  }
-                };
+              {translations.map((translation: ProviderHistoryRecord<IHistoryItem>) => {
+                const historyItems = Object.values(translation);
+                if (!historyItems.length) {
+                  return; // might be empty group after manual items remove
+                }
+                const groupId = historyItems[0]?.id; // ID is the same for the whole group
+                const isOpened = this.detailsVisible.has(groupId);
+                const toggleGroup = () => this.toggleDetails(groupId);
 
                 return (
                   <div
-                    key={itemGroupId}
-                    className={cssNames("history-items", { isOpened })}
-                    onClick={() => this.toggleDetails(itemGroupId)}
-                    tabIndex={0} // make focusable via keyboard
-                    onKeyDown={onEnterKey}
-                    ref={historyElem}
+                    key={groupId}
+                    className={`history-items ${cssNames({ isOpened })}`}
+                    tabIndex={0} // make focusable
+                    onClick={toggleGroup}
+                    onKeyDown={(evt) => isHotkeyPressed({ key: "Enter" }, evt) && toggleGroup()}
                   >
-                    {getTranslators().map(vendor => {
-                      const item = translation[vendor.name];
-                      if (!item) return; // no results for this translation service yet
-                      return <React.Fragment key={item.vendor}>{this.renderHistoryItem(item)}</React.Fragment>
-                    })}
+                    {historyItems.map(item => (
+                      <UserHistoryItem
+                        key={item.vendor}
+                        item={item}
+                        showDetails={this.detailsVisible.has(item.id)}
+                        highlightSearch={this.highlightSearch}
+                      />
+                    ))}
                   </div>
                 )
               })}
             </React.Fragment>
           )
         })}
-      </div>
-    );
-  }
-
-  renderHistoryItem(item: IHistoryItem): React.ReactNode {
-    var { id: itemId, vendor, from: langFrom, to: langTo, text, translation, transcription, dictionary } = item;
-    var showDetails = this.detailsVisible.has(itemId);
-    var translator = getTranslator(vendor);
-    var favorite = isFavorite(item);
-
-    var clearItem = prevDefault(() => {
-      removeFavorite(item);
-      clearHistoryItem(itemId, vendor);
-    });
-
-    var toggleFavorite = prevDefault(() => {
-      saveToFavoritesAction(item, { isFavorite: !favorite });
-    });
-
-    const sourceTextUrl = getTranslationPageUrl({ vendor, from: langFrom, to: langTo, text });
-    const reverseTranslationUrl = getTranslationPageUrl({ vendor, from: langTo, to: langFrom, text: translation });
-
-    return (
-      <div className={`history-item ${cssNames({ showDetails })}`}>
-        {showDetails && (
-          <small className="translation-service-info">
-            <span className="translation-vendor">{translator.title} </span>
-            <span className="translation-direction">{translator.getLangPairTitle(langFrom, langTo)}</span>
-          </small>
-        )}
-        <div className="main-info flex gaps align-center">
-          <div className="text box grow flex gaps align-center">
-            {showDetails && (
-              <Icon
-                className="icons tts"
-                material="play_circle_outline"
-                onClick={prevDefault(() => translator.speak(langFrom, text))}
-              />
-            )}
-            <div className="source-text">
-              <a
-                href={sourceTextUrl}
-                onClick={prevDefault(() => navigate(sourceTextUrl))}
-                dangerouslySetInnerHTML={{ __html: this.highlightSearch(text) }}
-              />
-            </div>
-            {transcription ? <span className="transcription">({transcription})</span> : null}
-          </div>
-          <div className={cssNames("translation box grow", { rtl: isRTL(langTo) })}>
-            <a
-              href={reverseTranslationUrl}
-              onClick={prevDefault(() => navigate(reverseTranslationUrl))}
-              dangerouslySetInnerHTML={{ __html: this.highlightSearch(translation) }}
-            />
-          </div>
-          <Icon
-            className="icons favorites"
-            material={favorite ? iconMaterialFavorite : iconMaterialFavoriteOutlined}
-            onClick={toggleFavorite}
-          />
-          <Icon
-            material="remove_circle_outline"
-            className="icons remove-icon"
-            onClick={clearItem}
-          />
-        </div>
-
-        {showDetails && dictionary.length > 0 && (
-          <div className="details flex gaps auto">
-            {dictionary.map(dict => {
-              var wordType = dict.wordType;
-              return (
-                <div key={wordType} className={cssNames("dictionary", { rtl: isRTL(item.to) })}>
-                  <b className="word-type">{wordType}</b>
-                  <div className="translations">
-                    {dict.translation.map((wordTranslation, index, list) => {
-                      const isLastItem = index === list.length - 1;
-                      const reverseTranslationUrl = getTranslationPageUrl({
-                        vendor: vendor,
-                        from: langTo,
-                        to: langFrom,
-                        text: wordTranslation,
-                      })
-
-                      return [
-                        <a
-                          key={wordTranslation}
-                          href={reverseTranslationUrl}
-                          onClick={prevDefault(() => navigate(reverseTranslationUrl))}>
-                          {wordTranslation}
-                        </a>,
-
-                        !isLastItem ? ", " : "",
-                      ];
-                    }).flat()}
-                  </div>
-                </div>
-              )
-            })}
-          </div>
-        )}
       </div>
     );
   }
@@ -466,7 +359,7 @@ export class UserHistory extends React.Component {
             />
             <Icon
               className="favorites"
-              material={showOnlyFavorites ? iconMaterialFavorite : iconMaterialFavoriteOutlined}
+              material={showOnlyFavorites ? materialIcons.favorite : materialIcons.unfavorite}
               active={showOnlyFavorites}
               tooltip={getMessage("history_show_favorites_only")}
               onClick={() => this.showOnlyFavorites = !showOnlyFavorites}
@@ -566,7 +459,7 @@ export class UserHistory extends React.Component {
         {this.renderHeader()}
         {this.renderHistory()}
         {this.hasMore && (
-          <div className="load-more flex center">
+          <div className="load-more flex justify-center">
             <Button
               primary label={getMessage("history_button_show_more")}
               onClick={() => this.page++}

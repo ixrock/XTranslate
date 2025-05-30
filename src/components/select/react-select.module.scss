@@ -1,0 +1,78 @@
+@use "../mixins" as *;
+
+.ReactSelect {
+  .placeholder {
+    white-space: nowrap;
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .menuList {
+    @include custom-scrollbar($overlay: true) {
+      --theme-scrollbar-size: 7px;
+    }
+    overflow-x: hidden;
+  }
+
+  // clickable arrow indicator
+  .dropdownIndicator {
+    padding: var(--theme-spacing-half);
+
+    svg {
+      color: var(--theme-color-text);
+    }
+  }
+
+  .inputContainer,
+  .singleValue {
+    color: var(--theme-color-text);
+  }
+
+  // clickable input view
+  .control {
+    border: 1px solid currentColor;
+    min-height: 32px;
+    box-shadow: none;
+    background: var(--theme-bgc);
+
+    &:focus-within {
+      border-color: var(--theme-color-primary);
+    }
+  }
+
+  .menu {
+    background: var(--theme-bgc);
+    border: 1px solid var(--theme-border-color);
+
+    &.menuNoWrap {
+      min-width: 100%;
+      width: max-content;
+    }
+
+    &.menuRight {
+      right: 0;
+    }
+  }
+
+  .option {
+    color: var(--theme-color-text);
+    padding: var(--theme-spacing-half);
+
+    &:active, &:hover,
+    &:is(:global(.XTranslateReactSelect__option--is-focused)) {
+      color: white;
+      background: var(--theme-color-primary);
+    }
+
+    &:is(:global(.XTranslateReactSelect__option--is-selected)) {
+      color: var(--theme-color-text);
+      background: initial;
+      opacity: .75;
+    }
+
+    &:is(:global(.XTranslateReactSelect__option--is-disabled)) {
+      opacity: .75;
+      cursor: not-allowed;
+    }
+  }
+}

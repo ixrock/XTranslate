@@ -1,14 +1,16 @@
 XTranslate
 ==========
-Chrome-extension for translating foreign languages at the viewing web page context.
+Chrome-extension for translating foreign languages at the viewing web-page context.
 Translate from 100+ foreign languages to your native directly on web-site you're reading or
 insert text in the action window (via extension's icon on chrome's toolbar).
 
 ![Screenshot](https://github.com/ixrock/XTranslate/blob/master/screenshots/Untitled-1.jpg?raw=true)
+Latest and more [screenshots](./screenshots/README.md).
 
 Features:
 -----------
 1) Many ways to get translation from texts within web page:
+- full-page text translations: enable/disable auto-translation for full webpage, applied per domain (toggle via browser's context-menu per tab or extension's window top-icon)
 - double-click on the word
 
 Select text and get translation right after one of the following actions:
@@ -30,7 +32,7 @@ In order to work with local files (e.g. `file://path/to/file.pdf`) you must allo
 - open extensions page `chrome://extensions/`, find **XTranslate** and click **(Details)** button
 - enable checkbox **"Allow access to file URLs"** 
 
-2) Listen text-to-speech (TTS) for all supported translation vendors
+2) Listen text-to-speech (TTS) for supported translation providers (e.g. `Google`, `OpenAI`)
 
 3) Create your unique design (theme) for the popup with translation results
 
@@ -49,15 +51,14 @@ Install extension:
 * [Microsoft Edge Add-ons](https://microsoftedge.microsoft.com/addons/detail/cinfaflgbaachkaamaeglolofeahelkd)
 * [Firefox addons](https://addons.mozilla.org/en-GB/firefox/addon/xtranslate-chrome/) _(partially supported)_
 
-Available translation vendors:
+Available translation providers:
 -----------
 * [Google](http://translate.google.com/)
-* [Yandex](http://translate.yandex.com/)
 * [Bing](http://bing.com/translator/)
 * [DeepL](https://www.deepl.com/) _(requires own user key, register at https://www.deepl.com/en/signup/)_
-* [DeepSeek](https://platform.deepseek.com) _(register, top-up balance and create api-key)_
-* [OpenAI (ChatGPT)](https://platform.openai.com) _(see registration steps below)_
+* [OpenAI](https://platform.openai.com) _(see registration steps below)_
 * [Grok](https://grok.com) _(create account at https://console.x.ai, top-up balance and provide api-key)_
+* [DeepSeek](https://platform.deepseek.com) _(register, top-up balance and create api-key)_
 
 Steps for access OpenAI translations:
 ------

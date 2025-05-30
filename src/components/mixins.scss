@@ -63,3 +63,10 @@
     border-bottom-style: solid;
   }
 }
+
+@mixin bold-link($thickness: 2px, $offset: 2px) {
+  text-decoration: underline;
+  text-underline-position: from-font;
+  text-decoration-thickness: $thickness;
+  text-underline-offset: $offset;
+}

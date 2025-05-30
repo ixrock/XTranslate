@@ -1,5 +1,6 @@
 import { createObservableHistory } from "mobx-observable-history";
 import { createTab, getManifest, getURL, isOptionsPage } from "./extension";
+import type { ProviderCodeName } from "./providers";
 
 export const navigation = createObservableHistory(); // not available in service-worker aka "background page"
 
@@ -12,7 +13,7 @@ export interface NavigationParams {
 
 export interface TranslationPageParams extends NavigationParams {
   page: "translate";
-  vendor: string; // "google" | "yandex" | "bing" | "deepl"
+  provider: ProviderCodeName;
   from: string; // source language
   to: string; // target language
   text: string;

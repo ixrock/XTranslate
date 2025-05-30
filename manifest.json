@@ -1,7 +1,7 @@
 {
   "name": "XTranslate",
   "description": "__MSG_short_description__",
-  "version": "4.6.5",
+  "version": "5.0.10",
   "manifest_version": 3,
   "default_locale": "en",
   "browser_specific_settings": {
@@ -38,9 +38,9 @@
   },
   "content_scripts": [
     {
-      "all_frames": true,
+      "all_frames": false,
       "run_at": "document_start",
-      "js": ["content-script.js"],
+      "js": ["content-script-entry.js"],
       "matches": [
         "<all_urls>",
         "https://*/*",

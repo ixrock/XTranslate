@@ -33,14 +33,12 @@ export_settings_button_label = 匯出設定
 import_settings_button_label = 匯入設定
 import_incorrect_file_format = 檔案格式不正確（應為 { $fileNameJson }）
 imported_setting_successful = 已成功匯入鍵值為 { $key } 的設定
-show_context_menu = 顯示在頁面上下文選單中
 display_icon_near_selection = 在選中文本附近顯示圖示
 show_tts_icon_inside_popup = 顯示語音合成圖示
 show_next_vendor_icon_in_popup = 顯示下個翻譯器圖示
 show_copy_translation_icon = 顯示複製翻譯圖示
 show_save_as_favorite_icon = 顯示保存為收藏圖示
 show_close_popup_button = 在右上角顯示關閉彈出框按鈕
-show_close_popup_button_title = 關閉
 show_detected_language_block = 顯示檢測到的語言
 display_on_click_by_selected_text = 點擊選取文字後顯示
 display_popup_after_text_selected = 選擇文字後即時顯示
@@ -130,7 +128,7 @@ history_import_success = 成功匯入 { $itemsCount } 條歷史記錄
 history_import_file_error = 讀取檔案 '{ $fileName }' 錯誤：{ $errorInfo }
 
 # 上下文選單
-context_menu_translate_full_page = 使用 { $translator } 翻譯整頁
+context_menu_translate_full_page = 翻譯成 { $lang }
 context_menu_translate_selection = 使用 { $translator } 翻譯 { $selection }
 
 # 其他
@@ -179,31 +177,11 @@ mellowtel_dialog_footer = 感謝您花時間閱讀，開發團隊 { $devs }。
 error_403_auth_failed = 授權失敗。請在設定中提供有效的 API 金鑰
 
 # OpenAI 整合
-open_ai_get_access_info = 1）在 platform.openai.com 註冊 2）創建 API 訪問金鑰 3）充值您的帳戶餘額（5 美元以上）
-open_ai_insert_auth_key = 提供您的 API 金鑰以獲得 OpenAI 翻譯
-open_ai_insert_auth_key_warning = 警告：請勿在此擴充功能視窗以外的任何地方輸入您的 API 金鑰
-open_ai_insert_auth_key_remove = 移除 OpenAI API 金鑰
-open_ai_choose_model = 選擇 AI 模型
-open_ai_choose_model_cost_efficient = 最具成本效益
-open_ai_choose_model_optimal = 推薦模型
-open_ai_choose_model_best_results = 最佳結果（最昂貴）
-open_ai_why_info_help =
-通過直接使用您自己的 OpenAI 平台帳戶並提供 API 金鑰，您可以節省大量金錢，而不是使用其他應用/擴充功能的“中間人”服務，
-  在那裡您通常需要支付每月/每年的訂閱費，所有價格和使用限制都不在您的控制範圍內。
-  不要忘記在 platform.openai.com 上調整使用限制，並禁用信用卡的自動充值餘額。
+ai_choose_model = 選擇 AI 模型
+ai_choose_model_cost_effective = 最具成本效益
+ai_choose_model_recommended = 推薦模型
+ai_choose_model_best_results = 最佳結果（最昂貴）
 
 # PDF 翻譯支援通過 pdf.js
 pdf_use_custom_viewer = 支援 PDF 文件翻譯
 pdf_use_custom_viewer_info = 此選項將替換預設的 PDF 檢視器
-
-# DeepSeek AI integration (ZH_TW)
-deepseek_get_own_key_info=在 platform.deepseek.com 註冊並充值餘額（例如通過 PayPal）
-deepseek_auth_key=在 DeepSeek 平台建立 API 存取金鑰，並將其保存於此設定中
-deepseek_auth_key_warning=警告：請勿將您的 API 金鑰輸入至此擴展視窗以外的任何地方
-deepseek_auth_key_remove=刪除 DeepSeek API 金鑰
-
-# Grok AI integration (ZH_TW)
-grok_ai_get_own_key_info = 在 console.x.ai 註冊並充值餘額（例如通過信用卡）
-grok_ai_auth_key = 在 Grok (X) 平台創建 API 密鑰以獲取 API 訪問權限
-grok_ai_auth_key_warning = 警告：請勿在此擴展窗口以外的任何地方輸入您的 API 密鑰
-grok_ai_auth_key_remove = 移除 Grok API 密鑰
