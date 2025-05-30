@@ -7,9 +7,10 @@
 
 [data-xtranslate-tooltip] {
   @include theme-vars;
-  position: relative;
 
   &:hover {
+    position: relative;
+    overflow: initial;
     text-decoration: underline;
     text-decoration-style: dotted;
 

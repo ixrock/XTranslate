@@ -26,9 +26,11 @@ export class ContentScript extends React.Component {
   static window: Window;
   static rootElem: HTMLElement;
   static rootNode: Root;
+  static globalCssStyles: string;
 
   static async init(window: Window = globalThis.window.self) {
     await preloadAppData(); // wait for dependent data before first render
+    await this.preloadGlobalStyles();
 
     ContentScript.window = window;
     ContentScript.rootElem = window.document.createElement("div");
@@ -42,20 +44,15 @@ export class ContentScript extends React.Component {
     window.document.documentElement.appendChild(appElem);
     ContentScript.rootNode = rootNode;
 
-    const cssUrl = await this.getGlobalCssUrl();
-    appRootNode.render(<link rel="stylesheet" href={cssUrl}/>);
+    appRootNode.render(<style type="text/css">{this.globalCssStyles}</style>);
     rootNode.render(<ContentScript/>);
   }
 
-  static async getGlobalCssUrl(): Promise<string> {
-    const globalDomStyles = await proxyRequest<string>({
+  static async preloadGlobalStyles() {
+    this.globalCssStyles = await proxyRequest<string>({
       url: getURL(`${contentScriptEntry}.css`),
       responseType: ProxyResponseType.TEXT,
     });
-
-    return URL.createObjectURL(
-      new Blob([globalDomStyles], { type: "text/css" }),
-    );
   }
 
   constructor(props: object) {
@@ -100,10 +97,23 @@ export class ContentScript extends React.Component {
 
   componentDidMount() {
     this.bindEvents();
+    this.applyShadowDomGlobalStyles();
 
     if (this.pageTranslator.isAlwaysTranslate(location.href)) {
       this.startPageAutoTranslation();
     }
+  }
+
+  private getShadowDomElements(rootElem = document.body) {
+    return Array.from(rootElem.querySelectorAll("*")).filter(elem => elem.shadowRoot) as HTMLElement[];
+  }
+
+  private applyShadowDomGlobalStyles() {
+    this.getShadowDomElements().forEach(({ shadowRoot }) => {
+      const style = new CSSStyleSheet();
+      style.replaceSync(ContentScript.globalCssStyles);
+      shadowRoot.adoptedStyleSheets.push(style);
+    });
   }
 
   private bindEvents() {
