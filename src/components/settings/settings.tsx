@@ -314,13 +314,6 @@ export class Settings extends React.Component {
         </div>
 
         <SubTitle>{getMessage("settings_title_appearance")}</SubTitle>
-        <Checkbox
-          className={styles.inline}
-          label={getMessage("pdf_use_custom_viewer")}
-          tooltip={getMessage("pdf_use_custom_viewer_info")}
-          checked={settings.customPdfViewer}
-          onChange={v => settings.customPdfViewer = v}
-        />
         <div className="flex gaps">
           <Checkbox
             label={getMessage("display_icon_near_selection")}
