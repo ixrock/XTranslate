@@ -1,4 +1,5 @@
 import React from "react";
+import { observer } from "mobx-react";
 import startCase from "lodash/startCase";
 import { cssNames, prevDefault } from "../../utils";
 import { getTranslator, isRTL, Translator } from "../../providers";
@@ -15,7 +16,7 @@ export interface UserHistoryItemProps {
   highlightSearch(text: string): string;
 }
 
-export function UserHistoryItem({ item, showDetails, highlightSearch }: UserHistoryItemProps) {
+export const UserHistoryItem = observer(({ item, showDetails, highlightSearch }: UserHistoryItemProps) => {
   const { id: itemId, vendor, from: langFrom, to: langTo, text, translation, transcription, dictionary } = item;
   const translator = getTranslator(vendor);
   const favorite = isFavorite(item);
@@ -113,4 +114,4 @@ export function UserHistoryItem({ item, showDetails, highlightSearch }: UserHist
       )}
     </div>
   );
-}
+});

@@ -42,7 +42,7 @@ export function createStorage<T>(key: string, options: ChromeStorageHelperOption
   if (isBackgroundWorker()) {
     listenExternalStorageChanges(area, (changes) => {
       if (key in changes) {
-        logger.info("BACKGROUND SYNC", changes[key]);
+        logger.info(`BACKGROUND SYNC "${key}"`, changes[key]);
         storageHelper.sync(changes[key] as T);
       }
     });
@@ -50,12 +50,13 @@ export function createStorage<T>(key: string, options: ChromeStorageHelperOption
 
   // sync storage updates for options-page (app) and content-script pages
   onMessage(MessageType.STORAGE_DATA_SYNC, async (payload: StorageSyncPayload<T>) => {
+    const msgOrigin = StorageHelper.getResourceOrigin();
     const { key: evtKey, area: evtArea, state } = payload;
     const storageKeyMatched = evtKey === key;
     const isSameArea = evtArea === area;
 
     if (storageKeyMatched && isSameArea) {
-      logger.info("PAGE SYNC", payload);
+      logger.info(`PAGE SYNC "${key}" at ${msgOrigin}`, payload);
       storageHelper.sync(state);
     }
   });

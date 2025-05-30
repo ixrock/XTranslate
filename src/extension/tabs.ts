@@ -1,6 +1,6 @@
 // Chrome tabs apis
 import { Message } from './messages'
-import { sendMessage } from "./runtime";
+import { isRuntimeConnectionFailedError, sendMessage } from "./runtime";
 import { isSystemPage } from "../common-vars";
 
 export type BrowserTab = chrome.tabs.Tab;
@@ -18,7 +18,7 @@ export async function sendMessageToTabs<P>(message: Message<P>, params: { filter
 
   return Promise.allSettled(
     tabs
-      .filter(params.filter ?? ((tab) => !isSystemPage(tab.url)))
+      .filter(params.filter ?? (() => true))
       .map(tab => sendMessageToTab(tab.id, message))
   );
 }
@@ -50,18 +50,10 @@ export interface BroadcastMessageParams {
  * Broadcast message to all window tabs (context pages) and extension windows (options page)
  */
 export async function broadcastMessage<T>(msg: Message<T>, { acceptFilter }: BroadcastMessageParams = {}) {
-  acceptFilter ??= (tab) => !isSystemPage(tab.url);
-
-  const activeTab = await getActiveTab();
-
-  if (acceptFilter(activeTab)) {
-    try {
-      await sendMessage<T>(msg);
-    } catch (err) {
-      if (!String(err).includes("Could not establish connection. Receiving end does not exist.")) {
-        throw err;
-      }
-    }
+  try {
+    await sendMessage<T>(msg); // send a message to background service-worker (if called from webpage)
+  } catch (err) {
+    if (!isRuntimeConnectionFailedError(err)) throw err;
   }
 
   return sendMessageToTabs<T>(msg, {
