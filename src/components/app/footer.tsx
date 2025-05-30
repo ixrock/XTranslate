@@ -1,11 +1,14 @@
 import "./footer.scss"
 import React from "react";
 import { observer } from "mobx-react";
-import { getExtensionUrl, paypalLink } from "../../common-vars";
+import { getExtensionUrl } from "../../common-vars";
 import { prevDefault } from '../../utils'
 import { getManifest } from '../../extension'
 import { getMessage } from "../../i18n";
 import { Icon } from "../icon";
+import { dialogsState } from "./dialogs-state";
+import { mellowtelOptOutTime } from "../../../mellowtel";
+import { action } from 'mobx';
 
 interface ShareIcon {
   title: string
@@ -41,6 +44,12 @@ export class Footer extends React.Component {
     });
   }
 
+  @action.bound
+  supportDevelopers() {
+    dialogsState.showMellowtelDialog = true;
+    mellowtelOptOutTime.set(0);
+  }
+
   render() {
     return (
       <div className="Footer flex gaps">
@@ -55,7 +64,7 @@ export class Footer extends React.Component {
             )
           })}
         </div>
-        <a className="support box right noshrink flex gaps align-center" href={paypalLink} target="_blank">
+        <a className="support box right noshrink flex gaps align-center" onClick={this.supportDevelopers}>
           <Icon material="rocket_launcher" small/>
           <span className="text">{getMessage("donate_title")}</span>
         </a>
