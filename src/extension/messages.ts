@@ -15,14 +15,11 @@ export enum MessageType {
   STORAGE_DATA_SYNC = "SYNC_STORAGE",
   AI_TRANSLATION = "AI_TRANSLATION",
   AI_TEXT_TO_SPEECH = "AI_TEXT_TO_SPEECH",
-  MELLOWTEL_STATUS = "MELLOWTEL_STATUS",
-  MELLOWTEL_ACTIVATE = "MELLOWTEL_ACTIVATE",
-  MELLOWTEL_DEACTIVATE = "MELLOWTEL_DEACTIVATE",
   INJECT_CONTENT_SCRIPT = "INJECT_CONTENT_SCRIPT",
   RUNTIME_ERROR_CONTEXT_INVALIDATED = "RUNTIME_ERROR_CONTEXT_INVALIDATED",
 }
 
-export interface Message<Payload = any /*json-serializable*/> {
+export interface Message<Payload = {}> {
   type: MessageType;
   tabId?: number;
   payload?: Payload;

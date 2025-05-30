@@ -7,7 +7,7 @@ import { refreshContentScripts } from "./scripting.bgc";
 
 const { INSTALL, UPDATE } = chrome.runtime.OnInstalledReason;
 
-export function onInstall() {
+export function installOrUpdateAppActions() {
   return onInstallExtension(async (reason) => {
     if (reason === INSTALL || isDevelopment) {
       await rateLastTimestamp.load();

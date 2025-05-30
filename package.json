@@ -40,7 +40,6 @@
   "dependencies": {
     "@fluent/bundle": "^0.19.1",
     "@fluent/dom": "^0.10.1",
-    "@mellowtel/module-meucci": "^1.0.0",
     "@types/chrome": "^0.0.322",
     "@types/hoist-non-react-statics": "^3.3.6",
     "@types/html-webpack-plugin": "^3.2.9",
@@ -66,7 +65,6 @@
     "js-md5": "^0.8.3",
     "lodash": "^4.17.21",
     "marked": "^15.0.11",
-    "mellowtel": "^1.6.2",
     "mini-css-extract-plugin": "^2.9.2",
     "mobx": "^6.13.7",
     "mobx-observable-history": "^2.0.3",

@@ -7,10 +7,11 @@
   .support {
     --flexGap: var(--theme-spacing-half) !important;
 
+    text-decoration: none;
     cursor: pointer;
 
     .text {
-      @include pseudo-link;
+      @include bold-link;
     }
   }
 }

@@ -2,7 +2,7 @@
 @use "../components/theme" as *;
 
 [data-xtranslate-tooltip]:hover [data-xtranslate-tooltip]::after {
-  z-index: 2;
+  z-index: 10001;
 }
 
 [data-xtranslate-tooltip] {
@@ -38,6 +38,6 @@
     width: 100%;
     min-width: min-content;
     max-width: max-content;
-    z-index: 1;
+    z-index: 10000;
   }
 }
