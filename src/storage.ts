@@ -1,4 +1,6 @@
-// Persistent storage helper
+// Isomorphic persistent storage layer (helper)
+// The utility can be used in any environment (background, content-page, etc.)
+// Sync data-state updates to extension-runtime and browser tabs via service-worker aka "background-script"
 
 import { createLogger } from "./utils/createLogger";
 import { StorageAdapter, StorageHelper, StorageHelperOptions } from "./utils/storageHelper";

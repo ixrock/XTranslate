@@ -5,7 +5,8 @@ import { observer } from "mobx-react";
 import { cssNames } from "../../utils/cssNames";
 import { getTranslator } from "../../providers";
 import { getManifest, translateActivePage } from "../../extension";
-import { activeTabStorage, settingsStore } from '../settings/settings.storage'
+import { activeTabStorage } from "../../background/tabs.bgc";
+import { settingsStore } from '../settings/settings.storage'
 import { Tabs } from "../tabs";
 import { Icon } from "../icon";
 import { getUrlParams, navigate, PageId } from "../../navigation";

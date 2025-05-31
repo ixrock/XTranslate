@@ -1,6 +1,14 @@
 import { runInAction } from "mobx";
-import { activeTabStorage } from "../components/settings/settings.storage";
+import { createStorage } from "../storage";
 import { getActiveTab } from "../extension";
+
+export const activeTabStorage = createStorage("active_tab", {
+  defaultValue: {
+    tabId: -1,
+    title: "",
+    url: "",
+  },
+});
 
 export function initActiveTabWatcher() {
   async function onTabActivated(info: chrome.tabs.TabActiveInfo) {
