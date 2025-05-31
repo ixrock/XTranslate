@@ -1,9 +1,9 @@
 import AILanguagesList from "./open-ai.json"
 import { DeepSeekAIModel, ITranslationResult, ProviderCodeName, TranslateParams, Translator } from "./index";
 import { createStorage } from "../storage";
-import { aiTranslateAction } from "../background/open-ai.bgc";
+import { aiTranslateAction } from "../background/ai.bgc";
 
-class DeepSeekTranslator extends Translator {
+export class DeepSeekTranslator extends Translator {
   public name = ProviderCodeName.DEEPSEEK;
   public title = "DeepSeek";
   public publicUrl = "https://platform.deepseek.com/";

@@ -1,16 +1,39 @@
 import OpenAI from "openai";
-import type { ResponseFormatJSONObject } from "openai/resources";
-import { getTranslator, ITranslationError, ITranslationResult, ProviderCodeName, TranslateParams } from "../providers";
+import { z, TypeOf } from "zod";
+import { zodTextFormat } from "openai/helpers/zod";
+import { getTranslator, ITranslationError, ITranslationResult, ProviderCodeName } from "../providers";
 import { createLogger, disposer } from "../utils";
 import { AITranslatePayload, isBackgroundWorker, MessageType, onMessage, OpenAITextToSpeechPayload, sendMessage } from "../extension";
 
-const logger = createLogger({ systemPrefix: "AI_TRANSLATION(helper)" });
+export const loggerAI = createLogger({ systemPrefix: "AI" });
 
-export function listenAIRequests() {
+export function listenOpenAIRequests() {
   return disposer(
-    onMessage(MessageType.AI_TRANSLATION, translateText),
-    onMessage(MessageType.AI_TEXT_TO_SPEECH, textToSpeech),
+    onMessage(MessageType.OPENAI_TRANSLATION, translateText),
+    onMessage(MessageType.OPENAI_TEXT_TO_SPEECH, textToSpeech),
   );
+}
+
+export async function openAiTranslateAction(payload: AITranslatePayload): Promise<ITranslationResult> {
+  if (isBackgroundWorker()) {
+    return translateText(payload);
+  }
+
+  return sendMessage<AITranslatePayload, ITranslationResult>({
+    type: MessageType.OPENAI_TRANSLATION,
+    payload,
+  });
+}
+
+export async function openAiTextToSpeechAction(payload: OpenAITextToSpeechPayload): Promise<Uint8Array | number[]> {
+  if (isBackgroundWorker()) {
+    return textToSpeech(payload);
+  }
+
+  return sendMessage({
+    type: MessageType.OPENAI_TEXT_TO_SPEECH,
+    payload,
+  });
 }
 
 export function getAPI(params: { apiKey: string, provider: ProviderCodeName }) {
@@ -22,16 +45,15 @@ export function getAPI(params: { apiKey: string, provider: ProviderCodeName }) {
   });
 }
 
-export interface AITranslateTextResponse {
-  translation: string;
-  detectedLang: string;
-  transcription?: string;
-  spellCorrection?: string;
-}
+export type AITranslationResponse = TypeOf<typeof AITranslationJsonSchema>;
 
-/**
- * Text translation capabilities
- */
+export const AITranslationJsonSchema = z.object({
+  translation: z.string(),
+  detectedLang: z.string(),
+  transcription: z.string().nullable(),
+  spellCorrection: z.string().nullable(),
+});
+
 export async function translateText(params: AITranslatePayload): Promise<ITranslationResult> {
   const {
     provider,
@@ -43,28 +65,33 @@ export async function translateText(params: AITranslatePayload): Promise<ITransl
 
   const { apiKey, ...sanitizedParams } = params;
   const sanitizedText = text.trim();
-  const responseFormatJson: ResponseFormatJSONObject = { type: "json_object" };
-  const responseFormat = ![ProviderCodeName.GROK].includes(provider) ? responseFormatJson : undefined;
+
+  const systemPrompt = [
+    `You are a professional translation assistant with following rules:`,
+    `- Use ISO-639-1 for detected lang, e.g. "en", "fi"`,
+    `- Preserve markup, punctuation and line breaks`,
+  ].join("\n");
+
+  const userPrompt = [
+    `Source lang: ${sourceLanguage ?? "auto-detect"}`,
+    `Target lang: ${targetLanguage}`,
+    `Text:\n\n${sanitizedText}`
+  ].join("\n");
 
   try {
-    const { userPrompt, systemPrompt } = getTranslationPrompts({
-      from: sourceLanguage,
-      to: targetLanguage,
-      text: sanitizedText,
-    });
-    const response = await getAPI({ apiKey, provider: provider }).chat.completions.create({
+    const response = await getAPI({ apiKey, provider }).responses.parse({
       model,
-      n: 1,
       temperature: .95,
-      response_format: responseFormat,
-      messages: [
+      input: [
         { role: "system", content: systemPrompt },
         { role: "user", content: userPrompt },
       ],
+      text: {
+        format: zodTextFormat(AITranslationJsonSchema, "translation"),
+      }
     });
 
-    const data = JSON.parse(response.choices[0].message.content) as AITranslateTextResponse;
-    const { detectedLang, transcription, spellCorrection, translation } = data;
+    const { detectedLang, transcription, spellCorrection, translation } = response.output_parsed;
 
     const result: ITranslationResult = {
       vendor: provider,
@@ -78,23 +105,20 @@ export async function translateText(params: AITranslatePayload): Promise<ITransl
       dictionary: [],
     };
 
-    logger.info({ response, data, result, params: sanitizedParams });
-    return result;
+    loggerAI.info({ response, result, params: sanitizedParams });
 
+    return result;
   } catch (err) {
     const error: ITranslationError = {
       message: String(err),
       statusCode: err.statusCode || err.status,
     };
 
-    logger.error({ error, params: sanitizedParams });
+    loggerAI.error({ error, params: sanitizedParams });
     throw error;
   }
 }
 
-/**
- * Text-to-speech capabilities
- */
 export async function textToSpeech(params: OpenAITextToSpeechPayload): Promise<number[]> {
   const {
     apiKey, text, model, provider,
@@ -115,62 +139,4 @@ export async function textToSpeech(params: OpenAITextToSpeechPayload): Promise<n
   const transferableDataContainer = new Uint8Array(buffer);
 
   return Array.from(transferableDataContainer);
-}
-
-export async function aiTranslateAction(payload: AITranslatePayload): Promise<ITranslationResult> {
-  if (isBackgroundWorker()) {
-    return translateText(payload);
-  }
-
-  return sendMessage<AITranslatePayload, ITranslationResult>({
-    type: MessageType.AI_TRANSLATION,
-    payload,
-  });
-}
-
-export async function aiTextToSpeechAction(payload: OpenAITextToSpeechPayload): Promise<Uint8Array | number[]> {
-  if (isBackgroundWorker()) {
-    return textToSpeech(payload);
-  }
-
-  return sendMessage({
-    type: MessageType.AI_TEXT_TO_SPEECH,
-    payload,
-  });
-}
-
-export function getTranslationPrompts({ from: sourceLang, to: targetLang, text }: Partial<TranslateParams>) {
-  const systemPrompt = `
-  
-You are a professional translation assistant.
-Return EXACTLY one JSON object with the following shape:
-
-{
-  "translation":   string,          // text translated to "${targetLang}"
-  "detectedLang":  ISO-639-1 code,  // e.g. "en", "fi"
-  "transcription": string|null,     // ONLY for single dictionary word or phrasal verb
-  "spellCorrection": string|null    // non-empty if you fixed typos
-}
-
-Rules:
-- Do NOT wrap the JSON in triple backticks.
-- Do NOT add comments or additional keys.
-- Preserve markup, punctuation and line breaks.
-- If translation == original, still output JSON but keep "translation" unchanged.
-`.trim();
-
-  const userPrompt = `
-  
-Source language: ${sourceLang ?? "auto-detect"}
-Target language: ${targetLang}
-
-TEXT_TO_TRANSLATE:
-<<<
-${text}
->>>`.trim();
-
-  return {
-    systemPrompt,
-    userPrompt,
-  };
 }

@@ -1,11 +1,11 @@
 import AILanguagesList from "./open-ai.json"
 import { ITranslationResult, OpenAIModelTTS, ProviderCodeName, TranslateParams, Translator } from "./index";
 import { createStorage } from "../storage";
-import { aiTextToSpeechAction, aiTranslateAction } from "../background/open-ai.bgc";
+import { openAiTextToSpeechAction, openAiTranslateAction } from "../background/open-ai.bgc";
 import { settingsStore } from "../components/settings/settings.storage";
 import { toBinaryFile } from "../utils/binary";
 
-class OpenAITranslator extends Translator {
+export class OpenAITranslator extends Translator {
   override name = ProviderCodeName.OPENAI;
   override title = "OpenAI";
   override publicUrl = "https://platform.openai.com/";
@@ -20,7 +20,7 @@ class OpenAITranslator extends Translator {
   async translate({ from, to, text }: TranslateParams): Promise<ITranslationResult> {
     await this.#apiKey.load();
 
-    return aiTranslateAction({
+    return openAiTranslateAction({
       provider: this.name,
       model: settingsStore.data.openAiModel,
       apiKey: this.#apiKey.get(),
@@ -33,7 +33,7 @@ class OpenAITranslator extends Translator {
   async getAudioFile(text: string, lang?: string): Promise<Blob> {
     await this.#apiKey.load();
 
-    const data = await aiTextToSpeechAction({
+    const data = await openAiTextToSpeechAction({
       provider: this.name,
       model: OpenAIModelTTS.MINI,
       apiKey: this.#apiKey.get(),

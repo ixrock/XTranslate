@@ -2,9 +2,9 @@ import AILanguagesList from "./open-ai.json"
 import { ITranslationResult, ProviderCodeName, TranslateParams, Translator } from "./index";
 import { createStorage } from "../storage";
 import { settingsStore } from "../components/settings/settings.storage";
-import { aiTranslateAction } from "../background/open-ai.bgc";
+import { aiTranslateAction } from "../background/ai.bgc";
 
-class GrokTranslator extends Translator {
+export class GrokTranslator extends Translator {
   override name = ProviderCodeName.GROK;
   override title = "Grok";
   override publicUrl = "https://console.x.ai/";
