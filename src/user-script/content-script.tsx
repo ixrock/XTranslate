@@ -41,7 +41,7 @@ export class ContentScript extends React.Component {
     const shadowRoot = appElem.attachShadow({ mode: "closed" });
     const rootNode = createRoot(shadowRoot);
     const appRootNode = createRoot(appElem);
-    window.document.documentElement.appendChild(appElem);
+    window.document.body.appendChild(appElem);
     ContentScript.rootNode = rootNode;
 
     appRootNode.render(<style type="text/css">{this.globalCssStyles}</style>);

@@ -2,7 +2,8 @@
 
 import { autorun } from "mobx";
 import { getManifest, translateActivePage } from "../extension";
-import { activeTabStorage, settingsStorage } from "../components/settings/settings.storage";
+import { settingsStorage } from "../components/settings/settings.storage";
+import { activeTabStorage } from "./tabs.bgc";
 import { getTranslator } from "../providers";
 import { getMessage, i18nInit } from "../i18n";
 
