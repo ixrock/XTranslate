@@ -1,7 +1,7 @@
 import AILanguagesList from "./open-ai.json"
 import { ITranslationResult, OpenAIModelTTS, ProviderCodeName, TranslateParams, Translator } from "./index";
 import { createStorage } from "../storage";
-import { openAiTextToSpeechAction, openAiTranslateAction } from "../background/open-ai.bgc";
+import { textToSpeechAction, translateTextAction } from "../background/open-ai.bgc";
 import { settingsStore } from "../components/settings/settings.storage";
 import { toBinaryFile } from "../utils/binary";
 
@@ -20,7 +20,7 @@ export class OpenAITranslator extends Translator {
   async translate({ from, to, text }: TranslateParams): Promise<ITranslationResult> {
     await this.#apiKey.load();
 
-    return openAiTranslateAction({
+    return translateTextAction({
       provider: this.name,
       model: settingsStore.data.openAiModel,
       apiKey: this.#apiKey.get(),
@@ -33,7 +33,7 @@ export class OpenAITranslator extends Translator {
   async getAudioFile(text: string, lang?: string): Promise<Blob> {
     await this.#apiKey.load();
 
-    const data = await openAiTextToSpeechAction({
+    const data = await textToSpeechAction({
       provider: this.name,
       model: OpenAIModelTTS.MINI,
       apiKey: this.#apiKey.get(),

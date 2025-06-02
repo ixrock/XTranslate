@@ -1,39 +1,32 @@
 // Injectable script actions
 
-import { getActiveTabId, InjectContentScriptPayload, isBackgroundWorker, MessageType, onMessage, sendMessage, waitTabReadiness } from "../extension";
+import { createIsomorphicAction, getActiveTabId, InjectContentScriptPayload, MessageType, waitTabReadiness } from "../extension";
 import { contentScriptInjectable } from "../common-vars";
-import { disposer } from "../utils/disposer";
 import { getInjectableTabs } from "../extension/tabs";
 import { createLogger } from "../utils/createLogger";
 
 const logger = createLogger({ systemPrefix: '[SCRIPTING]' });
 
-export function listenScriptingActions() {
-  return disposer(
-    onMessage(MessageType.INJECT_CONTENT_SCRIPT, injectContentScript),
-  );
-}
+export const injectContentScriptAction = createIsomorphicAction({
+  messageType: MessageType.INJECT_CONTENT_SCRIPT,
+  handler: injectContentScript,
+})
 
 export async function injectContentScript({ tabId }: InjectContentScriptPayload = {}) {
-  if (isBackgroundWorker()) {
-    tabId ??= await getActiveTabId();
+  tabId ??= await getActiveTabId();
 
-    return injectScriptSafe(tabId, {
-      target: { tabId, allFrames: true },
-      files: [`${contentScriptInjectable}.js`],
-    });
-  }
-
-  return sendMessage<InjectContentScriptPayload>({
-    type: MessageType.INJECT_CONTENT_SCRIPT,
-    payload: { tabId }
+  return injectScriptSafe(tabId, {
+    target: { tabId, allFrames: true },
+    files: [`${contentScriptInjectable}.js`],
   });
 }
 
 export async function refreshContentScripts() {
   const tabs = await getInjectableTabs();
 
-  return Promise.allSettled(tabs.map((tab) => injectContentScript({ tabId: tab.id })));
+  return Promise.allSettled(
+    tabs.map((tab) => injectContentScript({ tabId: tab.id }))
+  );
 }
 
 export async function injectScriptSafe<Args extends any[], Result>(

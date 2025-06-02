@@ -1,24 +1,11 @@
-import { getAPI, loggerAI, AITranslationResponse } from "./open-ai.bgc";
+import { AITranslationResponse, getAPI, loggerAI } from "./open-ai.bgc";
 import { ITranslationError, ITranslationResult, TranslateParams } from "../providers";
-import { AITranslatePayload, isBackgroundWorker, MessageType, onMessage, sendMessage } from "../extension";
-import { disposer } from "../utils";
+import { AITranslatePayload, createIsomorphicAction, MessageType } from "../extension";
 
-export function listenAIRequests() {
-  return disposer(
-    onMessage(MessageType.AI_TRANSLATION, translateText),
-  );
-}
-
-export async function aiTranslateAction(payload: AITranslatePayload): Promise<ITranslationResult> {
-  if (isBackgroundWorker()) {
-    return translateText(payload);
-  }
-
-  return sendMessage<AITranslatePayload, ITranslationResult>({
-    type: MessageType.AI_TRANSLATION,
-    payload,
-  });
-}
+export const aiTranslateAction = createIsomorphicAction({
+  messageType: MessageType.AI_TRANSLATION,
+  handler: translateText,
+});
 
 export async function translateText(params: AITranslatePayload): Promise<ITranslationResult> {
   const {

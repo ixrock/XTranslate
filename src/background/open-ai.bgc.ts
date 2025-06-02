@@ -1,40 +1,21 @@
 import OpenAI from "openai";
-import { z, TypeOf } from "zod";
+import { TypeOf, z } from "zod";
 import { zodTextFormat } from "openai/helpers/zod";
 import { getTranslator, ITranslationError, ITranslationResult, ProviderCodeName } from "../providers";
-import { createLogger, disposer } from "../utils";
-import { AITranslatePayload, isBackgroundWorker, MessageType, onMessage, OpenAITextToSpeechPayload, sendMessage } from "../extension";
+import { createLogger } from "../utils";
+import { AITranslatePayload, createIsomorphicAction, MessageType, OpenAITextToSpeechPayload } from "../extension";
 
-export const loggerAI = createLogger({ systemPrefix: "AI" });
+export const loggerAI = createLogger({ systemPrefix: "[AI]" });
 
-export function listenOpenAIRequests() {
-  return disposer(
-    onMessage(MessageType.OPENAI_TRANSLATION, translateText),
-    onMessage(MessageType.OPENAI_TEXT_TO_SPEECH, textToSpeech),
-  );
-}
+export const translateTextAction = createIsomorphicAction({
+  messageType: MessageType.OPENAI_TRANSLATION,
+  handler: translateText,
+});
 
-export async function openAiTranslateAction(payload: AITranslatePayload): Promise<ITranslationResult> {
-  if (isBackgroundWorker()) {
-    return translateText(payload);
-  }
-
-  return sendMessage<AITranslatePayload, ITranslationResult>({
-    type: MessageType.OPENAI_TRANSLATION,
-    payload,
-  });
-}
-
-export async function openAiTextToSpeechAction(payload: OpenAITextToSpeechPayload): Promise<Uint8Array | number[]> {
-  if (isBackgroundWorker()) {
-    return textToSpeech(payload);
-  }
-
-  return sendMessage({
-    type: MessageType.OPENAI_TEXT_TO_SPEECH,
-    payload,
-  });
-}
+export const textToSpeechAction = createIsomorphicAction({
+  messageType: MessageType.OPENAI_TEXT_TO_SPEECH,
+  handler: textToSpeech,
+});
 
 export function getAPI(params: { apiKey: string, provider: ProviderCodeName }) {
   return new OpenAI({

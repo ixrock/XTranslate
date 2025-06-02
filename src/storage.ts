@@ -22,8 +22,7 @@ export function createStorage<T>(key: string, options: ChromeStorageHelperOption
 
   const storageAdapter: StorageAdapter<T> = {
     async setItem(key: string, state: T): Promise<void> {
-      const payload: StorageWritePayload<T> = { key, area, state };
-      return writeToExternalStorageAction(payload);
+      return writeToExternalStorageAction({ key, area, state });
     },
 
     async getItem(key: string): Promise<T> {

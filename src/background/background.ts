@@ -1,24 +1,19 @@
 //-- Background (service worker)
 
 import "../setup";
+
+import "./storage.bgc";
+import "./scripting.bgc";
+import "./history.bgc";
+import "./open-ai.bgc";
+import "./ai.bgc";
+
 import { installOrUpdateAppActions } from "./install.bgc";
-import { initContextMenu } from "./contextMenu.bgc";
-import { listenStorageActions } from "./storage.bgc";
-import { listenProxyRequestActions } from "./httpProxy.bgc";
-import { listenTranslationHistoryActions } from "./history.bgc";
-import { listenAIRequests } from "./ai.bgc";
-import { listenOpenAIRequests } from "./open-ai.bgc";
-import { listenScriptingActions } from "./scripting.bgc";
 import { initActiveTabWatcher } from "./tabs.bgc";
+import { initContextMenu } from "./contextMenu.bgc";
+import { listenProxyRequestActions } from "./httpProxy.bgc";
 
 initContextMenu();
 initActiveTabWatcher();
 installOrUpdateAppActions();
-
-// Listen IPC messages from "options-page" (extension window) or "content-script" pages
-listenAIRequests();
-listenOpenAIRequests();
-listenScriptingActions();
-listenStorageActions();
-listenProxyRequestActions()
-listenTranslationHistoryActions();
+listenProxyRequestActions();

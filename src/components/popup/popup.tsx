@@ -139,7 +139,8 @@ export class Popup extends React.Component<Props> {
 
   @action
   private toggleFavorites = async () => {
-    await saveToFavoritesAction(this.props.translation, {
+    return saveToFavoritesAction({
+      item: this.props.translation,
       isFavorite: !this.isFavorite,
     });
   };

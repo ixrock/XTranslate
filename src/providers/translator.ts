@@ -106,8 +106,8 @@ export abstract class Translator {
     const { langDetected, originalText } = translation;
     const { autoPlayText, historyEnabled } = settingsStore.data;
 
-    if (autoPlayText) this.speak(langDetected, originalText);
-    if (historyEnabled) saveToHistoryAction(translation);
+    if (autoPlayText) void this.speak(langDetected, originalText);
+    if (historyEnabled) void saveToHistoryAction({ translation });
 
     return translation;
   }

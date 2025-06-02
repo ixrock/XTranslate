@@ -227,7 +227,7 @@ export class InputTranslation extends React.Component {
               <Icon
                 material={favorite ? materialIcons.favorite : materialIcons.unfavorite}
                 tooltip={favorite ? getMessage("history_unmark_as_favorite") : getMessage("history_mark_as_favorite")}
-                onClick={() => saveToFavoritesAction(this.translation, { isFavorite: !favorite })}
+                onClick={() => saveToFavoritesAction({ item: this.translation, isFavorite: !favorite })}
               />
               <div className="lang" id="translated_with">
                 {translationDirection}

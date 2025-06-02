@@ -1,21 +1,26 @@
 //-- Handling persistent data storage for extension
 // Currently used `chrome.storage.*` APIs
 
-import { disposer } from "../utils/disposer";
 import { Message, MessageType, StorageDeletePayload, StorageReadPayload, StorageSyncPayload, StorageWritePayload } from '../extension/messages'
-import { isBackgroundWorker, onMessage, sendMessage, } from '../extension/runtime'
-import { broadcastMessage } from '../extension/tabs'
+import { broadcastMessage, createIsomorphicAction } from "../extension";
 
 export type StorageKey = string;
 export type StorageArea = chrome.storage.AreaName;
 
-export function listenStorageActions() {
-  return disposer(
-    onMessage(MessageType.STORAGE_DATA_READ, readFromExternalStorage),
-    onMessage(MessageType.STORAGE_DATA_WRITE, writeToExternalStorage),
-    onMessage(MessageType.STORAGE_DATA_REMOVE, removeFromExternalStorage),
-  );
-}
+export const writeToExternalStorageAction = createIsomorphicAction({
+  messageType: MessageType.STORAGE_DATA_WRITE,
+  handler: writeToExternalStorage,
+});
+
+export const readFromExternalStorageAction = createIsomorphicAction({
+  messageType: MessageType.STORAGE_DATA_READ,
+  handler: readFromExternalStorage,
+});
+
+export const removeFromExternalStorageAction = createIsomorphicAction({
+  messageType: MessageType.STORAGE_DATA_REMOVE,
+  handler: removeFromExternalStorage,
+});
 
 export function getStorageApi(area: StorageArea = "local") {
   return chrome.storage[area];
@@ -54,6 +59,15 @@ export async function removeFromExternalStorage(payload: StorageDeletePayload, s
   }
 }
 
+export function syncExternalStorageUpdate<T>(payload: StorageSyncPayload<T>) {
+  const msg: Message<StorageSyncPayload<T>> = {
+    type: MessageType.STORAGE_DATA_SYNC,
+    payload,
+  };
+
+  return broadcastMessage(msg);
+}
+
 export function listenExternalStorageChanges(area: StorageArea, callback: (changes: Record<StorageKey, unknown>) => void) {
   const storageApi = getStorageApi(area);
 
@@ -68,46 +82,4 @@ export function listenExternalStorageChanges(area: StorageArea, callback: (chang
 
   storageApi.onChanged.addListener(handleChange);
   return () => storageApi.onChanged.removeListener(handleChange);
-}
-
-export async function writeToExternalStorageAction(payload: StorageWritePayload): Promise<void> {
-  if (isBackgroundWorker()) {
-    return writeToExternalStorage(payload);
-  }
-
-  return sendMessage<StorageWritePayload, void>({
-    type: MessageType.STORAGE_DATA_WRITE,
-    payload,
-  });
-}
-
-export async function readFromExternalStorageAction<Request extends StorageReadPayload, Response>(payload: Request): Promise<Response> {
-  if (isBackgroundWorker()) {
-    return readFromExternalStorage(payload);
-  }
-
-  return sendMessage<Request, Response>({
-    type: MessageType.STORAGE_DATA_READ,
-    payload,
-  });
-}
-
-export async function removeFromExternalStorageAction(payload: StorageDeletePayload): Promise<void> {
-  if (isBackgroundWorker()) {
-    return removeFromExternalStorage(payload);
-  }
-
-  return sendMessage<StorageDeletePayload, void>({
-    type: MessageType.STORAGE_DATA_REMOVE,
-    payload,
-  });
-}
-
-export function syncExternalStorageUpdate<T>(payload: StorageSyncPayload<T>) {
-  const msg: Message<StorageSyncPayload<T>> = {
-    type: MessageType.STORAGE_DATA_SYNC,
-    payload,
-  };
-
-  return broadcastMessage(msg);
 }

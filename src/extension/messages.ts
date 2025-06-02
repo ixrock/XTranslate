@@ -43,7 +43,7 @@ export type ProxyRequestInit = Omit<RequestInit, "window" | "signal" | "body"> &
   body?: string;
 };
 
-export interface ProxyResponsePayload<Data> {
+export interface ProxyResponsePayload<Data = unknown> {
   url: string;
   headers: { [header: string]: string; "content-type"?: string };
   data: Data;
