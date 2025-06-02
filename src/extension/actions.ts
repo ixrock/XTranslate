@@ -5,7 +5,6 @@ import { getActiveTabId } from "./tabs";
 export interface IsomorphicActionParams<Payload, Result> {
   messageType: MessageType;
   handler: (data?: Payload) => Promise<Result>;
-  processResult?: (response: Result, request: Payload) => Promise<Result>;
   autoBindListener?: boolean; // bind handler to `chrome.runtime.onMessage` for provided  `message.type` (default: true)
 }
 
@@ -13,7 +12,6 @@ export function createIsomorphicAction<Payload, Result>(params: IsomorphicAction
   const {
     messageType, handler,
     autoBindListener = true,
-    processResult,
   } = params;
 
   if (autoBindListener && isBackgroundWorker()) {
@@ -21,22 +19,14 @@ export function createIsomorphicAction<Payload, Result>(params: IsomorphicAction
   }
 
   return async (payload: Payload, tabId?: number): Promise<Result> => {
-    let response: Result;
-
     if (isBackgroundWorker()) {
-      response = await handler(payload);
-    } else {
-      response = await sendMessage<Payload, Result>({
-        type: messageType,
-        tabId,
-        payload,
-      });
+      return handler(payload);
     }
-
-    if (processResult) {
-      return processResult(response, payload);
-    }
-    return response;
+    return sendMessage<Payload, Result>({
+      type: messageType,
+      tabId,
+      payload,
+    });
   };
 }
 
