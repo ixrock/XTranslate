@@ -22,6 +22,10 @@ export function isOptionsPage(): boolean {
   return location.href.startsWith(getURL(optionsHtmlPage));
 }
 
+export function getRuntimeLastError() {
+  return chrome.runtime.lastError;
+}
+
 export async function sendMessage<Request, Response = unknown, Error = unknown>({ tabId, ...message }: Message<Request>): Promise<Response> {
   let response: { data?: Response, error?: Error };
 

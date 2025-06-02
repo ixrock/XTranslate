@@ -1,7 +1,7 @@
 {
   "name": "XTranslate",
   "description": "__MSG_short_description__",
-  "version": "5.0.11",
+  "version": "5.0.12",
   "manifest_version": 3,
   "default_locale": "en",
   "homepage_url": "https://xtranslate.dev/",
@@ -34,7 +34,7 @@
   "content_scripts": [
     {
       "all_frames": false,
-      "run_at": "document_idle",
+      "run_at": "document_end",
       "js": ["content-script-entry.js"],
       "matches": [
         "<all_urls>",
