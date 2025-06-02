@@ -1,6 +1,6 @@
 // Injectable script actions
 
-import { getActiveTab, InjectContentScriptPayload, isBackgroundWorker, MessageType, onMessage, sendMessage, waitTabReadiness } from "../extension";
+import { getActiveTabId, InjectContentScriptPayload, isBackgroundWorker, MessageType, onMessage, sendMessage, waitTabReadiness } from "../extension";
 import { contentScriptInjectable } from "../common-vars";
 import { disposer } from "../utils/disposer";
 import { getInjectableTabs } from "../extension/tabs";
@@ -16,7 +16,7 @@ export function listenScriptingActions() {
 
 export async function injectContentScript({ tabId }: InjectContentScriptPayload = {}) {
   if (isBackgroundWorker()) {
-    tabId ??= (await getActiveTab()).id;
+    tabId ??= await getActiveTabId();
 
     return injectScriptSafe(tabId, {
       target: { tabId, allFrames: true },

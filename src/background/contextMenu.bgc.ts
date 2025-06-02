@@ -36,10 +36,6 @@ export async function initContextMenu() {
       title: isTranslatedWebsite ? stopTranslatePageTitle : startTranslatePageTitle,
     });
 
-    chrome.contextMenus.onClicked.addListener(onContextMenuClick);
+    chrome.contextMenus.onClicked.addListener(translateActivePage);
   })
-}
-
-function onContextMenuClick(opts: chrome.contextMenus.OnClickData) {
-  void translateActivePage();
 }

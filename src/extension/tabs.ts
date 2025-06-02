@@ -55,6 +55,10 @@ export async function getActiveTab(): Promise<BrowserTab> {
   return tabs[0];
 }
 
+export async function getActiveTabId(): Promise<number> {
+  return (await getActiveTab()).id;
+}
+
 export async function waitTabReadiness(tabId: number) {
   return new Promise(resolve => {
     function listener(updatedTabId: number, changes: chrome.tabs.TabChangeInfo, tab: BrowserTab) {

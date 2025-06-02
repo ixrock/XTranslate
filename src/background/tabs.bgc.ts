@@ -1,27 +1,34 @@
-import { runInAction } from "mobx";
 import { createStorage } from "../storage";
 import { getActiveTab } from "../extension";
 
 export const activeTabStorage = createStorage("active_tab", {
   defaultValue: {
-    tabId: -1,
+    tabId: 0,
     title: "",
     url: "",
   },
 });
 
 export function initActiveTabWatcher() {
-  async function onTabActivated(info: chrome.tabs.TabActiveInfo) {
-    const { id: tabId, title, url } = await getActiveTab();
-
-    const activeTab = activeTabStorage.get();
-    runInAction(() => {
-      activeTab.tabId = tabId;
-      activeTab.title = title;
-      activeTab.url = url;
-    });
-  }
-
   chrome.tabs.onActivated.addListener(onTabActivated);
-  return () => chrome.tabs.onActivated.removeListener(onTabActivated);
+  chrome.tabs.onUpdated.addListener(onTabUpdated);
+
+  return () => {
+    chrome.tabs.onActivated.removeListener(onTabActivated);
+    chrome.tabs.onUpdated.removeListener(onTabUpdated);
+  };
+}
+
+async function onTabActivated() {
+  const { id: tabId, title, url } = await getActiveTab();
+  activeTabStorage.merge({ tabId, title, url });
+}
+
+async function onTabUpdated(updatedTabId: number, { url, title }: chrome.tabs.TabChangeInfo) {
+  const activeTab = activeTabStorage.get();
+
+  if (activeTab.tabId === updatedTabId) {
+    if (url) activeTab.url = url;
+    if (title) activeTab.title = title;
+  }
 }

@@ -13,7 +13,7 @@ import orderBy from 'lodash/orderBy';
 import { contentScriptEntry, contentScriptInjectable } from "../common-vars";
 import { preloadAppData } from "../preloadAppData";
 import { autoBind, disposer, getHotkey } from "../utils";
-import { getManifest, getURL, isRuntimeContextInvalidated, MessageType, onMessage, ProxyResponseType, TranslatePagePayload, TranslatePayload } from "../extension";
+import { getManifest, getURL, isRuntimeContextInvalidated, MessageType, onMessage, ProxyResponseType, TranslatePayload } from "../extension";
 import { proxyRequest } from "../background/httpProxy.bgc";
 import { popupHotkey, settingsStore } from "../components/settings/settings.storage";
 import { getNextTranslator, getTranslator, ITranslationError, ITranslationResult } from "../providers";
@@ -223,7 +223,8 @@ export class ContentScript extends React.Component {
     return this.selectedText;
   }
 
-  private togglePageAutoTranslation({ pageUrl }: TranslatePagePayload) {
+  private togglePageAutoTranslation() {
+    const pageUrl = location.href;
     if (this.pageTranslator.isAlwaysTranslate(pageUrl)) {
       this.stopPageAutoTranslation(pageUrl);
     } else {

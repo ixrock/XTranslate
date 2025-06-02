@@ -1,26 +1,18 @@
-import { getActiveTab } from "./tabs";
 import { isContextInvalidatedError, sendMessage, sendMessageSafe } from "./runtime";
-import { MessageType, TranslatePagePayload } from "./messages";
+import { getActiveTabId } from "./tabs";
+import { MessageType } from "./messages";
 
 export async function getSelectedText(): Promise<string> {
-  const activeTab = await getActiveTab();
-
   return sendMessageSafe<void, string>({
     type: MessageType.GET_SELECTED_TEXT,
-    tabId: activeTab.id,
+    tabId: await getActiveTabId(),
   });
 }
 
 export async function translateActivePage() {
-  const activeTab = await getActiveTab();
-
-  return sendMessageSafe<TranslatePagePayload, void>({
+  return sendMessageSafe({
     type: MessageType.TRANSLATE_FULL_PAGE,
-    tabId: activeTab.id,
-    payload: {
-      tabId: activeTab.id,
-      pageUrl: activeTab.url,
-    }
+    tabId: await getActiveTabId(),
   });
 }
 

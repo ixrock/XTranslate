@@ -36,7 +36,7 @@ export class Header extends React.Component {
   }
 
   private translateActivePage = async () => {
-    await translateActivePage();
+    void translateActivePage();
     window.close();
   }
 

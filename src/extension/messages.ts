@@ -57,11 +57,6 @@ export interface TranslatePayload extends TranslateParams {
   provider: ProviderCodeName;
 }
 
-export interface TranslatePagePayload {
-  tabId: number;
-  pageUrl: string;
-}
-
 export interface SaveToHistoryPayload {
   translation: ITranslationResult | IHistoryItem;
 }
