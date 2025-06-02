@@ -2,7 +2,7 @@ import AILanguagesList from "./open-ai.json"
 import { ITranslationResult, ProviderCodeName, TranslateParams, Translator } from "./index";
 import { createStorage } from "../storage";
 import { settingsStore } from "../components/settings/settings.storage";
-import { aiTranslateAction } from "../background/ai.bgc";
+import { translateTextAction } from "../background/open-ai.bgc";
 
 export class GrokTranslator extends Translator {
   override name = ProviderCodeName.GROK;
@@ -19,7 +19,7 @@ export class GrokTranslator extends Translator {
   async translate({ from, to, text }: TranslateParams): Promise<ITranslationResult> {
     await this.#apiKey.load();
 
-    return aiTranslateAction({
+    return translateTextAction({
       provider: this.name,
       model: settingsStore.data.grokAiModel,
       apiKey: this.#apiKey.get(),

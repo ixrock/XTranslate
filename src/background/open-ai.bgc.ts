@@ -1,11 +1,9 @@
 import OpenAI from "openai";
-import { TypeOf, z } from "zod";
-import { zodTextFormat } from "openai/helpers/zod";
-import { getTranslator, ITranslationError, ITranslationResult, ProviderCodeName } from "../providers";
-import { createLogger } from "../utils";
+import { getTranslator, ITranslationError, ITranslationResult, ProviderCodeName, TranslateParams } from "../providers";
 import { AITranslatePayload, createIsomorphicAction, MessageType, OpenAITextToSpeechPayload } from "../extension";
+import { createLogger } from "../utils/createLogger";
 
-export const loggerAI = createLogger({ systemPrefix: "[AI]" });
+const logger = createLogger({ systemPrefix: "[AI]" });
 
 export const translateTextAction = createIsomorphicAction({
   messageType: MessageType.OPENAI_TRANSLATION,
@@ -26,14 +24,12 @@ export function getAPI(params: { apiKey: string, provider: ProviderCodeName }) {
   });
 }
 
-export type AITranslationResponse = TypeOf<typeof AITranslationJsonSchema>;
-
-export const AITranslationJsonSchema = z.object({
-  translation: z.string(),
-  detectedLang: z.string(),
-  transcription: z.string().nullable(),
-  spellCorrection: z.string().nullable(),
-});
+export interface AITranslateResponse {
+  translation: string;
+  detectedLang: string;
+  transcription?: string;
+  spellCorrection?: string;
+}
 
 export async function translateText(params: AITranslatePayload): Promise<ITranslationResult> {
   const {
@@ -47,32 +43,28 @@ export async function translateText(params: AITranslatePayload): Promise<ITransl
   const { apiKey, ...sanitizedParams } = params;
   const sanitizedText = text.trim();
 
-  const systemPrompt = [
-    `You are a professional translation assistant with following rules:`,
-    `- Use ISO-639-1 for detected lang, e.g. "en", "fi"`,
-    `- Preserve markup, punctuation and line breaks`,
-  ].join("\n");
-
-  const userPrompt = [
-    `Source lang: ${sourceLanguage ?? "auto-detect"}`,
-    `Target lang: ${targetLanguage}`,
-    `Text:\n\n${sanitizedText}`
-  ].join("\n");
-
   try {
-    const response = await getAPI({ apiKey, provider }).responses.parse({
+    const { userPrompt, systemPrompt } = getTranslationPrompt({
+      from: sourceLanguage,
+      to: targetLanguage,
+      text: sanitizedText,
+    });
+
+    const response = await getAPI({ apiKey, provider }).chat.completions.create({
       model,
-      temperature: .95,
-      input: [
+      n: 1,
+      temperature: 1,
+      response_format: {
+        type: "json_object",
+      },
+      messages: [
         { role: "system", content: systemPrompt },
         { role: "user", content: userPrompt },
       ],
-      text: {
-        format: zodTextFormat(AITranslationJsonSchema, "translation"),
-      }
     });
 
-    const { detectedLang, transcription, spellCorrection, translation } = response.output_parsed;
+    const data = JSON.parse(response.choices[0].message.content) as AITranslateResponse;
+    const { detectedLang, transcription, spellCorrection, translation } = data;
 
     const result: ITranslationResult = {
       vendor: provider,
@@ -86,18 +78,50 @@ export async function translateText(params: AITranslatePayload): Promise<ITransl
       dictionary: [],
     };
 
-    loggerAI.info({ response, result, params: sanitizedParams });
-
+    logger.info({ response, data, result, params: sanitizedParams });
     return result;
+
   } catch (err) {
     const error: ITranslationError = {
       message: String(err),
       statusCode: err.statusCode || err.status,
     };
 
-    loggerAI.error({ error, params: sanitizedParams });
+    logger.error({ error, params: sanitizedParams });
     throw error;
   }
+}
+
+export function getTranslationPrompt({ from: sourceLang, to: targetLang, text }: Partial<TranslateParams>) {
+  const systemPrompt = `
+  
+You are a professional translation assistant.
+Return EXACTLY one JSON object with the following shape:
+{
+  "translation":   string,          // text translated to "${targetLang}"
+  "detectedLang":  ISO-639-1 code,  // e.g. "en", "fi"
+  "transcription": string|null,     // ONLY for single dictionary word or phrasal verb
+  "spellCorrection": string|null    // non-empty if you fixed typos
+}
+Rules:
+- Do NOT wrap the JSON in triple backticks
+- Do NOT add comments or additional keys
+- Preserve markup, punctuation and line breaks
+- If translation == original, still output JSON but keep "translation" unchanged
+`.trim();
+
+  const userPrompt = `
+
+Source lang: ${sourceLang ?? "auto-detect"}
+Target lang: ${targetLang}
+Text:
+${text}
+`.trim();
+
+  return {
+    systemPrompt,
+    userPrompt,
+  };
 }
 
 export async function textToSpeech(params: OpenAITextToSpeechPayload): Promise<number[]> {

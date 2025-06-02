@@ -6,7 +6,6 @@ import "./storage.bgc";
 import "./scripting.bgc";
 import "./history.bgc";
 import "./open-ai.bgc";
-import "./ai.bgc";
 
 import { installOrUpdateAppActions } from "./install.bgc";
 import { initActiveTabWatcher } from "./tabs.bgc";

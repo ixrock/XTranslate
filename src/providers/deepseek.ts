@@ -1,7 +1,7 @@
 import AILanguagesList from "./open-ai.json"
 import { DeepSeekAIModel, ITranslationResult, ProviderCodeName, TranslateParams, Translator } from "./index";
 import { createStorage } from "../storage";
-import { aiTranslateAction } from "../background/ai.bgc";
+import { translateTextAction } from "../background/open-ai.bgc";
 
 export class DeepSeekTranslator extends Translator {
   public name = ProviderCodeName.DEEPSEEK;
@@ -18,7 +18,7 @@ export class DeepSeekTranslator extends Translator {
   async translate({ from, to, text }: TranslateParams): Promise<ITranslationResult> {
     await this.#apiKey.load();
 
-    return aiTranslateAction({
+    return translateTextAction({
       provider: this.name,
       model: DeepSeekAIModel.CHAT,
       apiKey: this.#apiKey.get(),
