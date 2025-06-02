@@ -1,7 +1,6 @@
 //-- Background (service worker)
 
 import "../setup";
-
 import "./storage.bgc";
 import "./scripting.bgc";
 import "./history.bgc";

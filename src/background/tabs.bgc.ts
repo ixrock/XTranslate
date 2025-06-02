@@ -20,11 +20,15 @@ export function initActiveTabWatcher() {
 }
 
 async function onTabActivated() {
+  await activeTabStorage.load();
+
   const { id: tabId, title, url } = await getActiveTab();
   activeTabStorage.merge({ tabId, title, url });
 }
 
 async function onTabUpdated(updatedTabId: number, { url, title }: chrome.tabs.TabChangeInfo) {
+  await activeTabStorage.load();
+
   const activeTab = activeTabStorage.get();
 
   if (activeTab.tabId === updatedTabId) {
