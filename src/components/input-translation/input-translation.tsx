@@ -206,7 +206,7 @@ export class InputTranslation extends React.Component {
                 onClick={this.playText}
               />
               <CopyToClipboardIcon
-                content={{ obj: this.translation, copyOriginalText: false }}
+                content={this.translation}
                 tooltip={getMessage("popup_copy_translation_title")}
               />
             </div>

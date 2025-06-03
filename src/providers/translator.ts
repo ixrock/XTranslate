@@ -333,7 +333,12 @@ export interface ITranslationDictionaryMeaning {
 export interface ITranslationError extends JsonResponseError {
 }
 
-export function isTranslationError(error: ITranslationResult | ITranslationError | unknown): error is ITranslationError {
+export function isTranslationResult(data: ITranslationResult | unknown): data is ITranslationResult {
+  const result = data as ITranslationResult;
+  return !!(getTranslator(result?.vendor) && result?.translation);
+}
+
+export function isTranslationError(error: Error | ITranslationError | unknown): error is ITranslationError {
   const httpStatus = (error as ITranslationError)?.statusCode;
   return Number.isInteger(httpStatus) && !(httpStatus >= 200 && httpStatus < 300);
 }

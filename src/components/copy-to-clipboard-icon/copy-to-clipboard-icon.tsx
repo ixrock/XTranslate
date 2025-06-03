@@ -1,6 +1,6 @@
 import React from "react";
 import { materialIcons } from "../../common-vars";
-import { getTranslator, ITranslationResult } from "../../providers/translator";
+import { getTranslator, isTranslationResult, ITranslationResult } from "../../providers/translator";
 import { cssNames, IClassName } from "../../utils";
 import { getMessage } from "../../i18n";
 import { Icon, IconProps } from "../icon";
@@ -9,12 +9,7 @@ export interface CopyToClipboardIconProps {
   className?: IClassName;
   iconName?: string;
   tooltip?: IconProps["tooltip"],
-  content: string | CopyTranslationObject;
-}
-
-export interface CopyTranslationObject {
-  obj: ITranslationResult;
-  copyOriginalText?: boolean; /* default: true */
+  content: string | ITranslationResult;
 }
 
 export function CopyToClipboardIcon(props: CopyToClipboardIconProps) {
@@ -27,14 +22,8 @@ export function CopyToClipboardIcon(props: CopyToClipboardIconProps) {
   } = props;
 
   function copyToClipboard() {
-    let text = content as string;
-
-    if (typeof content !== "string") {
-      const { copyOriginalText, obj } = content;
-      text = getTranslationResultText(obj, { withOriginalText: copyOriginalText })
-    }
-
-    void navigator.clipboard.writeText(text);
+    const textToCopy = isTranslationResult(content) ? getTranslationResultText(content) : content;
+    void navigator.clipboard.writeText(textToCopy);
     setCopied(true);
     setTimeout(() => setCopied(false), 2500);
   }
@@ -49,7 +38,7 @@ export function CopyToClipboardIcon(props: CopyToClipboardIconProps) {
   )
 }
 
-export function getTranslationResultText(result: ITranslationResult, { withOriginalText = true } = {}) {
+export function getTranslationResultText(result: ITranslationResult) {
   const {
     vendor: provider,
     originalText,
@@ -59,7 +48,7 @@ export function getTranslationResultText(result: ITranslationResult, { withOrigi
 
   const translator = getTranslator(provider);
   return [
-    withOriginalText ? originalText : "",
+    originalText,
 
     `${translation}${transcription ? `(${transcription})` : ""}`,
 

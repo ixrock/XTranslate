@@ -160,7 +160,7 @@ export class Popup extends React.Component<Props> {
     return (
       <CopyToClipboardIcon
         className={styles.icon}
-        content={{ obj: this.props.translation }}
+        content={this.props.translation}
         tooltip={{
           children: getMessage("popup_copy_translation_title"),
           parentElement: this.props.tooltipParent,
