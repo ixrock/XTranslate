@@ -50,7 +50,7 @@ export function getFlagIcon(locale: string): string | undefined {
       return locales.includes(locale) || locales.includes(localeCommon);
     })?.[0] ?? locale;
 
-    return require(`flag-icons/flags/4x3/${flagIcon}.svg`);
+    return require(`flag-icons/flags/4x3/${flagIcon}.svg?url`);
   } catch (error) {
     return undefined; // noop
   }
