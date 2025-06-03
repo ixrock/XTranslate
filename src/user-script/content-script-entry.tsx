@@ -7,4 +7,6 @@ import { injectContentScriptAction } from "../background/scripting.bgc";
 void customPDFViewerRedirectCheck();
 
 // render app
-void injectContentScriptAction({});
+document.addEventListener("DOMContentLoaded", () => {
+  void injectContentScriptAction({});
+});
