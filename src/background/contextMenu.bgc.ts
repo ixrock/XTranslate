@@ -2,7 +2,8 @@
 
 import { autorun } from "mobx";
 import { getManifest, translateActivePage } from "../extension";
-import { activeTabStorage, settingsStorage } from "../components/settings/settings.storage";
+import { settingsStorage } from "../components/settings/settings.storage";
+import { activeTabStorage } from "./tabs.bgc";
 import { getTranslator } from "../providers";
 import { getMessage, i18nInit } from "../i18n";
 
@@ -17,7 +18,7 @@ export async function initContextMenu() {
     const { fullPageTranslation: { provider, langTo, alwaysTranslatePages } } = settingsStorage.get();
     const translator = getTranslator(provider);
     const activeTab = activeTabStorage.get();
-    const url = new URL(activeTab.url || location.href);
+    const autoTranslateEnabled = activeTab.url && alwaysTranslatePages.includes(new URL(activeTab.url).origin);
 
     const startTranslatePageTitle = getMessage("context_menu_translate_full_page_context_menu", {
       lang: translator.langTo[langTo] ?? langTo,
@@ -26,19 +27,13 @@ export async function initContextMenu() {
       site: `"${activeTab.title}" - ${activeTab.url}`,
     });
 
-    const isTranslatedWebsite = alwaysTranslatePages.includes(url.origin);
-
     chrome.contextMenus.removeAll();
     chrome.contextMenus.create({
       id: appName,
       contexts: [chrome.contextMenus.ContextType.ALL],
-      title: isTranslatedWebsite ? stopTranslatePageTitle : startTranslatePageTitle,
+      title: autoTranslateEnabled ? stopTranslatePageTitle : startTranslatePageTitle,
     });
 
-    chrome.contextMenus.onClicked.addListener(onContextMenuClick);
+    chrome.contextMenus.onClicked.addListener(translateActivePage);
   })
-}
-
-function onContextMenuClick(opts: chrome.contextMenus.OnClickData) {
-  void translateActivePage();
 }

@@ -13,7 +13,7 @@ import orderBy from 'lodash/orderBy';
 import { contentScriptEntry, contentScriptInjectable } from "../common-vars";
 import { preloadAppData } from "../preloadAppData";
 import { autoBind, disposer, getHotkey } from "../utils";
-import { getManifest, getURL, isRuntimeContextInvalidated, MessageType, onMessage, ProxyResponseType, TranslatePagePayload, TranslatePayload } from "../extension";
+import { getManifest, getURL, isRuntimeContextInvalidated, MessageType, onMessage, ProxyResponseType, TranslatePayload } from "../extension";
 import { proxyRequest } from "../background/httpProxy.bgc";
 import { popupHotkey, settingsStore } from "../components/settings/settings.storage";
 import { getNextTranslator, getTranslator, ITranslationError, ITranslationResult } from "../providers";
@@ -41,11 +41,15 @@ export class ContentScript extends React.Component {
     const shadowRoot = appElem.attachShadow({ mode: "closed" });
     const rootNode = createRoot(shadowRoot);
     const appRootNode = createRoot(appElem);
-    window.document.documentElement.appendChild(appElem);
+    window.document.body.appendChild(appElem);
     ContentScript.rootNode = rootNode;
 
     appRootNode.render(<style type="text/css">{this.globalCssStyles}</style>);
     rootNode.render(<ContentScript/>);
+  }
+
+  static get isTopFrame() {
+    return this.window === window.top;
   }
 
   static async preloadGlobalStyles() {
@@ -99,7 +103,7 @@ export class ContentScript extends React.Component {
     this.bindEvents();
     this.applyShadowDomGlobalStyles();
 
-    if (this.pageTranslator.isAlwaysTranslate(location.href)) {
+    if (this.pageTranslator.isAlwaysTranslate(document.URL)) {
       this.startPageAutoTranslation();
     }
   }
@@ -223,8 +227,11 @@ export class ContentScript extends React.Component {
     return this.selectedText;
   }
 
-  private togglePageAutoTranslation({ pageUrl }: TranslatePagePayload) {
-    if (this.pageTranslator.isAlwaysTranslate(pageUrl)) {
+  private togglePageAutoTranslation() {
+    const pageUrl = document.URL;
+    const autoTranslate = this.pageTranslator.isAlwaysTranslate(pageUrl);
+
+    if (autoTranslate) {
       this.stopPageAutoTranslation(pageUrl);
     } else {
       this.startPageAutoTranslation(pageUrl);
@@ -233,7 +240,9 @@ export class ContentScript extends React.Component {
 
   @action
   private startPageAutoTranslation(pageUrl?: string) {
-    if (pageUrl) this.pageTranslator.setAutoTranslatingPages({ enabled: [pageUrl] });
+    if (pageUrl && ContentScript.isTopFrame) {
+      this.pageTranslator.setAutoTranslatingPages({ enabled: [pageUrl] });
+    }
     this.pageTranslator.startAutoTranslation();
   }
 

@@ -1,6 +1,6 @@
 import "../setup";
 import "./content-script-entry.scss";
-import { injectContentScript } from "../background/scripting.bgc";
+import { injectContentScriptAction } from "../background/scripting.bgc";
 
 // render app
-await injectContentScript();
+void injectContentScriptAction({});

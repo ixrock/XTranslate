@@ -5,7 +5,8 @@ import { observer } from "mobx-react";
 import { cssNames } from "../../utils/cssNames";
 import { getTranslator } from "../../providers";
 import { getManifest, translateActivePage } from "../../extension";
-import { activeTabStorage, settingsStore } from '../settings/settings.storage'
+import { activeTabStorage } from "../../background/tabs.bgc";
+import { settingsStore } from '../settings/settings.storage'
 import { Tabs } from "../tabs";
 import { Icon } from "../icon";
 import { getUrlParams, navigate, PageId } from "../../navigation";
@@ -13,6 +14,7 @@ import { pageManager } from "./page-manager";
 import { getMessage } from "../../i18n";
 import { SelectLocaleIcon } from "../select-locale";
 import { dialogsState } from "./dialogs-state";
+import { isSystemPage } from "../../common-vars";
 
 @observer
 export class Header extends React.Component {
@@ -34,7 +36,7 @@ export class Header extends React.Component {
   }
 
   private translateActivePage = async () => {
-    await translateActivePage();
+    void translateActivePage();
     window.close();
   }
 
@@ -47,6 +49,7 @@ export class Header extends React.Component {
     const { name, version } = getManifest();
     const { page: pageId } = getUrlParams();
     const activeTab = activeTabStorage.get();
+    const showTranslateIcon = !isSystemPage(activeTab.url);
     const { useDarkTheme, fullPageTranslation } = settingsStore.data;
     const { provider, langTo, alwaysTranslatePages } = fullPageTranslation;
     const isAutoTranslatingPage = alwaysTranslatePages.includes(new URL(activeTab.url || location.href).origin);
@@ -66,13 +69,15 @@ export class Header extends React.Component {
           <div className="app-title box grow">
             {name} <sup className="app-version">{version}</sup>
           </div>
-          <Icon
-            small
-            material="g_translate"
-            active={isAutoTranslatingPage}
-            tooltip={translatePageActionTooltip}
-            onClick={this.translateActivePage}
-          />
+          {showTranslateIcon && (
+            <Icon
+              small
+              material="g_translate"
+              active={isAutoTranslatingPage}
+              tooltip={translatePageActionTooltip}
+              onClick={this.translateActivePage}
+            />
+          )}
           <Icon
             small
             svg="moon"

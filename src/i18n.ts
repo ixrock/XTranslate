@@ -47,7 +47,9 @@ async function loadMessages(locale: Locale) {
       responseType: ProxyResponseType.TEXT,
     });
 
-    const bundle = new FluentBundle(locale);
+    const bundle = new FluentBundle(locale, {
+      useIsolating: false, // don't wrap placeholders with invisible FSI, PDI symbols
+    });
     bundle.addResource(new FluentResource(messages))
     bundles.set(locale, bundle);
 

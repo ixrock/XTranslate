@@ -46,7 +46,7 @@ function webpackBaseConfig({ mode }: WebpackConfigEnv): webpack.Configuration {
     },
 
     optimization: {
-      minimize: !isDevelopment, // FIXME: 4MB max limit per file for firefox addons store
+      minimize: !isDevelopment,
     },
 
     ignoreWarnings: [
@@ -104,13 +104,25 @@ function webpackBaseConfig({ mode }: WebpackConfigEnv): webpack.Configuration {
         },
 
         /**
-         * Import icons and image files.
-         * Read more about asset types: https://webpack.js.org/guides/asset-modules/
+         * SVG-icons (vector image)
          */
         {
+          test: /\.svg$/i,
+          resourceQuery: /url/, // *.svg?url
+          type: "asset/resource", // path to `assets/icons/file.svg`
+          generator: {
+            filename: "assets/icons/[name][ext]"
+          }
+        },
+        {
           test: /\.svg$/,
+          resourceQuery: { not: [/url/] }, // import files as SVG-components (XML)
           type: "asset/inline" // data:image/svg+xml;base64,...
         },
+
+        /**
+         * Images
+         */
         {
           test: /\.(jpg|png|ico)$/,
           type: "asset/resource" // path to bundled file, e.g. "/assets/*"

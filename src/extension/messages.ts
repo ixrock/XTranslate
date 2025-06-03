@@ -13,8 +13,8 @@ export enum MessageType {
   STORAGE_DATA_WRITE = "WRITE_TO_EXTERNAL_STORAGE",
   STORAGE_DATA_REMOVE = "REMOVE_FROM_EXTERNAL_STORAGE",
   STORAGE_DATA_SYNC = "SYNC_STORAGE",
-  AI_TRANSLATION = "AI_TRANSLATION",
-  AI_TEXT_TO_SPEECH = "AI_TEXT_TO_SPEECH",
+  OPENAI_TRANSLATION = "OPENAI_TRANSLATION",
+  OPENAI_TEXT_TO_SPEECH = "OPENAI_TEXT_TO_SPEECH",
   INJECT_CONTENT_SCRIPT = "INJECT_CONTENT_SCRIPT",
   RUNTIME_ERROR_CONTEXT_INVALIDATED = "RUNTIME_ERROR_CONTEXT_INVALIDATED",
 }
@@ -42,7 +42,7 @@ export type ProxyRequestInit = Omit<RequestInit, "window" | "signal" | "body"> &
   body?: string;
 };
 
-export interface ProxyResponsePayload<Data> {
+export interface ProxyResponsePayload<Data = unknown> {
   url: string;
   headers: { [header: string]: string; "content-type"?: string };
   data: Data;
@@ -54,11 +54,6 @@ export interface InjectContentScriptPayload {
 
 export interface TranslatePayload extends TranslateParams {
   provider: ProviderCodeName;
-}
-
-export interface TranslatePagePayload {
-  tabId: number;
-  pageUrl: string;
 }
 
 export interface SaveToHistoryPayload {

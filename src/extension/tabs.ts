@@ -31,17 +31,6 @@ export async function getInjectableTabs(): Promise<BrowserTab[]> {
   });
 }
 
-// Works differently than `chrome.tabs.getCurrent()`
-// Only "activeTab" permission is enabled in manifest.json
-// e.g. show translation in extension's window when some text selected at webpage
-export function getActiveTab(): Promise<BrowserTab> {
-  return new Promise(resolve => {
-    chrome.tabs.query({ active: true }, function (tabs) {
-      resolve(tabs[0]);
-    });
-  });
-}
-
 export interface BroadcastMessageParams {
   acceptFilter?: (tab: BrowserTab) => boolean;
 }
@@ -59,4 +48,28 @@ export async function broadcastMessage<T>(msg: Message<T>, { acceptFilter }: Bro
   return sendMessageToTabs<T>(msg, {
     filter: acceptFilter,
   });
+}
+
+export async function getActiveTab(): Promise<BrowserTab> {
+  const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
+  return tabs[0];
+}
+
+export async function getActiveTabId(): Promise<number> {
+  return (await getActiveTab()).id;
+}
+
+export async function waitTabReadiness(tabId: number) {
+  return new Promise(resolve => {
+    function listener(updatedTabId: number, changes: chrome.tabs.TabChangeInfo, tab: BrowserTab) {
+      const isRequestedTab = updatedTabId === tabId;
+      const isComplete = changes.status === "complete"
+      if (isRequestedTab && isComplete) {
+        chrome.tabs.onUpdated.removeListener(listener);
+        resolve(tab.id);
+      }
+    }
+
+    chrome.tabs.onUpdated.addListener(listener);
+  })
 }

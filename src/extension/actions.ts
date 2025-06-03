@@ -1,26 +1,46 @@
-import { getActiveTab } from "./tabs";
-import { isContextInvalidatedError, sendMessage, sendMessageSafe } from "./runtime";
-import { MessageType, TranslatePagePayload } from "./messages";
+import { isBackgroundWorker, isContextInvalidatedError, onMessage, sendMessage, sendMessageSafe } from "./runtime";
+import { MessageType } from "./messages";
+import { getActiveTabId } from "./tabs";
+
+export interface IsomorphicActionParams<Payload, Result> {
+  messageType: MessageType;
+  handler: (data?: Payload) => Promise<Result>;
+  autoBindListener?: boolean; // bind handler to `chrome.runtime.onMessage` for provided  `message.type` (default: true)
+}
+
+export function createIsomorphicAction<Payload, Result>(params: IsomorphicActionParams<Payload, Result>) {
+  const {
+    messageType, handler,
+    autoBindListener = true,
+  } = params;
+
+  if (autoBindListener && isBackgroundWorker()) {
+    onMessage(messageType, handler);
+  }
+
+  return async (payload: Payload, tabId?: number): Promise<Result> => {
+    if (isBackgroundWorker()) {
+      return handler(payload);
+    }
+    return sendMessage<Payload, Result>({
+      type: messageType,
+      tabId,
+      payload,
+    });
+  };
+}
 
 export async function getSelectedText(): Promise<string> {
-  const activeTab = await getActiveTab();
-
   return sendMessageSafe<void, string>({
     type: MessageType.GET_SELECTED_TEXT,
-    tabId: activeTab.id,
+    tabId: await getActiveTabId(),
   });
 }
 
 export async function translateActivePage() {
-  const activeTab = await getActiveTab();
-
-  return sendMessageSafe<TranslatePagePayload, void>({
+  return sendMessageSafe({
     type: MessageType.TRANSLATE_FULL_PAGE,
-    tabId: activeTab.id,
-    payload: {
-      tabId: activeTab.id,
-      pageUrl: activeTab.url,
-    }
+    tabId: await getActiveTabId(),
   });
 }
 

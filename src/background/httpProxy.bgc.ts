@@ -4,7 +4,7 @@ import { blobToBase64DataUrl, createLogger, parseJson, toBinaryFile } from "../u
 import { isBackgroundWorker, onMessage, sendMessage } from "../extension/runtime"
 import { MessageType, ProxyRequestPayload, ProxyResponsePayload, ProxyResponseType } from "../extension/messages"
 
-const logger = createLogger({ systemPrefix: '[BACKGROUND(proxy)]' });
+const logger = createLogger({ systemPrefix: '[HTTP-PROXY]' });
 
 export function listenProxyRequestActions() {
   return onMessage(MessageType.PROXY_REQUEST, handleProxyRequestPayload);
@@ -14,7 +14,7 @@ export async function handleProxyRequestPayload<Response>({ url, responseType, r
   logger.info(`proxying request (${responseType}): ${url}`);
 
   const httpResponse = await fetch(url, requestInit);
-  const payload: ProxyResponsePayload<any> = {
+  const payload: ProxyResponsePayload = {
     url,
     headers: Object.fromEntries(httpResponse.headers),
     data: undefined,

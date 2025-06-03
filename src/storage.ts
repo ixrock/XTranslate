@@ -1,4 +1,6 @@
-// Persistent storage helper
+// Isomorphic persistent storage layer (helper)
+// The utility can be used in any environment (background, content-page, etc.)
+// Sync data-state updates to extension-runtime and browser tabs via service-worker aka "background-script"
 
 import { createLogger } from "./utils/createLogger";
 import { StorageAdapter, StorageHelper, StorageHelperOptions } from "./utils/storageHelper";
@@ -25,8 +27,7 @@ export function createStorage<T>(key: string, options: ChromeStorageHelperOption
 
   const storageAdapter: StorageAdapter<T> = {
     async setItem(key: string, state: T): Promise<void> {
-      const payload: StorageWritePayload<T> = { key, area, state };
-      return writeToExternalStorageAction(payload);
+      return writeToExternalStorageAction({ key, area, state });
     },
 
     async getItem(key: string): Promise<T> {

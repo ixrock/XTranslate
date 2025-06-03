@@ -7,7 +7,6 @@ import { action, comparer, computed, makeObservable, observable, reaction, toJS 
 import { observer } from "mobx-react";
 import { getTranslator, getTranslators, isRTL, ITranslationError, ITranslationResult, ProviderCodeName, Translator } from "../../providers";
 import { createLogger, cssNames, disposer } from "../../utils";
-import { copyToClipboard } from "../../utils/copy-to-clipboard";
 import { SelectLanguage } from "../select-language";
 import { Input } from "../input";
 import { Option, Select } from "../select";
@@ -24,6 +23,7 @@ import { isMac, materialIcons } from "../../common-vars";
 import { isFavorite } from "../user-history/favorites.storage";
 import { saveToFavoritesAction } from "../../background/history.bgc";
 import { getSelectedText } from "../../extension";
+import { CopyToClipboardIcon } from "../copy-to-clipboard-icon";
 
 export const lastInputText = createStorage("last_input_text", {
   defaultValue: "",
@@ -51,7 +51,6 @@ export class InputTranslation extends React.Component {
   @observable isLoading = false;
   @observable translation?: ITranslationResult;
   @observable error?: ITranslationError;
-  @observable copied = false;
 
   constructor(props: object) {
     super(props);
@@ -190,13 +189,6 @@ export class InputTranslation extends React.Component {
     this.input.focus();
   }
 
-  @action.bound
-  async copyToClipboard() {
-    await copyToClipboard(this.translation, { sourceText: false });
-    this.copied = true;
-    setTimeout(() => this.copied = false, 2500);
-  }
-
   renderTranslationResult() {
     const { langTo, langDetected, translation, transcription, dictionary, spellCorrection, sourceLanguages, vendor } = this.translation;
     const translator = getTranslator(vendor);
@@ -213,10 +205,9 @@ export class InputTranslation extends React.Component {
                 tooltip={getMessage("popup_play_icon_title")}
                 onClick={this.playText}
               />
-              <Icon
-                material={this.copied ? materialIcons.copiedTranslation : materialIcons.copyTranslation}
+              <CopyToClipboardIcon
+                content={this.translation}
                 tooltip={getMessage("popup_copy_translation_title")}
-                onClick={this.copyToClipboard}
               />
             </div>
             <div className="value box grow">
@@ -227,7 +218,7 @@ export class InputTranslation extends React.Component {
               <Icon
                 material={favorite ? materialIcons.favorite : materialIcons.unfavorite}
                 tooltip={favorite ? getMessage("history_unmark_as_favorite") : getMessage("history_mark_as_favorite")}
-                onClick={() => saveToFavoritesAction(this.translation, { isFavorite: !favorite })}
+                onClick={() => saveToFavoritesAction({ item: this.translation, isFavorite: !favorite })}
               />
               <div className="lang" id="translated_with">
                 {translationDirection}
