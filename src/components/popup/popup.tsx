@@ -6,7 +6,6 @@ import { observer } from "mobx-react";
 import isEqual from "lodash/isEqual";
 import { materialIcons } from "../../common-vars";
 import { cssNames, disposer, IClassName, noop, prevDefault } from "../../utils";
-import { copyToClipboard } from "../../utils/copy-to-clipboard";
 import { toCssColor } from "../../utils/toCssColor";
 import { getNextTranslator, getTranslator, isRTL, ITranslationError, ITranslationResult } from "../../providers";
 import { Icon } from "../icon";
@@ -15,6 +14,7 @@ import { themeStore } from "../theme-manager/theme.storage";
 import { isFavorite } from "../user-history/favorites.storage";
 import { getLocale, getMessage } from "../../i18n";
 import { saveToFavoritesAction } from "../../background/history.bgc";
+import { CopyToClipboardIcon } from "../copy-to-clipboard-icon";
 
 interface Props extends Omit<React.HTMLProps<any>, "className"> {
   previewMode?: boolean;
@@ -30,22 +30,20 @@ interface Props extends Omit<React.HTMLProps<any>, "className"> {
 
 @observer
 export class Popup extends React.Component<Props> {
-  private dispose = disposer();
-  public elem: HTMLElement;
-
   static defaultProps: Partial<Props> = {
     tooltipParent: document.body,
     onPlayText: noop,
     onTranslateNext: noop,
   };
 
-  @observable copied = false;
-  @observable translation = this.props.translation;
-
   constructor(props: Props) {
     super(props);
     makeObservable(this);
   }
+
+  private dispose = disposer();
+  @observable.ref elem: HTMLElement;
+  @observable translation = this.props.translation;
 
   @action
   componentDidUpdate() {
@@ -59,8 +57,8 @@ export class Popup extends React.Component<Props> {
   static get translationMock(): ITranslationResult {
     return {
       vendor: settingsStorage.defaultValue.vendor,
-      langFrom: "en",
-      langTo: getLocale(),
+      langFrom: "fi",
+      langTo: "en",
       translation: getMessage("popup_demo_translation"),
       dictionary: [
         {
@@ -131,13 +129,6 @@ export class Popup extends React.Component<Props> {
   }
 
   @action
-  copyToClipboard = async () => {
-    await copyToClipboard(this.props.translation);
-    this.copied = true;
-    setTimeout(() => this.copied = false, 2500); // reset in 2,5 seconds
-  }
-
-  @action
   private toggleFavorites = async () => {
     return saveToFavoritesAction({
       item: this.props.translation,
@@ -154,7 +145,6 @@ export class Popup extends React.Component<Props> {
         className={styles.icon}
         material={this.isFavorite ? materialIcons.favorite : materialIcons.unfavorite}
         tooltip={{
-          className: styles.iconTooltip,
           children: getMessage("history_mark_as_favorite"),
           parentElement: this.props.tooltipParent,
         }}
@@ -168,15 +158,13 @@ export class Popup extends React.Component<Props> {
       return;
     }
     return (
-      <Icon
+      <CopyToClipboardIcon
         className={styles.icon}
-        material={this.copied ? materialIcons.copiedTranslation : materialIcons.copyTranslation}
+        content={{ obj: this.props.translation }}
         tooltip={{
-          className: styles.iconTooltip,
           children: getMessage("popup_copy_translation_title"),
           parentElement: this.props.tooltipParent,
         }}
-        onClick={this.copyToClipboard}
       />
     )
   }
@@ -190,7 +178,6 @@ export class Popup extends React.Component<Props> {
         className={styles.icon}
         material={materialIcons.ttsPlay}
         tooltip={{
-          className: styles.iconTooltip,
           children: getMessage("popup_play_icon_title"),
           parentElement: this.props.tooltipParent,
         }}
@@ -213,7 +200,6 @@ export class Popup extends React.Component<Props> {
         className={styles.icon}
         material={materialIcons.nextTranslation}
         tooltip={{
-          className: styles.iconTooltip,
           children: iconTitle,
           parentElement: this.props.tooltipParent,
         }}
