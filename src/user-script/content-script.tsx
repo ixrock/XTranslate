@@ -48,6 +48,10 @@ export class ContentScript extends React.Component {
     rootNode.render(<ContentScript/>);
   }
 
+  static get isTopFrame() {
+    return this.window === window.top;
+  }
+
   static async preloadGlobalStyles() {
     this.globalCssStyles = await proxyRequest<string>({
       url: getURL(`${contentScriptEntry}.css`),
@@ -99,7 +103,7 @@ export class ContentScript extends React.Component {
     this.bindEvents();
     this.applyShadowDomGlobalStyles();
 
-    if (this.pageTranslator.isAlwaysTranslate(location.href)) {
+    if (this.pageTranslator.isAlwaysTranslate(document.URL)) {
       this.startPageAutoTranslation();
     }
   }
@@ -224,8 +228,10 @@ export class ContentScript extends React.Component {
   }
 
   private togglePageAutoTranslation() {
-    const pageUrl = location.href;
-    if (this.pageTranslator.isAlwaysTranslate(pageUrl)) {
+    const pageUrl = document.URL;
+    const autoTranslate = this.pageTranslator.isAlwaysTranslate(pageUrl);
+
+    if (autoTranslate) {
       this.stopPageAutoTranslation(pageUrl);
     } else {
       this.startPageAutoTranslation(pageUrl);
@@ -234,7 +240,9 @@ export class ContentScript extends React.Component {
 
   @action
   private startPageAutoTranslation(pageUrl?: string) {
-    if (pageUrl) this.pageTranslator.setAutoTranslatingPages({ enabled: [pageUrl] });
+    if (pageUrl && ContentScript.isTopFrame) {
+      this.pageTranslator.setAutoTranslatingPages({ enabled: [pageUrl] });
+    }
     this.pageTranslator.startAutoTranslation();
   }
 
