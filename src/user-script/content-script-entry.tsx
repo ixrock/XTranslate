@@ -1,5 +1,4 @@
 import "../setup";
-import "./content-script-entry.scss";
 import { customPDFViewerRedirectCheck } from "../pdf-viewer/pdf-utils";
 import { injectContentScriptAction } from "../background/scripting.bgc";
 
@@ -7,6 +6,6 @@ import { injectContentScriptAction } from "../background/scripting.bgc";
 void customPDFViewerRedirectCheck();
 
 // render app
-document.addEventListener("DOMContentLoaded", () => {
+window.addEventListener("load", () => {
   void injectContentScriptAction({});
 });

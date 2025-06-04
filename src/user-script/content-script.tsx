@@ -1,7 +1,7 @@
 //-- Injectable content-script (refreshed on every page reload without extension-reload)
 
 import "../setup";
-import "./content-script-entry.scss";
+import "./content-script.scss"
 import React from "react";
 import { createRoot, Root } from "react-dom/client";
 import { action, computed, makeObservable, observable, toJS } from "mobx";
@@ -10,7 +10,7 @@ import debounce from 'lodash/debounce';
 import isEmpty from 'lodash/isEmpty';
 import isEqual from 'lodash/isEqual';
 import orderBy from 'lodash/orderBy';
-import { contentScriptEntry, contentScriptInjectable } from "../common-vars";
+import { contentScriptInjectable } from "../common-vars";
 import { preloadAppData } from "../preloadAppData";
 import { autoBind, disposer, getHotkey } from "../utils";
 import { getManifest, getURL, isRuntimeContextInvalidated, MessageType, onMessage, ProxyResponseType, TranslatePayload } from "../extension";
@@ -18,6 +18,7 @@ import { proxyRequest } from "../background/httpProxy.bgc";
 import { popupHotkey, settingsStore } from "../components/settings/settings.storage";
 import { getNextTranslator, getTranslator, ITranslationError, ITranslationResult } from "../providers";
 import { XTranslateIcon } from "./xtranslate-icon";
+import { XTranslateTooltip } from "./xtranslate-tooltip";
 import { Popup } from "../components/popup/popup";
 import { PageTranslator } from "./page-translator";
 
@@ -26,11 +27,11 @@ export class ContentScript extends React.Component {
   static window: Window;
   static rootElem: HTMLElement;
   static rootNode: Root;
-  static globalCssStyles: string;
+  static cssStylesUrl = "";
 
   static async init(window: Window = globalThis.window.self) {
     await preloadAppData(); // wait for dependent data before first render
-    await this.preloadGlobalStyles();
+    await this.preloadCss();
 
     ContentScript.window = window;
     ContentScript.rootElem = window.document.createElement("div");
@@ -44,28 +45,31 @@ export class ContentScript extends React.Component {
     window.document.body.appendChild(appElem);
     ContentScript.rootNode = rootNode;
 
-    appRootNode.render(<style type="text/css">{this.globalCssStyles}</style>);
+    appRootNode.render(<link rel="stylesheet" href={this.cssStylesUrl}/>);
     rootNode.render(<ContentScript/>);
+  }
+
+  static async preloadCss() {
+    const cssStyles = await proxyRequest<string>({
+      url: getURL(`${contentScriptInjectable}.css`),
+      responseType: ProxyResponseType.TEXT,
+    });
+    this.cssStylesUrl = URL.createObjectURL(
+      new Blob([cssStyles], { type: "text/css" }),
+    );
   }
 
   static get isTopFrame() {
     return this.window === window.top;
   }
 
-  static async preloadGlobalStyles() {
-    this.globalCssStyles = await proxyRequest<string>({
-      url: getURL(`${contentScriptEntry}.css`),
-      responseType: ProxyResponseType.TEXT,
-    });
-  }
-
   constructor(props: object) {
     super(props);
     makeObservable(this);
     autoBind(this);
-    this.preloadCss();
   }
 
+  private unload = disposer();
   public appName = getManifest().name;
   private selection = ContentScript.window.getSelection();
   private popup: Popup;
@@ -74,9 +78,7 @@ export class ContentScript extends React.Component {
   private mousePos = { x: 0, y: 0 };
   private mouseTarget: HTMLElement = document.body;
   private pageTranslator = new PageTranslator();
-
-  // Unload previous content script (e.g. in case of "context invalidated" error on extension update to new version)
-  private unload = disposer();
+  private tooltipRef = React.createRef<HTMLElement>();
 
   @observable.ref translation: ITranslationResult;
   @observable.ref error: ITranslationError;
@@ -87,21 +89,9 @@ export class ContentScript extends React.Component {
   @observable isRtlSelection = false;
   @observable isIconVisible = false;
   @observable isLoading = false;
-  @observable shadowDomCssUrl = "";
 
-  async preloadCss() {
-    const shadowDomStyles = await proxyRequest<string>({
-      url: getURL(`${contentScriptInjectable}.css`),
-      responseType: ProxyResponseType.TEXT,
-    });
-    this.shadowDomCssUrl = URL.createObjectURL(
-      new Blob([shadowDomStyles], { type: "text/css" }),
-    );
-  }
-
-  componentDidMount() {
+  async componentDidMount() {
     this.bindEvents();
-    this.applyShadowDomGlobalStyles();
 
     if (this.pageTranslator.isAlwaysTranslate(document.URL)) {
       this.startPageAutoTranslation();
@@ -110,14 +100,6 @@ export class ContentScript extends React.Component {
 
   private getShadowDomElements(rootElem = document.body) {
     return Array.from(rootElem.querySelectorAll("*")).filter(elem => elem.shadowRoot) as HTMLElement[];
-  }
-
-  private applyShadowDomGlobalStyles() {
-    this.getShadowDomElements().forEach(({ shadowRoot }) => {
-      const style = new CSSStyleSheet();
-      style.replaceSync(ContentScript.globalCssStyles);
-      shadowRoot.adoptedStyleSheets.push(style);
-    });
   }
 
   private bindEvents() {
@@ -151,7 +133,10 @@ export class ContentScript extends React.Component {
 
   async checkContextInvalidationError(): Promise<void> {
     const isInvalidated = await isRuntimeContextInvalidated();
-    if (isInvalidated) this.unload();
+    if (isInvalidated) {
+      // unload previous content-script artifacts in case of "context invalidated" error
+      this.unload();
+    }
   }
 
   @computed get isPopupHidden() {
@@ -297,7 +282,7 @@ export class ContentScript extends React.Component {
     return !ContentScript.rootElem.contains(elem);
   }
 
-  normalizeRect(rect: DOMRect, { withScroll = true } = {}): WritableDOMRect {
+  normalizeRect(rect: DOMRect, { withScroll = false } = {}): WritableDOMRect {
     let { left, top, width, height } = rect;
     if (withScroll) {
       left += ContentScript.window.scrollX;
@@ -388,6 +373,28 @@ export class ContentScript extends React.Component {
     }));
   }
 
+  refreshTranslationTooltip() {
+    const tooltipElem = this.tooltipRef.current;
+    const { showTranslationOnHover, showOriginalOnHover } = settingsStore.data.fullPageTranslation;
+    const showTooltip = Boolean(showTranslationOnHover || showOriginalOnHover) && this.pageTranslator.isEnabled;
+    if (!showTooltip) {
+      return;
+    }
+
+    const targetElem = this.mouseTarget.closest("[data-xtranslate-tooltip]");
+    if (targetElem) {
+      const { left, top, height } = targetElem.getBoundingClientRect();
+      const tooltipTranslation = targetElem.getAttribute("data-xtranslate-translation");
+      const tooltipOriginalText = targetElem.getAttribute("data-xtranslate-original");
+
+      tooltipElem.style.left = `${left}px`;
+      tooltipElem.style.top = `${top + height}px`;
+      tooltipElem.innerHTML = [tooltipOriginalText, tooltipTranslation].filter(Boolean).join("<hr/>");
+    } else if (!tooltipElem.matches(":empty")) {
+      tooltipElem.innerText = "";
+    }
+  }
+
   isClickedOnSelection() {
     if (!this.selectedText || !this.selectionRects) return;
     const { x, y } = this.mousePos;
@@ -423,7 +430,7 @@ export class ContentScript extends React.Component {
     evt.stopPropagation();
   }
 
-  private getMouseTopElement(evt: MouseEvent): HTMLElement {
+  private getMouseTargetTopElem(evt: MouseEvent): HTMLElement {
     return evt.composedPath()[0] as HTMLElement;
   }
 
@@ -432,7 +439,8 @@ export class ContentScript extends React.Component {
 
     this.mousePos.x = clientX;
     this.mousePos.y = clientY;
-    this.mouseTarget = this.getMouseTopElement(evt);
+    this.mouseTarget = this.getMouseTargetTopElem(evt);
+    this.refreshTranslationTooltip();
   }
 
   onMouseDown(evt: MouseEvent) {
@@ -532,9 +540,7 @@ export class ContentScript extends React.Component {
     const translator = getTranslator(vendor);
     return (
       <>
-        {this.shadowDomCssUrl && (
-          <link rel="stylesheet" href={this.shadowDomCssUrl} crossOrigin="anonymous"/>
-        )}
+        <link rel="stylesheet" href={ContentScript.cssStylesUrl}/>
         {isIconVisible && (
           <XTranslateIcon
             style={this.iconPosition}
@@ -542,6 +548,7 @@ export class ContentScript extends React.Component {
             title={`${this.appName}: ${translator.getLangPairTitle(langFrom, langTo)}`}
           />
         )}
+        <XTranslateTooltip ref={this.tooltipRef}/>
         <Popup
           style={popupPosition}
           initParams={lastParams}

@@ -1,8 +1,6 @@
 @use "../mixins" as *;
-@use "../theme" as *;
 
 .Popup {
-  @include theme-vars;
   --theme-spacing: .6em;
 
   position: absolute;

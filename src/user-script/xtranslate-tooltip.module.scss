@@ -1,0 +1,25 @@
+.XTranslateTooltip {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 100000;
+  min-width: min-content;
+  max-width: max-content;
+  white-space: pre-wrap;
+  padding: var(--theme-spacing);
+  border-radius: var(--theme-border-radius);
+  background: black;
+  color: white;
+  border: 1px solid;
+  transition: top 250ms, left 250ms;
+  pointer-events: none !important;
+
+  &:empty {
+    visibility: hidden;
+  }
+}
+
+[data-xtranslate-tooltip]:hover {
+  text-decoration: underline;
+  text-decoration-style: dotted;
+}

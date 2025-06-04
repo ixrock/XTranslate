@@ -46,6 +46,10 @@ export class PageTranslator {
     return settingsStore.data.fullPageTranslation;
   }
 
+  get isEnabled() {
+    return this.isAlwaysTranslate(document.URL);
+  }
+
   getProviderParams() {
     const { provider, langFrom, langTo } = this.settings;
     return { provider, langFrom, langTo };
