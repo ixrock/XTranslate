@@ -12,16 +12,16 @@ export class Footer extends React.Component {
   private appName = getManifest().name;
 
   private shareTags = [
-    "browser-extension", "browser-addon",
-    "text-translator", "page-translator",
-    "learn-languages", "productivity",
-    "chrome", "ms-edge",
-    this.appName.toLowerCase(),
+    "ChromeExtension", "BrowserAddon", "TextTranslator", "PageTranslator",
+    "BrowserExtension", "LearnLanguages", "TextToSpeech",
+    "GoogleTranslate", "BingTranslator", "AILanguageTranslation",
+    this.appName,
   ];
 
   get shareText() {
     return [
       `${this.appName} - ${getMessage("short_description")}`,
+      "",
       `${this.shareTags.map(tag => `#` + tag).join(' ')}`,
       "",
       getExtensionUrl(),
