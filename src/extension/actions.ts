@@ -1,4 +1,4 @@
-import { isBackgroundWorker, isContextInvalidatedError, onMessage, sendMessage, sendMessageSafe } from "./runtime";
+import { isBackgroundWorker, onMessage, sendMessage, sendMessageSafe } from "./runtime";
 import { MessageType } from "./messages";
 import { getActiveTabId } from "./tabs";
 
@@ -42,13 +42,4 @@ export async function translateActivePage() {
     type: MessageType.TRANSLATE_FULL_PAGE,
     tabId: await getActiveTabId(),
   });
-}
-
-export async function isRuntimeContextInvalidated(): Promise<boolean> {
-  try {
-    await sendMessage({ type: MessageType.RUNTIME_ERROR_CONTEXT_INVALIDATED });
-    return false; // if we reach this point, the context is valid
-  } catch (err) {
-    return isContextInvalidatedError(err);
-  }
 }

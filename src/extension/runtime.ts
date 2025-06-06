@@ -101,3 +101,12 @@ export function isContextInvalidatedError(err: Error) {
 export function isRuntimeConnectionFailedError(err: Error) {
   return String(err).includes("Could not establish connection. Receiving end does not exist");
 }
+
+export async function isRuntimeContextInvalidated(): Promise<boolean> {
+  try {
+    await sendMessage({ type: MessageType.RUNTIME_ERROR_CONTEXT_INVALIDATED });
+    return false; // if we reach this point, the context is valid
+  } catch (err) {
+    return isContextInvalidatedError(err);
+  }
+}
