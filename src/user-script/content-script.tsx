@@ -235,6 +235,7 @@ export class ContentScript extends React.Component {
   private stopPageAutoTranslation(pageUrl?: string) {
     if (pageUrl) this.pageTranslator.setAutoTranslatingPages({ disabled: [pageUrl] });
     this.pageTranslator.stopAutoTranslation();
+    this.setTooltipHTML("");
   }
 
   playText() {
@@ -373,6 +374,10 @@ export class ContentScript extends React.Component {
     }));
   }
 
+  private setTooltipHTML(...htmlChunks: React.ReactNode[]): void {
+    this.tooltipRef.current.innerHTML = htmlChunks.filter(Boolean).join("<hr/>");
+  }
+
   refreshTranslationTooltip() {
     const tooltipElem = this.tooltipRef.current;
     const { showTranslationOnHover, showOriginalOnHover } = settingsStore.data.fullPageTranslation;
@@ -389,9 +394,9 @@ export class ContentScript extends React.Component {
 
       tooltipElem.style.left = `${left}px`;
       tooltipElem.style.top = `${top + height}px`;
-      tooltipElem.innerHTML = [tooltipOriginalText, tooltipTranslation].filter(Boolean).join("<hr/>");
+      this.setTooltipHTML(tooltipOriginalText, tooltipTranslation);
     } else if (!tooltipElem.matches(":empty")) {
-      tooltipElem.innerText = "";
+      this.setTooltipHTML("");
     }
   }
 
