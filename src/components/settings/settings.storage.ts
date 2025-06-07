@@ -22,7 +22,7 @@ export const settingsStorage = createStorage("settings", {
     useSpeechSynthesis: false,
     showTextToSpeechIcon: true,
     showSaveToFavoriteIcon: true,
-    showNextVendorIcon: false,
+    showProviderSelectIcon: true,
     showCopyTranslationIcon: true,
     useDarkTheme: false,
     showIconNearSelection: true,

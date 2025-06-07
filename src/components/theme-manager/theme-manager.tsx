@@ -117,6 +117,8 @@ export class ThemeManager extends React.Component {
           previewMode
           style={{ position: "sticky", top: 20 }}
           translation={Popup.translationMock}
+          error={null}
+          lastParams={null}
         />
         <br/>
         <SettingsPopup/>

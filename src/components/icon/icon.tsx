@@ -14,7 +14,6 @@ export interface IconProps extends React.HTMLAttributes<any> {
   big?: boolean;              // pre-defined icon-size
   active?: boolean;           // apply active-state styles
   interactive?: boolean;      // indicates that icon is interactive and highlight it on focus/hover
-  focusable?: boolean;        // allow focus to the icon + show .active styles (default: "true", when icon is interactive)
   colorful?: boolean;          // applicable only for svg-icons
   disabled?: boolean;
   tooltip?: ReactNode | Omit<TooltipProps, "anchorId">; // TODO: move to proper decorator / wrapper (?)
@@ -25,10 +24,6 @@ export class Icon extends React.PureComponent<IconProps> {
   public iconId = this.props.id ?? (
     this.props.tooltip ? uniqueId(`icon_tooltip`) : undefined
   );
-
-  static defaultProps: IconProps = {
-    focusable: true,
-  };
 
   get isInteractive() {
     const { interactive, onClick, href } = this.props;
@@ -71,7 +66,7 @@ export class Icon extends React.PureComponent<IconProps> {
     const { isInteractive } = this;
     const {
       // skip passing props to icon's html element
-      className, href, material, svg, size, small, big, disabled, active, focusable, colorful,
+      className, href, material, svg, size, small, big, disabled, active, colorful,
       children, tooltip, htmlFor,
       interactive: _interactive,
       onClick: _onClick,
@@ -89,14 +84,13 @@ export class Icon extends React.PureComponent<IconProps> {
         [styles.interactive]: isInteractive,
         [styles.disabled]: disabled,
         [styles.active]: active,
-        [styles.focusable]: focusable,
         [styles.small]: small,
         [styles.big]: big,
         [styles.colorful]: colorful,
       }),
       onClick: isInteractive ? this.onClick : undefined,
       onKeyDown: isInteractive ? this.onKeyDown : undefined,
-      tabIndex: isInteractive && focusable && !disabled ? 0 : undefined,
+      tabIndex: isInteractive && !disabled ? 0 : undefined,
       style: size ? { "--icon-size": `${size}${typeof size === "number" ? "px" : ""}` } as React.CSSProperties : undefined,
       ref: this.bindRef,
       ...elemProps,

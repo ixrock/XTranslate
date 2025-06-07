@@ -16,7 +16,7 @@ import { autoBind, disposer, getHotkey } from "../utils";
 import { getManifest, getURL, isRuntimeContextInvalidated, MessageType, onMessage, ProxyResponseType, TranslatePayload } from "../extension";
 import { proxyRequest } from "../background/httpProxy.bgc";
 import { popupHotkey, settingsStore } from "../components/settings/settings.storage";
-import { getNextTranslator, getTranslator, ITranslationError, ITranslationResult } from "../providers";
+import { getNextTranslator, getTranslator, ITranslationError, ITranslationResult, ProviderCodeName } from "../providers";
 import { XTranslateIcon } from "./xtranslate-icon";
 import { XTranslateTooltip } from "./xtranslate-tooltip";
 import { Popup } from "../components/popup/popup";
@@ -80,10 +80,10 @@ export class ContentScript extends React.Component {
   private pageTranslator = new PageTranslator();
   private tooltipRef = React.createRef<HTMLElement>();
 
+  @observable.ref lastParams: TranslatePayload; // last used translation payload
   @observable.ref translation: ITranslationResult;
   @observable.ref error: ITranslationError;
   @observable.ref selectionRects: WritableDOMRect[];
-  @observable lastParams: Partial<ITranslationResult> = {}; // last used params in getting translation attempt
   @observable popupPosition: React.CSSProperties = {};
   @observable selectedText = "";
   @observable isRtlSelection = false;
@@ -172,22 +172,25 @@ export class ContentScript extends React.Component {
   translateLazy = debounce(this.translate, 250);
 
   @action
-  async translate({ provider, from, to, text }: Partial<TranslatePayload> = {}) {
+  async translate(params: Partial<TranslatePayload> = {}) {
     void this.checkContextInvalidationError();
 
-    this.lastParams = {
-      vendor: provider ?? settingsStore.data.vendor,
-      langFrom: from ?? settingsStore.data.langFrom,
-      langTo: to ?? settingsStore.data.langTo,
-      originalText: text ?? this.selectedText.trim(),
-    };
+    this.isLoading = true;
+    this.translation = null;
+    this.error = null;
 
     try {
-      const { vendor, langTo: to, langFrom: from, originalText: text } = this.lastParams;
-      this.isLoading = true;
-      this.translation = null;
-      this.error = null;
-      this.translation = await getTranslator(vendor).translate({ to, from, text });
+      const payload = this.lastParams = {
+        provider: params.provider ?? settingsStore.data.vendor,
+        from: params.from ?? settingsStore.data.langFrom,
+        to: params.to ?? settingsStore.data.langTo,
+        text: params.text ?? this.selectedText.trim(),
+      };
+
+      const translation = await getTranslator(payload.provider).translate(payload);
+      if (isEqual(payload, this.lastParams)) {
+        this.translation = translation;
+      }
     } catch (err) {
       this.error = err;
     } finally {
@@ -196,15 +199,22 @@ export class ContentScript extends React.Component {
     }
   }
 
+  translateWith(provider: ProviderCodeName) {
+    return this.translate({
+      ...(this.lastParams ?? {}),
+      provider,
+    });
+  }
+
   translateNext(reverse = false) {
-    const { vendor, langFrom, langTo, originalText } = this.lastParams;
-    const nextTranslator = getNextTranslator(vendor, langFrom, langTo, reverse);
+    if (!this.lastParams) return;
+
+    const { provider, from, to } = this.lastParams;
+    const nextTranslator = getNextTranslator(provider, from, to, reverse);
 
     return this.translate({
+      ...this.lastParams,
       provider: nextTranslator.name,
-      from: langFrom,
-      to: langTo,
-      text: originalText,
     });
   }
 
@@ -239,11 +249,8 @@ export class ContentScript extends React.Component {
   }
 
   playText() {
-    const {
-      vendor, originalText,
-      langDetected = this.lastParams.langFrom,
-    } = this.translation ?? this.lastParams;
-
+    if (!this.translation) return;
+    const { vendor, originalText, langDetected } = this.translation;
     return getTranslator(vendor).speak(langDetected, originalText);
   }
 
@@ -540,7 +547,7 @@ export class ContentScript extends React.Component {
   }), 250);
 
   render() {
-    const { lastParams, translation, error, popupPosition, playText, translateNext, onIconClick, hidePopup, isIconVisible } = this;
+    const { translation, error, popupPosition, playText, onIconClick, isIconVisible } = this;
     const { langFrom, langTo, vendor } = settingsStore.data;
     const translator = getTranslator(vendor);
     return (
@@ -556,13 +563,12 @@ export class ContentScript extends React.Component {
         <XTranslateTooltip ref={this.tooltipRef}/>
         <Popup
           style={popupPosition}
-          initParams={lastParams}
           translation={translation}
           error={error}
           onPlayText={playText}
-          onTranslateNext={() => translateNext()}
-          onClose={hidePopup}
-          tooltipParent={ContentScript.rootElem}
+          lastParams={this.lastParams}
+          onProviderChange={this.translateWith}
+          tooltipParentElem={ContentScript.rootElem}
           ref={(ref: Popup) => {
             this.popup = ref
           }}

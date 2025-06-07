@@ -1,19 +1,19 @@
 import * as styles from "./select-provider.module.scss"
 import React from "react";
 import { getTranslators, ProviderCodeName, Translator } from "../../providers";
-import { FormatOptionLabelMeta, ReactSelect, ReactSelectOption } from "../select/react-select";
+import { FormatOptionLabelMeta, ReactSelect, ReactSelectOption, ReactSelectProps } from "../select/react-select";
 import { cssNames } from "../../utils/cssNames";
 import { Icon } from "../icon";
 
-export interface SelectProviderProps {
+export interface SelectProviderProps extends Omit<ReactSelectProps<ProviderCodeName>, "value" | "onChange" | "options"> {
   className?: string;
   compactView?: boolean;
-  value: ProviderCodeName;
-  onChange(value: ProviderCodeName): void;
+  value?: ProviderCodeName;
+  onChange?(value: ProviderCodeName): void;
   filter?(provider: Translator): boolean;
 }
 
-export function SelectProvider({ compactView, filter, ...inputProps }: SelectProviderProps) {
+export function SelectProvider({ compactView, filter, value: providerName, ...inputProps }: SelectProviderProps) {
   const providers = getTranslators();
 
   const options: ReactSelectOption<ProviderCodeName>[] = providers
@@ -45,7 +45,7 @@ export function SelectProvider({ compactView, filter, ...inputProps }: SelectPro
       {...inputProps}
       className={cssNames(styles.SelectProvider, inputProps.className)}
       options={options}
-      value={options.find(opt => opt.value === inputProps.value)}
+      value={options.find(opt => opt.value === providerName)}
       onChange={onChange}
       formatOptionLabel={formatOptionLabel}
     />
