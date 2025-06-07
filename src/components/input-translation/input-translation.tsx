@@ -5,11 +5,10 @@ import isEqual from "lodash/isEqual";
 import React, { Fragment } from "react";
 import { action, comparer, computed, makeObservable, observable, reaction, toJS } from "mobx";
 import { observer } from "mobx-react";
-import { getTranslator, getTranslators, isRTL, ITranslationError, ITranslationResult, ProviderCodeName, Translator } from "../../providers";
+import { getTranslator, isRTL, ITranslationError, ITranslationResult, ProviderCodeName, Translator } from "../../providers";
 import { createLogger, cssNames, disposer } from "../../utils";
 import { SelectLanguage } from "../select-language";
 import { Input } from "../input";
-import { Option, Select } from "../select";
 import { Spinner } from "../spinner";
 import { settingsStore } from "../settings/settings.storage";
 import { pageManager } from "../app/page-manager";
@@ -24,6 +23,7 @@ import { isFavorite } from "../user-history/favorites.storage";
 import { saveToFavoritesAction } from "../../background/history.bgc";
 import { getSelectedText } from "../../extension";
 import { CopyToClipboardIcon } from "../copy-to-clipboard-icon";
+import { SelectProvider } from "../select-provider";
 
 export const lastInputText = createStorage("last_input_text", {
   defaultValue: "",
@@ -350,9 +350,10 @@ export class InputTranslation extends React.Component {
             to={langTo}
             onChange={({ langTo, langFrom }) => this.onLangChange(langFrom, langTo)}
           />
-          <Select value={provider} onChange={this.onProviderChange}>
-            {getTranslators().map(v => <Option key={v.name} value={v.name} label={v.title}/>)}
-          </Select>
+          <SelectProvider
+            value={provider}
+            onChange={this.onProviderChange}
+          />
         </div>
         <div className="flex gaps align-center">
           <Input

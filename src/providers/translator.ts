@@ -259,10 +259,11 @@ export abstract class Translator {
     return { langFrom, langTo }
   }
 
-  hasProvidedOrNotRequiredApiKey(): boolean {
-    const hasFilledApiKey = this.getAuthSettings().apiKeySanitized !== "";
-
-    return Boolean(!this.isRequireApiKey || this.isRequireApiKey && hasFilledApiKey);
+  isAvailable(): boolean {
+    if (!this.isRequireApiKey) {
+      return true; // not required additional input-settings from user
+    }
+    return this.getAuthSettings().apiKeySanitized !== "";
   }
 
   getAuthSettings(): TranslatorAuthParams {
@@ -355,11 +356,6 @@ export function isRTL(lang: string) {
 
 export function getTranslators(): Translator[] {
   return Array.from(Translator.providers.keys()).map(getTranslator);
-}
-
-export function getFullPageTranslators<T extends Translator>(): T[] {
-  return getTranslators(
-  ).filter(translator => translator.canTranslateFullPage() && translator.hasProvidedOrNotRequiredApiKey()) as T[];
 }
 
 export function getTranslator<T extends Translator>(name: ProviderCodeName): T | undefined {

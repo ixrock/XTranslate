@@ -6,7 +6,7 @@ import { Tooltip, TooltipProps } from "../tooltip";
 
 export interface IconProps extends React.HTMLAttributes<any> {
   material?: string;          // material-icon, see available names at https://material.io/icons/
-  svg?: string;               // svg-filename without extension in current folder
+  svg?: string;               // ./%filename%.svg or base64-encoded xml-svg content
   htmlFor?: string;           // render icon as <label htmlFor="id">
   href?: string;              // render icon as a link <a href="">
   size?: string | number;     // icon-size
