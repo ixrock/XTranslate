@@ -22,31 +22,37 @@ import { XTranslateTooltip } from "./xtranslate-tooltip";
 import { Popup } from "../components/popup/popup";
 import { PageTranslator } from "./page-translator";
 
+type DOMRectNormalized = Omit<Writeable<DOMRect>, "toJSON" | "x" | "y">;
+
 @observer
 export class ContentScript extends React.Component {
   static window: Window;
   static rootElem: HTMLElement;
-  static rootNode: Root;
-  static cssStylesUrl = "";
+  static cssStylesUrl: string;
 
   static async init(window: Window = globalThis.window.self) {
+    this.window = window;
+    this.umount();
     await preloadAppData(); // wait for dependent data before first render
     await this.preloadCss();
 
-    ContentScript.window = window;
-    ContentScript.rootElem = window.document.createElement("div");
-    const appElem = ContentScript.rootElem;
+    const appElem = window.document.createElement("div");
     appElem.classList.add("XTranslate");
     appElem.style.all = "unset"; // reset possible css-collisions with global page styles
+    ContentScript.rootElem = appElem;
 
     const shadowRoot = appElem.attachShadow({ mode: "closed" });
     const rootNode = createRoot(shadowRoot);
     const appRootNode = createRoot(appElem);
     window.document.body.appendChild(appElem);
-    ContentScript.rootNode = rootNode;
 
     appRootNode.render(<link rel="stylesheet" href={this.cssStylesUrl}/>);
     rootNode.render(<ContentScript/>);
+  }
+
+  static umount() {
+    const appElem = this.window.document.querySelector(".XTranslate");
+    if (appElem) appElem.parentElement.removeChild(appElem);
   }
 
   static async preloadCss() {
@@ -83,7 +89,7 @@ export class ContentScript extends React.Component {
   @observable.ref lastParams: TranslatePayload; // last used translation payload
   @observable.ref translation: ITranslationResult;
   @observable.ref error: ITranslationError;
-  @observable.ref selectionRects: WritableDOMRect[];
+  @observable.ref selectionRects: DOMRectNormalized[];
   @observable popupPosition: React.CSSProperties = {};
   @observable selectedText = "";
   @observable isRtlSelection = false;
@@ -118,10 +124,6 @@ export class ContentScript extends React.Component {
     window.addEventListener("resize", this.updatePopupPositionLazy, { signal });
 
     this.unload.push(
-      function unmount() {
-        ContentScript.rootElem.parentElement.removeChild(ContentScript.rootElem);
-        ContentScript.rootNode.unmount();
-      },
       function unbindDOMEvents() {
         abortCtrl.abort();
       },
@@ -290,7 +292,7 @@ export class ContentScript extends React.Component {
     return !ContentScript.rootElem.contains(elem);
   }
 
-  normalizeRect(rect: DOMRect, { withScroll = false } = {}): WritableDOMRect {
+  normalizeRect(rect: DOMRect, { withScroll = false } = {}): DOMRectNormalized {
     let { left, top, width, height } = rect;
     if (withScroll) {
       left += ContentScript.window.scrollX;

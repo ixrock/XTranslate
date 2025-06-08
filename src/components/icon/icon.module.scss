@@ -106,7 +106,7 @@
   }
 
   &.interactive {
-    opacity: .75;
+    opacity: .85;
     transition: 250ms color, 250ms opacity, 150ms background-color, 150ms box-shadow;
     border-radius: 50%;
     cursor: pointer;

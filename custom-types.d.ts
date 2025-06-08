@@ -51,3 +51,14 @@ declare module "*.ftl" { // fluent (localization)
   const content: string;
   export = content;
 }
+
+//
+// Global generics
+//
+declare type Writeable<T> = { -readonly [P in keyof T]: T[P] };
+
+declare type ValueOf<T> = T[keyof T];
+
+declare type DeepPartial<T> = {
+  [K in keyof T]?: T[K] extends object ? DeepPartial<T[K]> : T[K];
+}
