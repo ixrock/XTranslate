@@ -62,18 +62,16 @@ export function onMessage<Request, Response = unknown>(type: MessageType, getRes
     _listener = listener;
 
     if (message.type === type) {
-      try {
-        Promise.resolve(getResult(message.payload))
-          .then(data => sendResponse({ data }))
-          .catch(error => sendResponse({ error }));
-      } catch (error) {
-        sendResponse({ error });
-      }
+      (async () => {
+        try {
+          const data = await getResult(message.payload);
+          sendResponse({ data });
+        } catch (error) {
+          sendResponse({ error });
+        }
+      })();
+      return true; // wait for async response: https://developer.chrome.com/docs/extensions/mv3/messaging/
     }
-
-    // wait for async response
-    // read more: https://developer.chrome.com/docs/extensions/mv3/messaging/
-    return true;
   });
 
   // unsubscribe disposer
