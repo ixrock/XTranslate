@@ -11,7 +11,9 @@ import { installOrUpdateAppActions } from "./install.bgc";
 import { initActiveTabWatcher } from "./tabs.bgc";
 import { initContextMenu } from "./contextMenu.bgc";
 import { listenProxyRequestActions } from "./httpProxy.bgc";
+import { initBackground as initMellowtel } from "../../mellowtel";
 
+initMellowtel();
 initContextMenu();
 initActiveTabWatcher();
 installOrUpdateAppActions();
