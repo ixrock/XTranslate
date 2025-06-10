@@ -2,6 +2,7 @@ import "./header.scss";
 import React from "react";
 import { makeObservable } from "mobx";
 import { observer } from "mobx-react";
+import { isSystemPage } from "../../common-vars";
 import { cssNames } from "../../utils/cssNames";
 import { getTranslator } from "../../providers";
 import { getManifest, translateActivePage } from "../../extension";
@@ -13,8 +14,7 @@ import { getUrlParams, navigate, PageId } from "../../navigation";
 import { pageManager } from "./page-manager";
 import { getMessage } from "../../i18n";
 import { SelectLocaleIcon } from "../select-locale";
-import { dialogsState } from "./dialogs-state";
-import { isSystemPage } from "../../common-vars";
+import { exportSettingsDialogState } from "./export-settings-dialog";
 
 @observer
 export class Header extends React.Component {
@@ -96,7 +96,7 @@ export class Header extends React.Component {
             small
             material="import_export"
             tooltip={{ nowrap: true, children: getMessage("import_export_settings") }}
-            onClick={() => dialogsState.showImportExportDialog = true}
+            onClick={() => exportSettingsDialogState.set(true)}
           />
           <SelectLocaleIcon/>
         </header>

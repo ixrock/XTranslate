@@ -16,35 +16,33 @@ import { popupHotkey, PopupHotkeyStorageModel, settingsStorage, SettingsStorageM
 import { themeStorage, ThemeStorageModel } from "../theme-manager/theme.storage";
 import { favoritesStorage, FavoriteStorageModel } from "../user-history/favorites.storage";
 
-export interface StorableSettings<Data> {
+export const exportSettingsDialogState = observable.box(false);
+
+export interface ExportingData<Data> {
   data: Data;
 }
 
-export interface ImportExportSettings {
+export interface ExportImportSettings {
   appVersion: string; // manifest.json version
-  settings?: StorableSettings<SettingsStorageModel>;
-  theme?: StorableSettings<ThemeStorageModel>;
-  favorites?: StorableSettings<FavoriteStorageModel>;
-  hotkey?: StorableSettings<PopupHotkeyStorageModel>;
+  settings?: ExportingData<SettingsStorageModel>;
+  theme?: ExportingData<ThemeStorageModel>;
+  favorites?: ExportingData<FavoriteStorageModel>;
+  hotkey?: ExportingData<PopupHotkeyStorageModel>;
 }
 
-export interface ImportExportSettingsDialogProps extends DialogProps {
+export interface ExportSettingsDialogProps extends Partial<DialogProps> {
 }
-
-const defaultProps: Partial<ImportExportSettingsDialogProps> = {};
 
 @observer
-export class ImportExportSettingsDialog extends React.Component<ImportExportSettingsDialogProps> {
-  static defaultProps = defaultProps as unknown as ImportExportSettingsDialogProps;
-
-  readonly appVersion = getManifest().version;
-  readonly fileNameJson = `xtranslate-settings-${this.appVersion}.json`;
+export class ExportSettingsDialog extends React.Component<ExportSettingsDialogProps> {
+  private readonly appVersion = getManifest().version;
+  private readonly fileNameJson = `xtranslate-settings-${this.appVersion}.json`;
   private fileInput: FileInput<string>;
 
   @observable.ref dialog: Dialog;
   @observable error = "";
 
-  constructor(props: ImportExportSettingsDialogProps) {
+  constructor(props: ExportSettingsDialogProps) {
     super(props);
     makeObservable(this);
   }
@@ -53,7 +51,7 @@ export class ImportExportSettingsDialog extends React.Component<ImportExportSett
   importSettings = async ([{ file }]: ImportingFile<string>[]) => {
     this.error = "";
     try {
-      const jsonSettings: ImportExportSettings = JSON.parse(await file.text());
+      const jsonSettings: ExportImportSettings = JSON.parse(await file.text());
       const { appVersion, settings, theme, favorites, hotkey } = jsonSettings;
       const noSettingsFound = Boolean(!settings && !theme); // TODO: validate input better
       if (noSettingsFound) {
@@ -88,7 +86,7 @@ export class ImportExportSettingsDialog extends React.Component<ImportExportSett
   };
 
   exportSettings = () => {
-    const appSettings: ImportExportSettings = {
+    const appSettings: ExportImportSettings = {
       appVersion: this.appVersion,
       settings: {
         data: settingsStorage.toJS(),
@@ -107,6 +105,15 @@ export class ImportExportSettingsDialog extends React.Component<ImportExportSett
     download.json(this.fileNameJson, appSettings);
   };
 
+  get isOpen() {
+    return exportSettingsDialogState.get();
+  }
+
+  private onClose = () => {
+    this.props.onClose?.();
+    exportSettingsDialogState.set(false);
+  }
+
   render() {
     const { className, ...dialogProps } = this.props;
     const dialogClass = cssNames(styles.ExportSettingsDialog, className);
@@ -114,6 +121,8 @@ export class ImportExportSettingsDialog extends React.Component<ImportExportSett
     return (
       <Dialog
         {...dialogProps}
+        isOpen={this.isOpen}
+        onClose={this.onClose}
         className={dialogClass}
         contentClassName="flex gaps column"
         ref={elem => {
@@ -151,4 +160,3 @@ export class ImportExportSettingsDialog extends React.Component<ImportExportSett
     )
   }
 }
-

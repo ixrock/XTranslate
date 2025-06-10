@@ -1,5 +1,5 @@
 .PrivacyDialog {
-  padding: calc(var(--theme-spacing-double) * 4);
+  padding: var(--theme-spacing-double);
 
   .content {
     display: flex;
@@ -11,16 +11,26 @@
     padding: calc(var(--theme-spacing-double) * 1.5);
   }
 
+  h3 {
+    text-align: center;
+  }
+
   .policyContent {
     display: flex;
     flex-direction: column;
     gap: var(--theme-spacing-half);
     overflow: auto;
-    max-height: 300px;
+    max-height: 400px;
     font-size: small;
 
-    h1, h2 {
+    h1 {
       display: none;
+    }
+
+    h2 {
+      font: inherit;
+      font-weight: bold;
+      margin-top: var(--theme-spacing);
     }
   }
 }

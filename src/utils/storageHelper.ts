@@ -14,6 +14,7 @@ export interface StorageHelperOptions<T> {
   storageAdapter?: StorageAdapter<T>; // handle saving and loading state from external storage
   autoSaveOptions?: IReactionOptions<T, boolean>;
   deepMergeOnLoad?: boolean; // deep merge with `defaultValue`, set to `false` for dynamic fields (e.g. hotkey-object), default: true
+  saveDefaultWhenEmpty?: boolean; // save `opts.defaultValue` to remote storage if empty on initialization (default: false)
 }
 
 export type StorageMigrationCallback<T> = (data: T | any) => T | void;
@@ -52,6 +53,7 @@ export class StorageHelper<T> {
     this.options = {
       autoLoad: true,
       deepMergeOnLoad: true,
+      saveDefaultWhenEmpty: false,
       ...options
     };
     this.#data.set(this.defaultValue);
@@ -135,6 +137,8 @@ export class StorageHelper<T> {
       this.merge(data, {
         deep: this.options.deepMergeOnLoad,
       });
+    } else if (this.options.saveDefaultWhenEmpty) {
+      void this.saveToExternalStorage(this.toJS());
     }
 
     this.loaded = true;
