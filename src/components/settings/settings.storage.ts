@@ -13,7 +13,7 @@ export type XIconPosition = {
 };
 
 export type SettingsStorageModel = typeof settingsStorage.defaultValue;
-export type SettingsStorageFullPage = typeof settingsStorage.defaultValue.fullPageTranslation;
+export type PopupHotkeyStorageModel = typeof popupHotkey.defaultValue;
 
 export const settingsStorage = createStorage("settings", {
   area: "sync", // share synced data via logged-in account (google, firefox, etc.)

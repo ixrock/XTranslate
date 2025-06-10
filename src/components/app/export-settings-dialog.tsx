@@ -12,12 +12,11 @@ import { Icon } from "../icon";
 import { FileInput, ImportingFile } from "../input";
 import { Notifications } from "../notifications";
 import { SubTitle } from "../sub-title";
-import { settingsStorage, SettingsStorageModel } from "../settings/settings.storage";
+import { popupHotkey, PopupHotkeyStorageModel, settingsStorage, SettingsStorageModel } from "../settings/settings.storage";
 import { themeStorage, ThemeStorageModel } from "../theme-manager/theme.storage";
 import { favoritesStorage, FavoriteStorageModel } from "../user-history/favorites.storage";
 
 export interface StorableSettings<Data> {
-  version: number;
   data: Data;
 }
 
@@ -26,6 +25,7 @@ export interface ImportExportSettings {
   settings?: StorableSettings<SettingsStorageModel>;
   theme?: StorableSettings<ThemeStorageModel>;
   favorites?: StorableSettings<FavoriteStorageModel>;
+  hotkey?: StorableSettings<PopupHotkeyStorageModel>;
 }
 
 export interface ImportExportSettingsDialogProps extends DialogProps {
@@ -37,7 +37,8 @@ const defaultProps: Partial<ImportExportSettingsDialogProps> = {};
 export class ImportExportSettingsDialog extends React.Component<ImportExportSettingsDialogProps> {
   static defaultProps = defaultProps as unknown as ImportExportSettingsDialogProps;
 
-  readonly fileNameJson = "xtranslate-settings.json";
+  readonly appVersion = getManifest().version;
+  readonly fileNameJson = `xtranslate-settings-${this.appVersion}.json`;
   private fileInput: FileInput<string>;
 
   @observable.ref dialog: Dialog;
@@ -53,7 +54,7 @@ export class ImportExportSettingsDialog extends React.Component<ImportExportSett
     this.error = "";
     try {
       const jsonSettings: ImportExportSettings = JSON.parse(await file.text());
-      const { appVersion, settings, theme, favorites } = jsonSettings;
+      const { appVersion, settings, theme, favorites, hotkey } = jsonSettings;
       const noSettingsFound = Boolean(!settings && !theme); // TODO: validate input better
       if (noSettingsFound) {
         const importCommonErrorMessage = getMessage("import_incorrect_file_format", {
@@ -73,6 +74,10 @@ export class ImportExportSettingsDialog extends React.Component<ImportExportSett
           favoritesStorage.set(favorites.data);
           Notifications.ok(getMessage("imported_setting_successful", { key: "favorites" }));
         }
+        if (hotkey) {
+          popupHotkey.set(hotkey.data);
+          Notifications.ok(getMessage("imported_setting_successful", { key: "hotkey" }));
+        }
         this.dialog.close();
       }
     } catch (error) {
@@ -84,19 +89,19 @@ export class ImportExportSettingsDialog extends React.Component<ImportExportSett
 
   exportSettings = () => {
     const appSettings: ImportExportSettings = {
-      appVersion: getManifest().version,
+      appVersion: this.appVersion,
       settings: {
-        version: 1,
         data: settingsStorage.toJS(),
       },
       theme: {
-        version: 1,
         data: themeStorage.toJS(),
       },
       favorites: {
-        version: 1,
         data: favoritesStorage.toJS(),
       },
+      hotkey: {
+        data: popupHotkey.toJS(),
+      }
     };
 
     download.json(this.fileNameJson, appSettings);
