@@ -1,12 +1,13 @@
 import DeeplLanguages from "./deepl.json"
 import { ITranslationError, ITranslationResult, ProviderCodeName, TranslateParams, Translator } from "./index";
+import { strLengthInBytes } from "../utils";
 import { createStorage } from "../storage";
 import { ProxyRequestInit } from "../extension";
 import { getMessage } from "../i18n";
 
 class Deepl extends Translator {
   static MAX_BYTES_PER_REQUEST = 128 * 1024; /*128K*/
-  static MAX_TEXTS_PER_REQUEST = 25;
+  static MAX_GROUP_PER_REQUEST = 25;
 
   override name = ProviderCodeName.DEEPL;
   override title = "DeepL";
@@ -60,12 +61,8 @@ class Deepl extends Translator {
       return translations.map(tr => tr.text);
     }
 
-    if (texts.length >= Deepl.MAX_TEXTS_PER_REQUEST) {
-      const textGroups: string[][] = this.packGroups(texts, {
-        groupSize: Deepl.MAX_TEXTS_PER_REQUEST,
-        maxBytesPerGroup: Deepl.MAX_BYTES_PER_REQUEST,
-      });
-
+    if (texts.length >= Deepl.MAX_GROUP_PER_REQUEST) {
+      const textGroups = this.packGroups(texts);
       const translations = await Promise.all(
         textGroups.map(texts => request(texts).catch(() => Array(texts.length).fill(undefined)))
       );
@@ -101,16 +98,33 @@ class Deepl extends Translator {
     }
   }
 
-  private setupAuthApiKey = () => {
-    const newKey = window.prompt("DeepL API Key");
-    if (newKey === null) return;
-    this.#apiKey.set(newKey || this.#apiKey.defaultValue);
-  };
+  protected packGroups(texts: string[], {
+    groupSize = Deepl.MAX_GROUP_PER_REQUEST,
+    maxBytesPerGroup = Deepl.MAX_BYTES_PER_REQUEST,
+  } = {}): string[][] {
+    const packs = [];
+    let buf = [];
+    let sizeBytes = 0;
+
+    for (const str of texts) {
+      const len = strLengthInBytes(str);
+
+      if (sizeBytes + len > maxBytesPerGroup || buf.length >= groupSize) {
+        packs.push(buf);
+        buf = [];
+        sizeBytes = 0;
+      }
+      buf.push(str);
+      sizeBytes += len;
+    }
+    if (buf.length) packs.push(buf);
+    return packs;
+  }
 
   getAuthSettings() {
     return {
       apiKeySanitized: this.sanitizeApiKey(this.#apiKey.get()),
-      setupApiKey: this.setupAuthApiKey,
+      setupApiKey: () => this.setupApiKey(key => this.#apiKey.set(key)),
       clearApiKey: () => this.#apiKey.set(""),
     };
   }

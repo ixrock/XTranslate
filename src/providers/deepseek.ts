@@ -28,21 +28,11 @@ export class DeepSeekTranslator extends Translator {
     })
   }
 
-  private setupApiKey = () => {
-    const newKey = window.prompt(`${this.title} API Key`);
-    if (newKey === null) return;
-    this.#apiKey.set(newKey || this.#apiKey.defaultValue);
-  };
-
-  private clearApiKey = () => {
-    this.#apiKey.set("");
-  };
-
   getAuthSettings() {
     return {
       apiKeySanitized: this.sanitizeApiKey(this.#apiKey.get()),
-      setupApiKey: this.setupApiKey,
-      clearApiKey: this.clearApiKey,
+      setupApiKey: () => this.setupApiKey(key => this.#apiKey.set(key)),
+      clearApiKey: () => this.#apiKey.set(""),
     };
   }
 }

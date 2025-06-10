@@ -1,9 +1,10 @@
 // Base class for all translation providers
 
 import { observable } from "mobx";
-import { autoBind, createLogger, JsonResponseError, strLengthInBytes } from "../utils";
-import { ProxyRequestPayload, ProxyResponseType, isOptionsPage } from "../extension";
+import { autoBind, createLogger, JsonResponseError } from "../utils";
+import { isOptionsPage, ProxyRequestPayload, ProxyResponseType } from "../extension";
 import { ProviderCodeName } from "./providers";
+import { getMessage } from "../i18n";
 import { getTTSVoices, speak, stopSpeaking, TTSVoice } from "../tts";
 import { settingsStore } from "../components/settings/settings.storage";
 import { proxyRequest } from "../background/httpProxy.bgc";
@@ -311,30 +312,15 @@ export abstract class Translator {
     return {} as TranslatorAuthParams;
   }
 
+  protected setupApiKey(saveKeyCallback: (key: string) => void) {
+    const key = window.prompt(getMessage("auth_setup_key_info", { provider: this.title }));
+    if (key) saveKeyCallback(key);
+  }
+
   protected sanitizeApiKey(apiKey: string) {
     if (!apiKey) return "";
     const tail = 4;
     return apiKey.substring(0, tail) + "*-*" + apiKey.substring(apiKey.length - tail);
-  }
-
-  protected packGroups(texts: string[], { groupSize = 50, maxBytesPerGroup = 0 } = {}): string[][] {
-    const packs = [];
-    let buf = [];
-    let sizeBytes = 0;
-
-    for (const str of texts) {
-      const len = strLengthInBytes(str);
-
-      if (sizeBytes + len > maxBytesPerGroup || buf.length >= groupSize) {
-        packs.push(buf);
-        buf = [];
-        sizeBytes = 0;
-      }
-      buf.push(str);
-      sizeBytes += len;
-    }
-    if (buf.length) packs.push(buf);
-    return packs;
   }
 }
 
@@ -407,11 +393,11 @@ export function getTranslator<T extends Translator>(name: ProviderCodeName): T |
   return Translator.instances.get(name) as T;
 }
 
-export function getNextTranslator(name: ProviderCodeName, langFrom: string, langTo: string, reverse = false) {
+export function getNextTranslator(lastUsedProvider: ProviderCodeName, langFrom: string, langTo: string, reverse = false) {
   let translator: Translator;
   const providers = getTranslators();
   const translators: Translator[] = [];
-  const index = providers.findIndex(translator => translator.name === name);
+  const index = providers.findIndex(translator => translator.name === lastUsedProvider);
   const beforeCurrent = providers.slice(0, index);
   const afterCurrent = providers.slice(index + 1);
   if (reverse) {
@@ -423,7 +409,7 @@ export function getNextTranslator(name: ProviderCodeName, langFrom: string, lang
     if (settingsStore.data.skipVendorInRotation[translator.name]) {
       continue;
     }
-    if (translator.canTranslate(langFrom, langTo)) {
+    if (translator.canTranslate(langFrom, langTo) && translator.isAvailable()) {
       return translator;
     }
   }

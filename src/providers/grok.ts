@@ -13,7 +13,7 @@ export class GrokTranslator extends Translator {
   #apiKey = createStorage<string>("grok_x_api_key");
 
   constructor() {
-    super({languages: AILanguagesList});
+    super({ languages: AILanguagesList });
   }
 
   async translate({ from, to, text }: TranslateParams): Promise<ITranslationResult> {
@@ -29,21 +29,11 @@ export class GrokTranslator extends Translator {
     })
   }
 
-  private setupApiKey = () => {
-    const newKey = window.prompt(`${this.title} API Key`);
-    if (newKey === null) return;
-    this.#apiKey.set(newKey || this.#apiKey.defaultValue);
-  };
-
-  private clearApiKey = () => {
-    this.#apiKey.set("");
-  };
-
   getAuthSettings() {
     return {
       apiKeySanitized: this.sanitizeApiKey(this.#apiKey.get()),
-      setupApiKey: this.setupApiKey,
-      clearApiKey: this.clearApiKey,
+      setupApiKey: () => this.setupApiKey(key => this.#apiKey.set(key)),
+      clearApiKey: () => this.#apiKey.set(""),
     };
   }
 }
