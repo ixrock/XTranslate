@@ -2,13 +2,13 @@ import { isBackgroundWorker, onMessage, sendMessage, sendMessageSafe } from "./r
 import { MessageType } from "./messages";
 import { getActiveTabId } from "./tabs";
 
-export interface IsomorphicActionParams<Payload, Result> {
+export interface IsomorphicActionParams<Payload extends any[], Result> {
   messageType: MessageType;
-  handler: (data?: Payload) => Promise<Result>;
+  handler: (...data: Payload) => Promise<Result>;
   autoBindListener?: boolean; // bind handler to `chrome.runtime.onMessage` for provided  `message.type` (default: true)
 }
 
-export function createIsomorphicAction<Payload, Result>(params: IsomorphicActionParams<Payload, Result>) {
+export function createIsomorphicAction<Payload extends any[], Result>(params: IsomorphicActionParams<Payload, Result>) {
   const {
     messageType, handler,
     autoBindListener = true,
@@ -18,13 +18,12 @@ export function createIsomorphicAction<Payload, Result>(params: IsomorphicAction
     onMessage(messageType, handler);
   }
 
-  return async (payload: Payload, tabId?: number): Promise<Result> => {
+  return async (...payload: Payload): Promise<Result> => {
     if (isBackgroundWorker()) {
-      return handler(payload);
+      return handler(...payload);
     }
     return sendMessage<Payload, Result>({
       type: messageType,
-      tabId,
       payload,
     });
   };

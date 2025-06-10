@@ -51,11 +51,11 @@ export async function sendMessageSafe<Payload, Response = unknown>(msg: Message<
   }
 }
 
-export interface OnMessageCallback<Request, Response> {
-  (req: Request): Promise<Response> | Response | undefined;
+export interface OnMessageCallback<RequestPayload extends any[], Response> {
+  (...req: RequestPayload): Promise<Response> | Response | undefined;
 }
 
-export function onMessage<Request, Response = unknown>(type: MessageType, getResult: OnMessageCallback<Request, Response>) {
+export function onMessage<Request extends any[], Response = unknown>(type: MessageType, getResult: OnMessageCallback<Request, Response>) {
   let _listener: (...args: any) => any;
 
   chrome.runtime.onMessage.addListener(function listener(message: Message<Request>, sender, sendResponse) {
@@ -64,7 +64,8 @@ export function onMessage<Request, Response = unknown>(type: MessageType, getRes
     if (message.type === type) {
       (async () => {
         try {
-          const data = await getResult(message.payload);
+          const payload = [message.payload].flat() as Request;
+          const data = await getResult(...payload);
           sendResponse({ data });
         } catch (error) {
           sendResponse({ error });

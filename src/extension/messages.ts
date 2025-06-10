@@ -19,7 +19,7 @@ export enum MessageType {
   RUNTIME_ERROR_CONTEXT_INVALIDATED = "RUNTIME_ERROR_CONTEXT_INVALIDATED",
 }
 
-export interface Message<Payload = {}> {
+export interface Message<Payload extends {} | []> {
   type: MessageType;
   tabId?: number;
   payload?: Payload;
