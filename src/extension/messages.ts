@@ -1,6 +1,7 @@
 // [IPC]: inter-process communications for [options-page] <-> [background] <-> [content-pages]
 import { ITranslationResult, OpenAIVoiceTTS, ProviderCodeName, TranslateParams } from "../providers";
 import type { IHistoryItem } from "../components/user-history/history.storage";
+import type { GoogleMetricEvents } from "../background/metrics.bgc";
 
 export enum MessageType {
   PROXY_REQUEST = "PROXY_REQUEST",
@@ -58,12 +59,14 @@ export interface TranslatePayload extends TranslateParams {
 }
 
 export interface SaveToHistoryPayload {
-  translation: ITranslationResult | IHistoryItem;
+  translation: ITranslationResult;
+  source?: GoogleMetricEvents["history_saved"]["source"];
 }
 
 export interface SaveToFavoritesPayload {
   item: ITranslationResult | IHistoryItem;
   isFavorite: boolean;
+  source?: GoogleMetricEvents["favorite_saved"]["source"];
 }
 
 export interface StorageReadPayload {

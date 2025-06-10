@@ -2,7 +2,8 @@
 
 ## Your consent
 
-By using Chrome or Edge browser extension "XTranslate" you consent to this privacy policy and terms of use.
+By using Chrome or Edge browser extension "XTranslate" you consent to this privacy policy and terms of use. 
+If you're not agreed with current terms & conditions you must uninstall the app.
 
 ## Collecting, storing & sharing user data
 
@@ -14,4 +15,3 @@ By using Chrome or Edge browser extension "XTranslate" you consent to this priva
 ## How to delete all my user data related to the extension?
 
 Simply uninstall/delete extension from the browser and all your user data will be erased.
-If you're not agreed with current terms & conditions you must uninstall the app.

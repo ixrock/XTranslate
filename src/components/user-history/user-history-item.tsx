@@ -29,7 +29,11 @@ export const UserHistoryItem = observer(({ item, showDetails, highlightSearch }:
   });
 
   const toggleFavorite = prevDefault(() => {
-    void saveToFavoritesAction({ item, isFavorite: !favorite });
+    void saveToFavoritesAction({
+      item,
+      isFavorite: !favorite,
+      source: "history_list"
+    });
   });
 
   const sourceTextUrl = getTranslationPageUrl({ provider: vendor, from: langFrom, to: langTo, text });

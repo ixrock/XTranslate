@@ -6,8 +6,9 @@ import { createIsomorphicAction, MessageType, SaveToFavoritesPayload, SaveToHist
 import { settingsStorage } from "../components/settings/settings.storage";
 import { generateId, getHistoryItemId, historyStorage, IHistoryStorageItem, importHistory, toHistoryItem, toStorageItem, toTranslationResult } from "../components/user-history/history.storage";
 import { favoritesStorage } from "../components/user-history/favorites.storage";
+import { sendMetric } from "./metrics.bgc";
 
-const logger = createLogger({ systemPrefix: '[HISTORY]' });
+const logger = createLogger({ systemPrefix: "[HISTORY]" });
 
 export const saveToHistoryAction = createIsomorphicAction({
   messageType: MessageType.SAVE_TO_HISTORY,
@@ -24,7 +25,7 @@ export const getTranslationFromHistoryAction = createIsomorphicAction({
   handler: getHistoryItemOffline,
 });
 
-export async function saveToHistory({ translation }: SaveToHistoryPayload) {
+export async function saveToHistory({ translation, source }: SaveToHistoryPayload) {
   await Promise.all([
     settingsStorage.load(),
     historyStorage.load(),
@@ -39,9 +40,18 @@ export async function saveToHistory({ translation }: SaveToHistoryPayload) {
   const savingItem = toStorageItem(translation);
   logger.info("saving item to history", savingItem);
   importHistory(savingItem);
+
+  if (source) {
+    void sendMetric("history_saved", {
+      source: source,
+      provider: translation.vendor,
+      lang_from: translation.langFrom,
+      lang_to: translation.langTo,
+    });
+  }
 }
 
-export async function saveToFavorites({ item, isFavorite }: SaveToFavoritesPayload) {
+export async function saveToFavorites({ item, isFavorite, source }: SaveToFavoritesPayload) {
   await Promise.all([
     historyStorage.load(),
     favoritesStorage.load(),
@@ -50,7 +60,7 @@ export async function saveToFavorites({ item, isFavorite }: SaveToFavoritesPaylo
   const itemId = getHistoryItemId(item);
   const { translations } = historyStorage.get();
   const { favorites } = favoritesStorage.get();
-  const savedItem = toHistoryItem(translations[itemId]?.[item.vendor]);
+  let savedItem = toHistoryItem(translations[itemId]?.[item.vendor]);
 
   logger.info(`marking item as favorite: ${isFavorite}`, item);
   runInAction(() => {
@@ -60,8 +70,18 @@ export async function saveToFavorites({ item, isFavorite }: SaveToFavoritesPaylo
 
   if (!savedItem) {
     const savingItem = toStorageItem(item);
+    savedItem = toHistoryItem(savingItem);
     logger.info(`saving item(${itemId}) to history because favorite`, savingItem);
     importHistory(savingItem);
+  }
+
+  if (isFavorite && source) {
+    void sendMetric("favorite_saved", {
+      source: source,
+      provider: savedItem.vendor,
+      lang_from: savedItem.from,
+      lang_to: savedItem.to,
+    })
   }
 }
 

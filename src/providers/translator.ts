@@ -2,12 +2,13 @@
 
 import { observable } from "mobx";
 import { autoBind, createLogger, JsonResponseError, strLengthInBytes } from "../utils";
-import { ProxyRequestPayload, ProxyResponseType } from "../extension/messages";
-import { proxyRequest } from "../background/httpProxy.bgc";
-import { settingsStore } from "../components/settings/settings.storage";
-import { getTTSVoices, speak, stopSpeaking, TTSVoice } from "../tts";
+import { ProxyRequestPayload, ProxyResponseType, isOptionsPage } from "../extension";
 import { ProviderCodeName } from "./providers";
+import { getTTSVoices, speak, stopSpeaking, TTSVoice } from "../tts";
+import { settingsStore } from "../components/settings/settings.storage";
+import { proxyRequest } from "../background/httpProxy.bgc";
 import { getTranslationFromHistoryAction, saveToHistoryAction } from "../background/history.bgc";
+import { MetricSourceEnv, sendMetric } from "../background/metrics.bgc";
 
 export interface ProviderLanguagesApiMap {
   from: { [locale: string]: string; auto?: string };
@@ -84,9 +85,29 @@ export abstract class Translator {
     // get result via network
     if (!translation) {
       const getTranslationResult = async (customParams: Partial<TranslateParams> = {}) => {
-        const customizedParams = { ...params, ...customParams };
-        const result: ITranslationResult = await Reflect.apply(originalTranslate, this, [customizedParams]);
-        return this.normalize(result, customizedParams);
+        const reqParams = { ...params, ...customParams };
+        try {
+          let result = await Reflect.apply(originalTranslate, this, [reqParams]);
+          result = this.normalize(result, reqParams);
+
+          void sendMetric("translate_used", {
+            source: this.metricSource,
+            provider: this.name,
+            lang_from: reqParams.from,
+            lang_to: reqParams.to,
+          });
+
+          return result;
+        } catch (err) {
+          void sendMetric("translate_error", {
+            error: isTranslationError(err) ? err.message : String(err),
+            source: this.metricSource,
+            provider: this.name,
+            lang_from: reqParams.from,
+            lang_to: reqParams.to,
+          });
+          throw err;
+        }
       };
 
       translation = await getTranslationResult();
@@ -102,18 +123,29 @@ export abstract class Translator {
     return translation;
   }
 
+  protected get metricSource(): MetricSourceEnv {
+    return isOptionsPage() ? "translate_tab" : "popup";
+  }
+
   protected handleSideEffects(translation: ITranslationResult): ITranslationResult {
     const { langDetected, originalText } = translation;
     const { autoPlayText, historyEnabled } = settingsStore.data;
 
-    if (autoPlayText) void this.speak(langDetected, originalText);
-    if (historyEnabled) void saveToHistoryAction({ translation });
+    if (autoPlayText) {
+      void this.speak(langDetected, originalText);
+    }
+    if (historyEnabled) {
+      void saveToHistoryAction({
+        translation,
+        source: this.metricSource,
+      });
+    }
 
     return translation;
   }
 
-  protected normalize(result: ITranslationResult, initParams: TranslateParams): ITranslationResult {
-    const { from: langFrom, to: langTo, text: originalText } = initParams;
+  protected normalize(result: ITranslationResult, params: TranslateParams): ITranslationResult {
+    const { from: langFrom, to: langTo, text: originalText } = params;
 
     function toLowerCase(output: string) {
       const isDictionaryWord = !!result.dictionary;
@@ -210,14 +242,23 @@ export abstract class Translator {
         this.logger.info(`[TTS]: speaking via api request`, { lang, text });
         this.audio = document.createElement("audio");
         this.audio.src = this.audioDataUrl = URL.createObjectURL(audioBinary);
-
         await this.audio.play();
+
+        void sendMetric("tts_played", {
+          source: this.metricSource,
+          provider: this.name,
+          lang: lang,
+        });
       } catch (error) {
-        // FIXME: it might fall due CORS at some sites (e.g. github)
-        // Error: refused to load media from 'blob:https://github.com/fce42e78-5c8c-47fc-84d9-a6433ada5840' because it violates the following Content Security Policy directive: "media-src github.com user-images.githubusercontent.com/ secured-user-images.githubusercontent.com/ private-user-images.githubusercontent.com github-production-user-asset-6210df.s3.amazonaws.com gist.github.com github.githubassets.com".
-        // So, we have to do some workaround, e.g. with new background 1x1 window or something..
         this.logger.error(`[TTS]: failed to play: ${error}`, { lang, text });
         this.speakSynth(text, voice); // fallback to TTS-synthesis engine
+
+        void sendMetric("tts_error", {
+          error: String(error),
+          source: this.metricSource,
+          provider: this.name,
+          lang: lang,
+        })
       }
     }
   }

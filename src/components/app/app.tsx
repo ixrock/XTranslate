@@ -19,7 +19,7 @@ import { PrivacyDialog } from "./privacy-dialog";
 import { AppRateDialog } from "./app-rate.dialog";
 import { isRTL } from "../../providers";
 import { getLocale } from "../../i18n";
-import { saveMetrics } from "../../background/metrics.bgc";
+import { sendMetric } from "../../background/metrics.bgc";
 
 @observer
 export class App extends React.Component {
@@ -50,7 +50,7 @@ export class App extends React.Component {
 
   static bindPageIdWatcher() {
     return reaction(() => getUrlParams().page, pageId => {
-      void saveMetrics("screen_view", { screen_name: pageId })
+      void sendMetric("screen_view", { screen_name: pageId })
     }, {
       fireImmediately: true,
     });

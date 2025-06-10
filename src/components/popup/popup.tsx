@@ -114,11 +114,11 @@ export class Popup extends React.Component<PopupProps> {
     }
   }
 
-  @action
-  private toggleFavorites = async () => {
+  toggleFavorites = () => {
     return saveToFavoritesAction({
       item: this.props.translation,
       isFavorite: !this.isFavorite,
+      source: "popup",
     });
   };
 
@@ -130,11 +130,11 @@ export class Popup extends React.Component<PopupProps> {
       <Icon
         className={styles.icon}
         material={this.isFavorite ? materialIcons.favorite : materialIcons.unfavorite}
+        onClick={this.toggleFavorites}
         tooltip={{
           children: getMessage("history_mark_as_favorite"),
           parentElement: this.props.tooltipParentElem,
         }}
-        onClick={this.toggleFavorites}
       />
     )
   }

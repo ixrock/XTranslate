@@ -13,12 +13,12 @@ export const gaClientId = createStorage("ga_client_id", {
   saveDefaultWhenEmpty: true,
 });
 
-export const saveMetrics = createIsomorphicAction({
+export const sendMetric = createIsomorphicAction({
   messageType: MessageType.GA_METRICS_SEND_EVENT,
   handler: sendGAEvent,
 });
 
-export async function sendGAEvent<EventName extends GoogleMetricName>(
+export async function sendGAEvent<EventName extends MetricName>(
   eventName: EventName,
   params: GoogleMetricEvents[EventName],
 ) {
@@ -54,40 +54,55 @@ export async function sendGAEvent<EventName extends GoogleMetricName>(
   }
 }
 
-export type GoogleMetricName = keyof GoogleMetricEvents;
+export type MetricName = keyof GoogleMetricEvents;
+export type MetricSourceEnv = "popup" | "translate_tab";
 
 export type GoogleMetricEvents = {
   screen_view: {
     screen_name: PageId;
   };
   translate_used: {
-    source: 'popup' | 'translate_tab' | 'fullpage';
+    source: MetricSourceEnv | "fullpage";
     provider: ProviderCodeName;
     lang_from: string;
     lang_to: string;
   };
-  popup_used: {
-    trigger: 'icon' | 'double_click' | 'mouseup' | 'hotkey';
+  translate_error: {
+    source: MetricSourceEnv;
     provider: ProviderCodeName;
     lang_from: string;
     lang_to: string;
+    error: string;
   };
-  page_translate: {
-    provider: ProviderCodeName;
-    domain: string;
-    lang_from: string;
-    lang_to: string;
+  translate_action: {
+    trigger: "icon" | "double_click" | "selection_click" | "selection_change" | "hotkey" | "provider_change";
   };
   tts_played: {
-    source: 'popup' | 'translate_tab'
+    source: MetricSourceEnv;
+    provider: ProviderCodeName;
+    lang: string;
   };
-  saved_to_favorites: {
-    source: 'popup' | 'translate_tab'
+  tts_error: {
+    source: MetricSourceEnv;
+    provider: ProviderCodeName;
+    lang: string;
+    error: string;
   };
-  ui_interaction: {
-    action: string;
+  history_saved: {
+    source: MetricSourceEnv;
+    provider: ProviderCodeName;
+    lang_from: string;
+    lang_to: string;
+  };
+  favorite_saved: {
+    source: MetricSourceEnv | "history_list"
+    provider: ProviderCodeName;
+    lang_from: string;
+    lang_to: string;
+  };
+  // TODO: use metric
+  settings_changed: {
     name: string;
-    value: string | boolean | number;
-  };
-  history_opened: {};
+    value: string | boolean | number
+  }
 };

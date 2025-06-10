@@ -15,8 +15,9 @@ import { preloadAppData } from "../preloadAppData";
 import { autoBind, disposer, getHotkey } from "../utils";
 import { getManifest, getURL, isRuntimeContextInvalidated, MessageType, onMessage, ProxyResponseType, TranslatePayload } from "../extension";
 import { proxyRequest } from "../background/httpProxy.bgc";
+import { sendMetric } from "../background/metrics.bgc";
 import { popupHotkey, settingsStore } from "../components/settings/settings.storage";
-import { getNextTranslator, getTranslator, ITranslationError, ITranslationResult, ProviderCodeName } from "../providers";
+import { getNextTranslator, getTranslator, ITranslationError, ITranslationResult, ProviderCodeName, TranslateParams } from "../providers";
 import { XTranslateIcon } from "./xtranslate-icon";
 import { XTranslateTooltip } from "./xtranslate-tooltip";
 import { Popup } from "../components/popup/popup";
@@ -177,18 +178,19 @@ export class ContentScript extends React.Component {
   async translate(params: Partial<TranslatePayload> = {}) {
     void this.checkContextInvalidationError();
 
+    this.hideIcon();
     this.isLoading = true;
     this.translation = null;
     this.error = null;
 
-    try {
-      const payload = this.lastParams = {
-        provider: params.provider ?? settingsStore.data.vendor,
-        from: params.from ?? settingsStore.data.langFrom,
-        to: params.to ?? settingsStore.data.langTo,
-        text: params.text ?? this.selectedText.trim(),
-      };
+    const payload = this.lastParams = {
+      provider: params.provider ?? settingsStore.data.vendor,
+      from: params.from ?? settingsStore.data.langFrom,
+      to: params.to ?? settingsStore.data.langTo,
+      text: params.text ?? this.selectedText.trim(),
+    };
 
+    try {
       const translation = await getTranslator(payload.provider).translate(payload);
       if (isEqual(payload, this.lastParams)) {
         this.translation = translation;
@@ -201,23 +203,22 @@ export class ContentScript extends React.Component {
     }
   }
 
-  translateWith(provider: ProviderCodeName) {
-    return this.translate({
+  async translateWith(provider: ProviderCodeName) {
+    await this.translate({
       ...(this.lastParams ?? {}),
       provider,
     });
+    void sendMetric("translate_action", {
+      trigger: "provider_change"
+    });
   }
 
-  translateNext(reverse = false) {
+  async translateNext({ reverse = false } = {}) {
     if (!this.lastParams) return;
 
     const { provider, from, to } = this.lastParams;
     const nextTranslator = getNextTranslator(provider, from, to, reverse);
-
-    return this.translate({
-      ...this.lastParams,
-      provider: nextTranslator.name,
-    });
+    await this.translateWith(nextTranslator.name);
   }
 
   private getSelectedTextAction() {
@@ -237,10 +238,19 @@ export class ContentScript extends React.Component {
 
   @action
   private startPageAutoTranslation(pageUrl?: string) {
+    const { provider, langTo, langFrom } = this.pageTranslator.settings;
+    this.pageTranslator.startAutoTranslation();
+
     if (pageUrl && ContentScript.isTopFrame) {
       this.pageTranslator.setAutoTranslatingPages({ enabled: [pageUrl] });
     }
-    this.pageTranslator.startAutoTranslation();
+
+    void sendMetric("translate_used", {
+      source: "fullpage",
+      provider: provider,
+      lang_from: langFrom,
+      lang_to: langTo,
+    });
   }
 
   @action
@@ -253,7 +263,7 @@ export class ContentScript extends React.Component {
   playText() {
     if (!this.translation) return;
     const { vendor, originalText, langDetected } = this.translation;
-    return getTranslator(vendor).speak(langDetected, originalText);
+    void getTranslator(vendor).speak(langDetected, originalText);
   }
 
   showIcon() {
@@ -389,7 +399,7 @@ export class ContentScript extends React.Component {
 
   refreshTranslationTooltip() {
     const tooltipElem = this.tooltipRef.current;
-    const { showTranslationOnHover, showOriginalOnHover } = settingsStore.data.fullPageTranslation;
+    const { showTranslationOnHover, showOriginalOnHover } = this.pageTranslator.settings;
     const showTooltip = Boolean(showTranslationOnHover || showOriginalOnHover) && this.pageTranslator.isEnabled;
     if (!showTooltip) {
       return;
@@ -423,15 +433,16 @@ export class ContentScript extends React.Component {
     if (ContentScript.isEditableElement(document.activeElement) || !this.selectedText) {
       return;
     }
-    const { showPopupAfterSelection, showIconNearSelection, showPopupOnDoubleClick } = settingsStore.data;
+    const { showPopupAfterSelection, showIconNearSelection } = settingsStore.data;
     if (showPopupAfterSelection) {
       this.saveSelectionRects();
       this.translateLazy();
-    } else if (this.isPopupHidden) {
+      void sendMetric("translate_action", { trigger: "selection_change" });
+    } else if (this.isPopupHidden && !this.isHotkeyActivated) {
       this.saveSelectionRects();
-      const showOnDoubleClick = showPopupOnDoubleClick && this.isDblClicked;
-      if (showOnDoubleClick || this.isHotkeyActivated || this.isLoading) {
-        this.translate();
+      if (this.isDblClicked) {
+        void this.translate();
+        void sendMetric("translate_action", { trigger: "double_click" });
       } else if (showIconNearSelection) {
         this.showIcon();
       }
@@ -439,9 +450,9 @@ export class ContentScript extends React.Component {
   }), 250);
 
   onIconClick(evt: React.MouseEvent) {
-    this.hideIcon();
-    void this.translate();
     evt.stopPropagation();
+    void this.translate();
+    void sendMetric("translate_action", { trigger: "icon" });
   }
 
   private getMouseTargetTopElem(evt: MouseEvent): HTMLElement {
@@ -468,8 +479,9 @@ export class ContentScript extends React.Component {
     }
 
     if (settingsStore.data.showPopupOnClickBySelection && this.isClickedOnSelection()) {
-      void this.translate();
       evt.preventDefault();
+      void this.translate();
+      void sendMetric("translate_action", { trigger: "selection_click" });
     }
   }
 
@@ -488,12 +500,12 @@ export class ContentScript extends React.Component {
         evt.stopPropagation();
         break;
       case "ArrowLeft":
-        this.translateNext(true);
+        void this.translateNext({ reverse: true });
         evt.stopImmediatePropagation();
         evt.preventDefault();
         break;
       case "ArrowRight":
-        this.translateNext();
+        void this.translateNext({ reverse: false });
         evt.stopImmediatePropagation();
         evt.preventDefault();
         break;
@@ -508,6 +520,7 @@ export class ContentScript extends React.Component {
     if (isEqual(userHotkey, pressedHotkey) && this.isPopupHidden) {
       evt.preventDefault();
       this.isHotkeyActivated = true;
+      void sendMetric("translate_action", { trigger: "hotkey" });
       this.translateFromTopElement();
     }
   }

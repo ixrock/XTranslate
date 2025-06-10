@@ -79,7 +79,7 @@ export class InputTranslation extends React.Component {
   private syncParamsWithUrl() {
     return disposer(
       reaction(() => toJS(this.params), (params: TranslationPageParams) => {
-        this.translate(); // translate text (if any)
+        void this.translate(); // auto-translate text (if any)
         if (!isEqual(this.urlParams, params)) {
           navigation.searchParams.replace(params); // update url
         }
@@ -121,9 +121,9 @@ export class InputTranslation extends React.Component {
     );
   }
 
-  playText = () => {
+  playText = async () => {
     const { vendor, langDetected, originalText } = this.translation;
-    getTranslator(vendor).speak(langDetected, originalText);
+    await getTranslator(vendor).speak(langDetected, originalText);
   }
 
   @action.bound
@@ -150,7 +150,7 @@ export class InputTranslation extends React.Component {
         to: langTo,
         from: langFrom,
         text: text,
-      })
+      });
     } catch (error) {
       this.error = error;
     } finally {
@@ -189,6 +189,14 @@ export class InputTranslation extends React.Component {
     this.input.focus();
   }
 
+  private saveToFavorites = (isFavorite: boolean) => {
+    void saveToFavoritesAction({
+      item: this.translation,
+      isFavorite: isFavorite,
+      source: "translate_tab",
+    });
+  }
+
   renderTranslationResult() {
     const { langTo, langDetected, translation, transcription, dictionary, spellCorrection, sourceLanguages, vendor } = this.translation;
     const translator = getTranslator(vendor);
@@ -218,7 +226,7 @@ export class InputTranslation extends React.Component {
               <Icon
                 material={favorite ? materialIcons.favorite : materialIcons.unfavorite}
                 tooltip={favorite ? getMessage("history_unmark_as_favorite") : getMessage("history_mark_as_favorite")}
-                onClick={() => saveToFavoritesAction({ item: this.translation, isFavorite: !favorite })}
+                onClick={() => this.saveToFavorites(!favorite)}
               />
               <div className="lang" id="translated_with">
                 {translationDirection}
