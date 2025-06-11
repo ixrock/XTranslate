@@ -176,7 +176,6 @@ error_403_auth_failed = Autorizzazione fallita. Fornisci una chiave API valida n
 ai_choose_model = Scegli il modello di IA
 ai_choose_model_cost_effective = Più efficiente in termini di costi
 ai_choose_model_recommended = Modello raccomandato
-ai_choose_model_best_results = Migliori risultati (più costoso)
 
 # Supporto per le traduzioni PDF tramite pdf.js
 pdf_use_custom_viewer = Supporto per le traduzioni nei file PDF

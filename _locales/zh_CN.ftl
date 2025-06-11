@@ -176,7 +176,6 @@ error_403_auth_failed = 授权失败。请在设置中提供有效的认证API�
 ai_choose_model = 选择AI模型
 ai_choose_model_cost_effective = 最具成本效益
 ai_choose_model_recommended = 推荐模型
-ai_choose_model_best_results = 最佳结果（最昂贵）
 
 # 通过pdf.js支持PDF翻译
 pdf_use_custom_viewer = 支持在PDF文件中翻译

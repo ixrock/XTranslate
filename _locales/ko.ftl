@@ -176,7 +176,6 @@ error_403_auth_failed = 인증 실패. 설정에서 유효한 인증 API 키를 
 ai_choose_model = AI 모델 선택
 ai_choose_model_cost_effective = 가장 비용 효율적인
 ai_choose_model_recommended = 권장 모델
-ai_choose_model_best_results = 최고의 결과 (가장 비싼)
 
 # pdf.js를 통한 PDF 번역 지원
 pdf_use_custom_viewer = PDF 파일 내 번역 지원

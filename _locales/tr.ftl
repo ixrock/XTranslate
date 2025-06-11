@@ -168,7 +168,6 @@ error_403_auth_failed=Yetkilendirme başarısız. Lütfen ayarlarda geçerli bir
 ai_choose_model=AI modelini seçin
 ai_choose_model_cost_effective=En maliyet etkin
 ai_choose_model_recommended=Önerilen model
-ai_choose_model_best_results=En iyi sonuçlar (en pahalı)
 ai_choose_model_reasoning=Akıl yürütme modeli (seride en yeni ve maliyet etkin)
 
 # PDF translations suppot via pdf.js (TR)

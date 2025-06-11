@@ -176,7 +176,6 @@ error_403_auth_failed = Falha na autorização. Por favor, forneça uma chave de
 ai_choose_model = Escolha o modelo de IA
 ai_choose_model_cost_effective = Mais eficiente em termos de custo
 ai_choose_model_recommended = Modelo recomendado
-ai_choose_model_best_results = Melhores resultados (mais caro)
 
 # Suporte para tradução de PDF via pdf.js
 pdf_use_custom_viewer = Suporte para traduções em arquivos PDF

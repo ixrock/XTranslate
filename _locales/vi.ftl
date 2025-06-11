@@ -176,7 +176,6 @@ error_403_auth_failed = Xác thực thất bại. Vui lòng cung cấp khóa API
 ai_choose_model = Chọn mô hình AI
 ai_choose_model_cost_effective = Tiết kiệm chi phí nhất
 ai_choose_model_recommended = Mô hình khuyến nghị
-ai_choose_model_best_results = Kết quả tốt nhất (tốn kém nhất)
 
 # Hỗ trợ dịch PDF qua pdf.js
 pdf_use_custom_viewer = Hỗ trợ dịch trong các tệp PDF

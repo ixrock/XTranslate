@@ -4,7 +4,7 @@ import { action, makeObservable, observable } from "mobx";
 import { observer } from "mobx-react";
 import isEqual from "lodash/isEqual";
 import startCase from "lodash/startCase";
-import { getTranslator, getTranslators, googleApiDomain, googleApiDomains, GrokAIModel, OpenAIModel, OpenAIVoiceTTS, ProviderCodeName, Translator } from "../../providers";
+import { DeepSeekAIModel, getTranslator, getTranslators, googleApiDomain, googleApiDomains, GrokAIModel, OpenAIModel, OpenAIVoiceTTS, ProviderCodeName, Translator } from "../../providers";
 import { cssNames } from "../../utils";
 import { XTranslateIcon } from "../../user-script/xtranslate-icon";
 import { SelectLanguage, SelectLanguageChangeEvent } from "../select-language";
@@ -84,6 +84,14 @@ export class Settings extends React.Component {
           onChange={value => settingsStore.data.grokAiModel = value}
         />
       ),
+      deepseek: (
+        <SelectAIModel
+          className="deepseek_settings"
+          modelOptions={DeepSeekAIModel}
+          getValue={() => settingsStore.data.deepSeekModel}
+          onChange={value => settingsStore.data.deepSeekModel = value}
+        />
+      )
     }
   };
 

@@ -180,7 +180,6 @@ error_403_auth_failed = Ауторизација није успела. Унес
 ai_choose_model = Изабери AI модел
 ai_choose_model_cost_effective = Најисплативије
 ai_choose_model_recommended = Препоручени модел
-ai_choose_model_best_results = Најбољи резултати (најскупље)
 
 # PDF translations suppot via pdf.js
 pdf_use_custom_viewer = Подршка за преводе у PDF фајловима

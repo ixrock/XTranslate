@@ -175,7 +175,6 @@ error_403_auth_failed = 認証に失敗しました。設定で有効な認証AP
 ai_choose_model = AIモデルを選択
 ai_choose_model_cost_effective = 最もコスト効率の良い
 ai_choose_model_recommended = 推奨モデル
-ai_choose_model_best_results = 最良の結果（最も高価）
 
 # PDF翻訳サポート via pdf.js
 pdf_use_custom_viewer = PDFファイル内の翻訳をサポート

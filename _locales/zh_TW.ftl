@@ -176,7 +176,6 @@ error_403_auth_failed = 授權失敗。請在設定中提供有效的 API 金鑰
 ai_choose_model = 選擇 AI 模型
 ai_choose_model_cost_effective = 最具成本效益
 ai_choose_model_recommended = 推薦模型
-ai_choose_model_best_results = 最佳結果（最昂貴）
 
 # PDF 翻譯支援通過 pdf.js
 pdf_use_custom_viewer = 支援 PDF 文件翻譯

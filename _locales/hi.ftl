@@ -176,7 +176,6 @@ error_403_auth_failed = प्रमाणीकरण विफल। कृप
 ai_choose_model = AI मॉडल चुनें
 ai_choose_model_cost_effective = सबसे लागत-प्रभावी
 ai_choose_model_recommended = अनुशंसित मॉडल
-ai_choose_model_best_results = सबसे अच्छे परिणाम (सबसे महंगा)
 
 # PDF अनुवाद समर्थन pdf.js के माध्यम से
 pdf_use_custom_viewer = PDF फाइलों में अनुवाद समर्थन

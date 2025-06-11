@@ -176,7 +176,6 @@ error_403_auth_failed = অথেন্টিকেশন ব্যর্থ। 
 ai_choose_model = AI মডেল বেছে নিন
 ai_choose_model_cost_effective = সবচেয়ে কস্ট-কার্যকর
 ai_choose_model_recommended = সুপারিশকৃত মডেল
-ai_choose_model_best_results = সর্বোত্তম ফলাফল (সবচেয়ে মহঙ্গ)
 
 # pdf.js-এর মাধ্যমে PDF অনুবাদ সমর্থন
 pdf_use_custom_viewer = PDF ফাইলে অনুবাদ সমর্থন করুন

@@ -198,7 +198,8 @@ pdf_use_custom_viewer_info = This option will replace default PDF viewer
 ai_choose_model = Choose AI model
 ai_choose_model_cost_effective = Most cost-efficient
 ai_choose_model_recommended = Recommended model
-ai_choose_model_best_results = Best results (most expensive)
+ai_choose_model_reasoning = Thinking model / slow
+ai_choose_model_reasoning_light = Thinking model light / faster
 
 auth_access_info_steps_openai = 1) Register at platform.openai.com 2) Create api access key 3) Top-up your balance (5$+)
 auth_access_info_steps_grok = Register at console.x.ai and top-up balance (e.g. via Credit card)

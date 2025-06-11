@@ -13,6 +13,7 @@ export enum ProviderCodeName {
 export enum OpenAIModel {
   COST_EFFECTIVE = "gpt-4.1-mini",
   RECOMMENDED = "gpt-4.1",
+  REASONING_LIGHT = "o4-mini",
 }
 
 // OpenAI TTS voice characters
@@ -37,7 +38,7 @@ export enum GrokAIModel {
 }
 
 // DeepSeek models
-export const enum DeepSeekAIModel {
-  CHAT = "deepseek-chat",
-  THINKER = "deepseek-reasoner"
+export enum DeepSeekAIModel {
+  RECOMMENDED = "deepseek-chat",
+  REASONING = "deepseek-reasoner"
 }

@@ -3,7 +3,7 @@
 import "../setup";
 import "./content-script.scss"
 import React from "react";
-import { createRoot, Root } from "react-dom/client";
+import { createRoot } from "react-dom/client";
 import { action, computed, makeObservable, observable, toJS } from "mobx";
 import { observer } from "mobx-react";
 import debounce from 'lodash/debounce';
@@ -17,7 +17,7 @@ import { getManifest, getURL, isRuntimeContextInvalidated, MessageType, onMessag
 import { proxyRequest } from "../background/httpProxy.bgc";
 import { sendMetric } from "../background/metrics.bgc";
 import { popupHotkey, settingsStore } from "../components/settings/settings.storage";
-import { getNextTranslator, getTranslator, ITranslationError, ITranslationResult, ProviderCodeName, TranslateParams } from "../providers";
+import { getNextTranslator, getTranslator, ITranslationError, ITranslationResult, ProviderCodeName } from "../providers";
 import { XTranslateIcon } from "./xtranslate-icon";
 import { XTranslateTooltip } from "./xtranslate-tooltip";
 import { Popup } from "../components/popup/popup";
@@ -177,11 +177,7 @@ export class ContentScript extends React.Component {
   @action
   async translate(params: Partial<TranslatePayload> = {}) {
     void this.checkContextInvalidationError();
-
     this.hideIcon();
-    this.isLoading = true;
-    this.translation = null;
-    this.error = null;
 
     const payload = this.lastParams = {
       provider: params.provider ?? settingsStore.data.vendor,
@@ -190,13 +186,19 @@ export class ContentScript extends React.Component {
       text: params.text ?? this.selectedText.trim(),
     };
 
+    this.translation = null;
+    this.error = null;
+    this.isLoading = true;
+
     try {
       const translation = await getTranslator(payload.provider).translate(payload);
       if (isEqual(payload, this.lastParams)) {
         this.translation = translation;
       }
     } catch (err) {
-      this.error = err;
+      if (isEqual(payload, this.lastParams)) {
+        this.error = err;
+      }
     } finally {
       this.isLoading = false;
       this.refinePosition();
@@ -204,10 +206,10 @@ export class ContentScript extends React.Component {
   }
 
   async translateWith(provider: ProviderCodeName) {
-    await this.translate({
-      ...(this.lastParams ?? {}),
-      provider,
-    });
+    if (!this.lastParams) return;
+
+    await this.translate({ ...this.lastParams, provider });
+
     void sendMetric("translate_action", {
       trigger: "provider_change"
     });

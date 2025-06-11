@@ -175,7 +175,6 @@ error_403_auth_failed = Authentifizierung fehlgeschlagen. Bitte geben Sie einen 
 ai_choose_model = KI-Modell auswählen
 ai_choose_model_cost_effective = Kostenwirksamste Wahl
 ai_choose_model_recommended = Empfohlenes Modell
-ai_choose_model_best_results = Beste Ergebnisse (am teuersten)
 
 # Unterstützung für PDF-Übersetzungen via pdf.js
 pdf_use_custom_viewer = Unterstützung für Übersetzungen in PDF-Dateien

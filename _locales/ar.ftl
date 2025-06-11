@@ -176,7 +176,6 @@ error_403_auth_failed = فشل في التوثيق. يرجى توفير مفتا
 ai_choose_model = اختر نموذج الذكاء الاصطناعي
 ai_choose_model_cost_effective = الأكثر كفاءة من حيث التكلفة
 ai_choose_model_recommended = النموذج الموصى به
-ai_choose_model_best_results = أفضل نتائج (الأكثر تكلفة)
 
 # دعم ترجمة PDF عبر pdf.js
 pdf_use_custom_viewer = دعم الترجمات في ملفات PDF

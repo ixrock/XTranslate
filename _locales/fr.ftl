@@ -176,7 +176,6 @@ error_403_auth_failed = Échec de l'autorisation. Veuillez fournir une clé API 
 ai_choose_model = Choisissez le modèle d'IA
 ai_choose_model_cost_effective = Le plus économique
 ai_choose_model_recommended = Modèle recommandé
-ai_choose_model_best_results = Meilleurs résultats (le plus coûteux)
 
 # Support pour les traductions de PDF via pdf.js
 pdf_use_custom_viewer = Support pour les traductions dans les fichiers PDF

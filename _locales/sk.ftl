@@ -198,7 +198,6 @@ pdf_use_custom_viewer_info = Táto možnosť nahradí predvolený prehliadač PD
 ai_choose_model = Vyberte AI model
 ai_choose_model_cost_effective = Najúspornejší z hľadiska nákladov
 ai_choose_model_recommended = Odporúčaný model
-ai_choose_model_best_results = Najlepšie výsledky (najdrahší)
 
 auth_access_info_steps_openai = 1) Zaregistrujte sa na platform.openai.com 2) Vytvorte prístupový kľúč API 3) Dobite si kredit (5$+)
 auth_access_info_steps_grok = Zaregistrujte sa na adrese console.x.ai a dobite si kredit (napr. prostredníctvom kreditnej karty)

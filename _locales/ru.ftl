@@ -204,8 +204,9 @@ pdf_use_custom_viewer_info = Эта опция заменит стандартн
 # AI integrations
 ai_choose_model = Выберите AI-модель
 ai_choose_model_cost_effective = Наиболее экономичная
-ai_choose_model_recommended = Рекомендуемая / оптимальная модель
-ai_choose_model_best_results = Лучшие результаты (наиболее дорогое)
+ai_choose_model_recommended = Рекомендуемая модель
+ai_choose_model_reasoning = Думающая модель / медленная
+ai_choose_model_reasoning_light = Думающая модель "лайт" / быстрее
 
 auth_access_info_steps_openai = 1) Зарегистрируйтесь на platform.openai.com 2) Создайте ключ доступа к API 3) Пополните баланс (минимально 5$)
 auth_access_info_steps_grok = Зарегистрируйтесь на console.x.ai и пополните баланс (например, с помощью кредитной карты)

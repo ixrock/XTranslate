@@ -178,7 +178,6 @@ error_403_auth_failed = Autorizacija nije uspela. Unesi validan API ključ za au
 ai_choose_model = Izaberi AI model
 ai_choose_model_cost_effective = Najisplativije
 ai_choose_model_recommended = Preporučeni model
-ai_choose_model_best_results = Najbolji rezultati (najskuplje)
 
 # PDF translations suppot via pdf.js
 pdf_use_custom_viewer = Podrška za prevode u PDF fajlovima
