@@ -59,7 +59,6 @@ translation_delay_info = Si experimentas bloqueos frecuentes (error 503) de Goog
 reverse_translate_select_placeholder = Traducir en sentido inverso el idioma
 reverse_translate_add_action = Añadir idioma inverso: { $lang } -> ? (solo aplicable con la opción "Detección automática")
 reverse_translate_delete_action = Eliminar idioma de traducción inversa
-skip_translation_vendor_in_rotation = Saltar traducciones de { $vendor } en la rotación mediante el icono de flecha o las flechas del teclado (en el emergente)
 custom_font_select = Seleccionar fuente personalizada
 
 # tema

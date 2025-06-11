@@ -59,7 +59,6 @@ translation_delay_info = Nếu bạn thường xuyên gặp phải tình trạng
 reverse_translate_select_placeholder = Dịch ngược ngôn ngữ
 reverse_translate_add_action = Thêm ngôn ngữ ngược: { $lang } -> ? (chỉ áp dụng với tùy chọn "Tự động phát hiện")
 reverse_translate_delete_action = Hủy chọn dịch ngược ngôn ngữ
-skip_translation_vendor_in_rotation = Bỏ qua các dịch của { $vendor } trong vòng quay thông qua biểu tượng mũi tên hoặc phím mũi tên trên bàn phím (trong bật lên)
 custom_font_select = Chọn phông chữ tùy chỉnh
 
 # Chủ đề

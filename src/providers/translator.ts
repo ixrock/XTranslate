@@ -406,9 +406,6 @@ export function getNextTranslator(lastUsedProvider: ProviderCodeName, langFrom: 
     translators.push(...afterCurrent, ...beforeCurrent)
   }
   while ((translator = translators.shift())) {
-    if (settingsStore.data.skipVendorInRotation[translator.name]) {
-      continue;
-    }
     if (translator.canTranslate(langFrom, langTo) && translator.isAvailable()) {
       return translator;
     }

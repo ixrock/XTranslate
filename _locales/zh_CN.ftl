@@ -59,7 +59,6 @@ translation_delay_info = 如果您经常遇到来自Google或其他服务的阻�
 reverse_translate_select_placeholder = 反向翻译语言
 reverse_translate_add_action = 添加反向语言: { $lang } -> ?（仅在“自动检测”选项下有效）
 reverse_translate_delete_action = 取消设置反向翻译语言
-skip_translation_vendor_in_rotation = 在旋转中跳过 { $vendor } 翻译，通过箭头图标或键盘箭头（在弹出框中）
 custom_font_select = 选择自定义字体
 
 # 主题

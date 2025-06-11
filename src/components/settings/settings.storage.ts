@@ -49,7 +49,6 @@ export const settingsStorage = createStorage("settings", {
     openAiModel: OpenAIModel.RECOMMENDED,
     grokAiModel: GrokAIModel.RECOMMENDED,
     deepSeekModel: DeepSeekAIModel.RECOMMENDED,
-    skipVendorInRotation: {} as Record<ProviderCodeName, boolean>,
     customPdfViewer: false,
     fullPageTranslation: {
       provider: "bing" as ProviderCodeName,

@@ -59,7 +59,6 @@ translation_delay_info = Wenn Sie häufig Sperrungen (Fehler 503) von Google ode
 reverse_translate_select_placeholder = Umgekehrte Übersetzung der Sprache
 reverse_translate_add_action = Umgekehrte Sprache hinzufügen: { $lang } -> ? (nur mit der Option "Automatische Erkennung" anwendbar)
 reverse_translate_delete_action = Umgekehrte Sprachübersetzung aufheben
-skip_translation_vendor_in_rotation = Übersetzungen von { $vendor } in der Rotation durch Pfeil-Symbol oder Tastaturpfeile überspringen (im Popup)
 custom_font_select = Benutzerdefinierte Schriftart auswählen
 
 # Thema

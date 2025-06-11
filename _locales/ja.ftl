@@ -59,7 +59,6 @@ translation_delay_info = Googleや他のサービスから頻繁にブロック�
 reverse_translate_select_placeholder = 逆翻訳言語
 reverse_translate_add_action = 逆言語を追加: { $lang } -> ?（「自動検出」オプションでのみ適用）
 reverse_translate_delete_action = 逆翻訳言語を解除
-skip_translation_vendor_in_rotation = 矢印アイコンまたはキーボードの矢印で次の翻訳にスキップ（ポップアップ内）
 custom_font_select = カスタムフォントを選択
 
 # テーマ

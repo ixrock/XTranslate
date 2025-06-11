@@ -59,7 +59,6 @@ translation_delay_info = Google 또는 다른 서비스에서 자주 차단 (503
 reverse_translate_select_placeholder = 역번역 언어
 reverse_translate_add_action = 역언어 추가: { $lang } -> ? (자동 감지 옵션과 함께만 적용 가능)
 reverse_translate_delete_action = 역번역 언어 해제
-skip_translation_vendor_in_rotation = 화살표 아이콘이나 키보드 화살표를 통해 다음 번역으로 { $vendor }-번역 건너뛰기 (팝업 내)
 custom_font_select = 맞춤 폰트 선택
 
 # 테마

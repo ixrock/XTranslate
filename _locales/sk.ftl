@@ -75,7 +75,6 @@ translation_delay_info = Ak často dochádza k blokovaniu (chyba 503) zo strany 
 reverse_translate_select_placeholder = Spätný preklad jazyka
 reverse_translate_add_action = Pridať reverzný jazyk: { $lang } -> ? (použiteľné len pri voľbe "Automatické zistenie")
 reverse_translate_delete_action = Zrušiť nastavenie jazyka spätného prekladu
-skip_translation_vendor_in_rotation = Preskočiť preklad cez { $vendor } pri prechádzaní pomocou šípok alebo klávesov šípok (vo vyskakovacom okne)
 custom_font_select = Select custom font
 
 # theme

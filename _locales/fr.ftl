@@ -59,7 +59,6 @@ translation_delay_info = Si vous rencontrez souvent des blocages (erreur 503) de
 reverse_translate_select_placeholder = Traduction inverse de la langue
 reverse_translate_add_action = Ajouter la langue inverse : { $lang } -> ? (applicable uniquement avec l'option "Détection automatique")
 reverse_translate_delete_action = Supprimer la langue de traduction inverse
-skip_translation_vendor_in_rotation = Sauter les traductions de { $vendor } dans la rotation via l'icône flèche ou les flèches du clavier (dans le pop-up)
 custom_font_select = Sélectionner une police personnalisée
 
 # thème

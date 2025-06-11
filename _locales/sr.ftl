@@ -61,7 +61,6 @@ translation_delay_info = Ako često nailazite na blokiranje (greška 503) od Goo
 reverse_translate_select_placeholder = Jezik za obrnuti prevod
 reverse_translate_add_action = Dodaj jezik za obrnuti prevod: { $lang } -> ? (primenljivo samo kad je "Otkrivanje jezika" uključeno)
 reverse_translate_delete_action = Obriši jezik za obrnuti prevod
-skip_translation_vendor_in_rotation = Preskoči { $vendor }-prevode u rotaciji preko ikonice strelice ili strelica na tastaturi (u iskačućem prozoru)
 custom_font_select = Izaberi prilagođeni font
 
 # theme
