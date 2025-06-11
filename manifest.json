@@ -34,7 +34,7 @@
   "content_scripts": [
     {
       "all_frames": false,
-      "run_at": "document_start",
+      "run_at": "document_idle",
       "js": ["content-script-entry.js"],
       "matches": [
         "<all_urls>",
