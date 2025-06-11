@@ -142,7 +142,6 @@ source_lang_placeholder = উৎস ভাষা
 favorites_lang_title = ফেভারিট
 favorites_info_tooltip = ভাষাকে ফেভারিট হিসেবে চিহ্নিত/অচিহ্নিত করতে (তালিকা শীর্ষে দেখানো হয়), { $hotkey } + ক্লিক করুন
 donate_title = ডেভেলপর সাপোর্ট
-donate_copy_wallet = ঠিকানা কপি করুন
 donate_description = আপনি যদি অ্যাপটি পছন্দ করেন তাহলে ডেভেলপারদের দান করুন। ধন্যবাদ!
 service_unavailable = সেবা উপলব্ধ নেই। ৫-২৫ মিনিট পরে আবার চেষ্টা করুন। যদি এটি স্থায়ীভাবে ঘটে তাহলে সেটিংসে অনুবাদের দেরি বাড়ান।
 service_confirm_not_a_robot = আপনি { $link }-এ যেতে পারেন এবং নিশ্চিত করতে পারেন যে আপনি রোবট নন।

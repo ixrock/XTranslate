@@ -160,7 +160,6 @@ source_lang_placeholder = Zdrojové jazyky
 favorites_lang_title = Obľúbené
 favorites_info_tooltip = Ak chcete označiť/odznačiť jazyk ako obľúbený (zoznam sa zobrazí v hornej časti), použite { $hotkey } + klik
 donate_title = Prispieť
-donate_copy_wallet = Kopírovať adresu
 donate_description = Ak sa vám rozšírenie páči, zvážte možnosť prispieť vývojárom. Ďakujeme!
 service_unavailable = Služba je nedostupná. Skúste to znova po 5 - 25 minútach. Ak sa to deje neustále, zvýšte oneskorenie prekladu v nastaveniach.
 service_confirm_not_a_robot = Môžete tiež prejsť na { $link } a potvrdiť, že nie ste robot.

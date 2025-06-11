@@ -142,7 +142,6 @@ source_lang_placeholder = Lingue di origine
 favorites_lang_title = Preferiti
 favorites_info_tooltip = Per segnare/desegnare una lingua come preferita (l'elenco viene mostrato in alto), usa { $hotkey } + clic
 donate_title = Supporto agli sviluppatori
-donate_copy_wallet = Copia indirizzo
 donate_description = Se ti piace l'app, considera di fare una donazione agli sviluppatori. Grazie!
 service_unavailable = Servizio non disponibile. Riprova dopo 5-25 minuti. Se succede continuamente, aumenta il ritardo della traduzione nelle impostazioni.
 service_confirm_not_a_robot = Puoi anche andare su { $link } e confermare che non sei un robot.

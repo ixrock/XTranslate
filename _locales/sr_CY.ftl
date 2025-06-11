@@ -146,7 +146,6 @@ source_lang_placeholder = Изворни језици
 favorites_lang_title = Омиљено
 favorites_info_tooltip = Да бисте мењали омиљене језике (листа на врху), користите { $hotkey } + клик
 donate_title = Подршка девелопера
-donate_copy_wallet = Копирај адресу
 donate_description = Ако вам се свиђа апликација, можете донирати девелоперима. Хвала!
 service_unavailable = Сервис није доступан. Пробајте поново за 5-25 минута. Ако се то често дешава, повећајте вредност кашњења превода у подешавањима.
 service_confirm_not_a_robot = Можете отићи на { $link } и потврдити да нисте робот.

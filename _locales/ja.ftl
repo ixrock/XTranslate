@@ -142,7 +142,6 @@ source_lang_placeholder = ソース言語
 favorites_lang_title = お気に入り
 favorites_info_tooltip = 言語をお気に入りにマーク/アンマークするには（リストは上部に表示されます）、{ $hotkey } + クリックを使用してください
 donate_title = 開発者へのサポート
-donate_copy_wallet = アドレスをコピー
 donate_description = アプリが気に入ったら、開発者への寄付を検討してください。感謝！
 service_unavailable = サービスが利用できません。5-25分後に再試行してください。頻繁に発生する場合は、設定で翻訳の遅延を増やしてください。
 service_confirm_not_a_robot = また、{ $link } にアクセスしてロボットでないことを確認することもできます。

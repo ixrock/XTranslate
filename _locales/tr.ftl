@@ -135,7 +135,6 @@ favorites_lang_title = Sık kullanılanlar
 favorites_info_tooltip = Dili sık kullanılan olarak işaretlemek/işaretini kaldırmak için (listede en üstte gösterilir), { $hotkey } + tıklama kullanın
 donate_title = Bağış yap
 donate_via = Bağış yap
-donate_copy_wallet = Adresi kopyala
 donate_description = Uygulamayı beğendiyseniz geliştiricilere bağış yapmayı düşünün. Teşekkürler!
 service_unavailable = Hizmet kullanılamıyor. 5-25 dakika sonra tekrar deneyin. Bu gerçekleşirse, ayarlardaki çeviri gecikmesini sürekli olarak artırın.
 service_confirm_not_a_robot = Ayrıca { $link } adresine gidebilir ve robot olmadığınızı onaylayabilirsiniz.

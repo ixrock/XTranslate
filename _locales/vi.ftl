@@ -142,7 +142,6 @@ source_lang_placeholder = Ngôn ngữ nguồn
 favorites_lang_title = Yêu thích
 favorites_info_tooltip = Để đánh dấu/hủy đánh dấu ngôn ngữ là yêu thích (danh sách được hiển thị ở trên cùng), hãy sử dụng { $hotkey } + nhấp chuột
 donate_title = Hỗ trợ nhà phát triển
-donate_copy_wallet = Sao chép địa chỉ
 donate_description = Nếu bạn thích ứng dụng này, hãy xem xét đóng góp cho nhà phát triển. Cảm ơn bạn!
 service_unavailable = Dịch vụ không khả dụng. Vui lòng thử lại sau 5-25 phút. Nếu điều này xảy ra thường xuyên, hãy tăng độ trễ dịch trong cài đặt.
 service_confirm_not_a_robot = Bạn cũng có thể truy cập vào { $link } và xác nhận rằng bạn không phải là robot.

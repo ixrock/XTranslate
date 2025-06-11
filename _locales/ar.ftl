@@ -142,7 +142,6 @@ source_lang_placeholder = اللغات المصدر
 favorites_lang_title = المفضلات
 favorites_info_tooltip = لوسم اللغة كمفضلة/إلغاء الوسم (القائمة تظهر في الأعلى)، استخدم { $hotkey } + النقر
 donate_title = دعم المطورين
-donate_copy_wallet = نسخ العنوان
 donate_description = إذا أعجبك التطبيق، فكر في التبرع للمطورين. شكرًا!
 service_unavailable = الخدمة غير متوفرة. حاول مرة أخرى بعد 5-25 دقيقة. إذا حدث هذا باستمرار، زد من تأخير الترجمة في الإعدادات.
 service_confirm_not_a_robot = يمكنك أيضًا الذهاب إلى { $link } وتأكيد أنك لست روبوت.

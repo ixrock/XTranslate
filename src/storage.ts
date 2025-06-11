@@ -5,7 +5,7 @@
 import { createLogger } from "./utils/createLogger";
 import { StorageAdapter, StorageHelper, StorageHelperOptions } from "./utils/storageHelper";
 import { isBackgroundWorker, onMessage } from "./extension/runtime";
-import { MessageType, StorageSyncPayload, StorageWritePayload } from "./extension/messages";
+import { MessageType, StorageSyncPayload } from "./extension/messages";
 import { listenExternalStorageChanges, readFromExternalStorageAction, removeFromExternalStorageAction, StorageArea, writeToExternalStorageAction } from "./background/storage.bgc";
 
 const logger = createLogger({ systemPrefix: "STORAGE(helper)" });
@@ -22,11 +22,11 @@ export function createStorage<T>(key: string, options: ChromeStorageHelperOption
 
   const storageAdapter: StorageAdapter<T> = {
     async setItem(key: string, state: T): Promise<void> {
-      return writeToExternalStorageAction({ key, area, state });
+      return writeToExternalStorageAction<T>({ key, area, state });
     },
 
     async getItem(key: string): Promise<T> {
-      return readFromExternalStorageAction({ area, key });
+      return readFromExternalStorageAction<T>({ area, key });
     },
 
     async removeItem(key: string): Promise<void> {

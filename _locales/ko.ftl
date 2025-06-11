@@ -142,7 +142,6 @@ source_lang_placeholder = 소스 언어
 favorites_lang_title = 즐겨찾기
 favorites_info_tooltip = 언어를 즐겨찾기로 표시/해제하려면 (목록은 상단에 표시됩니다) { $hotkey } + 클릭을 사용하세요
 donate_title = 개발자 지원
-donate_copy_wallet = 주소 복사
 donate_description = 앱이 마음에 드시면 개발자에게 기부를 고려해주세요. 감사합니다!
 service_unavailable = 서비스를 사용할 수 없습니다. 5-25분 후에 다시 시도하세요. 이 문제가 자주 발생하면 설정에서 번역 지연을 늘리세요.
 service_confirm_not_a_robot = 또한 { $link }로 가서 로봇이 아님을 확인할 수 있습니다.

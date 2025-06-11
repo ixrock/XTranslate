@@ -55,6 +55,10 @@ hr {
   background: var(--theme-border-color);
 }
 
+h4 {
+  font-weight: 500;
+}
+
 #XTranslateWindowApp {
   //@include custom-scrollbar($overlay: true);
   margin: auto;

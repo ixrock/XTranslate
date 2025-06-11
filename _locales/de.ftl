@@ -142,7 +142,6 @@ source_lang_placeholder = Quellsprachen
 favorites_lang_title = Favoriten
 favorites_info_tooltip = Um eine Sprache als Favorit zu markieren/zu löschen (die Liste wird oben angezeigt), verwenden Sie { $hotkey } + Klicken
 donate_title = Entwicklerunterstützung
-donate_copy_wallet = Adresse kopieren
 donate_description = Wenn Ihnen die App gefällt, erwägen Sie bitte eine Spende an die Entwickler. Danke!
 service_unavailable = Dienst nicht verfügbar. Versuchen Sie es nach 5-25 Minuten erneut. Wenn dies ständig passiert, erhöhen Sie die Übersetzungsverzögerung in den Einstellungen.
 service_confirm_not_a_robot = Sie können auch zu { $link } gehen und bestätigen, dass Sie kein Roboter sind.

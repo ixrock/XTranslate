@@ -142,7 +142,6 @@ source_lang_placeholder = 來源語言
 favorites_lang_title = 收藏
 favorites_info_tooltip = 要標記/取消標記語言為收藏（列表顯示在頂部），請使用 { $hotkey } + 點擊
 donate_title = 支援開發者
-donate_copy_wallet = 複製地址
 donate_description = 如果您喜歡此應用，請考慮向開發者捐款。謝謝！
 service_unavailable = 服務不可用。請稍後 5-25 分鐘後再試。如果此情況經常發生，請在設定中增加翻譯延遲。
 service_confirm_not_a_robot = 您也可以訪問 { $link } 並確認您不是機器人。

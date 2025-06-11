@@ -1,2 +1,7 @@
 .AppRateDialog {
+  .button {
+    display: flex;
+    gap: var(--theme-spacing-half);
+    align-items: center;
+  }
 }
