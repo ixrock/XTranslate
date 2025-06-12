@@ -7,5 +7,5 @@ void customPDFViewerRedirectCheck();
 
 // render app
 window.addEventListener("load", () => {
-  window.requestIdleCallback(() => injectContentScriptAction());
+  window.requestAnimationFrame(() => injectContentScriptAction());
 }, { once: true });
