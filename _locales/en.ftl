@@ -207,3 +207,6 @@ auth_access_info_api_key = Provide your api key for getting { $provider } transl
 auth_setup_key_info = Provide { $provider } API-key
 auth_clear_key_info = Remove { $provider } API key
 auth_safety_warning_info = Warning: DO NOT enter your API key in any other place except this extension window
+
+pro_version_promo_link_text = 20% off PRO
+pro_version_promo_tooltip = We’re building a PRO version with full-page AI translation. Click to learn more and claim your discount.

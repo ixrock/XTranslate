@@ -214,3 +214,6 @@ auth_access_info_api_key = Предоставьте свой API-ключ для
 auth_setup_key_info = Сохранить API-ключ для { $provider }
 auth_clear_key_info = Удалить API-ключ доступа { $provider }
 auth_safety_warning_info = Предупреждение: НЕ вводите свой API-ключ в других местах, кроме как из этого окна расширения
+
+pro_version_promo_link_text = Скидка 20% на PRO
+pro_version_promo_tooltip = Мы готовим PRO-версию с поддержкой AI-переводов целых страниц. Кликните, чтобы узнать подробности и получить скидку.
