@@ -59,7 +59,6 @@ translation_delay_info = 如果您经常遇到来自Google或其他服务的阻�
 reverse_translate_select_placeholder = 反向翻译语言
 reverse_translate_add_action = 添加反向语言: { $lang } -> ?（仅在“自动检测”选项下有效）
 reverse_translate_delete_action = 取消设置反向翻译语言
-skip_translation_vendor_in_rotation = 在旋转中跳过 { $vendor } 翻译，通过箭头图标或键盘箭头（在弹出框中）
 custom_font_select = 选择自定义字体
 
 # 主题
@@ -138,16 +137,11 @@ rate_app_info1 = 喜欢使用这个应用吗？请给我们打5星评分！
 rate_app_info2 = 这将帮助其他用户找到扩展，并传播其好处。
 rate_app_button = 在扩展商店评分
 rate_app_button_later = 稍后提醒我
-deepl_get_own_key_info = 在 www.deepl.com 注册并获得您自己的免费DeepL API认证密钥
-deepl_insert_auth_key = 设置认证API密钥以访问DeepL翻译
-deepl_insert_auth_key_warning = 警告：除了此扩展窗口外，请勿在任何其他地方输入您的API密钥
-deepl_insert_auth_key_remove = 移除DeepL API密钥
 target_lang_placeholder = 目标语言
 source_lang_placeholder = 源语言
 favorites_lang_title = 收藏
 favorites_info_tooltip = 要标记/取消标记语言为收藏（列表显示在顶部），使用 { $hotkey } + 点击
 donate_title = 支持开发者
-donate_copy_wallet = 复制地址
 donate_description = 如果您喜欢这个应用，请考虑捐赠给开发者。谢谢！
 service_unavailable = 服务不可用。请在5-25分钟后重试。如果持续发生，请在设置中增加翻译延迟。
 service_confirm_not_a_robot = 您也可以访问 { $link } 并确认您不是机器人。
@@ -180,7 +174,6 @@ error_403_auth_failed = 授权失败。请在设置中提供有效的认证API�
 ai_choose_model = 选择AI模型
 ai_choose_model_cost_effective = 最具成本效益
 ai_choose_model_recommended = 推荐模型
-ai_choose_model_best_results = 最佳结果（最昂贵）
 
 # 通过pdf.js支持PDF翻译
 pdf_use_custom_viewer = 支持在PDF文件中翻译

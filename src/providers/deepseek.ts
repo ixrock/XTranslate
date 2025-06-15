@@ -1,7 +1,8 @@
 import AILanguagesList from "./open-ai.json"
-import { DeepSeekAIModel, ITranslationResult, ProviderCodeName, TranslateParams, Translator } from "./index";
+import { ITranslationResult, ProviderCodeName, TranslateParams, Translator } from "./index";
 import { createStorage } from "../storage";
 import { translateTextAction } from "../background/open-ai.bgc";
+import { settingsStore } from "../components/settings/settings.storage";
 
 export class DeepSeekTranslator extends Translator {
   public name = ProviderCodeName.DEEPSEEK;
@@ -20,7 +21,7 @@ export class DeepSeekTranslator extends Translator {
 
     return translateTextAction({
       provider: this.name,
-      model: DeepSeekAIModel.CHAT,
+      model: settingsStore.data.deepSeekModel,
       apiKey: this.#apiKey.get(),
       targetLanguage: this.langTo[to],
       sourceLanguage: from !== "auto" ? this.langFrom[from] : undefined,
@@ -28,21 +29,11 @@ export class DeepSeekTranslator extends Translator {
     })
   }
 
-  private setupApiKey = () => {
-    const newKey = window.prompt(`${this.title} API Key`);
-    if (newKey === null) return;
-    this.#apiKey.set(newKey || this.#apiKey.defaultValue);
-  };
-
-  private clearApiKey = () => {
-    this.#apiKey.set("");
-  };
-
   getAuthSettings() {
     return {
       apiKeySanitized: this.sanitizeApiKey(this.#apiKey.get()),
-      setupApiKey: this.setupApiKey,
-      clearApiKey: this.clearApiKey,
+      setupApiKey: () => this.setupApiKey(key => this.#apiKey.set(key)),
+      clearApiKey: () => this.#apiKey.set(""),
     };
   }
 }

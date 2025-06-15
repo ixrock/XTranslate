@@ -59,7 +59,6 @@ translation_delay_info = Googleや他のサービスから頻繁にブロック�
 reverse_translate_select_placeholder = 逆翻訳言語
 reverse_translate_add_action = 逆言語を追加: { $lang } -> ?（「自動検出」オプションでのみ適用）
 reverse_translate_delete_action = 逆翻訳言語を解除
-skip_translation_vendor_in_rotation = 矢印アイコンまたはキーボードの矢印で次の翻訳にスキップ（ポップアップ内）
 custom_font_select = カスタムフォントを選択
 
 # テーマ
@@ -138,16 +137,11 @@ rate_app_info1 = アプリの使用を楽しんでいますか？5つ星で評�
 rate_app_info2 = これにより、他のユーザーが拡張機能を見つけ、その利点を普及させるのに役立ちます。
 rate_app_button = 拡張機能ストアで評価
 rate_app_button_later = 後でリマインド
-deepl_get_own_key_info = www.deepl.com に登録し、DeepL APIのための無料認証キーを取得してください
-deepl_insert_auth_key = DeepL翻訳へのアクセスに認証APIキーを設定
-deepl_insert_auth_key_warning = 警告: この拡張機能のウィンドウ以外にAPIキーを入力しないでください
-deepl_insert_auth_key_remove = DeepL APIキーを削除
 target_lang_placeholder = ターゲット言語
 source_lang_placeholder = ソース言語
 favorites_lang_title = お気に入り
 favorites_info_tooltip = 言語をお気に入りにマーク/アンマークするには（リストは上部に表示されます）、{ $hotkey } + クリックを使用してください
 donate_title = 開発者へのサポート
-donate_copy_wallet = アドレスをコピー
 donate_description = アプリが気に入ったら、開発者への寄付を検討してください。感謝！
 service_unavailable = サービスが利用できません。5-25分後に再試行してください。頻繁に発生する場合は、設定で翻訳の遅延を増やしてください。
 service_confirm_not_a_robot = また、{ $link } にアクセスしてロボットでないことを確認することもできます。
@@ -179,7 +173,6 @@ error_403_auth_failed = 認証に失敗しました。設定で有効な認証AP
 ai_choose_model = AIモデルを選択
 ai_choose_model_cost_effective = 最もコスト効率の良い
 ai_choose_model_recommended = 推奨モデル
-ai_choose_model_best_results = 最良の結果（最も高価）
 
 # PDF翻訳サポート via pdf.js
 pdf_use_custom_viewer = PDFファイル内の翻訳をサポート

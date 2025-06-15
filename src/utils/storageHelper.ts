@@ -88,7 +88,7 @@ export class StorageHelper<T> {
     this.loading = true;
 
     try {
-      const data = this.storage?.getItem(this.key) ?? this.defaultValue
+      const data = this.storage?.getItem(this.key);
       if (data instanceof Promise) {
         return data.then(this.onData, this.onError);
       } else {

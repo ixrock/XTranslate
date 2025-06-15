@@ -17,7 +17,7 @@ import { getManifest, getURL, isRuntimeContextInvalidated, MessageType, onMessag
 import { proxyRequest } from "../background/httpProxy.bgc";
 import { sendMetric } from "../background/metrics.bgc";
 import { popupHotkey, settingsStore } from "../components/settings/settings.storage";
-import { getNextTranslator, getTranslator, ITranslationError, ITranslationResult, ProviderCodeName, TranslateParams } from "../providers";
+import { getNextTranslator, getTranslator, ITranslationError, ITranslationResult, ProviderCodeName } from "../providers";
 import { XTranslateIcon } from "./xtranslate-icon";
 import { XTranslateTooltip } from "./xtranslate-tooltip";
 import { Popup } from "../components/popup/popup";
@@ -29,31 +29,28 @@ type DOMRectNormalized = Omit<Writeable<DOMRect>, "toJSON" | "x" | "y">;
 export class ContentScript extends React.Component {
   static window: Window;
   static rootElem: HTMLElement;
+  static rootNodes: Root[] = [];
   static cssStylesUrl: string;
 
   static async init(window: Window = globalThis.window.self) {
-    this.window = window;
-    this.umount();
     await preloadAppData(); // wait for dependent data before first render
     await this.preloadCss();
 
     const appElem = window.document.createElement("div");
     appElem.classList.add("XTranslate");
     appElem.style.all = "unset"; // reset possible css-collisions with global page styles
-    ContentScript.rootElem = appElem;
 
     const shadowRoot = appElem.attachShadow({ mode: "closed" });
     const rootNode = createRoot(shadowRoot);
     const appRootNode = createRoot(appElem);
     window.document.body.appendChild(appElem);
 
+    this.window = window;
+    this.rootElem = appElem;
+    this.rootNodes.push(rootNode, appRootNode);
+
     appRootNode.render(<link rel="stylesheet" href={this.cssStylesUrl}/>);
     rootNode.render(<ContentScript/>);
-  }
-
-  static umount() {
-    const appElem = this.window.document.querySelector(".XTranslate");
-    if (appElem) appElem.parentElement.removeChild(appElem);
   }
 
   static async preloadCss() {
@@ -76,7 +73,7 @@ export class ContentScript extends React.Component {
     autoBind(this);
   }
 
-  private unload = disposer();
+  private unmount = disposer();
   public appName = getManifest().name;
   private selection = ContentScript.window.getSelection();
   private popup: Popup;
@@ -100,7 +97,7 @@ export class ContentScript extends React.Component {
   async componentDidMount() {
     this.bindEvents();
 
-    if (this.pageTranslator.isAlwaysTranslate(document.URL)) {
+    if (this.pageTranslator.isEnabled) {
       this.startPageAutoTranslation();
     }
   }
@@ -124,21 +121,24 @@ export class ContentScript extends React.Component {
     window.addEventListener("scroll", this.updatePopupPositionLazy, { signal });
     window.addEventListener("resize", this.updatePopupPositionLazy, { signal });
 
-    this.unload.push(
+    this.unmount.push(
+      function unmountDOM() {
+        const { rootNodes, rootElem } = ContentScript;
+        rootNodes.forEach(node => node.unmount());
+        rootElem.parentElement.removeChild(rootElem);
+      },
       function unbindDOMEvents() {
         abortCtrl.abort();
       },
       onMessage(MessageType.TRANSLATE_FULL_PAGE, this.togglePageAutoTranslation),
       onMessage(MessageType.GET_SELECTED_TEXT, this.getSelectedTextAction),
-      () => this.stopPageAutoTranslation(),
     );
   }
 
   async checkContextInvalidationError(): Promise<void> {
     const isInvalidated = await isRuntimeContextInvalidated();
     if (isInvalidated) {
-      // unload previous content-script artifacts in case of "context invalidated" error
-      this.unload();
+      this.unmount(); // remove previous content-script artifacts in case of "context invalidated" error
     }
   }
 
@@ -177,11 +177,7 @@ export class ContentScript extends React.Component {
   @action
   async translate(params: Partial<TranslatePayload> = {}) {
     void this.checkContextInvalidationError();
-
     this.hideIcon();
-    this.isLoading = true;
-    this.translation = null;
-    this.error = null;
 
     const payload = this.lastParams = {
       provider: params.provider ?? settingsStore.data.vendor,
@@ -190,13 +186,19 @@ export class ContentScript extends React.Component {
       text: params.text ?? this.selectedText.trim(),
     };
 
+    this.translation = null;
+    this.error = null;
+    this.isLoading = true;
+
     try {
       const translation = await getTranslator(payload.provider).translate(payload);
       if (isEqual(payload, this.lastParams)) {
         this.translation = translation;
       }
     } catch (err) {
-      this.error = err;
+      if (isEqual(payload, this.lastParams)) {
+        this.error = err;
+      }
     } finally {
       this.isLoading = false;
       this.refinePosition();
@@ -204,10 +206,10 @@ export class ContentScript extends React.Component {
   }
 
   async translateWith(provider: ProviderCodeName) {
-    await this.translate({
-      ...(this.lastParams ?? {}),
-      provider,
-    });
+    if (!this.lastParams) return;
+
+    await this.translate({ ...this.lastParams, provider });
+
     void sendMetric("translate_action", {
       trigger: "provider_change"
     });
@@ -226,22 +228,19 @@ export class ContentScript extends React.Component {
   }
 
   private togglePageAutoTranslation() {
-    const pageUrl = document.URL;
-    const autoTranslate = this.pageTranslator.isAlwaysTranslate(pageUrl);
-
-    if (autoTranslate) {
-      this.stopPageAutoTranslation(pageUrl);
+    if (this.pageTranslator.isEnabled) {
+      this.stopPageAutoTranslation();
     } else {
-      this.startPageAutoTranslation(pageUrl);
+      this.startPageAutoTranslation();
     }
   }
 
   @action
-  private startPageAutoTranslation(pageUrl?: string) {
+  private startPageAutoTranslation(pageUrl = document.URL) {
     const { provider, langTo, langFrom } = this.pageTranslator.settings;
     this.pageTranslator.startAutoTranslation();
 
-    if (pageUrl && ContentScript.isTopFrame) {
+    if (ContentScript.isTopFrame) {
       this.pageTranslator.setAutoTranslatingPages({ enabled: [pageUrl] });
     }
 
@@ -254,10 +253,10 @@ export class ContentScript extends React.Component {
   }
 
   @action
-  private stopPageAutoTranslation(pageUrl?: string) {
-    if (pageUrl) this.pageTranslator.setAutoTranslatingPages({ disabled: [pageUrl] });
+  private stopPageAutoTranslation(pageUrl = document.URL) {
+    this.pageTranslator.setAutoTranslatingPages({ disabled: [pageUrl] });
     this.pageTranslator.stopAutoTranslation();
-    this.setTooltipHTML("");
+    this.setTooltipHTML(""); // reset
   }
 
   playText() {
@@ -394,6 +393,7 @@ export class ContentScript extends React.Component {
   }
 
   private setTooltipHTML(...htmlChunks: React.ReactNode[]): void {
+    if (!this.tooltipRef.current) return; // might not exist after context-invalidated
     this.tooltipRef.current.innerHTML = htmlChunks.filter(Boolean).join("<hr/>");
   }
 

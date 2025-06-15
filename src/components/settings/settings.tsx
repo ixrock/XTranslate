@@ -4,8 +4,7 @@ import { action, makeObservable, observable } from "mobx";
 import { observer } from "mobx-react";
 import isEqual from "lodash/isEqual";
 import startCase from "lodash/startCase";
-import { getTranslator, getTranslators, googleApiDomain, googleApiDomains, GrokAIModel, OpenAIModel, OpenAIVoiceTTS, ProviderCodeName, Translator } from "../../providers";
-import { cssNames } from "../../utils";
+import { DeepSeekAIModel, getTranslator, getTranslators, googleApiDomain, googleApiDomains, GrokAIModel, OpenAIModel, OpenAIVoiceTTS, ProviderCodeName, Translator } from "../../providers";
 import { XTranslateIcon } from "../../user-script/xtranslate-icon";
 import { SelectLanguage, SelectLanguageChangeEvent } from "../select-language";
 import { Checkbox } from "../checkbox";
@@ -84,6 +83,14 @@ export class Settings extends React.Component {
           onChange={value => settingsStore.data.grokAiModel = value}
         />
       ),
+      deepseek: (
+        <SelectAIModel
+          className="deepseek_settings"
+          modelOptions={DeepSeekAIModel}
+          getValue={() => settingsStore.data.deepSeekModel}
+          onChange={value => settingsStore.data.deepSeekModel = value}
+        />
+      )
     }
   };
 
@@ -148,19 +155,10 @@ export class Settings extends React.Component {
     const { name, title } = provider;
     const publicUrl = new URL(provider.publicUrl);
     const providerUrl = publicUrl.hostname.replace(/^www\./, "") + publicUrl.pathname.replace(/\/$/, "");
-    const skipInRotation = settingsStore.data.skipVendorInRotation[name];
-    const disableInRotationClassName = cssNames({
-      [styles.providerSkipRotation]: skipInRotation,
-    });
 
     return (
       <div key={name} className={`${styles.provider} flex gaps align-center`}>
-        <Checkbox
-          checked={skipInRotation}
-          onChange={checked => settingsStore.data.skipVendorInRotation[name] = checked}
-          tooltip={getMessage("skip_translation_vendor_in_rotation", { vendor: title })}
-        />
-        <Radio value={name} label={<span className={disableInRotationClassName}>{title}</span>}/>
+        <Radio value={name} label={title}/>
         <a className={styles.providerUrl} href={publicUrl.toString()} title={publicUrl.origin} target="_blank" tabIndex={-1}>
           {providerUrl}
         </a>

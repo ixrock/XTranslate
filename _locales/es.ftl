@@ -59,7 +59,6 @@ translation_delay_info = Si experimentas bloqueos frecuentes (error 503) de Goog
 reverse_translate_select_placeholder = Traducir en sentido inverso el idioma
 reverse_translate_add_action = Añadir idioma inverso: { $lang } -> ? (solo aplicable con la opción "Detección automática")
 reverse_translate_delete_action = Eliminar idioma de traducción inversa
-skip_translation_vendor_in_rotation = Saltar traducciones de { $vendor } en la rotación mediante el icono de flecha o las flechas del teclado (en el emergente)
 custom_font_select = Seleccionar fuente personalizada
 
 # tema
@@ -138,16 +137,11 @@ rate_app_info1 = ¿Disfrutas usando la aplicación? Por favor, califícanos con 
 rate_app_info2 = Esto ayudará a otros usuarios a encontrar la extensión y a disfrutar de sus beneficios.
 rate_app_button = Calificar en la tienda de extensiones
 rate_app_button_later = Recordarme más tarde
-deepl_get_own_key_info = Regístrate en www.deepl.com y obtén tu propia clave de autenticación gratuita para la API de DeepL
-deepl_insert_auth_key = Configura la clave de la API para acceder a las traducciones de DeepL
-deepl_insert_auth_key_warning = Advertencia: NO ingreses tu clave de API en ningún otro lugar excepto en esta ventana de la extensión
-deepl_insert_auth_key_remove = Eliminar la clave de API de DeepL
 target_lang_placeholder = Idiomas de destino
 source_lang_placeholder = Idiomas de origen
 favorites_lang_title = Favoritos
 favorites_info_tooltip = Para marcar/desmarcar un idioma como favorito (la lista se muestra en la parte superior), usa { $hotkey } + clic
 donate_title = Apoyo a desarrolladores
-donate_copy_wallet = Copiar dirección
 donate_description = Si te gusta la aplicación, considera donar a los desarrolladores. ¡Gracias!
 service_unavailable = Servicio no disponible. Inténtalo de nuevo después de 5-25 minutos. Si esto sucede constantemente, aumenta el retraso de traducción en la configuración.
 service_confirm_not_a_robot = También puedes ir a { $link } y confirmar que no eres un robot.
@@ -180,7 +174,6 @@ error_403_auth_failed = Fallo de autorización. Por favor, proporciona una clave
 ai_choose_model = Elige el modelo de IA
 ai_choose_model_cost_effective = Más eficiente en costos
 ai_choose_model_recommended = Modelo recomendado
-ai_choose_model_best_results = Mejores resultados (más costoso)
 
 # Soporte para traducciones de PDF mediante pdf.js
 pdf_use_custom_viewer = Soporte para traducciones en archivos PDF

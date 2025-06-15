@@ -75,7 +75,6 @@ translation_delay_info = Ak často dochádza k blokovaniu (chyba 503) zo strany 
 reverse_translate_select_placeholder = Spätný preklad jazyka
 reverse_translate_add_action = Pridať reverzný jazyk: { $lang } -> ? (použiteľné len pri voľbe "Automatické zistenie")
 reverse_translate_delete_action = Zrušiť nastavenie jazyka spätného prekladu
-skip_translation_vendor_in_rotation = Preskočiť preklad cez { $vendor } pri prechádzaní pomocou šípok alebo klávesov šípok (vo vyskakovacom okne)
 custom_font_select = Select custom font
 
 # theme
@@ -156,16 +155,11 @@ rate_app_info1 = Baví vás používať rozšírenie? Ohodnoťte ju 5 hviezdičk
 rate_app_info2 = Pomôže to ostatným používateľom nájsť rozšírenie a šíriť dobro.
 rate_app_button = Hodnotiť v obchode s rozšíreniami
 rate_app_button_later = Pripomenúť mi to neskôr
-deepl_get_own_key_info = Zaregistrujte sa na stránke www.deepl.com a získajte vlastný bezplatný autentifikačný kľúč pre rozhranie API DeepL.
-deepl_insert_auth_key = Nastaviť autorizačný kľúč pre rozhranie DeepL API.
-deepl_insert_auth_key_warning = Upozornenie: NEZADÁVAJTE svoj kľúč API na iné miesto okrem tohto okna rozšírenia.
-deepl_insert_auth_key_remove = Odstrániť kľúč API DeepL
 target_lang_placeholder = Cieľové jazyky
 source_lang_placeholder = Zdrojové jazyky
 favorites_lang_title = Obľúbené
 favorites_info_tooltip = Ak chcete označiť/odznačiť jazyk ako obľúbený (zoznam sa zobrazí v hornej časti), použite { $hotkey } + klik
 donate_title = Prispieť
-donate_copy_wallet = Kopírovať adresu
 donate_description = Ak sa vám rozšírenie páči, zvážte možnosť prispieť vývojárom. Ďakujeme!
 service_unavailable = Služba je nedostupná. Skúste to znova po 5 - 25 minútach. Ak sa to deje neustále, zvýšte oneskorenie prekladu v nastaveniach.
 service_confirm_not_a_robot = Môžete tiež prejsť na { $link } a potvrdiť, že nie ste robot.
@@ -202,7 +196,6 @@ pdf_use_custom_viewer_info = Táto možnosť nahradí predvolený prehliadač PD
 ai_choose_model = Vyberte AI model
 ai_choose_model_cost_effective = Najúspornejší z hľadiska nákladov
 ai_choose_model_recommended = Odporúčaný model
-ai_choose_model_best_results = Najlepšie výsledky (najdrahší)
 
 auth_access_info_steps_openai = 1) Zaregistrujte sa na platform.openai.com 2) Vytvorte prístupový kľúč API 3) Dobite si kredit (5$+)
 auth_access_info_steps_grok = Zaregistrujte sa na adrese console.x.ai a dobite si kredit (napr. prostredníctvom kreditnej karty)

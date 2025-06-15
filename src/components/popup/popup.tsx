@@ -1,9 +1,11 @@
 import * as styles from "./popup.module.scss"
 
 import React, { CSSProperties } from "react";
-import { action, computed, makeObservable } from "mobx";
+import { computed, makeObservable } from "mobx";
 import { observer } from "mobx-react";
 import isEqual from "lodash/isEqual";
+import sample from "lodash/sample"
+import LanguagesList from "../../providers/google.json"
 import { materialIcons } from "../../common-vars";
 import { cssNames, prevDefault } from "../../utils";
 import { toCssColor } from "../../utils/toCssColor";
@@ -32,9 +34,12 @@ export class Popup extends React.Component<PopupProps> {
   private elemRef = React.createRef<HTMLDivElement>();
 
   static get translationMock(): ITranslationResult {
+    const langs = { ...LanguagesList.from };
+    delete langs.auto;
+    delete langs.en;
     return {
       vendor: ProviderCodeName.GOOGLE,
-      langFrom: "fi",
+      langFrom: sample(Object.keys(langs)),
       langTo: "en",
       translation: getMessage("popup_demo_translation"),
       dictionary: [

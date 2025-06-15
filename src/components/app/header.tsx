@@ -2,7 +2,7 @@ import "./header.scss";
 import React from "react";
 import { makeObservable } from "mobx";
 import { observer } from "mobx-react";
-import { isSystemPage } from "../../common-vars";
+import { isSystemPage, websiteURL } from "../../common-vars";
 import { cssNames } from "../../utils/cssNames";
 import { getTranslator } from "../../providers";
 import { getManifest, translateActivePage } from "../../extension";
@@ -12,8 +12,9 @@ import { Tabs } from "../tabs";
 import { Icon } from "../icon";
 import { getUrlParams, navigate, PageId } from "../../navigation";
 import { pageManager } from "./page-manager";
-import { getMessage } from "../../i18n";
+import { getLocale, getMessage } from "../../i18n";
 import { SelectLocaleIcon } from "../select-locale";
+import { Tooltip } from "../tooltip";
 import { exportSettingsDialogState } from "./export-settings-dialog";
 
 @observer
@@ -66,8 +67,24 @@ export class Header extends React.Component {
     return (
       <div className="Header">
         <header className="flex gaps align-center">
-          <div className="app-title box grow">
+          <div className="app-title">
             {name} <sup className="app-version">{version}</sup>
+          </div>
+          <div className="box grow flex justify-center">
+            <a
+              id="pro-discount"
+              href={`${websiteURL}/early-access?source=extension&lang=${getLocale()}`}
+              target="_blank"
+            >
+              <Icon small material="discount"/>
+              <span>{getMessage("pro_version_promo_link_text")}</span>
+            </a>
+            <Tooltip anchorId="pro-discount" following>
+              <div className="flex gaps align-center">
+                <Icon small material="auto_fix_high" />
+                <span>{getMessage("pro_version_promo_tooltip")}</span>
+              </div>
+            </Tooltip>
           </div>
           {showTranslateIcon && (
             <Icon

@@ -14,5 +14,5 @@ void initMellowtel({
 
 // render app
 window.addEventListener("load", () => {
-  void injectContentScriptAction();
-});
+  window.requestAnimationFrame(() => injectContentScriptAction());
+}, { once: true });

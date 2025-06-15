@@ -59,7 +59,6 @@ translation_delay_info = Se spesso riscontri blocchi (errore 503) da Google o al
 reverse_translate_select_placeholder = Traduci la lingua in modo inverso
 reverse_translate_add_action = Aggiungi lingua inversa: { $lang } -> ? (applicabile solo con l'opzione "Rilevazione automatica")
 reverse_translate_delete_action = Rimuovi la traduzione inversa della lingua
-skip_translation_vendor_in_rotation = Salta le traduzioni di { $vendor } nella rotazione tramite l'icona freccia o le frecce della tastiera (nel pop-up)
 custom_font_select = Seleziona un font personalizzato
 
 # tema
@@ -138,16 +137,11 @@ rate_app_info1 = Ti piace usare l'app? Per favore, valutaci con 5 stelle!
 rate_app_info2 = Aiuterà altri utenti a trovare l'estensione e a diffondere i benefici.
 rate_app_button = Valuta nel negozio delle estensioni
 rate_app_button_later = Ricordamelo più tardi
-deepl_get_own_key_info = Registrati su www.deepl.com e ottieni la tua chiave di autenticazione gratuita per l'API DeepL
-deepl_insert_auth_key = Imposta la chiave API per accedere alle traduzioni DeepL
-deepl_insert_auth_key_warning = Attenzione: NON inserire la tua chiave API in nessun altro posto tranne questa finestra dell'estensione
-deepl_insert_auth_key_remove = Rimuovi la chiave API DeepL
 target_lang_placeholder = Lingue di destinazione
 source_lang_placeholder = Lingue di origine
 favorites_lang_title = Preferiti
 favorites_info_tooltip = Per segnare/desegnare una lingua come preferita (l'elenco viene mostrato in alto), usa { $hotkey } + clic
 donate_title = Supporto agli sviluppatori
-donate_copy_wallet = Copia indirizzo
 donate_description = Se ti piace l'app, considera di fare una donazione agli sviluppatori. Grazie!
 service_unavailable = Servizio non disponibile. Riprova dopo 5-25 minuti. Se succede continuamente, aumenta il ritardo della traduzione nelle impostazioni.
 service_confirm_not_a_robot = Puoi anche andare su { $link } e confermare che non sei un robot.
@@ -180,7 +174,6 @@ error_403_auth_failed = Autorizzazione fallita. Fornisci una chiave API valida n
 ai_choose_model = Scegli il modello di IA
 ai_choose_model_cost_effective = Più efficiente in termini di costi
 ai_choose_model_recommended = Modello raccomandato
-ai_choose_model_best_results = Migliori risultati (più costoso)
 
 # Supporto per le traduzioni PDF tramite pdf.js
 pdf_use_custom_viewer = Supporto per le traduzioni nei file PDF

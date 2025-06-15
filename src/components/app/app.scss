@@ -36,7 +36,7 @@ input, select, textarea {
   }
 }
 
-:link {
+:any-link {
   color: var(--theme-color-text2);
 
   &:focus,
@@ -53,6 +53,10 @@ ol, ul {
 hr {
   height: 1px;
   background: var(--theme-border-color);
+}
+
+h4 {
+  font-weight: 500;
 }
 
 #XTranslateWindowApp {

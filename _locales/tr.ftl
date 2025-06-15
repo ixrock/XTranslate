@@ -129,15 +129,12 @@ rate_app_info1 = Uygulamayı kullanmaktan zevk alıyor musunuz? Lütfen bizi 5 y
 rate_app_info2 = Diğer kullanıcıların uzantıyı bulmasına ve güzellikleri yaymasına yardımcı olacaktır.
 rate_app_button = Uzantı mağazasında değerlendir
 rate_app_button_later = Sonra hatırlat
-deepl_get_own_key_info = www.deepl.com adresinde kaydolun ve DeepL API için kendi ücretsiz kimlik doğrulama anahtarınızı edinin.
-deepl_insert_auth_key = DeepL API için yetkilendirme anahtarı ayarla.
 target_lang_placeholder = Hedef diller
 source_lang_placeholder = Kaynak diller
 favorites_lang_title = Sık kullanılanlar
 favorites_info_tooltip = Dili sık kullanılan olarak işaretlemek/işaretini kaldırmak için (listede en üstte gösterilir), { $hotkey } + tıklama kullanın
 donate_title = Bağış yap
 donate_via = Bağış yap
-donate_copy_wallet = Adresi kopyala
 donate_description = Uygulamayı beğendiyseniz geliştiricilere bağış yapmayı düşünün. Teşekkürler!
 service_unavailable = Hizmet kullanılamıyor. 5-25 dakika sonra tekrar deneyin. Bu gerçekleşirse, ayarlardaki çeviri gecikmesini sürekli olarak artırın.
 service_confirm_not_a_robot = Ayrıca { $link } adresine gidebilir ve robot olmadığınızı onaylayabilirsiniz.
@@ -170,7 +167,6 @@ error_403_auth_failed=Yetkilendirme başarısız. Lütfen ayarlarda geçerli bir
 ai_choose_model=AI modelini seçin
 ai_choose_model_cost_effective=En maliyet etkin
 ai_choose_model_recommended=Önerilen model
-ai_choose_model_best_results=En iyi sonuçlar (en pahalı)
 ai_choose_model_reasoning=Akıl yürütme modeli (seride en yeni ve maliyet etkin)
 
 # PDF translations suppot via pdf.js (TR)

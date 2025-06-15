@@ -76,7 +76,6 @@ translation_delay_info = Если вы часто сталкиваетесь с 
 reverse_translate_select_placeholder = Язык обратного перевода
 reverse_translate_add_action = Добавить язык обратного перевода: { $lang } -> ? (применимо только в случае когда выбрана опция авто-определения языка)
 reverse_translate_delete_action = Удалить язык обратного перевода
-skip_translation_vendor_in_rotation = Пропустить { $vendor }-переводы во время вращения через стрелку или клавиши клавиатуры (в попапе)
 custom_font_select = Выбрать свой шрифт
 
 
@@ -161,18 +160,13 @@ share_with_friends = Если вам нравится приложение, по
 translation_data_failed = Ошибка получения данных
 rate_app_info1 = Нравится приложение? Пожалуйста, оцените нас на 5 звезд!
 rate_app_info2 = Это поможет другим пользователям найти расширение и распространять вкусности.
-rate_app_button = Оценить в магазине расширений
+rate_app_button = Оставить отзыв
 rate_app_button_later = Напомнить позже
-deepl_get_own_key_info = Войдите в аккаунт на www.deepl.com и получите личный ключ доступа к данным DeepL API.
-deepl_insert_auth_key = Добавить личный ключ доступа для переводов DeepL
-deepl_insert_auth_key_warning = Внимание: не вводите свой API-ключ в других местах, кроме этого окна расширения.
-deepl_insert_auth_key_remove = Удалить ключ доступа DeepL API
 target_lang_placeholder = Целевой язык
 source_lang_placeholder = Исходный язык
 favorites_lang_title = Избранное
 favorites_info_tooltip = Чтобы добавить язык в избранное (список отображается сверху), используйте { $hotkey } + клик
 donate_title = Поддержка разработчиков
-donate_copy_wallet = Скопировать адрес
 donate_description = Если вам нравится приложение, и вы русский, то вам врядли захочется донатить.. Но попытка не пытка. Адреса указаны ниже. Благодарю!
 service_unavailable = Сервис недоступен. Попытайтесь снова через 5-25 минут. Если это случается периодически увеличьте задержку перевода в настройках.
 service_confirm_not_a_robot = Также вы можете попытаться перейти по ссылке { $link } и подтвердить что вы не робот.
@@ -208,12 +202,18 @@ pdf_use_custom_viewer_info = Эта опция заменит стандартн
 # AI integrations
 ai_choose_model = Выберите AI-модель
 ai_choose_model_cost_effective = Наиболее экономичная
-ai_choose_model_recommended = Рекомендуемая / оптимальная модель
-ai_choose_model_best_results = Лучшие результаты (наиболее дорогое)
+ai_choose_model_recommended = Рекомендуемая модель
+ai_choose_model_reasoning = Думающая модель / медленная
+ai_choose_model_reasoning_light = Думающая модель "лайт" / быстрее
 
 auth_access_info_steps_openai = 1) Зарегистрируйтесь на platform.openai.com 2) Создайте ключ доступа к API 3) Пополните баланс (минимально 5$)
 auth_access_info_steps_grok = Зарегистрируйтесь на console.x.ai и пополните баланс (например, с помощью кредитной карты)
 auth_access_info_steps_deepseek = Зарегистрируйтесь на platform.deepseek.com и пополните баланс (2$+)
+auth_access_info_steps_deepl = Зарегистрируйтесь на www.deepl.com и получите бесплатный ключ авторизации для DeepL-переводов
 auth_access_info_api_key = Предоставьте свой API-ключ для получения переводов { $provider }
+auth_setup_key_info = Сохранить API-ключ для { $provider }
 auth_clear_key_info = Удалить API-ключ доступа { $provider }
 auth_safety_warning_info = Предупреждение: НЕ вводите свой API-ключ в других местах, кроме как из этого окна расширения
+
+pro_version_promo_link_text = Скидка 20% на PRO
+pro_version_promo_tooltip = Мы готовим PRO-версию с поддержкой AI-переводов целых страниц. Кликните, чтобы узнать подробности и получить скидку.

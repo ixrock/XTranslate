@@ -133,26 +133,25 @@ export class InputTranslation extends React.Component {
 
   @action
   async translate() {
-    let { text, provider, from: langFrom, to: langTo } = this.params;
+    const payload = { ...this.params };
 
     this.input?.focus(); // autofocus input-field
-    this.input?.setValue(text || ""); // update input value manually since @defaultValue is utilized
-
-    if (!text) return;
-
-    this.logger.info("translating..", { text, provider, langFrom, langTo });
-    this.translation = null; // clear previous results immediately (if any)
+    this.input?.setValue(payload.text || ""); // update input value manually since @defaultValue is utilized
+    this.translation = null;
     this.error = null;
+
+    if (!payload.text) return;
     this.isLoading = true;
 
     try {
-      this.translation = await getTranslator(provider).translate({
-        to: langTo,
-        from: langFrom,
-        text: text,
-      });
+      const translation = await getTranslator(payload.provider).translate(payload);
+      if (isEqual(payload, this.params)) {
+        this.translation = translation;
+      }
     } catch (error) {
-      this.error = error;
+      if (isEqual(payload, this.params)) {
+        this.error = error;
+      }
     } finally {
       this.isLoading = false;
     }

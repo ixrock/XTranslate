@@ -61,7 +61,6 @@ translation_delay_info = Ako često nailazite na blokiranje (greška 503) od Goo
 reverse_translate_select_placeholder = Jezik za obrnuti prevod
 reverse_translate_add_action = Dodaj jezik za obrnuti prevod: { $lang } -> ? (primenljivo samo kad je "Otkrivanje jezika" uključeno)
 reverse_translate_delete_action = Obriši jezik za obrnuti prevod
-skip_translation_vendor_in_rotation = Preskoči { $vendor }-prevode u rotaciji preko ikonice strelice ili strelica na tastaturi (u iskačućem prozoru)
 custom_font_select = Izaberi prilagođeni font
 
 # theme
@@ -140,16 +139,11 @@ rate_app_info1 = Uživate u korišćenju aplikacije? Ocenite nas sa 5 zvezdica!
 rate_app_info2 = To će pomoći drugim korisnicima da pronađu proširenje u veb prodavnici.
 rate_app_button = Ocenite u veb prodavnici
 rate_app_button_later = Podseti me kasnije
-deepl_get_own_key_info = Registruj se na www.deepl.com da bi dobio besplatan ključ za autentifikaciju na DeepL API
-deepl_insert_auth_key = Postavi API ključ za autentifikaciju za dobijanje pristupa ka DeepL prevodima
-deepl_insert_auth_key_warning = Upozorenje: NE UNOSI svoj API ključ nigde osim u prozoru ovog proširenja
-deepl_insert_auth_key_remove = Ukloni DeepL API ključ
 target_lang_placeholder = Ciljani jezici
 source_lang_placeholder = Izvorni jezici
 favorites_lang_title = Omiljeno
 favorites_info_tooltip = Da biste menjali omiljene jezike (lista na vrhu), koristite { $hotkey } + klik
 donate_title = Podrška developera
-donate_copy_wallet = Kopiraj adresu
 donate_description = Ako vam se sviđa aplikacija, možete donirati developerima. Hvala!
 service_unavailable = Servis nije dostupan. Probajte ponovo za 5-25 minuta. Ako se to često dešava, povećajte vrednost kašnjenja prevoda u podešavanjima.
 service_confirm_not_a_robot = Možete otići na { $link } i potvrditi da niste robot.
@@ -182,7 +176,6 @@ error_403_auth_failed = Autorizacija nije uspela. Unesi validan API ključ za au
 ai_choose_model = Izaberi AI model
 ai_choose_model_cost_effective = Najisplativije
 ai_choose_model_recommended = Preporučeni model
-ai_choose_model_best_results = Najbolji rezultati (najskuplje)
 
 # PDF translations suppot via pdf.js
 pdf_use_custom_viewer = Podrška za prevode u PDF fajlovima
