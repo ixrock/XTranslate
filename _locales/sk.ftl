@@ -203,3 +203,6 @@ auth_access_info_steps_deepseek = Zaregistrujte sa na platform.deepseek.com a do
 auth_access_info_api_key = Zadajte  kľúč API na získanie prekladov { $provider }
 auth_clear_key_info = Odstrániť kľúč API { $provider }
 auth_safety_warning_info = Upozornenie: NEVKLADAJTE svoj kľúč API nikde inde okrem tohto okna rozšírenia
+
+pro_version_promo_link_text = 20 % zľava na PRO
+pro_version_promo_tooltip = Pripravujeme verziu PRO s celostránkovým prekladom AI. Pre viac informácií a uplatnenie zľavy kliknite sem.
