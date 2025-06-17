@@ -62,10 +62,10 @@ export class SettingsPopup extends React.Component {
             children={<Icon material={materialIcons.copyTranslation}/>}
           />
           <Checkbox
-            label={getMessage("show_next_vendor_icon_in_popup")}
-            checked={settings.showNextVendorIcon}
-            onChange={v => settings.showNextVendorIcon = v}
-            children={<Icon material={materialIcons.nextTranslation}/>}
+            label={getMessage("show_select_provider_icon_in_popup")}
+            checked={settings.showProviderSelectIcon}
+            onChange={v => settings.showProviderSelectIcon = v}
+            children={<Icon svg="google" small/>}
           />
           <Checkbox
             label={getMessage("show_detected_language_block")}

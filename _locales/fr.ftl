@@ -35,7 +35,7 @@ import_incorrect_file_format = Format de fichier incorrect (devrait probablement
 imported_setting_successful = Paramètres sous la clé { $key } importés avec succès
 display_icon_near_selection = Afficher l'icône près du texte sélectionné
 show_tts_icon_inside_popup = Afficher l'icône de texte à parole
-show_next_vendor_icon_in_popup = Afficher l'icône de traduction suivante
+show_select_provider_icon_in_popup = Afficher l'icône de traduction suivante
 show_copy_translation_icon = Afficher l'icône de copie de traduction
 show_save_as_favorite_icon = Afficher l'icône pour sauvegarder comme favori
 show_close_popup_button = Afficher le bouton de fermeture du pop-up en haut à droite
@@ -59,7 +59,6 @@ translation_delay_info = Si vous rencontrez souvent des blocages (erreur 503) de
 reverse_translate_select_placeholder = Traduction inverse de la langue
 reverse_translate_add_action = Ajouter la langue inverse : { $lang } -> ? (applicable uniquement avec l'option "Détection automatique")
 reverse_translate_delete_action = Supprimer la langue de traduction inverse
-skip_translation_vendor_in_rotation = Sauter les traductions de { $vendor } dans la rotation via l'icône flèche ou les flèches du clavier (dans le pop-up)
 custom_font_select = Sélectionner une police personnalisée
 
 # thème
@@ -138,16 +137,11 @@ rate_app_info1 = Vous aimez utiliser l'application? Veuillez nous noter avec 5 �
 rate_app_info2 = Cela aidera d'autres utilisateurs à trouver l'extension et à bénéficier de ses avantages.
 rate_app_button = Évaluer dans le magasin d'extensions
 rate_app_button_later = Me rappeler plus tard
-deepl_get_own_key_info = Inscrivez-vous sur www.deepl.com et obtenez votre propre clé d'authentification gratuite pour l'API DeepL
-deepl_insert_auth_key = Configurer la clé API pour accéder aux traductions DeepL
-deepl_insert_auth_key_warning = Attention : NE SAISISSEZ PAS votre clé API ailleurs que dans cette fenêtre d'extension
-deepl_insert_auth_key_remove = Supprimer la clé API DeepL
 target_lang_placeholder = Langues cibles
 source_lang_placeholder = Langues sources
 favorites_lang_title = Favoris
 favorites_info_tooltip = Pour marquer/démarquer une langue comme favorite (la liste est affichée en haut), utilisez { $hotkey } + clic
 donate_title = Soutien aux développeurs
-donate_copy_wallet = Copier l'adresse
 donate_description = Si vous aimez l'application, envisagez de faire un don aux développeurs. Merci !
 service_unavailable = Service indisponible. Réessayez après 5-25 minutes. Si cela se produit constamment, augmentez le délai de traduction dans les paramètres.
 service_confirm_not_a_robot = Vous pouvez également aller sur { $link } et confirmer que vous n'êtes pas un robot.
@@ -180,7 +174,6 @@ error_403_auth_failed = Échec de l'autorisation. Veuillez fournir une clé API 
 ai_choose_model = Choisissez le modèle d'IA
 ai_choose_model_cost_effective = Le plus économique
 ai_choose_model_recommended = Modèle recommandé
-ai_choose_model_best_results = Meilleurs résultats (le plus coûteux)
 
 # Support pour les traductions de PDF via pdf.js
 pdf_use_custom_viewer = Support pour les traductions dans les fichiers PDF

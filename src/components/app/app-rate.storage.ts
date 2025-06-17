@@ -5,5 +5,6 @@ export const rateButtonClicked = createStorage<boolean>("rate_btn_click", {
 });
 
 export const rateLastTimestamp = createStorage<number>("rate_delay_last", {
-  defaultValue: 0,
+  defaultValue: Date.now(),
+  saveDefaultWhenEmpty: true,
 });

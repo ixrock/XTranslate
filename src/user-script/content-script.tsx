@@ -1,7 +1,7 @@
 //-- Injectable content-script (refreshed on every page reload without extension-reload)
 
 import "../setup";
-import "./content-script-entry.scss";
+import "./content-script.scss"
 import React from "react";
 import { createRoot, Root } from "react-dom/client";
 import { action, computed, makeObservable, observable, toJS } from "mobx";
@@ -10,31 +10,33 @@ import debounce from 'lodash/debounce';
 import isEmpty from 'lodash/isEmpty';
 import isEqual from 'lodash/isEqual';
 import orderBy from 'lodash/orderBy';
-import { contentScriptEntry, contentScriptInjectable } from "../common-vars";
+import { contentScriptInjectable } from "../common-vars";
 import { preloadAppData } from "../preloadAppData";
 import { autoBind, disposer, getHotkey } from "../utils";
 import { getManifest, getURL, isRuntimeContextInvalidated, MessageType, onMessage, ProxyResponseType, TranslatePayload } from "../extension";
 import { proxyRequest } from "../background/httpProxy.bgc";
+import { sendMetric } from "../background/metrics.bgc";
 import { popupHotkey, settingsStore } from "../components/settings/settings.storage";
-import { getNextTranslator, getTranslator, ITranslationError, ITranslationResult } from "../providers";
+import { getNextTranslator, getTranslator, ITranslationError, ITranslationResult, ProviderCodeName } from "../providers";
 import { XTranslateIcon } from "./xtranslate-icon";
+import { XTranslateTooltip } from "./xtranslate-tooltip";
 import { Popup } from "../components/popup/popup";
 import { PageTranslator } from "./page-translator";
+
+type DOMRectNormalized = Omit<Writeable<DOMRect>, "toJSON" | "x" | "y">;
 
 @observer
 export class ContentScript extends React.Component {
   static window: Window;
   static rootElem: HTMLElement;
-  static rootNode: Root;
-  static globalCssStyles: string;
+  static rootNodes: Root[] = [];
+  static cssStylesUrl: string;
 
   static async init(window: Window = globalThis.window.self) {
     await preloadAppData(); // wait for dependent data before first render
-    await this.preloadGlobalStyles();
+    await this.preloadCss();
 
-    ContentScript.window = window;
-    ContentScript.rootElem = window.document.createElement("div");
-    const appElem = ContentScript.rootElem;
+    const appElem = window.document.createElement("div");
     appElem.classList.add("XTranslate");
     appElem.style.all = "unset"; // reset possible css-collisions with global page styles
 
@@ -42,30 +44,36 @@ export class ContentScript extends React.Component {
     const rootNode = createRoot(shadowRoot);
     const appRootNode = createRoot(appElem);
     window.document.body.appendChild(appElem);
-    ContentScript.rootNode = rootNode;
 
-    appRootNode.render(<style type="text/css">{this.globalCssStyles}</style>);
+    this.window = window;
+    this.rootElem = appElem;
+    this.rootNodes.push(rootNode, appRootNode);
+
+    appRootNode.render(<link rel="stylesheet" href={this.cssStylesUrl}/>);
     rootNode.render(<ContentScript/>);
+  }
+
+  static async preloadCss() {
+    const cssStyles = await proxyRequest<string>({
+      url: getURL(`${contentScriptInjectable}.css`),
+      responseType: ProxyResponseType.TEXT,
+    });
+    this.cssStylesUrl = URL.createObjectURL(
+      new Blob([cssStyles], { type: "text/css" }),
+    );
   }
 
   static get isTopFrame() {
     return this.window === window.top;
   }
 
-  static async preloadGlobalStyles() {
-    this.globalCssStyles = await proxyRequest<string>({
-      url: getURL(`${contentScriptEntry}.css`),
-      responseType: ProxyResponseType.TEXT,
-    });
-  }
-
   constructor(props: object) {
     super(props);
     makeObservable(this);
     autoBind(this);
-    this.preloadCss();
   }
 
+  private unmount = disposer();
   public appName = getManifest().name;
   private selection = ContentScript.window.getSelection();
   private popup: Popup;
@@ -74,50 +82,28 @@ export class ContentScript extends React.Component {
   private mousePos = { x: 0, y: 0 };
   private mouseTarget: HTMLElement = document.body;
   private pageTranslator = new PageTranslator();
+  private tooltipRef = React.createRef<HTMLElement>();
 
-  // Unload previous content script (e.g. in case of "context invalidated" error on extension update to new version)
-  private unload = disposer();
-
+  @observable.ref lastParams: TranslatePayload; // last used translation payload
   @observable.ref translation: ITranslationResult;
   @observable.ref error: ITranslationError;
-  @observable.ref selectionRects: WritableDOMRect[];
-  @observable lastParams: Partial<ITranslationResult> = {}; // last used params in getting translation attempt
+  @observable.ref selectionRects: DOMRectNormalized[];
   @observable popupPosition: React.CSSProperties = {};
   @observable selectedText = "";
   @observable isRtlSelection = false;
   @observable isIconVisible = false;
   @observable isLoading = false;
-  @observable shadowDomCssUrl = "";
 
-  async preloadCss() {
-    const shadowDomStyles = await proxyRequest<string>({
-      url: getURL(`${contentScriptInjectable}.css`),
-      responseType: ProxyResponseType.TEXT,
-    });
-    this.shadowDomCssUrl = URL.createObjectURL(
-      new Blob([shadowDomStyles], { type: "text/css" }),
-    );
-  }
-
-  componentDidMount() {
+  async componentDidMount() {
     this.bindEvents();
-    this.applyShadowDomGlobalStyles();
 
-    if (this.pageTranslator.isAlwaysTranslate(document.URL)) {
+    if (this.pageTranslator.isEnabled) {
       this.startPageAutoTranslation();
     }
   }
 
   private getShadowDomElements(rootElem = document.body) {
     return Array.from(rootElem.querySelectorAll("*")).filter(elem => elem.shadowRoot) as HTMLElement[];
-  }
-
-  private applyShadowDomGlobalStyles() {
-    this.getShadowDomElements().forEach(({ shadowRoot }) => {
-      const style = new CSSStyleSheet();
-      style.replaceSync(ContentScript.globalCssStyles);
-      shadowRoot.adoptedStyleSheets.push(style);
-    });
   }
 
   private bindEvents() {
@@ -135,23 +121,25 @@ export class ContentScript extends React.Component {
     window.addEventListener("scroll", this.updatePopupPositionLazy, { signal });
     window.addEventListener("resize", this.updatePopupPositionLazy, { signal });
 
-    this.unload.push(
-      function unmount() {
-        ContentScript.rootElem.parentElement.removeChild(ContentScript.rootElem);
-        ContentScript.rootNode.unmount();
+    this.unmount.push(
+      function unmountDOM() {
+        const { rootNodes, rootElem } = ContentScript;
+        rootNodes.forEach(node => node.unmount());
+        rootElem.parentElement.removeChild(rootElem);
       },
       function unbindDOMEvents() {
         abortCtrl.abort();
       },
       onMessage(MessageType.TRANSLATE_FULL_PAGE, this.togglePageAutoTranslation),
       onMessage(MessageType.GET_SELECTED_TEXT, this.getSelectedTextAction),
-      () => this.stopPageAutoTranslation(),
     );
   }
 
   async checkContextInvalidationError(): Promise<void> {
     const isInvalidated = await isRuntimeContextInvalidated();
-    if (isInvalidated) this.unload();
+    if (isInvalidated) {
+      this.unmount(); // remove previous content-script artifacts in case of "context invalidated" error
+    }
   }
 
   @computed get isPopupHidden() {
@@ -187,40 +175,52 @@ export class ContentScript extends React.Component {
   translateLazy = debounce(this.translate, 250);
 
   @action
-  async translate({ provider, from, to, text }: Partial<TranslatePayload> = {}) {
+  async translate(params: Partial<TranslatePayload> = {}) {
     void this.checkContextInvalidationError();
+    this.hideIcon();
 
-    this.lastParams = {
-      vendor: provider ?? settingsStore.data.vendor,
-      langFrom: from ?? settingsStore.data.langFrom,
-      langTo: to ?? settingsStore.data.langTo,
-      originalText: text ?? this.selectedText.trim(),
+    const payload = this.lastParams = {
+      provider: params.provider ?? settingsStore.data.vendor,
+      from: params.from ?? settingsStore.data.langFrom,
+      to: params.to ?? settingsStore.data.langTo,
+      text: params.text ?? this.selectedText.trim(),
     };
 
+    this.translation = null;
+    this.error = null;
+    this.isLoading = true;
+
     try {
-      const { vendor, langTo: to, langFrom: from, originalText: text } = this.lastParams;
-      this.isLoading = true;
-      this.translation = null;
-      this.error = null;
-      this.translation = await getTranslator(vendor).translate({ to, from, text });
+      const translation = await getTranslator(payload.provider).translate(payload);
+      if (isEqual(payload, this.lastParams)) {
+        this.translation = translation;
+      }
     } catch (err) {
-      this.error = err;
+      if (isEqual(payload, this.lastParams)) {
+        this.error = err;
+      }
     } finally {
       this.isLoading = false;
       this.refinePosition();
     }
   }
 
-  translateNext(reverse = false) {
-    const { vendor, langFrom, langTo, originalText } = this.lastParams;
-    const nextTranslator = getNextTranslator(vendor, langFrom, langTo, reverse);
+  async translateWith(provider: ProviderCodeName) {
+    if (!this.lastParams) return;
 
-    return this.translate({
-      provider: nextTranslator.name,
-      from: langFrom,
-      to: langTo,
-      text: originalText,
+    await this.translate({ ...this.lastParams, provider });
+
+    void sendMetric("translate_action", {
+      trigger: "provider_change"
     });
+  }
+
+  async translateNext({ reverse = false } = {}) {
+    if (!this.lastParams) return;
+
+    const { provider, from, to } = this.lastParams;
+    const nextTranslator = getNextTranslator(provider, from, to, reverse);
+    await this.translateWith(nextTranslator.name);
   }
 
   private getSelectedTextAction() {
@@ -228,37 +228,41 @@ export class ContentScript extends React.Component {
   }
 
   private togglePageAutoTranslation() {
-    const pageUrl = document.URL;
-    const autoTranslate = this.pageTranslator.isAlwaysTranslate(pageUrl);
-
-    if (autoTranslate) {
-      this.stopPageAutoTranslation(pageUrl);
+    if (this.pageTranslator.isEnabled) {
+      this.stopPageAutoTranslation();
     } else {
-      this.startPageAutoTranslation(pageUrl);
+      this.startPageAutoTranslation();
     }
   }
 
   @action
-  private startPageAutoTranslation(pageUrl?: string) {
-    if (pageUrl && ContentScript.isTopFrame) {
+  private startPageAutoTranslation(pageUrl = document.URL) {
+    const { provider, langTo, langFrom } = this.pageTranslator.settings;
+    this.pageTranslator.startAutoTranslation();
+
+    if (ContentScript.isTopFrame) {
       this.pageTranslator.setAutoTranslatingPages({ enabled: [pageUrl] });
     }
-    this.pageTranslator.startAutoTranslation();
+
+    void sendMetric("translate_used", {
+      source: "fullpage",
+      provider: provider,
+      lang_from: langFrom,
+      lang_to: langTo,
+    });
   }
 
   @action
-  private stopPageAutoTranslation(pageUrl?: string) {
-    if (pageUrl) this.pageTranslator.setAutoTranslatingPages({ disabled: [pageUrl] });
+  private stopPageAutoTranslation(pageUrl = document.URL) {
+    this.pageTranslator.setAutoTranslatingPages({ disabled: [pageUrl] });
     this.pageTranslator.stopAutoTranslation();
+    this.setTooltipHTML(""); // reset
   }
 
   playText() {
-    const {
-      vendor, originalText,
-      langDetected = this.lastParams.langFrom,
-    } = this.translation ?? this.lastParams;
-
-    return getTranslator(vendor).speak(langDetected, originalText);
+    if (!this.translation) return;
+    const { vendor, originalText, langDetected } = this.translation;
+    void getTranslator(vendor).speak(langDetected, originalText);
   }
 
   showIcon() {
@@ -297,7 +301,7 @@ export class ContentScript extends React.Component {
     return !ContentScript.rootElem.contains(elem);
   }
 
-  normalizeRect(rect: DOMRect, { withScroll = true } = {}): WritableDOMRect {
+  normalizeRect(rect: DOMRect, { withScroll = false } = {}): DOMRectNormalized {
     let { left, top, width, height } = rect;
     if (withScroll) {
       left += ContentScript.window.scrollX;
@@ -388,6 +392,33 @@ export class ContentScript extends React.Component {
     }));
   }
 
+  private setTooltipHTML(...htmlChunks: React.ReactNode[]): void {
+    if (!this.tooltipRef.current) return; // might not exist after context-invalidated
+    this.tooltipRef.current.innerHTML = htmlChunks.filter(Boolean).join("<hr/>");
+  }
+
+  refreshTranslationTooltip() {
+    const tooltipElem = this.tooltipRef.current;
+    const { showTranslationOnHover, showOriginalOnHover } = this.pageTranslator.settings;
+    const showTooltip = Boolean(showTranslationOnHover || showOriginalOnHover) && this.pageTranslator.isEnabled;
+    if (!showTooltip) {
+      return;
+    }
+
+    const targetElem = this.mouseTarget.closest("[data-xtranslate-tooltip]");
+    if (targetElem) {
+      const { left, top, height } = targetElem.getBoundingClientRect();
+      const tooltipTranslation = targetElem.getAttribute("data-xtranslate-translation");
+      const tooltipOriginalText = targetElem.getAttribute("data-xtranslate-original");
+
+      tooltipElem.style.left = `${left}px`;
+      tooltipElem.style.top = `${top + height}px`;
+      this.setTooltipHTML(tooltipOriginalText, tooltipTranslation);
+    } else if (!tooltipElem.matches(":empty")) {
+      this.setTooltipHTML("");
+    }
+  }
+
   isClickedOnSelection() {
     if (!this.selectedText || !this.selectionRects) return;
     const { x, y } = this.mousePos;
@@ -402,15 +433,16 @@ export class ContentScript extends React.Component {
     if (ContentScript.isEditableElement(document.activeElement) || !this.selectedText) {
       return;
     }
-    const { showPopupAfterSelection, showIconNearSelection, showPopupOnDoubleClick } = settingsStore.data;
+    const { showPopupAfterSelection, showIconNearSelection } = settingsStore.data;
     if (showPopupAfterSelection) {
       this.saveSelectionRects();
       this.translateLazy();
-    } else if (this.isPopupHidden) {
+      void sendMetric("translate_action", { trigger: "selection_change" });
+    } else if (this.isPopupHidden && !this.isHotkeyActivated) {
       this.saveSelectionRects();
-      const showOnDoubleClick = showPopupOnDoubleClick && this.isDblClicked;
-      if (showOnDoubleClick || this.isHotkeyActivated || this.isLoading) {
-        this.translate();
+      if (this.isDblClicked) {
+        void this.translate();
+        void sendMetric("translate_action", { trigger: "double_click" });
       } else if (showIconNearSelection) {
         this.showIcon();
       }
@@ -418,12 +450,12 @@ export class ContentScript extends React.Component {
   }), 250);
 
   onIconClick(evt: React.MouseEvent) {
-    this.hideIcon();
-    void this.translate();
     evt.stopPropagation();
+    void this.translate();
+    void sendMetric("translate_action", { trigger: "icon" });
   }
 
-  private getMouseTopElement(evt: MouseEvent): HTMLElement {
+  private getMouseTargetTopElem(evt: MouseEvent): HTMLElement {
     return evt.composedPath()[0] as HTMLElement;
   }
 
@@ -432,7 +464,8 @@ export class ContentScript extends React.Component {
 
     this.mousePos.x = clientX;
     this.mousePos.y = clientY;
-    this.mouseTarget = this.getMouseTopElement(evt);
+    this.mouseTarget = this.getMouseTargetTopElem(evt);
+    this.refreshTranslationTooltip();
   }
 
   onMouseDown(evt: MouseEvent) {
@@ -446,8 +479,9 @@ export class ContentScript extends React.Component {
     }
 
     if (settingsStore.data.showPopupOnClickBySelection && this.isClickedOnSelection()) {
-      void this.translate();
       evt.preventDefault();
+      void this.translate();
+      void sendMetric("translate_action", { trigger: "selection_click" });
     }
   }
 
@@ -466,12 +500,12 @@ export class ContentScript extends React.Component {
         evt.stopPropagation();
         break;
       case "ArrowLeft":
-        this.translateNext(true);
+        void this.translateNext({ reverse: true });
         evt.stopImmediatePropagation();
         evt.preventDefault();
         break;
       case "ArrowRight":
-        this.translateNext();
+        void this.translateNext({ reverse: false });
         evt.stopImmediatePropagation();
         evt.preventDefault();
         break;
@@ -486,6 +520,7 @@ export class ContentScript extends React.Component {
     if (isEqual(userHotkey, pressedHotkey) && this.isPopupHidden) {
       evt.preventDefault();
       this.isHotkeyActivated = true;
+      void sendMetric("translate_action", { trigger: "hotkey" });
       this.translateFromTopElement();
     }
   }
@@ -527,14 +562,12 @@ export class ContentScript extends React.Component {
   }), 250);
 
   render() {
-    const { lastParams, translation, error, popupPosition, playText, translateNext, onIconClick, hidePopup, isIconVisible } = this;
+    const { translation, error, popupPosition, playText, onIconClick, isIconVisible } = this;
     const { langFrom, langTo, vendor } = settingsStore.data;
     const translator = getTranslator(vendor);
     return (
       <>
-        {this.shadowDomCssUrl && (
-          <link rel="stylesheet" href={this.shadowDomCssUrl} crossOrigin="anonymous"/>
-        )}
+        <link rel="stylesheet" href={ContentScript.cssStylesUrl}/>
         {isIconVisible && (
           <XTranslateIcon
             style={this.iconPosition}
@@ -542,15 +575,15 @@ export class ContentScript extends React.Component {
             title={`${this.appName}: ${translator.getLangPairTitle(langFrom, langTo)}`}
           />
         )}
+        <XTranslateTooltip ref={this.tooltipRef}/>
         <Popup
           style={popupPosition}
-          initParams={lastParams}
           translation={translation}
           error={error}
           onPlayText={playText}
-          onTranslateNext={() => translateNext()}
-          onClose={hidePopup}
-          tooltipParent={ContentScript.rootElem}
+          lastParams={this.lastParams}
+          onProviderChange={this.translateWith}
+          tooltipParentElem={ContentScript.rootElem}
           ref={(ref: Popup) => {
             this.popup = ref
           }}

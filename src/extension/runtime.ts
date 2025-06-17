@@ -50,29 +50,28 @@ export async function sendMessageSafe<Payload, Response = unknown>(msg: Message<
   }
 }
 
-export interface OnMessageCallback<Request, Response> {
-  (req: Request): Promise<Response> | Response | undefined;
+export interface OnMessageCallback<RequestPayload extends any[], Response> {
+  (...req: RequestPayload): Promise<Response> | Response | undefined;
 }
 
-export function onMessage<Request, Response = unknown>(type: MessageType, getResult: OnMessageCallback<Request, Response>) {
+export function onMessage<Request extends any[], Response = unknown>(type: MessageType, getResult: OnMessageCallback<Request, Response>) {
   let _listener: (...args: any) => any;
 
   chrome.runtime.onMessage.addListener(function listener(message: Message<Request>, sender, sendResponse) {
     _listener = listener;
 
     if (message.type === type) {
-      try {
-        Promise.resolve(getResult(message.payload))
-          .then(data => sendResponse({ data }))
-          .catch(error => sendResponse({ error }));
-      } catch (error) {
-        sendResponse({ error });
-      }
+      (async () => {
+        try {
+          const payload = [message.payload].flat() as Request;
+          const data = await getResult(...payload);
+          sendResponse({ data });
+        } catch (error) {
+          sendResponse({ error });
+        }
+      })();
+      return true; // wait for async response: https://developer.chrome.com/docs/extensions/mv3/messaging/
     }
-
-    // wait for async response
-    // read more: https://developer.chrome.com/docs/extensions/mv3/messaging/
-    return true;
   });
 
   // unsubscribe disposer
@@ -99,4 +98,13 @@ export function isContextInvalidatedError(err: Error) {
 
 export function isRuntimeConnectionFailedError(err: Error) {
   return String(err).includes("Could not establish connection. Receiving end does not exist");
+}
+
+export async function isRuntimeContextInvalidated(): Promise<boolean> {
+  try {
+    await sendMessage({ type: MessageType.RUNTIME_ERROR_CONTEXT_INVALIDATED });
+    return false; // if we reach this point, the context is valid
+  } catch (err) {
+    return isContextInvalidatedError(err);
+  }
 }

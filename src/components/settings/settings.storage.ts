@@ -1,7 +1,7 @@
 import { action, makeObservable } from "mobx";
 import { Hotkey } from "../../utils/parseHotkey";
 import { createStorage } from "../../storage";
-import { getTranslator, GrokAIModel, OpenAIModel, OpenAIVoiceTTS, ProviderCodeName } from "../../providers";
+import { DeepSeekAIModel, getTranslator, GrokAIModel, OpenAIModel, OpenAIVoiceTTS, ProviderCodeName } from "../../providers";
 
 export type PopupPosition = "" /*auto*/ | "left top" | "left bottom" | "right top" | "right bottom";
 
@@ -13,7 +13,7 @@ export type XIconPosition = {
 };
 
 export type SettingsStorageModel = typeof settingsStorage.defaultValue;
-export type SettingsStorageFullPage = typeof settingsStorage.defaultValue.fullPageTranslation;
+export type PopupHotkeyStorageModel = typeof popupHotkey.defaultValue;
 
 export const settingsStorage = createStorage("settings", {
   area: "sync", // share synced data via logged-in account (google, firefox, etc.)
@@ -22,7 +22,7 @@ export const settingsStorage = createStorage("settings", {
     useSpeechSynthesis: false,
     showTextToSpeechIcon: true,
     showSaveToFavoriteIcon: true,
-    showNextVendorIcon: false,
+    showProviderSelectIcon: true,
     showCopyTranslationIcon: true,
     useDarkTheme: false,
     showIconNearSelection: true,
@@ -48,7 +48,7 @@ export const settingsStorage = createStorage("settings", {
     openAiTtsVoice: OpenAIVoiceTTS.ALLOY,
     openAiModel: OpenAIModel.RECOMMENDED,
     grokAiModel: GrokAIModel.RECOMMENDED,
-    skipVendorInRotation: {} as Record<ProviderCodeName, boolean>,
+    deepSeekModel: DeepSeekAIModel.RECOMMENDED,
     customPdfViewer: false,
     fullPageTranslation: {
       provider: "bing" as ProviderCodeName,

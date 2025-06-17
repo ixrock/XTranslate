@@ -5,11 +5,10 @@ import isEqual from "lodash/isEqual";
 import React, { Fragment } from "react";
 import { action, comparer, computed, makeObservable, observable, reaction, toJS } from "mobx";
 import { observer } from "mobx-react";
-import { getTranslator, getTranslators, isRTL, ITranslationError, ITranslationResult, ProviderCodeName, Translator } from "../../providers";
+import { getTranslator, isRTL, ITranslationError, ITranslationResult, ProviderCodeName, Translator } from "../../providers";
 import { createLogger, cssNames, disposer } from "../../utils";
 import { SelectLanguage } from "../select-language";
 import { Input } from "../input";
-import { Option, Select } from "../select";
 import { Spinner } from "../spinner";
 import { settingsStore } from "../settings/settings.storage";
 import { pageManager } from "../app/page-manager";
@@ -24,6 +23,7 @@ import { isFavorite } from "../user-history/favorites.storage";
 import { saveToFavoritesAction } from "../../background/history.bgc";
 import { getSelectedText } from "../../extension";
 import { CopyToClipboardIcon } from "../copy-to-clipboard-icon";
+import { SelectProvider } from "../select-provider";
 
 export const lastInputText = createStorage("last_input_text", {
   defaultValue: "",
@@ -79,7 +79,7 @@ export class InputTranslation extends React.Component {
   private syncParamsWithUrl() {
     return disposer(
       reaction(() => toJS(this.params), (params: TranslationPageParams) => {
-        this.translate(); // translate text (if any)
+        void this.translate(); // auto-translate text (if any)
         if (!isEqual(this.urlParams, params)) {
           navigation.searchParams.replace(params); // update url
         }
@@ -121,9 +121,9 @@ export class InputTranslation extends React.Component {
     );
   }
 
-  playText = () => {
+  playText = async () => {
     const { vendor, langDetected, originalText } = this.translation;
-    getTranslator(vendor).speak(langDetected, originalText);
+    await getTranslator(vendor).speak(langDetected, originalText);
   }
 
   @action.bound
@@ -133,26 +133,25 @@ export class InputTranslation extends React.Component {
 
   @action
   async translate() {
-    let { text, provider, from: langFrom, to: langTo } = this.params;
+    const payload = { ...this.params };
 
     this.input?.focus(); // autofocus input-field
-    this.input?.setValue(text || ""); // update input value manually since @defaultValue is utilized
-
-    if (!text) return;
-
-    this.logger.info("translating..", { text, provider, langFrom, langTo });
-    this.translation = null; // clear previous results immediately (if any)
+    this.input?.setValue(payload.text || ""); // update input value manually since @defaultValue is utilized
+    this.translation = null;
     this.error = null;
+
+    if (!payload.text) return;
     this.isLoading = true;
 
     try {
-      this.translation = await getTranslator(provider).translate({
-        to: langTo,
-        from: langFrom,
-        text: text,
-      })
+      const translation = await getTranslator(payload.provider).translate(payload);
+      if (isEqual(payload, this.params)) {
+        this.translation = translation;
+      }
     } catch (error) {
-      this.error = error;
+      if (isEqual(payload, this.params)) {
+        this.error = error;
+      }
     } finally {
       this.isLoading = false;
     }
@@ -189,6 +188,14 @@ export class InputTranslation extends React.Component {
     this.input.focus();
   }
 
+  private saveToFavorites = (isFavorite: boolean) => {
+    void saveToFavoritesAction({
+      item: this.translation,
+      isFavorite: isFavorite,
+      source: "translate_tab",
+    });
+  }
+
   renderTranslationResult() {
     const { langTo, langDetected, translation, transcription, dictionary, spellCorrection, sourceLanguages, vendor } = this.translation;
     const translator = getTranslator(vendor);
@@ -218,7 +225,7 @@ export class InputTranslation extends React.Component {
               <Icon
                 material={favorite ? materialIcons.favorite : materialIcons.unfavorite}
                 tooltip={favorite ? getMessage("history_unmark_as_favorite") : getMessage("history_mark_as_favorite")}
-                onClick={() => saveToFavoritesAction({ item: this.translation, isFavorite: !favorite })}
+                onClick={() => this.saveToFavorites(!favorite)}
               />
               <div className="lang" id="translated_with">
                 {translationDirection}
@@ -350,9 +357,10 @@ export class InputTranslation extends React.Component {
             to={langTo}
             onChange={({ langTo, langFrom }) => this.onLangChange(langFrom, langTo)}
           />
-          <Select value={provider} onChange={this.onProviderChange}>
-            {getTranslators().map(v => <Option key={v.name} value={v.name} label={v.title}/>)}
-          </Select>
+          <SelectProvider
+            value={provider}
+            onChange={this.onProviderChange}
+          />
         </div>
         <div className="flex gaps align-center">
           <Input

@@ -35,7 +35,7 @@ import_incorrect_file_format = Formato de arquivo incorreto (provavelmente dever
 imported_setting_successful = Configurações sob a chave { $key } importadas com sucesso
 display_icon_near_selection = Mostrar ícone perto do texto selecionado
 show_tts_icon_inside_popup = Mostrar ícone de texto para fala
-show_next_vendor_icon_in_popup = Mostrar ícone de próxima tradução
+show_select_provider_icon_in_popup = Mostrar ícone de próxima tradução
 show_copy_translation_icon = Mostrar ícone de copiar tradução
 show_save_as_favorite_icon = Mostrar ícone de salvar como favorito
 show_close_popup_button = Mostrar botão de fechar pop-up no canto direito
@@ -59,7 +59,6 @@ translation_delay_info = Se você frequentemente enfrenta bloqueios (erro 503) d
 reverse_translate_select_placeholder = Traduzir idioma de forma inversa
 reverse_translate_add_action = Adicionar idioma inverso: { $lang } -> ? (aplicável apenas com a opção "Auto-detectar")
 reverse_translate_delete_action = Remover tradução inversa do idioma
-skip_translation_vendor_in_rotation = Pular traduções de { $vendor } na rotação via ícone de flecha ou setas do teclado (no pop-up)
 custom_font_select = Selecionar fonte personalizada
 
 # tema
@@ -138,16 +137,11 @@ rate_app_info1 = Você gosta de usar o aplicativo? Por favor, nos avalie com 5 e
 rate_app_info2 = Isso ajudará outros usuários a encontrar a extensão e espalhar seus benefícios.
 rate_app_button = Avaliar na loja de extensões
 rate_app_button_later = Lembre-me mais tarde
-deepl_get_own_key_info = Cadastre-se em www.deepl.com e obtenha sua própria chave de autenticação gratuita para a API do DeepL
-deepl_insert_auth_key = Configure a chave da API para acessar traduções do DeepL
-deepl_insert_auth_key_warning = Aviso: NÃO insira sua chave de API em nenhum outro lugar exceto nesta janela da extensão
-deepl_insert_auth_key_remove = Remover chave API do DeepL
 target_lang_placeholder = Idiomas de destino
 source_lang_placeholder = Idiomas de origem
 favorites_lang_title = Favoritos
 favorites_info_tooltip = Para marcar/desmarcar um idioma como favorito (a lista é exibida no topo), use { $hotkey } + clique
 donate_title = Suporte aos desenvolvedores
-donate_copy_wallet = Copiar endereço
 donate_description = Se você gosta do aplicativo, considere doar aos desenvolvedores. Obrigado!
 service_unavailable = Serviço indisponível. Tente novamente após 5-25 minutos. Se isso ocorrer constantemente, aumente o atraso de tradução nas configurações.
 service_confirm_not_a_robot = Você também pode ir para { $link } e confirmar que não é um robô.
@@ -180,7 +174,6 @@ error_403_auth_failed = Falha na autorização. Por favor, forneça uma chave de
 ai_choose_model = Escolha o modelo de IA
 ai_choose_model_cost_effective = Mais eficiente em termos de custo
 ai_choose_model_recommended = Modelo recomendado
-ai_choose_model_best_results = Melhores resultados (mais caro)
 
 # Suporte para tradução de PDF via pdf.js
 pdf_use_custom_viewer = Suporte para traduções em arquivos PDF

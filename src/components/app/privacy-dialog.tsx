@@ -1,30 +1,43 @@
 import * as styles from "./privacy-dialog.module.scss"
+
 import React from "react";
+import semver from "semver";
 import * as marked from "marked"
 import { observer } from "mobx-react";
-import { Dialog, DialogProps } from "../dialog";
-import { cssNames } from "../../utils";
 import privacyPolicyMd from "../../../privacy-policy.md"
-import { Button } from "../button";
+import { getManifest } from "../../extension";
+import { createStorage } from "../../storage";
 import { getMessage } from "../../i18n";
+import { cssNames } from "../../utils";
+import { Dialog, DialogProps } from "../dialog";
+import { Button } from "../button";
 
-export interface PrivacyDialogProps extends DialogProps {
+export const privacyPolicyStorage = createStorage("privacy_policy", {
+  area: "sync",
+  autoLoad: true,
+  defaultValue: {
+    acceptedVersion: "0.0.0",
+  }
+});
+
+export interface PrivacyDialogProps extends Partial<DialogProps> {
+  affectedVersion?: string;
   onTermsAccepted?(): void;
 }
 
 @observer
 export class PrivacyDialog extends React.Component<PrivacyDialogProps> {
+  private appVersion = getManifest().version;
   private dialog: Dialog;
 
-  renderPolicyText() {
-    return (
-      <div className={styles.policyContent} dangerouslySetInnerHTML={{
-        __html: marked.parse(privacyPolicyMd),
-      }}/>
-    );
+  get isOpen() {
+    const { affectedVersion } = this.props;
+    const { acceptedVersion } = privacyPolicyStorage.get();
+    return semver.lt(acceptedVersion, affectedVersion);
   }
 
-  accept = () => {
+  onAccept = () => {
+    privacyPolicyStorage.merge({ acceptedVersion: this.appVersion });
     this.props.onTermsAccepted?.();
     this.dialog.close();
   }
@@ -35,6 +48,7 @@ export class PrivacyDialog extends React.Component<PrivacyDialogProps> {
     return (
       <Dialog
         pinned
+        isOpen={this.isOpen}
         {...dialogProps}
         className={cssNames(styles.PrivacyDialog, className)}
         contentClassName={cssNames(styles.content, contentClassName)}
@@ -43,11 +57,14 @@ export class PrivacyDialog extends React.Component<PrivacyDialogProps> {
         }}
       >
         <h3>{getMessage("privacy_policy_title_updated")}</h3>
-        {this.renderPolicyText()}
+        <div
+          className={styles.policyContent}
+          dangerouslySetInnerHTML={{ __html: marked.parse(privacyPolicyMd) }}
+        />
         <Button
           primary
           label={getMessage("privacy_policy_accept_terms")}
-          onClick={this.accept}
+          onClick={this.onAccept}
         />
       </Dialog>
     );

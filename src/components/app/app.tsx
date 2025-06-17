@@ -14,12 +14,12 @@ import { Footer } from './footer'
 import { Notifications } from "../notifications";
 import { getUrlParams } from "../../navigation";
 import { pageManager } from "./page-manager";
-import { ImportExportSettingsDialog } from "./export-settings-dialog";
+import { ExportSettingsDialog } from "./export-settings-dialog";
 import { PrivacyDialog } from "./privacy-dialog";
 import { AppRateDialog } from "./app-rate.dialog";
-import { dialogsState } from "./dialogs-state";
 import { isRTL } from "../../providers";
 import { getLocale } from "../../i18n";
+import { sendMetric } from "../../background/metrics.bgc";
 
 @observer
 export class App extends React.Component {
@@ -35,7 +35,8 @@ export class App extends React.Component {
     rootElem.id = "XTranslateWindowApp";
     document.body.appendChild(rootElem);
 
-    App.bindDarkThemeSwitching();
+    this.bindDarkThemeSwitching();
+    this.bindPageIdWatcher();
     rootNode.render(<App/>);
   }
 
@@ -46,6 +47,14 @@ export class App extends React.Component {
       fireImmediately: true,
     })
   };
+
+  static bindPageIdWatcher() {
+    return reaction(() => getUrlParams().page, pageId => {
+      void sendMetric("screen_view", { screen_name: pageId })
+    }, {
+      fireImmediately: true,
+    });
+  }
 
   render() {
     const { page: pageId } = getUrlParams();
@@ -61,15 +70,9 @@ export class App extends React.Component {
         />
         <Footer/>
         <Notifications/>
-        <ImportExportSettingsDialog
-          isOpen={dialogsState.showImportExportDialog}
-          onClose={() => dialogsState.showImportExportDialog = false}
-        />
-        <PrivacyDialog
-          isOpen={dialogsState.showPrivacyDialog}
-          onTermsAccepted={() => dialogsState.showPrivacyDialog = false}
-        />
+        <ExportSettingsDialog/>
         <AppRateDialog/>
+        <PrivacyDialog affectedVersion="5.1.1"/>
       </div>
     );
   }

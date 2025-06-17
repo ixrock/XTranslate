@@ -35,7 +35,7 @@ import_incorrect_file_format = 파일 형식이 잘못되었습니다 (아마도
 imported_setting_successful = 키 { $key } 아래의 설정이 성공적으로 가져왔습니다
 display_icon_near_selection = 선택한 텍스트 근처에 아이콘 표시
 show_tts_icon_inside_popup = 텍스트 음성 변환 아이콘 표시
-show_next_vendor_icon_in_popup = 다음 번역 아이콘 표시
+show_select_provider_icon_in_popup = 다음 번역 아이콘 표시
 show_copy_translation_icon = 번역 복사 아이콘 표시
 show_save_as_favorite_icon = 즐겨찾기로 저장 아이콘 표시
 show_close_popup_button = 오른쪽 상단에 팝업 닫기 버튼 표시
@@ -59,7 +59,6 @@ translation_delay_info = Google 또는 다른 서비스에서 자주 차단 (503
 reverse_translate_select_placeholder = 역번역 언어
 reverse_translate_add_action = 역언어 추가: { $lang } -> ? (자동 감지 옵션과 함께만 적용 가능)
 reverse_translate_delete_action = 역번역 언어 해제
-skip_translation_vendor_in_rotation = 화살표 아이콘이나 키보드 화살표를 통해 다음 번역으로 { $vendor }-번역 건너뛰기 (팝업 내)
 custom_font_select = 맞춤 폰트 선택
 
 # 테마
@@ -138,16 +137,11 @@ rate_app_info1 = 앱 사용이 마음에 드셨나요? 5점으로 평가해주�
 rate_app_info2 = 이는 다른 사용자들이 확장 프로그램을 찾고 그 혜택을 전파하는 데 도움이 됩니다.
 rate_app_button = 확장 프로그램 스토어에서 평가
 rate_app_button_later = 나중에 다시 알림
-deepl_get_own_key_info = www.deepl.com 에 등록하고 DeepL API에 대한 무료 인증 키를 받으세요
-deepl_insert_auth_key = DeepL 번역에 접근하기 위한 인증 API 키 설정
-deepl_insert_auth_key_warning = 경고: 이 확장 프로그램 창 외에 다른 곳에 API 키를 입력하지 마세요
-deepl_insert_auth_key_remove = DeepL API 키 제거
 target_lang_placeholder = 대상 언어
 source_lang_placeholder = 소스 언어
 favorites_lang_title = 즐겨찾기
 favorites_info_tooltip = 언어를 즐겨찾기로 표시/해제하려면 (목록은 상단에 표시됩니다) { $hotkey } + 클릭을 사용하세요
 donate_title = 개발자 지원
-donate_copy_wallet = 주소 복사
 donate_description = 앱이 마음에 드시면 개발자에게 기부를 고려해주세요. 감사합니다!
 service_unavailable = 서비스를 사용할 수 없습니다. 5-25분 후에 다시 시도하세요. 이 문제가 자주 발생하면 설정에서 번역 지연을 늘리세요.
 service_confirm_not_a_robot = 또한 { $link }로 가서 로봇이 아님을 확인할 수 있습니다.
@@ -180,7 +174,6 @@ error_403_auth_failed = 인증 실패. 설정에서 유효한 인증 API 키를 
 ai_choose_model = AI 모델 선택
 ai_choose_model_cost_effective = 가장 비용 효율적인
 ai_choose_model_recommended = 권장 모델
-ai_choose_model_best_results = 최고의 결과 (가장 비싼)
 
 # pdf.js를 통한 PDF 번역 지원
 pdf_use_custom_viewer = PDF 파일 내 번역 지원

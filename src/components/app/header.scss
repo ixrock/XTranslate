@@ -1,14 +1,13 @@
 .Header {
   header {
     direction: ltr;
-    text-transform: uppercase;
-    font-weight: bold;
-    text-align: left;
     background: linear-gradient(90deg, #92268dee, transparent);
     padding: .75em;
     border-radius: var(--theme-border-radius);
 
     .app-title {
+      text-transform: uppercase;
+      font-weight: bold;
       color: white;
     }
 
@@ -17,6 +16,15 @@
       font-weight: normal;
       font-size: 11px;
     }
+  }
+
+  #pro-discount {
+    text-decoration: none;
+    gap: 3px;
+    color: white;
+    font-weight: 500;
+    font-size: small;
+    text-shadow: 0 0 5px #000000aa;
   }
 
   .Tabs > .Tab {

@@ -35,7 +35,7 @@ import_incorrect_file_format = Falscher Dateiformat (sollte wahrscheinlich { $fi
 imported_setting_successful = Einstellungen unter dem Schlüssel { $key } erfolgreich importiert
 display_icon_near_selection = Symbol in der Nähe des ausgewählten Textes anzeigen
 show_tts_icon_inside_popup = Text-zu-Sprache-Symbol anzeigen
-show_next_vendor_icon_in_popup = Nächstes-Übersetzungssymbol anzeigen
+show_select_provider_icon_in_popup = Nächstes-Übersetzungssymbol anzeigen
 show_copy_translation_icon = Symbol zum Kopieren der Übersetzung anzeigen
 show_save_as_favorite_icon = Symbol zum Speichern als Favorit anzeigen
 show_close_popup_button = Schließen-Button für Popup in der rechten Ecke anzeigen
@@ -59,7 +59,6 @@ translation_delay_info = Wenn Sie häufig Sperrungen (Fehler 503) von Google ode
 reverse_translate_select_placeholder = Umgekehrte Übersetzung der Sprache
 reverse_translate_add_action = Umgekehrte Sprache hinzufügen: { $lang } -> ? (nur mit der Option "Automatische Erkennung" anwendbar)
 reverse_translate_delete_action = Umgekehrte Sprachübersetzung aufheben
-skip_translation_vendor_in_rotation = Übersetzungen von { $vendor } in der Rotation durch Pfeil-Symbol oder Tastaturpfeile überspringen (im Popup)
 custom_font_select = Benutzerdefinierte Schriftart auswählen
 
 # Thema
@@ -138,16 +137,11 @@ rate_app_info1 = Gefällt Ihnen die Nutzung der App? Bitte bewerten Sie uns mit 
 rate_app_info2 = Das hilft anderen Nutzern, die Erweiterung zu finden und die Vorteile zu verbreiten.
 rate_app_button = In der Erweiterungsstore bewerten
 rate_app_button_later = Später erinnern
-deepl_get_own_key_info = Registrieren Sie sich bei www.deepl.com und erhalten Sie einen eigenen kostenlosen Authentifizierungsschlüssel für die DeepL API
-deepl_insert_auth_key = Authentifizierungs-API-Schlüssel einrichten, um auf DeepL-Übersetzungen zuzugreifen
-deepl_insert_auth_key_warning = Warnung: Geben Sie Ihren API-Schlüssel nirgendwo außer in diesem Erweiterungsfenster ein
-deepl_insert_auth_key_remove = DeepL API-Schlüssel entfernen
 target_lang_placeholder = Zielsprachen
 source_lang_placeholder = Quellsprachen
 favorites_lang_title = Favoriten
 favorites_info_tooltip = Um eine Sprache als Favorit zu markieren/zu löschen (die Liste wird oben angezeigt), verwenden Sie { $hotkey } + Klicken
 donate_title = Entwicklerunterstützung
-donate_copy_wallet = Adresse kopieren
 donate_description = Wenn Ihnen die App gefällt, erwägen Sie bitte eine Spende an die Entwickler. Danke!
 service_unavailable = Dienst nicht verfügbar. Versuchen Sie es nach 5-25 Minuten erneut. Wenn dies ständig passiert, erhöhen Sie die Übersetzungsverzögerung in den Einstellungen.
 service_confirm_not_a_robot = Sie können auch zu { $link } gehen und bestätigen, dass Sie kein Roboter sind.
@@ -179,7 +173,6 @@ error_403_auth_failed = Authentifizierung fehlgeschlagen. Bitte geben Sie einen 
 ai_choose_model = KI-Modell auswählen
 ai_choose_model_cost_effective = Kostenwirksamste Wahl
 ai_choose_model_recommended = Empfohlenes Modell
-ai_choose_model_best_results = Beste Ergebnisse (am teuersten)
 
 # Unterstützung für PDF-Übersetzungen via pdf.js
 pdf_use_custom_viewer = Unterstützung für Übersetzungen in PDF-Dateien

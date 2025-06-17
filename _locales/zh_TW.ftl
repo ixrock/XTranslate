@@ -35,7 +35,7 @@ import_incorrect_file_format = 檔案格式不正確（應為 { $fileNameJson }�
 imported_setting_successful = 已成功匯入鍵值為 { $key } 的設定
 display_icon_near_selection = 在選中文本附近顯示圖示
 show_tts_icon_inside_popup = 顯示語音合成圖示
-show_next_vendor_icon_in_popup = 顯示下個翻譯器圖示
+show_select_provider_icon_in_popup = 顯示下個翻譯器圖示
 show_copy_translation_icon = 顯示複製翻譯圖示
 show_save_as_favorite_icon = 顯示保存為收藏圖示
 show_close_popup_button = 在右上角顯示關閉彈出框按鈕
@@ -59,7 +59,6 @@ translation_delay_info = 如果您經常遇到來自 Google 或其他服務的�
 reverse_translate_select_placeholder = 反向翻譯語言
 reverse_translate_add_action = 添加反向語言：{ $lang } -> ? （僅適用於“自動檢測”選項）
 reverse_translate_delete_action = 移除反向翻譯語言
-skip_translation_vendor_in_rotation = 通過箭頭圖示或快捷鍵跳過 { $vendor } 的翻譯（在彈出框中）
 custom_font_select = 選擇自定義字體
 
 # 主題
@@ -138,16 +137,11 @@ rate_app_info1 = 喜歡此應用嗎？請給我們打 5 星好評！
 rate_app_info2 = 這將幫助其他用戶發現此擴充功能並傳播其好處。
 rate_app_button = 在擴充功能商店中評分
 rate_app_button_later = 稍後提醒我
-deepl_get_own_key_info = 在 www.deepl.com 註冊並獲取自己的免費身份驗證金鑰
-deepl_insert_auth_key = 設定 DeepL API 的金鑰以獲取翻譯
-deepl_insert_auth_key_warning = 警告：請勿在此擴充功能視窗以外的任何地方輸入您的 API 金鑰
-deepl_insert_auth_key_remove = 移除 DeepL API 金鑰
 target_lang_placeholder = 目標語言
 source_lang_placeholder = 來源語言
 favorites_lang_title = 收藏
 favorites_info_tooltip = 要標記/取消標記語言為收藏（列表顯示在頂部），請使用 { $hotkey } + 點擊
 donate_title = 支援開發者
-donate_copy_wallet = 複製地址
 donate_description = 如果您喜歡此應用，請考慮向開發者捐款。謝謝！
 service_unavailable = 服務不可用。請稍後 5-25 分鐘後再試。如果此情況經常發生，請在設定中增加翻譯延遲。
 service_confirm_not_a_robot = 您也可以訪問 { $link } 並確認您不是機器人。
@@ -180,7 +174,6 @@ error_403_auth_failed = 授權失敗。請在設定中提供有效的 API 金鑰
 ai_choose_model = 選擇 AI 模型
 ai_choose_model_cost_effective = 最具成本效益
 ai_choose_model_recommended = 推薦模型
-ai_choose_model_best_results = 最佳結果（最昂貴）
 
 # PDF 翻譯支援通過 pdf.js
 pdf_use_custom_viewer = 支援 PDF 文件翻譯

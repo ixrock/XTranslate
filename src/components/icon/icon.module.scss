@@ -99,21 +99,19 @@
   }
 
   &.active {
+    opacity: 1;
     color: var(--icon-color-active);
     box-shadow: 0 0 0 3px var(--icon-bgc-active);
     background-color: var(--icon-bgc-active);
   }
 
   &.interactive {
-    cursor: pointer;
+    opacity: .85;
     transition: 250ms color, 250ms opacity, 150ms background-color, 150ms box-shadow;
     border-radius: 50%;
+    cursor: pointer;
 
-    &.focusable:focus {
-      @extend .active;
-    }
-
-    &:hover {
+    &:hover, &:focus {
       @extend .active;
     }
   }

@@ -12,38 +12,37 @@ import { Icon } from "../icon";
 import { FileInput, ImportingFile } from "../input";
 import { Notifications } from "../notifications";
 import { SubTitle } from "../sub-title";
-import { settingsStorage, SettingsStorageModel } from "../settings/settings.storage";
+import { popupHotkey, PopupHotkeyStorageModel, settingsStorage, SettingsStorageModel } from "../settings/settings.storage";
 import { themeStorage, ThemeStorageModel } from "../theme-manager/theme.storage";
 import { favoritesStorage, FavoriteStorageModel } from "../user-history/favorites.storage";
 
-export interface StorableSettings<Data> {
-  version: number;
+export const exportSettingsDialogState = observable.box(false);
+
+export interface ExportingData<Data> {
   data: Data;
 }
 
-export interface ImportExportSettings {
+export interface ExportImportSettings {
   appVersion: string; // manifest.json version
-  settings?: StorableSettings<SettingsStorageModel>;
-  theme?: StorableSettings<ThemeStorageModel>;
-  favorites?: StorableSettings<FavoriteStorageModel>;
+  settings?: ExportingData<SettingsStorageModel>;
+  theme?: ExportingData<ThemeStorageModel>;
+  favorites?: ExportingData<FavoriteStorageModel>;
+  hotkey?: ExportingData<PopupHotkeyStorageModel>;
 }
 
-export interface ImportExportSettingsDialogProps extends DialogProps {
+export interface ExportSettingsDialogProps extends Partial<DialogProps> {
 }
-
-const defaultProps: Partial<ImportExportSettingsDialogProps> = {};
 
 @observer
-export class ImportExportSettingsDialog extends React.Component<ImportExportSettingsDialogProps> {
-  static defaultProps = defaultProps as unknown as ImportExportSettingsDialogProps;
-
-  readonly fileNameJson = "xtranslate-settings.json";
+export class ExportSettingsDialog extends React.Component<ExportSettingsDialogProps> {
+  private readonly appVersion = getManifest().version;
+  private readonly fileNameJson = `xtranslate-settings-${this.appVersion}.json`;
   private fileInput: FileInput<string>;
 
   @observable.ref dialog: Dialog;
   @observable error = "";
 
-  constructor(props: ImportExportSettingsDialogProps) {
+  constructor(props: ExportSettingsDialogProps) {
     super(props);
     makeObservable(this);
   }
@@ -52,8 +51,8 @@ export class ImportExportSettingsDialog extends React.Component<ImportExportSett
   importSettings = async ([{ file }]: ImportingFile<string>[]) => {
     this.error = "";
     try {
-      const jsonSettings: ImportExportSettings = JSON.parse(await file.text());
-      const { appVersion, settings, theme, favorites } = jsonSettings;
+      const jsonSettings: ExportImportSettings = JSON.parse(await file.text());
+      const { appVersion, settings, theme, favorites, hotkey } = jsonSettings;
       const noSettingsFound = Boolean(!settings && !theme); // TODO: validate input better
       if (noSettingsFound) {
         const importCommonErrorMessage = getMessage("import_incorrect_file_format", {
@@ -73,6 +72,10 @@ export class ImportExportSettingsDialog extends React.Component<ImportExportSett
           favoritesStorage.set(favorites.data);
           Notifications.ok(getMessage("imported_setting_successful", { key: "favorites" }));
         }
+        if (hotkey) {
+          popupHotkey.set(hotkey.data);
+          Notifications.ok(getMessage("imported_setting_successful", { key: "hotkey" }));
+        }
         this.dialog.close();
       }
     } catch (error) {
@@ -83,24 +86,33 @@ export class ImportExportSettingsDialog extends React.Component<ImportExportSett
   };
 
   exportSettings = () => {
-    const appSettings: ImportExportSettings = {
-      appVersion: getManifest().version,
+    const appSettings: ExportImportSettings = {
+      appVersion: this.appVersion,
       settings: {
-        version: 1,
         data: settingsStorage.toJS(),
       },
       theme: {
-        version: 1,
         data: themeStorage.toJS(),
       },
       favorites: {
-        version: 1,
         data: favoritesStorage.toJS(),
       },
+      hotkey: {
+        data: popupHotkey.toJS(),
+      }
     };
 
     download.json(this.fileNameJson, appSettings);
   };
+
+  get isOpen() {
+    return exportSettingsDialogState.get();
+  }
+
+  private onClose = () => {
+    this.props.onClose?.();
+    exportSettingsDialogState.set(false);
+  }
 
   render() {
     const { className, ...dialogProps } = this.props;
@@ -109,6 +121,8 @@ export class ImportExportSettingsDialog extends React.Component<ImportExportSett
     return (
       <Dialog
         {...dialogProps}
+        isOpen={this.isOpen}
+        onClose={this.onClose}
         className={dialogClass}
         contentClassName="flex gaps column"
         ref={elem => {
@@ -146,4 +160,3 @@ export class ImportExportSettingsDialog extends React.Component<ImportExportSett
     )
   }
 }
-

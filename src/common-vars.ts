@@ -24,7 +24,6 @@ export const materialIcons = {
   copiedTranslation: "task_alt",
   favorite: "star",
   unfavorite: "star_outline",
-  nextTranslation: "arrow_forward",
 };
 
 //

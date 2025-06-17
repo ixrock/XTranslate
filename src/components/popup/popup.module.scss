@@ -1,8 +1,6 @@
 @use "../mixins" as *;
-@use "../theme" as *;
 
 .Popup {
-  @include theme-vars;
   --theme-spacing: .6em;
 
   position: absolute;
@@ -69,6 +67,7 @@
 
   .translationResult {
     --flexGap: var(--theme-spacing-half);
+    padding-right: var(--flexGap);
 
     @include custom-scrollbar($borderSpace: 1px) {
       --theme-scrollbar-size: .5em;
@@ -78,6 +77,7 @@
 
     .translation {
       display: flex;
+      align-items: center;
       gap: var(--flexGap);
 
       .value {
@@ -91,6 +91,9 @@
       }
 
       .icons {
+        display: flex;
+        gap: 2px;
+        align-items: center;
       }
     }
 
@@ -137,5 +140,33 @@
     font-style: italic;
     margin-top: var(--theme-spacing);
     opacity: .75;
+  }
+
+  .providerSelect {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--theme-spacing-half);
+
+    &:hover .providerSelectIcon {
+      opacity: 1;
+    }
+
+    .providerSelectIcon {
+      --icon-size: 16px;
+      --icon-color-active: currentColor;
+    }
+
+    select {
+      all: unset;
+      position: absolute;
+      font: inherit;
+      inset: 0;
+      appearance: none;
+      background: none;
+      color: transparent;
+      border: none;
+      cursor: pointer;
+    }
   }
 }

@@ -4,8 +4,7 @@ import { action, makeObservable, observable } from "mobx";
 import { observer } from "mobx-react";
 import isEqual from "lodash/isEqual";
 import startCase from "lodash/startCase";
-import { getFullPageTranslators, getTranslator, getTranslators, googleApiDomain, googleApiDomains, GrokAIModel, OpenAIModel, OpenAIVoiceTTS, ProviderCodeName, Translator } from "../../providers";
-import { cssNames } from "../../utils";
+import { DeepSeekAIModel, getTranslator, getTranslators, googleApiDomain, googleApiDomains, GrokAIModel, OpenAIModel, OpenAIVoiceTTS, ProviderCodeName, Translator } from "../../providers";
 import { XTranslateIcon } from "../../user-script/xtranslate-icon";
 import { SelectLanguage, SelectLanguageChangeEvent } from "../select-language";
 import { Checkbox } from "../checkbox";
@@ -24,6 +23,7 @@ import { ProviderAuthSettings } from "./auth_settings";
 import { materialIcons } from "../../common-vars";
 import { Notifications } from "../notifications";
 import { Button } from "../button";
+import { SelectProvider } from "../select-provider";
 
 @observer
 export class Settings extends React.Component {
@@ -83,6 +83,14 @@ export class Settings extends React.Component {
           onChange={value => settingsStore.data.grokAiModel = value}
         />
       ),
+      deepseek: (
+        <SelectAIModel
+          className="deepseek_settings"
+          modelOptions={DeepSeekAIModel}
+          getValue={() => settingsStore.data.deepSeekModel}
+          onChange={value => settingsStore.data.deepSeekModel = value}
+        />
+      )
     }
   };
 
@@ -95,10 +103,6 @@ export class Settings extends React.Component {
       { value: { left: true, bottom: true }, label: getMessage("popup_position_left_bottom") },
     ];
   };
-
-  get fullPageTranslateProvidersOptions(): ReactSelectOption<ProviderCodeName>[] {
-    return getFullPageTranslators().map(({ name, title }) => ({ value: name, label: title }))
-  }
 
   @observable demoVoiceText = "Quick brown fox jumps over the lazy dog";
   @observable isSpeaking = false;
@@ -129,7 +133,6 @@ export class Settings extends React.Component {
   renderProviderSettings({ name: provider, title, getAuthSettings }: Translator): React.ReactNode {
     const authSettings = getAuthSettings();
     const translator = getTranslator(provider);
-    const showProviderSettings = translator.hasProvidedOrNotRequiredApiKey();
 
     return (
       <div className={styles.providerSettings}>
@@ -143,7 +146,7 @@ export class Settings extends React.Component {
             warningInfo={getMessage(`auth_safety_warning_info`)}
           />
         )}
-        {showProviderSettings && this.providerSettings[provider]}
+        {translator.isAvailable() && this.providerSettings[provider]}
       </div>
     )
   }
@@ -152,19 +155,10 @@ export class Settings extends React.Component {
     const { name, title } = provider;
     const publicUrl = new URL(provider.publicUrl);
     const providerUrl = publicUrl.hostname.replace(/^www\./, "") + publicUrl.pathname.replace(/\/$/, "");
-    const skipInRotation = settingsStore.data.skipVendorInRotation[name];
-    const disableInRotationClassName = cssNames({
-      [styles.providerSkipRotation]: skipInRotation,
-    });
 
     return (
       <div key={name} className={`${styles.provider} flex gaps align-center`}>
-        <Checkbox
-          checked={skipInRotation}
-          onChange={checked => settingsStore.data.skipVendorInRotation[name] = checked}
-          tooltip={getMessage("skip_translation_vendor_in_rotation", { vendor: title })}
-        />
-        <Radio value={name} label={<span className={disableInRotationClassName}>{title}</span>}/>
+        <Radio value={name} label={title}/>
         <a className={styles.providerUrl} href={publicUrl.toString()} title={publicUrl.origin} target="_blank" tabIndex={-1}>
           {providerUrl}
         </a>
@@ -265,10 +259,10 @@ export class Settings extends React.Component {
             to={fullPageTranslation.langTo}
             onChange={this.onFullPageLanguageChange}
           />
-          <ReactSelect
-            value={this.fullPageTranslateProvidersOptions.find(opt => opt.value === fullPageTranslation.provider)}
-            options={this.fullPageTranslateProvidersOptions}
-            onChange={({ value }) => this.onFullPageProviderChange(value)}
+          <SelectProvider
+            value={fullPageTranslation.provider}
+            onChange={this.onFullPageProviderChange}
+            filter={(provider) => provider.isAvailable() && provider.canTranslateFullPage()}
           />
         </div>
         <div className="alwaysTranslatePages flex gaps align-center">

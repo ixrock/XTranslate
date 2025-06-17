@@ -10,8 +10,8 @@ export type LangTarget = string;
 export type TranslationHashId = `${ProviderCodeName}_${LangSource}_${LangTarget}`;
 
 export interface PageTranslatorParams {
-  persistent?: boolean; // cache page translations per window tab in `sessionStorage`, default: true
-  trafficSaveModeDelayMs?: number; /* default: 500 */
+  sessionCache?: boolean; // cache page translations per tab in `window.sessionStorage` (default: true)
+  autoTranslateDelayMs?: number; /* default: 500 */
 }
 
 export interface WatchViewportTextNodesOpts {
@@ -23,6 +23,10 @@ export class PageTranslator {
   static readonly SKIP_TAGS = new Set(["SCRIPT", "STYLE", "NOSCRIPT", "TEXTAREA", "CODE", "PRE"]);
   static readonly MAX_API_LIMIT_CHARS_PER_REQUEST = 5000;
 
+  protected logger = createLogger({ systemPrefix: "[PAGE-TRANSLATOR]", prefixColor: LoggerColor.INFO_SYSTEM });
+  protected dispose = disposer();
+
+  // TODO: support translations within <button value=""> and <input placeholder="">
   protected textNodes = observable.set<Text>();
   protected textNodesViewport = observable.set<Text>();
   protected parentNodes = new WeakMap<HTMLElement, Set<Text>>();
@@ -30,20 +34,22 @@ export class PageTranslator {
   protected originalText = new WeakMap<Text, string>();
   protected originalTextRaw = new WeakMap<Text, string>();
   protected detectedLanguages = new WeakMap<Text, string>();
-  protected logger = createLogger({ systemPrefix: "[PAGE-TRANSLATOR]", prefixColor: LoggerColor.INFO_SYSTEM });
-  protected dispose = disposer();
 
   constructor(private params: PageTranslatorParams = {}) {
     autoBind(this);
     const {
-      persistent = true,
-      trafficSaveModeDelayMs = 500,
+      sessionCache = true,
+      autoTranslateDelayMs = 500,
     } = params;
-    this.params = { persistent, trafficSaveModeDelayMs };
+    this.params = { sessionCache, autoTranslateDelayMs };
   }
 
   get settings() {
     return settingsStore.data.fullPageTranslation;
+  }
+
+  get isEnabled() {
+    return this.isAlwaysTranslate(document.URL);
   }
 
   getProviderParams() {
@@ -109,7 +115,7 @@ export class PageTranslator {
     };
     return reaction(getTexts, this.translateNodes, {
       fireImmediately: true,
-      delay: this.params.trafficSaveModeDelayMs,
+      delay: this.params.autoTranslateDelayMs,
     });
   }
 
@@ -249,7 +255,7 @@ export class PageTranslator {
       await Promise.all(
         packedNodes.map(async nodes => {
           const translations = await this.translateApiRequest(nodes);
-          if (this.params.persistent) this.saveStorageCache(nodes, translations, providerHashId);
+          if (this.params.sessionCache) this.saveStorageCache(nodes, translations, providerHashId);
           return translations;
         })
       )
@@ -264,7 +270,7 @@ export class PageTranslator {
       this.translations.set(textNode, {});
     }
     let translation = this.translations.get(textNode)[hashId];
-    if (!translation && this.params.persistent) {
+    if (!translation && this.params.sessionCache) {
       const storageCache = this.getStorageCache(textNode, hashId);
       if (storageCache) {
         translation = storageCache; // restore to memory-cache from storage (sync)

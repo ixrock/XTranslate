@@ -93,36 +93,21 @@ export async function translateText(params: AITranslatePayload): Promise<ITransl
   }
 }
 
-export function getTranslationPrompt({ from: sourceLang, to: targetLang, text }: Partial<TranslateParams>) {
-  const systemPrompt = `
-  
-You are a professional translation assistant.
-Return EXACTLY one JSON object with the following shape:
-{
-  "translation":   string,          // text translated to "${targetLang}"
-  "detectedLang":  ISO-639-1 code,  // e.g. "en", "fi"
-  "transcription": string|null,     // ONLY for single dictionary word or phrasal verb
-  "spellCorrection": string|null    // non-empty if you fixed typos
-}
-Rules:
-- Do NOT wrap the JSON in triple backticks
-- Do NOT add comments or additional keys
-- Preserve markup, punctuation and line breaks
-- If translation == original, still output JSON but keep "translation" unchanged
+// FIXME: figure out how to preserve letter case, e.g "AI-provider" -> "AI-провайдер"
+export function getTranslationPrompt({ from: srcLang = "auto", to: targetLang, text }: Partial<TranslateParams>) {
+  const system = `
+Return ONLY this JSON:{"translation":"","detectedLang":"","transcription":null,"spellCorrection":null}
+• Preserve punctuation, markup, line breaks
+• Use ISO-639-1 code for detected lang
+• Add transcription ONLY for single dictionary word / phrasal verb 
 `.trim();
 
-  const userPrompt = `
-
-Source lang: ${sourceLang ?? "auto-detect"}
-Target lang: ${targetLang}
-Text:
+  const user = `
+src=${srcLang} tgt=${targetLang}
 ${text}
 `.trim();
 
-  return {
-    systemPrompt,
-    userPrompt,
-  };
+  return { systemPrompt: system, userPrompt: user };
 }
 
 export async function textToSpeech(params: OpenAITextToSpeechPayload): Promise<number[]> {

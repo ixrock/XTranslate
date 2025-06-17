@@ -35,7 +35,7 @@ import_incorrect_file_format = Định dạng tệp không đúng (có lẽ nên
 imported_setting_successful = Cài đặt dưới khóa { $key } đã được nhập thành công
 display_icon_near_selection = Hiển thị biểu tượng gần văn bản đã chọn
 show_tts_icon_inside_popup = Hiển thị biểu tượng văn bản thành giọng nói
-show_next_vendor_icon_in_popup = Hiển thị biểu tượng dịch tiếp theo
+show_select_provider_icon_in_popup = Hiển thị biểu tượng dịch tiếp theo
 show_copy_translation_icon = Hiển thị biểu tượng sao chép bản dịch
 show_save_as_favorite_icon = Hiển thị biểu tượng lưu làm yêu thích
 show_close_popup_button = Hiển thị nút đóng bật lên ở góc phải
@@ -59,7 +59,6 @@ translation_delay_info = Nếu bạn thường xuyên gặp phải tình trạng
 reverse_translate_select_placeholder = Dịch ngược ngôn ngữ
 reverse_translate_add_action = Thêm ngôn ngữ ngược: { $lang } -> ? (chỉ áp dụng với tùy chọn "Tự động phát hiện")
 reverse_translate_delete_action = Hủy chọn dịch ngược ngôn ngữ
-skip_translation_vendor_in_rotation = Bỏ qua các dịch của { $vendor } trong vòng quay thông qua biểu tượng mũi tên hoặc phím mũi tên trên bàn phím (trong bật lên)
 custom_font_select = Chọn phông chữ tùy chỉnh
 
 # Chủ đề
@@ -138,16 +137,11 @@ rate_app_info1 = Bạn có thích sử dụng ứng dụng này không? Vui lòn
 rate_app_info2 = Điều này sẽ giúp người dùng khác tìm thấy tiện ích mở rộng và lan tỏa lợi ích của nó.
 rate_app_button = Đánh giá trong cửa hàng tiện ích mở rộng
 rate_app_button_later = Nhắc tôi sau
-deepl_get_own_key_info = Đăng ký tại www.deepl.com và lấy khóa xác thực miễn phí cho API DeepL
-deepl_insert_auth_key = Thiết lập khóa API để truy cập bản dịch DeepL
-deepl_insert_auth_key_warning = Cảnh báo: KHÔNG nhập khóa API của bạn ở bất kỳ nơi nào khác ngoài cửa sổ tiện ích mở rộng này
-deepl_insert_auth_key_remove = Xóa khóa API DeepL
 target_lang_placeholder = Ngôn ngữ đích
 source_lang_placeholder = Ngôn ngữ nguồn
 favorites_lang_title = Yêu thích
 favorites_info_tooltip = Để đánh dấu/hủy đánh dấu ngôn ngữ là yêu thích (danh sách được hiển thị ở trên cùng), hãy sử dụng { $hotkey } + nhấp chuột
 donate_title = Hỗ trợ nhà phát triển
-donate_copy_wallet = Sao chép địa chỉ
 donate_description = Nếu bạn thích ứng dụng này, hãy xem xét đóng góp cho nhà phát triển. Cảm ơn bạn!
 service_unavailable = Dịch vụ không khả dụng. Vui lòng thử lại sau 5-25 phút. Nếu điều này xảy ra thường xuyên, hãy tăng độ trễ dịch trong cài đặt.
 service_confirm_not_a_robot = Bạn cũng có thể truy cập vào { $link } và xác nhận rằng bạn không phải là robot.
@@ -180,7 +174,6 @@ error_403_auth_failed = Xác thực thất bại. Vui lòng cung cấp khóa API
 ai_choose_model = Chọn mô hình AI
 ai_choose_model_cost_effective = Tiết kiệm chi phí nhất
 ai_choose_model_recommended = Mô hình khuyến nghị
-ai_choose_model_best_results = Kết quả tốt nhất (tốn kém nhất)
 
 # Hỗ trợ dịch PDF qua pdf.js
 pdf_use_custom_viewer = Hỗ trợ dịch trong các tệp PDF

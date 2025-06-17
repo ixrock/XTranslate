@@ -1,63 +1,45 @@
 import * as styles from "./popup.module.scss"
 
 import React, { CSSProperties } from "react";
-import { action, computed, makeObservable, observable } from "mobx";
+import { computed, makeObservable } from "mobx";
 import { observer } from "mobx-react";
 import isEqual from "lodash/isEqual";
+import sample from "lodash/sample"
+import LanguagesList from "../../providers/google.json"
 import { materialIcons } from "../../common-vars";
-import { cssNames, disposer, IClassName, noop, prevDefault } from "../../utils";
+import { cssNames, prevDefault } from "../../utils";
 import { toCssColor } from "../../utils/toCssColor";
-import { getNextTranslator, getTranslator, isRTL, ITranslationError, ITranslationResult } from "../../providers";
+import { TranslatePayload } from "../../extension";
+import { getTranslator, getTranslators, isRTL, ITranslationError, ITranslationResult, ProviderCodeName } from "../../providers";
 import { Icon } from "../icon";
-import { settingsStorage, settingsStore } from "../settings/settings.storage";
+import { settingsStore } from "../settings/settings.storage";
 import { themeStore } from "../theme-manager/theme.storage";
 import { isFavorite } from "../user-history/favorites.storage";
 import { getLocale, getMessage } from "../../i18n";
 import { saveToFavoritesAction } from "../../background/history.bgc";
 import { CopyToClipboardIcon } from "../copy-to-clipboard-icon";
 
-interface Props extends Omit<React.HTMLProps<any>, "className"> {
+export interface PopupProps extends React.HTMLProps<any> {
   previewMode?: boolean;
-  className?: IClassName;
-  initParams?: Partial<ITranslationResult>;
-  translation?: ITranslationResult
-  error?: ITranslationError
-  tooltipParent?: HTMLElement; // where to render tooltips with "fixed" (aka following) "position"
+  lastParams: TranslatePayload | undefined;
+  translation: ITranslationResult | undefined;
+  error: ITranslationError | undefined;
+  tooltipParentElem?: HTMLElement;
+  onProviderChange?(name: ProviderCodeName): void;
   onPlayText?(): void;
-  onTranslateNext?(): void;
-  onClose?(): void;
 }
 
 @observer
-export class Popup extends React.Component<Props> {
-  static defaultProps: Partial<Props> = {
-    tooltipParent: document.body,
-    onPlayText: noop,
-    onTranslateNext: noop,
-  };
-
-  constructor(props: Props) {
-    super(props);
-    makeObservable(this);
-  }
-
-  private dispose = disposer();
-  @observable.ref elem: HTMLElement;
-  @observable translation = this.props.translation;
-
-  @action
-  componentDidUpdate() {
-    this.translation = this.props.translation;
-  }
-
-  componentWillUnmount() {
-    this.dispose();
-  }
+export class Popup extends React.Component<PopupProps> {
+  private elemRef = React.createRef<HTMLDivElement>();
 
   static get translationMock(): ITranslationResult {
+    const langs = { ...LanguagesList.from };
+    delete langs.auto;
+    delete langs.en;
     return {
-      vendor: settingsStorage.defaultValue.vendor,
-      langFrom: "fi",
+      vendor: ProviderCodeName.GOOGLE,
+      langFrom: sample(Object.keys(langs)),
       langTo: "en",
       translation: getMessage("popup_demo_translation"),
       dictionary: [
@@ -72,6 +54,15 @@ export class Popup extends React.Component<Props> {
         }
       ]
     }
+  }
+
+  constructor(props: PopupProps) {
+    super(props);
+    makeObservable(this);
+  }
+
+  get elem() {
+    return this.elemRef.current;
   }
 
   get isFavorite() {
@@ -128,11 +119,11 @@ export class Popup extends React.Component<Props> {
     }
   }
 
-  @action
-  private toggleFavorites = async () => {
+  toggleFavorites = () => {
     return saveToFavoritesAction({
       item: this.props.translation,
       isFavorite: !this.isFavorite,
+      source: "popup",
     });
   };
 
@@ -144,11 +135,11 @@ export class Popup extends React.Component<Props> {
       <Icon
         className={styles.icon}
         material={this.isFavorite ? materialIcons.favorite : materialIcons.unfavorite}
+        onClick={this.toggleFavorites}
         tooltip={{
           children: getMessage("history_mark_as_favorite"),
-          parentElement: this.props.tooltipParent,
+          parentElement: this.props.tooltipParentElem,
         }}
-        onClick={this.toggleFavorites}
       />
     )
   }
@@ -163,7 +154,7 @@ export class Popup extends React.Component<Props> {
         content={this.props.translation}
         tooltip={{
           children: getMessage("popup_copy_translation_title"),
-          parentElement: this.props.tooltipParent,
+          parentElement: this.props.tooltipParentElem,
         }}
       />
     )
@@ -179,33 +170,39 @@ export class Popup extends React.Component<Props> {
         material={materialIcons.ttsPlay}
         tooltip={{
           children: getMessage("popup_play_icon_title"),
-          parentElement: this.props.tooltipParent,
+          parentElement: this.props.tooltipParentElem,
         }}
         onClick={prevDefault(this.props.onPlayText)}
       />
     );
   }
 
-  renderNextTranslationIcon() {
-    if (!settingsStore.data.showNextVendorIcon) return;
+  private onProviderChange = (evt: React.ChangeEvent<HTMLSelectElement>) => {
+    this.props?.onProviderChange?.(evt.target.value as ProviderCodeName);
+  };
 
-    var { vendor, langFrom, langTo } = this.props.translation ?? this.props.initParams ?? {};
-    var nextVendor = getNextTranslator(vendor, langFrom, langTo);
-    var iconTitle = getMessage("popup_next_vendor_icon_title", {
-      translator: nextVendor.title
-    });
-
+  renderProviderSelectIcon(): React.ReactNode {
+    if (!settingsStore.data.showProviderSelectIcon) {
+      return;
+    }
+    const { translation, lastParams } = this.props;
+    const providerName = translation?.vendor ?? lastParams?.provider;
+    const provider = getTranslator(providerName);
     return (
-      <Icon
-        className={styles.icon}
-        material={materialIcons.nextTranslation}
-        tooltip={{
-          children: iconTitle,
-          parentElement: this.props.tooltipParent,
-        }}
-        onClick={prevDefault(this.props.onTranslateNext)}
-      />
-    )
+      <div className={styles.providerSelect}>
+        <Icon
+          small interactive
+          svg={providerName}
+          className={styles.providerSelectIcon}
+        />
+        <select value={providerName} onChange={this.onProviderChange} title={provider?.title}>
+          {getTranslators().map(({ name, title, isAvailable }) => {
+            if (!isAvailable()) return;
+            return <option key={name} value={name}>{title}</option>
+          })}
+        </select>
+      </div>
+    );
   }
 
   renderResult() {
@@ -233,7 +230,7 @@ export class Popup extends React.Component<Props> {
           <div className={styles.icons}>
             {this.renderSaveToFavoritesIcon()}
             {this.renderCopyTranslationIcon()}
-            {this.renderNextTranslationIcon()}
+            {this.renderProviderSelectIcon()}
           </div>
         </div>
         {dictionary.map(({ wordType, meanings }) =>
@@ -266,9 +263,9 @@ export class Popup extends React.Component<Props> {
   }
 
   renderError() {
-    var { error } = this.props;
+    const { error } = this.props;
     if (!error) return;
-    var { statusCode, message } = error;
+    const { statusCode, message } = error;
     return (
       <div className={styles.translationError}>
         <Icon material="error_outline" className={styles.errorIcon}/>
@@ -276,13 +273,9 @@ export class Popup extends React.Component<Props> {
           <p>{statusCode}: {getMessage("translation_data_failed")}</p>
           <p dangerouslySetInnerHTML={{ __html: message }}/>
         </div>
-        {this.renderNextTranslationIcon()}
+        {this.renderProviderSelectIcon()}
       </div>
     )
-  }
-
-  private bindRef = (elem: HTMLElement) => {
-    this.elem = elem;
   }
 
   render() {
@@ -300,7 +293,7 @@ export class Popup extends React.Component<Props> {
       <div
         className={popupClass} tabIndex={-1}
         style={{ ...this.popupStyle, ...(customStyle ?? {}) }}
-        ref={this.bindRef}
+        ref={this.elemRef}
       >
         {error ? this.renderError() : this.renderResult()}
       </div>
