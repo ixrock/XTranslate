@@ -32,6 +32,7 @@ export interface PopupProps extends React.HTMLProps<any> {
 @observer
 export class Popup extends React.Component<PopupProps> {
   private elemRef = React.createRef<HTMLDivElement>();
+  private translationMock?: ITranslationResult;
 
   static get translationMock(): ITranslationResult {
     const langs = { ...LanguagesList.from };
@@ -66,11 +67,15 @@ export class Popup extends React.Component<PopupProps> {
   }
 
   get isFavorite() {
-    return isFavorite(this.props.translation);
+    return isFavorite(this.translation);
   }
 
-  get isPreviewMode(): boolean {
-    return this.props.previewMode || isEqual(this.props.translation, Popup.translationMock);
+  get translation(): ITranslationResult | undefined {
+    if (this.props.previewMode) {
+      this.translationMock ??= Popup.translationMock;
+      return this.translationMock;
+    }
+    return this.props.translation;
   }
 
   get popupStyle(): CSSProperties {
@@ -121,14 +126,14 @@ export class Popup extends React.Component<PopupProps> {
 
   toggleFavorites = () => {
     return saveToFavoritesAction({
-      item: this.props.translation,
+      item: this.translation,
       isFavorite: !this.isFavorite,
       source: "popup",
     });
   };
 
   renderSaveToFavoritesIcon() {
-    if (!settingsStore.data.showSaveToFavoriteIcon || !this.props.translation) {
+    if (!settingsStore.data.showSaveToFavoriteIcon || !this.translation) {
       return;
     }
     return (
@@ -151,7 +156,7 @@ export class Popup extends React.Component<PopupProps> {
     return (
       <CopyToClipboardIcon
         className={styles.icon}
-        content={this.props.translation}
+        content={this.translation}
         tooltip={{
           children: getMessage("popup_copy_translation_title"),
           parentElement: this.props.tooltipParentElem,
@@ -185,8 +190,7 @@ export class Popup extends React.Component<PopupProps> {
     if (!settingsStore.data.showProviderSelectIcon) {
       return;
     }
-    const { translation, lastParams } = this.props;
-    const providerName = translation?.vendor ?? lastParams?.provider;
+    const providerName = this.translation?.vendor ?? this.props.lastParams?.provider;
     const provider = getTranslator(providerName);
     return (
       <div className={styles.providerSelect}>
@@ -206,9 +210,9 @@ export class Popup extends React.Component<PopupProps> {
   }
 
   renderResult() {
-    if (!this.props.translation) return;
+    if (!this.translation) return;
 
-    let { translation, transcription, dictionary, vendor, langFrom, langTo, langDetected } = this.props.translation;
+    let { translation, transcription, dictionary, vendor, langFrom, langTo, langDetected } = this.translation;
     if (langDetected) langFrom = langDetected;
 
     const translator = getTranslator(vendor);
@@ -280,13 +284,12 @@ export class Popup extends React.Component<PopupProps> {
 
   render() {
     const { popupPosition } = settingsStore.data;
-    const { translation, error, className, style: customStyle } = this.props;
+    const { previewMode, error, className, style: customStyle } = this.props;
     const hasAutoPosition = popupPosition === "";
-    const isVisible = !!(translation || error);
     const popupClass = cssNames(styles.Popup, className, popupPosition, {
-      [styles.visible]: isVisible,
-      [styles.fixedPos]: !this.isPreviewMode && !hasAutoPosition,
-      [styles.previewMode]: this.isPreviewMode,
+      [styles.visible]: Boolean(this.translation || error),
+      [styles.fixedPos]: !previewMode && !hasAutoPosition,
+      [styles.previewMode]: previewMode,
     });
 
     return (

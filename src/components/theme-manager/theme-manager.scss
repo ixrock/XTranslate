@@ -1,11 +1,10 @@
 
 .ThemeManager {
   .theme {
-    margin: var(--theme-spacing) 0;
-    margin-bottom: var(--theme-spacing-double) !important;
-    padding: var(--theme-spacing) 0;
+    width: 100%;
+    margin-top: var(--theme-spacing);
+    padding-top: var(--theme-spacing);
     border-top: 1px solid var(--theme-border-color);
-    border-bottom: 1px solid var(--theme-border-color);
 
     > .flex {
       padding: var(--theme-spacing);

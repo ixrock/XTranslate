@@ -3,6 +3,7 @@ import "./theme-manager.scss";
 import React from "react";
 import { observer } from "mobx-react";
 import { action } from "mobx";
+import { settingsStore } from "../settings/settings.storage";
 import { customFont, CustomFontStorageModel, themeStorage, ThemeStorageModel, themeStore } from "./theme.storage";
 import { pageManager } from "../app/page-manager";
 import { Popup } from "../popup";
@@ -18,6 +19,7 @@ import { getMessage } from "../../i18n";
 import { Icon } from "../icon";
 import { base64Encode } from "../../utils";
 import { SettingsPopup } from "../settings/settings_popup";
+import { ShowHideMore } from "../show-hide-more";
 
 @observer
 export class ThemeManager extends React.Component {
@@ -108,178 +110,167 @@ export class ThemeManager extends React.Component {
     )
   }
 
-  render() {
+  renderAdvancedPopupCustomize() {
     const theme = themeStore.data;
     const isDefault = themeStorage.isDefaultValue(theme) && customFont.isDefaultValue(this.customFont);
+
     return (
-      <div className="ThemeManager flex column gaps">
-        <Popup
-          previewMode
-          style={{ position: "sticky", top: 20 }}
-          translation={Popup.translationMock}
-          error={null}
-          lastParams={null}
-        />
-        <br/>
-        <SettingsPopup/>
-
-        <div className="theme">
-          <div className="flex gaps auto">
-            <div className="box">
-              <SubTitle>{getMessage("sub_header_background")}</SubTitle>
-              <div className="flex gaps align-center">
-                <span className="heading">{getMessage("background_color")}</span>
-                <div className="flex align-center">
-                  <ColorPicker
-                    value={theme.bgcMain}
-                    onChange={v => theme.bgcMain = v}
-                  />
-                  <ColorPicker
-                    value={theme.bgcSecondary}
-                    onChange={v => theme.bgcSecondary = v}
-                    disabled={!theme.bgcLinear}
-                  />
-                </div>
-                <Checkbox
-                  label={getMessage("background_linear_gradient")}
-                  checked={theme.bgcLinear}
-                  onChange={v => theme.bgcLinear = v}
-                />
-              </div>
-            </div>
-            <div className="box">
-              <SubTitle>{getMessage("sub_header_box_shadow")}</SubTitle>
-              <div className="flex gaps align-center">
-                <NumberInput
-                  className="box grow"
-                  min={0} max={100}
-                  value={theme.boxShadowBlur}
-                  onChange={v => theme.boxShadowBlur = v}
-                />
-                <span className="heading">{getMessage("box_shadow_color")}</span>
+      <div className="theme">
+        <div className="flex gaps auto">
+          <div className="box">
+            <SubTitle>{getMessage("sub_header_background")}</SubTitle>
+            <div className="flex gaps align-center">
+              <span className="heading">{getMessage("background_color")}</span>
+              <div className="flex align-center">
                 <ColorPicker
-                  position={{ bottom: true, right: true }}
-                  value={theme.boxShadowColor}
-                  onChange={v => theme.boxShadowColor = v}
+                  value={theme.bgcMain}
+                  onChange={v => theme.bgcMain = v}
                 />
-                <Checkbox
-                  label={getMessage("box_shadow_inner")}
-                  checked={theme.boxShadowInner}
-                  onChange={v => theme.boxShadowInner = v}
+                <ColorPicker
+                  value={theme.bgcSecondary}
+                  onChange={v => theme.bgcSecondary = v}
+                  disabled={!theme.bgcLinear}
                 />
               </div>
+              <Checkbox
+                label={getMessage("background_linear_gradient")}
+                checked={theme.bgcLinear}
+                onChange={v => theme.bgcLinear = v}
+              />
             </div>
           </div>
-
-          <SubTitle>{getMessage("sub_header_text")}</SubTitle>
-
-          <div className="flex gaps align-center">
-            <span className="heading">{getMessage("text_color")}</span>
-            <ColorPicker
-              value={theme.textColor}
-              onChange={v => theme.textColor = v}
-            />
-            <span className="heading">{getMessage("text_size")}</span>
-            <NumberInput
-              className="box grow"
-              min={10} max={50}
-              value={theme.fontSize}
-              onChange={v => theme.fontSize = v}
-            />
-            <span className="heading">{getMessage("text_font_family")}</span>
-            {this.renderFontsSelect()}
+          <div className="box">
+            <SubTitle>{getMessage("sub_header_box_shadow")}</SubTitle>
+            <div className="flex gaps align-center">
+              <NumberInput
+                className="box grow"
+                min={0} max={100}
+                value={theme.boxShadowBlur}
+                onChange={v => theme.boxShadowBlur = v}
+              />
+              <span className="heading">{getMessage("box_shadow_color")}</span>
+              <ColorPicker
+                position={{ bottom: true, right: true }}
+                value={theme.boxShadowColor}
+                onChange={v => theme.boxShadowColor = v}
+              />
+              <Checkbox
+                label={getMessage("box_shadow_inner")}
+                checked={theme.boxShadowInner}
+                onChange={v => theme.boxShadowInner = v}
+              />
+            </div>
           </div>
-          <div className="flex gaps align-center">
-            <span className="heading">{getMessage("text_shadow")}</span>
-            <NumberInput
-              title={getMessage("text_shadow_size")}
-              value={theme.textShadowRadius}
-              onChange={v => theme.textShadowRadius = v}
-            />
-            <NumberInput
-              title={getMessage("text_shadow_offset_x")}
-              value={theme.textShadowOffsetX}
-              onChange={v => theme.textShadowOffsetX = v}
-            />
-            <NumberInput
-              title={getMessage("text_shadow_offset_y")}
-              value={theme.textShadowOffsetY}
-              onChange={v => theme.textShadowOffsetY = v}
-            />
-            <span className="heading">{getMessage("text_shadow_color")}</span>
-            <ColorPicker
-              position={{ bottom: true, right: true }}
-              value={theme.textShadowColor}
-              onChange={v => theme.textShadowColor = v}
-            />
-          </div>
+        </div>
 
-          <SubTitle>{getMessage("sub_header_border")}</SubTitle>
+        <SubTitle>{getMessage("sub_header_text")}</SubTitle>
 
-          <div className="flex gaps align-center">
-            <span className="heading">{getMessage("border_width")}</span>
-            <NumberInput
-              className="box grow"
-              min={0} max={25}
-              value={theme.borderWidth}
-              onChange={v => theme.borderWidth = v}
-            />
-            <span className="heading">{getMessage("border_style")}</span>
-            {this.renderPopupBorderStyles()}
-            <span className="heading">{getMessage("border_color")}</span>
-            <ColorPicker
-              position={{ bottom: true, right: true }}
-              value={theme.borderColor}
-              onChange={v => theme.borderColor = v}/>
-          </div>
-          <div className="flex gaps align-center">
-            <span className="heading">{getMessage("border_radius")}</span>
-            <Slider
-              min={0} max={50}
-              className="box grow"
-              value={theme.borderRadius}
-              onChange={v => theme.borderRadius = v}
-            />
-          </div>
+        <div className="flex gaps align-center">
+          <span className="heading">{getMessage("text_color")}</span>
+          <ColorPicker
+            value={theme.textColor}
+            onChange={v => theme.textColor = v}
+          />
+          <span className="heading">{getMessage("text_size")}</span>
+          <NumberInput
+            className="box grow"
+            min={10} max={50}
+            value={theme.fontSize}
+            onChange={v => theme.fontSize = v}
+          />
+          <span className="heading">{getMessage("text_font_family")}</span>
+          {this.renderFontsSelect()}
+        </div>
+        <div className="flex gaps align-center">
+          <span className="heading">{getMessage("text_shadow")}</span>
+          <NumberInput
+            title={getMessage("text_shadow_size")}
+            value={theme.textShadowRadius}
+            onChange={v => theme.textShadowRadius = v}
+          />
+          <NumberInput
+            title={getMessage("text_shadow_offset_x")}
+            value={theme.textShadowOffsetX}
+            onChange={v => theme.textShadowOffsetX = v}
+          />
+          <NumberInput
+            title={getMessage("text_shadow_offset_y")}
+            value={theme.textShadowOffsetY}
+            onChange={v => theme.textShadowOffsetY = v}
+          />
+          <span className="heading">{getMessage("text_shadow_color")}</span>
+          <ColorPicker
+            position={{ bottom: true, right: true }}
+            value={theme.textShadowColor}
+            onChange={v => theme.textShadowColor = v}
+          />
+        </div>
 
-          <SubTitle>{getMessage("sub_header_box_size")}</SubTitle>
+        <SubTitle>{getMessage("sub_header_border")}</SubTitle>
 
-          <div className="flex gaps align-center">
-            <span className="heading">{getMessage("box_size_min_width")}</span>
-            <Slider
-              className="box grow"
-              min={0} max={500} step={50}
-              value={theme.minWidth}
-              onChange={v => theme.minWidth = v}
-              formatTitle={this.formatMinMaxTitle}
-            />
-            <span className="heading">{getMessage("box_size_min_height")}</span>
-            <Slider
-              className="box grow"
-              min={0} max={500} step={50}
-              value={theme.minHeight}
-              onChange={v => theme.minHeight = v}
-              formatTitle={this.formatMinMaxTitle}
-            />
-          </div>
-          <div className="flex gaps align-center">
-            <span className="heading">{getMessage("box_size_max_width")}</span>
-            <Slider
-              className="box grow"
-              min={0} max={500} step={50}
-              value={theme.maxWidth}
-              onChange={v => theme.maxWidth = v}
-              formatTitle={this.formatMinMaxTitle}
-            />
-            <span className="heading">{getMessage("box_size_max_height")}</span>
-            <Slider
-              className="box grow"
-              min={0} max={500} step={50}
-              value={theme.maxHeight}
-              onChange={v => theme.maxHeight = v}
-              formatTitle={this.formatMinMaxTitle}
-            />
-          </div>
+        <div className="flex gaps align-center">
+          <span className="heading">{getMessage("border_width")}</span>
+          <NumberInput
+            className="box grow"
+            min={0} max={25}
+            value={theme.borderWidth}
+            onChange={v => theme.borderWidth = v}
+          />
+          <span className="heading">{getMessage("border_style")}</span>
+          {this.renderPopupBorderStyles()}
+          <span className="heading">{getMessage("border_color")}</span>
+          <ColorPicker
+            position={{ bottom: true, right: true }}
+            value={theme.borderColor}
+            onChange={v => theme.borderColor = v}/>
+        </div>
+        <div className="flex gaps align-center">
+          <span className="heading">{getMessage("border_radius")}</span>
+          <Slider
+            min={0} max={50}
+            className="box grow"
+            value={theme.borderRadius}
+            onChange={v => theme.borderRadius = v}
+          />
+        </div>
+
+        <SubTitle>{getMessage("sub_header_box_size")}</SubTitle>
+
+        <div className="flex gaps align-center">
+          <span className="heading">{getMessage("box_size_min_width")}</span>
+          <Slider
+            className="box grow"
+            min={0} max={500} step={50}
+            value={theme.minWidth}
+            onChange={v => theme.minWidth = v}
+            formatTitle={this.formatMinMaxTitle}
+          />
+          <span className="heading">{getMessage("box_size_min_height")}</span>
+          <Slider
+            className="box grow"
+            min={0} max={500} step={50}
+            value={theme.minHeight}
+            onChange={v => theme.minHeight = v}
+            formatTitle={this.formatMinMaxTitle}
+          />
+        </div>
+        <div className="flex gaps align-center">
+          <span className="heading">{getMessage("box_size_max_width")}</span>
+          <Slider
+            className="box grow"
+            min={0} max={500} step={50}
+            value={theme.maxWidth}
+            onChange={v => theme.maxWidth = v}
+            formatTitle={this.formatMinMaxTitle}
+          />
+          <span className="heading">{getMessage("box_size_max_height")}</span>
+          <Slider
+            className="box grow"
+            min={0} max={500} step={50}
+            value={theme.maxHeight}
+            onChange={v => theme.maxHeight = v}
+            formatTitle={this.formatMinMaxTitle}
+          />
         </div>
 
         <div className="reset flex justify-center">
@@ -297,6 +288,24 @@ export class ThemeManager extends React.Component {
             onClick={() => themeStore.reset()}
           />
         </div>
+      </div>
+    )
+  }
+
+  render() {
+    const settings = settingsStore.data;
+    return (
+      <div className="ThemeManager flex column gaps align-center">
+        <Popup
+          previewMode
+          style={{ position: "sticky", top: 20 }}
+          translation={null} error={null} lastParams={null}
+        />
+        <br/>
+        <SettingsPopup/>
+        <ShowHideMore visible={settings.showPopupAdvancedCustomization} onToggle={v => settings.showPopupAdvancedCustomization = v}>
+          {this.renderAdvancedPopupCustomize()}
+        </ShowHideMore>
       </div>
     );
   }

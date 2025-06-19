@@ -29,7 +29,7 @@ settings_title_full_page_see_edit_list = Нажмите для просмотр�
 settings_title_full_page_add_url = Добавить URL
 settings_title_full_page_add_url_error = Попытка добавить некорректный URL
 settings_title_full_page_show_original_onmouseover = Отображать оригинальный текст при наведении курсора мыши
-settings_title_full_page_show_translation_onmouseover = Показать перевод при наведении курсора мыши
+settings_title_full_page_show_translation_onmouseover = Показывать перевод при наведении курсора мыши на текст
 settings_title_full_page_show_replace_texts = Заменять тексты документа на переводы
 settings_title_full_page_show_traffic_save_mode = Режим экономии трафика
 settings_title_full_page_show_traffic_save_mode_info = Сохраняет трафик и переводит только видимые части страницы документа
@@ -77,6 +77,8 @@ reverse_translate_select_placeholder = Язык обратного перево�
 reverse_translate_add_action = Добавить язык обратного перевода: { $lang } -> ? (применимо только в случае когда выбрана опция авто-определения языка)
 reverse_translate_delete_action = Удалить язык обратного перевода
 custom_font_select = Выбрать свой шрифт
+settings_show_more = Показать больше настроек
+settings_show_less = Показать меньше настроек
 
 
 # ___________theme_________________

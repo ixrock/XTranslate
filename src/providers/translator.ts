@@ -101,7 +101,7 @@ export abstract class Translator {
           return result;
         } catch (err) {
           void sendMetric("translate_error", {
-            error: isTranslationError(err) ? err.message : String(err),
+            error: isTranslationError(err) ? err.message : JSON.stringify(err),
             source: this.metricSource,
             provider: this.name,
             lang_from: reqParams.from,
