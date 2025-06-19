@@ -1,0 +1,11 @@
+@use "../mixins" as *;
+
+.ExpandBlock {
+  @include pseudo-link;
+
+  font-size: small;
+  width: auto;
+  display: flex;
+  align-items: center;
+  gap: var(--theme-spacing-half);
+}

@@ -76,6 +76,8 @@ reverse_translate_select_placeholder = Reverse translate language
 reverse_translate_add_action = Add reverse language: { $lang } -> ? (applicable only with "Auto-detect" option)
 reverse_translate_delete_action = Unset reverse translate language
 custom_font_select = Select custom font
+settings_show_more = Show more settings
+settings_show_less = Show less settings
 
 # theme
 popup_play_icon_title = Listen

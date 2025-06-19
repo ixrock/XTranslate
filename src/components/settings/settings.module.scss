@@ -6,20 +6,13 @@
   gap: var(--theme-spacing);
   align-items: flex-start;
 
+  .SubTitle {
+    margin-top: var(--theme-spacing);
+  }
+
   > * {
     display: flex;
     width: 100%;
-  }
-
-  .grid {
-    display: grid;
-    gap: var(--theme-spacing);
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    justify-items: start;
-
-    &:first-child {
-      padding-right: var(--theme-spacing-double);
-    }
   }
 
   .inline {
@@ -53,11 +46,5 @@
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
-  }
-
-  .showAdvanced {
-    @include pseudo-link;
-    font-size: small;
-    width: auto;
   }
 }

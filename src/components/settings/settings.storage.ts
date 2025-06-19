@@ -31,10 +31,11 @@ export const settingsStorage = createStorage("settings", {
     showPopupOnDoubleClick: true,
     showPopupOnHotkey: true,
     showTranslatedFrom: true,
+    showPopupAdvancedCustomization: false,
     rememberLastText: false,
     textInputTranslateDelayMs: 750,
-    showAdvancedProviders: false, // e.g. "advanced" == requires at least api-key from user-input to start working
-    vendor: "google" as ProviderCodeName,
+    showAdvancedProviders: false, // advanced-list requires some setup from the user (e.g. adding api-key)
+    vendor: "bing" as ProviderCodeName,
     langFrom: "auto",
     langTo: navigator.language.split('-')[0],
     langToReverse: "", // applied in case when `langFrom` == "auto" && `langDetected` == `langTo`
@@ -59,6 +60,7 @@ export const settingsStorage = createStorage("settings", {
       showTranslationInDOM: true,
       trafficSaveMode: true,
       alwaysTranslatePages: [],
+      showMore: false,
     },
   }
 });

@@ -24,6 +24,7 @@ import { materialIcons } from "../../common-vars";
 import { Notifications } from "../notifications";
 import { Button } from "../button";
 import { SelectProvider } from "../select-provider";
+import { ShowHideMore } from "../show-hide-more";
 
 @observer
 export class Settings extends React.Component {
@@ -242,15 +243,15 @@ export class Settings extends React.Component {
         <RadioGroup className={styles.providers} value={settings.vendor} onChange={v => settingsStore.setProvider(v)}>
           {providers.map(this.renderProvider, this)}
         </RadioGroup>
-        <a className={`${styles.showAdvanced} flex gaps`} onClick={() => settings.showAdvancedProviders = !settings.showAdvancedProviders}>
-          <Icon material={settings.showAdvancedProviders ? "expand_less" : "expand_more"}/>
-          <span>
-              {!settings.showAdvancedProviders && getMessage("settings_title_advanced_providers_list_show")}
-            {settings.showAdvancedProviders && getMessage("settings_title_advanced_providers_list_hide")}
-            </span>
-        </a>
-
-        <SubTitle>{getMessage("settings_title_full_page_translation")}</SubTitle>
+        <ShowHideMore
+          visible={settings.showAdvancedProviders}
+          onToggle={visible => settings.showAdvancedProviders = visible}
+          label={settings.showAdvancedProviders
+            ? getMessage("settings_title_advanced_providers_list_hide")
+            : getMessage("settings_title_advanced_providers_list_show")
+          }
+        />
+        <SubTitle className={styles.SubTitle}>{getMessage("settings_title_full_page_translation")}</SubTitle>
         <div className="flex gaps align-center">
           <SelectLanguage
             className="box grow"
@@ -265,49 +266,53 @@ export class Settings extends React.Component {
             filter={(provider) => provider.isAvailable() && provider.canTranslateFullPage()}
           />
         </div>
-        <div className="alwaysTranslatePages flex gaps align-center">
-          <span>{getMessage("settings_title_full_page_always_translate")} <b>({alwaysTranslatePages.length})</b></span>
-          <ReactSelect
-            value={null}
-            className="box grow"
-            menuNowrap={false}
-            closeMenuOnSelect={false}
-            placeholder={getMessage("settings_title_full_page_see_edit_list")}
-            noOptionsMessage={() => getMessage("settings_title_full_page_empty_list")}
-            options={alwaysTranslatePages.map(value => ({ value, label: value }))}
-            formatOptionLabel={({ value }: ReactSelectOption<string>) => this.formatPageUrlLabel(value, alwaysTranslatePages)}
-          />
-          <Button
-            primary
-            label={getMessage("settings_title_full_page_add_url")}
-            onClick={() => this.addAlwaysTranslatePage()}
-          />
-        </div>
-        <div className={styles.grid}>
-          <Checkbox
-            label={getMessage("settings_title_full_page_show_original_onmouseover")}
-            checked={fullPageTranslation.showOriginalOnHover}
-            onChange={val => fullPageTranslation.showOriginalOnHover = val}
-          />
-          <Checkbox
-            label={getMessage("settings_title_full_page_show_translation_onmouseover")}
-            checked={fullPageTranslation.showTranslationOnHover}
-            onChange={val => fullPageTranslation.showTranslationOnHover = val}
-          />
-          <Checkbox
-            label={getMessage("settings_title_full_page_show_replace_texts")}
-            checked={fullPageTranslation.showTranslationInDOM}
-            onChange={val => fullPageTranslation.showTranslationInDOM = val}
-          />
-          <Checkbox
-            label={getMessage("settings_title_full_page_show_traffic_save_mode")}
-            tooltip={getMessage("settings_title_full_page_show_traffic_save_mode_info")}
-            checked={fullPageTranslation.trafficSaveMode}
-            onChange={val => fullPageTranslation.trafficSaveMode = val}
-          />
-        </div>
+        <ShowHideMore visible={fullPageTranslation.showMore} onToggle={v => fullPageTranslation.showMore = v}>
+          <div className="alwaysTranslatePages flex gaps align-center">
+            <span>{getMessage("settings_title_full_page_always_translate")} <b>({alwaysTranslatePages.length})</b></span>
+            <ReactSelect
+              value={null}
+              className="box grow"
+              menuNowrap={false}
+              closeMenuOnSelect={false}
+              placeholder={getMessage("settings_title_full_page_see_edit_list")}
+              noOptionsMessage={() => getMessage("settings_title_full_page_empty_list")}
+              options={alwaysTranslatePages.map(value => ({ value, label: value }))}
+              formatOptionLabel={({ value }: ReactSelectOption<string>) => this.formatPageUrlLabel(value, alwaysTranslatePages)}
+            />
+            <Button
+              primary
+              label={getMessage("settings_title_full_page_add_url")}
+              onClick={() => this.addAlwaysTranslatePage()}
+            />
+          </div>
+          <div className="settings-fullpage flex column gaps align-start">
+            <Checkbox
+              label={getMessage("settings_title_full_page_show_original_onmouseover")}
+              checked={fullPageTranslation.showOriginalOnHover}
+              onChange={val => fullPageTranslation.showOriginalOnHover = val}
+            />
+            <Checkbox
+              label={getMessage("settings_title_full_page_show_translation_onmouseover")}
+              checked={fullPageTranslation.showTranslationOnHover}
+              onChange={val => fullPageTranslation.showTranslationOnHover = val}
+            />
+            <Checkbox
+              label={getMessage("settings_title_full_page_show_replace_texts")}
+              checked={fullPageTranslation.showTranslationInDOM}
+              onChange={val => fullPageTranslation.showTranslationInDOM = val}
+            />
+            <Checkbox
+              label={getMessage("settings_title_full_page_show_traffic_save_mode")}
+              tooltip={getMessage("settings_title_full_page_show_traffic_save_mode_info")}
+              checked={fullPageTranslation.trafficSaveMode}
+              onChange={val => fullPageTranslation.trafficSaveMode = val}
+            />
+          </div>
+        </ShowHideMore>
 
-        <SubTitle>{getMessage("settings_title_appearance")}</SubTitle>
+        <SubTitle className={styles.SubTitle}>
+          {getMessage("setting_title_translator_service")}
+        </SubTitle>
         <Checkbox
           className={styles.inline}
           label={getMessage("pdf_use_custom_viewer")}
@@ -315,7 +320,7 @@ export class Settings extends React.Component {
           checked={settings.customPdfViewer}
           onChange={v => settings.customPdfViewer = v}
         />
-        <div className="flex gaps">
+        <div className="translation-icon flex gaps">
           <Checkbox
             label={getMessage("display_icon_near_selection")}
             checked={settings.showIconNearSelection}
@@ -332,8 +337,6 @@ export class Settings extends React.Component {
             />
           )}
         </div>
-
-        <SubTitle>{getMessage("settings_title_tts")}</SubTitle>
         <Checkbox
           className={styles.inline}
           label={getMessage("auto_play_tts")}
