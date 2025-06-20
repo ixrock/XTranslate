@@ -1,36 +1,28 @@
 XTranslate
 ==========
-Chrome-extension for translating foreign languages at the viewing web-page context.
-Translate from 100+ foreign languages to your native directly on web-site you're reading or
-insert text in the action window (via extension's icon on chrome's toolbar).
+Chrome-based browser extension for translating languages.
+Translate single words with dictionary support (Google/Bing) or even full-pages from 100+ foreign languages to your native language.
 
 ![Screenshot](https://github.com/ixrock/XTranslate/blob/master/screenshots/Untitled-1.jpg?raw=true)
-Latest and more [screenshots](./screenshots/README.md).
+See more screenshots [here](./screenshots/README.md).
 
 Features:
 -----------
-1) Many ways to get translation from texts within web page:
-- full-page text translations: enable/disable auto-translation for full webpage, applied per domain (toggle via browser's context-menu per tab or extension's window top-icon)
+1) Multiple ways to get translation from web-pages:
+- full-page text translations: enable/disable auto-translation for full webpage from browser's context-menu or app's action window
 - double-click on the word
-
-Select text and get translation right after one of the following actions:
-- press hotkey defined in extension settings (`Alt + Shift + X` by default)
-- click on the XTranslate icon appeared near selected text
-- release mouse button after selecting a text (this option is turned off by default)
-- write text in the input fields, mouse-over it and press hotkey
-- open extension's window while text selected to get translation
+- mouse-over a block of text and press hotkey defined at the extension settings (`Alt + Shift + X` by default), this works for input/textarea fields too!
+- select a text at the webpage and click the XTranslate (X)-icon appeared close to the text 
+- just right after text selection _(this option is turned off by default)_
+- click by selected text at the page _(this option is turned off by default)_
+- open the app's action window (extension icon at browser's toolbar) and selected text from the page will be sent for translation 
 
 You can get even some translation from images by mouse overing the image element and
-press hotkey (title or alt attributes will be used when applicable).
-With this feature it is possible to get auto-translation by block of text at the page
-just by pressing the hotkey when mouse over it!
+press hotkey (`title` or `alt` attributes will be used when applicable).
 
 1) Translate texts in **PDF** files _(disabled by default)_.\
-This option will replace default chrome-based PDF-viewer and might not work correctly due [CORS](https://developer.mozilla.org/en-US/docs/Glossary/CORS) sometimes.
-
-In order to work with local files (e.g. `file://path/to/file.pdf`) you must allow access for the extension:
-- open extensions page `chrome://extensions/`, find **XTranslate** and click **(Details)** button
-- enable checkbox **"Allow access to file URLs"** 
+This option will replace default browser's PDF-viewer and sometimes might not work correctly due [CORS](https://developer.mozilla.org/en-US/docs/Glossary/CORS).\
+Anyway, even when it's enabled you can re-open PDF document with default viewer by clicking special Chrome-logo icon at PDF's top toolbar.
 
 2) Listen text-to-speech (TTS) for supported translation providers (e.g. `Google`, `OpenAI`)
 
@@ -49,46 +41,35 @@ Install extension:
 -----------
 * [Chrome's Web Store](https://chrome.google.com/webstore/detail/xtranslate/gfgpkepllngchpmcippidfhmbhlljhoo)
 * [Microsoft Edge Add-ons](https://microsoftedge.microsoft.com/addons/detail/cinfaflgbaachkaamaeglolofeahelkd)
-* [Firefox addons](https://addons.mozilla.org/en-GB/firefox/addon/xtranslate-chrome/) _(might be not fully supported)_
+* [Firefox addons](https://addons.mozilla.org/en-GB/firefox/addon/xtranslate-chrome/) _(outdated version)_
 
 Available translation providers:
 -----------
-* [Google](http://translate.google.com/)
-* [Bing](http://bing.com/translator/)
-* [DeepL](https://www.deepl.com/) _(requires own user key, register at https://www.deepl.com/en/signup/)_
-* [OpenAI](https://platform.openai.com) _(see registration steps below)_
-* [Grok](https://grok.com) _(create account at https://console.x.ai, top-up balance and provide api-key)_
-* [DeepSeek](https://platform.deepseek.com) _(register, top-up balance and create api-key)_
+* [Google](http://translate.google.com/) - ready to use after installation
+* [Bing](http://bing.com/translator/) - ready to use after installation
+* [DeepL](https://www.deepl.com/) _([register](https://www.deepl.com/en/signup/) and provide own free api-key)_
+* [OpenAI](https://platform.openai.com) _([register](https://platform.openai.com/), top-up balance and create api-key for the extension)_
+* [Grok](https://grok.com) _([register](https://console.x.ai), top-up balance and create api-key)_
+* [DeepSeek](https://platform.deepseek.com) _([register](https://platform.deepseek.com/), top-up balance and create api-key)_
 
-Steps for access OpenAI translations:
-------
-1) [Sign up](https://platform.openai.com/signup) if not yet registered or go to [OpenAI platform settings](https://platform.openai.com/settings) 
-2) Create api access key to get access for OpenAI translation service results 
-3) Top-up your balance (5$+) and disable credit card's auto-top-up balance at [billing page](https://platform.openai.com/settings/organization/billing/overview) _(recommended)_
-4) Don't forget to adjust [limits settings](https://platform.openai.com/settings/organization/limits) _(recommended)_
+How to enable translator in local HTML/PDF files:
+-----------
+In order to work with local documents (e.g. `file://path/file.pdf`) you must allow access for the extension:
+- open extensions page `chrome://extensions/`, find **XTranslate** and click _[Details]_ button
+- enable checkbox **"Allow access to file URLs"**
 
-Security considerations:
-------
-- OpenAI api key handled via extension-scoped [chrome.storage.local](https://developer.chrome.com/docs/extensions/reference/api/storage) apis
-and used only within `Authorization` header to sign OpenAI API requests (which is not exposed or tracked, even if `webRequest` API enabled in some other malicious extension, [see excluded list of headers](https://developer.chrome.com/docs/extensions/reference/api/webRequest#concepts_and_usage))
-- OpenAI requests goes through official [openai](https://www.npmjs.com/package/openai) NPM-package and running only within background service-worker (`{dangerouslyAllowBrowser: false}`)
-- Don't enter or share your OpenAI key anywhere else except extension's settings page (options page)
-
-For developers and contributors:
+How to build/contribute to project:
 -----------
 
-Install globals _(prerequisites)_:
-1) node.js _(v.20+)_
-2) npm install _(from project root folder)_
+_Prerequisites:_
 
-Steps to **build** (compile) extension:
+1) Install [Node.js](https://nodejs.org/) _(v23+)_
+2) Install project dependencies `npm install`
 
-1) `npm run build`
-2) use `/dist` folder as extension's build source with own `manifest.json`
+_NPM-script commands:_
 
-Other commands to **dev** and **test**:
+1) `npm run dev` - run project in development / watch mode
+2) `npm run build` - compile and pack ready to use extension in `/dist`
+3) `npm run test` - run available unit-tests
 
-1) `npm run dev` - runs project in dev/watch mode
-2) `npm run test` - runs available jest tests
-
-Powered by typescript, react, mobx, webpack, sass, lodash and some others. Made with ♥
+Powered by Typescript, ReactJS, MobX, Webpack, Scss, and some others. Made with ♥
