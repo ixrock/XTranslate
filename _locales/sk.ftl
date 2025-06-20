@@ -76,6 +76,8 @@ reverse_translate_select_placeholder = Spätný preklad jazyka
 reverse_translate_add_action = Pridať reverzný jazyk: { $lang } -> ? (použiteľné len pri voľbe "Automatické zistenie")
 reverse_translate_delete_action = Zrušiť nastavenie jazyka spätného prekladu
 custom_font_select = Select custom font
+settings_show_more = Zobraziť viac nastavení
+settings_show_less = Zobraziť menej nastavení
 
 # theme
 popup_play_icon_title = Prehrať
