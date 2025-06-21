@@ -2,7 +2,7 @@ import * as styles from './notifications.module.scss';
 import React from "react"
 import { reaction } from "mobx";
 import { observer } from "mobx-react"
-import { cssNames, disposer, prevDefault } from "../../utils";
+import { cssNames, disposer, prevDefault } from "@/utils";
 import { IMessage, INotification, notificationsStore } from "./notifications.store";
 import { Animate } from "../animate";
 import { Icon } from "../icon"

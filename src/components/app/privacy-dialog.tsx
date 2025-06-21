@@ -4,11 +4,11 @@ import React from "react";
 import semver from "semver";
 import * as marked from "marked"
 import { observer } from "mobx-react";
-import privacyPolicyMd from "../../../privacy-policy.md"
-import { getManifest } from "../../extension";
-import { createStorage } from "../../storage";
-import { getMessage } from "../../i18n";
-import { cssNames } from "../../utils";
+import privacyPolicyMd from "@/../privacy-policy.md"
+import { getManifest } from "@/extension";
+import { createStorage } from "@/storage";
+import { getMessage } from "@/i18n";
+import { cssNames } from "@/utils";
 import { Dialog, DialogProps } from "../dialog";
 import { Button } from "../button";
 

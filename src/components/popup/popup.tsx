@@ -5,18 +5,18 @@ import { computed, makeObservable } from "mobx";
 import { observer } from "mobx-react";
 import isEqual from "lodash/isEqual";
 import sample from "lodash/sample"
-import LanguagesList from "../../providers/google.json"
-import { materialIcons } from "../../common-vars";
-import { cssNames, prevDefault } from "../../utils";
-import { toCssColor } from "../../utils/toCssColor";
-import { TranslatePayload } from "../../extension";
-import { getTranslator, getTranslators, isRTL, ITranslationError, ITranslationResult, ProviderCodeName } from "../../providers";
+import LanguagesList from "@/providers/google.json"
+import { materialIcons } from "@/common-vars";
+import { cssNames, prevDefault } from "@/utils";
+import { toCssColor } from "@/utils/toCssColor";
+import { TranslatePayload } from "@/extension";
+import { getTranslator, getTranslators, isRTL, ITranslationError, ITranslationResult, ProviderCodeName } from "@/providers";
 import { Icon } from "../icon";
 import { settingsStore } from "../settings/settings.storage";
 import { themeStore } from "../theme-manager/theme.storage";
 import { isFavorite } from "../user-history/favorites.storage";
-import { getLocale, getMessage } from "../../i18n";
-import { saveToFavoritesAction } from "../../background/history.bgc";
+import { getLocale, getMessage } from "@/i18n";
+import { saveToFavoritesAction } from "@/background/history.bgc";
 import { CopyToClipboardIcon } from "../copy-to-clipboard-icon";
 
 export interface PopupProps extends React.HTMLProps<any> {

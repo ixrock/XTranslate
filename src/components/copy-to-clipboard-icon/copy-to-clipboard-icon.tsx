@@ -1,8 +1,8 @@
 import React from "react";
-import { materialIcons } from "../../common-vars";
-import { getTranslator, isTranslationResult, ITranslationResult } from "../../providers/translator";
-import { cssNames, IClassName } from "../../utils";
-import { getMessage } from "../../i18n";
+import { materialIcons } from "@/common-vars";
+import { getTranslator, isTranslationResult, ITranslationResult } from "@/providers/translator";
+import { cssNames, IClassName } from "@/utils";
+import { getMessage } from "@/i18n";
 import { Icon, IconProps } from "../icon";
 
 export interface CopyToClipboardIconProps {

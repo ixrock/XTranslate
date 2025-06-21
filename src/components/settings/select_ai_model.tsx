@@ -1,7 +1,7 @@
 import React from "react";
 import { observer } from "mobx-react";
 import { ReactSelect, ReactSelectOption, FormatOptionLabelMeta } from "../select";
-import { getMessage } from "../../i18n";
+import { getMessage } from "@/i18n";
 
 export type AIModelMap = Record<string, string>;
 

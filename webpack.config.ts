@@ -56,6 +56,9 @@ function webpackBaseConfig({ mode }: WebpackConfigEnv): webpack.Configuration {
 
     resolve: {
       extensions: ['.ts', '.tsx', '.js', '.mjs', '.json'],
+      alias: {
+        "@": srcPath,
+      },
       fallback: {
         // ignore browser polyfill warnings
         zlib: false,

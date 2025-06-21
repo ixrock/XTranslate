@@ -3,7 +3,7 @@ import * as styles from "./search-input.module.scss";
 import React from "react";
 import { Input, InputProps } from "./input";
 import { Icon } from "../icon";
-import { bindGlobalHotkey, cssNames, disposer, isHotkeyPressed, SimpleHotkey } from "../../utils";
+import { bindGlobalHotkey, cssNames, disposer, isHotkeyPressed, SimpleHotkey } from "@/utils";
 
 export interface SearchInputProps extends InputProps {
   showSearchIcon?: boolean;

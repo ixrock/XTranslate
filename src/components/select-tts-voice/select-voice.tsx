@@ -3,9 +3,9 @@ import React from "react";
 import { makeObservable, observable } from "mobx";
 import { observer } from "mobx-react";
 import { ReactSelect, ReactSelectOption } from "../select";
-import { getMessage } from "../../i18n";
-import { getTTSVoices, TTSVoice } from "../../tts";
-import { cssNames, IClassName } from "../../utils";
+import { getMessage } from "@/i18n";
+import { getTTSVoices, TTSVoice } from "@/tts";
+import { cssNames, IClassName } from "@/utils";
 
 export interface SelectVoiceProps {
   className?: IClassName;

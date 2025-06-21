@@ -1,7 +1,7 @@
-import type { ITranslationResult } from "../../providers";
+import type { ITranslationResult } from "@/providers";
 import type { HistoryRecord, IHistoryItem } from "./history.storage";
 import { getHistoryItemId } from "./history.storage";
-import { createStorage } from "../../storage";
+import { createStorage } from "@/storage";
 
 export interface FavoriteStorageModel {
   favorites: HistoryRecord<boolean>;

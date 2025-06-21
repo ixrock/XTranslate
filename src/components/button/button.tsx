@@ -1,6 +1,6 @@
 import * as styles from "./button.module.scss";
 import React, { ButtonHTMLAttributes, ReactNode } from "react";
-import { cssNames } from "../../utils";
+import { cssNames } from "@/utils";
 
 export interface ButtonProps extends ButtonHTMLAttributes<any> {
   label?: React.ReactNode;

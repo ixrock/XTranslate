@@ -1,7 +1,7 @@
 import { action, makeObservable } from "mobx";
-import { Hotkey } from "../../utils/parseHotkey";
-import { createStorage } from "../../storage";
-import { DeepSeekAIModel, getTranslator, GrokAIModel, OpenAIModel, OpenAIVoiceTTS, ProviderCodeName } from "../../providers";
+import { Hotkey } from "@/utils/parseHotkey";
+import { createStorage } from "@/storage";
+import { DeepSeekAIModel, getTranslator, GrokAIModel, OpenAIModel, OpenAIVoiceTTS, ProviderCodeName } from "@/providers";
 
 export type PopupPosition = "" /*auto*/ | "left top" | "left bottom" | "right top" | "right bottom";
 

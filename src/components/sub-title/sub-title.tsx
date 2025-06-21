@@ -1,6 +1,6 @@
 import * as styles from "./sub-title.module.scss"
 import React from "react"
-import { cssNames } from "../../utils";
+import { cssNames } from "@/utils";
 
 export interface Props extends React.HTMLProps<HTMLHeadingElement> {
 }
