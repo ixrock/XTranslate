@@ -4,5 +4,452 @@
   },
   "description": {
     "message": "Prevedite tekst sa veb stranice, prilagodite izgled iskačućeg prozora i još mnogo toga."
+  },
+  "open_in_window": {
+    "message": "Otvori u zasebnom prozoru"
+  },
+  "tab_settings": {
+    "message": "Podešavanja"
+  },
+  "tab_theme": {
+    "message": "Iskačući prozor"
+  },
+  "tab_text_input": {
+    "message": "Prevod"
+  },
+  "tab_history": {
+    "message": "Istorija"
+  },
+  "setting_title_common": {
+    "message": "Opšte"
+  },
+  "setting_title_text_input": {
+    "message": "Prevod"
+  },
+  "setting_title_popup": {
+    "message": "Iskačući prozor"
+  },
+  "setting_title_translator_service": {
+    "message": "Prevodilac"
+  },
+  "settings_title_tts": {
+    "message": "Pretvaranje teksta u govor (Text-to-speech, TTS)"
+  },
+  "settings_title_appearance": {
+    "message": "Izgled"
+  },
+  "auto_play_tts": {
+    "message": "Automatski reprodukuj pretvaranje teksta u govor"
+  },
+  "use_chrome_tts": {
+    "message": "Koristi Chrome mehanizam za pretvaranje teksta u govor"
+  },
+  "use_chrome_tts_tooltip_info": {
+    "message": "Ova opcija je automatski omogućena kada prevodilac nema dostupan TTS mehanizam"
+  },
+  "use_dark_theme": {
+    "message": "Promeni temu"
+  },
+  "tts_default_system_voice": {
+    "message": "Podrazumevani sistemski glas"
+  },
+  "tts_select_voice_title": {
+    "message": "Izaberi glas"
+  },
+  "tts_play_demo_sound": {
+    "message": "Pusti demo glas"
+  },
+  "tts_play_demo_sound_edit": {
+    "message": "Promeni tekst za zvučni demo"
+  },
+  "import_export_settings": {
+    "message": "Import/Export podešavanja"
+  },
+  "export_settings_button_label": {
+    "message": "Export podešavanja"
+  },
+  "import_settings_button_label": {
+    "message": "Import podešavanja"
+  },
+  "import_incorrect_file_format": {
+    "message": "Neispravan format (trebalo bi da bude { $fileNameJson })"
+  },
+  "imported_setting_successful": {
+    "message": "Podešavanja sa ključem { $key } su uspešno import-ovana"
+  },
+  "display_icon_near_selection": {
+    "message": "Prikaži ikonicu pored izabranog teksta"
+  },
+  "show_tts_icon_inside_popup": {
+    "message": "Prikaži ikonicu za pretvaranje teksta u govor"
+  },
+  "show_select_provider_icon_in_popup": {
+    "message": "Prikaži ikonicu sledećeg prevodioca"
+  },
+  "show_copy_translation_icon": {
+    "message": "Prikaži ikonicu za kopiranje prevoda"
+  },
+  "show_save_as_favorite_icon": {
+    "message": "Prikaži ikonicu za čuvanje u omiljeno"
+  },
+  "show_close_popup_button": {
+    "message": "Prikaži ikonicu za zatvaranje iskačućeg prozora u desnom uglu"
+  },
+  "show_detected_language_block": {
+    "message": "Prikaži otkriveni jezik"
+  },
+  "display_on_click_by_selected_text": {
+    "message": "Prikaži klikom na izabrani tekst"
+  },
+  "display_popup_after_text_selected": {
+    "message": "Prikaži nakon izbora teksta"
+  },
+  "display_popup_on_double_click": {
+    "message": "Prikaži dvoklikom na reč"
+  },
+  "display_popup_on_hotkey": {
+    "message": "Prikaži pritiskom prečice"
+  },
+  "remember_last_typed_text": {
+    "message": "Zapamti poslednji ukucani tekst"
+  },
+  "sub_header_quick_access_hotkey": {
+    "message": "Podesi prečicu"
+  },
+  "quick_access_configure_link": {
+    "message": "Podešavanje prečice na tastaturi za brzi pristup ovom prozoru"
+  },
+  "swap_languages": {
+    "message": "Zameni jezike"
+  },
+  "popup_position_title": {
+    "message": "Položaj"
+  },
+  "popup_position_auto": {
+    "message": "Automatski (poravnato sa tekstom)"
+  },
+  "popup_position_left_top": {
+    "message": "Gornji levi ugao"
+  },
+  "popup_position_right_top": {
+    "message": "Gornji desni ugao"
+  },
+  "popup_position_left_bottom": {
+    "message": "Donji levi ugao"
+  },
+  "popup_position_right_bottom": {
+    "message": "Donji desni ugao"
+  },
+  "translation_delay": {
+    "message": "Kašnjenje prevoda"
+  },
+  "translation_delay_info": {
+    "message": "Ako često nailazite na blokiranje (greška 503) od Google-a ili drugih servisa, postavite veću vrednost kašnjenja"
+  },
+  "reverse_translate_select_placeholder": {
+    "message": "Jezik za obrnuti prevod"
+  },
+  "reverse_translate_add_action": {
+    "message": "Dodaj jezik za obrnuti prevod: { $lang } -> ? (primenljivo samo kad je 'Otkrivanje jezika' uključeno)"
+  },
+  "reverse_translate_delete_action": {
+    "message": "Obriši jezik za obrnuti prevod"
+  },
+  "custom_font_select": {
+    "message": "Izaberi prilagođeni font"
+  },
+  "popup_play_icon_title": {
+    "message": "Preslušaj"
+  },
+  "popup_copy_translation_title": {
+    "message": "Kopiraj prevod"
+  },
+  "popup_next_vendor_icon_title": {
+    "message": "Prevedi pomoću: { $translator }"
+  },
+  "popup_demo_translation": {
+    "message": "Prevedeni tekst"
+  },
+  "popup_demo_dictionary_noun": {
+    "message": "imenica"
+  },
+  "popup_demo_dictionary_values": {
+    "message": "Reč 1, reč 2, itd."
+  },
+  "sub_header_background": {
+    "message": "Pozadina"
+  },
+  "sub_header_box_shadow": {
+    "message": "Senka"
+  },
+  "sub_header_text": {
+    "message": "Tekst"
+  },
+  "sub_header_border": {
+    "message": "Ivica"
+  },
+  "sub_header_box_size": {
+    "message": "Veličina okvira"
+  },
+  "background_color": {
+    "message": "Boja"
+  },
+  "background_linear_gradient": {
+    "message": "Linearno"
+  },
+  "box_shadow_color": {
+    "message": "Boja"
+  },
+  "box_shadow_inner": {
+    "message": "Unutra"
+  },
+  "text_size": {
+    "message": "Veličina"
+  },
+  "text_font_family": {
+    "message": "Font"
+  },
+  "text_color": {
+    "message": "Boja"
+  },
+  "text_shadow": {
+    "message": "Senka"
+  },
+  "text_shadow_size": {
+    "message": "Zamagljivanje"
+  },
+  "text_shadow_offset_x": {
+    "message": "Horizontalno odstupanje"
+  },
+  "text_shadow_offset_y": {
+    "message": "Vertikalno odstupanje"
+  },
+  "text_shadow_color": {
+    "message": "Boja"
+  },
+  "border_width": {
+    "message": "Širina"
+  },
+  "border_style": {
+    "message": "Stil"
+  },
+  "border_color": {
+    "message": "Boja"
+  },
+  "border_radius": {
+    "message": "Poluprečnik"
+  },
+  "box_size_min_width": {
+    "message": "Minimalna širina"
+  },
+  "box_size_min_height": {
+    "message": "Minimalna visina"
+  },
+  "box_size_max_width": {
+    "message": "Maksimalna širina"
+  },
+  "box_size_max_height": {
+    "message": "Maksimalna visina"
+  },
+  "reset_to_default_button_text": {
+    "message": "Vrati na podrazumevano"
+  },
+  "text_field_placeholder": {
+    "message": "Započnite kucanje da biste dobili prevod"
+  },
+  "translated_with": {
+    "message": "Prevedeno pomoću: { $translator } ({ $lang })"
+  },
+  "translated_from": {
+    "message": "Prevedeno sa: { $lang }"
+  },
+  "translate_also_from": {
+    "message": "Prevedi i sa"
+  },
+  "spell_correction": {
+    "message": "Da li ste mislili: { $suggestion }?"
+  },
+  "text_input_translation_hint": {
+    "message": "{ $hotkey } za trenutni prevod, kašnjenje: { $timeout }ms"
+  },
+  "history_enabled_flag": {
+    "message": "Omogućeno"
+  },
+  "history_settings_save_words_only": {
+    "message": "Sačuvaj samo reči iz rečnika"
+  },
+  "history_search_input_placeholder": {
+    "message": "Pretraži u istoriji"
+  },
+  "history_clear_period_hour": {
+    "message": "Protekli sat"
+  },
+  "history_clear_period_day": {
+    "message": "Protekli dan"
+  },
+  "history_clear_period_month": {
+    "message": "Protekli mesec"
+  },
+  "history_clear_period_year": {
+    "message": "Protekla godina"
+  },
+  "history_clear_period_all": {
+    "message": "Sve"
+  },
+  "history_button_clear": {
+    "message": "Obriši istoriju"
+  },
+  "history_button_show_more": {
+    "message": "Prikaži više"
+  },
+  "history_export_entries": {
+    "message": "Export-uj: { $format }"
+  },
+  "history_import_entries": {
+    "message": "Import-uj: { $format }"
+  },
+  "history_page_size": {
+    "message": "Veličina stranice"
+  },
+  "history_icon_tooltip_search": {
+    "message": "Pretraga"
+  },
+  "history_icon_tooltip_imp_exp": {
+    "message": "Import / Export"
+  },
+  "history_icon_tooltip_settings": {
+    "message": "Podešavanja"
+  },
+  "history_show_favorites_only": {
+    "message": "Prikaži samo omiljeno"
+  },
+  "history_mark_as_favorite": {
+    "message": "Obeleži kao omiljeno"
+  },
+  "history_unmark_as_favorite": {
+    "message": "Ukloni iz omiljenog"
+  },
+  "history_import_success": {
+    "message": "Uspešno uvezenih stavki istorije: { $itemsCount }"
+  },
+  "history_import_file_error": {
+    "message": "Greška u čitanju datoteke '{ $fileName }': { $errorInfo }"
+  },
+  "context_menu_translate_full_page": {
+    "message": "Prevedi na { $lang }"
+  },
+  "context_menu_translate_selection": {
+    "message": "Prevedi { $selection } pomoću: { $translator }"
+  },
+  "share_with_friends": {
+    "message": "Ako vam se sviđa aplikacija, podelite je sa prijateljima:"
+  },
+  "translation_data_failed": {
+    "message": "Učitavanje podataka nije uspelo"
+  },
+  "rate_app_info1": {
+    "message": "Uživate u korišćenju aplikacije? Ocenite nas sa 5 zvezdica!"
+  },
+  "rate_app_info2": {
+    "message": "To će pomoći drugim korisnicima da pronađu proširenje u veb prodavnici."
+  },
+  "rate_app_button": {
+    "message": "Ocenite u veb prodavnici"
+  },
+  "rate_app_button_later": {
+    "message": "Podseti me kasnije"
+  },
+  "target_lang_placeholder": {
+    "message": "Ciljani jezici"
+  },
+  "source_lang_placeholder": {
+    "message": "Izvorni jezici"
+  },
+  "favorites_lang_title": {
+    "message": "Omiljeno"
+  },
+  "favorites_info_tooltip": {
+    "message": "Da biste menjali omiljene jezike (lista na vrhu), koristite { $hotkey } + klik"
+  },
+  "donate_title": {
+    "message": "Podrška developera"
+  },
+  "donate_description": {
+    "message": "Ako vam se sviđa aplikacija, možete donirati developerima. Hvala!"
+  },
+  "service_unavailable": {
+    "message": "Servis nije dostupan. Probajte ponovo za 5-25 minuta. Ako se to često dešava, povećajte vrednost kašnjenja prevoda u podešavanjima."
+  },
+  "service_confirm_not_a_robot": {
+    "message": "Možete otići na { $link } i potvrditi da niste robot."
+  },
+  "privacy_policy_title_updated": {
+    "message": "Politika privatnosti je ažurirana"
+  },
+  "privacy_policy_accept_terms": {
+    "message": "Prihvatite odredbe i uslove"
+  },
+  "mellowtel_greetings": {
+    "message": "Pozdrav, prijatelju 👋"
+  },
+  "mellowtel_text1": {
+    "message": "Kao što verovatno znate, ovo proširenje je besplatno i dostupno svima... ali da bi nastavili, potrebno je da uradite par stvari!"
+  },
+  "mellowtel_text2": {
+    "message": "Nova verzija uključuje open-source { $link } biblioteku. Ova biblioteka vam omogućava da podelite nekorišćeni internet sa pouzdanim AI laboratorijama i startup-ima koji ga koriste da treniraju svoje modele."
+  },
+  "mellowtel_usage_title": {
+    "message": "Mellowtel koristimo za:"
+  },
+  "mellowtel_usage1": {
+    "message": "Praćenje prekida rada servisa"
+  },
+  "mellowtel_usage2": {
+    "message": "Merenje kvaliteta rada servisa"
+  },
+  "mellowtel_usage3": {
+    "message": "Kao developer ovog proširenja, dobijamo mali deo prihoda"
+  },
+  "mellowtel_accept_all_info1": {
+    "message": "Ako izaberete 'Prihvati sve', koristićemo Mellowtel API da: Dozvolimo pouzdanim partnerima da pristupe resursima na internetu rutiranjem dela njihovog saobraćaja kroz vaš čvor na mreži."
+  },
+  "mellowtel_accept_all_info2": {
+    "message": "Mellowtel deli samo vaš propusni opseg. Sigurnost i privatnost su 100% garantovani i sama biblioteka je open source kako bi svi mogli da je vide."
+  },
+  "mellowtel_regulation1": {
+    "message": "Ne prikuplja, ne deli, niti prodaje privatne informacije (čak ni anonimne podatke)."
+  },
+  "mellowtel_regulation2": {
+    "message": "Takođe je visoko regulisano: Mellowtel komunicira sa regulatorima Chrome veb prodavnice da bi garantovao sigurno iskustvo."
+  },
+  "mellowtel_regulation3": {
+    "message": "Takođe pruža i CWS regulatore sa alatima za nadgledanje i primenu usklađenosti."
+  },
+  "mellowtel_button_decline": {
+    "message": "Odbij opciono"
+  },
+  "mellowtel_button_accept": {
+    "message": "Prihvati sve"
+  },
+  "mellowtel_dialog_footer": {
+    "message": "Hvala što ste izdvojili vreme da pročitate, timovi { $devs }."
+  },
+  "error_403_auth_failed": {
+    "message": "Autorizacija nije uspela. Unesi validan API ključ za autentifikaciju u podešavanjima"
+  },
+  "ai_choose_model": {
+    "message": "Izaberi AI model"
+  },
+  "ai_choose_model_cost_effective": {
+    "message": "Najisplativije"
+  },
+  "ai_choose_model_recommended": {
+    "message": "Preporučeni model"
+  },
+  "pdf_use_custom_viewer": {
+    "message": "Podrška za prevode u PDF fajlovima"
+  },
+  "pdf_use_custom_viewer_info": {
+    "message": "Ova opcija će pregaziti podrazumevani PDF pregledač"
   }
 }

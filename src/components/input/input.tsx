@@ -1,6 +1,6 @@
 import * as styles from "./input.module.scss";
 import React, { DOMAttributes, InputHTMLAttributes, TextareaHTMLAttributes } from "react";
-import { cssNames, debouncePromise, IClassName } from "../../utils";
+import { cssNames, debouncePromise, IClassName } from "@/utils";
 import { Icon } from "../icon";
 import { conditionalValidators, Validator } from "./input.validators";
 import isString from "lodash/isString"

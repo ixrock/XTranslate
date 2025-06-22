@@ -4,5 +4,452 @@
   },
   "description": {
     "message": "ページのコンテキスト内でテキストを翻訳し、ポップアップブロックのスタイルをカスタマイズするなど。"
+  },
+  "open_in_window": {
+    "message": "外部ウィンドウで開く"
+  },
+  "tab_settings": {
+    "message": "設定"
+  },
+  "tab_theme": {
+    "message": "ポップアップ"
+  },
+  "tab_text_input": {
+    "message": "翻訳"
+  },
+  "tab_history": {
+    "message": "履歴"
+  },
+  "setting_title_common": {
+    "message": "共通"
+  },
+  "setting_title_text_input": {
+    "message": "翻訳"
+  },
+  "setting_title_popup": {
+    "message": "ポップアップ"
+  },
+  "setting_title_translator_service": {
+    "message": "サービス"
+  },
+  "settings_title_tts": {
+    "message": "テキスト読み上げ"
+  },
+  "settings_title_appearance": {
+    "message": "外観"
+  },
+  "auto_play_tts": {
+    "message": "自動でテキスト読み上げを再生"
+  },
+  "use_chrome_tts": {
+    "message": "システムのテキスト読み上げエンジンを使用する"
+  },
+  "use_chrome_tts_tooltip_info": {
+    "message": "翻訳者に独自のTTSエンジンがない場合、このオプションは自動的に有効になります"
+  },
+  "use_dark_theme": {
+    "message": "このウィンドウでダークテーマに切り替える"
+  },
+  "tts_default_system_voice": {
+    "message": "デフォルトのシステム音声"
+  },
+  "tts_select_voice_title": {
+    "message": "音声を選択"
+  },
+  "tts_play_demo_sound": {
+    "message": "デモ音声を再生"
+  },
+  "tts_play_demo_sound_edit": {
+    "message": "音声デモ用のテキストを編集"
+  },
+  "import_export_settings": {
+    "message": "設定をインポートまたはエクスポート"
+  },
+  "export_settings_button_label": {
+    "message": "設定をエクスポート"
+  },
+  "import_settings_button_label": {
+    "message": "設定をインポート"
+  },
+  "import_incorrect_file_format": {
+    "message": "ファイル形式が正しくありません（おそらく { $fileNameJson } であるべきです）"
+  },
+  "imported_setting_successful": {
+    "message": "キー { $key } の下の設定が正常にインポートされました"
+  },
+  "display_icon_near_selection": {
+    "message": "選択したテキストの近くにアイコンを表示"
+  },
+  "show_tts_icon_inside_popup": {
+    "message": "テキスト読み上げアイコンを表示"
+  },
+  "show_select_provider_icon_in_popup": {
+    "message": "次の翻訳アイコンを表示"
+  },
+  "show_copy_translation_icon": {
+    "message": "翻訳をコピーするアイコンを表示"
+  },
+  "show_save_as_favorite_icon": {
+    "message": "お気に入りに保存するアイコンを表示"
+  },
+  "show_close_popup_button": {
+    "message": "右上のポップアップを閉じるボタンを表示"
+  },
+  "show_detected_language_block": {
+    "message": "検出された言語を表示"
+  },
+  "display_on_click_by_selected_text": {
+    "message": "選択テキストをクリックしたときに表示"
+  },
+  "display_popup_after_text_selected": {
+    "message": "テキストが選択された直後に表示"
+  },
+  "display_popup_on_double_click": {
+    "message": "単語をダブルクリックしたときに表示"
+  },
+  "display_popup_on_hotkey": {
+    "message": "ショートカットキーを押したときに表示"
+  },
+  "remember_last_typed_text": {
+    "message": "最後に入力したテキストを記憶"
+  },
+  "sub_header_quick_access_hotkey": {
+    "message": "グローバルショートカットを設定"
+  },
+  "quick_access_configure_link": {
+    "message": "このウィンドウに素早くアクセスするためのキーボードショートカットを設定"
+  },
+  "swap_languages": {
+    "message": "言語を交換"
+  },
+  "popup_position_title": {
+    "message": "位置"
+  },
+  "popup_position_auto": {
+    "message": "自動（テキストに合わせて）"
+  },
+  "popup_position_left_top": {
+    "message": "左上"
+  },
+  "popup_position_right_top": {
+    "message": "右上"
+  },
+  "popup_position_left_bottom": {
+    "message": "左下"
+  },
+  "popup_position_right_bottom": {
+    "message": "右下"
+  },
+  "translation_delay": {
+    "message": "翻訳の遅延"
+  },
+  "translation_delay_info": {
+    "message": "Googleや他のサービスから頻繁にブロック（503エラー）を受ける場合、遅延の値を大きく設定してください"
+  },
+  "reverse_translate_select_placeholder": {
+    "message": "逆翻訳言語"
+  },
+  "reverse_translate_add_action": {
+    "message": "逆言語を追加: { $lang } -> ?（「自動検出」オプションでのみ適用）"
+  },
+  "reverse_translate_delete_action": {
+    "message": "逆翻訳言語を解除"
+  },
+  "custom_font_select": {
+    "message": "カスタムフォントを選択"
+  },
+  "popup_play_icon_title": {
+    "message": "聞く"
+  },
+  "popup_copy_translation_title": {
+    "message": "翻訳をコピー"
+  },
+  "popup_next_vendor_icon_title": {
+    "message": "{ $translator } で翻訳"
+  },
+  "popup_demo_translation": {
+    "message": "翻訳されたテキスト"
+  },
+  "popup_demo_dictionary_noun": {
+    "message": "名詞"
+  },
+  "popup_demo_dictionary_values": {
+    "message": "単語1、単語2など。"
+  },
+  "sub_header_background": {
+    "message": "背景"
+  },
+  "sub_header_box_shadow": {
+    "message": "ボックスのシャドウ"
+  },
+  "sub_header_text": {
+    "message": "テキスト"
+  },
+  "sub_header_border": {
+    "message": "ボーダー"
+  },
+  "sub_header_box_size": {
+    "message": "ボックスサイズ"
+  },
+  "background_color": {
+    "message": "色"
+  },
+  "background_linear_gradient": {
+    "message": "線形グラデーション"
+  },
+  "box_shadow_color": {
+    "message": "色"
+  },
+  "box_shadow_inner": {
+    "message": "内側"
+  },
+  "text_size": {
+    "message": "サイズ"
+  },
+  "text_font_family": {
+    "message": "フォント"
+  },
+  "text_color": {
+    "message": "色"
+  },
+  "text_shadow": {
+    "message": "シャドウ"
+  },
+  "text_shadow_size": {
+    "message": "ブラーファディアス"
+  },
+  "text_shadow_offset_x": {
+    "message": "水平オフセット"
+  },
+  "text_shadow_offset_y": {
+    "message": "垂直オフセット"
+  },
+  "text_shadow_color": {
+    "message": "色"
+  },
+  "border_width": {
+    "message": "幅"
+  },
+  "border_style": {
+    "message": "スタイル"
+  },
+  "border_color": {
+    "message": "色"
+  },
+  "border_radius": {
+    "message": "半径"
+  },
+  "box_size_min_width": {
+    "message": "最小幅"
+  },
+  "box_size_min_height": {
+    "message": "最小高さ"
+  },
+  "box_size_max_width": {
+    "message": "最大幅"
+  },
+  "box_size_max_height": {
+    "message": "最大高さ"
+  },
+  "reset_to_default_button_text": {
+    "message": "デフォルトにリセット"
+  },
+  "text_field_placeholder": {
+    "message": "ここに翻訳を取得するためにタイピングを開始"
+  },
+  "translated_with": {
+    "message": "{ $translator } ({ $lang }) で翻訳"
+  },
+  "translated_from": {
+    "message": "翻訳元: { $lang }"
+  },
+  "translate_also_from": {
+    "message": "こちらからも翻訳"
+  },
+  "spell_correction": {
+    "message": "{ $suggestion } を意味していましたか？"
+  },
+  "text_input_translation_hint": {
+    "message": "即時翻訳には { $hotkey }, 遅延: { $timeout }ms"
+  },
+  "history_enabled_flag": {
+    "message": "有効"
+  },
+  "history_settings_save_words_only": {
+    "message": "辞書の単語のみ保存"
+  },
+  "history_search_input_placeholder": {
+    "message": "履歴内を検索"
+  },
+  "history_clear_period_hour": {
+    "message": "直近1時間"
+  },
+  "history_clear_period_day": {
+    "message": "直近1日"
+  },
+  "history_clear_period_month": {
+    "message": "直近1ヶ月"
+  },
+  "history_clear_period_year": {
+    "message": "直近1年"
+  },
+  "history_clear_period_all": {
+    "message": "全て"
+  },
+  "history_button_clear": {
+    "message": "履歴をクリア"
+  },
+  "history_button_show_more": {
+    "message": "もっと表示"
+  },
+  "history_export_entries": {
+    "message": "{ $format } をエクスポート"
+  },
+  "history_import_entries": {
+    "message": "{ $format } をインポート"
+  },
+  "history_page_size": {
+    "message": "ページサイズ"
+  },
+  "history_icon_tooltip_search": {
+    "message": "検索"
+  },
+  "history_icon_tooltip_imp_exp": {
+    "message": "インポート / エクスポート"
+  },
+  "history_icon_tooltip_settings": {
+    "message": "設定"
+  },
+  "history_show_favorites_only": {
+    "message": "お気に入りのみ表示"
+  },
+  "history_mark_as_favorite": {
+    "message": "アイテムをお気に入りとしてマーク"
+  },
+  "history_unmark_as_favorite": {
+    "message": "アイテムのお気に入りマークを外す"
+  },
+  "history_import_success": {
+    "message": "{ $itemsCount } 件の履歴エントリーを正常にインポートしました"
+  },
+  "history_import_file_error": {
+    "message": "ファイル '{ $fileName }' の読み取りエラー: { $errorInfo }"
+  },
+  "context_menu_translate_full_page": {
+    "message": "{ $lang } に翻訳する"
+  },
+  "context_menu_translate_selection": {
+    "message": "{ $translator } で { $selection } を翻訳"
+  },
+  "share_with_friends": {
+    "message": "アプリが気に入ったら友達にシェアしてください"
+  },
+  "translation_data_failed": {
+    "message": "データの読み込みに失敗しました"
+  },
+  "rate_app_info1": {
+    "message": "アプリの使用を楽しんでいますか？5つ星で評価してください！"
+  },
+  "rate_app_info2": {
+    "message": "これにより、他のユーザーが拡張機能を見つけ、その利点を普及させるのに役立ちます。"
+  },
+  "rate_app_button": {
+    "message": "拡張機能ストアで評価"
+  },
+  "rate_app_button_later": {
+    "message": "後でリマインド"
+  },
+  "target_lang_placeholder": {
+    "message": "ターゲット言語"
+  },
+  "source_lang_placeholder": {
+    "message": "ソース言語"
+  },
+  "favorites_lang_title": {
+    "message": "お気に入り"
+  },
+  "favorites_info_tooltip": {
+    "message": "言語をお気に入りにマーク/アンマークするには（リストは上部に表示されます）、{ $hotkey } + クリックを使用してください"
+  },
+  "donate_title": {
+    "message": "開発者へのサポート"
+  },
+  "donate_description": {
+    "message": "アプリが気に入ったら、開発者への寄付を検討してください。感謝！"
+  },
+  "service_unavailable": {
+    "message": "サービスが利用できません。5-25分後に再試行してください。頻繁に発生する場合は、設定で翻訳の遅延を増やしてください。"
+  },
+  "service_confirm_not_a_robot": {
+    "message": "また、{ $link } にアクセスしてロボットでないことを確認することもできます。"
+  },
+  "privacy_policy_title_updated": {
+    "message": "プライバシーポリシーが更新されました"
+  },
+  "privacy_policy_accept_terms": {
+    "message": "利用規約に同意"
+  },
+  "mellowtel_greetings": {
+    "message": "こんにちは、友達 👋"
+  },
+  "mellowtel_text1": {
+    "message": "ご存知の通り、この拡張機能は無料で全員に利用可能です...しかし、今回は維持するためにあなたの行動が必要です！"
+  },
+  "mellowtel_text2": {
+    "message": "この新バージョンには { $link } オープンソースライブラリが含まれています。このライブラリを使用すると、信頼できるAIラボやスタートアップと未使用のインターネットを共有し、彼らが自分のモデルを訓練するために利用することができます。"
+  },
+  "mellowtel_usage_title": {
+    "message": "Mellowtelを使用して:"
+  },
+  "mellowtel_usage1": {
+    "message": "サービス停止を追跡"
+  },
+  "mellowtel_usage2": {
+    "message": "サービスの品質を測定"
+  },
+  "mellowtel_usage3": {
+    "message": "この拡張機能の開発者として、収益の一部を得る"
+  },
+  "mellowtel_accept_all_info1": {
+    "message": "'すべて受け入れる'を選択した場合、Mellowtel APIを使用して、信頼できるパートナーがネットワーク内のノードを通じてインターネットリソースにアクセスできるようにするためのトラフィックの一部をルーティングします。"
+  },
+  "mellowtel_accept_all_info2": {
+    "message": "Mellowtelはあなたの帯域幅のみを共有します。セキュリティとプライバシーは100%保証され、ライブラリは誰でも見られるオープンソースです。"
+  },
+  "mellowtel_regulation1": {
+    "message": "個人情報を収集、共有、販売することはありません（匿名化されたデータも含む）。"
+  },
+  "mellowtel_regulation2": {
+    "message": "また、非常に規制されています: MellowtelはChrome Web Storeの規制者と常に連絡を取り合い、安全な体験を保証しています。"
+  },
+  "mellowtel_regulation3": {
+    "message": "また、CWSの規制者にコンプライアンスの監視と施行のためのツールを提供します。"
+  },
+  "mellowtel_button_decline": {
+    "message": "オプションの使用を拒否"
+  },
+  "mellowtel_button_accept": {
+    "message": "すべて受け入れる"
+  },
+  "mellowtel_dialog_footer": {
+    "message": "読んでくれてありがとう、{ $devs } チーム。"
+  },
+  "error_403_auth_failed": {
+    "message": "認証に失敗しました。設定で有効な認証APIキーを指定してください。"
+  },
+  "ai_choose_model": {
+    "message": "AIモデルを選択"
+  },
+  "ai_choose_model_cost_effective": {
+    "message": "最もコスト効率の良い"
+  },
+  "ai_choose_model_recommended": {
+    "message": "推奨モデル"
+  },
+  "pdf_use_custom_viewer": {
+    "message": "PDFファイル内の翻訳をサポート"
+  },
+  "pdf_use_custom_viewer_info": {
+    "message": "このオプションはデフォルトのPDFビューアを置き換えます"
   }
 }

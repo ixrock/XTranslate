@@ -4,5 +4,434 @@
   },
   "description": {
     "message": "Metinleri sayfa içinde çevirin, kendi açılır pencere bloğu biçiminizi özelleştirin ve daha fazlasını yapın."
+  },
+  "open_in_window": {
+    "message": "Harici pencerede aç"
+  },
+  "tab_settings": {
+    "message": "Ayarlar"
+  },
+  "tab_theme": {
+    "message": "Açılır pencere"
+  },
+  "tab_text_input": {
+    "message": "Çeviri"
+  },
+  "tab_history": {
+    "message": "Geçmiş"
+  },
+  "setting_title_common": {
+    "message": "Genel"
+  },
+  "setting_title_text_input": {
+    "message": "Çeviri"
+  },
+  "setting_title_popup": {
+    "message": "Açılır pencere"
+  },
+  "setting_title_translator_service": {
+    "message": "Hizmet"
+  },
+  "settings_title_tts": {
+    "message": "Metin okuma"
+  },
+  "settings_title_appearance": {
+    "message": "Görünüm"
+  },
+  "auto_play_tts": {
+    "message": "Metin okumayı oto oynat"
+  },
+  "use_chrome_tts": {
+    "message": "Chrome metin okuma motorunu kullanmaya zorla"
+  },
+  "use_chrome_tts_tooltip_info": {
+    "message": "Bu seçenek, çevirmenin kullanılabilir TTS motoru olmadığında zaten etkinleştirilir"
+  },
+  "use_dark_theme": {
+    "message": "Bu pencere için koyu temaya geç"
+  },
+  "import_export_settings": {
+    "message": "Ayarları içe ya da dışa aktar"
+  },
+  "export_settings_button_label": {
+    "message": "Ayarları dışa aktar"
+  },
+  "import_settings_button_label": {
+    "message": "Ayarları içe aktar"
+  },
+  "import_incorrect_file_format": {
+    "message": "Yanlış dosya biçimi (muhtemelen { $fileNameJson } olmalıdır)"
+  },
+  "imported_setting_successful": {
+    "message": "'{ $key }' anahtarının altındaki ayarlar başarılı bir şekilde içe aktarıldı"
+  },
+  "display_icon_near_selection": {
+    "message": "Seçili metnin yanında çeviri simgesini göster"
+  },
+  "show_tts_icon_inside_popup": {
+    "message": "Metin okuma simgesi göster"
+  },
+  "show_select_provider_icon_in_popup": {
+    "message": "Sonraki çeviri simgesi göster"
+  },
+  "show_copy_translation_icon": {
+    "message": "Çeviriyi kopyala simgesi göster"
+  },
+  "show_save_as_favorite_icon": {
+    "message": "Sık kullanılanlara kaydet simgesi göster"
+  },
+  "show_close_popup_button": {
+    "message": "Sağ köşede pencereyi kapat simgesi göster"
+  },
+  "show_detected_language_block": {
+    "message": "Algılanan dili göster"
+  },
+  "display_on_click_by_selected_text": {
+    "message": "Seçime göre tıklamada göster"
+  },
+  "display_popup_after_text_selected": {
+    "message": "Metin seçiminden hemen sonra göster"
+  },
+  "display_popup_on_double_click": {
+    "message": "Bir kelimeyi çift tıklattığınızda göster"
+  },
+  "display_popup_on_hotkey": {
+    "message": "Kısayol tuşuna bastığımda göster"
+  },
+  "remember_last_typed_text": {
+    "message": "Son yazılan metni hatırla"
+  },
+  "sub_header_quick_access_hotkey": {
+    "message": "Genel kısayol tuşunu ayarla"
+  },
+  "quick_access_configure_link": {
+    "message": "Bu pencereye hızlı erişim için klavye kısayolunu yapılandırır"
+  },
+  "swap_languages": {
+    "message": "Dilleri değiştir"
+  },
+  "popup_position_title": {
+    "message": "Konum"
+  },
+  "popup_position_auto": {
+    "message": "Oto (metine hizala)"
+  },
+  "popup_position_left_top": {
+    "message": "Sol üst köşe"
+  },
+  "popup_position_right_top": {
+    "message": "Sağ üst köşe"
+  },
+  "popup_position_left_bottom": {
+    "message": "Sol alt köşe"
+  },
+  "popup_position_right_bottom": {
+    "message": "Sağ alt köşe"
+  },
+  "translation_delay": {
+    "message": "Çeviri gecikmesi"
+  },
+  "translation_delay_info": {
+    "message": "Google'dan ya da diğer hizmetlerden sık sık engelleme yaşıyorsanız (503 hatası), daha büyük bir gecikme değeri ayarlayın"
+  },
+  "popup_play_icon_title": {
+    "message": "Dinle"
+  },
+  "popup_copy_translation_title": {
+    "message": "Çeviriyi kopyala"
+  },
+  "popup_next_vendor_icon_title": {
+    "message": "{ $translator } ile çevir"
+  },
+  "popup_demo_translation": {
+    "message": "Çevrilen metin"
+  },
+  "popup_demo_dictionary_noun": {
+    "message": "isim"
+  },
+  "popup_demo_dictionary_values": {
+    "message": "Kelime 1, kelime 2, vb."
+  },
+  "sub_header_background": {
+    "message": "Arka plan"
+  },
+  "sub_header_box_shadow": {
+    "message": "Kutu gölgesi"
+  },
+  "sub_header_text": {
+    "message": "Metin"
+  },
+  "sub_header_border": {
+    "message": "Kenarlık"
+  },
+  "sub_header_box_size": {
+    "message": "Kutu boyutu"
+  },
+  "background_color": {
+    "message": "Renk"
+  },
+  "background_linear_gradient": {
+    "message": "Çizgisel"
+  },
+  "box_shadow_color": {
+    "message": "Renk"
+  },
+  "box_shadow_inner": {
+    "message": "İç taraf"
+  },
+  "text_size": {
+    "message": "Boyut"
+  },
+  "text_font_family": {
+    "message": "Yazı tipi"
+  },
+  "text_color": {
+    "message": "Renk"
+  },
+  "text_shadow": {
+    "message": "Gölge"
+  },
+  "text_shadow_size": {
+    "message": "Dairesel alan bulanıklaştırma"
+  },
+  "text_shadow_offset_x": {
+    "message": "Yatay kaydırma"
+  },
+  "text_shadow_offset_y": {
+    "message": "Dikey kaydırma"
+  },
+  "text_shadow_color": {
+    "message": "Renk"
+  },
+  "border_width": {
+    "message": "Genişlik"
+  },
+  "border_style": {
+    "message": "Biçim"
+  },
+  "border_color": {
+    "message": "Renk"
+  },
+  "border_radius": {
+    "message": "Dairesel alan"
+  },
+  "box_size_min_width": {
+    "message": "En küçük genişlik"
+  },
+  "box_size_min_height": {
+    "message": "En küçük yükseklik"
+  },
+  "box_size_max_width": {
+    "message": "En büyük genişlik"
+  },
+  "box_size_max_height": {
+    "message": "En büyük yükseklik"
+  },
+  "reset_to_default_button_text": {
+    "message": "Varsayılana sıfırla"
+  },
+  "text_field_placeholder": {
+    "message": "Çeviri almak için buraya yazmaya başlayın"
+  },
+  "translated_with": {
+    "message": "{ $translator } ({ $lang }) ile çevrildi"
+  },
+  "translated_from": {
+    "message": "Çeviri: { $lang }"
+  },
+  "translate_also_from": {
+    "message": "Şuradan da çevir:"
+  },
+  "spell_correction": {
+    "message": "Bunu mu demek istediniz: { $suggestion }?"
+  },
+  "text_input_translation_hint": {
+    "message": "Anında çeviri için: { $hotkey }, gecikme: { $timeout } ms"
+  },
+  "history_enabled_flag": {
+    "message": "Etkin"
+  },
+  "history_settings_save_words_only": {
+    "message": "Sadece sözlük kelimelerini kaydet"
+  },
+  "history_search_input_placeholder": {
+    "message": "Geçmişte ara"
+  },
+  "history_clear_period_hour": {
+    "message": "Son saat"
+  },
+  "history_clear_period_day": {
+    "message": "Son gün"
+  },
+  "history_clear_period_month": {
+    "message": "Son ay"
+  },
+  "history_clear_period_year": {
+    "message": "Son yıl"
+  },
+  "history_clear_period_all": {
+    "message": "Tümü"
+  },
+  "history_button_clear": {
+    "message": "Geçmişi temizle"
+  },
+  "history_button_show_more": {
+    "message": "Daha fazla göster"
+  },
+  "history_export_entries": {
+    "message": "Dışa aktar { $format }"
+  },
+  "history_import_entries": {
+    "message": "İçe aktar { $format }"
+  },
+  "history_page_size": {
+    "message": "Sayfa boyutu"
+  },
+  "history_icon_tooltip_search": {
+    "message": "Ara"
+  },
+  "history_icon_tooltip_imp_exp": {
+    "message": "İçe aktar / Dışa aktar"
+  },
+  "history_icon_tooltip_settings": {
+    "message": "Ayarlar"
+  },
+  "history_show_favorites_only": {
+    "message": "Yalnızca sık kullanılanları göster"
+  },
+  "history_mark_as_favorite": {
+    "message": "Öğeyi sık kullanılan olarak işaretle"
+  },
+  "history_unmark_as_favorite": {
+    "message": "Öğenin sık kullanılan işaretini kaldır"
+  },
+  "history_import_success": {
+    "message": "{ $itemsCount } geçmiş girişi başarıyla içe aktarıldı"
+  },
+  "history_import_file_error": {
+    "message": "'{ $fileName }' dosyası okuma hatası: { $errorInfo }"
+  },
+  "context_menu_translate_full_page": {
+    "message": "{ $lang }'ye çevir"
+  },
+  "context_menu_translate_selection": {
+    "message": "{ $selection } { $translator } ile çevir"
+  },
+  "share_with_friends": {
+    "message": "Uygulamayı beğendiyseniz arkadaşlarınızla paylaşabilirsiniz"
+  },
+  "translation_data_failed": {
+    "message": "Veri yükleme başarısız oldu"
+  },
+  "rate_app_info1": {
+    "message": "Uygulamayı kullanmaktan zevk alıyor musunuz? Lütfen bizi 5 yıldızla derecelendirin!"
+  },
+  "rate_app_info2": {
+    "message": "Diğer kullanıcıların uzantıyı bulmasına ve güzellikleri yaymasına yardımcı olacaktır."
+  },
+  "rate_app_button": {
+    "message": "Uzantı mağazasında değerlendir"
+  },
+  "rate_app_button_later": {
+    "message": "Sonra hatırlat"
+  },
+  "target_lang_placeholder": {
+    "message": "Hedef diller"
+  },
+  "source_lang_placeholder": {
+    "message": "Kaynak diller"
+  },
+  "favorites_lang_title": {
+    "message": "Sık kullanılanlar"
+  },
+  "favorites_info_tooltip": {
+    "message": "Dili sık kullanılan olarak işaretlemek/işaretini kaldırmak için (listede en üstte gösterilir), { $hotkey } + tıklama kullanın"
+  },
+  "donate_title": {
+    "message": "Bağış yap"
+  },
+  "donate_via": {
+    "message": "Bağış yap"
+  },
+  "donate_description": {
+    "message": "Uygulamayı beğendiyseniz geliştiricilere bağış yapmayı düşünün. Teşekkürler!"
+  },
+  "service_unavailable": {
+    "message": "Hizmet kullanılamıyor. 5-25 dakika sonra tekrar deneyin. Bu gerçekleşirse, ayarlardaki çeviri gecikmesini sürekli olarak artırın."
+  },
+  "service_confirm_not_a_robot": {
+    "message": "Ayrıca { $link } adresine gidebilir ve robot olmadığınızı onaylayabilirsiniz."
+  },
+  "privacy_policy_title_updated": {
+    "message": "Gizlilik Politikası güncellendi"
+  },
+  "privacy_policy_accept_terms": {
+    "message": "Şartlar ve koşulları kabul et"
+  },
+  "mellowtel_greetings": {
+    "message": "Merhaba, dostum 👋"
+  },
+  "mellowtel_text1": {
+    "message": "Bildiğiniz gibi bu eklenti ücretsiz ve herkese açıktır... ancak devam ettirebilmek için bu sefer sizden bir aksiyon bekliyoruz!"
+  },
+  "mellowtel_text2": {
+    "message": "Bu yeni sürüm, açık kaynaklı { $link } kütüphanesini içeriyor. Bu kütüphane, kullanılmayan internet bağlantınızı, modellerini eğitmek için kullanan güvenilir AI laboratuvarları ve startup'larla paylaşmanıza olanak tanır."
+  },
+  "mellowtel_usage_title": {
+    "message": "Mellowtel'i şu amaçlarla kullanıyoruz:"
+  },
+  "mellowtel_usage1": {
+    "message": "Servisin kesintilerini izlemek"
+  },
+  "mellowtel_usage2": {
+    "message": "Servisin kalitesini ölçmek"
+  },
+  "mellowtel_usage3": {
+    "message": "Bu eklentinin geliştiricisi olarak gelirin küçük bir payını almak"
+  },
+  "mellowtel_accept_all_info1": {
+    "message": "'Hepsini kabul et'i seçerseniz, Mellowtel API'sini şu amaçla da kullanacağız: Güvenilir ortakların internet kaynaklarına erişimini sağlamak için trafiğin bir kısmını ağınızdaki düğüm üzerinden yönlendirmek."
+  },
+  "mellowtel_accept_all_info2": {
+    "message": "Mellowtel sadece bant genişliğinizi paylaşır. Güvenlik ve gizlilik %100 garanti altındadır ve kütüphane herkesin görebileceği şekilde açık kaynak kodludur."
+  },
+  "mellowtel_regulation1": {
+    "message": "Kişisel bilgileri toplamaz, paylaşmaz veya satmaz (anonimleştirilmiş veriler bile)."
+  },
+  "mellowtel_regulation2": {
+    "message": "Ayrıca, oldukça düzenlenmiştir: Mellowtel, güvenli bir deneyim sağlamak için Chrome Web Store düzenleyicileriyle iletişimde kalır."
+  },
+  "mellowtel_regulation3": {
+    "message": "Ayrıca, CWS düzenleyicilerine uyumu izlemek ve sağlamak için araçlar sunar."
+  },
+  "mellowtel_button_decline": {
+    "message": "İsteğe bağlı kullanımı reddet"
+  },
+  "mellowtel_button_accept": {
+    "message": "Hepsini kabul et"
+  },
+  "mellowtel_dialog_footer": {
+    "message": "Okuduğunuz için teşekkürler, { $devs } ekipleri."
+  },
+  "error_403_auth_failed": {
+    "message": "Yetkilendirme başarısız. Lütfen ayarlarda geçerli bir API anahtarı girin."
+  },
+  "ai_choose_model": {
+    "message": "AI modelini seçin"
+  },
+  "ai_choose_model_cost_effective": {
+    "message": "En maliyet etkin"
+  },
+  "ai_choose_model_recommended": {
+    "message": "Önerilen model"
+  },
+  "ai_choose_model_reasoning": {
+    "message": "Akıl yürütme modeli (seride en yeni ve maliyet etkin)"
+  },
+  "pdf_use_custom_viewer": {
+    "message": "PDF dosyalarında çevirileri destekle"
+  },
+  "pdf_use_custom_viewer_info": {
+    "message": "Bu seçenek varsayılan PDF görüntüleyicisini değiştirecektir"
   }
 }

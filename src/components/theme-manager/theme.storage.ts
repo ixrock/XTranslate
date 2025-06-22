@@ -1,9 +1,9 @@
 import { EventEmitter } from "events"
 import { reaction } from "mobx";
 import { Color } from "react-color"
-import { getURL } from "../../extension";
-import { createLogger, disposer, LoggerColor } from "../../utils";
-import { createStorage } from "../../storage";
+import { getURL } from "@/extension";
+import { createLogger, disposer, LoggerColor } from "@/utils";
+import { createStorage } from "@/storage";
 
 export type ThemeStorageModel = typeof themeStorage.defaultValue;
 

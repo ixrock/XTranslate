@@ -1,8 +1,8 @@
 import * as styles from "./select-provider.module.scss"
 import React from "react";
-import { getTranslators, ProviderCodeName, Translator } from "../../providers";
+import { getTranslators, ProviderCodeName, Translator } from "@/providers";
 import { FormatOptionLabelMeta, ReactSelect, ReactSelectOption, ReactSelectProps } from "../select/react-select";
-import { cssNames } from "../../utils/cssNames";
+import { cssNames } from "@/utils/cssNames";
 import { Icon } from "../icon";
 
 export interface SelectProviderProps extends Omit<ReactSelectProps<ProviderCodeName>, "value" | "onChange" | "options"> {

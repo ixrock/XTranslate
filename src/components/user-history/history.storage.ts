@@ -1,9 +1,9 @@
 import { runInAction } from "mobx";
 import { md5 } from "js-md5";
-import { download } from "../../utils/downloadFile";
-import { createStorage } from "../../storage";
-import { getTranslator, ITranslationResult } from "../../providers/translator";
-import type { ProviderCodeName } from "../../providers";
+import { download } from "@/utils/downloadFile";
+import { createStorage } from "@/storage";
+import { getTranslator, ITranslationResult } from "@/providers/translator";
+import type { ProviderCodeName } from "@/providers";
 
 export type IHistoryItemId = string;
 

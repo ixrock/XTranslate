@@ -15,9 +15,9 @@ import { Button } from "../button";
 import { SubTitle } from "../sub-title";
 import { ColorPicker } from "../color-picker";
 import { Tab } from "../tabs";
-import { getMessage } from "../../i18n";
+import { getMessage } from "@/i18n";
 import { Icon } from "../icon";
-import { base64Encode } from "../../utils";
+import { base64Encode } from "@/utils";
 import { SettingsPopup } from "../settings/settings_popup";
 import { ShowHideMore } from "../show-hide-more";
 

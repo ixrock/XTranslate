@@ -3,7 +3,7 @@ import React, { Fragment, ReactElement, ReactNode, PropsWithChildren } from "rea
 import { createPortal } from "react-dom";
 import { observer } from "mobx-react";
 import { action, makeObservable, observable } from "mobx";
-import { autoBind, cssNames } from "../../utils";
+import { autoBind, cssNames } from "@/utils";
 import { Animate } from "../animate";
 import { MenuContext } from './menu-context';
 import { MenuItem, MenuItemProps } from './menu-item';

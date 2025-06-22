@@ -1,8 +1,8 @@
 import * as styles from "./show-hide-more.module.scss"
 import React from "react";
-import { cssNames } from "../../utils";
+import { cssNames } from "@/utils";
 import { Icon } from "../icon";
-import { getMessage } from "../../i18n";
+import { getMessage } from "@/i18n";
 
 export interface ShowHideMoreProps extends React.PropsWithChildren {
   className?: string;

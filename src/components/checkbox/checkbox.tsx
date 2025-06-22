@@ -1,7 +1,7 @@
 import * as styles from "./checkbox.module.scss"
 import uniqueId from "lodash/uniqueId";
 import React, { DOMAttributes, type ReactNode } from "react"
-import { cssNames, IClassName } from "../../utils";
+import { cssNames, IClassName } from "@/utils";
 import { Tooltip, TooltipProps } from "../tooltip";
 
 export type CheckboxProps<D = any> = Omit<DOMAttributes<any>, "onChange"> & {

@@ -1,6 +1,6 @@
 import * as styles from "./tabs.module.scss";
 import React from "react";
-import { cssNames, IClassName } from "../../utils";
+import { cssNames, IClassName } from "@/utils";
 import { Icon } from "../icon";
 
 const TabsContext = React.createContext<TabsContextValue>(null);

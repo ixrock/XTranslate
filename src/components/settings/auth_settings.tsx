@@ -1,8 +1,8 @@
 import * as styles from "./auth_settings.module.scss";
 import React from "react";
 import { Icon } from "../icon";
-import { ProviderCodeName, TranslatorAuthParams } from "../../providers";
-import { prevDefault, cssNames } from "../../utils";
+import { ProviderCodeName, TranslatorAuthParams } from "@/providers";
+import { prevDefault, cssNames } from "@/utils";
 
 export interface ProviderAuthSettingsProps extends TranslatorAuthParams, React.PropsWithChildren {
   provider: ProviderCodeName;

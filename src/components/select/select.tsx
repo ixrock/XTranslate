@@ -1,7 +1,7 @@
 import * as styles from "./select.module.scss";
 
 import React from "react";
-import { cssNames, IClassName } from "../../utils";
+import { cssNames, IClassName } from "@/utils";
 import { Icon } from "../icon";
 
 const SelectContext = React.createContext<Select>(null);

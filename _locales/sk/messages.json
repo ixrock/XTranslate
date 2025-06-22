@@ -1,8 +1,539 @@
 {
-   "description": {
-      "message": "Prekladajte texty na stránkach, prispôsobte si vzhľad vyskakovacej ponuky a mnoho ďalšieho."
-   },
-   "short_description": {
-      "message": "Jednoduchý preklad textu na webových stránkach"
-   }
+  "short_description": {
+    "message": "Jednoduchý preklad textu na webových stránkach"
+  },
+  "description": {
+    "message": "Prekladajte texty na stránkach, prispôsobte si vzhľad vyskakovacej ponuky a mnoho ďalšieho."
+  },
+  "open_in_window": {
+    "message": "Otvoriť v externom okne"
+  },
+  "tab_settings": {
+    "message": "Nastavenia"
+  },
+  "tab_theme": {
+    "message": "Ponuka"
+  },
+  "tab_text_input": {
+    "message": "Preložiť"
+  },
+  "tab_history": {
+    "message": "História"
+  },
+  "setting_title_common": {
+    "message": "Všeobecné"
+  },
+  "setting_title_text_input": {
+    "message": "Preložiť"
+  },
+  "setting_title_popup": {
+    "message": "Vyskakovacia ponuka"
+  },
+  "setting_title_translator_service": {
+    "message": "Služba"
+  },
+  "settings_title_tts": {
+    "message": "Prevod textu na reč"
+  },
+  "settings_title_appearance": {
+    "message": "Vzhľad"
+  },
+  "settings_title_full_page_translation": {
+    "message": "Preklad celej stránky"
+  },
+  "settings_title_full_page_excluded_pages": {
+    "message": "Nikdy neprekladať"
+  },
+  "settings_title_full_page_always_translate": {
+    "message": "Vždy preložiť"
+  },
+  "settings_title_full_page_show_original_onmouseover": {
+    "message": "Pri prechode myšou zobraziť pôvodný text"
+  },
+  "settings_title_full_page_show_translation_onmouseover": {
+    "message": "Pri prechode myšou zobraziť preložený text"
+  },
+  "settings_title_full_page_show_replace_texts": {
+    "message": "Nahradiť text dokumentu prekladom"
+  },
+  "settings_title_full_page_show_traffic_save_mode": {
+    "message": "Zapnúť režim 'úspora dát'"
+  },
+  "settings_title_full_page_show_traffic_save_mode_info": {
+    "message": "Šetrenie siete/API prekladaním iba zobrazených textov webovej stránky"
+  },
+  "settings_title_full_page_empty_list": {
+    "message": "Prázdny zoznam"
+  },
+  "settings_title_full_page_see_edit_list": {
+    "message": "Kliknutím zobrazíte a upravíte zoznam"
+  },
+  "settings_title_full_page_add_url": {
+    "message": "Pridať adresu URL"
+  },
+  "settings_title_full_page_add_url_error": {
+    "message": "Pokúsiť sa pridať neplatnú adresu URL"
+  },
+  "auto_play_tts": {
+    "message": "Automatické prehrávanie prevodu textu na reč"
+  },
+  "use_chrome_tts": {
+    "message": "Použiť funkciu prevodu textu na reč z Chromu"
+  },
+  "use_chrome_tts_tooltip_info": {
+    "message": "Táto možnosť je povolená vždy, keď prekladač nemá k dispozícii nástroj na preklad"
+  },
+  "use_dark_theme": {
+    "message": "Prepnúť tmavý motív pre toto okno"
+  },
+  "settings_title_advanced_providers_list": {
+    "message": "Rozšírený zoznam prekladačov"
+  },
+  "settings_title_advanced_providers_list_show": {
+    "message": "Zobraziť rozšírený zoznam prekladačov"
+  },
+  "settings_title_advanced_providers_list_hide": {
+    "message": "Skryť rozšírený zoznam prekladačov"
+  },
+  "settings_title_voice": {
+    "message": "Hlas"
+  },
+  "tts_default_system_voice": {
+    "message": "Predvolený systémový hlas"
+  },
+  "tts_select_voice_title": {
+    "message": "Vyberte hlas"
+  },
+  "tts_play_demo_sound": {
+    "message": "Prehrať ukážku hlasu"
+  },
+  "tts_play_demo_sound_edit": {
+    "message": "Upraviť text ukážky hlasu"
+  },
+  "import_export_settings": {
+    "message": "Importovať alebo exportovať nastavenia"
+  },
+  "export_settings_button_label": {
+    "message": "Exportovať nastavenia"
+  },
+  "import_settings_button_label": {
+    "message": "Importovať nastavenia"
+  },
+  "import_incorrect_file_format": {
+    "message": "Nesprávny formát súboru (mal by byť pravdepodobne { $fileNameJson })"
+  },
+  "imported_setting_successful": {
+    "message": "Nastavenia rozšírenia úspešne importované pre { $key }"
+  },
+  "display_icon_near_selection": {
+    "message": "Zobraziť ikonu prekladu vedľa vybraného textu"
+  },
+  "show_tts_icon_inside_popup": {
+    "message": "Zobraziť ikonu prevodu textu na reč"
+  },
+  "show_select_provider_icon_in_popup": {
+    "message": "Zobraziť ikonu ďalšieho prekladu"
+  },
+  "show_copy_translation_icon": {
+    "message": "Zobraziť ikonu kopírovania a prekladu"
+  },
+  "show_save_as_favorite_icon": {
+    "message": "Zobraziť ikonu uloženia do obľúbených"
+  },
+  "show_close_popup_button": {
+    "message": "Zobraziť ikonu zatvorenia v pravom rohu"
+  },
+  "show_detected_language_block": {
+    "message": "Zobraziť rozpoznaný jazyk"
+  },
+  "display_on_click_by_selected_text": {
+    "message": "Zobraziť po kliknutí na výber"
+  },
+  "display_popup_after_text_selected": {
+    "message": "Zobraziť hneď po výbere textu"
+  },
+  "display_popup_on_double_click": {
+    "message": "Zobraziť po dvojitom kliknutí na slovo"
+  },
+  "display_popup_on_hotkey": {
+    "message": "Zobraziť po stlačení klávesovej skratky"
+  },
+  "remember_last_typed_text": {
+    "message": "Zapamätať si posledný napísaný text"
+  },
+  "sub_header_quick_access_hotkey": {
+    "message": "Nastaviť klávesovú skratku"
+  },
+  "quick_access_configure_link": {
+    "message": "Nastavenie klávesovej skratky pre rýchly prístup k tomuto oknu"
+  },
+  "swap_languages": {
+    "message": "Vymeniť jazyky"
+  },
+  "popup_position_title": {
+    "message": "Pozícia"
+  },
+  "popup_position_auto": {
+    "message": "Automatická (zarovnať k textu)"
+  },
+  "popup_position_left_top": {
+    "message": "Ľavý horný roh"
+  },
+  "popup_position_right_top": {
+    "message": "Pravý horný roh"
+  },
+  "popup_position_left_bottom": {
+    "message": "Ľavý dolný roh"
+  },
+  "popup_position_right_bottom": {
+    "message": "Pravý dolný roh"
+  },
+  "translation_delay": {
+    "message": "Oneskorenie prekladu"
+  },
+  "translation_delay_info": {
+    "message": "Ak často dochádza k blokovaniu (chyba 503) zo strany Google alebo iných služieb, nastavte väčšiu hodnotu oneskorenia"
+  },
+  "reverse_translate_select_placeholder": {
+    "message": "Spätný preklad jazyka"
+  },
+  "reverse_translate_add_action": {
+    "message": "Pridať reverzný jazyk: { $lang } -> ? (použiteľné len pri voľbe 'Automatické zistenie')"
+  },
+  "reverse_translate_delete_action": {
+    "message": "Zrušiť nastavenie jazyka spätného prekladu"
+  },
+  "custom_font_select": {
+    "message": "Select custom font"
+  },
+  "settings_show_more": {
+    "message": "Zobraziť viac nastavení"
+  },
+  "settings_show_less": {
+    "message": "Zobraziť menej nastavení"
+  },
+  "popup_play_icon_title": {
+    "message": "Prehrať"
+  },
+  "popup_copy_translation_title": {
+    "message": "Kopírovať preklad"
+  },
+  "popup_next_vendor_icon_title": {
+    "message": "Preložiť pomocou { $translator }"
+  },
+  "popup_demo_translation": {
+    "message": "Preložený text"
+  },
+  "popup_demo_dictionary_noun": {
+    "message": "podstatné meno"
+  },
+  "popup_demo_dictionary_values": {
+    "message": "Slovo 1, slovo 2, atď."
+  },
+  "sub_header_background": {
+    "message": "Pozadie"
+  },
+  "sub_header_box_shadow": {
+    "message": "Tieň boxu"
+  },
+  "sub_header_text": {
+    "message": "Text"
+  },
+  "sub_header_border": {
+    "message": "Rámik"
+  },
+  "sub_header_box_size": {
+    "message": "Veľkosť boxu"
+  },
+  "background_color": {
+    "message": "Farba"
+  },
+  "background_linear_gradient": {
+    "message": "Lineárne"
+  },
+  "box_shadow_color": {
+    "message": "Farba"
+  },
+  "box_shadow_inner": {
+    "message": "Vnútri"
+  },
+  "text_size": {
+    "message": "Veľkosť"
+  },
+  "text_font_family": {
+    "message": "Písmo"
+  },
+  "text_color": {
+    "message": "Farba"
+  },
+  "text_shadow": {
+    "message": "Tieň"
+  },
+  "text_shadow_size": {
+    "message": "Rádius rozostrenia"
+  },
+  "text_shadow_offset_x": {
+    "message": "Horizontálny posun"
+  },
+  "text_shadow_offset_y": {
+    "message": "Vertikálny posun"
+  },
+  "text_shadow_color": {
+    "message": "Farba"
+  },
+  "border_width": {
+    "message": "Šírka"
+  },
+  "border_style": {
+    "message": "Štýl"
+  },
+  "border_color": {
+    "message": "Farba"
+  },
+  "border_radius": {
+    "message": "Rádius"
+  },
+  "box_size_min_width": {
+    "message": "Min. šírka"
+  },
+  "box_size_min_height": {
+    "message": "Min. výška"
+  },
+  "box_size_max_width": {
+    "message": "Max. šírka"
+  },
+  "box_size_max_height": {
+    "message": "Max. výška"
+  },
+  "reset_to_default_button_text": {
+    "message": "Resetovať na predvolené"
+  },
+  "text_field_placeholder": {
+    "message": "Začnite písať tu, aby ste získali preklad"
+  },
+  "translated_with": {
+    "message": "Preložené pomocou { $translator } ({ $lang })"
+  },
+  "translated_from": {
+    "message": "Preložené z: { $lang }"
+  },
+  "translate_also_from": {
+    "message": "Preložiť aj z"
+  },
+  "spell_correction": {
+    "message": "Mysleli ste { $suggestion }?"
+  },
+  "text_input_translation_hint": {
+    "message": "Na okamžitý preklad použite { $hotkey }, oneskorenie: { $timeout } ms"
+  },
+  "history_enabled_flag": {
+    "message": "Zapnuté"
+  },
+  "history_settings_save_words_only": {
+    "message": "Uložiť iba slovníkové slová"
+  },
+  "history_search_input_placeholder": {
+    "message": "Vyhľadávanie v histórii"
+  },
+  "history_clear_period_hour": {
+    "message": "Posledná hodina"
+  },
+  "history_clear_period_day": {
+    "message": "Posledný deň"
+  },
+  "history_clear_period_month": {
+    "message": "Posledný mesiac"
+  },
+  "history_clear_period_year": {
+    "message": "Posledný rok"
+  },
+  "history_clear_period_all": {
+    "message": "Všetko"
+  },
+  "history_button_clear": {
+    "message": "Vymazať históriu"
+  },
+  "history_button_show_more": {
+    "message": "Zobraziť viac"
+  },
+  "history_export_entries": {
+    "message": "Exportovať { $format }"
+  },
+  "history_import_entries": {
+    "message": "Importovať { $format }"
+  },
+  "history_page_size": {
+    "message": "Na stranu"
+  },
+  "history_icon_tooltip_search": {
+    "message": "Vyhľadať"
+  },
+  "history_icon_tooltip_imp_exp": {
+    "message": "Importovať/Exportovať"
+  },
+  "history_icon_tooltip_settings": {
+    "message": "Nastavenia"
+  },
+  "history_show_favorites_only": {
+    "message": "Zobraziť iba obľúbené"
+  },
+  "history_mark_as_favorite": {
+    "message": "Označiť položku ako obľúbenú"
+  },
+  "history_unmark_as_favorite": {
+    "message": "Odobrať položku z obľúbených"
+  },
+  "history_import_success": {
+    "message": "Úspešne importované položky histórie { $itemsCount }"
+  },
+  "history_import_file_error": {
+    "message": "Chyba pri čítaní súboru '{ $fileName }': { $errorInfo }"
+  },
+  "context_menu_translate_full_page_context_menu": {
+    "message": "Preložiť stranu do { $lang }"
+  },
+  "context_menu_translate_full_page_context_menu_stop": {
+    "message": "Zastaviť automatický preklad pre { $site }"
+  },
+  "context_menu_translate_full_page": {
+    "message": "Preložiť stranu '{ $pageTitle }' do { $lang }"
+  },
+  "context_menu_translate_selection": {
+    "message": "Preložiť { $selection } pomocou { $translator }"
+  },
+  "share_with_friends": {
+    "message": "Ak sa vám aplikácia páči, zdieľajte ju so svojimi priateľmi"
+  },
+  "translation_data_failed": {
+    "message": "Načítanie údajov zlyhalo"
+  },
+  "rate_app_info1": {
+    "message": "Baví vás používať rozšírenie? Ohodnoťte ju 5 hviezdičkami!"
+  },
+  "rate_app_info2": {
+    "message": "Pomôže to ostatným používateľom nájsť rozšírenie a šíriť dobro."
+  },
+  "rate_app_button": {
+    "message": "Hodnotiť v obchode s rozšíreniami"
+  },
+  "rate_app_button_later": {
+    "message": "Pripomenúť mi to neskôr"
+  },
+  "target_lang_placeholder": {
+    "message": "Cieľové jazyky"
+  },
+  "source_lang_placeholder": {
+    "message": "Zdrojové jazyky"
+  },
+  "favorites_lang_title": {
+    "message": "Obľúbené"
+  },
+  "favorites_info_tooltip": {
+    "message": "Ak chcete označiť/odznačiť jazyk ako obľúbený (zoznam sa zobrazí v hornej časti), použite { $hotkey } + klik"
+  },
+  "donate_title": {
+    "message": "Prispieť"
+  },
+  "donate_description": {
+    "message": "Ak sa vám rozšírenie páči, zvážte možnosť prispieť vývojárom. Ďakujeme!"
+  },
+  "service_unavailable": {
+    "message": "Služba je nedostupná. Skúste to znova po 5 - 25 minútach. Ak sa to deje neustále, zvýšte oneskorenie prekladu v nastaveniach."
+  },
+  "service_confirm_not_a_robot": {
+    "message": "Môžete tiež prejsť na { $link } a potvrdiť, že nie ste robot."
+  },
+  "privacy_policy_title_updated": {
+    "message": "Zásady ochrany osobných údajov boli aktualizované"
+  },
+  "privacy_policy_accept_terms": {
+    "message": "Prijať zmluvné podmienky"
+  },
+  "mellowtel_greetings": {
+    "message": "Ahoj, kamarát 👋"
+  },
+  "mellowtel_text1": {
+    "message": "Ako možno viete, toto rozšírenie je zadarmo a je k dispozícii pre každého... ale aby sme ho mohli udržať, tentoraz vyžadujeme od vás určitú akciu!"
+  },
+  "mellowtel_text2": {
+    "message": "Táto nová verzia obsahuje knižnicu s otvoreným kódom { $link }. Táto knižnica vám umožňuje zdieľať váš nevyužitý internet s dôveryhodnými AI laboratóriami a startupmi, ktoré ho využívajú na trénovanie svojich modelov."
+  },
+  "mellowtel_usage_title": {
+    "message": "Mellowtel využívame na:"
+  },
+  "mellowtel_usage1": {
+    "message": "Sledovanie výpadkov služby"
+  },
+  "mellowtel_usage2": {
+    "message": "Meranie kvality služby"
+  },
+  "mellowtel_usage3": {
+    "message": "Ako vývojár tohto rozšírenia získate malý podiel z príjmov"
+  },
+  "mellowtel_accept_all_info1": {
+    "message": "Ak zvolíte možnosť 'Prijať všetko', budeme tiež používať rozhranie API spoločnosti Mellowtel na: umožní dôveryhodným partnerom prístup k internetovým zdrojom tým, že časť ich prevádzky bude smerovaná aj cez váš uzol v sieti."
+  },
+  "mellowtel_accept_all_info2": {
+    "message": "Mellowtel zdieľa len vašu šírku pásma. Bezpečnosť a súkromie sú 100% zaručené a knižnica má otvorený kód pre všetkých na prezeranie."
+  },
+  "mellowtel_regulation1": {
+    "message": "Neposkytuje, nezdieľa ani nepredáva osobné údaje (ani anonymizované údaje)."
+  },
+  "mellowtel_regulation2": {
+    "message": "Je tiež prísne regulovaný: Mellowtel neustále komunikuje s regulátormi Chrome Web Store, aby zaručil bezpečný zážitok."
+  },
+  "mellowtel_regulation3": {
+    "message": "Taktiež poskytuje regulátorom CWS nástroje na monitorovanie a zabezpečenie dodržiavania pravidiel."
+  },
+  "mellowtel_button_decline": {
+    "message": "Odmietnuť voliteľné použitie"
+  },
+  "mellowtel_button_accept": {
+    "message": "Prijať všetko"
+  },
+  "mellowtel_dialog_footer": {
+    "message": "Ďakujeme, že ste si našli čas na prečítanie, tímy { $devs }."
+  },
+  "error_403_auth_failed": {
+    "message": "Autorizácia zlyhala. Prosím, zadajte platný kľúč API v nastaveniach."
+  },
+  "pdf_use_custom_viewer": {
+    "message": "Podpora prekladov v PDF súboroch"
+  },
+  "pdf_use_custom_viewer_info": {
+    "message": "Táto možnosť nahradí predvolený prehliadač PDF"
+  },
+  "ai_choose_model": {
+    "message": "Vyberte AI model"
+  },
+  "ai_choose_model_cost_effective": {
+    "message": "Najúspornejší z hľadiska nákladov"
+  },
+  "ai_choose_model_recommended": {
+    "message": "Odporúčaný model"
+  },
+  "auth_access_info_steps_openai": {
+    "message": "1) Zaregistrujte sa na platform.openai.com 2) Vytvorte prístupový kľúč API 3) Dobite si kredit (5$+)"
+  },
+  "auth_access_info_steps_grok": {
+    "message": "Zaregistrujte sa na adrese console.x.ai a dobite si kredit (napr. prostredníctvom kreditnej karty)"
+  },
+  "auth_access_info_steps_deepseek": {
+    "message": "Zaregistrujte sa na platform.deepseek.com a dobite si kredit (napr. cez Paypal)"
+  },
+  "auth_access_info_api_key": {
+    "message": "Zadajte  kľúč API na získanie prekladov { $provider }"
+  },
+  "auth_clear_key_info": {
+    "message": "Odstrániť kľúč API { $provider }"
+  },
+  "auth_safety_warning_info": {
+    "message": "Upozornenie: NEVKLADAJTE svoj kľúč API nikde inde okrem tohto okna rozšírenia"
+  },
+  "pro_version_promo_link_text": {
+    "message": "20 % zľava na PRO"
+  },
+  "pro_version_promo_tooltip": {
+    "message": "Pripravujeme verziu PRO s celostránkovým prekladom AI. Pre viac informácií a uplatnenie zľavy kliknite sem."
+  }
 }

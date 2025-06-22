@@ -4,5 +4,548 @@
   },
   "description": {
     "message": "Translate texts within page context, customize your own style of popup block, and more."
+  },
+  "open_in_window": {
+    "message": "Open in external window"
+  },
+  "tab_settings": {
+    "message": "Settings"
+  },
+  "tab_theme": {
+    "message": "Popup"
+  },
+  "tab_text_input": {
+    "message": "Translate"
+  },
+  "tab_history": {
+    "message": "History"
+  },
+  "setting_title_common": {
+    "message": "Common"
+  },
+  "setting_title_text_input": {
+    "message": "Translate"
+  },
+  "setting_title_popup": {
+    "message": "Popup"
+  },
+  "setting_title_translator_service": {
+    "message": "Service"
+  },
+  "settings_title_tts": {
+    "message": "Text-to-speech"
+  },
+  "settings_title_appearance": {
+    "message": "Appearance"
+  },
+  "settings_title_full_page_translation": {
+    "message": "Full-page translation"
+  },
+  "settings_title_full_page_excluded_pages": {
+    "message": "Never translate"
+  },
+  "settings_title_full_page_always_translate": {
+    "message": "Always translate"
+  },
+  "settings_title_full_page_show_original_onmouseover": {
+    "message": "Show original text on mouseover"
+  },
+  "settings_title_full_page_show_translation_onmouseover": {
+    "message": "Show translation text on mouseover"
+  },
+  "settings_title_full_page_show_replace_texts": {
+    "message": "Replace document texts with translations"
+  },
+  "settings_title_full_page_show_traffic_save_mode": {
+    "message": "Enable \"traffic-save\" mode"
+  },
+  "settings_title_full_page_show_traffic_save_mode_info": {
+    "message": "Saving network / API-costs by translating only visible texts from webpage viewport"
+  },
+  "settings_title_full_page_empty_list": {
+    "message": "Empty list"
+  },
+  "settings_title_full_page_see_edit_list": {
+    "message": "Click to see and edit the list"
+  },
+  "settings_title_full_page_add_url": {
+    "message": "Add URL"
+  },
+  "settings_title_full_page_add_url_error": {
+    "message": "Attempt to add invalid URL"
+  },
+  "auto_play_tts": {
+    "message": "Auto-play text-to-speech"
+  },
+  "use_chrome_tts": {
+    "message": "Force to use system text-to-speech engine"
+  },
+  "use_chrome_tts_tooltip_info": {
+    "message": "This option is auto-enabled when translator don't have its own TTS engine"
+  },
+  "use_dark_theme": {
+    "message": "Switch dark theme for this window"
+  },
+  "settings_title_advanced_providers_list": {
+    "message": "Advanced translation providers"
+  },
+  "settings_title_advanced_providers_list_show": {
+    "message": "Show Advanced Translation Providers"
+  },
+  "settings_title_advanced_providers_list_hide": {
+    "message": "Hide Advanced Translation Providers"
+  },
+  "settings_title_voice": {
+    "message": "Voice"
+  },
+  "tts_default_system_voice": {
+    "message": "Default system voice"
+  },
+  "tts_select_voice_title": {
+    "message": "Select voice"
+  },
+  "tts_play_demo_sound": {
+    "message": "Play demo sound"
+  },
+  "tts_play_demo_sound_edit": {
+    "message": "Edit text for voice demo"
+  },
+  "import_export_settings": {
+    "message": "Import or export settings"
+  },
+  "export_settings_button_label": {
+    "message": "Export settings"
+  },
+  "import_settings_button_label": {
+    "message": "Import settings"
+  },
+  "import_incorrect_file_format": {
+    "message": "Incorrect file format (should be probably { $fileNameJson })"
+  },
+  "imported_setting_successful": {
+    "message": "Settings under the key { $key } imported successful"
+  },
+  "display_icon_near_selection": {
+    "message": "Show icon near selected text"
+  },
+  "show_tts_icon_inside_popup": {
+    "message": "Display text-to-speech icon"
+  },
+  "show_select_provider_icon_in_popup": {
+    "message": "Display provider-select icon"
+  },
+  "show_copy_translation_icon": {
+    "message": "Display copy-translation icon"
+  },
+  "show_save_as_favorite_icon": {
+    "message": "Display save to favorites icon"
+  },
+  "show_close_popup_button": {
+    "message": "Display close-popup icon at the right corner"
+  },
+  "show_detected_language_block": {
+    "message": "Display detected language"
+  },
+  "display_on_click_by_selected_text": {
+    "message": "Display on click by selection"
+  },
+  "display_popup_after_text_selected": {
+    "message": "Display right after text selection"
+  },
+  "display_popup_on_double_click": {
+    "message": "Display on double-click a word"
+  },
+  "display_popup_on_hotkey": {
+    "message": "Display when I press hotkey"
+  },
+  "remember_last_typed_text": {
+    "message": "Remember last typed text"
+  },
+  "sub_header_quick_access_hotkey": {
+    "message": "Setup global hotkey"
+  },
+  "quick_access_configure_link": {
+    "message": "Configure keyboard shortcut for quick access to this window"
+  },
+  "swap_languages": {
+    "message": "Swap languages"
+  },
+  "popup_position_title": {
+    "message": "Position"
+  },
+  "popup_position_auto": {
+    "message": "Auto (align to the text)"
+  },
+  "popup_position_left_top": {
+    "message": "Left-top corner"
+  },
+  "popup_position_right_top": {
+    "message": "Right-top corner"
+  },
+  "popup_position_left_bottom": {
+    "message": "Left-bottom corner"
+  },
+  "popup_position_right_bottom": {
+    "message": "Right-bottom corner"
+  },
+  "translation_delay": {
+    "message": "Translation delay"
+  },
+  "translation_delay_info": {
+    "message": "If you often experience blocking (503 error) from Google or other services set bigger value of delay"
+  },
+  "reverse_translate_select_placeholder": {
+    "message": "Reverse translate language"
+  },
+  "reverse_translate_add_action": {
+    "message": "Add reverse language: { $lang } -> ? (applicable only with \"Auto-detect\" option)"
+  },
+  "reverse_translate_delete_action": {
+    "message": "Unset reverse translate language"
+  },
+  "custom_font_select": {
+    "message": "Select custom font"
+  },
+  "settings_show_more": {
+    "message": "Show more settings"
+  },
+  "settings_show_less": {
+    "message": "Show less settings"
+  },
+  "popup_play_icon_title": {
+    "message": "Listen"
+  },
+  "popup_copy_translation_title": {
+    "message": "Copy translation"
+  },
+  "popup_next_vendor_icon_title": {
+    "message": "Translate with { $translator }"
+  },
+  "popup_demo_translation": {
+    "message": "Translated text"
+  },
+  "popup_demo_dictionary_noun": {
+    "message": "noun"
+  },
+  "popup_demo_dictionary_values": {
+    "message": "Word 1, word 2, etc."
+  },
+  "sub_header_background": {
+    "message": "Background"
+  },
+  "sub_header_box_shadow": {
+    "message": "Box shadow"
+  },
+  "sub_header_text": {
+    "message": "Text"
+  },
+  "sub_header_border": {
+    "message": "Border"
+  },
+  "sub_header_box_size": {
+    "message": "Box size"
+  },
+  "background_color": {
+    "message": "Color"
+  },
+  "background_linear_gradient": {
+    "message": "Linear"
+  },
+  "box_shadow_color": {
+    "message": "Color"
+  },
+  "box_shadow_inner": {
+    "message": "Inside"
+  },
+  "text_size": {
+    "message": "Size"
+  },
+  "text_font_family": {
+    "message": "Font"
+  },
+  "text_color": {
+    "message": "Color"
+  },
+  "text_shadow": {
+    "message": "Shadow"
+  },
+  "text_shadow_size": {
+    "message": "Blur radius"
+  },
+  "text_shadow_offset_x": {
+    "message": "Horizontal offset"
+  },
+  "text_shadow_offset_y": {
+    "message": "Vertical offset"
+  },
+  "text_shadow_color": {
+    "message": "Color"
+  },
+  "border_width": {
+    "message": "Width"
+  },
+  "border_style": {
+    "message": "Style"
+  },
+  "border_color": {
+    "message": "Color"
+  },
+  "border_radius": {
+    "message": "Radius"
+  },
+  "box_size_min_width": {
+    "message": "Min width"
+  },
+  "box_size_min_height": {
+    "message": "Min height"
+  },
+  "box_size_max_width": {
+    "message": "Max width"
+  },
+  "box_size_max_height": {
+    "message": "Max height"
+  },
+  "reset_to_default_button_text": {
+    "message": "Reset to default"
+  },
+  "text_field_placeholder": {
+    "message": "Start typing here to get translation"
+  },
+  "translated_with": {
+    "message": "Translated with { $translator } ({ $lang })"
+  },
+  "translated_from": {
+    "message": "Translated from: { $lang }"
+  },
+  "translate_also_from": {
+    "message": "Translate also from"
+  },
+  "spell_correction": {
+    "message": "Did you mean { $suggestion }?"
+  },
+  "text_input_translation_hint": {
+    "message": "{ $hotkey } to immediate translate, delay: { $timeout }ms"
+  },
+  "history_enabled_flag": {
+    "message": "Enabled"
+  },
+  "history_settings_save_words_only": {
+    "message": "Save only dictionary words"
+  },
+  "history_search_input_placeholder": {
+    "message": "Search in history"
+  },
+  "history_clear_period_hour": {
+    "message": "Last hour"
+  },
+  "history_clear_period_day": {
+    "message": "Last day"
+  },
+  "history_clear_period_month": {
+    "message": "Last month"
+  },
+  "history_clear_period_year": {
+    "message": "Last year"
+  },
+  "history_clear_period_all": {
+    "message": "All"
+  },
+  "history_button_clear": {
+    "message": "Clear history"
+  },
+  "history_button_show_more": {
+    "message": "Show more"
+  },
+  "history_export_entries": {
+    "message": "Export { $format }"
+  },
+  "history_import_entries": {
+    "message": "Import { $format }"
+  },
+  "history_page_size": {
+    "message": "Page size"
+  },
+  "history_icon_tooltip_search": {
+    "message": "Search"
+  },
+  "history_icon_tooltip_imp_exp": {
+    "message": "Import / Export"
+  },
+  "history_icon_tooltip_settings": {
+    "message": "Settings"
+  },
+  "history_show_favorites_only": {
+    "message": "Show favorites only"
+  },
+  "history_mark_as_favorite": {
+    "message": "Mark item as favorite"
+  },
+  "history_unmark_as_favorite": {
+    "message": "Unmark item as favorite"
+  },
+  "history_import_success": {
+    "message": "Successfully imported { $itemsCount } history entries"
+  },
+  "history_import_file_error": {
+    "message": "Reading file '{ $fileName }' error: { $errorInfo }"
+  },
+  "context_menu_translate_full_page_context_menu": {
+    "message": "Translate page to { $lang }"
+  },
+  "context_menu_translate_full_page_context_menu_stop": {
+    "message": "Stop auto-translation for { $site }"
+  },
+  "context_menu_translate_full_page": {
+    "message": "Translate page '{ $pageTitle }' to { $lang }"
+  },
+  "context_menu_translate_selection": {
+    "message": "Translate { $selection } with { $translator }"
+  },
+  "share_with_friends": {
+    "message": "If you like the app share it with your friends"
+  },
+  "translation_data_failed": {
+    "message": "Data loading failed"
+  },
+  "rate_app_info1": {
+    "message": "Enjoy using the app? Please rate us with 5 stars!"
+  },
+  "rate_app_info2": {
+    "message": "It will help other users to find extension and spread the goodies."
+  },
+  "rate_app_button": {
+    "message": "Rate app"
+  },
+  "rate_app_button_later": {
+    "message": "Remind later"
+  },
+  "target_lang_placeholder": {
+    "message": "Target languages"
+  },
+  "source_lang_placeholder": {
+    "message": "Source languages"
+  },
+  "favorites_lang_title": {
+    "message": "Favorites"
+  },
+  "favorites_info_tooltip": {
+    "message": "To mark/unmark language as favorite (list is shown on the top), use { $hotkey } + click"
+  },
+  "donate_title": {
+    "message": "Developers support"
+  },
+  "donate_description": {
+    "message": "If you like the app consider to donate developers. Thanks!"
+  },
+  "service_unavailable": {
+    "message": "Service unavailable. Try again after 5-25 minutes. If this happens constantly increase translation delay in the settings."
+  },
+  "service_confirm_not_a_robot": {
+    "message": "Also you can go to { $link } and confirm that you're not a robot."
+  },
+  "privacy_policy_title_updated": {
+    "message": "Privacy Policy has been updated"
+  },
+  "privacy_policy_accept_terms": {
+    "message": "Accept terms & conditions"
+  },
+  "mellowtel_greetings": {
+    "message": "Hello, friend 👋"
+  },
+  "mellowtel_text1": {
+    "message": "As you might know this extension is free and available to everybody... but to keep it up this time we require some action from you!"
+  },
+  "mellowtel_text2": {
+    "message": "This new version includes the open-source { $link } library. This library lets you share your unused internet with trusted AI labs & startups who use it to train their models."
+  },
+  "mellowtel_usage_title": {
+    "message": "We use Mellowtel to:"
+  },
+  "mellowtel_usage1": {
+    "message": "Track outages of the service"
+  },
+  "mellowtel_usage2": {
+    "message": "Measure the quality of the service"
+  },
+  "mellowtel_usage3": {
+    "message": "As the developer of this extension get a small share of the revenue"
+  },
+  "mellowtel_accept_all_info1": {
+    "message": "If you choose to 'Accept all', we will also use the Mellowtel API to: Enable trusted partners to access internet resources by also routing part of their traffic through your node in the network."
+  },
+  "mellowtel_accept_all_info2": {
+    "message": "Mellowtel shares your bandwidth only. Security and privacy are 100% guaranteed and the library is open source for everyone to see."
+  },
+  "mellowtel_regulation1": {
+    "message": "It doesn't collect, share, or sell personal information (not even anonymized data)."
+  },
+  "mellowtel_regulation2": {
+    "message": "It’s also highly regulated: Mellowtel keeps communicating with Chrome Web Store regulators to guarantee a safe experience."
+  },
+  "mellowtel_regulation3": {
+    "message": "It also provides CWS regulators with tools to monitor and enforce compliance."
+  },
+  "mellowtel_button_decline": {
+    "message": "Decline optional use"
+  },
+  "mellowtel_button_accept": {
+    "message": "Accept all"
+  },
+  "mellowtel_dialog_footer": {
+    "message": "Thanks for taking the time to read, teams { $devs }."
+  },
+  "error_403_auth_failed": {
+    "message": "Authorization failed. Please supply a valid auth api key in the settings"
+  },
+  "pdf_use_custom_viewer": {
+    "message": "Support translations in PDF files"
+  },
+  "pdf_use_custom_viewer_info": {
+    "message": "This option will replace default PDF viewer"
+  },
+  "ai_choose_model": {
+    "message": "Choose AI model"
+  },
+  "ai_choose_model_cost_effective": {
+    "message": "Most cost-efficient"
+  },
+  "ai_choose_model_recommended": {
+    "message": "Recommended model"
+  },
+  "ai_choose_model_reasoning": {
+    "message": "Thinking model / slow"
+  },
+  "ai_choose_model_reasoning_light": {
+    "message": "Thinking model light / faster"
+  },
+  "auth_access_info_steps_openai": {
+    "message": "1) Register at platform.openai.com 2) Create api access key 3) Top-up your balance (5$+)"
+  },
+  "auth_access_info_steps_grok": {
+    "message": "Register at console.x.ai and top-up balance (e.g. via Credit card)"
+  },
+  "auth_access_info_steps_deepseek": {
+    "message": "Register at platform.deepseek.com and top-up balance (e.g. via Paypal)"
+  },
+  "auth_access_info_steps_deepl": {
+    "message": "Register at www.deepl.com and get own free autorization API-key for DeepL translations"
+  },
+  "auth_access_info_api_key": {
+    "message": "Provide your api key for getting { $provider } translations"
+  },
+  "auth_setup_key_info": {
+    "message": "Provide { $provider } API-key"
+  },
+  "auth_clear_key_info": {
+    "message": "Remove { $provider } API key"
+  },
+  "auth_safety_warning_info": {
+    "message": "Warning: DO NOT enter your API key in any other place except this extension window"
+  },
+  "pro_version_promo_link_text": {
+    "message": "20% off PRO"
+  },
+  "pro_version_promo_tooltip": {
+    "message": "We’re building a PRO version with full-page AI translation. Click to learn more and claim your discount."
   }
 }

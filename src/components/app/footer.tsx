@@ -1,9 +1,9 @@
 import "./footer.scss"
 import React from "react";
 import { observer } from "mobx-react";
-import { getExtensionUrl } from "../../common-vars";
-import { getManifest } from '../../extension'
-import { getMessage } from "../../i18n";
+import { getExtensionUrl } from "@/common-vars";
+import { getManifest } from '@/extension'
+import { getMessage } from "@/i18n";
 import { Icon } from "../icon";
 import { CopyToClipboardIcon } from "../copy-to-clipboard-icon";
 import { mellowtelDialogState } from "../../../mellowtel";

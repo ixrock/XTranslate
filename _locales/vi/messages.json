@@ -1,8 +1,455 @@
 {
   "short_description": {
-    "message": "Dịch văn bản trên trang web dễ dàng."
+    "message": "Dịch văn bản trên trang web dễ dàng"
   },
   "description": {
-    "message": "Dịch văn bản trong ngữ cảnh trang web, tùy chỉnh kiểu hiển thị khung bật lên của riêng bạn và nhiều hơn thế nữa."
+    "message": "Dịch văn bản trong ngữ cảnh của trang, tùy chỉnh phong cách khối bật lên của bạn và nhiều hơn nữa."
+  },
+  "open_in_window": {
+    "message": "Mở trong cửa sổ ngoài"
+  },
+  "tab_settings": {
+    "message": "Cài đặt"
+  },
+  "tab_theme": {
+    "message": "Bật lên"
+  },
+  "tab_text_input": {
+    "message": "Dịch"
+  },
+  "tab_history": {
+    "message": "Lịch sử"
+  },
+  "setting_title_common": {
+    "message": "Chung"
+  },
+  "setting_title_text_input": {
+    "message": "Dịch"
+  },
+  "setting_title_popup": {
+    "message": "Bật lên"
+  },
+  "setting_title_translator_service": {
+    "message": "Dịch vụ"
+  },
+  "settings_title_tts": {
+    "message": "Văn bản thành giọng nói"
+  },
+  "settings_title_appearance": {
+    "message": "Giao diện"
+  },
+  "auto_play_tts": {
+    "message": "Tự động phát văn bản thành giọng nói"
+  },
+  "use_chrome_tts": {
+    "message": "Ép buộc sử dụng hệ thống văn bản thành giọng nói"
+  },
+  "use_chrome_tts_tooltip_info": {
+    "message": "Tùy chọn này sẽ tự động kích hoạt khi dịch vụ không có hệ thống TTS riêng"
+  },
+  "use_dark_theme": {
+    "message": "Chuyển sang chế độ tối cho cửa sổ này"
+  },
+  "tts_default_system_voice": {
+    "message": "Giọng nói hệ thống mặc định"
+  },
+  "tts_select_voice_title": {
+    "message": "Chọn giọng nói"
+  },
+  "tts_play_demo_sound": {
+    "message": "Phát âm thanh demo"
+  },
+  "tts_play_demo_sound_edit": {
+    "message": "Chỉnh sửa văn bản cho demo giọng nói"
+  },
+  "import_export_settings": {
+    "message": "Nhập hoặc xuất cài đặt"
+  },
+  "export_settings_button_label": {
+    "message": "Xuất cài đặt"
+  },
+  "import_settings_button_label": {
+    "message": "Nhập cài đặt"
+  },
+  "import_incorrect_file_format": {
+    "message": "Định dạng tệp không đúng (có lẽ nên là { $fileNameJson })"
+  },
+  "imported_setting_successful": {
+    "message": "Cài đặt dưới khóa { $key } đã được nhập thành công"
+  },
+  "display_icon_near_selection": {
+    "message": "Hiển thị biểu tượng gần văn bản đã chọn"
+  },
+  "show_tts_icon_inside_popup": {
+    "message": "Hiển thị biểu tượng văn bản thành giọng nói"
+  },
+  "show_select_provider_icon_in_popup": {
+    "message": "Hiển thị biểu tượng dịch tiếp theo"
+  },
+  "show_copy_translation_icon": {
+    "message": "Hiển thị biểu tượng sao chép bản dịch"
+  },
+  "show_save_as_favorite_icon": {
+    "message": "Hiển thị biểu tượng lưu làm yêu thích"
+  },
+  "show_close_popup_button": {
+    "message": "Hiển thị nút đóng bật lên ở góc phải"
+  },
+  "show_detected_language_block": {
+    "message": "Hiển thị ngôn ngữ đã phát hiện"
+  },
+  "display_on_click_by_selected_text": {
+    "message": "Hiển thị khi nhấp vào văn bản đã chọn"
+  },
+  "display_popup_after_text_selected": {
+    "message": "Hiển thị ngay sau khi chọn văn bản"
+  },
+  "display_popup_on_double_click": {
+    "message": "Hiển thị khi nhấp đúp vào từ"
+  },
+  "display_popup_on_hotkey": {
+    "message": "Hiển thị khi tôi nhấn phím tắt"
+  },
+  "remember_last_typed_text": {
+    "message": "Nhớ văn bản đã gõ cuối cùng"
+  },
+  "sub_header_quick_access_hotkey": {
+    "message": "Thiết lập phím tắt toàn cục"
+  },
+  "quick_access_configure_link": {
+    "message": "Cấu hình phím tắt bàn phím để truy cập nhanh vào cửa sổ này"
+  },
+  "swap_languages": {
+    "message": "Hoán đổi ngôn ngữ"
+  },
+  "popup_position_title": {
+    "message": "Vị trí"
+  },
+  "popup_position_auto": {
+    "message": "Tự động (căn chỉnh theo văn bản)"
+  },
+  "popup_position_left_top": {
+    "message": "Góc trên trái"
+  },
+  "popup_position_right_top": {
+    "message": "Góc trên phải"
+  },
+  "popup_position_left_bottom": {
+    "message": "Góc dưới trái"
+  },
+  "popup_position_right_bottom": {
+    "message": "Góc dưới phải"
+  },
+  "translation_delay": {
+    "message": "Độ trễ dịch"
+  },
+  "translation_delay_info": {
+    "message": "Nếu bạn thường xuyên gặp phải tình trạng chặn (lỗi 503) từ Google hoặc các dịch vụ khác, hãy đặt giá trị độ trễ lớn hơn"
+  },
+  "reverse_translate_select_placeholder": {
+    "message": "Dịch ngược ngôn ngữ"
+  },
+  "reverse_translate_add_action": {
+    "message": "Thêm ngôn ngữ ngược: { $lang } -> ? (chỉ áp dụng với tùy chọn 'Tự động phát hiện')"
+  },
+  "reverse_translate_delete_action": {
+    "message": "Hủy chọn dịch ngược ngôn ngữ"
+  },
+  "custom_font_select": {
+    "message": "Chọn phông chữ tùy chỉnh"
+  },
+  "popup_play_icon_title": {
+    "message": "Nghe"
+  },
+  "popup_copy_translation_title": {
+    "message": "Sao chép bản dịch"
+  },
+  "popup_next_vendor_icon_title": {
+    "message": "Dịch với { $translator }"
+  },
+  "popup_demo_translation": {
+    "message": "Văn bản đã dịch"
+  },
+  "popup_demo_dictionary_noun": {
+    "message": "Danh từ"
+  },
+  "popup_demo_dictionary_values": {
+    "message": "Từ 1, từ 2, v.v."
+  },
+  "sub_header_background": {
+    "message": "Nền"
+  },
+  "sub_header_box_shadow": {
+    "message": "Bóng hộp"
+  },
+  "sub_header_text": {
+    "message": "Văn bản"
+  },
+  "sub_header_border": {
+    "message": "Viền"
+  },
+  "sub_header_box_size": {
+    "message": "Kích thước hộp"
+  },
+  "background_color": {
+    "message": "Màu sắc"
+  },
+  "background_linear_gradient": {
+    "message": "Tuyến tính"
+  },
+  "box_shadow_color": {
+    "message": "Màu sắc"
+  },
+  "box_shadow_inner": {
+    "message": "Bên trong"
+  },
+  "text_size": {
+    "message": "Kích thước"
+  },
+  "text_font_family": {
+    "message": "Phông chữ"
+  },
+  "text_color": {
+    "message": "Màu sắc"
+  },
+  "text_shadow": {
+    "message": "Bóng"
+  },
+  "text_shadow_size": {
+    "message": "Bán kính mờ"
+  },
+  "text_shadow_offset_x": {
+    "message": "Độ lệch ngang"
+  },
+  "text_shadow_offset_y": {
+    "message": "Độ lệch dọc"
+  },
+  "text_shadow_color": {
+    "message": "Màu sắc"
+  },
+  "border_width": {
+    "message": "Độ rộng"
+  },
+  "border_style": {
+    "message": "Kiểu dáng"
+  },
+  "border_color": {
+    "message": "Màu sắc"
+  },
+  "border_radius": {
+    "message": "Bán kính"
+  },
+  "box_size_min_width": {
+    "message": "Độ rộng tối thiểu"
+  },
+  "box_size_min_height": {
+    "message": "Chiều cao tối thiểu"
+  },
+  "box_size_max_width": {
+    "message": "Độ rộng tối đa"
+  },
+  "box_size_max_height": {
+    "message": "Chiều cao tối đa"
+  },
+  "reset_to_default_button_text": {
+    "message": "Đặt lại về mặc định"
+  },
+  "text_field_placeholder": {
+    "message": "Bắt đầu nhập ở đây để lấy bản dịch"
+  },
+  "translated_with": {
+    "message": "Đã dịch với { $translator } ({ $lang })"
+  },
+  "translated_from": {
+    "message": "Đã dịch từ: { $lang }"
+  },
+  "translate_also_from": {
+    "message": "Cũng dịch từ"
+  },
+  "spell_correction": {
+    "message": "Bạn có muốn nói là { $suggestion }?"
+  },
+  "text_input_translation_hint": {
+    "message": "{ $hotkey } để dịch ngay lập tức, độ trễ: { $timeout }ms"
+  },
+  "history_enabled_flag": {
+    "message": "Đã bật"
+  },
+  "history_settings_save_words_only": {
+    "message": "Chỉ lưu từ điển"
+  },
+  "history_search_input_placeholder": {
+    "message": "Tìm kiếm trong lịch sử"
+  },
+  "history_clear_period_hour": {
+    "message": "Giờ trước"
+  },
+  "history_clear_period_day": {
+    "message": "Ngày trước"
+  },
+  "history_clear_period_month": {
+    "message": "Tháng trước"
+  },
+  "history_clear_period_year": {
+    "message": "Năm trước"
+  },
+  "history_clear_period_all": {
+    "message": "Tất cả"
+  },
+  "history_button_clear": {
+    "message": "Xóa lịch sử"
+  },
+  "history_button_show_more": {
+    "message": "Hiển thị thêm"
+  },
+  "history_export_entries": {
+    "message": "Xuất { $format }"
+  },
+  "history_import_entries": {
+    "message": "Nhập { $format }"
+  },
+  "history_page_size": {
+    "message": "Kích thước trang"
+  },
+  "history_icon_tooltip_search": {
+    "message": "Tìm kiếm"
+  },
+  "history_icon_tooltip_imp_exp": {
+    "message": "Nhập / Xuất"
+  },
+  "history_icon_tooltip_settings": {
+    "message": "Cài đặt"
+  },
+  "history_show_favorites_only": {
+    "message": "Chỉ hiển thị yêu thích"
+  },
+  "history_mark_as_favorite": {
+    "message": "Đánh dấu mục là yêu thích"
+  },
+  "history_unmark_as_favorite": {
+    "message": "Bỏ đánh dấu mục là yêu thích"
+  },
+  "history_import_success": {
+    "message": "Đã nhập thành công { $itemsCount } mục lịch sử"
+  },
+  "history_import_file_error": {
+    "message": "Lỗi đọc tệp '{ $fileName }': { $errorInfo }"
+  },
+  "context_menu_translate_full_page": {
+    "message": "Dịch sang { $lang }"
+  },
+  "context_menu_translate_selection": {
+    "message": "Dịch { $selection } với { $translator }"
+  },
+  "share_with_friends": {
+    "message": "Nếu bạn thích ứng dụng này, hãy chia sẻ với bạn bè của bạn"
+  },
+  "translation_data_failed": {
+    "message": "Lỗi tải dữ liệu"
+  },
+  "rate_app_info1": {
+    "message": "Bạn có thích sử dụng ứng dụng này không? Vui lòng đánh giá chúng tôi 5 sao!"
+  },
+  "rate_app_info2": {
+    "message": "Điều này sẽ giúp người dùng khác tìm thấy tiện ích mở rộng và lan tỏa lợi ích của nó."
+  },
+  "rate_app_button": {
+    "message": "Đánh giá trong cửa hàng tiện ích mở rộng"
+  },
+  "rate_app_button_later": {
+    "message": "Nhắc tôi sau"
+  },
+  "target_lang_placeholder": {
+    "message": "Ngôn ngữ đích"
+  },
+  "source_lang_placeholder": {
+    "message": "Ngôn ngữ nguồn"
+  },
+  "favorites_lang_title": {
+    "message": "Yêu thích"
+  },
+  "favorites_info_tooltip": {
+    "message": "Để đánh dấu/hủy đánh dấu ngôn ngữ là yêu thích (danh sách được hiển thị ở trên cùng), hãy sử dụng { $hotkey } + nhấp chuột"
+  },
+  "donate_title": {
+    "message": "Hỗ trợ nhà phát triển"
+  },
+  "donate_description": {
+    "message": "Nếu bạn thích ứng dụng này, hãy xem xét đóng góp cho nhà phát triển. Cảm ơn bạn!"
+  },
+  "service_unavailable": {
+    "message": "Dịch vụ không khả dụng. Vui lòng thử lại sau 5-25 phút. Nếu điều này xảy ra thường xuyên, hãy tăng độ trễ dịch trong cài đặt."
+  },
+  "service_confirm_not_a_robot": {
+    "message": "Bạn cũng có thể truy cập vào { $link } và xác nhận rằng bạn không phải là robot."
+  },
+  "privacy_policy_title_updated": {
+    "message": "Chính sách bảo mật đã được cập nhật"
+  },
+  "privacy_policy_accept_terms": {
+    "message": "Chấp nhận điều khoản và điều kiện"
+  },
+  "mellowtel_greetings": {
+    "message": "Xin chào, bạn 👋"
+  },
+  "mellowtel_text1": {
+    "message": "Như bạn có thể biết, tiện ích mở rộng này miễn phí và có sẵn cho tất cả mọi người... nhưng lần này, để duy trì nó, chúng tôi cần bạn thực hiện hành động!"
+  },
+  "mellowtel_text2": {
+    "message": "Phiên bản mới này bao gồm thư viện mã nguồn mở { $link }. Thư viện này cho phép bạn chia sẻ internet không sử dụng với các phòng thí nghiệm AI và công ty khởi nghiệp đáng tin cậy, những người sử dụng nó để đào tạo mô hình của họ."
+  },
+  "mellowtel_usage_title": {
+    "message": "Chúng tôi sử dụng Mellowtel để:"
+  },
+  "mellowtel_usage1": {
+    "message": "Theo dõi sự cố ngừng hoạt động của dịch vụ"
+  },
+  "mellowtel_usage2": {
+    "message": "Đo lường chất lượng dịch vụ"
+  },
+  "mellowtel_usage3": {
+    "message": "Là nhà phát triển của tiện ích mở rộng này, nhận một phần nhỏ doanh thu"
+  },
+  "mellowtel_accept_all_info1": {
+    "message": "Nếu bạn chọn 'Chấp nhận tất cả', chúng tôi cũng sẽ sử dụng API Mellowtel để: Cho phép các đối tác đáng tin cậy truy cập vào tài nguyên internet bằng cách định tuyến một phần lưu lượng của họ qua nút mạng của bạn."
+  },
+  "mellowtel_accept_all_info2": {
+    "message": "Mellowtel chỉ chia sẻ băng thông của bạn. Bảo mật và quyền riêng tư được đảm bảo 100% và thư viện này là mã nguồn mở cho mọi người xem."
+  },
+  "mellowtel_regulation1": {
+    "message": "Nó không thu thập, chia sẻ hoặc bán thông tin cá nhân (thậm chí không phải dữ liệu ẩn danh)."
+  },
+  "mellowtel_regulation2": {
+    "message": "Nó cũng bị quản lý chặt chẽ: Mellowtel liên tục giao tiếp với các nhà quản lý của Chrome Web Store để đảm bảo trải nghiệm an toàn."
+  },
+  "mellowtel_regulation3": {
+    "message": "Nó cũng cung cấp cho các nhà quản lý CWS các công cụ để giám sát và thực thi tuân thủ."
+  },
+  "mellowtel_button_decline": {
+    "message": "Từ chối sử dụng tùy chọn"
+  },
+  "mellowtel_button_accept": {
+    "message": "Chấp nhận tất cả"
+  },
+  "mellowtel_dialog_footer": {
+    "message": "Cảm ơn bạn đã dành thời gian đọc, các đội { $devs }."
+  },
+  "error_403_auth_failed": {
+    "message": "Xác thực thất bại. Vui lòng cung cấp khóa API hợp lệ trong cài đặt."
+  },
+  "ai_choose_model": {
+    "message": "Chọn mô hình AI"
+  },
+  "ai_choose_model_cost_effective": {
+    "message": "Tiết kiệm chi phí nhất"
+  },
+  "ai_choose_model_recommended": {
+    "message": "Mô hình khuyến nghị"
+  },
+  "pdf_use_custom_viewer": {
+    "message": "Hỗ trợ dịch trong các tệp PDF"
+  },
+  "pdf_use_custom_viewer_info": {
+    "message": "Tùy chọn này sẽ thay thế trình xem PDF mặc định"
   }
 }

@@ -3,7 +3,7 @@ import * as styles from "./number-input.module.scss";
 import React from "react";
 import { Input, InputProps } from "./input";
 import { Icon } from "../icon";
-import { autoBind, cssNames } from "../../utils";
+import { autoBind, cssNames } from "@/utils";
 
 interface Props extends InputProps<number> {
 }

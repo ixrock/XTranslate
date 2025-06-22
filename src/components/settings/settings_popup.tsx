@@ -2,14 +2,14 @@ import * as styles from "./settings_popup.module.scss";
 import React from "react";
 import { makeObservable } from "mobx";
 import { observer } from "mobx-react";
-import { getHotkey, parseHotkey, prevDefault } from "../../utils";
+import { getHotkey, parseHotkey, prevDefault } from "@/utils";
 import { Input } from "../input";
 import { Checkbox } from "../checkbox";
 import { ReactSelect, ReactSelectOption } from "../select";
 import { Icon } from "../icon";
 import { popupHotkey, PopupPosition, settingsStore } from "./settings.storage";
-import { getMessage } from "../../i18n";
-import { materialIcons } from "../../common-vars";
+import { getMessage } from "@/i18n";
+import { materialIcons } from "@/common-vars";
 
 @observer
 export class SettingsPopup extends React.Component {

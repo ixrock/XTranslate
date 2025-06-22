@@ -3,7 +3,7 @@ import React from "react"
 import { observer } from "mobx-react";
 import { makeObservable, observable } from "mobx";
 import { createPortal } from "react-dom"
-import { autoBind, cssNames } from "../../utils";
+import { autoBind, cssNames } from "@/utils";
 import { Animate } from "../animate";
 
 export interface TooltipProps {

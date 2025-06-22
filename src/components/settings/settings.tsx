@@ -4,8 +4,8 @@ import { action, makeObservable, observable } from "mobx";
 import { observer } from "mobx-react";
 import isEqual from "lodash/isEqual";
 import startCase from "lodash/startCase";
-import { DeepSeekAIModel, getTranslator, getTranslators, googleApiDomain, googleApiDomains, GrokAIModel, OpenAIModel, OpenAIVoiceTTS, ProviderCodeName, Translator } from "../../providers";
-import { XTranslateIcon } from "../../user-script/xtranslate-icon";
+import { ProviderWithApiKey, DeepSeekAIModel, getTranslator, getTranslators, googleApiDomain, googleApiDomains, GrokAIModel, OpenAIModel, OpenAIVoiceTTS, ProviderCodeName, Translator } from "@/providers";
+import { XTranslateIcon } from "@/user-script/xtranslate-icon";
 import { SelectLanguage, SelectLanguageChangeEvent } from "../select-language";
 import { Checkbox } from "../checkbox";
 import { Radio, RadioGroup } from "../radio";
@@ -15,12 +15,12 @@ import { SubTitle } from "../sub-title";
 import { Tab } from "../tabs";
 import { settingsStore, XIconPosition } from "./settings.storage";
 import { pageManager } from "../app/page-manager";
-import { getMessage } from "../../i18n";
+import { getMessage } from "@/i18n";
 import { SelectVoice } from "../select-tts-voice";
-import { getTTSVoices, speak, stopSpeaking } from "../../tts";
+import { getTTSVoices, speak, stopSpeaking } from "@/tts";
 import { SelectAIModel } from "./select_ai_model";
 import { ProviderAuthSettings } from "./auth_settings";
-import { materialIcons } from "../../common-vars";
+import { materialIcons } from "@/common-vars";
 import { Notifications } from "../notifications";
 import { Button } from "../button";
 import { SelectProvider } from "../select-provider";
@@ -141,7 +141,7 @@ export class Settings extends React.Component {
           <ProviderAuthSettings
             {...authSettings}
             provider={provider}
-            accessInfo={getMessage(`auth_access_info_steps_${provider}`)}
+            accessInfo={getMessage(`auth_access_info_steps_${provider as ProviderWithApiKey}`)}
             accessInfo2={getMessage(`auth_access_info_api_key`, { provider: title })}
             clearKeyInfo={getMessage(`auth_clear_key_info`, { provider: title })}
             warningInfo={getMessage(`auth_safety_warning_info`)}
