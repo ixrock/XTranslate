@@ -1,22 +1,22 @@
-// UI localization
+// [I18n]: localization system with message-key type-safety (json-dictionaries)
+// TODO: support pluralization via Intl.PluralRules(locale);
 
-import SupportedLocalesList from "../_locales/_locales.json"
-import type { ReactNode } from "react";
-import type { Pattern, PatternElement } from "@fluent/bundle/esm/ast"
-import { FluentBundle, FluentResource, FluentVariable } from "@fluent/bundle"
-import { observable } from "mobx";
-import { getURL, ProxyResponseType } from "./extension";
-import { proxyRequest } from "./background/httpProxy.bgc";
-import { createLogger, LoggerColor } from "./utils/createLogger";
-import { createStorage } from "./storage";
+import React, { ReactNode } from "react";
+import AvailableLocales from "../_locales/_locales.json";
+import DefaultLocale from "../_locales/en/messages.json";
+import { proxyRequest } from "@/background/httpProxy.bgc";
+import { getURL, ProxyResponseType } from "@/extension";
+import { createStorage } from "@/storage";
 
-const logger = createLogger({ systemPrefix: "[I18N]", prefixColor: LoggerColor.INFO_SYSTEM });
+export type Locale = keyof typeof AvailableLocales;
+export type LocalizationFile = typeof DefaultLocale;
+export type LocalizationKey = keyof LocalizationFile;
 
-export type Locale = keyof typeof SupportedLocalesList;
-export const availableLocales = SupportedLocalesList;
-export const fallbackLocale = "en";
-
-export const bundles = observable.map<Locale, FluentBundle>();
+export const availableLocales = AvailableLocales;
+export const defaultLocale: Locale = "en";
+export const messagesMap: DeepPartial<MessagesMap> = {};
+export const placeholderRegex = /\{\s*(\$\w+)\s*}/g;
+export const placeholderWithValueRegex = /\{\s*\$(\w+)\s*(?:=\s*([^}]+?)\s*)?}/g;
 
 export const i18nStorage = createStorage<{ lang: Locale }>("i18n", {
   area: "sync",
@@ -26,109 +26,13 @@ export const i18nStorage = createStorage<{ lang: Locale }>("i18n", {
 });
 
 export async function i18nInit() {
-  await loadMessages(fallbackLocale);
-  await i18nStorage.load() // load current i18n settings
-
-  const userLocale = getLocale();
-  if (userLocale !== fallbackLocale) {
-    await loadMessages(getLocale());
-  }
+  await i18nStorage.load();
+  await loadLocale(getLocale());
 }
 
-async function loadMessages(locale: Locale) {
-  const preloaded = bundles.has(locale);
-  const unknownLocale = !availableLocales[locale];
-  if (preloaded || unknownLocale) return;
-
-  const messagesUrl = getURL(`_locales/${locale}.ftl`);
-  try {
-    const messages = await proxyRequest<string>({
-      url: messagesUrl,
-      responseType: ProxyResponseType.TEXT,
-    });
-
-    const bundle = new FluentBundle(locale, {
-      useIsolating: false, // don't wrap placeholders with invisible FSI, PDI symbols
-    });
-    bundle.addResource(new FluentResource(messages))
-    bundles.set(locale, bundle);
-
-    logger.info(`locale "${locale}" successfully loaded`, {
-      domain: location.href,
-      bundle,
-      messages,
-    });
-  } catch (error) {
-    logger.error(`loading locale "${locale}" has failed (file: ${messagesUrl})`, {
-      domain: location.href,
-      error,
-    });
-  }
-}
-
-export interface MessagePattern {
-  message: Pattern
-  bundle: FluentBundle
-}
-
-export function getMessagePattern(key: string): MessagePattern {
-  const currentLocale = getLocale();
-  const bundle = bundles.get(currentLocale);
-  const message = bundle?.getMessage(key)?.value;
-
-  if (message) {
-    return { message, bundle }
-  }
-
-  const fallbackBundle = bundles.get(fallbackLocale);
-  const fallbackMessage = fallbackBundle.getMessage(key)?.value; // fallback locale message (default: english)
-
-  return {
-    message: fallbackMessage,
-    bundle: fallbackBundle,
-  };
-}
-
-export function getMessage(key: string, placeholders?: Record<string, string | FluentVariable>): string;
-export function getMessage(key: string, placeholders: Record<string, ReactNode | FluentVariable>): ReactNode[];
-export function getMessage(key: string, placeholders: Record<string, any> = {}): unknown {
-  const { message, bundle } = getMessagePattern(key);
-  if (!message) return;
-
-  const errors: Error[] = [];
-  const formatted = bundle.formatPattern(message, placeholders, errors);
-  const hasReactPlaceholders = errors.some(isFluentVariableUnsupportedError);
-
-  if (errors.length) {
-    errors
-      .filter(error => !isFluentVariableUnsupportedError(error)) // filter out errors related to ReactNode-placeholders
-      .forEach(error => {
-        logger.error(`format key="${key}" errors: ${errors.map(String)}`, {
-          errors, placeholders,
-          message, bundle,
-          formatted,
-        });
-      });
-  }
-
-  // prepare `React.Children` or `React.Fragment[]` in case of formatting errors with `ReactNode`-placeholders
-  if (hasReactPlaceholders) {
-    return Array.from(message).map((msgChunk: PatternElement) => {
-      if (typeof msgChunk == "string") {
-        return msgChunk;
-      } else if (msgChunk.type === "var") {
-        const paramName = msgChunk.name;
-        return placeholders[paramName]; // ReactNode | React.Fragment
-      }
-    });
-  }
-
-  return formatted;
-}
-
-export async function setLocale(lang: Locale) {
-  await loadMessages(lang); // preload first for smooth UI switching
-  i18nStorage.merge({ lang });
+export async function setLocale(locale: Locale) {
+  await loadLocale(locale);
+  i18nStorage.merge({ lang: locale });
 }
 
 export function getLocale(): Locale {
@@ -142,9 +46,100 @@ export function getSystemLocale(): Locale {
   }
 
   const locale = systemLocale.split(/_-/)[0] as Locale; // handle "en-GB", etc.
-  return availableLocales[locale] ? locale : fallbackLocale;
+  return availableLocales[locale] ? locale : defaultLocale;
 }
 
-export function isFluentVariableUnsupportedError(error: Error | string) {
-  return String(error).includes("Variable type not supported");
+export type MessagesMap = Record<Locale, Record<LocalizationKey, {
+  value: string,
+  placeholders?: {
+    [paramName: string]: string; // TODO: add type-safety
+  }
+}>>;
+
+type MessageParams = Record<string, ReactNode | ((value: string) => ReactNode)>;
+type HasNonStringParams<T extends MessageParams> = Exclude<T[keyof T], string> extends never ? false : true;
+
+export function getMessage<K extends LocalizationKey, P extends MessageParams>(
+  key: K,
+  params: P & (HasNonStringParams<P> extends true ? unknown : never)
+): ReactNode;
+
+export function getMessage<K extends LocalizationKey, P extends MessageParams>(
+  key: K,
+  params?: MessageParams,
+): string;
+
+export function getMessage(
+  key: LocalizationKey,
+  params?: MessageParams,
+): string | ReactNode {
+  const locale = getLocale();
+  const message = messagesMap[locale]?.[key] ?? messagesMap[defaultLocale]?.[key];
+  const template = message?.value ?? "";
+  const placeholders = message?.placeholders;
+  const containsReactNode = params && Object.values(params).some((v) => typeof v !== 'string');
+  const templateParts = template.split(placeholderRegex);
+
+  if (placeholders) {
+    Object.keys(placeholders).forEach(paramName => {
+      if (!params?.[paramName]) {
+        console.warn(`[I18N]: missing placeholder "${paramName}" in "${key}"`)
+      }
+    })
+  }
+
+  const result = templateParts.map((part, index) => {
+    const paramName = part.startsWith("$") ? part.slice(1) : "";
+
+    if (paramName) {
+      const localizedParamValue = placeholders?.[paramName] as string;
+      let paramValue = params?.[paramName];
+      if (typeof paramValue === "function") {
+        paramValue = paramValue(localizedParamValue);
+      }
+      if (React.isValidElement(paramValue)) {
+        paramValue = React.cloneElement(paramValue, { key: index });
+      }
+      return paramValue ?? localizedParamValue;
+    }
+
+    return part;
+  });
+
+  return containsReactNode ? result : result.join('');
+}
+
+export async function loadLocale(locale: Locale) {
+  if (locale !== defaultLocale) {
+    await loadLocale(defaultLocale); // fallback-locale must be always available
+  }
+
+  const localeJsonFilePath = getURL(`_locales/${locale}/messages.json`);
+
+  const localeJsonRaw: LocalizationFile = await proxyRequest({
+    url: localeJsonFilePath,
+    responseType: ProxyResponseType.JSON,
+  });
+
+  parseMessages(locale, localeJsonRaw);
+}
+
+function parseMessages(locale: Locale, rawData: LocalizationFile) {
+  const messages = messagesMap[locale] ??= {};
+
+  Object.entries(rawData).forEach(([key, { message: value }]) => {
+    const message = messages[key as LocalizationKey] ??= {};
+    message.value = value.replace(placeholderWithValueRegex, (v, paramName) => `{$${paramName}}`);
+
+    Array.from(value.matchAll(placeholderWithValueRegex)).forEach(([, paramName, paramValue]) => {
+      message.placeholders ??= {};
+      message.placeholders[paramName] = paramValue;
+    });
+  });
+
+  return messages;
+}
+
+export function formatNumber({ value, locale }: { value: number, locale: Locale }) {
+  return new Intl.NumberFormat(locale).format(value);
 }

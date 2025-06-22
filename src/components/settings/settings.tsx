@@ -4,7 +4,7 @@ import { action, makeObservable, observable } from "mobx";
 import { observer } from "mobx-react";
 import isEqual from "lodash/isEqual";
 import startCase from "lodash/startCase";
-import { DeepSeekAIModel, getTranslator, getTranslators, googleApiDomain, googleApiDomains, GrokAIModel, OpenAIModel, OpenAIVoiceTTS, ProviderCodeName, Translator } from "@/providers";
+import { ProviderWithApiKey, DeepSeekAIModel, getTranslator, getTranslators, googleApiDomain, googleApiDomains, GrokAIModel, OpenAIModel, OpenAIVoiceTTS, ProviderCodeName, Translator } from "@/providers";
 import { XTranslateIcon } from "@/user-script/xtranslate-icon";
 import { SelectLanguage, SelectLanguageChangeEvent } from "../select-language";
 import { Checkbox } from "../checkbox";
@@ -141,7 +141,7 @@ export class Settings extends React.Component {
           <ProviderAuthSettings
             {...authSettings}
             provider={provider}
-            accessInfo={getMessage(`auth_access_info_steps_${provider}`)}
+            accessInfo={getMessage(`auth_access_info_steps_${provider as ProviderWithApiKey}`)}
             accessInfo2={getMessage(`auth_access_info_api_key`, { provider: title })}
             clearKeyInfo={getMessage(`auth_clear_key_info`, { provider: title })}
             warningInfo={getMessage(`auth_safety_warning_info`)}

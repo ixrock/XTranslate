@@ -1,9 +1,10 @@
 import React from "react";
 import { observer } from "mobx-react";
 import { ReactSelect, ReactSelectOption, FormatOptionLabelMeta } from "../select";
+import { AIModelTranslationKey } from "@/providers";
 import { getMessage } from "@/i18n";
 
-export type AIModelMap = Record<string, string>;
+type AIModelMap = Record<string, string>;
 
 export interface SelectAIModelProps<Models extends AIModelMap> {
   className?: string;
@@ -16,9 +17,10 @@ export interface SelectAIModelProps<Models extends AIModelMap> {
 export class SelectAIModel<Models extends AIModelMap> extends React.Component<SelectAIModelProps<Models>> {
   get modelOptions(): ReactSelectOption<ValueOf<Models>>[] {
     return Object.entries(this.props.modelOptions).map(([key, value]) => {
+      const translationKey = key.toLowerCase() as AIModelTranslationKey;
       return {
         value: value as ValueOf<Models>,
-        label: getMessage(`ai_choose_model_${key.toLowerCase()}`)
+        label: getMessage(`ai_choose_model_${translationKey}`)
       }
     });
   }
