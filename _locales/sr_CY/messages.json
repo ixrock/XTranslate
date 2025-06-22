@@ -368,9 +368,6 @@
   "favorites_lang_title": {
     "message": "Омиљено"
   },
-  "favorites_info_tooltip": {
-    "message": "Да бисте мењали омиљене језике (листа на врху), користите { $hotkey } + клик"
-  },
   "donate_title": {
     "message": "Подршка девелопера"
   },

@@ -368,9 +368,6 @@
   "favorites_lang_title": {
     "message": "收藏"
   },
-  "favorites_info_tooltip": {
-    "message": "要標記/取消標記語言為收藏（列表顯示在頂部），請使用 { $hotkey } + 點擊"
-  },
   "donate_title": {
     "message": "支援開發者"
   },

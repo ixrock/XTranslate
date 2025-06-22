@@ -368,9 +368,6 @@
   "favorites_lang_title": {
     "message": "收藏"
   },
-  "favorites_info_tooltip": {
-    "message": "要标记/取消标记语言为收藏（列表显示在顶部），使用 { $hotkey } + 点击"
-  },
   "donate_title": {
     "message": "支持开发者"
   },

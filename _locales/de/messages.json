@@ -368,9 +368,6 @@
   "favorites_lang_title": {
     "message": "Favoriten"
   },
-  "favorites_info_tooltip": {
-    "message": "Um eine Sprache als Favorit zu markieren/zu löschen (die Liste wird oben angezeigt), verwenden Sie { $hotkey } + Klicken"
-  },
   "donate_title": {
     "message": "Entwicklerunterstützung"
   },

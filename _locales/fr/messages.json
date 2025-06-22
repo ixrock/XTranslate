@@ -368,9 +368,6 @@
   "favorites_lang_title": {
     "message": "Favoris"
   },
-  "favorites_info_tooltip": {
-    "message": "Pour marquer/démarquer une langue comme favorite (la liste est affichée en haut), utilisez { $hotkey } + clic"
-  },
   "donate_title": {
     "message": "Soutien aux développeurs"
   },

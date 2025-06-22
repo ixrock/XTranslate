@@ -368,9 +368,6 @@
   "favorites_lang_title": {
     "message": "पसंदीदा"
   },
-  "favorites_info_tooltip": {
-    "message": "भाषा को पसंदीदा के रूप में चिह्नित/अचिह्नित करने के लिए (सूची ऊपर दिखाई जाती है), { $hotkey } + क्लिक करें"
-  },
   "donate_title": {
     "message": "डेवलपर्स का समर्थन"
   },

@@ -368,9 +368,6 @@
   "favorites_lang_title": {
     "message": "ফেভারিট"
   },
-  "favorites_info_tooltip": {
-    "message": "ভাষাকে ফেভারিট হিসেবে চিহ্নিত/অচিহ্নিত করতে (তালিকা শীর্ষে দেখানো হয়), { $hotkey } + ক্লিক করুন"
-  },
   "donate_title": {
     "message": "ডেভেলপর সাপোর্ট"
   },

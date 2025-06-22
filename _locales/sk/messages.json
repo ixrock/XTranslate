@@ -428,9 +428,6 @@
   "favorites_lang_title": {
     "message": "Obľúbené"
   },
-  "favorites_info_tooltip": {
-    "message": "Ak chcete označiť/odznačiť jazyk ako obľúbený (zoznam sa zobrazí v hornej časti), použite { $hotkey } + klik"
-  },
   "donate_title": {
     "message": "Prispieť"
   },

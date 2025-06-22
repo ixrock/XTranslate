@@ -428,9 +428,6 @@
   "favorites_lang_title": {
     "message": "Избранное"
   },
-  "favorites_info_tooltip": {
-    "message": "Чтобы добавить язык в избранное (список отображается сверху), используйте { $hotkey } + клик"
-  },
   "donate_title": {
     "message": "Поддержка разработчиков"
   },

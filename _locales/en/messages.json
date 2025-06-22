@@ -57,7 +57,7 @@
     "message": "Replace document texts with translations"
   },
   "settings_title_full_page_show_traffic_save_mode": {
-    "message": "Enable \"traffic-save\" mode"
+    "message": "Enable traffic saving mode"
   },
   "settings_title_full_page_show_traffic_save_mode_info": {
     "message": "Saving network / API-costs by translating only visible texts from webpage viewport"
@@ -198,7 +198,7 @@
     "message": "Reverse translate language"
   },
   "reverse_translate_add_action": {
-    "message": "Add reverse language: { $lang } -> ? (applicable only with \"Auto-detect\" option)"
+    "message": "Add reverse language: { $lang } -> ? (applicable only with Auto-detect)"
   },
   "reverse_translate_delete_action": {
     "message": "Unset reverse translate language"
@@ -427,9 +427,6 @@
   },
   "favorites_lang_title": {
     "message": "Favorites"
-  },
-  "favorites_info_tooltip": {
-    "message": "To mark/unmark language as favorite (list is shown on the top), use { $hotkey } + click"
   },
   "donate_title": {
     "message": "Developers support"

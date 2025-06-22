@@ -368,9 +368,6 @@
   "favorites_lang_title": {
     "message": "المفضلات"
   },
-  "favorites_info_tooltip": {
-    "message": "لوسم اللغة كمفضلة/إلغاء الوسم (القائمة تظهر في الأعلى)، استخدم { $hotkey } + النقر"
-  },
   "donate_title": {
     "message": "دعم المطورين"
   },

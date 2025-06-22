@@ -368,9 +368,6 @@
   "favorites_lang_title": {
     "message": "즐겨찾기"
   },
-  "favorites_info_tooltip": {
-    "message": "언어를 즐겨찾기로 표시/해제하려면 (목록은 상단에 표시됩니다) { $hotkey } + 클릭을 사용하세요"
-  },
   "donate_title": {
     "message": "개발자 지원"
   },

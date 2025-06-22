@@ -368,9 +368,6 @@
   "favorites_lang_title": {
     "message": "お気に入り"
   },
-  "favorites_info_tooltip": {
-    "message": "言語をお気に入りにマーク/アンマークするには（リストは上部に表示されます）、{ $hotkey } + クリックを使用してください"
-  },
   "donate_title": {
     "message": "開発者へのサポート"
   },

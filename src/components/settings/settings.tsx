@@ -233,7 +233,6 @@ export class Settings extends React.Component {
     return (
       <main className={styles.Settings}>
         <SelectLanguage
-          showInfoIcon
           showReverseTranslation
           provider={settings.vendor}
           from={settings.langFrom}

@@ -344,9 +344,6 @@
   "favorites_lang_title": {
     "message": "Sık kullanılanlar"
   },
-  "favorites_info_tooltip": {
-    "message": "Dili sık kullanılan olarak işaretlemek/işaretini kaldırmak için (listede en üstte gösterilir), { $hotkey } + tıklama kullanın"
-  },
   "donate_title": {
     "message": "Bağış yap"
   },
