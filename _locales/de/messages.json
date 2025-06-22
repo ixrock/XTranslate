@@ -1,8 +1,452 @@
 {
   "short_description": {
-    "message": "Text auf Internetseiten leicht übersetzen."
+    "message": "Text auf Webseiten einfach übersetzen"
   },
   "description": {
-    "message": "Übersetzen Sie Texte von einer Internetseite, passen Sie das Design des Popup-Fensters an, und vieles mehr."
+    "message": "Übersetzen Sie Texte im Kontext der Seite, passen Sie Ihren eigenen Stil des Popup-Blocks an und vieles mehr."
+  },
+  "open_in_window": {
+    "message": "In externem Fenster öffnen"
+  },
+  "tab_settings": {
+    "message": "Einstellungen"
+  },
+  "tab_theme": {
+    "message": "Popup"
+  },
+  "tab_text_input": {
+    "message": "Übersetzen"
+  },
+  "tab_history": {
+    "message": "Verlauf"
+  },
+  "setting_title_common": {
+    "message": "Allgemein"
+  },
+  "setting_title_text_input": {
+    "message": "Übersetzen"
+  },
+  "setting_title_popup": {
+    "message": "Popup"
+  },
+  "setting_title_translator_service": {
+    "message": "Dienst"
+  },
+  "settings_title_tts": {
+    "message": "Text-zu-Sprache"
+  },
+  "settings_title_appearance": {
+    "message": "Aussehen"
+  },
+  "auto_play_tts": {
+    "message": "Text-zu-Sprache automatisch abspielen"
+  },
+  "use_chrome_tts": {
+    "message": "Erzwingen der Verwendung des System-Text-zu-Sprache-Engine"
+  },
+  "use_chrome_tts_tooltip_info": {
+    "message": "Diese Option wird automatisch aktiviert, wenn der Übersetzer keinen eigenen TTS-Engine hat"
+  },
+  "use_dark_theme": {
+    "message": "Dunkelmodus für dieses Fenster aktivieren"
+  },
+  "tts_default_system_voice": {
+    "message": "Standard-Systemstimme"
+  },
+  "tts_select_voice_title": {
+    "message": "Stimme auswählen"
+  },
+  "tts_play_demo_sound": {
+    "message": "Demosound abspielen"
+  },
+  "tts_play_demo_sound_edit": {
+    "message": "Text für Sprachdemo bearbeiten"
+  },
+  "import_export_settings": {
+    "message": "Einstellungen importieren oder exportieren"
+  },
+  "export_settings_button_label": {
+    "message": "Einstellungen exportieren"
+  },
+  "import_settings_button_label": {
+    "message": "Einstellungen importieren"
+  },
+  "import_incorrect_file_format": {
+    "message": "Falscher Dateiformat (sollte wahrscheinlich { $fileNameJson } sein)"
+  },
+  "imported_setting_successful": {
+    "message": "Einstellungen unter dem Schlüssel { $key } erfolgreich importiert"
+  },
+  "display_icon_near_selection": {
+    "message": "Symbol in der Nähe des ausgewählten Textes anzeigen"
+  },
+  "show_tts_icon_inside_popup": {
+    "message": "Text-zu-Sprache-Symbol anzeigen"
+  },
+  "show_select_provider_icon_in_popup": {
+    "message": "Nächstes-Übersetzungssymbol anzeigen"
+  },
+  "show_copy_translation_icon": {
+    "message": "Symbol zum Kopieren der Übersetzung anzeigen"
+  },
+  "show_save_as_favorite_icon": {
+    "message": "Symbol zum Speichern als Favorit anzeigen"
+  },
+  "show_close_popup_button": {
+    "message": "Schließen-Button für Popup in der rechten Ecke anzeigen"
+  },
+  "show_detected_language_block": {
+    "message": "Erkannte Sprache anzeigen"
+  },
+  "display_on_click_by_selected_text": {
+    "message": "Beim Klicken auf die Auswahl anzeigen"
+  },
+  "display_popup_after_text_selected": {
+    "message": "Direkt nach Textauswahl anzeigen"
+  },
+  "display_popup_on_double_click": {
+    "message": "Beim Doppelklicken auf ein Wort anzeigen"
+  },
+  "display_popup_on_hotkey": {
+    "message": "Beim Drücken der Hotkey anzeigen"
+  },
+  "remember_last_typed_text": {
+    "message": "Letzten eingegebenen Text merken"
+  },
+  "sub_header_quick_access_hotkey": {
+    "message": "Globale Hotkey einstellen"
+  },
+  "quick_access_configure_link": {
+    "message": "Tastenkürzel für schnellen Zugriff auf dieses Fenster konfigurieren"
+  },
+  "swap_languages": {
+    "message": "Sprachen tauschen"
+  },
+  "popup_position_title": {
+    "message": "Position"
+  },
+  "popup_position_auto": {
+    "message": "Auto (ausrichten an Text)"
+  },
+  "popup_position_left_top": {
+    "message": "Linke obere Ecke"
+  },
+  "popup_position_right_top": {
+    "message": "Rechte obere Ecke"
+  },
+  "popup_position_left_bottom": {
+    "message": "Linke untere Ecke"
+  },
+  "popup_position_right_bottom": {
+    "message": "Rechte untere Ecke"
+  },
+  "translation_delay": {
+    "message": "Übersetzungsverzögerung"
+  },
+  "translation_delay_info": {
+    "message": "Wenn Sie häufig Sperrungen (Fehler 503) von Google oder anderen Diensten erleben, setzen Sie einen höheren Verzögerungswert"
+  },
+  "reverse_translate_select_placeholder": {
+    "message": "Umgekehrte Übersetzung der Sprache"
+  },
+  "reverse_translate_add_action": {
+    "message": "Umgekehrte Sprache hinzufügen: { $lang } -> ? (nur mit der Option 'Automatische Erkennung' anwendbar)"
+  },
+  "reverse_translate_delete_action": {
+    "message": "Umgekehrte Sprachübersetzung aufheben"
+  },
+  "custom_font_select": {
+    "message": "Benutzerdefinierte Schriftart auswählen"
+  },
+  "popup_play_icon_title": {
+    "message": "Hören"
+  },
+  "popup_copy_translation_title": {
+    "message": "Übersetzung kopieren"
+  },
+  "popup_next_vendor_icon_title": {
+    "message": "Mit { $translator } übersetzen"
+  },
+  "popup_demo_translation": {
+    "message": "Übersetzter Text"
+  },
+  "popup_demo_dictionary_noun": {
+    "message": "Substantiv"
+  },
+  "popup_demo_dictionary_values": {
+    "message": "Wort 1, Wort 2, etc."
+  },
+  "sub_header_background": {
+    "message": "Hintergrund"
+  },
+  "sub_header_box_shadow": {
+    "message": "Boxschatten"
+  },
+  "sub_header_text": {
+    "message": "Text"
+  },
+  "sub_header_border": {
+    "message": "Rahmen"
+  },
+  "sub_header_box_size": {
+    "message": "Boxgröße"
+  },
+  "background_color": {
+    "message": "Farbe"
+  },
+  "background_linear_gradient": {
+    "message": "Linear"
+  },
+  "box_shadow_color": {
+    "message": "Farbe"
+  },
+  "box_shadow_inner": {
+    "message": "Innen"
+  },
+  "text_size": {
+    "message": "Größe"
+  },
+  "text_font_family": {
+    "message": "Schriftart"
+  },
+  "text_color": {
+    "message": "Farbe"
+  },
+  "text_shadow": {
+    "message": "Schatten"
+  },
+  "text_shadow_size": {
+    "message": "Unschärferadius"
+  },
+  "text_shadow_offset_x": {
+    "message": "Horizontale Verschiebung"
+  },
+  "text_shadow_offset_y": {
+    "message": "Vertikale Verschiebung"
+  },
+  "text_shadow_color": {
+    "message": "Farbe"
+  },
+  "border_width": {
+    "message": "Breite"
+  },
+  "border_style": {
+    "message": "Stil"
+  },
+  "border_color": {
+    "message": "Farbe"
+  },
+  "border_radius": {
+    "message": "Radius"
+  },
+  "box_size_min_width": {
+    "message": "Minimale Breite"
+  },
+  "box_size_min_height": {
+    "message": "Minimale Höhe"
+  },
+  "box_size_max_width": {
+    "message": "Maximale Breite"
+  },
+  "box_size_max_height": {
+    "message": "Maximale Höhe"
+  },
+  "reset_to_default_button_text": {
+    "message": "Auf Standard zurücksetzen"
+  },
+  "text_field_placeholder": {
+    "message": "Hier tippen, um eine Übersetzung zu erhalten"
+  },
+  "translated_with": {
+    "message": "Übersetzt mit { $translator } ({ $lang })"
+  },
+  "translated_from": {
+    "message": "Übersetzt von: { $lang }"
+  },
+  "translate_also_from": {
+    "message": "Auch von hier übersetzen"
+  },
+  "spell_correction": {
+    "message": "Meinten Sie { $suggestion }?"
+  },
+  "text_input_translation_hint": {
+    "message": "{ $hotkey } für sofortige Übersetzung, Verzögerung: { $timeout }ms"
+  },
+  "history_enabled_flag": {
+    "message": "Aktiviert"
+  },
+  "history_settings_save_words_only": {
+    "message": "Nur Wörterbuchwörter speichern"
+  },
+  "history_search_input_placeholder": {
+    "message": "Im Verlauf suchen"
+  },
+  "history_clear_period_hour": {
+    "message": "Letzte Stunde"
+  },
+  "history_clear_period_day": {
+    "message": "Letzter Tag"
+  },
+  "history_clear_period_month": {
+    "message": "Letzter Monat"
+  },
+  "history_clear_period_year": {
+    "message": "Letztes Jahr"
+  },
+  "history_clear_period_all": {
+    "message": "Alles"
+  },
+  "history_button_clear": {
+    "message": "Verlauf löschen"
+  },
+  "history_button_show_more": {
+    "message": "Mehr anzeigen"
+  },
+  "history_export_entries": {
+    "message": "{ $format } exportieren"
+  },
+  "history_import_entries": {
+    "message": "{ $format } importieren"
+  },
+  "history_page_size": {
+    "message": "Seitenzahl"
+  },
+  "history_icon_tooltip_search": {
+    "message": "Suchen"
+  },
+  "history_icon_tooltip_imp_exp": {
+    "message": "Importieren / Exportieren"
+  },
+  "history_icon_tooltip_settings": {
+    "message": "Einstellungen"
+  },
+  "history_show_favorites_only": {
+    "message": "Nur Favoriten anzeigen"
+  },
+  "history_mark_as_favorite": {
+    "message": "Eintrag als Favorit markieren"
+  },
+  "history_unmark_as_favorite": {
+    "message": "Eintrag als Favorit abwählen"
+  },
+  "history_import_success": {
+    "message": "{ $itemsCount } Verlaufseinträge erfolgreich importiert"
+  },
+  "history_import_file_error": {
+    "message": "Fehler beim Lesen der Datei '{ $fileName }': { $errorInfo }"
+  },
+  "context_menu_translate_full_page": {
+    "message": "Übersetze in { $lang }"
+  },
+  "context_menu_translate_selection": {
+    "message": "{ $selection } mit { $translator } übersetzen"
+  },
+  "share_with_friends": {
+    "message": "Wenn Ihnen die App gefällt, teilen Sie sie mit Ihren Freunden"
+  },
+  "translation_data_failed": {
+    "message": "Daten laden fehlgeschlagen"
+  },
+  "rate_app_info1": {
+    "message": "Gefällt Ihnen die Nutzung der App? Bitte bewerten Sie uns mit 5 Sternen!"
+  },
+  "rate_app_info2": {
+    "message": "Das hilft anderen Nutzern, die Erweiterung zu finden und die Vorteile zu verbreiten."
+  },
+  "rate_app_button": {
+    "message": "In der Erweiterungsstore bewerten"
+  },
+  "rate_app_button_later": {
+    "message": "Später erinnern"
+  },
+  "target_lang_placeholder": {
+    "message": "Zielsprachen"
+  },
+  "source_lang_placeholder": {
+    "message": "Quellsprachen"
+  },
+  "favorites_lang_title": {
+    "message": "Favoriten"
+  },
+  "donate_title": {
+    "message": "Entwicklerunterstützung"
+  },
+  "donate_description": {
+    "message": "Wenn Ihnen die App gefällt, erwägen Sie bitte eine Spende an die Entwickler. Danke!"
+  },
+  "service_unavailable": {
+    "message": "Dienst nicht verfügbar. Versuchen Sie es nach 5-25 Minuten erneut. Wenn dies ständig passiert, erhöhen Sie die Übersetzungsverzögerung in den Einstellungen."
+  },
+  "service_confirm_not_a_robot": {
+    "message": "Sie können auch zu { $link } gehen und bestätigen, dass Sie kein Roboter sind."
+  },
+  "privacy_policy_title_updated": {
+    "message": "Die Datenschutzerklärung wurde aktualisiert"
+  },
+  "privacy_policy_accept_terms": {
+    "message": "Allgemeine Geschäftsbedingungen akzeptieren"
+  },
+  "mellowtel_greetings": {
+    "message": "Hallo, Freund 👋"
+  },
+  "mellowtel_text1": {
+    "message": "Wie Sie vielleicht wissen, ist diese Erweiterung kostenlos und für jeden verfügbar... aber dieses Mal brauchen wir eine Handlung von Ihnen, um sie aufrechtzuerhalten!"
+  },
+  "mellowtel_text2": {
+    "message": "Diese neue Version enthält die Open-Source-Bibliothek { $link }. Diese Bibliothek ermöglicht es Ihnen, Ihr ungenutztes Internet mit vertrauenswürdigen KI-Laboren und Start-ups zu teilen, die es verwenden, um ihre Modelle zu trainieren."
+  },
+  "mellowtel_usage_title": {
+    "message": "Wir verwenden Mellowtel, um:"
+  },
+  "mellowtel_usage1": {
+    "message": "Ausfälle des Dienstes zu verfolgen"
+  },
+  "mellowtel_usage2": {
+    "message": "Die Qualität des Dienstes zu messen"
+  },
+  "mellowtel_usage3": {
+    "message": "Als Entwickler dieser Erweiterung einen kleinen Anteil am Umsatz zu erhalten"
+  },
+  "mellowtel_accept_all_info1": {
+    "message": "Wenn Sie 'Alles akzeptieren' wählen, verwenden wir auch die Mellowtel-API, um: Vertrauenswürdigen Partnern den Zugriff auf Internetressourcen zu ermöglichen, indem ein Teil ihres Traffics über Ihren Knoten im Netzwerk geroutet wird."
+  },
+  "mellowtel_accept_all_info2": {
+    "message": "Mellowtel teilt nur Ihre Bandbreite. Sicherheit und Privatsphäre sind zu 100% garantiert, und die Bibliothek ist Open Source für alle sichtbar."
+  },
+  "mellowtel_regulation1": {
+    "message": "Es sammelt, teilt oder verkauft keine persönlichen Informationen (nicht einmal anonymisierte Daten)."
+  },
+  "mellowtel_regulation2": {
+    "message": "Es ist auch stark reguliert: Mellowtel kommuniziert kontinuierlich mit den Regulatoren des Chrome Web Stores, um eine sichere Erfahrung zu gewährleisten."
+  },
+  "mellowtel_regulation3": {
+    "message": "Es stellt den Regulatoren des CWS auch Werkzeuge zur Verfügung, um die Einhaltung zu überwachen und durchzusetzen."
+  },
+  "mellowtel_button_decline": {
+    "message": "Optionalen Gebrauch ablehnen"
+  },
+  "mellowtel_button_accept": {
+    "message": "Alles akzeptieren"
+  },
+  "mellowtel_dialog_footer": {
+    "message": "Danke, dass Sie sich die Zeit genommen haben zu lesen, Teams { $devs }."
+  },
+  "error_403_auth_failed": {
+    "message": "Authentifizierung fehlgeschlagen. Bitte geben Sie einen gültigen Authentifizierungs-API-Schlüssel in den Einstellungen an."
+  },
+  "ai_choose_model": {
+    "message": "KI-Modell auswählen"
+  },
+  "ai_choose_model_cost_effective": {
+    "message": "Kostenwirksamste Wahl"
+  },
+  "ai_choose_model_recommended": {
+    "message": "Empfohlenes Modell"
+  },
+  "pdf_use_custom_viewer": {
+    "message": "Unterstützung für Übersetzungen in PDF-Dateien"
+  },
+  "pdf_use_custom_viewer_info": {
+    "message": "Diese Option ersetzt den Standard-PDF-Viewer"
   }
 }

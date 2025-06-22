@@ -16,7 +16,6 @@ export interface SelectLanguageProps {
   from: string;
   to: string;
   className?: string;
-  showInfoIcon?: boolean;
   showReverseTranslation?: boolean;
   onChange(update: SelectLanguageChangeEvent): void;
 }
@@ -154,7 +153,6 @@ export class SelectLanguage extends React.Component<SelectLanguageProps> {
     )
   }
 
-
   renderReverseTranslationSettingsPanel() {
     const { to: langTo, provider } = this.props;
     const langToTitle = getTranslator(provider).langTo[langTo];
@@ -196,7 +194,7 @@ export class SelectLanguage extends React.Component<SelectLanguageProps> {
 
   render() {
     const {
-      className, showInfoIcon, showReverseTranslation,
+      className, showReverseTranslation,
       from: langFrom,
       to: langTo,
     } = this.props;
@@ -239,14 +237,6 @@ export class SelectLanguage extends React.Component<SelectLanguageProps> {
         />
 
         {showReverseTranslation && this.renderReverseTranslationSettingsPanel()}
-        {showInfoIcon && (
-          <Icon
-            small
-            material="info_outline"
-            tooltip={
-              getMessage("favorites_info_tooltip", { hotkey: "Cmd / Alt+Shift" })
-            }/>
-        )}
       </div>
     );
   }

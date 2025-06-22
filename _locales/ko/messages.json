@@ -4,5 +4,449 @@
   },
   "description": {
     "message": "페이지 컨텍스트 내에서 텍스트를 번역하고, 팝업 블록의 스타일을 맞춤 설정하는 등의 기능."
+  },
+  "open_in_window": {
+    "message": "외부 창에서 열기"
+  },
+  "tab_settings": {
+    "message": "설정"
+  },
+  "tab_theme": {
+    "message": "팝업"
+  },
+  "tab_text_input": {
+    "message": "번역"
+  },
+  "tab_history": {
+    "message": "기록"
+  },
+  "setting_title_common": {
+    "message": "공통"
+  },
+  "setting_title_text_input": {
+    "message": "번역"
+  },
+  "setting_title_popup": {
+    "message": "팝업"
+  },
+  "setting_title_translator_service": {
+    "message": "서비스"
+  },
+  "settings_title_tts": {
+    "message": "텍스트 음성 변환"
+  },
+  "settings_title_appearance": {
+    "message": "외관"
+  },
+  "auto_play_tts": {
+    "message": "자동 재생 텍스트 음성 변환"
+  },
+  "use_chrome_tts": {
+    "message": "시스템 텍스트 음성 변환 엔진 사용 강제"
+  },
+  "use_chrome_tts_tooltip_info": {
+    "message": "번역기에 자체 TTS 엔진이 없을 때 이 옵션이 자동으로 활성화됩니다"
+  },
+  "use_dark_theme": {
+    "message": "이 창에 대해 다크 테마로 전환"
+  },
+  "tts_default_system_voice": {
+    "message": "기본 시스템 음성"
+  },
+  "tts_select_voice_title": {
+    "message": "음성 선택"
+  },
+  "tts_play_demo_sound": {
+    "message": "데모 소리 재생"
+  },
+  "tts_play_demo_sound_edit": {
+    "message": "음성 데모를 위한 텍스트 편집"
+  },
+  "import_export_settings": {
+    "message": "설정 가져오기 또는 내보내기"
+  },
+  "export_settings_button_label": {
+    "message": "설정 내보내기"
+  },
+  "import_settings_button_label": {
+    "message": "설정 가져오기"
+  },
+  "import_incorrect_file_format": {
+    "message": "파일 형식이 잘못되었습니다 (아마도 { $fileNameJson } 형식이어야 합니다)"
+  },
+  "imported_setting_successful": {
+    "message": "키 { $key } 아래의 설정이 성공적으로 가져왔습니다"
+  },
+  "display_icon_near_selection": {
+    "message": "선택한 텍스트 근처에 아이콘 표시"
+  },
+  "show_tts_icon_inside_popup": {
+    "message": "텍스트 음성 변환 아이콘 표시"
+  },
+  "show_select_provider_icon_in_popup": {
+    "message": "다음 번역 아이콘 표시"
+  },
+  "show_copy_translation_icon": {
+    "message": "번역 복사 아이콘 표시"
+  },
+  "show_save_as_favorite_icon": {
+    "message": "즐겨찾기로 저장 아이콘 표시"
+  },
+  "show_close_popup_button": {
+    "message": "오른쪽 상단에 팝업 닫기 버튼 표시"
+  },
+  "show_detected_language_block": {
+    "message": "감지된 언어 표시"
+  },
+  "display_on_click_by_selected_text": {
+    "message": "선택한 텍스트를 클릭할 때 표시"
+  },
+  "display_popup_after_text_selected": {
+    "message": "텍스트 선택 후 바로 표시"
+  },
+  "display_popup_on_double_click": {
+    "message": "단어를 더블 클릭할 때 표시"
+  },
+  "display_popup_on_hotkey": {
+    "message": "단축키를 누를 때 표시"
+  },
+  "remember_last_typed_text": {
+    "message": "마지막으로 입력한 텍스트 기억"
+  },
+  "sub_header_quick_access_hotkey": {
+    "message": "글로벌 단축키 설정"
+  },
+  "quick_access_configure_link": {
+    "message": "이 창에 빠르게 접근하기 위한 키보드 단축키 설정"
+  },
+  "swap_languages": {
+    "message": "언어 교환"
+  },
+  "popup_position_title": {
+    "message": "위치"
+  },
+  "popup_position_auto": {
+    "message": "자동 (텍스트에 맞춤)"
+  },
+  "popup_position_left_top": {
+    "message": "왼쪽 상단"
+  },
+  "popup_position_right_top": {
+    "message": "오른쪽 상단"
+  },
+  "popup_position_left_bottom": {
+    "message": "왼쪽 하단"
+  },
+  "popup_position_right_bottom": {
+    "message": "오른쪽 하단"
+  },
+  "translation_delay": {
+    "message": "번역 지연"
+  },
+  "translation_delay_info": {
+    "message": "Google 또는 다른 서비스에서 자주 차단 (503 에러)을 겪는다면 더 큰 지연 값을 설정하세요"
+  },
+  "reverse_translate_select_placeholder": {
+    "message": "역번역 언어"
+  },
+  "reverse_translate_add_action": {
+    "message": "역언어 추가: { $lang } -> ? (자동 감지 옵션과 함께만 적용 가능)"
+  },
+  "reverse_translate_delete_action": {
+    "message": "역번역 언어 해제"
+  },
+  "custom_font_select": {
+    "message": "맞춤 폰트 선택"
+  },
+  "popup_play_icon_title": {
+    "message": "듣기"
+  },
+  "popup_copy_translation_title": {
+    "message": "번역 복사"
+  },
+  "popup_next_vendor_icon_title": {
+    "message": "{ $translator }로 번역"
+  },
+  "popup_demo_translation": {
+    "message": "번역된 텍스트"
+  },
+  "popup_demo_dictionary_noun": {
+    "message": "명사"
+  },
+  "popup_demo_dictionary_values": {
+    "message": "단어 1, 단어 2 등"
+  },
+  "sub_header_background": {
+    "message": "배경"
+  },
+  "sub_header_box_shadow": {
+    "message": "박스 그림자"
+  },
+  "sub_header_text": {
+    "message": "텍스트"
+  },
+  "sub_header_border": {
+    "message": "테두리"
+  },
+  "sub_header_box_size": {
+    "message": "박스 크기"
+  },
+  "background_color": {
+    "message": "색상"
+  },
+  "background_linear_gradient": {
+    "message": "선형"
+  },
+  "box_shadow_color": {
+    "message": "색상"
+  },
+  "box_shadow_inner": {
+    "message": "내부"
+  },
+  "text_size": {
+    "message": "크기"
+  },
+  "text_font_family": {
+    "message": "폰트"
+  },
+  "text_color": {
+    "message": "색상"
+  },
+  "text_shadow": {
+    "message": "그림자"
+  },
+  "text_shadow_size": {
+    "message": "흐림 반경"
+  },
+  "text_shadow_offset_x": {
+    "message": "수평 오프셋"
+  },
+  "text_shadow_offset_y": {
+    "message": "수직 오프셋"
+  },
+  "text_shadow_color": {
+    "message": "색상"
+  },
+  "border_width": {
+    "message": "너비"
+  },
+  "border_style": {
+    "message": "스타일"
+  },
+  "border_color": {
+    "message": "색상"
+  },
+  "border_radius": {
+    "message": "반경"
+  },
+  "box_size_min_width": {
+    "message": "최소 너비"
+  },
+  "box_size_min_height": {
+    "message": "최소 높이"
+  },
+  "box_size_max_width": {
+    "message": "최대 너비"
+  },
+  "box_size_max_height": {
+    "message": "최대 높이"
+  },
+  "reset_to_default_button_text": {
+    "message": "기본값으로 재설정"
+  },
+  "text_field_placeholder": {
+    "message": "번역을 얻기 위해 여기에서 타이핑 시작"
+  },
+  "translated_with": {
+    "message": "{ $translator }({ $lang })로 번역됨"
+  },
+  "translated_from": {
+    "message": "번역된 언어: { $lang }"
+  },
+  "translate_also_from": {
+    "message": "여기서도 번역"
+  },
+  "spell_correction": {
+    "message": "{ $suggestion } 을(를) 의미하셨나요?"
+  },
+  "text_input_translation_hint": {
+    "message": "즉시 번역을 위해 { $hotkey }, 지연: { $timeout }ms"
+  },
+  "history_enabled_flag": {
+    "message": "활성화됨"
+  },
+  "history_settings_save_words_only": {
+    "message": "사전 단어만 저장"
+  },
+  "history_search_input_placeholder": {
+    "message": "기록에서 검색"
+  },
+  "history_clear_period_hour": {
+    "message": "최근 1시간"
+  },
+  "history_clear_period_day": {
+    "message": "최근 1일"
+  },
+  "history_clear_period_month": {
+    "message": "최근 1개월"
+  },
+  "history_clear_period_year": {
+    "message": "최근 1년"
+  },
+  "history_clear_period_all": {
+    "message": "모두"
+  },
+  "history_button_clear": {
+    "message": "기록 지우기"
+  },
+  "history_button_show_more": {
+    "message": "더 보기"
+  },
+  "history_export_entries": {
+    "message": "{ $format } 내보내기"
+  },
+  "history_import_entries": {
+    "message": "{ $format } 가져오기"
+  },
+  "history_page_size": {
+    "message": "페이지 크기"
+  },
+  "history_icon_tooltip_search": {
+    "message": "검색"
+  },
+  "history_icon_tooltip_imp_exp": {
+    "message": "가져오기 / 내보내기"
+  },
+  "history_icon_tooltip_settings": {
+    "message": "설정"
+  },
+  "history_show_favorites_only": {
+    "message": "즐겨찾기만 표시"
+  },
+  "history_mark_as_favorite": {
+    "message": "항목을 즐겨찾기로 표시"
+  },
+  "history_unmark_as_favorite": {
+    "message": "항목의 즐겨찾기 표시 해제"
+  },
+  "history_import_success": {
+    "message": "{ $itemsCount } 개의 기록 항목이 성공적으로 가져왔습니다"
+  },
+  "history_import_file_error": {
+    "message": "파일 '{ $fileName }'을(를) 읽는 중 오류 발생: { $errorInfo }"
+  },
+  "context_menu_translate_full_page": {
+    "message": "페이지를 { $lang }로 번역"
+  },
+  "context_menu_translate_selection": {
+    "message": "{ $translator }로 { $selection }을(를) 번역"
+  },
+  "share_with_friends": {
+    "message": "앱이 마음에 드시면 친구들과 공유하세요"
+  },
+  "translation_data_failed": {
+    "message": "데이터 로드 실패"
+  },
+  "rate_app_info1": {
+    "message": "앱 사용이 마음에 드셨나요? 5점으로 평가해주세요!"
+  },
+  "rate_app_info2": {
+    "message": "이는 다른 사용자들이 확장 프로그램을 찾고 그 혜택을 전파하는 데 도움이 됩니다."
+  },
+  "rate_app_button": {
+    "message": "확장 프로그램 스토어에서 평가"
+  },
+  "rate_app_button_later": {
+    "message": "나중에 다시 알림"
+  },
+  "target_lang_placeholder": {
+    "message": "대상 언어"
+  },
+  "source_lang_placeholder": {
+    "message": "소스 언어"
+  },
+  "favorites_lang_title": {
+    "message": "즐겨찾기"
+  },
+  "donate_title": {
+    "message": "개발자 지원"
+  },
+  "donate_description": {
+    "message": "앱이 마음에 드시면 개발자에게 기부를 고려해주세요. 감사합니다!"
+  },
+  "service_unavailable": {
+    "message": "서비스를 사용할 수 없습니다. 5-25분 후에 다시 시도하세요. 이 문제가 자주 발생하면 설정에서 번역 지연을 늘리세요."
+  },
+  "service_confirm_not_a_robot": {
+    "message": "또한 { $link }로 가서 로봇이 아님을 확인할 수 있습니다."
+  },
+  "privacy_policy_title_updated": {
+    "message": "개인정보 보호 정책이 업데이트되었습니다"
+  },
+  "privacy_policy_accept_terms": {
+    "message": "약관 동의"
+  },
+  "mellowtel_greetings": {
+    "message": "안녕, 친구 👋"
+  },
+  "mellowtel_text1": {
+    "message": "아시다시피 이 확장 프로그램은 무료로 모든 사람에게 제공됩니다... 하지만 이번에는 유지하기 위해 사용자의 조치가 필요합니다!"
+  },
+  "mellowtel_text2": {
+    "message": "이 새로운 버전에는 오픈 소스 라이브러리 { $link }가 포함되어 있습니다. 이 라이브러리는 사용하지 않는 인터넷을 믿을 수 있는 AI 연구소와 스타트업과 공유하여 그들이 모델을 학습하는 데 사용할 수 있게 합니다."
+  },
+  "mellowtel_usage_title": {
+    "message": "Mellowtel을 사용하여:"
+  },
+  "mellowtel_usage1": {
+    "message": "서비스 중단 추적"
+  },
+  "mellowtel_usage2": {
+    "message": "서비스 품질 측정"
+  },
+  "mellowtel_usage3": {
+    "message": "이 확장 프로그램의 개발자로서 수익의 일부를 받습니다"
+  },
+  "mellowtel_accept_all_info1": {
+    "message": "'모두 수락'을 선택하시면, Mellowtel API를 사용하여 신뢰할 수 있는 파트너가 네트워크 내의 노드를 통해 인터넷 자원에 접근할 수 있도록 트래픽의 일부를 라우팅합니다."
+  },
+  "mellowtel_accept_all_info2": {
+    "message": "Mellowtel은 오직 대역폭만 공유합니다. 보안과 개인정보 보호는 100% 보장되며, 라이브러리는 모든 사람이 볼 수 있는 오픈 소스입니다."
+  },
+  "mellowtel_regulation1": {
+    "message": "개인 정보를 수집, 공유하거나 판매하지 않습니다 (익명화된 데이터도 포함)."
+  },
+  "mellowtel_regulation2": {
+    "message": "또한 매우 규제된 상태입니다: Mellowtel은 안전한 경험을 보장하기 위해 Chrome Web Store 규제 기관과 지속적으로 소통합니다."
+  },
+  "mellowtel_regulation3": {
+    "message": "또한 CWS 규제 기관에 규제 준수를 모니터링하고 시행할 도구를 제공합니다."
+  },
+  "mellowtel_button_decline": {
+    "message": "선택적 사용 거부"
+  },
+  "mellowtel_button_accept": {
+    "message": "모두 수락"
+  },
+  "mellowtel_dialog_footer": {
+    "message": "읽어 주셔서 감사합니다, { $devs } 팀."
+  },
+  "error_403_auth_failed": {
+    "message": "인증 실패. 설정에서 유효한 인증 API 키를 제공하세요."
+  },
+  "ai_choose_model": {
+    "message": "AI 모델 선택"
+  },
+  "ai_choose_model_cost_effective": {
+    "message": "가장 비용 효율적인"
+  },
+  "ai_choose_model_recommended": {
+    "message": "권장 모델"
+  },
+  "pdf_use_custom_viewer": {
+    "message": "PDF 파일 내 번역 지원"
+  },
+  "pdf_use_custom_viewer_info": {
+    "message": "이 옵션은 기본 PDF 뷰어를 대체합니다"
   }
 }

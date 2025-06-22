@@ -9,6 +9,15 @@ export enum ProviderCodeName {
   GROK = "grok",
 }
 
+export type Provider = (typeof ProviderCodeName)[keyof typeof ProviderCodeName];
+export type ProviderWithApiKey = Exclude<Provider, "google" | "bing">;
+
+export type AIModelTranslationKey =
+  Lowercase<keyof typeof OpenAIModel>
+  | Lowercase<keyof typeof GrokAIModel>
+  | Lowercase<keyof typeof DeepSeekAIModel>
+  ;
+
 // OpenAI models
 export enum OpenAIModel {
   COST_EFFECTIVE = "gpt-4.1-mini",
