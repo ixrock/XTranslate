@@ -148,20 +148,14 @@ export abstract class Translator {
   protected normalize(result: ITranslationResult, params: TranslateParams): ITranslationResult {
     const { from: langFrom, to: langTo, text: originalText } = params;
 
-    function toLowerCase(output: string) {
-      const isDictionaryWord = !!result.dictionary;
-      return isDictionaryWord ? output.toLowerCase() : output;
-    }
-
     return {
       ...result,
       vendor: this.name,
-      translation: toLowerCase(result.translation),
       dictionary: result.dictionary ?? [],
       langFrom,
       langTo,
+      originalText,
       langDetected: result.langDetected ?? langFrom,
-      originalText: toLowerCase(originalText),
     };
   }
 
