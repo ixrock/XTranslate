@@ -1,7 +1,7 @@
 import OpenAI from "openai";
-import { getTranslator, ITranslationError, ITranslationResult, ProviderCodeName, TranslateParams } from "../providers";
-import { AITranslatePayload, createIsomorphicAction, MessageType, OpenAITextToSpeechPayload } from "../extension";
-import { createLogger } from "../utils/createLogger";
+import { getTranslator, ITranslationError, ITranslationResult, ProviderCodeName, TranslateParams } from "@/providers";
+import { AITranslatePayload, createIsomorphicAction, MessageType, OpenAITextToSpeechPayload } from "@/extension";
+import { createLogger } from "@/utils/createLogger";
 
 const logger = createLogger({ systemPrefix: "[AI]" });
 
@@ -92,7 +92,6 @@ export async function translateText(params: AITranslatePayload): Promise<ITransl
   }
 }
 
-// FIXME: figure out how to preserve letter case, e.g "AI-provider" -> "AI-провайдер"
 export function getTranslationPrompt({ from: srcLang = "auto", to: targetLang, text }: Partial<TranslateParams>) {
   const system = `
 Return ONLY this JSON:{"translation":"","detectedLang":"","transcription":null,"spellCorrection":null}
