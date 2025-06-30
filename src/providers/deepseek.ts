@@ -1,7 +1,7 @@
 import AILanguagesList from "./open-ai.json"
 import { ITranslationResult, ProviderCodeName, TranslateParams, Translator } from "./index";
 import { createStorage } from "../storage";
-import { translateTextAction } from "../background/open-ai.bgc";
+import { translateTextAction } from "../background/ai.bgc";
 import { settingsStore } from "../components/settings/settings.storage";
 
 export class DeepSeekTranslator extends Translator {

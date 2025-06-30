@@ -47,10 +47,11 @@ Available translation providers:
 -----------
 * [Google](http://translate.google.com/) - ready to use after installation
 * [Bing](http://bing.com/translator/) - ready to use after installation
-* [DeepL](https://www.deepl.com/) _([register](https://www.deepl.com/en/signup/) and provide own free api-key)_
-* [OpenAI](https://platform.openai.com) _([register](https://platform.openai.com/), top-up balance and create api-key for the extension)_
-* [Grok](https://grok.com) _([register](https://console.x.ai), top-up balance and create api-key)_
-* [DeepSeek](https://platform.deepseek.com) _([register](https://platform.deepseek.com/), top-up balance and create api-key)_
+* [DeepL](https://www.deepl.com/) _(register and provide free api-key, 500K chars/month)_
+* [OpenAI](https://platform.openai.com) _(register, top-up balance and create api-key for the extension)_
+* [Grok](https://console.x.ai) _(register, top-up balance and create api-key)_
+* [DeepSeek](https://platform.deepseek.com) _(register, top-up balance and create api-key)_
+* [Gemini](https://aistudio.google.com/) _(create free-tier api-key)_
 
 How to enable translator in local HTML/PDF files:
 -----------

@@ -525,7 +525,10 @@
     "message": "Register at platform.deepseek.com and top-up balance (e.g. via Paypal)"
   },
   "auth_access_info_steps_deepl": {
-    "message": "Register at www.deepl.com and get own free autorization API-key for DeepL translations"
+    "message": "Register at www.deepl.com and get own free authorization API-key for DeepL translations"
+  },
+  "auth_access_info_steps_gemini": {
+    "message": "Create your free API-key at https://aistudio.google.com/apikey"
   },
   "auth_access_info_api_key": {
     "message": "Provide your api key for getting { $provider } translations"

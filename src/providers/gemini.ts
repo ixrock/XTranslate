@@ -1,17 +1,18 @@
 import AILanguagesList from "./open-ai.json"
-import { ITranslationResult, OpenAIModelTTS, ProviderCodeName, TranslateParams, Translator } from "./index";
+import { GeminiAIModelTTS, ITranslationResult, ProviderCodeName, TranslateParams, Translator } from "./index";
 import { createStorage } from "../storage";
-import { ttsOpenAIAction, translateTextAction } from "../background/ai.bgc";
+import { translateTextAction, ttsGeminiAction } from "../background/ai.bgc";
 import { settingsStore } from "../components/settings/settings.storage";
 import { toBinaryFile } from "../utils/binary";
+import { AITextToSpeechPayload } from "@/extension";
 
-export class OpenAITranslator extends Translator {
-  override name = ProviderCodeName.OPENAI;
-  override title = "OpenAI";
-  override publicUrl = "https://platform.openai.com/";
-  override apiUrl = "https://api.openai.com/v1";
+export class GeminiTranslator extends Translator {
+  override name = ProviderCodeName.GEMINI;
+  override title = "Gemini";
+  override publicUrl = "https://aistudio.google.com/";
+  override apiUrl = "https://generativelanguage.googleapis.com/v1beta";
   override isRequireApiKey = true;
-  #apiKey = createStorage<string>("openai_api_key");
+  #apiKey = createStorage<string>("gemini_api_key");
 
   constructor() {
     super({ languages: AILanguagesList });
@@ -22,7 +23,7 @@ export class OpenAITranslator extends Translator {
 
     return translateTextAction({
       provider: this.name,
-      model: settingsStore.data.openAiModel,
+      model: settingsStore.data.geminiModel,
       apiKey: this.#apiKey.get(),
       targetLanguage: this.langTo[to],
       sourceLanguage: from !== "auto" ? this.langFrom[from] : undefined,
@@ -33,17 +34,19 @@ export class OpenAITranslator extends Translator {
   async getAudioFile(text: string, lang?: string): Promise<Blob> {
     await this.#apiKey.load();
 
-    const data = await ttsOpenAIAction({
+    const responseFormat: AITextToSpeechPayload["response_format"] = "mp3";
+
+    const data = await ttsGeminiAction({
       provider: this.name,
-      model: OpenAIModelTTS.MINI,
+      model: GeminiAIModelTTS.FLASH,
       apiKey: this.#apiKey.get(),
-      voice: settingsStore.data.tts.openAiVoice,
+      voice: settingsStore.data.tts.geminiVoice,
       text,
       targetLanguage: lang,
-      response_format: "mp3",
+      response_format: responseFormat,
     });
 
-    return toBinaryFile(data, "audio/mpeg");
+    return toBinaryFile(data, `audio/${responseFormat}`);
   }
 
   getAuthSettings() {
@@ -55,4 +58,4 @@ export class OpenAITranslator extends Translator {
   }
 }
 
-Translator.register(ProviderCodeName.OPENAI, OpenAITranslator);
+Translator.register(ProviderCodeName.GEMINI, GeminiTranslator);
