@@ -1,7 +1,7 @@
 import { action, makeObservable } from "mobx";
 import { Hotkey } from "@/utils/parseHotkey";
 import { createStorage } from "@/storage";
-import { DeepSeekAIModel, getTranslator, GrokAIModel, OpenAIModel, OpenAIVoiceTTS, ProviderCodeName } from "@/providers";
+import { DeepSeekAIModel, GeminiAIModel, GeminiAIModelTTSVoice, getTranslator, GrokAIModel, OpenAIModel, OpenAIModelTTSVoice, ProviderCodeName } from "@/providers";
 
 export type PopupPosition = "" /*auto*/ | "left top" | "left bottom" | "right top" | "right bottom";
 
@@ -33,7 +33,7 @@ export const settingsStorage = createStorage("settings", {
     showTranslatedFrom: true,
     showPopupAdvancedCustomization: false,
     rememberLastText: false,
-    textInputTranslateDelayMs: 750,
+    textInputTranslateDelayMs: 1000,
     showAdvancedProviders: false, // advanced-list requires some setup from the user (e.g. adding api-key)
     vendor: "bing" as ProviderCodeName,
     langFrom: "auto",
@@ -45,12 +45,16 @@ export const settingsStorage = createStorage("settings", {
     favorites: {} as FavoritesList,
     popupPosition: "" as PopupPosition,
     iconPosition: {} as XIconPosition,
-    ttsVoiceIndex: 0,
-    openAiTtsVoice: OpenAIVoiceTTS.ALLOY,
+    customPdfViewer: false,
     openAiModel: OpenAIModel.RECOMMENDED,
     grokAiModel: GrokAIModel.RECOMMENDED,
     deepSeekModel: DeepSeekAIModel.RECOMMENDED,
-    customPdfViewer: false,
+    geminiModel: GeminiAIModel.RECOMMENDED,
+    tts: {
+      systemVoiceIndex: 0,
+      openAiVoice: OpenAIModelTTSVoice.Alloy,
+      geminiVoice: GeminiAIModelTTSVoice.Puck,
+    },
     fullPageTranslation: {
       provider: "bing" as ProviderCodeName,
       langFrom: "auto",

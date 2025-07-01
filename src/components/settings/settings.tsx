@@ -4,7 +4,7 @@ import { action, makeObservable, observable } from "mobx";
 import { observer } from "mobx-react";
 import isEqual from "lodash/isEqual";
 import startCase from "lodash/startCase";
-import { ProviderWithApiKey, DeepSeekAIModel, getTranslator, getTranslators, googleApiDomain, googleApiDomains, GrokAIModel, OpenAIModel, OpenAIVoiceTTS, ProviderCodeName, Translator } from "@/providers";
+import { ProviderWithApiKey, DeepSeekAIModel, getTranslator, getTranslators, googleApiDomain, googleApiDomains, GrokAIModel, OpenAIModel, OpenAIModelTTSVoice, ProviderCodeName, Translator, GeminiAIModel, GeminiAIModelTTSVoice } from "@/providers";
 import { XTranslateIcon } from "@/user-script/xtranslate-icon";
 import { SelectLanguage, SelectLanguageChangeEvent } from "../select-language";
 import { Checkbox } from "../checkbox";
@@ -28,13 +28,8 @@ import { ShowHideMore } from "../show-hide-more";
 
 @observer
 export class Settings extends React.Component {
-  private openAiVoiceOptions: ReactSelectOption<OpenAIVoiceTTS>[] = Object.values(OpenAIVoiceTTS)
-    .map((voice: OpenAIVoiceTTS) => {
-      return {
-        value: voice,
-        label: startCase(voice),
-      } as ReactSelectOption<OpenAIVoiceTTS>;
-    });
+  private openAiVoiceOptions = this.getVoicesOptions(OpenAIModelTTSVoice);
+  private geminiVoiceOptions = this.getVoicesOptions(GeminiAIModelTTSVoice);
 
   private googleApiDomainOptions: ReactSelectOption<string>[] = googleApiDomains.map(({ domain, title }) => {
     return {
@@ -46,6 +41,13 @@ export class Settings extends React.Component {
   constructor(props: object) {
     super(props);
     makeObservable(this);
+  }
+
+  private getVoicesOptions<Voice extends string>(voiceModels: Record<string, Voice>): ReactSelectOption<Voice>[] {
+    return Object.values(voiceModels).map((voice: Voice) => ({
+      value: voice,
+      label: startCase(voice),
+    }))
   }
 
   get providerSettings(): Partial<Record<ProviderCodeName, React.ReactNode>> {
@@ -60,7 +62,7 @@ export class Settings extends React.Component {
         </>
       ),
       openai: (
-        <div className="openai_settings flex gaps align-center">
+        <div className="flex gaps align-center">
           <SelectAIModel
             className={styles.providerSelect}
             modelOptions={OpenAIModel}
@@ -71,14 +73,13 @@ export class Settings extends React.Component {
             className={styles.providerSelect}
             placeholder={getMessage("tts_select_voice_title")}
             options={this.openAiVoiceOptions}
-            value={this.openAiVoiceOptions.find(voiceOpt => voiceOpt.value === settingsStore.data.openAiTtsVoice)}
-            onChange={({ value }) => settingsStore.data.openAiTtsVoice = value}
+            value={this.openAiVoiceOptions.find(voiceOpt => voiceOpt.value === settingsStore.data.tts.openAiVoice)}
+            onChange={({ value }) => settingsStore.data.tts.openAiVoice = value}
           />
         </div>
       ),
       grok: (
         <SelectAIModel
-          className="grok_settings"
           modelOptions={GrokAIModel}
           getValue={() => settingsStore.data.grokAiModel}
           onChange={value => settingsStore.data.grokAiModel = value}
@@ -86,10 +87,16 @@ export class Settings extends React.Component {
       ),
       deepseek: (
         <SelectAIModel
-          className="deepseek_settings"
           modelOptions={DeepSeekAIModel}
           getValue={() => settingsStore.data.deepSeekModel}
           onChange={value => settingsStore.data.deepSeekModel = value}
+        />
+      ),
+      gemini: (
+        <SelectAIModel
+          modelOptions={GeminiAIModel}
+          getValue={() => settingsStore.data.geminiModel}
+          onChange={value => settingsStore.data.geminiModel = value}
         />
       )
     }
@@ -122,7 +129,7 @@ export class Settings extends React.Component {
 
     if (this.isSpeaking) {
       const voices = await getTTSVoices();
-      const selectedVoice = voices[settingsStore.data.ttsVoiceIndex];
+      const selectedVoice = voices[settingsStore.data.tts.systemVoiceIndex];
 
       stopSpeaking();
       speak(this.demoVoiceText, selectedVoice);
@@ -351,8 +358,8 @@ export class Settings extends React.Component {
             tooltip={getMessage("use_chrome_tts_tooltip_info")}
           />
           <SelectVoice
-            currentIndex={settings.ttsVoiceIndex}
-            onChange={v => settings.ttsVoiceIndex = v}
+            currentIndex={settings.tts.systemVoiceIndex}
+            onChange={v => settings.tts.systemVoiceIndex = v}
           />
           <Icon
             small

@@ -4,7 +4,7 @@ import "../setup";
 import "./storage.bgc";
 import "./scripting.bgc";
 import "./history.bgc";
-import "./open-ai.bgc";
+import "./ai.bgc";
 import "./metrics.bgc";
 
 import { installOrUpdateAppActions } from "./install.bgc";

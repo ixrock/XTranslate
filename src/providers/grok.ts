@@ -2,7 +2,7 @@ import AILanguagesList from "./open-ai.json"
 import { ITranslationResult, ProviderCodeName, TranslateParams, Translator } from "./index";
 import { createStorage } from "../storage";
 import { settingsStore } from "../components/settings/settings.storage";
-import { translateTextAction } from "../background/open-ai.bgc";
+import { translateTextAction } from "../background/ai.bgc";
 
 export class GrokTranslator extends Translator {
   override name = ProviderCodeName.GROK;

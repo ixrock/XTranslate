@@ -1,6 +1,6 @@
 import OpenAI from "openai";
 import { getTranslator, ITranslationError, ITranslationResult, ProviderCodeName, TranslateParams } from "@/providers";
-import { AITranslatePayload, createIsomorphicAction, MessageType, OpenAITextToSpeechPayload } from "@/extension";
+import { AITranslatePayload, createIsomorphicAction, GeminiTextToSpeechPayload, MessageType, OpenAITextToSpeechPayload } from "@/extension";
 import { createLogger } from "@/utils/createLogger";
 
 const logger = createLogger({ systemPrefix: "[AI]" });
@@ -10,9 +10,14 @@ export const translateTextAction = createIsomorphicAction({
   handler: translateText,
 });
 
-export const textToSpeechAction = createIsomorphicAction({
+export const ttsOpenAIAction = createIsomorphicAction({
   messageType: MessageType.OPENAI_TEXT_TO_SPEECH,
-  handler: textToSpeech,
+  handler: textToSpeechOpenAI,
+});
+
+export const ttsGeminiAction = createIsomorphicAction({
+  messageType: MessageType.GEMINI_TEXT_TO_SPEECH,
+  handler: textToSpeechGemini,
 });
 
 export function getAPI(params: { apiKey: string, provider: ProviderCodeName }) {
@@ -108,24 +113,48 @@ ${text}
   return { systemPrompt: system, userPrompt: user };
 }
 
-export async function textToSpeech(params: OpenAITextToSpeechPayload): Promise<number[]> {
-  const {
-    apiKey, text, model, provider,
-    speed = 1,
-    voice = "alloy",
-    response_format = "mp3"
-  } = params;
+export async function textToSpeechOpenAI(params: OpenAITextToSpeechPayload): Promise<number[]> {
+  const { apiKey, text, model, provider, response_format, voice, speed } = params;
+  const api = getAPI({ apiKey, provider });
 
-  const speechFile = await getAPI({ apiKey, provider: provider }).audio.speech.create({
+  const speechFile = await api.audio.speech.create({
     model: model,
     voice: voice,
     input: text,
     speed: speed,
-    response_format,
+    response_format: response_format,
   });
 
   const buffer = await speechFile.arrayBuffer();
   const transferableDataContainer = new Uint8Array(buffer);
 
   return Array.from(transferableDataContainer);
+}
+
+// FIXME: doesn't work with Gemini API
+export async function textToSpeechGemini(params: GeminiTextToSpeechPayload): Promise<number[]> {
+  const { apiKey, text, model, speed = 1, voice, provider, response_format } = params;
+
+  const api = getAPI({ apiKey, provider });
+  const apiUrl = `${api.baseURL}/models/${model}:generateSpeech`;
+
+  const response = await fetch(apiUrl, {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${apiKey}`, // or try `${apiUrl}?key=${apiKey}`
+      "Content-Type": "application/json",
+      "Accept": `audio/${response_format}`
+    },
+    body: JSON.stringify({
+      text,
+      audioConfig: {
+        voice: { name: voice },
+        audioEncoding: response_format === "wav" ? "LINEAR16" : "MP3",
+        speakingRate: speed,
+      }
+    })
+  });
+
+  const buffer = await response.arrayBuffer();
+  return Array.from(new Uint8Array(buffer));
 }

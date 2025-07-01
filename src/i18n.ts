@@ -82,7 +82,7 @@ export function getMessage(
 
   if (placeholders) {
     Object.keys(placeholders).forEach(paramName => {
-      if (!params?.[paramName]) {
+      if (params?.[paramName] === undefined) {
         console.warn(`[I18N]: missing placeholder "${paramName}" in "${key}"`)
       }
     })

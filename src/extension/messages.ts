@@ -1,5 +1,5 @@
 // [IPC]: inter-process communications for [options-page] <-> [background] <-> [content-pages]
-import { ITranslationResult, OpenAIVoiceTTS, ProviderCodeName, TranslateParams } from "../providers";
+import { GeminiAIModelTTSVoice, ITranslationResult, OpenAIModelTTSVoice, ProviderCodeName, TranslateParams } from "../providers";
 import type { IHistoryItem } from "../components/user-history/history.storage";
 import type { GoogleMetricEvents } from "../background/metrics.bgc";
 
@@ -16,6 +16,7 @@ export enum MessageType {
   STORAGE_DATA_SYNC = "SYNC_STORAGE",
   OPENAI_TRANSLATION = "OPENAI_TRANSLATION",
   OPENAI_TEXT_TO_SPEECH = "OPENAI_TEXT_TO_SPEECH",
+  GEMINI_TEXT_TO_SPEECH = "GEMINI_TEXT_TO_SPEECH",
   MELLOWTEL_STATUS = "MELLOWTEL_STATUS",
   MELLOWTEL_ACTIVATE = "MELLOWTEL_ACTIVATE",
   MELLOWTEL_DEACTIVATE = "MELLOWTEL_DEACTIVATE",
@@ -106,9 +107,13 @@ export interface AITextToSpeechPayload {
   targetLanguage?: string; /* or auto-detect if not provided */
   speed?: number; /* 0.5 - 4.0 */
   voice?: string;
-  response_format?: "mp3"
+  response_format?: "mp3" | "aac" | "flac" | "wav" | "pcm"
 }
 
 export interface OpenAITextToSpeechPayload extends AITextToSpeechPayload {
-  voice?: OpenAIVoiceTTS;
+  voice: OpenAIModelTTSVoice;
+}
+
+export interface GeminiTextToSpeechPayload extends AITextToSpeechPayload {
+  voice: GeminiAIModelTTSVoice;
 }

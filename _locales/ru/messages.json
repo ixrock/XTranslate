@@ -527,6 +527,9 @@
   "auth_access_info_steps_deepl": {
     "message": "Зарегистрируйтесь на www.deepl.com и получите бесплатный ключ авторизации для DeepL-переводов"
   },
+  "auth_access_info_steps_gemini": {
+    "message": "Создайте свой бесплатный API-ключ на странице https://aistudio.google.com/apikey"
+  },
   "auth_access_info_api_key": {
     "message": "Предоставьте свой API-ключ для получения переводов { $provider }"
   },

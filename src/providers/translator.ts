@@ -217,13 +217,13 @@ export abstract class Translator {
 
     if (!voice) {
       const voices = await getTTSVoices();
-      voice = voices[settingsStore.data.ttsVoiceIndex];
+      voice = voices[settingsStore.data.tts.systemVoiceIndex];
     }
 
     if (useSpeechSynthesis) {
       this.logger.info(`[TTS]: speaking using system speech synthesis`, {
         lang, text, voice,
-        voiceIndex: settingsStore.data.ttsVoiceIndex,
+        voiceIndex: settingsStore.data.tts.systemVoiceIndex,
       });
       this.speakSynth(text, voice);
     } else {
