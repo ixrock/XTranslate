@@ -509,6 +509,12 @@
   "ai_choose_model_recommended": {
     "message": "Odporúčaný model"
   },
+  "ai_choose_model_reasoning": {
+    "message": "Model uvažovania / pomalé"
+  },
+  "ai_choose_model_reasoning_light": {
+    "message": "Model uvažovania (light) / rýchle"
+  },
   "auth_access_info_steps_openai": {
     "message": "1) Zaregistrujte sa na platform.openai.com 2) Vytvorte prístupový kľúč API 3) Dobite si kredit (5$+)"
   },
@@ -517,6 +523,12 @@
   },
   "auth_access_info_steps_deepseek": {
     "message": "Zaregistrujte sa na platform.deepseek.com a dobite si kredit (napr. cez Paypal)"
+  },
+  "auth_access_info_steps_deepl": {
+    "message": "Zaregistrujte sa na www.deepl.com a získať vlastný bezplatný autorizačný kľúč API na preklady pomocou DeepL"
+  },
+  "auth_access_info_steps_gemini": {
+    "message": "Vytvorte si bezplatný kľúč API na https://aistudio.google.com/apikey"
   },
   "auth_access_info_api_key": {
     "message": "Zadajte  kľúč API na získanie prekladov { $provider }"
