@@ -45,7 +45,9 @@ export const mellowtelStatusAction = createIsomorphicAction({
     const lastOptOutTime = mellowtelOptOutTime.get();
     const timeToRemindForSupport = lastOptOutTime + mellowtelOptInReminderDuration > Date.now();
 
-    return enabled || timeToRemindForSupport;
+    return {
+      enabled: enabled || timeToRemindForSupport
+    };
   },
 });
 

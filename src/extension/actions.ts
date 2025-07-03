@@ -1,4 +1,4 @@
-import { isBackgroundWorker, onMessage, sendMessage, sendMessageSafe } from "./runtime";
+import { isBackgroundWorker, onMessage, sendMessage, sendMessageSafe, openOptionsPage } from "./runtime";
 import { MessageType } from "./messages";
 import { getActiveTabId } from "./tabs";
 
@@ -42,3 +42,8 @@ export async function translateActivePage() {
     tabId: await getActiveTabId(),
   });
 }
+
+export const openOptionsPageAction = createIsomorphicAction({
+  messageType: MessageType.OPEN_OPTIONS_PAGE,
+  handler: openOptionsPage,
+});

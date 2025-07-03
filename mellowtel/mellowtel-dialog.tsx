@@ -19,7 +19,7 @@ export class MellowtelDialog extends React.Component<MellowtelDialogProps> {
   }
 
   async componentDidMount() {
-    const enabled = await mellowtelStatusAction();
+    const { enabled } = await mellowtelStatusAction();
     mellowtelDialogVisibility.set(!enabled);
   }
 
