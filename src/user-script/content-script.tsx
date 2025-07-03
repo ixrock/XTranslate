@@ -22,6 +22,7 @@ import { XTranslateIcon } from "./xtranslate-icon";
 import { XTranslateTooltip } from "./xtranslate-tooltip";
 import { Popup } from "../components/popup/popup";
 import { PageTranslator } from "./page-translator";
+import { Icon } from "@/components/icon";
 
 type DOMRectNormalized = Omit<Writeable<DOMRect>, "toJSON" | "x" | "y">;
 
@@ -87,7 +88,7 @@ export class ContentScript extends React.Component {
   @observable.ref lastParams: TranslatePayload; // last used translation payload
   @observable.ref translation: ITranslationResult;
   @observable.ref error: ITranslationError;
-  @observable.ref selectionRects: DOMRectNormalized[];
+  @observable.ref selectionRects: DOMRectNormalized[] = [];
   @observable popupPosition: React.CSSProperties = {};
   @observable selectedText = "";
   @observable isRtlSelection = false;
@@ -149,8 +150,10 @@ export class ContentScript extends React.Component {
   @computed get iconPosition(): React.CSSProperties {
     const { iconPosition } = settingsStore.data;
     const { selectionRects, isRtlSelection } = this;
-    const firstRect = selectionRects[0];
-    const lastRect = selectionRects.slice(-1)[0];
+
+    if (!selectionRects.length) {
+      return {};
+    }
 
     if (!isEmpty(iconPosition)) {
       const top = iconPosition.top ? orderBy(selectionRects, "top", "asc")[0].top : undefined;
@@ -164,6 +167,9 @@ export class ContentScript extends React.Component {
         transform: `translate(${left ? -100 : 0}%, ${top ? -100 : 0}%)`,
       }
     }
+
+    const firstRect = selectionRects[0];
+    const lastRect = selectionRects.slice(-1)[0];
 
     return {
       left: isRtlSelection ? firstRect.left : lastRect.right,
@@ -265,15 +271,6 @@ export class ContentScript extends React.Component {
     void getTranslator(vendor).speak(langDetected, originalText);
   }
 
-  showIcon() {
-    void this.checkContextInvalidationError();
-    this.isIconVisible = true;
-  }
-
-  hideIcon() {
-    this.isIconVisible = false;
-  }
-
   @action
   hidePopup() {
     if (this.isPopupHidden) {
@@ -284,8 +281,8 @@ export class ContentScript extends React.Component {
     }
     this.translation = null;
     this.error = null;
-    this.popupPosition = null;
-    this.selectionRects = null;
+    this.popupPosition = {};
+    this.selectionRects = [];
     this.isDblClicked = false;
     this.isHotkeyActivated = false;
     this.selection.removeAllRanges();
@@ -353,7 +350,7 @@ export class ContentScript extends React.Component {
   @action
   refinePosition() {
     const hasAutoPosition = settingsStore.data.popupPosition === "";
-    if (!hasAutoPosition || !this.selectionRects) {
+    if (!hasAutoPosition || !this.selectionRects.length) {
       return; // skip: no position refining is needed
     }
 
@@ -420,7 +417,7 @@ export class ContentScript extends React.Component {
   }
 
   isClickedOnSelection() {
-    if (!this.selectedText || !this.selectionRects) return;
+    if (!this.selectedText || !this.selectionRects.length) return;
     const { x, y } = this.mousePos;
 
     return this.selectionRects.some(({ left, top, right, bottom }) => {
@@ -448,12 +445,6 @@ export class ContentScript extends React.Component {
       }
     }
   }), 250);
-
-  onIconClick(evt: React.MouseEvent) {
-    evt.stopPropagation();
-    void this.translate();
-    void sendMetric("translate_action", { trigger: "icon" });
-  }
 
   private getMouseTargetTopElem(evt: MouseEvent): HTMLElement {
     return evt.composedPath()[0] as HTMLElement;
@@ -561,20 +552,41 @@ export class ContentScript extends React.Component {
     this.refinePosition();
   }), 250);
 
-  render() {
-    const { translation, error, popupPosition, playText, onIconClick, isIconVisible } = this;
+  onIconClick(evt: React.MouseEvent) {
+    evt.stopPropagation();
+    void this.translate();
+    void sendMetric("translate_action", { trigger: "icon" });
+  }
+
+  showIcon() {
+    void this.checkContextInvalidationError();
+    this.isIconVisible = true;
+  }
+
+  hideIcon() {
+    this.isIconVisible = false;
+  }
+
+  renderIcon() {
+    const { appName, onIconClick, isIconVisible, isLoading, iconPosition } = this;
     const { langFrom, langTo, vendor } = settingsStore.data;
     const translator = getTranslator(vendor);
+    const translateIconTitle = `${appName}: ${translator.getLangPairTitle(langFrom, langTo)}`;
+
+    return (
+      <div style={{ position: "absolute", ...iconPosition }}>
+        {isLoading && <Icon svg="spinner"/>}
+        {!isLoading && isIconVisible && <XTranslateIcon onMouseDown={onIconClick} title={translateIconTitle}/>}
+      </div>
+    )
+  }
+
+  render() {
+    const { translation, error, popupPosition, playText } = this;
     return (
       <>
         <link rel="stylesheet" href={ContentScript.cssStylesUrl}/>
-        {isIconVisible && (
-          <XTranslateIcon
-            style={this.iconPosition}
-            onMouseDown={onIconClick}
-            title={`${this.appName}: ${translator.getLangPairTitle(langFrom, langTo)}`}
-          />
-        )}
+        {this.renderIcon()}
         <XTranslateTooltip ref={this.tooltipRef}/>
         <Popup
           style={popupPosition}
