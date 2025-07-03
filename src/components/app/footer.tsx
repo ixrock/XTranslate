@@ -6,7 +6,7 @@ import { getManifest } from '@/extension'
 import { getMessage } from "@/i18n";
 import { Icon } from "../icon";
 import { CopyToClipboardIcon } from "../copy-to-clipboard-icon";
-import { mellowtelDialogState } from "../../../mellowtel";
+import { mellowtelDialogVisibility } from "../../../mellowtel";
 
 @observer
 export class Footer extends React.Component {
@@ -30,7 +30,7 @@ export class Footer extends React.Component {
   }
 
   supportDevelopers(){
-    mellowtelDialogState.set(true);
+    mellowtelDialogVisibility.set(true);
   }
 
   render() {

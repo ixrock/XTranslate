@@ -6,7 +6,7 @@ import { action, makeObservable } from "mobx";
 import { getMessage } from "../src/i18n";
 import { Button } from "../src/components/button";
 import { Icon } from "../src/components/icon";
-import { mellowtelActivateAction, mellowtelDeactivateAction, mellowtelStatusAction, mellowtelDialogState, mellowtelOptOutTime, mellowtelOptInReminderDuration } from "./index";
+import { mellowtelActivateAction, mellowtelDeactivateAction, mellowtelDialogVisibility, mellowtelOptOutTime, mellowtelStatusAction } from "./index";
 
 export interface MellowtelDialogProps extends Omit<DialogProps, "isOpen"> {
 }
@@ -19,25 +19,8 @@ export class MellowtelDialog extends React.Component<MellowtelDialogProps> {
   }
 
   async componentDidMount() {
-    const visible = await this.checkDialogVisibility();
-    mellowtelDialogState.set(visible);
-  }
-
-  async checkDialogVisibility(): Promise<boolean> {
-    await mellowtelOptOutTime.load();
-    let lastOptOutTime = mellowtelOptOutTime.get();
-
-    if (!lastOptOutTime) {
-      lastOptOutTime = Date.now();
-      mellowtelOptOutTime.set(lastOptOutTime);
-    }
-
     const enabled = await mellowtelStatusAction();
-    const isOptedOutLongTimeAgo = lastOptOutTime + mellowtelOptInReminderDuration < Date.now();
-    if (enabled) {
-      return false;
-    }
-    return isOptedOutLongTimeAgo;
+    mellowtelDialogVisibility.set(!enabled);
   }
 
   optIn = async () => {
@@ -52,7 +35,7 @@ export class MellowtelDialog extends React.Component<MellowtelDialogProps> {
 
   @action.bound
   close() {
-    mellowtelDialogState.set(false);
+    mellowtelDialogVisibility.set(false);
     mellowtelOptOutTime.set(Date.now());
   }
 
@@ -60,7 +43,7 @@ export class MellowtelDialog extends React.Component<MellowtelDialogProps> {
     return (
       <Dialog
         pinned
-        isOpen={mellowtelDialogState.get()}
+        isOpen={mellowtelDialogVisibility.get()}
         className={styles.MellowtelDialog}
         contentClassName="flex gaps column"
       >

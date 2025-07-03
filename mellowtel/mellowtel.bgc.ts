@@ -3,22 +3,50 @@
 import Mellowtel from "mellowtel";
 import { createIsomorphicAction, MessageType } from "../src/extension";
 import { createLogger } from "../src/utils/createLogger";
+import { mellowtelOptOutTime } from "./mellowtel.storage";
+import { mellowtelOptInReminderDuration } from "./mellowtel.config";
 
 const logger = createLogger({ systemPrefix: "[MELLOWTEL]" });
 
 export const mellowtelActivateAction = createIsomorphicAction({
   messageType: MessageType.MELLOWTEL_ACTIVATE,
-  handler: mellowtelActivate,
+  handler: async function mellowtelActivate() {
+    try {
+      const api = mellowtelApi();
+      await api.optIn();
+      await api.start();
+      logger.info("Mellowtel activated");
+    } catch (err) {
+      logger.info(`Mellowtel activatation failed: ${err}`);
+    }
+  },
 });
 
 export const mellowtelDeactivateAction = createIsomorphicAction({
   messageType: MessageType.MELLOWTEL_DEACTIVATE,
-  handler: mellowtelDeactivate,
+  handler: async function mellowtelDeactivate() {
+    try {
+      const api = mellowtelApi();
+      await api.stop();
+      await api.optOut();
+      logger.info("Mellowtel deactivated");
+    } catch (err) {
+      logger.info(`Mellowtel deactivation failed: ${err}`);
+    }
+  },
 });
 
 export const mellowtelStatusAction = createIsomorphicAction({
   messageType: MessageType.MELLOWTEL_STATUS,
-  handler: mellowtelStatus,
+  handler: async function mellowtelStatus() {
+    await mellowtelOptOutTime.load();
+
+    const enabled = await mellowtelApi().getOptInStatus();
+    const lastOptOutTime = mellowtelOptOutTime.get();
+    const timeToRemindForSupport = lastOptOutTime + mellowtelOptInReminderDuration > Date.now();
+
+    return enabled || timeToRemindForSupport;
+  },
 });
 
 export function mellowtelApi() {
@@ -43,37 +71,5 @@ export async function initContentPage(params: InitContentPageParams) {
     await mellowtelApi().initContentScript(params);
   } catch (err) {
     logger.error(`init content page script failed: ${String(err)}`, params);
-  }
-}
-
-export async function mellowtelStatus() {
-  return mellowtelApi().getOptInStatus();
-}
-
-export async function mellowtelActivate() {
-  try {
-    const api = mellowtelApi();
-    const enabled = await mellowtelStatus();
-    if (!enabled) {
-      await api.optIn();
-      await api.start();
-      logger.info("Mellowtel activated");
-    }
-  } catch (err) {
-    logger.info(`Mellowtel activatation failed: ${err}`);
-  }
-}
-
-export async function mellowtelDeactivate() {
-  try {
-    const api = mellowtelApi();
-    const enabled = await mellowtelStatus();
-    if (enabled) {
-      await api.stop();
-      await api.optOut();
-      logger.info("Mellowtel deactivated");
-    }
-  } catch (err) {
-    logger.info(`Mellowtel deactivation failed: ${err}`);
   }
 }
