@@ -1,6 +1,6 @@
 import * as styles from "./input.module.scss";
 import React, { DOMAttributes, InputHTMLAttributes, TextareaHTMLAttributes } from "react";
-import { cssNames, debouncePromise, IClassName } from "@/utils";
+import { cssNames, debouncePromise, IClassName, noop } from "@/utils";
 import { Icon } from "../icon";
 import { conditionalValidators, Validator } from "./input.validators";
 import isString from "lodash/isString"
@@ -26,13 +26,6 @@ export type InputProps<T = any> = Omit<InputElementProps, "onChange"> & {
   labelContent?: React.ReactNode;
   infoContent?: React.ReactNode;
   onChange?(value: T, evt: React.ChangeEvent<InputElement>): void;
-  onBlurChanged?(data: OnBlurChangedData, evt: React.ChangeEvent<InputElement>): void;
-}
-
-export interface OnBlurChangedData {
-  valid: boolean;
-  focusValue: string;
-  value: string;
 }
 
 interface State {
@@ -44,21 +37,20 @@ interface State {
   errors?: React.ReactNode[]
 }
 
-const defaultProps: Partial<InputProps> = {
-  rows: 1,
-  maxRows: 10000,
-  showErrors: true,
-  showValidationLine: true,
-  restoreInvalidOnBlur: true,
-  validators: [],
-}
-
 export class Input extends React.Component<InputProps, State> {
-  static defaultProps = defaultProps as object;
+  static defaultProps: InputProps = {
+    rows: 1,
+    maxRows: 10000,
+    showErrors: true,
+    showValidationLine: true,
+    restoreInvalidOnBlur: true,
+    validators: [],
+  };
 
   public elem: InputElement;
-  public validators: Validator[] = [];
-  public focusValue: string;
+  private validators: Validator[] = [];
+  private validationId: string;
+  private focusValue: string;
 
   public state: State = {
     dirty: !!this.props.dirty,
@@ -68,15 +60,15 @@ export class Input extends React.Component<InputProps, State> {
 
   setValue(value: string | number) {
     if (value != this.getValue()) {
-      var nativeInputValueSetter = Object.getOwnPropertyDescriptor(this.elem.constructor.prototype, "value").set;
+      const nativeInputValueSetter = Object.getOwnPropertyDescriptor(this.elem.constructor.prototype, "value").set;
       nativeInputValueSetter.call(this.elem, value);
-      var evt = new Event("input", { bubbles: true });
+      const evt = new Event("input", { bubbles: true });
       this.elem.dispatchEvent(evt);
     }
   }
 
   getValue(): string {
-    var { value, defaultValue = "" } = this.props;
+    const { value, defaultValue = "" } = this.props;
     if (value !== undefined) return value; // controlled input
     if (this.elem) return this.elem.value; // uncontrolled input
     return defaultValue as string;
@@ -86,52 +78,24 @@ export class Input extends React.Component<InputProps, State> {
     this.elem.focus();
   }
 
-  blur() {
-    this.elem.blur();
-  }
-
   select() {
     this.elem.select()
   }
 
-  private autoFitHeight() {
-    var { multiLine, rows, maxRows } = this.props;
-    if (!multiLine) {
-      return;
-    }
-    var textArea = this.elem;
-    var lineHeight = parseFloat(window.getComputedStyle(textArea).lineHeight);
-    var rowsCount = (this.getValue().match(/\n/g) || []).length + 1;
-    var height = lineHeight * Math.min(Math.max(rowsCount, rows), maxRows);
-    textArea.style.height = height + "px";
-  }
-
-  private validationId: string;
-
   async validate(value = this.getValue()) {
-    var validationId = (this.validationId = ""); // reset every time for async validators
-    var asyncValidators: Promise<any>[] = [];
-    var errors: React.ReactNode[] = [];
+    const errors: React.ReactNode[] = [];
+    const asyncValidators: Promise<any>[] = [];
 
-    // run validators
     for (let validator of this.validators) {
       if (errors.length) {
-        // stop validation check if there is an error already
-        break;
+        break; // stop validation checks after single error
       }
-      var result = validator.validate(value, this.props);
+      const result = validator.validate(value, this.props);
       if (isBoolean(result) && !result) {
         errors.push(this.getValidatorError(value, validator));
       } else if (result instanceof Promise) {
-        if (!validationId) {
-          this.validationId = validationId = uniqueId("validation_id_");
-        }
-        asyncValidators.push(
-          result.then(
-            () => {}, // don't consider any valid result from promise since we interested in errors  54only
-            error => this.getValidatorError(value, validator) || error
-          )
-        );
+        const asyncValidatorResult = result.then(noop, error => this.getValidatorError(value, validator) || error);
+        asyncValidators.push(asyncValidatorResult);
       }
     }
 
@@ -140,11 +104,13 @@ export class Input extends React.Component<InputProps, State> {
 
     // handle async validators result
     if (asyncValidators.length > 0) {
+      const validationId = this.validationId = uniqueId("validation_id_");
       this.setState({ validating: true, valid: false, });
-      var asyncErrors = await Promise.all(asyncValidators);
-      var isLastValidationCheck = this.validationId === validationId;
+      const asyncErrors = await Promise.all(asyncValidators);
+      const isLastValidationCheck = this.validationId === validationId;
       if (isLastValidationCheck) {
-        errors = this.state.errors.concat(asyncErrors.filter(err => err));
+        errors.length = 0;
+        errors.push(...this.state.errors, ...asyncErrors.filter(Boolean));
         this.setValidation(errors);
       }
     }
@@ -186,8 +152,8 @@ export class Input extends React.Component<InputProps, State> {
   }
 
   onFocus = (evt: React.FocusEvent<InputElement>) => {
-    var { onFocus, onBlurChanged, restoreInvalidOnBlur } = this.props;
-    if (onBlurChanged || restoreInvalidOnBlur) {
+    const { onFocus, restoreInvalidOnBlur } = this.props;
+    if (restoreInvalidOnBlur) {
       this.focusValue = this.getValue();
     }
     if (onFocus) {
@@ -197,19 +163,16 @@ export class Input extends React.Component<InputProps, State> {
   }
 
   onBlur = (evt: React.FocusEvent<InputElement>) => {
-    var { onBlurChanged, onBlur, restoreInvalidOnBlur } = this.props;
-    var focusValue = this.focusValue;
-    var value = this.getValue();
-    var { valid, dirtyOnBlur } = this.state;
+    const { onBlur, restoreInvalidOnBlur } = this.props;
+    const focusValue = this.focusValue;
+    let value = this.getValue();
+    const { valid, dirtyOnBlur } = this.state;
     if (restoreInvalidOnBlur && !valid) {
       value = focusValue;
       this.setValue(focusValue);
     }
     if (onBlur) {
       onBlur(evt);
-    }
-    if (onBlurChanged && focusValue != value) {
-      onBlurChanged({ valid, value, focusValue }, evt);
     }
     if (dirtyOnBlur) {
       this.setState({ dirty: true, dirtyOnBlur: false });
@@ -223,7 +186,6 @@ export class Input extends React.Component<InputProps, State> {
     }
 
     this.validate();
-    this.autoFitHeight();
 
     // mark input as dirty for the first time only onBlur() to avoid immediate error-state show when start typing
     if (!this.state.dirty) {
@@ -238,7 +200,7 @@ export class Input extends React.Component<InputProps, State> {
   }
 
   get showMaxLenIndicator() {
-    var { maxLength, multiLine } = this.props;
+    const { maxLength, multiLine } = this.props;
     return maxLength && multiLine;
   }
 
@@ -248,14 +210,12 @@ export class Input extends React.Component<InputProps, State> {
 
   componentDidMount() {
     this.setupValidators();
-    this.autoFitHeight();
   }
 
   componentDidUpdate(prevProps: InputProps) {
-    var { defaultValue, value, dirty, validators } = this.props;
+    const { defaultValue, value, dirty, validators } = this.props;
     if (prevProps.value !== value || defaultValue !== prevProps.defaultValue) {
       this.validate();
-      this.autoFitHeight();
     }
     if (prevProps.dirty !== dirty) {
       this.setDirty(dirty);
@@ -270,16 +230,16 @@ export class Input extends React.Component<InputProps, State> {
   }
 
   render() {
-    var {
-      className, iconLeft, iconRight, multiLine, dirty,
+    let {
+      className, multiLine, dirty: _dirty, iconRight, iconLeft,
       showValidationLine, showErrors, validators, maxRows, children,
-      restoreInvalidOnBlur, onBlurChanged, labelContent, infoContent,
+      restoreInvalidOnBlur, labelContent, infoContent,
       ...inputProps
     } = this.props;
-    var { maxLength, rows, disabled } = this.props;
-    var { focused, dirty, valid, validating, errors } = this.state;
+    const { maxLength, rows, disabled } = inputProps;
+    const { focused, dirty, valid, validating, errors } = this.state;
 
-    // normalize icons
+    // normalize material-icons
     if (isString(iconLeft)) iconLeft = <Icon material={iconLeft}/>
     if (isString(iconRight)) iconRight = <Icon material={iconRight}/>
 
