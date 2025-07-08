@@ -11,7 +11,7 @@
     cursor: pointer;
 
     .text {
-      @include bold-link;
+      @include pseudo-link;
     }
   }
 }

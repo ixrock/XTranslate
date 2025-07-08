@@ -368,11 +368,8 @@
   "favorites_lang_title": {
     "message": "즐겨찾기"
   },
-  "donate_title": {
+  "support_developers": {
     "message": "개발자 지원"
-  },
-  "donate_description": {
-    "message": "앱이 마음에 드시면 개발자에게 기부를 고려해주세요. 감사합니다!"
   },
   "service_unavailable": {
     "message": "서비스를 사용할 수 없습니다. 5-25분 후에 다시 시도하세요. 이 문제가 자주 발생하면 설정에서 번역 지연을 늘리세요."
@@ -390,46 +387,25 @@
     "message": "안녕, 친구 👋"
   },
   "mellowtel_text1": {
-    "message": "아시다시피 이 확장 프로그램은 무료로 모든 사람에게 제공됩니다... 하지만 이번에는 유지하기 위해 사용자의 조치가 필요합니다!"
+    "message": "알다시피 이 확장 기능은 무료이며 누구나 사용할 수 있어요… 하지만 유지하려면 당신의 도움이 필요해요!"
   },
   "mellowtel_text2": {
-    "message": "이 새로운 버전에는 오픈 소스 라이브러리 { $link }가 포함되어 있습니다. 이 라이브러리는 사용하지 않는 인터넷을 믿을 수 있는 AI 연구소와 스타트업과 공유하여 그들이 모델을 학습하는 데 사용할 수 있게 합니다."
+    "message": "XTranslate 개발자를 지원하려면 { $link }을(를) 설치해주세요. 이 오픈소스 확장 기능은 사용하지 않는 인터넷 대역폭을 신뢰할 수 있는 AI 연구소 및 스타트업과 공유하여 모델 훈련에 활용하게 해줍니다."
   },
-  "mellowtel_usage_title": {
-    "message": "Mellowtel을 사용하여:"
+  "mellowtel_text3": {
+    "message": "Mellowtel은 당신의 대역폭만 공유합니다. 보안과 개인정보 보호는 100% 보장됩니다. 개인 정보(익명화된 데이터 포함)는 전혀 수집·공유·판매되지 않습니다."
   },
-  "mellowtel_usage1": {
-    "message": "서비스 중단 추적"
+  "mellowtel_text4": {
+    "message": "Chrome 웹 스토어의 보안 정책 때문에 별도 확장으로 설치해야 합니다. 하지만 걱정 마세요—현재 XTranslate 설정은 그대로 유지되고, 개인 데이터도 수집되지 않습니다."
   },
-  "mellowtel_usage2": {
-    "message": "서비스 품질 측정"
+  "mellowtel_decline": {
+    "message": "나중에 다시 알림"
   },
-  "mellowtel_usage3": {
-    "message": "이 확장 프로그램의 개발자로서 수익의 일부를 받습니다"
+  "mellowtel_install": {
+    "message": "Mellowtel 설치하기"
   },
-  "mellowtel_accept_all_info1": {
-    "message": "'모두 수락'을 선택하시면, Mellowtel API를 사용하여 신뢰할 수 있는 파트너가 네트워크 내의 노드를 통해 인터넷 자원에 접근할 수 있도록 트래픽의 일부를 라우팅합니다."
-  },
-  "mellowtel_accept_all_info2": {
-    "message": "Mellowtel은 오직 대역폭만 공유합니다. 보안과 개인정보 보호는 100% 보장되며, 라이브러리는 모든 사람이 볼 수 있는 오픈 소스입니다."
-  },
-  "mellowtel_regulation1": {
-    "message": "개인 정보를 수집, 공유하거나 판매하지 않습니다 (익명화된 데이터도 포함)."
-  },
-  "mellowtel_regulation2": {
-    "message": "또한 매우 규제된 상태입니다: Mellowtel은 안전한 경험을 보장하기 위해 Chrome Web Store 규제 기관과 지속적으로 소통합니다."
-  },
-  "mellowtel_regulation3": {
-    "message": "또한 CWS 규제 기관에 규제 준수를 모니터링하고 시행할 도구를 제공합니다."
-  },
-  "mellowtel_button_decline": {
-    "message": "선택적 사용 거부"
-  },
-  "mellowtel_button_accept": {
-    "message": "모두 수락"
-  },
-  "mellowtel_dialog_footer": {
-    "message": "읽어 주셔서 감사합니다, { $devs } 팀."
+  "mellowtel_footer": {
+    "message": "읽어주셔서 감사해요, { $devs } 팀 드림."
   },
   "error_403_auth_failed": {
     "message": "인증 실패. 설정에서 유효한 인증 API 키를 제공하세요."

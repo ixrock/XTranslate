@@ -344,14 +344,11 @@
   "favorites_lang_title": {
     "message": "Sık kullanılanlar"
   },
-  "donate_title": {
+  "support_developers": {
     "message": "Bağış yap"
   },
   "donate_via": {
     "message": "Bağış yap"
-  },
-  "donate_description": {
-    "message": "Uygulamayı beğendiyseniz geliştiricilere bağış yapmayı düşünün. Teşekkürler!"
   },
   "service_unavailable": {
     "message": "Hizmet kullanılamıyor. 5-25 dakika sonra tekrar deneyin. Bu gerçekleşirse, ayarlardaki çeviri gecikmesini sürekli olarak artırın."
@@ -369,46 +366,25 @@
     "message": "Merhaba, dostum 👋"
   },
   "mellowtel_text1": {
-    "message": "Bildiğiniz gibi bu eklenti ücretsiz ve herkese açıktır... ancak devam ettirebilmek için bu sefer sizden bir aksiyon bekliyoruz!"
+    "message": "Belki biliyorsundur, bu eklenti ücretsiz ve herkes için açık… ama varlığını sürdürebilmesi için senin desteğine ihtiyacımız var!"
   },
   "mellowtel_text2": {
-    "message": "Bu yeni sürüm, açık kaynaklı { $link } kütüphanesini içeriyor. Bu kütüphane, kullanılmayan internet bağlantınızı, modellerini eğitmek için kullanan güvenilir AI laboratuvarları ve startup'larla paylaşmanıza olanak tanır."
+    "message": "XTranslate geliştiricilerini desteklemek için lütfen { $link }’i yükle. Bu açık kaynak eklenti, kullanılmayan internetini güvenilir AI laboratuvarları ve girişimlerle paylaşmana olanak tanıyor, böylece modellerini eğitiyorlar."
   },
-  "mellowtel_usage_title": {
-    "message": "Mellowtel'i şu amaçlarla kullanıyoruz:"
+  "mellowtel_text3": {
+    "message": "Mellowtel sadece bant genişliğini paylaşıyor. Güvenlik ve gizlilik %100 garanti. Hiçbir kişisel bilgiyi toplamaz, paylaşmaz veya satmaz (anonimleştirilmiş veriler dahil değil)."
   },
-  "mellowtel_usage1": {
-    "message": "Servisin kesintilerini izlemek"
+  "mellowtel_text4": {
+    "message": "Chrome Web Store güvenlik politikaları nedeniyle ayrı bir eklenti olarak yüklenmesi gerekiyor. Ama merak etme—bu, mevcut XTranslate ayarlarını etkilemez ve hiçbir kişisel veri toplamaz."
   },
-  "mellowtel_usage2": {
-    "message": "Servisin kalitesini ölçmek"
+  "mellowtel_decline": {
+    "message": "Daha sonra hatırlat"
   },
-  "mellowtel_usage3": {
-    "message": "Bu eklentinin geliştiricisi olarak gelirin küçük bir payını almak"
+  "mellowtel_install": {
+    "message": "Mellowtel’i yükle"
   },
-  "mellowtel_accept_all_info1": {
-    "message": "'Hepsini kabul et'i seçerseniz, Mellowtel API'sini şu amaçla da kullanacağız: Güvenilir ortakların internet kaynaklarına erişimini sağlamak için trafiğin bir kısmını ağınızdaki düğüm üzerinden yönlendirmek."
-  },
-  "mellowtel_accept_all_info2": {
-    "message": "Mellowtel sadece bant genişliğinizi paylaşır. Güvenlik ve gizlilik %100 garanti altındadır ve kütüphane herkesin görebileceği şekilde açık kaynak kodludur."
-  },
-  "mellowtel_regulation1": {
-    "message": "Kişisel bilgileri toplamaz, paylaşmaz veya satmaz (anonimleştirilmiş veriler bile)."
-  },
-  "mellowtel_regulation2": {
-    "message": "Ayrıca, oldukça düzenlenmiştir: Mellowtel, güvenli bir deneyim sağlamak için Chrome Web Store düzenleyicileriyle iletişimde kalır."
-  },
-  "mellowtel_regulation3": {
-    "message": "Ayrıca, CWS düzenleyicilerine uyumu izlemek ve sağlamak için araçlar sunar."
-  },
-  "mellowtel_button_decline": {
-    "message": "İsteğe bağlı kullanımı reddet"
-  },
-  "mellowtel_button_accept": {
-    "message": "Hepsini kabul et"
-  },
-  "mellowtel_dialog_footer": {
-    "message": "Okuduğunuz için teşekkürler, { $devs } ekipleri."
+  "mellowtel_footer": {
+    "message": "Okumaya zaman ayırdığın için teşekkürler, { $devs } ekibi."
   },
   "error_403_auth_failed": {
     "message": "Yetkilendirme başarısız. Lütfen ayarlarda geçerli bir API anahtarı girin."

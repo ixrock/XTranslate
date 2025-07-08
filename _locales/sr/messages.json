@@ -368,11 +368,8 @@
   "favorites_lang_title": {
     "message": "Omiljeno"
   },
-  "donate_title": {
+  "support_developers": {
     "message": "Podrška developera"
-  },
-  "donate_description": {
-    "message": "Ako vam se sviđa aplikacija, možete donirati developerima. Hvala!"
   },
   "service_unavailable": {
     "message": "Servis nije dostupan. Probajte ponovo za 5-25 minuta. Ako se to često dešava, povećajte vrednost kašnjenja prevoda u podešavanjima."
@@ -387,49 +384,28 @@
     "message": "Prihvatite odredbe i uslove"
   },
   "mellowtel_greetings": {
-    "message": "Pozdrav, prijatelju 👋"
+    "message": "Zdravo, prijatelju 👋"
   },
   "mellowtel_text1": {
-    "message": "Kao što verovatno znate, ovo proširenje je besplatno i dostupno svima... ali da bi nastavili, potrebno je da uradite par stvari!"
+    "message": "Kao što znaš, ova ekstenzija je besplatna i dostupna svima… ali da bi ostala aktivna, potrebno nam je tvoje učešće!"
   },
   "mellowtel_text2": {
-    "message": "Nova verzija uključuje open-source { $link } biblioteku. Ova biblioteka vam omogućava da podelite nekorišćeni internet sa pouzdanim AI laboratorijama i startup-ima koji ga koriste da treniraju svoje modele."
+    "message": "Da podršiš XTranslate developere, instaliraj { $link }. Ova open‑source ekstenzija ti omogućava da deliš neiskorišćen internet sa pouzdanim AI laboratorijama i startupima koji ga koriste za trening modela."
   },
-  "mellowtel_usage_title": {
-    "message": "Mellowtel koristimo za:"
+  "mellowtel_text3": {
+    "message": "Mellowtel deli samo tvoju propusnu moć. Bezbednost i privatnost su 100 % zagarantovani. Ne sakuplja, ne deli ni prodaje lične podatke (čak ni anonimizovane)."
   },
-  "mellowtel_usage1": {
-    "message": "Praćenje prekida rada servisa"
+  "mellowtel_text4": {
+    "message": "Zbog sigurnosnih pravila Chrome Web Store‑a, mora biti instalirana kao posebna ekstenzija. Ali ne brini—to neće uticati na tvoje postojeće XTranslate postavke i neće prikupljati lične podatke."
   },
-  "mellowtel_usage2": {
-    "message": "Merenje kvaliteta rada servisa"
+  "mellowtel_decline": {
+    "message": "Podseti me kasnije"
   },
-  "mellowtel_usage3": {
-    "message": "Kao developer ovog proširenja, dobijamo mali deo prihoda"
+  "mellowtel_install": {
+    "message": "Instaliraj Mellowtel"
   },
-  "mellowtel_accept_all_info1": {
-    "message": "Ako izaberete 'Prihvati sve', koristićemo Mellowtel API da: Dozvolimo pouzdanim partnerima da pristupe resursima na internetu rutiranjem dela njihovog saobraćaja kroz vaš čvor na mreži."
-  },
-  "mellowtel_accept_all_info2": {
-    "message": "Mellowtel deli samo vaš propusni opseg. Sigurnost i privatnost su 100% garantovani i sama biblioteka je open source kako bi svi mogli da je vide."
-  },
-  "mellowtel_regulation1": {
-    "message": "Ne prikuplja, ne deli, niti prodaje privatne informacije (čak ni anonimne podatke)."
-  },
-  "mellowtel_regulation2": {
-    "message": "Takođe je visoko regulisano: Mellowtel komunicira sa regulatorima Chrome veb prodavnice da bi garantovao sigurno iskustvo."
-  },
-  "mellowtel_regulation3": {
-    "message": "Takođe pruža i CWS regulatore sa alatima za nadgledanje i primenu usklađenosti."
-  },
-  "mellowtel_button_decline": {
-    "message": "Odbij opciono"
-  },
-  "mellowtel_button_accept": {
-    "message": "Prihvati sve"
-  },
-  "mellowtel_dialog_footer": {
-    "message": "Hvala što ste izdvojili vreme da pročitate, timovi { $devs }."
+  "mellowtel_footer": {
+    "message": "Hvala što si izdvojio vreme da pročitaš, od tima { $devs }."
   },
   "error_403_auth_failed": {
     "message": "Autorizacija nije uspela. Unesi validan API ključ za autentifikaciju u podešavanjima"

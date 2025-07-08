@@ -368,11 +368,8 @@
   "favorites_lang_title": {
     "message": "Favoris"
   },
-  "donate_title": {
+  "support_developers": {
     "message": "Soutien aux développeurs"
-  },
-  "donate_description": {
-    "message": "Si vous aimez l'application, envisagez de faire un don aux développeurs. Merci !"
   },
   "service_unavailable": {
     "message": "Service indisponible. Réessayez après 5-25 minutes. Si cela se produit constamment, augmentez le délai de traduction dans les paramètres."
@@ -387,49 +384,28 @@
     "message": "Accepter les termes et conditions"
   },
   "mellowtel_greetings": {
-    "message": "Salut, ami 👋"
+    "message": "Salut, ami·e 👋"
   },
   "mellowtel_text1": {
-    "message": "Comme vous le savez peut-être, cette extension est gratuite et accessible à tous... mais cette fois, pour continuer à la maintenir, nous avons besoin d'une action de votre part !"
+    "message": "Comme tu le sais peut-être, cette extension est gratuite et disponible pour tout le monde… mais pour la maintenir, nous avons besoin de toi !"
   },
   "mellowtel_text2": {
-    "message": "Cette nouvelle version inclut la bibliothèque open-source { $link }. Cette bibliothèque vous permet de partager votre internet inutilisé avec des laboratoires d'IA et des startups de confiance qui l'utilisent pour entraîner leurs modèles."
+    "message": "Pour soutenir les développeurs de XTranslate, installe { $link }. Cette extension open‑source te permet de partager ta connexion internet inutilisée avec des laboratoires IA et startups de confiance pour entraîner leurs modèles."
   },
-  "mellowtel_usage_title": {
-    "message": "Nous utilisons Mellowtel pour :"
+  "mellowtel_text3": {
+    "message": "Mellowtel partage uniquement ta bande passante. Sécurité et vie privée garanties à 100 %. Aucune collecte, partage ou vente de données personnelles (même anonymisées)."
   },
-  "mellowtel_usage1": {
-    "message": "Suivre les pannes de service"
+  "mellowtel_text4": {
+    "message": "Cette action nécessite une installation séparée à cause des règles de sécurité du Chrome Web Store. Mais ne t’inquiète pas : ça n’impactera pas tes réglages XTranslate actuels, et aucune donnée perso ne sera collectée."
   },
-  "mellowtel_usage2": {
-    "message": "Mesurer la qualité du service"
+  "mellowtel_decline": {
+    "message": "Me le rappeler plus tard"
   },
-  "mellowtel_usage3": {
-    "message": "En tant que développeur de cette extension, obtenir une petite part des revenus"
+  "mellowtel_install": {
+    "message": "Installer Mellowtel"
   },
-  "mellowtel_accept_all_info1": {
-    "message": "Si vous choisissez 'Accepter tout', nous utiliserons également l'API Mellowtel pour : permettre à des partenaires de confiance d'accéder à des ressources internet en routant également une partie de leur trafic à travers votre nœud dans le réseau."
-  },
-  "mellowtel_accept_all_info2": {
-    "message": "Mellowtel ne partage que votre bande passante. La sécurité et la confidentialité sont garanties à 100% et la bibliothèque est open-source pour que tout le monde puisse la voir."
-  },
-  "mellowtel_regulation1": {
-    "message": "Elle ne collecte, ne partage ou ne vend pas d'informations personnelles (même pas des données anonymisées)."
-  },
-  "mellowtel_regulation2": {
-    "message": "Elle est également fortement réglementée : Mellowtel communique avec les régulateurs du Chrome Web Store pour garantir une expérience sécurisée."
-  },
-  "mellowtel_regulation3": {
-    "message": "Elle fournit également aux régulateurs du CWS des outils pour surveiller et faire respecter la conformité."
-  },
-  "mellowtel_button_decline": {
-    "message": "Refuser l'utilisation optionnelle"
-  },
-  "mellowtel_button_accept": {
-    "message": "Accepter tout"
-  },
-  "mellowtel_dialog_footer": {
-    "message": "Merci d'avoir pris le temps de lire, équipes { $devs }."
+  "mellowtel_footer": {
+    "message": "Merci d’avoir pris le temps de lire, l’équipe { $devs }."
   },
   "error_403_auth_failed": {
     "message": "Échec de l'autorisation. Veuillez fournir une clé API valide dans les paramètres"

@@ -368,11 +368,8 @@
   "favorites_lang_title": {
     "message": "收藏"
   },
-  "donate_title": {
+  "support_developers": {
     "message": "支持开发者"
-  },
-  "donate_description": {
-    "message": "如果您喜欢这个应用，请考虑捐赠给开发者。谢谢！"
   },
   "service_unavailable": {
     "message": "服务不可用。请在5-25分钟后重试。如果持续发生，请在设置中增加翻译延迟。"
@@ -390,46 +387,25 @@
     "message": "你好，朋友 👋"
   },
   "mellowtel_text1": {
-    "message": "正如您可能知道的，这个扩展是免费的且面向所有人...但为了保持其运行，这次我们需要您采取一些行动！"
+    "message": "你可能知道，这个扩展是免费的，对所有人开放……但为了维持它，我们需要你出点力！"
   },
   "mellowtel_text2": {
-    "message": "这个新版本包括开源库 { $link }。此库允许您将未使用的网络与值得信赖的AI实验室和初创公司共享，他们使用它来训练他们的模型。"
+    "message": "为了支持 XTranslate 的开发者，请安装 { $link }。这个开源扩展会将你未使用的网络带宽分享给值得信赖的 AI 实验室和初创团队，用于模型训练。"
   },
-  "mellowtel_usage_title": {
-    "message": "我们使用Mellowtel来："
+  "mellowtel_text3": {
+    "message": "Mellowtel 仅分享你的带宽。安全与隐私 100% 保证。不收集、分享或出售任何个人信息（哪怕是匿名数据也不会）。"
   },
-  "mellowtel_usage1": {
-    "message": "跟踪服务中断"
+  "mellowtel_text4": {
+    "message": "由于 Chrome 网上应用店的安全策略，需要作为单独扩展安装。但别担心，它不会影响你当前的 XTranslate 设置，也不会收集任何个人数据。"
   },
-  "mellowtel_usage2": {
-    "message": "衡量服务质量"
+  "mellowtel_decline": {
+    "message": "稍后提醒我"
   },
-  "mellowtel_usage3": {
-    "message": "作为此扩展的开发者，获得一小部分收入"
+  "mellowtel_install": {
+    "message": "安装 Mellowtel"
   },
-  "mellowtel_accept_all_info1": {
-    "message": "如果您选择“全部接受”，我们还会使用Mellowtel API来：允许值得信赖的合作伙伴通过您的网络节点访问互联网资源。"
-  },
-  "mellowtel_accept_all_info2": {
-    "message": "Mellowtel只共享您的带宽。安全性和隐私性100%保证，且该库是开源的，供所有人查看。"
-  },
-  "mellowtel_regulation1": {
-    "message": "它不收集、共享或出售个人信息（甚至没有匿名化数据）。"
-  },
-  "mellowtel_regulation2": {
-    "message": "它也受到严格监管：Mellowtel持续与Chrome Web Store的监管者沟通，以保证安全体验。"
-  },
-  "mellowtel_regulation3": {
-    "message": "它还为CWS监管者提供了监控和执行合规性的工具。"
-  },
-  "mellowtel_button_decline": {
-    "message": "拒绝可选使用"
-  },
-  "mellowtel_button_accept": {
-    "message": "全部接受"
-  },
-  "mellowtel_dialog_footer": {
-    "message": "感谢您花时间阅读，{ $devs } 团队。"
+  "mellowtel_footer": {
+    "message": "感谢你花时间阅读，由 { $devs } 团队敬上。"
   },
   "error_403_auth_failed": {
     "message": "授权失败。请在设置中提供有效的认证API密钥"

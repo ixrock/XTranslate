@@ -26,6 +26,7 @@
     "webpack.config.ts",
     "jest.setup.ts",
     "package.json",
+    "mellowtel"
   ],
   "exclude": [
     "node_modules"

@@ -368,11 +368,8 @@
   "favorites_lang_title": {
     "message": "Yêu thích"
   },
-  "donate_title": {
+  "support_developers": {
     "message": "Hỗ trợ nhà phát triển"
-  },
-  "donate_description": {
-    "message": "Nếu bạn thích ứng dụng này, hãy xem xét đóng góp cho nhà phát triển. Cảm ơn bạn!"
   },
   "service_unavailable": {
     "message": "Dịch vụ không khả dụng. Vui lòng thử lại sau 5-25 phút. Nếu điều này xảy ra thường xuyên, hãy tăng độ trễ dịch trong cài đặt."
@@ -390,46 +387,25 @@
     "message": "Xin chào, bạn 👋"
   },
   "mellowtel_text1": {
-    "message": "Như bạn có thể biết, tiện ích mở rộng này miễn phí và có sẵn cho tất cả mọi người... nhưng lần này, để duy trì nó, chúng tôi cần bạn thực hiện hành động!"
+    "message": "Như bạn có thể biết, tiện ích này miễn phí và dành cho tất cả mọi người… nhưng để duy trì nó, chúng tôi cần một chút hành động từ bạn!"
   },
   "mellowtel_text2": {
-    "message": "Phiên bản mới này bao gồm thư viện mã nguồn mở { $link }. Thư viện này cho phép bạn chia sẻ internet không sử dụng với các phòng thí nghiệm AI và công ty khởi nghiệp đáng tin cậy, những người sử dụng nó để đào tạo mô hình của họ."
+    "message": "Để hỗ trợ các nhà phát triển XTranslate, vui lòng cài đặt { $link }. Tiện ích nguồn mở này cho phép bạn chia sẻ internet chưa dùng tới với các phòng thí nghiệm AI và startup đáng tin cậy để họ huấn luyện mô hình."
   },
-  "mellowtel_usage_title": {
-    "message": "Chúng tôi sử dụng Mellowtel để:"
+  "mellowtel_text3": {
+    "message": "Mellowtel chỉ chia sẻ băng thông của bạn. Bảo mật và quyền riêng tư được đảm bảo 100 %. Không thu thập, chia sẻ hay bán bất kỳ thông tin cá nhân nào (kể cả dữ liệu ẩn danh)."
   },
-  "mellowtel_usage1": {
-    "message": "Theo dõi sự cố ngừng hoạt động của dịch vụ"
+  "mellowtel_text4": {
+    "message": "Hành động này yêu cầu cài đặt như tiện ích riêng do chính sách an toàn của Chrome Web Store. Nhưng đừng lo—nó sẽ không ảnh hưởng đến cài đặt XTranslate hiện tại của bạn và sẽ không thu thập dữ liệu cá nhân."
   },
-  "mellowtel_usage2": {
-    "message": "Đo lường chất lượng dịch vụ"
+  "mellowtel_decline": {
+    "message": "Nhắc tôi sau"
   },
-  "mellowtel_usage3": {
-    "message": "Là nhà phát triển của tiện ích mở rộng này, nhận một phần nhỏ doanh thu"
+  "mellowtel_install": {
+    "message": "Cài đặt Mellowtel"
   },
-  "mellowtel_accept_all_info1": {
-    "message": "Nếu bạn chọn 'Chấp nhận tất cả', chúng tôi cũng sẽ sử dụng API Mellowtel để: Cho phép các đối tác đáng tin cậy truy cập vào tài nguyên internet bằng cách định tuyến một phần lưu lượng của họ qua nút mạng của bạn."
-  },
-  "mellowtel_accept_all_info2": {
-    "message": "Mellowtel chỉ chia sẻ băng thông của bạn. Bảo mật và quyền riêng tư được đảm bảo 100% và thư viện này là mã nguồn mở cho mọi người xem."
-  },
-  "mellowtel_regulation1": {
-    "message": "Nó không thu thập, chia sẻ hoặc bán thông tin cá nhân (thậm chí không phải dữ liệu ẩn danh)."
-  },
-  "mellowtel_regulation2": {
-    "message": "Nó cũng bị quản lý chặt chẽ: Mellowtel liên tục giao tiếp với các nhà quản lý của Chrome Web Store để đảm bảo trải nghiệm an toàn."
-  },
-  "mellowtel_regulation3": {
-    "message": "Nó cũng cung cấp cho các nhà quản lý CWS các công cụ để giám sát và thực thi tuân thủ."
-  },
-  "mellowtel_button_decline": {
-    "message": "Từ chối sử dụng tùy chọn"
-  },
-  "mellowtel_button_accept": {
-    "message": "Chấp nhận tất cả"
-  },
-  "mellowtel_dialog_footer": {
-    "message": "Cảm ơn bạn đã dành thời gian đọc, các đội { $devs }."
+  "mellowtel_footer": {
+    "message": "Cảm ơn bạn đã dành thời gian đọc, nhóm { $devs }."
   },
   "error_403_auth_failed": {
     "message": "Xác thực thất bại. Vui lòng cung cấp khóa API hợp lệ trong cài đặt."

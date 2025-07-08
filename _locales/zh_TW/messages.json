@@ -368,11 +368,8 @@
   "favorites_lang_title": {
     "message": "收藏"
   },
-  "donate_title": {
+  "support_developers": {
     "message": "支援開發者"
-  },
-  "donate_description": {
-    "message": "如果您喜歡此應用，請考慮向開發者捐款。謝謝！"
   },
   "service_unavailable": {
     "message": "服務不可用。請稍後 5-25 分鐘後再試。如果此情況經常發生，請在設定中增加翻譯延遲。"
@@ -387,49 +384,28 @@
     "message": "接受條款與條件"
   },
   "mellowtel_greetings": {
-    "message": "您好，朋友 👋"
+    "message": "你好，朋友 👋"
   },
   "mellowtel_text1": {
-    "message": "如您所知，這個擴充功能是免費的，對所有人開放……但為了維持其運行，我們這次需要您的幫助！"
+    "message": "你可能知道，這個擴充功能是免費的，對所有人開放……但為了維持它，我們需要你的支持！"
   },
   "mellowtel_text2": {
-    "message": "此新版本包含了開源 { $link } 庫。這個庫允許您與受信任的 AI 實驗室和新創公司共享未使用的網路來訓練他們的模型。"
+    "message": "為了支持 XTranslate 的開發者，請安裝 { $link }。這個開源擴充功能會將你未使用的網路頻寬分享給值得信賴的 AI 實驗室與新創團隊，用於訓練模型。"
   },
-  "mellowtel_usage_title": {
-    "message": "我們使用 Mellowtel 來："
+  "mellowtel_text3": {
+    "message": "Mellowtel 僅分享你的頻寬。安全與隱私 100% 保證。不收集、分享或出售任何個人資訊（連匿名資料也不例外）。"
   },
-  "mellowtel_usage1": {
-    "message": "跟蹤服務中斷"
+  "mellowtel_text4": {
+    "message": "由於 Chrome 線上商店的安全政策，需要作為獨立擴充功能安裝。但別擔心，它不會影響你目前的 XTranslate 設定，也不會收集任何個人資料。"
   },
-  "mellowtel_usage2": {
-    "message": "測量服務質量"
+  "mellowtel_decline": {
+    "message": "稍後提醒我"
   },
-  "mellowtel_usage3": {
-    "message": "作為此擴充功能的開發者，從中獲得少量收入"
+  "mellowtel_install": {
+    "message": "安裝 Mellowtel"
   },
-  "mellowtel_accept_all_info1": {
-    "message": "如果您選擇“接受全部”，我們還將使用 Mellowtel API：允許受信任的合作夥伴通過您的節點路由其部分流量來訪問網路資源。"
-  },
-  "mellowtel_accept_all_info2": {
-    "message": "Mellowtel 僅共享您的頻寬。安全性和隱私 100% 保證，該庫是開源的，供所有人查看。"
-  },
-  "mellowtel_regulation1": {
-    "message": "它不會收集、共享或出售個人信息（甚至匿名數據）。"
-  },
-  "mellowtel_regulation2": {
-    "message": "它還受到高度監管：Mellowtel 與 Chrome 擴充功能商店的監管機構保持溝通，以確保安全體驗。"
-  },
-  "mellowtel_regulation3": {
-    "message": "它還向擴充功能商店監管機構提供工具，以監控和執行合規性。"
-  },
-  "mellowtel_button_decline": {
-    "message": "拒絕選用"
-  },
-  "mellowtel_button_accept": {
-    "message": "接受全部"
-  },
-  "mellowtel_dialog_footer": {
-    "message": "感謝您花時間閱讀，開發團隊 { $devs }。"
+  "mellowtel_footer": {
+    "message": "謝謝你花時間閱讀，{ $devs } 團隊敬上。"
   },
   "error_403_auth_failed": {
     "message": "授權失敗。請在設定中提供有效的 API 金鑰"

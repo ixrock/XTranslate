@@ -6,6 +6,7 @@ import "./scripting.bgc";
 import "./history.bgc";
 import "./ai.bgc";
 import "./metrics.bgc";
+import "../../mellowtel";
 
 import { installOrUpdateAppActions } from "./install.bgc";
 import { initActiveTabWatcher } from "./tabs.bgc";

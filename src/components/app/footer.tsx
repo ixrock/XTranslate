@@ -1,11 +1,12 @@
 import "./footer.scss"
 import React from "react";
 import { observer } from "mobx-react";
-import { getExtensionUrl, paypalLink } from "@/common-vars";
+import { getExtensionUrl } from "@/common-vars";
 import { getManifest } from '@/extension'
 import { getMessage } from "@/i18n";
 import { Icon } from "../icon";
 import { CopyToClipboardIcon } from "../copy-to-clipboard-icon";
+import { mellowtelDialogVisibility } from "../../../mellowtel";
 
 @observer
 export class Footer extends React.Component {
@@ -28,6 +29,10 @@ export class Footer extends React.Component {
     ].join("\n");
   }
 
+  supportDevelopers = () => {
+    mellowtelDialogVisibility.set(true);
+  }
+
   render() {
     return (
       <div className="Footer flex gaps">
@@ -35,9 +40,9 @@ export class Footer extends React.Component {
           {getMessage("share_with_friends")}:{" "}
           <CopyToClipboardIcon iconName="share" content={this.shareText}/>
         </div>
-        <a className="support box right noshrink flex gaps align-center" href={paypalLink} target="_blank">
+        <a className="support box right noshrink flex gaps align-center" onClick={this.supportDevelopers}>
           <Icon material="rocket_launcher" small/>
-          <span className="text">{getMessage("donate_title")}</span>
+          <span className="text">{getMessage("support_developers")}</span>
         </a>
       </div>
     );

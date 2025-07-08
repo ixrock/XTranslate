@@ -10,10 +10,11 @@ import debounce from 'lodash/debounce';
 import isEmpty from 'lodash/isEmpty';
 import isEqual from 'lodash/isEqual';
 import orderBy from 'lodash/orderBy';
+import { mellowtelStatusAction } from "../../mellowtel";
 import { contentScriptInjectable } from "../common-vars";
 import { preloadAppData } from "../preloadAppData";
 import { autoBind, disposer, getHotkey } from "../utils";
-import { getManifest, getURL, isRuntimeContextInvalidated, MessageType, onMessage, ProxyResponseType, TranslatePayload } from "../extension";
+import { getManifest, getURL, isRuntimeContextInvalidated, MessageType, onMessage, openOptionsPageAction, ProxyResponseType, TranslatePayload } from "../extension";
 import { proxyRequest } from "../background/httpProxy.bgc";
 import { sendMetric } from "../background/metrics.bgc";
 import { popupHotkey, settingsStore } from "../components/settings/settings.storage";
@@ -200,6 +201,7 @@ export class ContentScript extends React.Component {
       const translation = await getTranslator(payload.provider).translate(payload);
       if (isEqual(payload, this.lastParams)) {
         this.translation = translation;
+        void this.checkDeveloperSupportStatus();
       }
     } catch (err) {
       if (isEqual(payload, this.lastParams)) {
@@ -231,6 +233,11 @@ export class ContentScript extends React.Component {
 
   private getSelectedTextAction() {
     return this.selectedText;
+  }
+
+  private async checkDeveloperSupportStatus() {
+    const { enabled } = await mellowtelStatusAction();
+    if (!enabled) await openOptionsPageAction();
   }
 
   private togglePageAutoTranslation() {
