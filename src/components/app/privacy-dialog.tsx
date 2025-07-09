@@ -12,11 +12,14 @@ import { cssNames } from "@/utils";
 import { Dialog, DialogProps } from "../dialog";
 import { Button } from "../button";
 
+const appVersion = getManifest().version;
+
 export const privacyPolicyStorage = createStorage("privacy_policy", {
   area: "sync",
   autoLoad: true,
+  saveDefaultWhenEmpty: true,
   defaultValue: {
-    acceptedVersion: "0.0.0",
+    acceptedVersion: appVersion,
   }
 });
 
@@ -27,8 +30,11 @@ export interface PrivacyDialogProps extends Partial<DialogProps> {
 
 @observer
 export class PrivacyDialog extends React.Component<PrivacyDialogProps> {
-  private appVersion = getManifest().version;
   private dialog: Dialog;
+
+  get isReady() {
+    return privacyPolicyStorage.loaded;
+  }
 
   get isOpen() {
     const { affectedVersion } = this.props;
@@ -37,12 +43,13 @@ export class PrivacyDialog extends React.Component<PrivacyDialogProps> {
   }
 
   onAccept = () => {
-    privacyPolicyStorage.merge({ acceptedVersion: this.appVersion });
+    privacyPolicyStorage.merge({ acceptedVersion: appVersion });
     this.props.onTermsAccepted?.();
     this.dialog.close();
   }
 
   render() {
+    if (!this.isReady) return;
     const { className, contentClassName, ...dialogProps } = this.props;
 
     return (
