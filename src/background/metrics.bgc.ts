@@ -1,6 +1,6 @@
 import type { PageId } from "../navigation";
 import type { ProviderCodeName } from "../providers";
-import { isDevelopment } from "../common-vars";
+import { isDevelopment } from "../config";
 import { createStorage } from "../storage";
 import { createIsomorphicAction, MessageType } from "../extension";
 

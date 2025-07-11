@@ -8,12 +8,5 @@
 
 .setupApiKey {
   @include pseudo-link;
-
-  display: flex;
-  gap: var(--theme-spacing);
   font-size: small;
-}
-
-:global(.openai_apiKey) {
-  //max-width: 40px;
 }

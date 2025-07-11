@@ -16,7 +16,7 @@ import { Tooltip } from "../tooltip";
 import { getUrlParams, navigation, TranslationPageParams } from "@/navigation";
 import { createStorage } from "@/storage";
 import { getMessage } from "@/i18n";
-import { isMac, materialIcons } from "@/common-vars";
+import { isMac, materialIcons } from "@/config";
 import { isFavorite } from "../user-history/favorites.storage";
 import { saveToFavoritesAction } from "@/background/history.bgc";
 import { getSelectedText } from "@/extension";

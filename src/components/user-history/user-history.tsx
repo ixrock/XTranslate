@@ -20,7 +20,7 @@ import { Tab } from "../tabs";
 import { Spinner } from "../spinner";
 import { Notifications } from "../notifications";
 import { getMessage } from "@/i18n";
-import { isMac, materialIcons } from "@/common-vars";
+import { isMac, materialIcons } from "@/config";
 import { favoritesStorage } from "./favorites.storage";
 import { UserHistoryItem } from "./user-history-item";
 

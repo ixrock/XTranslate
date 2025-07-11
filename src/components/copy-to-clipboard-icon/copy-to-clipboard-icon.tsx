@@ -1,5 +1,5 @@
 import React from "react";
-import { materialIcons } from "@/common-vars";
+import { materialIcons } from "@/config";
 import { getTranslator, isTranslationResult, ITranslationResult } from "@/providers/translator";
 import { cssNames, IClassName } from "@/utils";
 import { getMessage } from "@/i18n";

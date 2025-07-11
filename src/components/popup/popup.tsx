@@ -6,7 +6,7 @@ import { observer } from "mobx-react";
 import isEqual from "lodash/isEqual";
 import sample from "lodash/sample"
 import LanguagesList from "@/providers/google.json"
-import { materialIcons } from "@/common-vars";
+import { materialIcons } from "@/config";
 import { cssNames, prevDefault } from "@/utils";
 import { toCssColor } from "@/utils/toCssColor";
 import { TranslatePayload } from "@/extension";

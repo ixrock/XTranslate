@@ -9,7 +9,7 @@ import { ReactSelect, ReactSelectOption } from "../select";
 import { Icon } from "../icon";
 import { popupHotkey, PopupPosition, settingsStore } from "./settings.storage";
 import { getMessage } from "@/i18n";
-import { materialIcons } from "@/common-vars";
+import { materialIcons } from "@/config";
 
 @observer
 export class SettingsPopup extends React.Component {

@@ -1,7 +1,7 @@
 // Injectable script actions
 
 import { createIsomorphicAction, getActiveTabId, InjectContentScriptPayload, MessageType, waitTabReadiness } from "../extension";
-import { contentScriptInjectable } from "../common-vars";
+import { contentScriptInjectable } from "../config";
 import { getInjectableTabs } from "../extension/tabs";
 import { createLogger } from "../utils/createLogger";
 

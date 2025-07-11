@@ -1,5 +1,5 @@
 // Basic logger for outputting system logs to console or other source
-import { isDevelopment } from "../common-vars";
+import { isDevelopment } from "../config";
 
 export enum LoggerColor {
   INFO_DEFAULT = "#ca22b5",

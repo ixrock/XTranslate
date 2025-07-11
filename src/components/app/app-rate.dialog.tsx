@@ -6,7 +6,7 @@ import { Dialog } from "../dialog";
 import { Button } from "../button";
 import { Icon } from "../icon";
 import { getMessage } from "@/i18n";
-import { getExtensionUrl } from "@/common-vars";
+import { getExtensionUrl } from "@/config";
 import { rateButtonClicked, rateLastTimestamp } from "./app-rate.storage";
 
 @observer
