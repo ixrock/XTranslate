@@ -20,7 +20,6 @@ import { AppRateDialog } from "./app-rate.dialog";
 import { isRTL } from "@/providers";
 import { getLocale } from "@/i18n";
 import { sendMetric } from "@/background/metrics.bgc";
-import { MellowtelDialog } from "../../../mellowtel";
 
 @observer
 export class App extends React.Component {
@@ -73,7 +72,6 @@ export class App extends React.Component {
         <Notifications/>
         <ExportSettingsDialog/>
         <AppRateDialog/>
-        <MellowtelDialog/>
         <PrivacyDialog affectedVersion="5.1.1"/>
       </div>
     );
