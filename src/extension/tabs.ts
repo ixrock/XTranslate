@@ -1,7 +1,7 @@
 // Chrome tabs apis
 import { Message } from './messages'
 import { isRuntimeConnectionFailedError, sendMessage } from "./runtime";
-import { isSystemPage } from "../common-vars";
+import { isSystemPage } from "../config";
 
 export type BrowserTab = chrome.tabs.Tab;
 

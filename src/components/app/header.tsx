@@ -2,7 +2,7 @@ import "./header.scss";
 import React from "react";
 import { makeObservable } from "mobx";
 import { observer } from "mobx-react";
-import { isSystemPage, websiteURL } from "@/common-vars";
+import { isSystemPage, websiteURL } from "@/config";
 import { cssNames } from "@/utils/cssNames";
 import { getTranslator } from "@/providers";
 import { getManifest, translateActivePage } from "@/extension";

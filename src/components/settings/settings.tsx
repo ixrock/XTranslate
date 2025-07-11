@@ -19,8 +19,8 @@ import { getMessage } from "@/i18n";
 import { SelectVoice } from "../select-tts-voice";
 import { getTTSVoices, speak, stopSpeaking } from "@/tts";
 import { SelectAIModel } from "./select_ai_model";
-import { ProviderAuthSettings } from "./auth_settings";
-import { materialIcons } from "@/common-vars";
+import { ProviderAuthSettings } from "./provider_auth_settings";
+import { materialIcons } from "@/config";
 import { Notifications } from "../notifications";
 import { Button } from "../button";
 import { SelectProvider } from "../select-provider";
@@ -148,10 +148,9 @@ export class Settings extends React.Component {
           <ProviderAuthSettings
             {...authSettings}
             provider={provider}
-            accessInfo={getMessage(`auth_access_info_steps_${provider as ProviderWithApiKey}`)}
-            accessInfo2={getMessage(`auth_access_info_api_key`, { provider: title })}
+            accessInfo={getMessage(`auth_access_info_api_key`, { provider: title })}
+            accessInfoSetupSteps={getMessage(`auth_access_info_steps_${provider as ProviderWithApiKey}`)}
             clearKeyInfo={getMessage(`auth_clear_key_info`, { provider: title })}
-            warningInfo={getMessage(`auth_safety_warning_info`)}
           />
         )}
         {translator.isAvailable() && this.providerSettings[provider]}

@@ -3,7 +3,7 @@ import path from 'path'
 import HtmlWebpackPlugin from 'html-webpack-plugin'
 import CopyWebpackPlugin from 'copy-webpack-plugin'
 import MiniCssExtractPlugin from 'mini-css-extract-plugin'
-import { appEntry, contentScriptEntry, contentScriptInjectable, pdfViewerEntry, serviceWorkerEntry } from "./src/common-vars";
+import { appEntry, contentScriptEntry, contentScriptInjectable, pdfViewerEntry, serviceWorkerEntry } from "@/config";
 import { mellowtelMeucciFilename } from "./mellowtel/mellowtel.config";
 
 const srcPath = path.resolve(__dirname, "src");

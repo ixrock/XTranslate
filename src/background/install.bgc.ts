@@ -1,6 +1,6 @@
 //-- Extension install event handlers
 
-import { isDevelopment } from "../common-vars";
+import { isDevelopment } from "../config";
 import { refreshContentScripts } from "./scripting.bgc";
 import { onInstallExtension, openOptionsPage } from '../extension'
 

@@ -5,7 +5,7 @@ import { cssNames, prevDefault } from "@/utils";
 import { getTranslator, isRTL, Translator } from "@/providers";
 import { clearHistoryItem, IHistoryItem } from "./history.storage";
 import { Icon } from "../icon";
-import { materialIcons } from "@/common-vars";
+import { materialIcons } from "@/config";
 import { isFavorite, removeFavorite } from "./favorites.storage";
 import { getTranslationPageUrl, navigate } from "@/navigation";
 import { saveToFavoritesAction } from "@/background/history.bgc";
