@@ -443,30 +443,6 @@
   "privacy_policy_accept_terms": {
     "message": "Accept terms & conditions"
   },
-  "mellowtel_greetings": {
-    "message": "Hello, friend 👋"
-  },
-  "mellowtel_text1": {
-    "message": "As you might know this extension is free and available to everybody... but to keep it up we require some action from you!"
-  },
-  "mellowtel_text2": {
-    "message": "To support XTranslate developers please install { $link }. This open-source extension lets you share your unused internet with trusted AI labs & startups who use it to train their models."
-  },
-  "mellowtel_text3": {
-    "message": "Mellowtel shares your bandwidth only. Security and privacy are 100% guaranteed. It doesn't collect, share, or sell personal information (not even anonymized data)."
-  },
-  "mellowtel_text4": {
-    "message": "This action requires to install it as separate extension due Chrome Web Store safety policies. But don't worry, it will not affect your current XTranslate settings and will not collect any personal data."
-  },
-  "mellowtel_decline": {
-    "message": "Remind later"
-  },
-  "mellowtel_install": {
-    "message": "Install Mellowtel"
-  },
-  "mellowtel_footer": {
-    "message": "Thanks for taking the time to read, teams { $devs }."
-  },
   "error_403_auth_failed": {
     "message": "Authorization failed. Please supply a valid auth api key in the settings"
   },

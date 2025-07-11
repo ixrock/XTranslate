@@ -383,30 +383,6 @@
   "privacy_policy_accept_terms": {
     "message": "약관 동의"
   },
-  "mellowtel_greetings": {
-    "message": "안녕, 친구 👋"
-  },
-  "mellowtel_text1": {
-    "message": "알다시피 이 확장 기능은 무료이며 누구나 사용할 수 있어요… 하지만 유지하려면 당신의 도움이 필요해요!"
-  },
-  "mellowtel_text2": {
-    "message": "XTranslate 개발자를 지원하려면 { $link }을(를) 설치해주세요. 이 오픈소스 확장 기능은 사용하지 않는 인터넷 대역폭을 신뢰할 수 있는 AI 연구소 및 스타트업과 공유하여 모델 훈련에 활용하게 해줍니다."
-  },
-  "mellowtel_text3": {
-    "message": "Mellowtel은 당신의 대역폭만 공유합니다. 보안과 개인정보 보호는 100% 보장됩니다. 개인 정보(익명화된 데이터 포함)는 전혀 수집·공유·판매되지 않습니다."
-  },
-  "mellowtel_text4": {
-    "message": "Chrome 웹 스토어의 보안 정책 때문에 별도 확장으로 설치해야 합니다. 하지만 걱정 마세요—현재 XTranslate 설정은 그대로 유지되고, 개인 데이터도 수집되지 않습니다."
-  },
-  "mellowtel_decline": {
-    "message": "나중에 다시 알림"
-  },
-  "mellowtel_install": {
-    "message": "Mellowtel 설치하기"
-  },
-  "mellowtel_footer": {
-    "message": "읽어주셔서 감사해요, { $devs } 팀 드림."
-  },
   "error_403_auth_failed": {
     "message": "인증 실패. 설정에서 유효한 인증 API 키를 제공하세요."
   },

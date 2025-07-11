@@ -383,30 +383,6 @@
   "privacy_policy_accept_terms": {
     "message": "Chấp nhận điều khoản và điều kiện"
   },
-  "mellowtel_greetings": {
-    "message": "Xin chào, bạn 👋"
-  },
-  "mellowtel_text1": {
-    "message": "Như bạn có thể biết, tiện ích này miễn phí và dành cho tất cả mọi người… nhưng để duy trì nó, chúng tôi cần một chút hành động từ bạn!"
-  },
-  "mellowtel_text2": {
-    "message": "Để hỗ trợ các nhà phát triển XTranslate, vui lòng cài đặt { $link }. Tiện ích nguồn mở này cho phép bạn chia sẻ internet chưa dùng tới với các phòng thí nghiệm AI và startup đáng tin cậy để họ huấn luyện mô hình."
-  },
-  "mellowtel_text3": {
-    "message": "Mellowtel chỉ chia sẻ băng thông của bạn. Bảo mật và quyền riêng tư được đảm bảo 100 %. Không thu thập, chia sẻ hay bán bất kỳ thông tin cá nhân nào (kể cả dữ liệu ẩn danh)."
-  },
-  "mellowtel_text4": {
-    "message": "Hành động này yêu cầu cài đặt như tiện ích riêng do chính sách an toàn của Chrome Web Store. Nhưng đừng lo—nó sẽ không ảnh hưởng đến cài đặt XTranslate hiện tại của bạn và sẽ không thu thập dữ liệu cá nhân."
-  },
-  "mellowtel_decline": {
-    "message": "Nhắc tôi sau"
-  },
-  "mellowtel_install": {
-    "message": "Cài đặt Mellowtel"
-  },
-  "mellowtel_footer": {
-    "message": "Cảm ơn bạn đã dành thời gian đọc, nhóm { $devs }."
-  },
   "error_403_auth_failed": {
     "message": "Xác thực thất bại. Vui lòng cung cấp khóa API hợp lệ trong cài đặt."
   },

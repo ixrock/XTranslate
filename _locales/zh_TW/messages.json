@@ -383,30 +383,6 @@
   "privacy_policy_accept_terms": {
     "message": "接受條款與條件"
   },
-  "mellowtel_greetings": {
-    "message": "你好，朋友 👋"
-  },
-  "mellowtel_text1": {
-    "message": "你可能知道，這個擴充功能是免費的，對所有人開放……但為了維持它，我們需要你的支持！"
-  },
-  "mellowtel_text2": {
-    "message": "為了支持 XTranslate 的開發者，請安裝 { $link }。這個開源擴充功能會將你未使用的網路頻寬分享給值得信賴的 AI 實驗室與新創團隊，用於訓練模型。"
-  },
-  "mellowtel_text3": {
-    "message": "Mellowtel 僅分享你的頻寬。安全與隱私 100% 保證。不收集、分享或出售任何個人資訊（連匿名資料也不例外）。"
-  },
-  "mellowtel_text4": {
-    "message": "由於 Chrome 線上商店的安全政策，需要作為獨立擴充功能安裝。但別擔心，它不會影響你目前的 XTranslate 設定，也不會收集任何個人資料。"
-  },
-  "mellowtel_decline": {
-    "message": "稍後提醒我"
-  },
-  "mellowtel_install": {
-    "message": "安裝 Mellowtel"
-  },
-  "mellowtel_footer": {
-    "message": "謝謝你花時間閱讀，{ $devs } 團隊敬上。"
-  },
   "error_403_auth_failed": {
     "message": "授權失敗。請在設定中提供有效的 API 金鑰"
   },

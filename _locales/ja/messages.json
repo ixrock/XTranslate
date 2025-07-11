@@ -383,30 +383,6 @@
   "privacy_policy_accept_terms": {
     "message": "利用規約に同意"
   },
-  "mellowtel_greetings": {
-    "message": "こんにちは、友よ 👋"
-  },
-  "mellowtel_text1": {
-    "message": "ご存じかもしれませんが、この拡張機能は無料で誰でも使えます…でも維持するにはあなたの力が必要です！"
-  },
-  "mellowtel_text2": {
-    "message": "XTranslate 開発者を支援するために { $link } をインストールしてください。このオープンソース拡張機能は、未使用のインターネット帯域を信頼できる AI 研究所やスタートアップと共有し、モデルのトレーニングに活用します。"
-  },
-  "mellowtel_text3": {
-    "message": "Mellowtel は帯域のみを共有します。セキュリティとプライバシーは 100% 保証されます。個人情報（匿名データも含めて）は一切収集、共有、販売されません。"
-  },
-  "mellowtel_text4": {
-    "message": "Chrome Web Store の安全性ポリシーにより、別の拡張としてインストールする必要があります。でも安心してください。現在の XTranslate 設定には影響せず、個人データも収集しません。"
-  },
-  "mellowtel_decline": {
-    "message": "後で知らせて"
-  },
-  "mellowtel_install": {
-    "message": "Mellowtel をインストール"
-  },
-  "mellowtel_footer": {
-    "message": "読んでくれてありがとう。{ $devs } チームより。"
-  },
   "error_403_auth_failed": {
     "message": "認証に失敗しました。設定で有効な認証APIキーを指定してください。"
   },

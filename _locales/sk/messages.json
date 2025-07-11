@@ -443,30 +443,6 @@
   "privacy_policy_accept_terms": {
     "message": "Prijať zmluvné podmienky"
   },
-  "mellowtel_greetings": {
-    "message": "Ahoj, priateľ 👋"
-  },
-  "mellowtel_text1": {
-    "message": "Ako vieš, toto rozšírenie je zadarmo a dostupné pre všetkých… ale aby zostalo aktívne, potrebujeme tvoju podporu!"
-  },
-  "mellowtel_text2": {
-    "message": "Ak chceš podporiť vývojárov XTranslate, nainštaluj { $link }. Toto open‑source rozšírenie ti umožní zdieľať nevyužitý internet s dôveryhodnými AI laboratóriami a startupmi na tréning ich modelov."
-  },
-  "mellowtel_text3": {
-    "message": "Mellowtel zdieľa iba tvoju šírku pásma. Bezpečnosť a ochrana súkromia sú na 100 % zaručené. Nezískava, nezdieľa ani nepredáva osobné údaje (ani anonymizované)."
-  },
-  "mellowtel_text4": {
-    "message": "Z dôvodu bezpečnostných zásad Chrome Web Store je potrebná samostatná inštalácia. Ale neboj sa—neovplyvní to tvoje aktuálne nastavenia XTranslate a nebude zbierať osobné údaje."
-  },
-  "mellowtel_decline": {
-    "message": "Pripomenúť mi to neskôr"
-  },
-  "mellowtel_install": {
-    "message": "Inštalovať Mellowtel"
-  },
-  "mellowtel_footer": {
-    "message": "Ďakujeme, že si si našiel čas na čítanie, tím { $devs }."
-  },
   "error_403_auth_failed": {
     "message": "Autorizácia zlyhala. Prosím, zadajte platný kľúč API v nastaveniach."
   },

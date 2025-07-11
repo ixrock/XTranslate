@@ -383,30 +383,6 @@
   "privacy_policy_accept_terms": {
     "message": "接受条款和条件"
   },
-  "mellowtel_greetings": {
-    "message": "你好，朋友 👋"
-  },
-  "mellowtel_text1": {
-    "message": "你可能知道，这个扩展是免费的，对所有人开放……但为了维持它，我们需要你出点力！"
-  },
-  "mellowtel_text2": {
-    "message": "为了支持 XTranslate 的开发者，请安装 { $link }。这个开源扩展会将你未使用的网络带宽分享给值得信赖的 AI 实验室和初创团队，用于模型训练。"
-  },
-  "mellowtel_text3": {
-    "message": "Mellowtel 仅分享你的带宽。安全与隐私 100% 保证。不收集、分享或出售任何个人信息（哪怕是匿名数据也不会）。"
-  },
-  "mellowtel_text4": {
-    "message": "由于 Chrome 网上应用店的安全策略，需要作为单独扩展安装。但别担心，它不会影响你当前的 XTranslate 设置，也不会收集任何个人数据。"
-  },
-  "mellowtel_decline": {
-    "message": "稍后提醒我"
-  },
-  "mellowtel_install": {
-    "message": "安装 Mellowtel"
-  },
-  "mellowtel_footer": {
-    "message": "感谢你花时间阅读，由 { $devs } 团队敬上。"
-  },
   "error_403_auth_failed": {
     "message": "授权失败。请在设置中提供有效的认证API密钥"
   },

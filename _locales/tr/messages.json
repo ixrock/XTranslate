@@ -362,30 +362,6 @@
   "privacy_policy_accept_terms": {
     "message": "Şartlar ve koşulları kabul et"
   },
-  "mellowtel_greetings": {
-    "message": "Merhaba, dostum 👋"
-  },
-  "mellowtel_text1": {
-    "message": "Belki biliyorsundur, bu eklenti ücretsiz ve herkes için açık… ama varlığını sürdürebilmesi için senin desteğine ihtiyacımız var!"
-  },
-  "mellowtel_text2": {
-    "message": "XTranslate geliştiricilerini desteklemek için lütfen { $link }’i yükle. Bu açık kaynak eklenti, kullanılmayan internetini güvenilir AI laboratuvarları ve girişimlerle paylaşmana olanak tanıyor, böylece modellerini eğitiyorlar."
-  },
-  "mellowtel_text3": {
-    "message": "Mellowtel sadece bant genişliğini paylaşıyor. Güvenlik ve gizlilik %100 garanti. Hiçbir kişisel bilgiyi toplamaz, paylaşmaz veya satmaz (anonimleştirilmiş veriler dahil değil)."
-  },
-  "mellowtel_text4": {
-    "message": "Chrome Web Store güvenlik politikaları nedeniyle ayrı bir eklenti olarak yüklenmesi gerekiyor. Ama merak etme—bu, mevcut XTranslate ayarlarını etkilemez ve hiçbir kişisel veri toplamaz."
-  },
-  "mellowtel_decline": {
-    "message": "Daha sonra hatırlat"
-  },
-  "mellowtel_install": {
-    "message": "Mellowtel’i yükle"
-  },
-  "mellowtel_footer": {
-    "message": "Okumaya zaman ayırdığın için teşekkürler, { $devs } ekibi."
-  },
   "error_403_auth_failed": {
     "message": "Yetkilendirme başarısız. Lütfen ayarlarda geçerli bir API anahtarı girin."
   },

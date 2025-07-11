@@ -383,30 +383,6 @@
   "privacy_policy_accept_terms": {
     "message": "Prihvatite odredbe i uslove"
   },
-  "mellowtel_greetings": {
-    "message": "Zdravo, prijatelju 👋"
-  },
-  "mellowtel_text1": {
-    "message": "Kao što znaš, ova ekstenzija je besplatna i dostupna svima… ali da bi ostala aktivna, potrebno nam je tvoje učešće!"
-  },
-  "mellowtel_text2": {
-    "message": "Da podršiš XTranslate developere, instaliraj { $link }. Ova open‑source ekstenzija ti omogućava da deliš neiskorišćen internet sa pouzdanim AI laboratorijama i startupima koji ga koriste za trening modela."
-  },
-  "mellowtel_text3": {
-    "message": "Mellowtel deli samo tvoju propusnu moć. Bezbednost i privatnost su 100 % zagarantovani. Ne sakuplja, ne deli ni prodaje lične podatke (čak ni anonimizovane)."
-  },
-  "mellowtel_text4": {
-    "message": "Zbog sigurnosnih pravila Chrome Web Store‑a, mora biti instalirana kao posebna ekstenzija. Ali ne brini—to neće uticati na tvoje postojeće XTranslate postavke i neće prikupljati lične podatke."
-  },
-  "mellowtel_decline": {
-    "message": "Podseti me kasnije"
-  },
-  "mellowtel_install": {
-    "message": "Instaliraj Mellowtel"
-  },
-  "mellowtel_footer": {
-    "message": "Hvala što si izdvojio vreme da pročitaš, od tima { $devs }."
-  },
   "error_403_auth_failed": {
     "message": "Autorizacija nije uspela. Unesi validan API ključ za autentifikaciju u podešavanjima"
   },

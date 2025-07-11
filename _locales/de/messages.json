@@ -383,30 +383,6 @@
   "privacy_policy_accept_terms": {
     "message": "Allgemeine Geschäftsbedingungen akzeptieren"
   },
-  "mellowtel_greetings": {
-    "message": "Hallo, Freund 👋"
-  },
-  "mellowtel_text1": {
-    "message": "Wie du vielleicht weißt, ist diese Erweiterung kostenlos und für jeden verfügbar... aber um sie weiter betreiben zu können, brauchen wir deine Mithilfe!"
-  },
-  "mellowtel_text2": {
-    "message": "Um die XTranslate‑Entwickler zu unterstützen, installiere bitte { $link }. Diese Open‑Source‑Erweiterung teilt deine ungenutzte Internetverbindung mit vertrauenswürdigen KI‑Labors und Startups, die sie zum Training ihrer Modelle nutzen."
-  },
-  "mellowtel_text3": {
-    "message": "Mellowtel teilt nur deine Bandbreite. Sicherheit und Datenschutz sind zu 100 % garantiert. Es werden keinerlei persönliche Daten gesammelt, geteilt oder verkauft (nicht einmal anonymisierte Daten)."
-  },
-  "mellowtel_text4": {
-    "message": "Aufgrund der Sicherheitsrichtlinien des Chrome Web Store muss es als separate Erweiterung installiert werden. Aber keine Sorge – deine aktuellen XTranslate‑Einstellungen bleiben unberührt, und es werden keine persönlichen Daten gesammelt."
-  },
-  "mellowtel_decline": {
-    "message": "Später erinnern"
-  },
-  "mellowtel_install": {
-    "message": "Mellowtel installieren"
-  },
-  "mellowtel_footer": {
-    "message": "Danke, dass du dir Zeit genommen hast – dein Team { $devs }."
-  },
   "error_403_auth_failed": {
     "message": "Authentifizierung fehlgeschlagen. Bitte geben Sie einen gültigen Authentifizierungs-API-Schlüssel in den Einstellungen an."
   },

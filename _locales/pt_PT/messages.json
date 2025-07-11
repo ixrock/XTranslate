@@ -383,30 +383,6 @@
   "privacy_policy_accept_terms": {
     "message": "Aceitar termos e condições"
   },
-  "mellowtel_greetings": {
-    "message": "Olá, amigo 👋"
-  },
-  "mellowtel_text1": {
-    "message": "Como sabes, esta extensão é gratuita e está disponível para todos… mas para a manter ativa, precisamos da tua ajuda!"
-  },
-  "mellowtel_text2": {
-    "message": "Para apoiar os desenvolvedores do XTranslate, por favor instala { $link }. Esta extensão open‑source permite-te partilhar a tua ligação à Internet não utilizada com laboratórios de IA e startups de confiança, que a usam para treinar os seus modelos."
-  },
-  "mellowtel_text3": {
-    "message": "O Mellowtel partilha apenas a tua largura de banda. Segurança e privacidade 100% garantidas. Não recolhe, partilha nem vende informações pessoais (nem dados anonimizados)."
-  },
-  "mellowtel_text4": {
-    "message": "Esta ação requer ser instalada como extensão separada devido às políticas de segurança da Chrome Web Store. Mas não te preocupes—não afetará as tuas configurações atuais do XTranslate e não recolherá qualquer dado pessoal."
-  },
-  "mellowtel_decline": {
-    "message": "Lembrar mais tarde"
-  },
-  "mellowtel_install": {
-    "message": "Instalar Mellowtel"
-  },
-  "mellowtel_footer": {
-    "message": "Obrigado por leres, equipa { $devs }."
-  },
   "error_403_auth_failed": {
     "message": "Falha na autorização. Por favor, forneça uma chave de API válida nas configurações."
   },
