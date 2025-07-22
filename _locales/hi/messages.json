@@ -400,5 +400,11 @@
   },
   "pdf_use_custom_viewer_info": {
     "message": "यह विकल्प डिफ़ॉल्ट PDF दर्शक को प्रतिस्थापित करेगा"
+  },
+  "skip_popup_inject_for_pages": {
+    "message": "URL छोड़ना"
+  },
+  "skip_popup_inject_for_pages_info": {
+    "message": "यदि आपको कुछ समस्याएँ, जैसे कि Cloudflare captcha iframe जाँच का सामना करना पड़े, तो पॉपअप इंजेक्शन को छोड़ने के लिए URL जोड़ें।"
   }
 }

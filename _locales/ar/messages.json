@@ -400,5 +400,11 @@
   },
   "pdf_use_custom_viewer_info": {
     "message": "ستستبدل هذه الخيار عارض PDF الافتراضي"
+  },
+  "skip_popup_inject_for_pages": {
+    "message": "تخطي عناوين URL"
+  },
+  "skip_popup_inject_for_pages_info": {
+    "message": "أضف عناوين URL لتخطي حقن النافذة المنبثقة إذا واجهتك مشاكل، مثل فحص iframe لرمز التحقق من Cloudflare."
   }
 }

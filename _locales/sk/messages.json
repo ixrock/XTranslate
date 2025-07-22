@@ -62,16 +62,16 @@
   "settings_title_full_page_show_traffic_save_mode_info": {
     "message": "Šetrenie siete/API prekladaním iba zobrazených textov webovej stránky"
   },
-  "settings_title_full_page_empty_list": {
+  "settings_select_empty_list": {
     "message": "Prázdny zoznam"
   },
-  "settings_title_full_page_see_edit_list": {
+  "settings_select_edit_list": {
     "message": "Kliknutím zobrazíte a upravíte zoznam"
   },
-  "settings_title_full_page_add_url": {
+  "settings_select_add_url": {
     "message": "Pridať adresu URL"
   },
-  "settings_title_full_page_add_url_error": {
+  "settings_select_add_url_error": {
     "message": "Pokúsiť sa pridať neplatnú adresu URL"
   },
   "auto_play_tts": {
@@ -496,5 +496,11 @@
   },
   "pro_version_promo_tooltip": {
     "message": "Pripravujeme verziu PRO s celostránkovým prekladom AI. Pre viac informácií a uplatnenie zľavy kliknite sem."
+  },
+  "skip_popup_inject_for_pages": {
+    "message": "Preskočiť URL"
+  },
+  "skip_popup_inject_for_pages_info": {
+    "message": "Pridajte URL, ktoré sa majú preskočiť pri vkladaní pop-upu, ak nastanú problémy, napr. kontrola captcha iframe od Cloudflare."
   }
 }

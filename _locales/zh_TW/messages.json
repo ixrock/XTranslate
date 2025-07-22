@@ -400,5 +400,11 @@
   },
   "pdf_use_custom_viewer_info": {
     "message": "此選項將替換預設的 PDF 檢視器"
+  },
+  "skip_popup_inject_for_pages": {
+    "message": "略過 URL"
+  },
+  "skip_popup_inject_for_pages_info": {
+    "message": "如果遇到問題，例如 Cloudflare 驗證碼 iframe 檢查，請加入要略過彈出視窗注入的 URL。"
   }
 }

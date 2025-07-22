@@ -5,9 +5,8 @@ import { observer } from "mobx-react";
 import { getHotkey, parseHotkey, prevDefault } from "@/utils";
 import { Input } from "../input";
 import { Checkbox } from "../checkbox";
-import { ReactSelect, ReactSelectOption } from "../select";
 import { Icon } from "../icon";
-import { popupHotkey, PopupPosition, settingsStore } from "./settings.storage";
+import { popupHotkey, settingsStore } from "./settings.storage";
 import { getMessage } from "@/i18n";
 import { materialIcons } from "@/config";
 
@@ -16,16 +15,6 @@ export class SettingsPopup extends React.Component {
   constructor(props: object) {
     super(props);
     makeObservable(this);
-  }
-
-  private get popupPositions(): ReactSelectOption<PopupPosition>[] {
-    return [
-      { value: "", label: getMessage("popup_position_auto") },
-      { value: "left top", label: getMessage("popup_position_left_top") },
-      { value: "right top", label: getMessage("popup_position_right_top") },
-      { value: "right bottom", label: getMessage("popup_position_right_bottom") },
-      { value: "left bottom", label: getMessage("popup_position_left_bottom") },
-    ]
   }
 
   onSaveHotkey = (evt: React.KeyboardEvent) => {
@@ -107,19 +96,6 @@ export class SettingsPopup extends React.Component {
               />
             </label>
           </div>
-          <label className="flex gaps align-center">
-            <Icon
-              material="display_settings"
-              tooltip={getMessage("popup_position_title")}
-            />
-            <ReactSelect
-              className="box grow"
-              menuPlacement="auto"
-              options={this.popupPositions}
-              value={this.popupPositions.find(pos => pos.value === settings.popupPosition)}
-              onChange={(opt: ReactSelectOption<PopupPosition>) => settings.popupPosition = opt.value}
-            />
-          </label>
         </div>
       </div>
     );

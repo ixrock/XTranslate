@@ -16,7 +16,7 @@ import { autoBind, disposer, getHotkey } from "../utils";
 import { getManifest, getURL, isRuntimeContextInvalidated, MessageType, onMessage, ProxyResponseType, TranslatePayload } from "../extension";
 import { proxyRequest } from "../background/httpProxy.bgc";
 import { sendMetric } from "../background/metrics.bgc";
-import { popupHotkey, settingsStore } from "../components/settings/settings.storage";
+import { popupHotkey, popupSkipInjectionUrls, settingsStore } from "../components/settings/settings.storage";
 import { getNextTranslator, getTranslator, ITranslationError, ITranslationResult, ProviderCodeName } from "../providers";
 import { XTranslateIcon } from "./xtranslate-icon";
 import { XTranslateTooltip } from "./xtranslate-tooltip";
@@ -36,6 +36,11 @@ export class ContentScript extends React.Component {
   static async init(window: Window = globalThis.window.self) {
     await preloadAppData(); // wait for dependent data before first render
     await this.preloadCss();
+    await popupSkipInjectionUrls.load();
+
+    // skip content-script injection for specific urls to avoid bugs, e.g. for cloudflare captcha iframe checks
+    const skipInjection = popupSkipInjectionUrls.get().some(url => window.document.URL.startsWith(url));
+    if (skipInjection) return;
 
     const appElem = window.document.createElement("div");
     appElem.classList.add("XTranslate");

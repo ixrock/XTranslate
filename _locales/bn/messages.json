@@ -400,5 +400,11 @@
   },
   "pdf_use_custom_viewer_info": {
     "message": "এই বিকল্পটি ডিফল্ট PDF ভিউয়ারকে প্রতিস্থাপন করবে"
+  },
+  "skip_popup_inject_for_pages": {
+    "message": "URL বাদ দিন"
+  },
+  "skip_popup_inject_for_pages_info": {
+    "message": "যদি আপনি কিছু সমস্যা, যেমন Cloudflare captcha iframe চেক, সম্মুখীন হন, পপআপ ইনজেকশন এড়াতে URL যুক্ত করুন।"
   }
 }

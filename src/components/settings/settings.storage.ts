@@ -65,8 +65,17 @@ export const settingsStorage = createStorage("settings", {
       trafficSaveMode: true,
       alwaysTranslatePages: [],
       showMore: false,
-    },
+    }
   }
+});
+
+export const popupSkipInjectionUrls = createStorage<string[]>("popup_skip_inject", {
+  area: "sync",
+  autoLoad: true,
+  deepMergeOnLoad: false,
+  defaultValue: [
+    "https://challenges.cloudflare.com/"
+  ]
 });
 
 export const popupHotkey = createStorage("popup_hotkey", {

@@ -400,5 +400,11 @@
   },
   "pdf_use_custom_viewer_info": {
     "message": "Tùy chọn này sẽ thay thế trình xem PDF mặc định"
+  },
+  "skip_popup_inject_for_pages": {
+    "message": "Bỏ qua URL"
+  },
+  "skip_popup_inject_for_pages_info": {
+    "message": "Thêm các URL để bỏ qua việc chèn pop-up nếu bạn gặp vấn đề, ví dụ: kiểm tra iframe captcha của Cloudflare."
   }
 }

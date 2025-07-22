@@ -400,5 +400,11 @@
   },
   "pdf_use_custom_viewer_info": {
     "message": "Diese Option ersetzt den Standard-PDF-Viewer"
+  },
+  "skip_popup_inject_for_pages": {
+    "message": "URLs überspringen"
+  },
+  "skip_popup_inject_for_pages_info": {
+    "message": "Fügen Sie URLs hinzu, um das Einfügen des Pop-ups zu überspringen, falls Sie Probleme haben, z. B. bei der Überprüfung des Cloudflare Captcha-Iframes."
   }
 }

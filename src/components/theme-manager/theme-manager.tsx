@@ -3,7 +3,7 @@ import "./theme-manager.scss";
 import React from "react";
 import { observer } from "mobx-react";
 import { action } from "mobx";
-import { settingsStore } from "../settings/settings.storage";
+import { PopupPosition, popupSkipInjectionUrls, settingsStore } from "../settings/settings.storage";
 import { customFont, CustomFontStorageModel, themeStorage, ThemeStorageModel, themeStore } from "./theme.storage";
 import { pageManager } from "../app/page-manager";
 import { Popup } from "../popup";
@@ -20,6 +20,7 @@ import { Icon } from "../icon";
 import { base64Encode } from "@/utils";
 import { SettingsPopup } from "../settings/settings_popup";
 import { ShowHideMore } from "../show-hide-more";
+import { SettingsUrlList } from "@/components/settings/settings_url_list";
 
 @observer
 export class ThemeManager extends React.Component {
@@ -32,6 +33,16 @@ export class ThemeManager extends React.Component {
 
   get customFont(): CustomFontStorageModel {
     return customFont.get();
+  }
+
+  private get popupPositions(): ReactSelectOption<PopupPosition>[] {
+    return [
+      { value: "", label: getMessage("popup_position_auto") },
+      { value: "left top", label: getMessage("popup_position_left_top") },
+      { value: "right top", label: getMessage("popup_position_right_top") },
+      { value: "right bottom", label: getMessage("popup_position_right_bottom") },
+      { value: "left bottom", label: getMessage("popup_position_left_bottom") },
+    ]
   }
 
   renderFontsSelect() {
@@ -110,7 +121,7 @@ export class ThemeManager extends React.Component {
     )
   }
 
-  renderAdvancedPopupCustomize() {
+  renderThemeCustomize() {
     const theme = themeStore.data;
     const isDefault = themeStorage.isDefaultValue(theme) && customFont.isDefaultValue(this.customFont);
 
@@ -303,8 +314,31 @@ export class ThemeManager extends React.Component {
         />
         <br/>
         <SettingsPopup/>
+
+        <div className="more-settings flex gaps column">
+          <label className="flex gaps align-center">
+            <Icon
+              material="display_settings"
+              tooltip={getMessage("popup_position_title")}
+            />
+            <ReactSelect
+              className="box grow"
+              menuPlacement="auto"
+              options={this.popupPositions}
+              value={this.popupPositions.find(pos => pos.value === settings.popupPosition)}
+              onChange={(opt: ReactSelectOption<PopupPosition>) => settings.popupPosition = opt.value}
+            />
+          </label>
+
+          <SettingsUrlList
+            urlList={popupSkipInjectionUrls.get()}
+            title={getMessage("skip_popup_inject_for_pages")}
+            infoTooltip={getMessage("skip_popup_inject_for_pages_info")}
+          />
+        </div>
+
         <ShowHideMore visible={settings.showPopupAdvancedCustomization} onToggle={v => settings.showPopupAdvancedCustomization = v}>
-          {this.renderAdvancedPopupCustomize()}
+          {this.renderThemeCustomize()}
         </ShowHideMore>
       </div>
     );

@@ -47,16 +47,16 @@
   "settings_title_full_page_always_translate": {
     "message": "Всегда переводить"
   },
-  "settings_title_full_page_empty_list": {
+  "settings_select_empty_list": {
     "message": "Пустой список"
   },
-  "settings_title_full_page_see_edit_list": {
+  "settings_select_edit_list": {
     "message": "Нажмите для просмотра и редактирования списка"
   },
-  "settings_title_full_page_add_url": {
+  "settings_select_add_url": {
     "message": "Добавить URL"
   },
-  "settings_title_full_page_add_url_error": {
+  "settings_select_add_url_error": {
     "message": "Попытка добавить некорректный URL"
   },
   "settings_title_full_page_show_original_onmouseover": {
@@ -499,5 +499,11 @@
   },
   "pro_version_promo_tooltip": {
     "message": "Мы готовим PRO-версию с поддержкой AI-переводов целых страниц. Кликните, чтобы узнать подробности и получить скидку."
+  },
+  "skip_popup_inject_for_pages": {
+    "message": "Пропуск URL"
+  },
+  "skip_popup_inject_for_pages_info": {
+    "message": "Добавьте URL для пропуска внедрения попапа, если возникают проблемы, например, проверка iframe капчи Cloudflare."
   }
 }

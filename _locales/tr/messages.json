@@ -382,5 +382,11 @@
   },
   "pdf_use_custom_viewer_info": {
     "message": "Bu seçenek varsayılan PDF görüntüleyicisini değiştirecektir"
+  },
+  "skip_popup_inject_for_pages": {
+    "message": "URL'leri atla"
+  },
+  "skip_popup_inject_for_pages_info": {
+    "message": "Popup enjeksiyonunu atlamak için, örneğin Cloudflare captcha iframe kontrolü gibi, sorun yaşarsanız URL ekleyin."
   }
 }

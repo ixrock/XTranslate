@@ -62,16 +62,16 @@
   "settings_title_full_page_show_traffic_save_mode_info": {
     "message": "Saving network / API-costs by translating only visible texts from webpage viewport"
   },
-  "settings_title_full_page_empty_list": {
+  "settings_select_empty_list": {
     "message": "Empty list"
   },
-  "settings_title_full_page_see_edit_list": {
+  "settings_select_edit_list": {
     "message": "Click to see and edit the list"
   },
-  "settings_title_full_page_add_url": {
+  "settings_select_add_url": {
     "message": "Add URL"
   },
-  "settings_title_full_page_add_url_error": {
+  "settings_select_add_url_error": {
     "message": "Attempt to add invalid URL"
   },
   "auto_play_tts": {
@@ -499,5 +499,11 @@
   },
   "pro_version_promo_tooltip": {
     "message": "We’re building a PRO version with full-page AI translation. Click to learn more and claim your discount."
+  },
+  "skip_popup_inject_for_pages": {
+    "message": "Skipping URLs"
+  },
+  "skip_popup_inject_for_pages_info": {
+    "message": "Add URLs to skip popup injection if you experience some issues, e.g. Cloudflare captcha iframe check."
   }
 }

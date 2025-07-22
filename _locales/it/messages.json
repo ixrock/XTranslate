@@ -400,5 +400,11 @@
   },
   "pdf_use_custom_viewer_info": {
     "message": "Questa opzione sostituirà il visualizzatore PDF predefinito"
+  },
+  "skip_popup_inject_for_pages": {
+    "message": "Salta URL"
+  },
+  "skip_popup_inject_for_pages_info": {
+    "message": "Aggiungi URL per saltare l'iniezione del popup se si verificano problemi, ad esempio il controllo dell'iframe captcha di Cloudflare."
   }
 }

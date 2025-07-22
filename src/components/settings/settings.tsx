@@ -4,7 +4,7 @@ import { action, makeObservable, observable } from "mobx";
 import { observer } from "mobx-react";
 import isEqual from "lodash/isEqual";
 import startCase from "lodash/startCase";
-import { ProviderWithApiKey, DeepSeekAIModel, getTranslator, getTranslators, googleApiDomain, googleApiDomains, GrokAIModel, OpenAIModel, OpenAIModelTTSVoice, ProviderCodeName, Translator, GeminiAIModel, GeminiAIModelTTSVoice } from "@/providers";
+import { DeepSeekAIModel, GeminiAIModel, GeminiAIModelTTSVoice, getTranslator, getTranslators, googleApiDomain, googleApiDomains, GrokAIModel, OpenAIModel, OpenAIModelTTSVoice, ProviderCodeName, ProviderWithApiKey, Translator } from "@/providers";
 import { XTranslateIcon } from "@/user-script/xtranslate-icon";
 import { SelectLanguage, SelectLanguageChangeEvent } from "../select-language";
 import { Checkbox } from "../checkbox";
@@ -21,10 +21,9 @@ import { getTTSVoices, speak, stopSpeaking } from "@/tts";
 import { SelectAIModel } from "./select_ai_model";
 import { ProviderAuthSettings } from "./provider_auth_settings";
 import { materialIcons } from "@/config";
-import { Notifications } from "../notifications";
-import { Button } from "../button";
 import { SelectProvider } from "../select-provider";
 import { ShowHideMore } from "../show-hide-more";
+import { SettingsUrlList } from "@/components/settings/settings_url_list";
 
 @observer
 export class Settings extends React.Component {
@@ -199,35 +198,6 @@ export class Settings extends React.Component {
     fullPageTranslation.langTo = supportedLanguages.langTo;
   };
 
-  private addPageException(pageAddr: string, list: string[]) {
-    try {
-      const pageUrl = String(new URL(pageAddr));
-      const alreadyExists = list.find(url => pageUrl === url);
-      if (!alreadyExists) list.push(pageUrl);
-    } catch (err) {
-      Notifications.error(`${getMessage("settings_title_full_page_add_url_error")}: ${pageAddr}`);
-    }
-  }
-
-  private formatPageUrlLabel(pageUrl: string, list: string[]): React.ReactNode {
-    const removeItem = () => {
-      const index = list.indexOf(pageUrl);
-      if (index > -1) list.splice(index, 1);
-    };
-    return (
-      <div className="page-url-exception flex gaps">
-        <span className="box grow">{pageUrl}</span>
-        <Icon small material="clear" onClick={removeItem}/>
-      </div>
-    )
-  }
-
-  @action
-  addAlwaysTranslatePage(pageUrl?: string) {
-    pageUrl ??= window.prompt(getMessage("settings_title_full_page_always_translate"));
-    if (pageUrl) this.addPageException(pageUrl, settingsStore.data.fullPageTranslation.alwaysTranslatePages);
-  }
-
   render() {
     const settings = settingsStore.data;
     const { fullPageTranslation, showAdvancedProviders } = settings;
@@ -272,24 +242,10 @@ export class Settings extends React.Component {
           />
         </div>
         <ShowHideMore visible={fullPageTranslation.showMore} onToggle={v => fullPageTranslation.showMore = v}>
-          <div className="alwaysTranslatePages flex gaps align-center">
-            <span>{getMessage("settings_title_full_page_always_translate")} <b>({alwaysTranslatePages.length})</b></span>
-            <ReactSelect
-              value={null}
-              className="box grow"
-              menuNowrap={false}
-              closeMenuOnSelect={false}
-              placeholder={getMessage("settings_title_full_page_see_edit_list")}
-              noOptionsMessage={() => getMessage("settings_title_full_page_empty_list")}
-              options={alwaysTranslatePages.map(value => ({ value, label: value }))}
-              formatOptionLabel={({ value }: ReactSelectOption<string>) => this.formatPageUrlLabel(value, alwaysTranslatePages)}
-            />
-            <Button
-              primary
-              label={getMessage("settings_title_full_page_add_url")}
-              onClick={() => this.addAlwaysTranslatePage()}
-            />
-          </div>
+          <SettingsUrlList
+            urlList={alwaysTranslatePages}
+            title={getMessage("settings_title_full_page_always_translate")}
+          />
           <div className="settings-fullpage flex column gaps align-start">
             <Checkbox
               label={getMessage("settings_title_full_page_show_original_onmouseover")}

@@ -400,5 +400,11 @@
   },
   "pdf_use_custom_viewer_info": {
     "message": "이 옵션은 기본 PDF 뷰어를 대체합니다"
+  },
+  "skip_popup_inject_for_pages": {
+    "message": "URL 건너뛰기"
+  },
+  "skip_popup_inject_for_pages_info": {
+    "message": "문제가 발생할 경우(예: Cloudflare 캡차 iframe 검사) 팝업 주입을 건너뛰기 위해 URL을 추가하세요."
   }
 }

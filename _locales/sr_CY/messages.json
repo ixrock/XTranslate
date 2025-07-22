@@ -400,5 +400,11 @@
   },
   "pdf_use_custom_viewer_info": {
     "message": "Ова опција ће прегазити подразумевани PDF прегледач"
+  },
+  "skip_popup_inject_for_pages": {
+    "message": "Прескочи URL-ове"
+  },
+  "skip_popup_inject_for_pages_info": {
+    "message": "Додајте URL-ове за прескакање убацивања поп-упа ако имате проблеме, нпр. Cloudflare captcha iframe check."
   }
 }
