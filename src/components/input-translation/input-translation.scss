@@ -3,6 +3,7 @@
 
 .InputTranslation {
   .input {
+    @include hidden-scrollbar;
     flex: 1;
 
     label {
@@ -40,6 +41,7 @@
 
       .value {
         white-space: pre-line;
+        overflow: auto;
       }
 
       .transcription {
