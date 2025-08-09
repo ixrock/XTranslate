@@ -96,6 +96,7 @@ export class ContentScript extends React.Component {
   @observable.ref selectionRects: DOMRectNormalized[] = [];
   @observable popupPosition: React.CSSProperties = {};
   @observable selectedText = "";
+  @observable isSelectingText = false;
   @observable isRtlSelection = false;
   @observable isIconVisible = false;
   @observable isLoading = false;
@@ -155,11 +156,13 @@ export class ContentScript extends React.Component {
   @computed get iconPosition(): React.CSSProperties {
     const { iconPosition } = settingsStore.data;
     const { selectionRects, isRtlSelection } = this;
+    const commonStyles = { position: "absolute", width: 25, height: 25 } as React.CSSProperties;
 
     if (!selectionRects.length) {
       return {};
     }
 
+    // fixed position
     if (!isEmpty(iconPosition)) {
       const top = iconPosition.top ? orderBy(selectionRects, "top", "asc")[0].top : undefined;
       const left = iconPosition.left ? orderBy(selectionRects, "left", "asc")[0].left : undefined;
@@ -167,6 +170,7 @@ export class ContentScript extends React.Component {
       const bottom = iconPosition.bottom ? orderBy(selectionRects, "bottom", "desc")[0].bottom : undefined;
 
       return {
+        ...commonStyles,
         left: left ?? right,
         top: top ?? bottom,
         transform: `translate(${left ? -100 : 0}%, ${top ? -100 : 0}%)`,
@@ -176,7 +180,9 @@ export class ContentScript extends React.Component {
     const firstRect = selectionRects[0];
     const lastRect = selectionRects.slice(-1)[0];
 
+    // auto-position
     return {
+      ...commonStyles,
       left: isRtlSelection ? firstRect.left : lastRect.right,
       top: isRtlSelection ? firstRect.top : lastRect.bottom,
       transform: isRtlSelection ? "translate(-100%, -100%)" : undefined,
@@ -430,12 +436,27 @@ export class ContentScript extends React.Component {
     });
   }
 
-  onSelectionChange = debounce(action(() => {
+  onSelectionEnd = debounce(() => this.isSelectingText = false, 100);
+
+  onSelectionChange = action(() => {
     this.selectedText = this.selection.toString().trim();
-    if (ContentScript.isEditableElement(document.activeElement) || !this.selectedText) {
+
+    const isEditableElem = ContentScript.isEditableElement(document.activeElement);
+    const emptyText = !this.selectedText;
+
+    if (isEditableElem || emptyText) {
+      this.isSelectingText = false;
       return;
     }
+
+    this.isSelectingText = true;
+    this.onSelectionEnd.cancel();
+    this.handleTextSelection();
+  });
+
+  handleTextSelection = debounce(action(() => {
     const { showPopupAfterSelection, showIconNearSelection } = settingsStore.data;
+
     if (showPopupAfterSelection) {
       this.saveSelectionRects();
       this.translateLazy();
@@ -449,6 +470,8 @@ export class ContentScript extends React.Component {
         this.showIcon();
       }
     }
+
+    this.onSelectionEnd();
   }), 250);
 
   private getMouseTargetTopElem(evt: MouseEvent): HTMLElement {
@@ -579,7 +602,7 @@ export class ContentScript extends React.Component {
     const translateIconTitle = `${appName}: ${translator.getLangPairTitle(langFrom, langTo)}`;
 
     return (
-      <div style={{ position: "absolute", ...iconPosition }}>
+      <div style={iconPosition} inert={this.isSelectingText}>
         {isLoading && <Icon svg="spinner"/>}
         {!isLoading && isIconVisible && <XTranslateIcon onMouseDown={onIconClick} title={translateIconTitle}/>}
       </div>
