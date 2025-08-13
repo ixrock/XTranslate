@@ -1,0 +1,509 @@
+{
+  "short_description": {
+    "message": "Terjemahkan teks di halaman web dengan mudah"
+  },
+  "description": {
+    "message": "Terjemahkan teks dalam konteks halaman, sesuaikan gaya popup sesuai keinginan, dan lainnya."
+  },
+  "open_in_window": {
+    "message": "Buka di jendela eksternal"
+  },
+  "tab_settings": {
+    "message": "Pengaturan"
+  },
+  "tab_theme": {
+    "message": "Popup"
+  },
+  "tab_text_input": {
+    "message": "Terjemahkan"
+  },
+  "tab_history": {
+    "message": "Riwayat"
+  },
+  "setting_title_common": {
+    "message": "Umum"
+  },
+  "setting_title_text_input": {
+    "message": "Terjemahan"
+  },
+  "setting_title_popup": {
+    "message": "Popup"
+  },
+  "setting_title_translator_service": {
+    "message": "Layanan"
+  },
+  "settings_title_tts": {
+    "message": "Teks ke Ucapan"
+  },
+  "settings_title_appearance": {
+    "message": "Tampilan"
+  },
+  "settings_title_full_page_translation": {
+    "message": "Terjemahan seluruh halaman"
+  },
+  "settings_title_full_page_excluded_pages": {
+    "message": "Jangan pernah terjemahkan"
+  },
+  "settings_title_full_page_always_translate": {
+    "message": "Selalu terjemahkan"
+  },
+  "settings_title_full_page_show_original_onmouseover": {
+    "message": "Tampilkan teks asli saat diarahkan kursor"
+  },
+  "settings_title_full_page_show_translation_onmouseover": {
+    "message": "Tampilkan terjemahan saat diarahkan kursor"
+  },
+  "settings_title_full_page_show_replace_texts": {
+    "message": "Ganti teks dokumen dengan terjemahan"
+  },
+  "settings_title_full_page_show_traffic_save_mode": {
+    "message": "Aktifkan mode hemat trafik"
+  },
+  "settings_title_full_page_show_traffic_save_mode_info": {
+    "message": "Menghemat jaringan / biaya API dengan hanya menerjemahkan teks yang terlihat di layar halaman"
+  },
+  "settings_select_empty_list": {
+    "message": "Daftar kosong"
+  },
+  "settings_select_edit_list": {
+    "message": "Klik untuk melihat dan mengedit daftar"
+  },
+  "settings_select_add_url": {
+    "message": "Tambah URL"
+  },
+  "settings_select_add_url_error": {
+    "message": "Percobaan menambahkan URL tidak valid"
+  },
+  "auto_play_tts": {
+    "message": "Putar otomatis teks ke ucapan"
+  },
+  "use_chrome_tts": {
+    "message": "Paksa gunakan mesin teks ke ucapan sistem"
+  },
+  "use_chrome_tts_tooltip_info": {
+    "message": "Opsi ini otomatis aktif saat penerjemah tidak memiliki mesin TTS sendiri"
+  },
+  "use_dark_theme": {
+    "message": "Gunakan tema gelap untuk jendela ini"
+  },
+  "settings_title_advanced_providers_list": {
+    "message": "Penyedia terjemahan tingkat lanjut"
+  },
+  "settings_title_advanced_providers_list_show": {
+    "message": "Tampilkan penyedia terjemahan tingkat lanjut"
+  },
+  "settings_title_advanced_providers_list_hide": {
+    "message": "Sembunyikan penyedia terjemahan tingkat lanjut"
+  },
+  "settings_title_voice": {
+    "message": "Suara"
+  },
+  "tts_default_system_voice": {
+    "message": "Suara bawaan sistem"
+  },
+  "tts_select_voice_title": {
+    "message": "Pilih suara"
+  },
+  "tts_play_demo_sound": {
+    "message": "Putar suara demo"
+  },
+  "tts_play_demo_sound_edit": {
+    "message": "Edit teks untuk demo suara"
+  },
+  "import_export_settings": {
+    "message": "Impor atau ekspor pengaturan"
+  },
+  "export_settings_button_label": {
+    "message": "Ekspor pengaturan"
+  },
+  "import_settings_button_label": {
+    "message": "Impor pengaturan"
+  },
+  "import_incorrect_file_format": {
+    "message": "Format file tidak sesuai (seharusnya { $fileNameJson })"
+  },
+  "imported_setting_successful": {
+    "message": "Pengaturan dengan kunci { $key } berhasil diimpor"
+  },
+  "display_icon_near_selection": {
+    "message": "Tampilkan ikon dekat teks yang dipilih"
+  },
+  "show_tts_icon_inside_popup": {
+    "message": "Tampilkan ikon teks ke ucapan"
+  },
+  "show_select_provider_icon_in_popup": {
+    "message": "Tampilkan ikon pilih penyedia"
+  },
+  "show_copy_translation_icon": {
+    "message": "Tampilkan ikon salin terjemahan"
+  },
+  "show_save_as_favorite_icon": {
+    "message": "Tampilkan ikon simpan ke favorit"
+  },
+  "show_close_popup_button": {
+    "message": "Tampilkan ikon tutup popup di pojok kanan"
+  },
+  "show_detected_language_block": {
+    "message": "Tampilkan bahasa yang terdeteksi"
+  },
+  "display_on_click_by_selected_text": {
+    "message": "Tampilkan saat klik teks yang dipilih"
+  },
+  "display_popup_after_text_selected": {
+    "message": "Tampilkan segera setelah teks dipilih"
+  },
+  "display_popup_on_double_click": {
+    "message": "Tampilkan saat klik ganda pada kata"
+  },
+  "display_popup_on_hotkey": {
+    "message": "Tampilkan saat menekan tombol pintas"
+  },
+  "remember_last_typed_text": {
+    "message": "Ingat teks terakhir yang diketik"
+  },
+  "sub_header_quick_access_hotkey": {
+    "message": "Atur tombol pintas global"
+  },
+  "quick_access_configure_link": {
+    "message": "Atur pintasan keyboard untuk akses cepat ke jendela ini"
+  },
+  "swap_languages": {
+    "message": "Tukar bahasa"
+  },
+  "popup_position_title": {
+    "message": "Posisi"
+  },
+  "popup_position_auto": {
+    "message": "Otomatis (sejajarkan ke teks)"
+  },
+  "popup_position_left_top": {
+    "message": "Pojok kiri atas"
+  },
+  "popup_position_right_top": {
+    "message": "Pojok kanan atas"
+  },
+  "popup_position_left_bottom": {
+    "message": "Pojok kiri bawah"
+  },
+  "popup_position_right_bottom": {
+    "message": "Pojok kanan bawah"
+  },
+  "translation_delay": {
+    "message": "Jeda terjemahan"
+  },
+  "translation_delay_info": {
+    "message": "Jika sering mengalami blokir (error 503) dari Google atau layanan lain, atur nilai jeda lebih besar"
+  },
+  "reverse_translate_select_placeholder": {
+    "message": "Bahasa terjemahan balik"
+  },
+  "reverse_translate_add_action": {
+    "message": "Tambah bahasa balik: { $lang } -> ? (hanya berlaku dengan Deteksi Otomatis)"
+  },
+  "reverse_translate_delete_action": {
+    "message": "Hapus bahasa terjemahan balik"
+  },
+  "custom_font_select": {
+    "message": "Pilih font kustom"
+  },
+  "settings_show_more": {
+    "message": "Tampilkan lebih banyak pengaturan"
+  },
+  "settings_show_less": {
+    "message": "Tampilkan lebih sedikit pengaturan"
+  },
+  "popup_play_icon_title": {
+    "message": "Dengarkan"
+  },
+  "popup_copy_translation_title": {
+    "message": "Salin terjemahan"
+  },
+  "popup_next_vendor_icon_title": {
+    "message": "Terjemahkan dengan { $translator }"
+  },
+  "popup_demo_translation": {
+    "message": "Teks terjemahan"
+  },
+  "popup_demo_dictionary_noun": {
+    "message": "kata benda"
+  },
+  "popup_demo_dictionary_values": {
+    "message": "Kata 1, kata 2, dll."
+  },
+  "sub_header_background": {
+    "message": "Latar belakang"
+  },
+  "sub_header_box_shadow": {
+    "message": "Bayangan kotak"
+  },
+  "sub_header_text": {
+    "message": "Teks"
+  },
+  "sub_header_border": {
+    "message": "Bingkai"
+  },
+  "sub_header_box_size": {
+    "message": "Ukuran kotak"
+  },
+  "background_color": {
+    "message": "Warna"
+  },
+  "background_linear_gradient": {
+    "message": "Linear"
+  },
+  "box_shadow_color": {
+    "message": "Warna"
+  },
+  "box_shadow_inner": {
+    "message": "Dalam"
+  },
+  "text_size": {
+    "message": "Ukuran"
+  },
+  "text_font_family": {
+    "message": "Font"
+  },
+  "text_color": {
+    "message": "Warna"
+  },
+  "text_shadow": {
+    "message": "Bayangan"
+  },
+  "text_shadow_size": {
+    "message": "Radius blur"
+  },
+  "text_shadow_offset_x": {
+    "message": "Offset horizontal"
+  },
+  "text_shadow_offset_y": {
+    "message": "Offset vertikal"
+  },
+  "text_shadow_color": {
+    "message": "Warna"
+  },
+  "border_width": {
+    "message": "Lebar"
+  },
+  "border_style": {
+    "message": "Gaya"
+  },
+  "border_color": {
+    "message": "Warna"
+  },
+  "border_radius": {
+    "message": "Radius"
+  },
+  "box_size_min_width": {
+    "message": "Lebar minimum"
+  },
+  "box_size_min_height": {
+    "message": "Tinggi minimum"
+  },
+  "box_size_max_width": {
+    "message": "Lebar maksimum"
+  },
+  "box_size_max_height": {
+    "message": "Tinggi maksimum"
+  },
+  "reset_to_default_button_text": {
+    "message": "Atur ulang ke bawaan"
+  },
+  "text_field_placeholder": {
+    "message": "Mulai ketik di sini untuk menerjemahkan"
+  },
+  "translated_with": {
+    "message": "Diterjemahkan dengan { $translator } ({ $lang })"
+  },
+  "translated_from": {
+    "message": "Diterjemahkan dari: { $lang }"
+  },
+  "translate_also_from": {
+    "message": "Juga terjemahkan dari"
+  },
+  "spell_correction": {
+    "message": "Maksud Anda { $suggestion }?"
+  },
+  "text_input_translation_hint": {
+    "message": "{ $hotkey } untuk langsung menerjemahkan, jeda: { $timeout }ms"
+  },
+  "history_enabled_flag": {
+    "message": "Aktif"
+  },
+  "history_settings_save_words_only": {
+    "message": "Simpan hanya kata kamus"
+  },
+  "history_search_input_placeholder": {
+    "message": "Cari di riwayat"
+  },
+  "history_clear_period_hour": {
+    "message": "Satu jam terakhir"
+  },
+  "history_clear_period_day": {
+    "message": "Sehari terakhir"
+  },
+  "history_clear_period_month": {
+    "message": "Sebulan terakhir"
+  },
+  "history_clear_period_year": {
+    "message": "Setahun terakhir"
+  },
+  "history_clear_period_all": {
+    "message": "Semua"
+  },
+  "history_button_clear": {
+    "message": "Hapus riwayat"
+  },
+  "history_button_show_more": {
+    "message": "Tampilkan lebih banyak"
+  },
+  "history_export_entries": {
+    "message": "Ekspor { $format }"
+  },
+  "history_import_entries": {
+    "message": "Impor { $format }"
+  },
+  "history_page_size": {
+    "message": "Jumlah per halaman"
+  },
+  "history_icon_tooltip_search": {
+    "message": "Cari"
+  },
+  "history_icon_tooltip_imp_exp": {
+    "message": "Impor / Ekspor"
+  },
+  "history_icon_tooltip_settings": {
+    "message": "Pengaturan"
+  },
+  "history_show_favorites_only": {
+    "message": "Hanya tampilkan favorit"
+  },
+  "history_mark_as_favorite": {
+    "message": "Tandai sebagai favorit"
+  },
+  "history_unmark_as_favorite": {
+    "message": "Hapus tanda favorit"
+  },
+  "history_import_success": {
+    "message": "Berhasil mengimpor { $itemsCount } entri riwayat"
+  },
+  "history_import_file_error": {
+    "message": "Gagal membaca file '{ $fileName }': { $errorInfo }"
+  },
+  "context_menu_translate_full_page_context_menu": {
+    "message": "Terjemahkan halaman ke { $lang }"
+  },
+  "context_menu_translate_full_page_context_menu_stop": {
+    "message": "Hentikan terjemahan otomatis untuk { $site }"
+  },
+  "context_menu_translate_full_page": {
+    "message": "Terjemahkan halaman '{ $pageTitle }' ke { $lang }"
+  },
+  "context_menu_translate_selection": {
+    "message": "Terjemahkan { $selection } dengan { $translator }"
+  },
+  "share_with_friends": {
+    "message": "Suka aplikasi ini? Bagikan kepada teman Anda"
+  },
+  "translation_data_failed": {
+    "message": "Gagal memuat data"
+  },
+  "rate_app_info1": {
+    "message": "Suka menggunakan aplikasi ini? Beri kami 5 bintang!"
+  },
+  "rate_app_info2": {
+    "message": "Ini akan membantu pengguna lain menemukan ekstensi ini dan menyebarkan manfaatnya."
+  },
+  "rate_app_button": {
+    "message": "Beri nilai aplikasi"
+  },
+  "rate_app_button_later": {
+    "message": "Ingatkan nanti"
+  },
+  "target_lang_placeholder": {
+    "message": "Bahasa target"
+  },
+  "source_lang_placeholder": {
+    "message": "Bahasa sumber"
+  },
+  "favorites_lang_title": {
+    "message": "Favorit"
+  },
+  "support_developers": {
+    "message": "Dukung pengembang"
+  },
+  "service_unavailable": {
+    "message": "Layanan tidak tersedia. Coba lagi setelah 5-25 menit. Jika ini terus terjadi, tingkatkan jeda terjemahan di pengaturan."
+  },
+  "service_confirm_not_a_robot": {
+    "message": "Anda juga bisa membuka { $link } dan mengonfirmasi bahwa Anda bukan robot."
+  },
+  "privacy_policy_title_updated": {
+    "message": "Kebijakan Privasi telah diperbarui"
+  },
+  "privacy_policy_accept_terms": {
+    "message": "Setujui syarat & ketentuan"
+  },
+  "error_403_auth_failed": {
+    "message": "Otorisasi gagal. Mohon masukkan API key yang valid di pengaturan"
+  },
+  "pdf_use_custom_viewer": {
+    "message": "Dukung terjemahan pada file PDF"
+  },
+  "pdf_use_custom_viewer_info": {
+    "message": "Opsi ini akan mengganti penampil PDF bawaan"
+  },
+  "ai_choose_model": {
+    "message": "Pilih model AI"
+  },
+  "ai_choose_model_cost_effective": {
+    "message": "Paling hemat biaya"
+  },
+  "ai_choose_model_recommended": {
+    "message": "Model yang direkomendasikan"
+  },
+  "ai_choose_model_reasoning": {
+    "message": "Model berpikir / lambat"
+  },
+  "ai_choose_model_reasoning_light": {
+    "message": "Model berpikir ringan / lebih cepat"
+  },
+  "auth_access_info_steps_openai": {
+    "message": "1) Daftar di platform.openai.com 2) Buat API key 3) Isi saldo minimal $5"
+  },
+  "auth_access_info_steps_grok": {
+    "message": "Daftar di console.x.ai dan isi saldo (contoh via Kartu Kredit)"
+  },
+  "auth_access_info_steps_deepseek": {
+    "message": "Daftar di platform.deepseek.com dan isi saldo (contoh via Paypal)"
+  },
+  "auth_access_info_steps_deepl": {
+    "message": "Daftar di www.deepl.com dan dapatkan API key gratis untuk terjemahan DeepL"
+  },
+  "auth_access_info_steps_gemini": {
+    "message": "Buat API key gratis di https://aistudio.google.com/apikey"
+  },
+  "auth_access_info_api_key": {
+    "message": "Masukkan API key Anda untuk mendapatkan terjemahan { $provider }"
+  },
+  "auth_setup_key_info": {
+    "message": "Masukkan API key { $provider }"
+  },
+  "auth_clear_key_info": {
+    "message": "Hapus API key { $provider }"
+  },
+  "auth_safety_warning_info": {
+    "message": "Peringatan: JANGAN masukkan API key Anda di tempat lain selain di jendela ekstensi ini"
+  },
+  "pro_version_promo_link_text": {
+    "message": "Diskon 20% PRO"
+  },
+  "pro_version_promo_tooltip": {
+    "message": "Kami sedang membuat versi PRO dengan terjemahan AI seluruh halaman. Klik untuk tahu lebih dan klaim diskon Anda."
+  },
+  "skip_popup_inject_for_pages": {
+    "message": "Lewati URL"
+  },
+  "skip_popup_inject_for_pages_info": {
+    "message": "Tambahkan URL untuk melewati injeksi popup jika Anda mengalami masalah, misalnya pemeriksaan captcha iframe Cloudflare."
+  }
+}
