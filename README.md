@@ -59,6 +59,39 @@ In order to work with local documents (e.g. `file://path/file.pdf`) you must all
 - open extensions page `chrome://extensions/`, find **XTranslate** and click _[Details]_ button
 - enable checkbox **"Allow access to file URLs"**
 
+# XTranslate — architecture at a glance
+
+```
+┌─────────────── Web Page ──────────────────┐
+│ Content Script                            │
+│ — captures text selection                 │
+│ — shows floating UI bubble                │
+└───────────────▲───────────────────────────┘
+                │ messages
+                ▼
+┌──── Service Worker ( aka Background ) ────┐
+│ — access to chrome.api.*                  │
+│ — chrome.runtime messages hub             │
+│ — requests to translation APIs            │
+│ — isomorphic shared storage               │
+│ — handling metrics (GA)                   │
+│ — https proxy handler                     │
+└───────────────▲───────────────────────────┘
+                │ sync store
+                ▼
+┌─────────────── Action Window ─────────────┐
+│ — popup/options                           │
+│ — text input / settings                   │
+└───────────────────────────────────────────┘
+```
+
+**Key points:**
+
+* All parts are connected through the Service Worker.
+* Single shared storage, updated sequentially.
+* Single webpack build with three targets (CS, Popup, SW).
+
+
 How to build/contribute to project:
 -----------
 
