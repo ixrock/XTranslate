@@ -47,7 +47,7 @@ Available translation providers:
 -----------
 * [Google](http://translate.google.com/) - ready to use after installation
 * [Bing](http://bing.com/translator/) - ready to use after installation
-* [DeepL](https://www.deepl.com/) _(register and provide free api-key, 500K chars/month)_
+* [DeepL](https://www.deepl.com/) _(register and provide at least free api-key with 500K chars/month included)_
 * [OpenAI](https://platform.openai.com) _(register, top-up balance and create api-key for the extension)_
 * [Grok](https://console.x.ai) _(register, top-up balance and create api-key)_
 * [DeepSeek](https://platform.deepseek.com) _(register, top-up balance and create api-key)_
@@ -59,37 +59,36 @@ In order to work with local documents (e.g. `file://path/file.pdf`) you must all
 - open extensions page `chrome://extensions/`, find **XTranslate** and click _[Details]_ button
 - enable checkbox **"Allow access to file URLs"**
 
-# XTranslate — architecture at a glance
+XTranslate architecture overview:
+-----------
+
+* All parts are connected through the Service Worker.
+* Isomorphic storage (same API in any env), updated sequentially in Service Worker only, _say bye-bye to race-conditions_!
+* Webpack build handles 3 different targets: `WebPageContentScript(target=web)`, `AppActionWindowScript(target=web)` and `BackgroundServiceWorker(target=worker)`.
 
 ```
 ┌─────────────── Web Page ──────────────────┐
 │ Content Script                            │
 │ — captures text selection                 │
-│ — shows floating UI bubble                │
-└───────────────▲───────────────────────────┘
-                │ messages
-                ▼
+│ — shows floating UI bubble (updates DOM)  │
+└────────▲──────────────────────────────────┘
+         │ runtime messages, sync store
+         ▼
 ┌──── Service Worker ( aka Background ) ────┐
 │ — access to chrome.api.*                  │
 │ — chrome.runtime messages hub             │
 │ — requests to translation APIs            │
-│ — isomorphic shared storage               │
+│ — isomorphic storage                      │
 │ — handling metrics (GA)                   │
 │ — https proxy handler                     │
-└───────────────▲───────────────────────────┘
-                │ sync store
-                ▼
+└────────▲──────────────────────────────────┘
+         │ runtime messages, sync store
+         ▼
 ┌─────────────── Action Window ─────────────┐
 │ — popup/options                           │
 │ — text input / settings                   │
 └───────────────────────────────────────────┘
 ```
-
-**Key points:**
-
-* All parts are connected through the Service Worker.
-* Single shared storage, updated sequentially.
-* Single webpack build with three targets (CS, Popup, SW).
 
 
 How to build/contribute to project:
