@@ -61,7 +61,7 @@ export async function getActiveTabId(): Promise<number> {
 
 export async function waitTabReadiness(tabId: number) {
   return new Promise(resolve => {
-    function listener(updatedTabId: number, changes: chrome.tabs.TabChangeInfo, tab: BrowserTab) {
+    function listener(updatedTabId: number, changes: chrome.tabs.OnUpdatedInfo, tab: BrowserTab) {
       const isRequestedTab = updatedTabId === tabId;
       const isComplete = changes.status === "complete"
       if (isRequestedTab && isComplete) {

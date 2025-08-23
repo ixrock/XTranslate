@@ -26,7 +26,7 @@ async function onTabActivated() {
   activeTabStorage.merge({ tabId, title, url });
 }
 
-async function onTabUpdated(updatedTabId: number, { url, title }: chrome.tabs.TabChangeInfo) {
+async function onTabUpdated(updatedTabId: number, { url, title }: chrome.tabs.OnUpdatedInfo) {
   await activeTabStorage.load();
 
   const activeTab = activeTabStorage.get();

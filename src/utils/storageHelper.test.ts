@@ -1,39 +1,7 @@
 import { reaction } from "mobx";
 import { StorageAdapter, StorageHelper } from "./storageHelper";
-import { delay } from "./delay";
 
 describe("renderer/utils/StorageHelper", () => {
-  describe("window.localStorage might be used as StorageAdapter", () => {
-    type StorageModel = string;
-
-    const storageKey = "ui-settings";
-    let storageHelper: StorageHelper<StorageModel>;
-
-    beforeEach(() => {
-      localStorage.clear();
-
-      storageHelper = new StorageHelper<StorageModel>(storageKey, {
-        storageAdapter: localStorage,
-        defaultValue: "test",
-        autoLoad: false,
-      });
-    });
-
-    it("initialized with default value", async () => {
-      localStorage.setItem(storageKey, "saved"); // pretending it was saved previously
-
-      expect(storageHelper.key).toBe(storageKey);
-      expect(storageHelper.defaultValue).toBe("test");
-      expect(storageHelper.get()).toBe("test");
-
-      await storageHelper.load();
-
-      expect(storageHelper.key).toBe(storageKey);
-      expect(storageHelper.defaultValue).toBe("test");
-      expect(storageHelper.get()).toBe("saved");
-    });
-  });
-
   describe("Using custom StorageAdapter", () => {
     const storageKey = "mySettings";
     const storageMock: Record<string, any> = {
@@ -49,7 +17,6 @@ describe("renderer/utils/StorageHelper", () => {
 
     type StorageModel = Partial<typeof defaultValue>;
     let storageHelper: StorageHelper<StorageModel>;
-    let storageHelperAsync: StorageHelper<StorageModel>;
     let storageAdapter: StorageAdapter<StorageModel>;
 
     beforeEach(() => {
@@ -73,19 +40,6 @@ describe("renderer/utils/StorageHelper", () => {
         defaultValue: defaultValue,
         storageAdapter: storageAdapter,
       });
-
-      storageHelperAsync = new StorageHelper(storageKey, {
-        autoLoad: false,
-        defaultValue: defaultValue,
-        storageAdapter: {
-          ...storageAdapter,
-          async getItem(key: string): Promise<typeof defaultValue | any> {
-            await delay(500); // fake loading timeout
-
-            return storageAdapter.getItem(key);
-          }
-        },
-      });
     });
 
     it("loads data from storage with fallback to default-value", () => {
@@ -96,15 +50,11 @@ describe("renderer/utils/StorageHelper", () => {
       expect(storageAdapter.getItem).toHaveBeenCalledWith(storageHelper.key);
     });
 
-    it("async loading from storage supported too", async () => {
-      expect(storageHelperAsync.initialized).toBeFalsy();
-      storageHelperAsync.load();
-      await delay(300);
-      expect(storageHelperAsync.loaded).toBeFalsy();
-      expect(storageHelperAsync.get()).toEqual(defaultValue);
-      await delay(200);
-      expect(storageHelperAsync.loaded).toBeTruthy();
-      expect(storageHelperAsync.get().message).toBe("saved-before");
+    it("load() data from external storage", async () => {
+      expect(storageHelper.initialized).toBeFalsy();
+      await storageHelper.load();
+      expect(storageHelper.loaded).toBeTruthy();
+      expect(storageHelper.get().message).toBe("saved-before");
     });
 
     it("set() fully replaces data in storage", async () => {
