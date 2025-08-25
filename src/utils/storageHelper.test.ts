@@ -137,4 +137,86 @@ describe("renderer/utils/StorageHelper", () => {
     });
   });
 
+  it("opts.deepMergeOnLoad: true produces deep merge on load", async () => {
+    const storageKey = "testDeepMergeTrue";
+    const storageAdapter = {
+      getItem: jest.fn(() => ({
+        message: "updated",
+        deepDataTree: { some: "changed" },
+      })),
+      setItem: jest.fn(),
+      removeItem: jest.fn(),
+    };
+
+    const defaultValue = {
+      message: "default",
+      deepDataTree: { other: "defaultOther" },
+    };
+
+    const storageHelper = new StorageHelper(storageKey, {
+      autoLoad: false,
+      deepMergeOnLoad: true,
+      defaultValue,
+      storageAdapter,
+    });
+
+    await storageHelper.load();
+    expect(storageHelper.get()).toEqual({
+      message: "updated",
+      deepDataTree: { some: "changed", other: "defaultOther" },
+    });
+  });
+
+  it("opts.deepMergeOnLoad: false performs shallow merge on load", async () => {
+    const storageKey = "testDeepMergeFalse";
+    const storageAdapter = {
+      getItem: jest.fn(() => ({
+        message: "updated",
+        deepDataTree: { some: "changed" },
+      })),
+      setItem: jest.fn(),
+      removeItem: jest.fn(),
+    };
+
+    const defaultValue = {
+      message: "default",
+      deepDataTree: { some: "default", other: "defaultOther" },
+    };
+
+    const storageHelper = new StorageHelper(storageKey, {
+      autoLoad: false,
+      deepMergeOnLoad: false,
+      defaultValue,
+      storageAdapter,
+    });
+
+    await storageHelper.load();
+    expect(storageHelper.get()).toEqual({
+      message: "updated",
+      deepDataTree: { some: "changed" },
+    });
+  });
+
+  it("opts.saveDefaultWhenEmpty: saves default to storage if loaded data is empty", async () => {
+    const storageKey = "testSaveDefault";
+    const setItemMock = jest.fn();
+    const storageAdapter = {
+      getItem: jest.fn(),
+      setItem: setItemMock,
+      removeItem: jest.fn(),
+    };
+
+    const defaultValue = { message: "default" };
+
+    const storageHelper = new StorageHelper(storageKey, {
+      autoLoad: false,
+      saveDefaultWhenEmpty: true,
+      defaultValue,
+      storageAdapter,
+    });
+
+    await storageHelper.load();
+    expect(setItemMock).toHaveBeenCalledWith(storageKey, defaultValue);
+  });
+
 });
