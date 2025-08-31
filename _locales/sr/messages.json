@@ -38,6 +38,42 @@
   "settings_title_appearance": {
     "message": "Izgled"
   },
+  "settings_title_full_page_translation": {
+    "message": "Prevod cele stranice"
+  },
+  "settings_title_full_page_excluded_pages": {
+    "message": "Nikad ne prevodi"
+  },
+  "settings_title_full_page_always_translate": {
+    "message": "Uvek prevedi"
+  },
+  "settings_title_full_page_show_original_onmouseover": {
+    "message": "Prikaži originalni tekst prelaskom miša"
+  },
+  "settings_title_full_page_show_translation_onmouseover": {
+    "message": "Prikaži prevedeni tekst prelaskom miša"
+  },
+  "settings_title_full_page_show_replace_texts": {
+    "message": "Zameni tekst u dokumentima prevodom"
+  },
+  "settings_title_full_page_show_traffic_save_mode": {
+    "message": "Omogući režim uštede saobraćaja"
+  },
+  "settings_title_full_page_show_traffic_save_mode_info": {
+    "message": "Ušteda troškova mreže / API-ja prevođenjem samo vidljivih tekstova iz prikazanog dela veb stranice"
+  },
+  "settings_select_empty_list": {
+    "message": "Prazna lista"
+  },
+  "settings_select_edit_list": {
+    "message": "Klikni da vidiš i izmeniš listu"
+  },
+  "settings_select_add_url": {
+    "message": "Dodaj URL"
+  },
+  "settings_select_add_url_error": {
+    "message": "Pokušaj dodavanja nevalidne URL adrese"
+  },
   "auto_play_tts": {
     "message": "Automatski reprodukuj pretvaranje teksta u govor"
   },
@@ -49,6 +85,18 @@
   },
   "use_dark_theme": {
     "message": "Promeni temu"
+  },
+  "settings_title_advanced_providers_list": {
+    "message": "Napredni prevodioci"
+  },
+  "settings_title_advanced_providers_list_show": {
+    "message": "Prikaži napredne prevodioce"
+  },
+  "settings_title_advanced_providers_list_hide": {
+    "message": "Sakrij napredne prevodioce"
+  },
+  "settings_title_voice": {
+    "message": "Glas"
   },
   "tts_default_system_voice": {
     "message": "Podrazumevani sistemski glas"
@@ -84,7 +132,7 @@
     "message": "Prikaži ikonicu za pretvaranje teksta u govor"
   },
   "show_select_provider_icon_in_popup": {
-    "message": "Prikaži ikonicu sledećeg prevodioca"
+    "message": "Prikaži ikonicu prevodioca"
   },
   "show_copy_translation_icon": {
     "message": "Prikaži ikonicu za kopiranje prevoda"
@@ -157,6 +205,12 @@
   },
   "custom_font_select": {
     "message": "Izaberi prilagođeni font"
+  },
+  "settings_show_more": {
+    "message": "Prikaži još podešavanja"
+  },
+  "settings_show_less": {
+    "message": "Prikaži manje podešavanja"
   },
   "popup_play_icon_title": {
     "message": "Preslušaj"
@@ -335,14 +389,20 @@
   "history_import_file_error": {
     "message": "Greška u čitanju datoteke '{ $fileName }': { $errorInfo }"
   },
+  "context_menu_translate_full_page_context_menu": {
+    "message": "Prevedi stranicu na { $lang }"
+  },
+  "context_menu_translate_full_page_context_menu_stop": {
+    "message": "Prekini automatsko prevođenje za { $site }"
+  },
   "context_menu_translate_full_page": {
-    "message": "Prevedi na { $lang }"
+    "message": "Prevedi stranicu '{ $pageTitle }' na { $lang }"
   },
   "context_menu_translate_selection": {
     "message": "Prevedi { $selection } pomoću: { $translator }"
   },
   "share_with_friends": {
-    "message": "Ako vam se sviđa aplikacija, podelite je sa prijateljima:"
+    "message": "Ako vam se sviđa aplikacija, podelite je sa prijateljima"
   },
   "translation_data_failed": {
     "message": "Učitavanje podataka nije uspelo"
@@ -354,7 +414,7 @@
     "message": "To će pomoći drugim korisnicima da pronađu proširenje u veb prodavnici."
   },
   "rate_app_button": {
-    "message": "Ocenite u veb prodavnici"
+    "message": "Ocenite aplikaciju"
   },
   "rate_app_button_later": {
     "message": "Podseti me kasnije"
@@ -386,6 +446,12 @@
   "error_403_auth_failed": {
     "message": "Autorizacija nije uspela. Unesi validan API ključ za autentifikaciju u podešavanjima"
   },
+  "pdf_use_custom_viewer": {
+    "message": "Podrška za prevode u PDF fajlovima"
+  },
+  "pdf_use_custom_viewer_info": {
+    "message": "Ova opcija će pregaziti podrazumevani PDF pregledač"
+  },
   "ai_choose_model": {
     "message": "Izaberi AI model"
   },
@@ -395,16 +461,49 @@
   "ai_choose_model_recommended": {
     "message": "Preporučeni model"
   },
-  "pdf_use_custom_viewer": {
-    "message": "Podrška za prevode u PDF fajlovima"
+  "ai_choose_model_reasoning": {
+    "message": "Model razmišljanja / sporo"
   },
-  "pdf_use_custom_viewer_info": {
-    "message": "Ova opcija će pregaziti podrazumevani PDF pregledač"
+  "ai_choose_model_reasoning_light": {
+    "message": "Lakši model razmišljanja / brži"
+  },
+  "auth_access_info_steps_openai": {
+    "message": "1) Registruj se na platform.openai.com 2) Kreiraj ključ za pristup API-ju 3) Dopuni svoja novčana sredstva (5$+)"
+  },
+  "auth_access_info_steps_grok": {
+    "message": "Registruj se na console.x.ai i dopuni svoja novčana sredstva (npr. pomoću kreditne kartice)"
+  },
+  "auth_access_info_steps_deepseek": {
+    "message": "Registruj se na platform.deepseek.com i dopuni svoja novčana sredstva (npr. pomoću Paypal-a)"
+  },
+  "auth_access_info_steps_deepl": {
+    "message": "Registruj se na www.deepl.com da bi dobio besplatan ključ za autorizaciju na DeepL API"
+  },
+  "auth_access_info_steps_gemini": {
+    "message": "Kreiraj besplatan API ključ na https://aistudio.google.com/apikey"
+  },
+  "auth_access_info_api_key": {
+    "message": "Obezbedi API ključ za dobijanje { $provider } prevoda"
+  },
+  "auth_setup_key_info": {
+    "message": "Obezbedi { $provider } API ključ"
+  },
+  "auth_clear_key_info": {
+    "message": "Ukloni { $provider } API ključ"
+  },
+  "auth_safety_warning_info": {
+    "message": "Upozorenje: NE UNOSI svoj API ključ nigde osim u prozoru ovog proširenja"
+  },
+  "pro_version_promo_link_text": {
+    "message": "20% popusta za PRO"
+  },
+  "pro_version_promo_tooltip": {
+    "message": "Pravimo PRO verziju sa AI prevodom cele stranice. Klikni da saznaš više i preuzmeš svoj popust."
   },
   "skip_popup_inject_for_pages": {
     "message": "Preskoči URL-ove"
   },
   "skip_popup_inject_for_pages_info": {
-    "message": "Dodajte URL-ove za preskakanje umetanja pop-up-a ako doživite probleme, npr. Cloudflare captcha iframe check."
+    "message": "Dodaj URL-ove za preskakanje umetanja iskačućih prozora ako imaš probleme, npr. Cloudflare captcha iframe check."
   }
 }
