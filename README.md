@@ -96,7 +96,7 @@ How to build/contribute to project:
 
 _Prerequisites:_
 
-1) Install [Node.js](https://nodejs.org/) _(v23+)_
+1) Install [Node.js](https://nodejs.org/) _(v24+)_
 2) Install project dependencies `npm install`
 
 _NPM-script commands:_

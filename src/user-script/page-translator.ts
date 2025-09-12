@@ -1,5 +1,4 @@
 import { observable, reaction } from "mobx";
-import { franc } from "franc";
 import { md5 } from "js-md5";
 import { autoBind, createLogger, disposer, LoggerColor, strLengthCodePoints } from "../utils";
 import { settingsStore } from "../components/settings/settings.storage";
@@ -400,20 +399,6 @@ export class PageTranslator {
     const textParents = new Set(textNodes.map(text => text.parentElement).filter(Boolean));
     textParents.forEach(elem => intersectionObserver.observe(elem)); // subscribe
     return () => intersectionObserver.disconnect(); // unsubscribe
-  }
-
-  detectLanguage(textNode: Text): string {
-    const isDetected = this.detectedLanguages.has(textNode);
-    if (!isDetected) {
-      const text = textNode.textContent;
-      let detectedLang = franc(text, { minLength: 2 });
-      if (detectedLang === "und") {
-        detectedLang = textNode.parentElement.closest(`[lang]`)?.getAttribute("lang");
-      }
-      this.detectedLanguages.set(textNode, detectedLang);
-      return detectedLang;
-    }
-    return this.detectedLanguages.get(textNode);
   }
 
   protected getStorageHashId(text: string, providerHashId = this.getProviderHashId()) {
