@@ -1,5 +1,6 @@
-import { observable, reaction } from "mobx";
+import { comparer, observable, reaction } from "mobx";
 import { md5 } from "js-md5";
+import debounce from "lodash/debounce";
 import { autoBind, createLogger, disposer, LoggerColor, strLengthCodePoints } from "../utils";
 import { settingsStore } from "../components/settings/settings.storage";
 import { getTranslator, ProviderCodeName } from "../providers";
@@ -9,30 +10,24 @@ export type LangTarget = string;
 export type TranslationHashId = `${ProviderCodeName}_${LangSource}_${LangTarget}`;
 
 export interface PageTranslatorParams {
-  sessionCache?: boolean; // cache page translations per tab in `window.sessionStorage` (default: true)
+  sessionCache?: boolean; // cache page translations per tab in `window.sessionStorage` Ø(default: true)
   autoTranslateDelayMs?: number; /* default: 500 */
-}
-
-export interface WatchViewportTextNodesOpts {
-  onVisible?(elem: HTMLElement): void;
 }
 
 export class PageTranslator {
   static readonly RX_LETTER = /\p{L}/u;
-  static readonly SKIP_TAGS = new Set(["SCRIPT", "STYLE", "NOSCRIPT", "TEXTAREA", "CODE", "PRE"]);
+  static readonly SKIP_TAGS = ["SCRIPT", "STYLE", "NOSCRIPT", "CODE"];
   static readonly MAX_API_LIMIT_CHARS_PER_REQUEST = 5000;
 
   protected logger = createLogger({ systemPrefix: "[PAGE-TRANSLATOR]", prefixColor: LoggerColor.INFO_SYSTEM });
   protected dispose = disposer();
 
-  // TODO: support translations within <button value=""> and <input placeholder="">
-  protected textNodes = observable.set<Text>();
-  protected textNodesViewport = observable.set<Text>();
-  protected parentNodes = new WeakMap<HTMLElement, Set<Text>>();
-  protected translations = new WeakMap<Text, Record<TranslationHashId, string>>();
-  protected originalText = new WeakMap<Text, string>();
-  protected originalTextRaw = new WeakMap<Text, string>();
-  protected detectedLanguages = new WeakMap<Text, string>();
+  protected nodesAll = observable.set<Node>();
+  protected nodesFromViewport = observable.set<Node>();
+  protected translations = new WeakMap<Node, Record<TranslationHashId, string>>();
+  protected originalText = new WeakMap<Node, string>();
+  protected originalTextRaw = new WeakMap<Node, string>();
+  protected tooltipNodes = new WeakMap<HTMLElement, Set<Text>>();
 
   constructor(private params: PageTranslatorParams = {}) {
     autoBind(this);
@@ -43,6 +38,11 @@ export class PageTranslator {
     this.params = { sessionCache, autoTranslateDelayMs };
   }
 
+  get nodes(): Node[] {
+    const nodeList = this.settings.trafficSaveMode ? this.nodesFromViewport : this.nodesAll;
+    return Array.from(nodeList);
+  }
+
   get settings() {
     return settingsStore.data.fullPageTranslation;
   }
@@ -51,13 +51,38 @@ export class PageTranslator {
     return this.isAlwaysTranslate(document.URL);
   }
 
-  getProviderParams() {
-    const { provider, langFrom, langTo } = this.settings;
-    return { provider, langFrom, langTo };
+  private getNodeText = (node: Text) => node.textContent; // N.B. select>option>#Text.nodeValue always empty`
+  private getNodeImageText = (node: HTMLImageElement | HTMLAreaElement) => node.alt;
+  private getNodeSelectLabel = (node: HTMLOptGroupElement | HTMLOptionElement) => node.label;
+  private getNodeInputPlaceholder = (node: HTMLInputElement | HTMLTextAreaElement) => node.placeholder;
+  private getNodeInputButtonValue = (node: HTMLInputElement) => {
+    if (["submit", "reset", "button"].includes(node.type)) {
+      return node.value;
+    }
   }
 
-  getProviderHashId(params = this.getProviderParams()): TranslationHashId {
-    const { provider, langFrom, langTo } = params;
+  getTranslation(node: Node, providerId = this.getProviderHashId()): string {
+    if (!this.translations.has(node)) {
+      this.translations.set(node, {});
+    }
+
+    const translations = this.translations.get(node);
+    let translation = translations[providerId];
+    if (translation) return translation;
+
+    if (this.params.sessionCache) {
+      const cachedTranslation = this.getStorageCache(node, providerId);
+      if (cachedTranslation) {
+        translations[providerId] = cachedTranslation;
+        return cachedTranslation;
+      }
+    }
+
+    return "";
+  }
+
+  getProviderHashId(): TranslationHashId {
+    const { provider, langFrom, langTo } = this.settings;
     return `${provider}_${langFrom}_${langTo}`;
   }
 
@@ -86,130 +111,192 @@ export class PageTranslator {
   }
 
   startAutoTranslation() {
-    const textNodes = this.collectTextNodes();
-    this.processTextNodes(textNodes);
+    const nodes = this.collectNodes();
+    this.processNodes(nodes);
 
     this.dispose.push(
-      this.bindDocumentTextsAutoTranslation(),
+      this.bindTextsAutoTranslation(),
       this.bindRefreshTranslationsOnParamsChange(),
-      this.watchDOMTextNodes(),
+      this.watchDOMNodeUpdates(),
       () => this.clearCollectedNodes(),
     );
   }
 
   stopAutoTranslation() {
-    const textNodes = Array.from(this.textNodes);
-    this.restoreDOM(textNodes, { restoreOriginalText: true });
+    this.restoreDOM();
     this.dispose();
   }
 
   protected bindRefreshTranslationsOnParamsChange = () => {
-    return reaction(this.getProviderParams, this.refreshTranslations);
+    return reaction(() => {
+        const { showMore, alwaysTranslatePages, ...settings } = this.settings;
+        return settings;
+      },
+      this.refreshTranslations,
+      {
+        delay: this.params.autoTranslateDelayMs,
+        equals: comparer.shallow,
+      }
+    );
   }
 
-  protected bindDocumentTextsAutoTranslation = () => {
-    const getTexts = (): Text[] => {
-      if (this.settings.trafficSaveMode) return [...this.textNodesViewport];
-      return [...this.textNodes];
-    };
-    return reaction(getTexts, this.translateNodes, {
-      fireImmediately: true,
-      delay: this.params.autoTranslateDelayMs,
-    });
+  protected bindTextsAutoTranslation = () => {
+    return reaction(() => this.nodes,
+      this.refreshTranslations,
+      {
+        fireImmediately: true,
+        delay: this.params.autoTranslateDelayMs,
+        equals: comparer.structural,
+      }
+    );
   }
 
   protected clearCollectedNodes() {
-    this.textNodes.clear();
-    this.textNodesViewport.clear();
+    this.nodesAll.clear();
+    this.nodesFromViewport.clear();
   }
 
-  protected updateDOMResults(textNodes: Text[], providerHashId = this.getProviderHashId()) {
+  protected updateDOMNode(node: Node, text: string) {
+    if (node instanceof Text) {
+      this.updateTextNode(node, text);
+    }
+    if (node instanceof HTMLImageElement || node instanceof HTMLAreaElement) {
+      node.alt = text;
+    }
+    if (node instanceof HTMLOptGroupElement || node instanceof HTMLOptionElement) {
+      node.label = text;
+    }
+    if (node instanceof HTMLInputElement) {
+      if (this.getNodeInputButtonValue(node)) node.value = text;
+      if (this.getNodeInputPlaceholder(node)) node.placeholder = text;
+    }
+    if (node instanceof HTMLTextAreaElement) {
+      node.placeholder = text;
+    }
+  }
+
+  protected updateDOM() {
+    this.logger.info("UPDATE DOM");
+    this.nodes.forEach(node => {
+      const translation = this.getTranslation(node);
+      this.updateDOMNode(node, translation);
+    });
+  }
+
+  restoreDOM() {
+    this.logger.info("RESTORE DOM");
+    this.nodes.forEach(node => {
+      const originalText = this.originalTextRaw.get(node);
+      this.updateDOMNode(node, originalText);
+    });
+  };
+
+  protected updateTextNode(node: Text, text: string) {
     const { showTranslationInDOM, showOriginalOnHover, showTranslationOnHover } = this.settings;
-    const showTooltip = Boolean(showOriginalOnHover || showTranslationOnHover);
+    const showTooltip = showOriginalOnHover || showTranslationOnHover;
+    const isReset = text === this.originalTextRaw.get(node);
 
-    this.restoreDOM(textNodes, {
-      restoreOriginalText: !showTranslationInDOM,
-    });
-
-    textNodes.forEach(node => {
-      const translation = this.getTranslationByNode(node, providerHashId);
-      if (!translation) {
-        return;
+    if (showTranslationInDOM) {
+      if (isReset) {
+        node.nodeValue = text;
+      } else {
+        const { leadingSpaces, trailingSpaces } = this.getSpaces(node);
+        node.nodeValue = `${leadingSpaces}${text}${trailingSpaces}`;
       }
-      if (showTranslationInDOM) {
-        const { leadingSpaces, trailingSpaces } = this.getNodeSpaces(node);
-        node.nodeValue = `${leadingSpaces}${translation}${trailingSpaces}`;
-      }
-      if (showTooltip) {
-        const tooltipElem = node.parentElement as HTMLElement;
-        const tooltipNodes = this.parentNodes.get(tooltipElem);
-        if (tooltipNodes) {
-          this.setTooltip(tooltipElem, [...tooltipNodes], providerHashId);
-        }
-      }
-    })
-  }
-
-  protected setTooltip(elem: HTMLElement, textNodes: Text[], providerHashId = this.getProviderHashId()) {
-    elem.dataset.xtranslateTooltip = "";
-
-    if (this.settings.showOriginalOnHover) {
-      elem.dataset.xtranslateOriginal = textNodes
-        .map((node: Text) => this.originalText.get(node) || node.nodeValue)
-        .join(" ")
     }
-
-    if (this.settings.showTranslationOnHover) {
-      elem.dataset.xtranslateTranslation = textNodes
-        .map((node: Text) => this.getTranslationByNode(node, providerHashId) || node.nodeValue)
-        .join(" ")
+    if (showTooltip) {
+      this.setTooltip(node, isReset);
     }
   }
 
-  restoreDOM(textNodes: Text[], { restoreOriginalText = false } = {}) {
-    textNodes.forEach(node => {
-      const parentElem = node.parentElement as HTMLElement | null;
-      delete parentElem?.dataset.xtranslateTooltip;
-      delete parentElem?.dataset.xtranslateOriginal;
-      delete parentElem?.dataset.xtranslateTranslation;
-      if (restoreOriginalText) {
-        node.nodeValue = this.originalTextRaw.get(node);
+  protected setTooltip(node: Text, isReset: boolean) {
+    const tooltipElem = node.parentElement as HTMLElement;
+    const textNodes = Array.from(this.tooltipNodes.get(tooltipElem) ?? []);
+    if (!textNodes.length) return;
+
+    if (isReset) {
+      const parentElem = node.parentElement as HTMLElement;
+      delete parentElem?.dataset.xtranslateTooltip; // [data-xtranslate-tooltip]
+      delete parentElem?.dataset.xtranslateOriginal; // [data-xtranslate-original]
+      delete parentElem?.dataset.xtranslateTranslation; // [data-xtranslate-translation]
+    } else {
+      tooltipElem.dataset.xtranslateTooltip = "";
+
+      if (this.settings.showOriginalOnHover) {
+        tooltipElem.dataset.xtranslateOriginal = textNodes
+          .map((node: Text) => this.originalText.get(node))
+          .join(" ")
       }
+
+      if (this.settings.showTranslationOnHover) {
+        tooltipElem.dataset.xtranslateTranslation = textNodes
+          .map((node: Text) => this.getTranslation(node))
+          .join(" ")
+      }
+    }
+  }
+
+  protected refreshTranslations = debounce(async () => {
+    this.logger.info("REFRESH TRANSLATIONS");
+
+    await this.translateNodes();
+
+    queueMicrotask(() => {
+      this.restoreDOM()
+      this.updateDOM();
     });
-  };
+  });
 
-  refreshTranslations() {
-    const textNodesAll = Array.from(this.textNodes);
-    const nodes = this.settings.trafficSaveMode ? Array.from(this.textNodesViewport) : textNodesAll;
-    this.restoreDOM(textNodesAll);
-    void this.translateNodes(nodes);
-  };
+  protected importNode(node: Node, nodes: Node[]) {
+    if (this.nodesAll.has(node)) return;
 
-  protected processTextNodes(nodes: Text[]) {
-    nodes.forEach(node => {
+    this.nodesAll.add(node);
+
+    let text = "";
+
+    if (node instanceof Text) {
+      text = this.getNodeText(node);
+
       const parentElem = node.parentElement;
       if (parentElem) {
-        if (!this.parentNodes.get(parentElem)) {
-          const childrenTexts = nodes.filter(text => parentElem.contains(text));
-          this.parentNodes.set(parentElem, new Set(childrenTexts));
+        if (!this.tooltipNodes.get(parentElem)) {
+          const childrenTexts = nodes.filter(textNode => parentElem.contains(textNode)) as Text[]; // TODO: optimize?
+          this.tooltipNodes.set(parentElem, new Set(childrenTexts));
         }
-        this.parentNodes.get(parentElem).add(node);
+        this.tooltipNodes.get(parentElem).add(node);
       }
+    }
+    if (node instanceof HTMLImageElement || node instanceof HTMLAreaElement) {
+      text = this.getNodeImageText(node);
+    }
+    if (node instanceof HTMLOptGroupElement || node instanceof HTMLOptionElement) {
+      text = this.getNodeSelectLabel(node);
+    }
+    if (node instanceof HTMLInputElement) {
+      const placeholder = this.getNodeInputPlaceholder(node);
+      const buttonValue = this.getNodeInputButtonValue(node);
+      if (placeholder) text = placeholder;
+      else if (buttonValue) text = buttonValue;
+    }
+    if (node instanceof HTMLTextAreaElement) {
+      text = this.getNodeInputPlaceholder(node);
+    }
 
-      const txt = this.normalizeText(node); // cut redundant empty spaces
-      this.textNodes.add(node);
-      this.originalText.set(node, txt);
-      this.originalTextRaw.set(node, node.nodeValue);
-
-      this.logger.info(`IMPORTED NODE: ${txt}`, { textNode: node, parentElem });
-    });
-
-    if (this.settings.trafficSaveMode) {
-      this.dispose.push(this.watchVisibleTextNodes(nodes));
+    if (text) {
+      this.originalText.set(node, text.trim());
+      this.originalTextRaw.set(node, text);
     }
   }
 
-  protected getNodeSpaces(node: Text) {
+  protected processNodes(nodes: Node[]) {
+    nodes.forEach(node => this.importNode(node, nodes));
+
+    if (this.settings.trafficSaveMode) {
+      this.dispose.push(this.enableTrafficSaveMode(nodes));
+    }
+  }
+
+  protected getSpaces(node: Node) {
     const text = this.originalText.get(node);
     const textRaw = this.originalTextRaw.get(node);
     const spaces = { leadingSpaces: "", trailingSpaces: "" };
@@ -222,12 +309,13 @@ export class PageTranslator {
   }
 
   // TODO: split big sentences with `Intl.Segmenter` for better API-caching
-  protected packNodes(textNodes: Text[], limit = PageTranslator.MAX_API_LIMIT_CHARS_PER_REQUEST): Text[][] {
-    const packs: Text[][] = [];
-    let currentPack: Text[] = [];
+  protected packNodes(nodes: Node[]): Node[][] {
+    const limit = PageTranslator.MAX_API_LIMIT_CHARS_PER_REQUEST;
+    const packs: Node[][] = [];
+    let currentPack: Node[] = [];
     let bufferLen = 0; // in code-points
 
-    for (const node of textNodes) {
+    for (const node of nodes) {
       const txt = this.originalText.get(node);
       const len = strLengthCodePoints(txt); // safe for chars like: 😊 𐍈 等
 
@@ -244,132 +332,136 @@ export class PageTranslator {
     return packs;
   }
 
-  protected async translateNodes(textNodes: Text[]): Promise<string[]> {
-    const providerParams = this.getProviderParams();
-    const providerHashId = this.getProviderHashId(providerParams);
-    const freshNodes = textNodes.filter(node => !this.getTranslationByNode(node, providerHashId));
-    const packedNodes = this.packNodes(freshNodes);
+  protected async translateNodes(nodes = this.nodes): Promise<string[]> {
+    const freshNodes = nodes.filter(node => !this.getTranslation(node));
+    freshNodes.forEach(node => this.importNode(node, nodes));
 
-    const translations = (
+    this.logger.info("TRANSLATING NODES", { nodes: freshNodes })
+
+    const packedNodes = this.packNodes(freshNodes);
+    return (
       await Promise.all(
         packedNodes.map(async nodes => {
           const translations = await this.translateApiRequest(nodes);
-          if (this.params.sessionCache) this.saveStorageCache(nodes, translations, providerHashId);
+          if (this.params.sessionCache) this.saveStorageCache(nodes, translations);
           return translations;
         })
       )
     ).flat();
-
-    requestAnimationFrame(() => this.updateDOMResults(textNodes, providerHashId));
-    return translations;
   }
 
-  getTranslationByNode(textNode: Text, hashId = this.getProviderHashId()): string {
-    if (!this.translations.has(textNode)) {
-      this.translations.set(textNode, {});
-    }
-    let translation = this.translations.get(textNode)[hashId];
-    if (!translation && this.params.sessionCache) {
-      const storageCache = this.getStorageCache(textNode, hashId);
-      if (storageCache) {
-        translation = storageCache; // restore to memory-cache from storage (sync)
-        this.translations.get(textNode)[hashId] = storageCache;
-      }
-    }
-    return translation ?? "";
-  }
-
-  async translateApiRequest(textNodes: Text[], params = this.getProviderParams()): Promise<string[]> {
-    const hashId = this.getProviderHashId(params);
-    const texts = textNodes.map(node => this.originalText.get(node));
-    const translator = getTranslator(params.provider);
+  async translateApiRequest(nodes: Node[]): Promise<string[]> {
+    const { provider, langFrom, langTo } = this.settings;
+    const providerId = this.getProviderHashId();
+    const texts = nodes.map(node => this.originalText.get(node));
+    const translator = getTranslator(provider);
 
     try {
       const translations = await translator.translateMany({
-        from: params.langFrom,
-        to: params.langTo,
+        from: langFrom,
+        to: langTo,
         texts,
       });
 
       const result = texts.map((originalText, i) => [originalText, translations[i]]);
-      this.logger.info(`TRANSLATED TEXTS: ${textNodes.length}`, { params, result });
+      this.logger.info(`TRANSLATED TEXTS: ${nodes.length}`, { result });
 
       translations.forEach((translation, index) => {
-        const node = textNodes[index];
-        if (!this.translations.has(node)) this.translations.set(node, {});
-        this.translations.get(node)[hashId] = translation;
+        const node = nodes[index];
+        const savedTranslations = this.translations.get(node);
+        savedTranslations[providerId] = translation;
       });
 
       return translations;
     } catch (err) {
-      this.logger.error(`TRANSLATION FAILED: ${err}`, { params, texts });
+      this.logger.error(`TRANSLATION FAILED: ${err}`, { texts });
     }
 
     return [];
   }
 
-  normalizeText(node: Text): string {
-    return node.nodeValue.trim();
+  isTranslatableNode(node: Node): boolean {
+    const elem = node instanceof Text ? node.parentElement : node as HTMLElement;
+    const skipByTag = !elem || PageTranslator.SKIP_TAGS.includes(elem.tagName);
+    if (skipByTag) return false;
+
+    if (node instanceof Text) {
+      const text = this.getNodeText(node);
+      const empty = !text.length;
+      const hasWords = PageTranslator.RX_LETTER.test(text);
+      return !empty && hasWords;
+    }
+    if (node instanceof HTMLImageElement || node instanceof HTMLAreaElement) {
+      return Boolean(this.getNodeImageText(node));
+    }
+    if (node instanceof HTMLOptGroupElement || node instanceof HTMLOptionElement) {
+      return Boolean(this.getNodeSelectLabel(node));
+    }
+    if (node instanceof HTMLInputElement) {
+      return Boolean(this.getNodeInputPlaceholder(node) || this.getNodeInputButtonValue(node));
+    }
+    if (node instanceof HTMLTextAreaElement) {
+      return Boolean(this.getNodeInputPlaceholder(node));
+    }
   }
 
-  acceptTextNodeFilter(node: Node): boolean {
-    if (node.nodeType !== Node.TEXT_NODE) return false;
-
-    const parentElem = node.parentElement;
-    const skippedByParentTag = !parentElem || PageTranslator.SKIP_TAGS.has(parentElem.tagName);
-    if (skippedByParentTag) return false;
-
-    const text = this.normalizeText(node as Text);
-    const empty = !text.length;
-    const hasWords = PageTranslator.RX_LETTER.test(text);
-    return !empty && hasWords;
-  }
-
-  collectTextNodes(rootElem: HTMLElement | ShadowRoot = document.body): Text[] {
-    const treeWalker = document.createTreeWalker(rootElem, NodeFilter.SHOW_TEXT, {
-        acceptNode: (node: Text) => {
-          const accepted = this.acceptTextNodeFilter(node);
-          return accepted ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
+  protected collectNodes(rootElem: HTMLElement | ShadowRoot = document.body): Node[] {
+    const treeWalker = document.createTreeWalker(
+      rootElem,
+      NodeFilter.SHOW_TEXT | NodeFilter.SHOW_ELEMENT,
+      {
+        acceptNode: (node: Node) => {
+          const isTranslatable = this.isTranslatableNode(node);
+          if (isTranslatable === undefined) return NodeFilter.FILTER_SKIP; // traverse child nodes
+          return isTranslatable ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
         },
       }
     );
 
-    const nodes: Text[] = [];
-    while (treeWalker.nextNode()) nodes.push(treeWalker.currentNode as Text);
-    const shadowDomNodes: Text[] = this.collectTextNodesShadowDOM(rootElem);
+    const nodes: Node[] = [];
+    while (treeWalker.nextNode()) {
+      nodes.push(treeWalker.currentNode);
+    }
+
+    // TODO: try to handle within single `TreeWalker` above
+    const shadowDomNodes = this.collectNodesShadowDOM(rootElem);
     nodes.push(...shadowDomNodes);
 
     return nodes;
   }
 
-  protected collectTextNodesShadowDOM(rootElem: HTMLElement | ShadowRoot): Text[] {
-    const shadowDomElements = Array.from(rootElem.querySelectorAll("*")).filter(elem => elem.shadowRoot) as HTMLElement[];
+  protected collectNodesShadowDOM(rootElem: HTMLElement | ShadowRoot): Node[] {
+    const shadowDomElements = Array
+      .from(rootElem.querySelectorAll("*"))
+      .filter(elem => elem.shadowRoot) as HTMLElement[];
 
     if (shadowDomElements.length) {
       this.logger.info("collecting texts from shadow-DOM", shadowDomElements);
-      return shadowDomElements.map(elem => this.collectTextNodes(elem.shadowRoot)).flat();
+      return shadowDomElements.map(elem => this.collectNodes(elem.shadowRoot)).flat();
     }
     return [];
   }
 
-  watchDOMTextNodes(rootElem = document.body): () => void {
+  protected watchDOMNodeUpdates(rootElem = document.body) {
     const observer = new MutationObserver(mutations => {
-      const freshNodes: Text[] = [];
+      const freshNodes: Node[] = [];
 
-      for (const m of mutations) {
-        m.addedNodes.forEach(node => {
-          if (this.acceptTextNodeFilter(node)) freshNodes.push(node as Text);
+      for (const mutation of mutations) {
+        mutation.addedNodes.forEach(node => {
+          if (this.isTranslatableNode(node)) {
+            freshNodes.push(node);
+          }
 
           if (node.nodeType === Node.ELEMENT_NODE) {
-            const innerTexts = this.collectTextNodes(node as HTMLElement);
-            freshNodes.push(...innerTexts);
+            const innerNodes = this.collectNodes(node as HTMLElement);
+            freshNodes.push(...innerNodes);
           }
         });
       }
 
       if (freshNodes.length) {
         this.logger.info("NEW TEXT NODES", freshNodes);
-        this.processTextNodes(freshNodes);
+        this.processNodes(freshNodes);
       }
     });
 
@@ -377,16 +469,21 @@ export class PageTranslator {
     return () => observer.disconnect();
   }
 
-  watchVisibleTextNodes(textNodes: Text[], { onVisible }: WatchViewportTextNodesOpts = {}) {
+  protected enableTrafficSaveMode(nodes: Node[]) {
     const intersectionObserver = new IntersectionObserver(entries => {
         for (const entry of entries) {
           if (entry.isIntersecting) {
             const target = entry.target as HTMLElement;
-            const texts = this.parentNodes.get(target);
-            if (texts) {
-              onVisible?.(target);
-              texts.forEach((text) => this.textNodesViewport.add(text));
-              intersectionObserver.unobserve(target); // children texts processed, stop watching
+
+            if (this.isTranslatableNode(target)) {
+              this.nodesFromViewport.add(target); // handle <img alt>, <input placeholder>, etc.
+              intersectionObserver.unobserve(target);
+            } else {
+              const texts = this.tooltipNodes.get(target);
+              if (texts) {
+                texts.forEach((text) => this.nodesFromViewport.add(text));
+                intersectionObserver.unobserve(target); // children texts processed, stop watching
+              }
             }
           }
         }
@@ -396,23 +493,26 @@ export class PageTranslator {
       }
     );
 
-    const textParents = new Set(textNodes.map(text => text.parentElement).filter(Boolean));
-    textParents.forEach(elem => intersectionObserver.observe(elem)); // subscribe
+    nodes
+      .map(node => node instanceof Text ? node.parentElement : node as HTMLElement)
+      .filter(Boolean)
+      .forEach(elem => intersectionObserver.observe(elem)); // subscribe
+
     return () => intersectionObserver.disconnect(); // unsubscribe
   }
 
-  protected getStorageHashId(text: string, providerHashId = this.getProviderHashId()) {
-    return `${providerHashId}--${md5(text)}`;
+  protected getStorageHashId(text: string, providerId = this.getProviderHashId()) {
+    return `${providerId}--${md5(text)}`;
   }
 
-  protected saveStorageCache(textNodes: Text[], translations: string[], providerHashId = this.getProviderHashId()): void {
+  protected saveStorageCache(nodes: Node[], translations: string[]): void {
     queueMicrotask(() => {
-      textNodes.forEach((textNode, index) => {
-        const originalText = this.originalText.get(textNode);
+      nodes.forEach((node, index) => {
+        const originalText = this.originalText.get(node);
         if (originalText) {
           const translation = translations[index];
           if (translation) {
-            const translationCacheId = this.getStorageHashId(originalText, providerHashId);
+            const translationCacheId = this.getStorageHashId(originalText);
             sessionStorage.setItem(translationCacheId, translation);
           }
         }
@@ -420,10 +520,10 @@ export class PageTranslator {
     });
   }
 
-  protected getStorageCache(textNode: Text, providerHashId = this.getProviderHashId()): string | undefined {
-    const text = this.originalText.get(textNode);
+  protected getStorageCache(node: Node, providerId = this.getProviderHashId()): string | undefined {
+    const text = this.originalText.get(node);
     if (text) {
-      const storageCacheId = this.getStorageHashId(text, providerHashId);
+      const storageCacheId = this.getStorageHashId(text, providerId);
       return sessionStorage.getItem(storageCacheId);
     }
   }
