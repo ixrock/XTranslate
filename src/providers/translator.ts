@@ -1,7 +1,7 @@
 // Base class for all translation providers
 
 import { observable } from "mobx";
-import { autoBind, createLogger, JsonResponseError } from "../utils";
+import { autoBind, createLogger } from "../utils";
 import { isOptionsPage, ProxyRequestPayload, ProxyResponseType } from "../extension";
 import { ProviderCodeName } from "./providers";
 import { getMessage } from "../i18n";
@@ -352,7 +352,9 @@ export interface ITranslationDictionaryMeaning {
   examples?: string[][] // examples in source lang
 }
 
-export interface ITranslationError extends JsonResponseError {
+export interface ITranslationError {
+  statusCode: number;
+  message: string;
 }
 
 export function isTranslationResult(data: ITranslationResult | unknown): data is ITranslationResult {

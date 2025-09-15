@@ -1,6 +1,6 @@
 //-- Network proxy (to avoid CORS errors in `options` and `content-script` pages)
 
-import { blobToBase64DataUrl, createLogger, parseJson, toBinaryFile } from "../utils";
+import { blobToBase64DataUrl, createLogger, toBinaryFile } from "../utils";
 import { isBackgroundWorker, onMessage, sendMessage } from "../extension/runtime"
 import { MessageType, ProxyRequestPayload, ProxyResponsePayload, ProxyResponseType } from "../extension/messages"
 
@@ -21,9 +21,18 @@ export async function handleProxyRequestPayload<Response>({ url, responseType, r
   };
 
   switch (responseType) {
-  case ProxyResponseType.JSON:
-    payload.data = await parseJson(httpResponse);
+  case ProxyResponseType.JSON: {
+    const data = await httpResponse.json();
+    if (httpResponse.ok) payload.data = data;
+    else {
+      throw {
+        statusCode: httpResponse.status,
+        message: httpResponse.statusText,
+        ...data,
+      }
+    }
     break;
+  }
 
   case ProxyResponseType.TEXT:
     payload.data = await httpResponse.text();
