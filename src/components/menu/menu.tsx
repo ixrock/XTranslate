@@ -1,4 +1,7 @@
+// TODO: use native popover API
+//  see: https://developer.mozilla.org/en-US/docs/Web/API/Popover_API
 import * as styles from './menu.module.scss'
+
 import React, { Fragment, ReactElement, ReactNode, PropsWithChildren } from "react";
 import { createPortal } from "react-dom";
 import { observer } from "mobx-react";

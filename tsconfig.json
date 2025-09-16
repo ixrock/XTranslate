@@ -26,7 +26,7 @@
     "custom-types.d.ts",
     "webpack.config.ts",
     "jest.setup.ts",
-    "package.json",
+    "package.json"
   ],
   "exclude": [
     "node_modules"

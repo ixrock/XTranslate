@@ -110,12 +110,12 @@ export class StorageHelper<T> {
       this.logger.info(`saving state to external storage"`, {
         state,
         key: this.key,
-        origin: location?.href,
+        origin: StorageHelper.getResourceOrigin(),
       });
       this.saving = true;
       await this.storage?.setItem(this.key, state);
     } catch (error) {
-      this.logger.error("saving state to external storage has failed", error);
+      console.error("saving state to external storage has failed", error);
     } finally {
       this.saving = false;
     }

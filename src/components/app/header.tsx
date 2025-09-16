@@ -16,12 +16,17 @@ import { getLocale, getMessage } from "@/i18n";
 import { SelectLocaleIcon } from "../select-locale";
 import { Tooltip } from "../tooltip";
 import { exportSettingsDialogState } from "./export-settings-dialog";
+import { sendMetric } from "@/background/metrics.bgc";
 
 @observer
 export class Header extends React.Component {
   constructor(props: object) {
     super(props);
     makeObservable(this);
+  }
+
+  componentDidMount() {
+    void sendMetric("pro_button_shown", { source: "translate_tab" })
   }
 
   detachWindow = () => {
@@ -44,6 +49,29 @@ export class Header extends React.Component {
   private onTabsChange = async (page: PageId) => {
     await navigate({ page });
     window.scrollTo(0, 0);
+  }
+
+  renderProButtonEarlyAccess() {
+    const earlyAccessUrl = `${websiteURL}/early-access?source=extension&lang=${getLocale()}`;
+
+    const getPro = () => {
+      void sendMetric("pro_button_clicked", { source: "translate_tab" });
+    }
+
+    return (
+      <div className="buy-pro-button box grow flex justify-center">
+        <a id="pro-discount" href={earlyAccessUrl} onMouseDown={getPro} target="_blank">
+          <Icon small material="discount"/>
+          <span>{getMessage("pro_version_promo_link_text")}</span>
+        </a>
+        <Tooltip anchorId="pro-discount" following>
+          <div className="flex gaps align-center">
+            <Icon small material="auto_fix_high"/>
+            <span>{getMessage("pro_version_promo_tooltip")}</span>
+          </div>
+        </Tooltip>
+      </div>
+    )
   }
 
   render() {
@@ -70,22 +98,7 @@ export class Header extends React.Component {
           <div className="app-title">
             {name} <sup className="app-version">{version}</sup>
           </div>
-          <div className="box grow flex justify-center">
-            <a
-              id="pro-discount"
-              href={`${websiteURL}/early-access?source=extension&lang=${getLocale()}`}
-              target="_blank"
-            >
-              <Icon small material="discount"/>
-              <span>{getMessage("pro_version_promo_link_text")}</span>
-            </a>
-            <Tooltip anchorId="pro-discount" following>
-              <div className="flex gaps align-center">
-                <Icon small material="auto_fix_high" />
-                <span>{getMessage("pro_version_promo_tooltip")}</span>
-              </div>
-            </Tooltip>
-          </div>
+          {this.renderProButtonEarlyAccess()}
           {showTranslateIcon && (
             <Icon
               small

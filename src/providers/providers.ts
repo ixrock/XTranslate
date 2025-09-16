@@ -21,9 +21,8 @@ export type AIModelTranslationKey =
 
 // OpenAI models
 export enum OpenAIModel {
-  COST_EFFECTIVE = "gpt-4.1-mini",
-  RECOMMENDED = "gpt-4.1",
-  REASONING_LIGHT = "o4-mini",
+  COST_EFFECTIVE = "gpt-5-mini",
+  RECOMMENDED = "gpt-5-chat-latest"
 }
 
 // Grok models (x.ai)

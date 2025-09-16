@@ -9,7 +9,7 @@ export const GA_API_SECRET = "1bWF6YDXSM295O3ONY9esw";
 
 export const gaClientId = createStorage("ga_client_id", {
   area: "sync",
-  defaultValue: crypto.randomUUID(),
+  defaultValue: crypto.randomUUID?.() ?? Math.random().toString(36).substring(2),
   saveDefaultWhenEmpty: true,
 });
 
@@ -100,6 +100,12 @@ export type GoogleMetricEvents = {
     lang_from: string;
     lang_to: string;
   };
+  pro_button_shown: {
+    source: MetricSourceEnv;
+  }
+  pro_button_clicked: {
+    source: MetricSourceEnv;
+  }
   // TODO: use metric
   settings_changed: {
     name: string;

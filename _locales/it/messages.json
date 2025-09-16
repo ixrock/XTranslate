@@ -368,11 +368,8 @@
   "favorites_lang_title": {
     "message": "Preferiti"
   },
-  "donate_title": {
+  "support_developers": {
     "message": "Supporto agli sviluppatori"
-  },
-  "donate_description": {
-    "message": "Se ti piace l'app, considera di fare una donazione agli sviluppatori. Grazie!"
   },
   "service_unavailable": {
     "message": "Servizio non disponibile. Riprova dopo 5-25 minuti. Se succede continuamente, aumenta il ritardo della traduzione nelle impostazioni."
@@ -385,51 +382,6 @@
   },
   "privacy_policy_accept_terms": {
     "message": "Accetta i termini e le condizioni"
-  },
-  "mellowtel_greetings": {
-    "message": "Ciao, amico 👋"
-  },
-  "mellowtel_text1": {
-    "message": "Come forse sai, questa estensione è gratuita e disponibile per tutti... ma per mantenerla attiva questa volta abbiamo bisogno di un tuo intervento!"
-  },
-  "mellowtel_text2": {
-    "message": "Questa nuova versione include la libreria open-source { $link }. Questa libreria ti permette di condividere la tua connessione internet inutilizzata con laboratori di IA e startup fidate che la utilizzano per addestrare i loro modelli."
-  },
-  "mellowtel_usage_title": {
-    "message": "Usiamo Mellowtel per:"
-  },
-  "mellowtel_usage1": {
-    "message": "Monitorare le interruzioni del servizio"
-  },
-  "mellowtel_usage2": {
-    "message": "Misurare la qualità del servizio"
-  },
-  "mellowtel_usage3": {
-    "message": "Come sviluppatore di questa estensione, ottenere una piccola parte del reddito"
-  },
-  "mellowtel_accept_all_info1": {
-    "message": "Se scegli 'Accetta tutto', useremo anche l'API di Mellowtel per: permettere a partner fidati di accedere alle risorse internet, instradando anche parte del loro traffico attraverso il tuo nodo nella rete."
-  },
-  "mellowtel_accept_all_info2": {
-    "message": "Mellowtel condivide solo la tua larghezza di banda. La sicurezza e la privacy sono garantite al 100% e la libreria è open-source per tutti da vedere."
-  },
-  "mellowtel_regulation1": {
-    "message": "Non raccoglie, condivide o vende informazioni personali (nemmeno dati anonimizzati)."
-  },
-  "mellowtel_regulation2": {
-    "message": "È anche altamente regolamentata: Mellowtel mantiene una comunicazione continua con i regolatori del Chrome Web Store per garantire un'esperienza sicura."
-  },
-  "mellowtel_regulation3": {
-    "message": "Fornisce anche ai regolatori del CWS strumenti per monitorare e far rispettare la conformità."
-  },
-  "mellowtel_button_decline": {
-    "message": "Rifiuta l'uso opzionale"
-  },
-  "mellowtel_button_accept": {
-    "message": "Accetta tutto"
-  },
-  "mellowtel_dialog_footer": {
-    "message": "Grazie per aver dedicato del tempo alla lettura, team { $devs }."
   },
   "error_403_auth_failed": {
     "message": "Autorizzazione fallita. Fornisci una chiave API valida nelle impostazioni."
@@ -448,5 +400,11 @@
   },
   "pdf_use_custom_viewer_info": {
     "message": "Questa opzione sostituirà il visualizzatore PDF predefinito"
+  },
+  "skip_popup_inject_for_pages": {
+    "message": "Salta URL"
+  },
+  "skip_popup_inject_for_pages_info": {
+    "message": "Aggiungi URL per saltare l'iniezione del popup se si verificano problemi, ad esempio il controllo dell'iframe captcha di Cloudflare."
   }
 }

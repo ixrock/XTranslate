@@ -368,11 +368,8 @@
   "favorites_lang_title": {
     "message": "Favoriten"
   },
-  "donate_title": {
+  "support_developers": {
     "message": "Entwicklerunterstützung"
-  },
-  "donate_description": {
-    "message": "Wenn Ihnen die App gefällt, erwägen Sie bitte eine Spende an die Entwickler. Danke!"
   },
   "service_unavailable": {
     "message": "Dienst nicht verfügbar. Versuchen Sie es nach 5-25 Minuten erneut. Wenn dies ständig passiert, erhöhen Sie die Übersetzungsverzögerung in den Einstellungen."
@@ -385,51 +382,6 @@
   },
   "privacy_policy_accept_terms": {
     "message": "Allgemeine Geschäftsbedingungen akzeptieren"
-  },
-  "mellowtel_greetings": {
-    "message": "Hallo, Freund 👋"
-  },
-  "mellowtel_text1": {
-    "message": "Wie Sie vielleicht wissen, ist diese Erweiterung kostenlos und für jeden verfügbar... aber dieses Mal brauchen wir eine Handlung von Ihnen, um sie aufrechtzuerhalten!"
-  },
-  "mellowtel_text2": {
-    "message": "Diese neue Version enthält die Open-Source-Bibliothek { $link }. Diese Bibliothek ermöglicht es Ihnen, Ihr ungenutztes Internet mit vertrauenswürdigen KI-Laboren und Start-ups zu teilen, die es verwenden, um ihre Modelle zu trainieren."
-  },
-  "mellowtel_usage_title": {
-    "message": "Wir verwenden Mellowtel, um:"
-  },
-  "mellowtel_usage1": {
-    "message": "Ausfälle des Dienstes zu verfolgen"
-  },
-  "mellowtel_usage2": {
-    "message": "Die Qualität des Dienstes zu messen"
-  },
-  "mellowtel_usage3": {
-    "message": "Als Entwickler dieser Erweiterung einen kleinen Anteil am Umsatz zu erhalten"
-  },
-  "mellowtel_accept_all_info1": {
-    "message": "Wenn Sie 'Alles akzeptieren' wählen, verwenden wir auch die Mellowtel-API, um: Vertrauenswürdigen Partnern den Zugriff auf Internetressourcen zu ermöglichen, indem ein Teil ihres Traffics über Ihren Knoten im Netzwerk geroutet wird."
-  },
-  "mellowtel_accept_all_info2": {
-    "message": "Mellowtel teilt nur Ihre Bandbreite. Sicherheit und Privatsphäre sind zu 100% garantiert, und die Bibliothek ist Open Source für alle sichtbar."
-  },
-  "mellowtel_regulation1": {
-    "message": "Es sammelt, teilt oder verkauft keine persönlichen Informationen (nicht einmal anonymisierte Daten)."
-  },
-  "mellowtel_regulation2": {
-    "message": "Es ist auch stark reguliert: Mellowtel kommuniziert kontinuierlich mit den Regulatoren des Chrome Web Stores, um eine sichere Erfahrung zu gewährleisten."
-  },
-  "mellowtel_regulation3": {
-    "message": "Es stellt den Regulatoren des CWS auch Werkzeuge zur Verfügung, um die Einhaltung zu überwachen und durchzusetzen."
-  },
-  "mellowtel_button_decline": {
-    "message": "Optionalen Gebrauch ablehnen"
-  },
-  "mellowtel_button_accept": {
-    "message": "Alles akzeptieren"
-  },
-  "mellowtel_dialog_footer": {
-    "message": "Danke, dass Sie sich die Zeit genommen haben zu lesen, Teams { $devs }."
   },
   "error_403_auth_failed": {
     "message": "Authentifizierung fehlgeschlagen. Bitte geben Sie einen gültigen Authentifizierungs-API-Schlüssel in den Einstellungen an."
@@ -448,5 +400,11 @@
   },
   "pdf_use_custom_viewer_info": {
     "message": "Diese Option ersetzt den Standard-PDF-Viewer"
+  },
+  "skip_popup_inject_for_pages": {
+    "message": "URLs überspringen"
+  },
+  "skip_popup_inject_for_pages_info": {
+    "message": "Fügen Sie URLs hinzu, um das Einfügen des Pop-ups zu überspringen, falls Sie Probleme haben, z. B. bei der Überprüfung des Cloudflare Captcha-Iframes."
   }
 }

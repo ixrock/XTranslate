@@ -1,3 +1,6 @@
+// TODO: use native dialogs / popover API
+//  see: https://developer.mozilla.org/en-US/docs/Web/API/Popover_API
+//  see: https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/dialog
 import * as styles from "./dialog.module.scss";
 
 import React from "react";

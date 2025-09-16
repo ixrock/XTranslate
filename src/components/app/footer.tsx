@@ -42,7 +42,7 @@ export class Footer extends React.Component {
         </div>
         <a className="support box right noshrink flex gaps align-center" onClick={this.supportDevelopers}>
           <Icon material="rocket_launcher" small/>
-          <span className="text">{getMessage("donate_title")}</span>
+          <span className="text">{getMessage("support_developers")}</span>
         </a>
       </div>
     );

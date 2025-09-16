@@ -50,6 +50,7 @@ export const settingsStorage = createStorage("settings", {
     grokAiModel: GrokAIModel.RECOMMENDED,
     deepSeekModel: DeepSeekAIModel.RECOMMENDED,
     geminiModel: GeminiAIModel.RECOMMENDED,
+    letterCaseAutoCorrection: true, // split content per sentence
     tts: {
       systemVoiceIndex: 0,
       openAiVoice: OpenAIModelTTSVoice.Alloy,
@@ -65,8 +66,17 @@ export const settingsStorage = createStorage("settings", {
       trafficSaveMode: true,
       alwaysTranslatePages: [],
       showMore: false,
-    },
+    }
   }
+});
+
+export const popupSkipInjectionUrls = createStorage<string[]>("popup_skip_inject", {
+  area: "sync",
+  autoLoad: true,
+  deepMergeOnLoad: false,
+  defaultValue: [
+    "https://challenges.cloudflare.com/"
+  ]
 });
 
 export const popupHotkey = createStorage("popup_hotkey", {

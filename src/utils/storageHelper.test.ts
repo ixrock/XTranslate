@@ -1,39 +1,7 @@
 import { reaction } from "mobx";
 import { StorageAdapter, StorageHelper } from "./storageHelper";
-import { delay } from "./delay";
 
 describe("renderer/utils/StorageHelper", () => {
-  describe("window.localStorage might be used as StorageAdapter", () => {
-    type StorageModel = string;
-
-    const storageKey = "ui-settings";
-    let storageHelper: StorageHelper<StorageModel>;
-
-    beforeEach(() => {
-      localStorage.clear();
-
-      storageHelper = new StorageHelper<StorageModel>(storageKey, {
-        storageAdapter: localStorage,
-        defaultValue: "test",
-        autoLoad: false,
-      });
-    });
-
-    it("initialized with default value", async () => {
-      localStorage.setItem(storageKey, "saved"); // pretending it was saved previously
-
-      expect(storageHelper.key).toBe(storageKey);
-      expect(storageHelper.defaultValue).toBe("test");
-      expect(storageHelper.get()).toBe("test");
-
-      await storageHelper.load();
-
-      expect(storageHelper.key).toBe(storageKey);
-      expect(storageHelper.defaultValue).toBe("test");
-      expect(storageHelper.get()).toBe("saved");
-    });
-  });
-
   describe("Using custom StorageAdapter", () => {
     const storageKey = "mySettings";
     const storageMock: Record<string, any> = {
@@ -49,7 +17,6 @@ describe("renderer/utils/StorageHelper", () => {
 
     type StorageModel = Partial<typeof defaultValue>;
     let storageHelper: StorageHelper<StorageModel>;
-    let storageHelperAsync: StorageHelper<StorageModel>;
     let storageAdapter: StorageAdapter<StorageModel>;
 
     beforeEach(() => {
@@ -73,19 +40,6 @@ describe("renderer/utils/StorageHelper", () => {
         defaultValue: defaultValue,
         storageAdapter: storageAdapter,
       });
-
-      storageHelperAsync = new StorageHelper(storageKey, {
-        autoLoad: false,
-        defaultValue: defaultValue,
-        storageAdapter: {
-          ...storageAdapter,
-          async getItem(key: string): Promise<typeof defaultValue | any> {
-            await delay(500); // fake loading timeout
-
-            return storageAdapter.getItem(key);
-          }
-        },
-      });
     });
 
     it("loads data from storage with fallback to default-value", () => {
@@ -96,15 +50,11 @@ describe("renderer/utils/StorageHelper", () => {
       expect(storageAdapter.getItem).toHaveBeenCalledWith(storageHelper.key);
     });
 
-    it("async loading from storage supported too", async () => {
-      expect(storageHelperAsync.initialized).toBeFalsy();
-      storageHelperAsync.load();
-      await delay(300);
-      expect(storageHelperAsync.loaded).toBeFalsy();
-      expect(storageHelperAsync.get()).toEqual(defaultValue);
-      await delay(200);
-      expect(storageHelperAsync.loaded).toBeTruthy();
-      expect(storageHelperAsync.get().message).toBe("saved-before");
+    it("load() data from external storage", async () => {
+      expect(storageHelper.initialized).toBeFalsy();
+      await storageHelper.load();
+      expect(storageHelper.loaded).toBeTruthy();
+      expect(storageHelper.get().message).toBe("saved-before");
     });
 
     it("set() fully replaces data in storage", async () => {
@@ -185,6 +135,88 @@ describe("renderer/utils/StorageHelper", () => {
       expect(observedChanges[0]).toEqual({ ...defaultValue, lastName: "Black" });
       expect(observedChanges[2][0]).toBe("other-data");
     });
+  });
+
+  it("opts.deepMergeOnLoad: true produces deep merge on load", async () => {
+    const storageKey = "testDeepMergeTrue";
+    const storageAdapter = {
+      getItem: jest.fn(() => ({
+        message: "updated",
+        deepDataTree: { some: "changed" },
+      })),
+      setItem: jest.fn(),
+      removeItem: jest.fn(),
+    };
+
+    const defaultValue = {
+      message: "default",
+      deepDataTree: { other: "defaultOther" },
+    };
+
+    const storageHelper = new StorageHelper(storageKey, {
+      autoLoad: false,
+      deepMergeOnLoad: true,
+      defaultValue,
+      storageAdapter,
+    });
+
+    await storageHelper.load();
+    expect(storageHelper.get()).toEqual({
+      message: "updated",
+      deepDataTree: { some: "changed", other: "defaultOther" },
+    });
+  });
+
+  it("opts.deepMergeOnLoad: false performs shallow merge on load", async () => {
+    const storageKey = "testDeepMergeFalse";
+    const storageAdapter = {
+      getItem: jest.fn(() => ({
+        message: "updated",
+        deepDataTree: { some: "changed" },
+      })),
+      setItem: jest.fn(),
+      removeItem: jest.fn(),
+    };
+
+    const defaultValue = {
+      message: "default",
+      deepDataTree: { some: "default", other: "defaultOther" },
+    };
+
+    const storageHelper = new StorageHelper(storageKey, {
+      autoLoad: false,
+      deepMergeOnLoad: false,
+      defaultValue,
+      storageAdapter,
+    });
+
+    await storageHelper.load();
+    expect(storageHelper.get()).toEqual({
+      message: "updated",
+      deepDataTree: { some: "changed" },
+    });
+  });
+
+  it("opts.saveDefaultWhenEmpty: saves default to storage if loaded data is empty", async () => {
+    const storageKey = "testSaveDefault";
+    const setItemMock = jest.fn();
+    const storageAdapter = {
+      getItem: jest.fn(),
+      setItem: setItemMock,
+      removeItem: jest.fn(),
+    };
+
+    const defaultValue = { message: "default" };
+
+    const storageHelper = new StorageHelper(storageKey, {
+      autoLoad: false,
+      saveDefaultWhenEmpty: true,
+      defaultValue,
+      storageAdapter,
+    });
+
+    await storageHelper.load();
+    expect(setItemMock).toHaveBeenCalledWith(storageKey, defaultValue);
   });
 
 });

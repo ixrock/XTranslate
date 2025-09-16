@@ -62,16 +62,16 @@
   "settings_title_full_page_show_traffic_save_mode_info": {
     "message": "Šetrenie siete/API prekladaním iba zobrazených textov webovej stránky"
   },
-  "settings_title_full_page_empty_list": {
+  "settings_select_empty_list": {
     "message": "Prázdny zoznam"
   },
-  "settings_title_full_page_see_edit_list": {
+  "settings_select_edit_list": {
     "message": "Kliknutím zobrazíte a upravíte zoznam"
   },
-  "settings_title_full_page_add_url": {
+  "settings_select_add_url": {
     "message": "Pridať adresu URL"
   },
-  "settings_title_full_page_add_url_error": {
+  "settings_select_add_url_error": {
     "message": "Pokúsiť sa pridať neplatnú adresu URL"
   },
   "auto_play_tts": {
@@ -428,11 +428,8 @@
   "favorites_lang_title": {
     "message": "Obľúbené"
   },
-  "donate_title": {
+  "support_developers": {
     "message": "Prispieť"
-  },
-  "donate_description": {
-    "message": "Ak sa vám rozšírenie páči, zvážte možnosť prispieť vývojárom. Ďakujeme!"
   },
   "service_unavailable": {
     "message": "Služba je nedostupná. Skúste to znova po 5 - 25 minútach. Ak sa to deje neustále, zvýšte oneskorenie prekladu v nastaveniach."
@@ -445,51 +442,6 @@
   },
   "privacy_policy_accept_terms": {
     "message": "Prijať zmluvné podmienky"
-  },
-  "mellowtel_greetings": {
-    "message": "Ahoj, kamarát 👋"
-  },
-  "mellowtel_text1": {
-    "message": "Ako možno viete, toto rozšírenie je zadarmo a je k dispozícii pre každého... ale aby sme ho mohli udržať, tentoraz vyžadujeme od vás určitú akciu!"
-  },
-  "mellowtel_text2": {
-    "message": "Táto nová verzia obsahuje knižnicu s otvoreným kódom { $link }. Táto knižnica vám umožňuje zdieľať váš nevyužitý internet s dôveryhodnými AI laboratóriami a startupmi, ktoré ho využívajú na trénovanie svojich modelov."
-  },
-  "mellowtel_usage_title": {
-    "message": "Mellowtel využívame na:"
-  },
-  "mellowtel_usage1": {
-    "message": "Sledovanie výpadkov služby"
-  },
-  "mellowtel_usage2": {
-    "message": "Meranie kvality služby"
-  },
-  "mellowtel_usage3": {
-    "message": "Ako vývojár tohto rozšírenia získate malý podiel z príjmov"
-  },
-  "mellowtel_accept_all_info1": {
-    "message": "Ak zvolíte možnosť 'Prijať všetko', budeme tiež používať rozhranie API spoločnosti Mellowtel na: umožní dôveryhodným partnerom prístup k internetovým zdrojom tým, že časť ich prevádzky bude smerovaná aj cez váš uzol v sieti."
-  },
-  "mellowtel_accept_all_info2": {
-    "message": "Mellowtel zdieľa len vašu šírku pásma. Bezpečnosť a súkromie sú 100% zaručené a knižnica má otvorený kód pre všetkých na prezeranie."
-  },
-  "mellowtel_regulation1": {
-    "message": "Neposkytuje, nezdieľa ani nepredáva osobné údaje (ani anonymizované údaje)."
-  },
-  "mellowtel_regulation2": {
-    "message": "Je tiež prísne regulovaný: Mellowtel neustále komunikuje s regulátormi Chrome Web Store, aby zaručil bezpečný zážitok."
-  },
-  "mellowtel_regulation3": {
-    "message": "Taktiež poskytuje regulátorom CWS nástroje na monitorovanie a zabezpečenie dodržiavania pravidiel."
-  },
-  "mellowtel_button_decline": {
-    "message": "Odmietnuť voliteľné použitie"
-  },
-  "mellowtel_button_accept": {
-    "message": "Prijať všetko"
-  },
-  "mellowtel_dialog_footer": {
-    "message": "Ďakujeme, že ste si našli čas na prečítanie, tímy { $devs }."
   },
   "error_403_auth_failed": {
     "message": "Autorizácia zlyhala. Prosím, zadajte platný kľúč API v nastaveniach."
@@ -544,5 +496,11 @@
   },
   "pro_version_promo_tooltip": {
     "message": "Pripravujeme verziu PRO s celostránkovým prekladom AI. Pre viac informácií a uplatnenie zľavy kliknite sem."
+  },
+  "skip_popup_inject_for_pages": {
+    "message": "Preskočiť URL"
+  },
+  "skip_popup_inject_for_pages_info": {
+    "message": "Pridajte URL, ktoré sa majú preskočiť pri vkladaní pop-upu, ak nastanú problémy, napr. kontrola captcha iframe od Cloudflare."
   }
 }

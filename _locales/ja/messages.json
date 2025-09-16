@@ -368,11 +368,8 @@
   "favorites_lang_title": {
     "message": "お気に入り"
   },
-  "donate_title": {
+  "support_developers": {
     "message": "開発者へのサポート"
-  },
-  "donate_description": {
-    "message": "アプリが気に入ったら、開発者への寄付を検討してください。感謝！"
   },
   "service_unavailable": {
     "message": "サービスが利用できません。5-25分後に再試行してください。頻繁に発生する場合は、設定で翻訳の遅延を増やしてください。"
@@ -385,51 +382,6 @@
   },
   "privacy_policy_accept_terms": {
     "message": "利用規約に同意"
-  },
-  "mellowtel_greetings": {
-    "message": "こんにちは、友達 👋"
-  },
-  "mellowtel_text1": {
-    "message": "ご存知の通り、この拡張機能は無料で全員に利用可能です...しかし、今回は維持するためにあなたの行動が必要です！"
-  },
-  "mellowtel_text2": {
-    "message": "この新バージョンには { $link } オープンソースライブラリが含まれています。このライブラリを使用すると、信頼できるAIラボやスタートアップと未使用のインターネットを共有し、彼らが自分のモデルを訓練するために利用することができます。"
-  },
-  "mellowtel_usage_title": {
-    "message": "Mellowtelを使用して:"
-  },
-  "mellowtel_usage1": {
-    "message": "サービス停止を追跡"
-  },
-  "mellowtel_usage2": {
-    "message": "サービスの品質を測定"
-  },
-  "mellowtel_usage3": {
-    "message": "この拡張機能の開発者として、収益の一部を得る"
-  },
-  "mellowtel_accept_all_info1": {
-    "message": "'すべて受け入れる'を選択した場合、Mellowtel APIを使用して、信頼できるパートナーがネットワーク内のノードを通じてインターネットリソースにアクセスできるようにするためのトラフィックの一部をルーティングします。"
-  },
-  "mellowtel_accept_all_info2": {
-    "message": "Mellowtelはあなたの帯域幅のみを共有します。セキュリティとプライバシーは100%保証され、ライブラリは誰でも見られるオープンソースです。"
-  },
-  "mellowtel_regulation1": {
-    "message": "個人情報を収集、共有、販売することはありません（匿名化されたデータも含む）。"
-  },
-  "mellowtel_regulation2": {
-    "message": "また、非常に規制されています: MellowtelはChrome Web Storeの規制者と常に連絡を取り合い、安全な体験を保証しています。"
-  },
-  "mellowtel_regulation3": {
-    "message": "また、CWSの規制者にコンプライアンスの監視と施行のためのツールを提供します。"
-  },
-  "mellowtel_button_decline": {
-    "message": "オプションの使用を拒否"
-  },
-  "mellowtel_button_accept": {
-    "message": "すべて受け入れる"
-  },
-  "mellowtel_dialog_footer": {
-    "message": "読んでくれてありがとう、{ $devs } チーム。"
   },
   "error_403_auth_failed": {
     "message": "認証に失敗しました。設定で有効な認証APIキーを指定してください。"
@@ -448,5 +400,11 @@
   },
   "pdf_use_custom_viewer_info": {
     "message": "このオプションはデフォルトのPDFビューアを置き換えます"
+  },
+  "skip_popup_inject_for_pages": {
+    "message": "URLをスキップ"
+  },
+  "skip_popup_inject_for_pages_info": {
+    "message": "何らかの問題が発生した場合（例: Cloudflareのcaptcha iframeチェック）、ポップアップ注入をスキップするためのURLを追加してください。"
   }
 }

@@ -150,7 +150,15 @@ class Bing extends Translator {
       return result;
     };
 
-    return request();
+    try {
+      return await request();
+    } catch (err: BingTranslationError | unknown) {
+      const { error: { code, message } } = err as BingTranslationError;
+      throw {
+        statusCode: code,
+        message: message || `Bing translation error ${code}`,
+      } satisfies ITranslationError
+    }
   }
 }
 
@@ -187,9 +195,11 @@ export interface BingDictionary {
   translations: DictTranslation[]
 }
 
-export interface BingTranslationError extends ITranslationError {
-  statusCode: number;
-  errorMessage: string;
+export interface BingTranslationError {
+  error: {
+    code: number;
+    message: string;
+  }
 }
 
 interface DictTranslation {

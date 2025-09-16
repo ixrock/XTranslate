@@ -1,69 +1,44 @@
-// Restore the case of a text based on another text, preserving sentence structure and proper nouns.
-// e.g. might be used to restore (first) letters case in translated texts based on the original text.
+// Restore letters case preserving original sentence structure, acronyms, etc.
 
 export interface CopyCaseParams {
-  fromText: string,
-  toText: string,
-  locale: string; // e.g. 'en-US'
-  properNouns: string[]; // "Monday"
+  fromLocale: string; // e.g. 'en-US'
+  toLocale: string; // e.g. 'ru'
+  fromText: string; // e.g "Hello World"
+  toText: string; // "привет мир"
 }
 
-export function copyCase({ locale, toText, fromText, properNouns }: CopyCaseParams): string {
-  const sentenceSegmenter = new Intl.Segmenter(locale, { granularity: 'sentence' });
-  const fromSegments = Array.from(sentenceSegmenter.segment(fromText));
-  const toSegments = Array.from(sentenceSegmenter.segment(toText));
-  const properNounsLower = new Set(properNouns.map((word) => word.toLowerCase()));
+export const ACRONYM_REGX = /\b[A-Z]{2,}\b/g; // TODO: support
 
-  const acronymRegex = /\b[A-Z]{2,}\b/g;
-  const acronyms = Array.from(new Set(fromText.match(acronymRegex) || []));
+function splitSentences(text: string): string[] {
+  return text.match(/[^.!?]+[.!?]+(\s|$)/g) || [text];
+}
 
-  function isLetter(char: string): boolean {
-    return char.toLowerCase() !== char.toUpperCase();
-  }
+export function copyCase({ fromLocale, toLocale, fromText, toText }: CopyCaseParams): string {
+  const fromSegmenter = new Intl.Segmenter(fromLocale, { granularity: 'sentence' });
+  const toSegmenter = new Intl.Segmenter(toLocale, { granularity: 'sentence' });
 
-  function isUppercase(char: string): boolean {
-    return char === char.toUpperCase();
-  }
+  const rawFromSegments = Array.from(fromSegmenter.segment(fromText)).map(s => s.segment);
+  const rawToSegments = Array.from(toSegmenter.segment(toText)).map(s => s.segment);
 
-  function restoreCapitalization(from: string, to: string): string {
-    const trimmedFrom = from.trim();
-    const trimmedTo = to.trim();
-    if (!trimmedFrom || !trimmedTo) return trimmedTo;
+  const fromSentences = rawFromSegments.flatMap(splitSentences);
+  const toSentences = rawToSegments.flatMap(splitSentences);
 
-    const firstFromChar = trimmedFrom[0];
-    const firstToChar = trimmedTo[0];
+  const patched = toSentences.map((sentence, index) => {
+    const from = fromSentences[index];
+    if (!from) return sentence;
 
-    const shouldCapitalize = isLetter(firstFromChar) && isUppercase(firstFromChar);
+    const fChar = from.trim()[0];
+    const tChar = sentence.trim()[0];
 
-    return (shouldCapitalize
-      ? firstToChar.toUpperCase()
-      : firstToChar.toLowerCase()) + trimmedTo.slice(1);
-  }
+    const shouldUpper = fChar === fChar.toUpperCase() && fChar !== fChar.toLowerCase();
+    const shouldLower = fChar === fChar.toLowerCase() && fChar !== fChar.toUpperCase();
 
-  function restoreProperNounsAndAcronyms(text: string): string {
-    return text
-      .split(/\b/)
-      .map((word) => {
-        const lower = word.toLowerCase();
+    const newChar = shouldUpper ? tChar.toUpperCase()
+      : shouldLower ? tChar.toLowerCase()
+        : tChar;
 
-        if (properNounsLower.has(lower)) {
-          return word.charAt(0).toUpperCase() + word.slice(1);
-        }
+    return sentence.replace(tChar, newChar);
+  });
 
-        const upperAcronym = acronyms.find((a) => a.toLowerCase() === lower);
-        if (upperAcronym) return upperAcronym;
-
-        return word;
-      })
-      .join('');
-  }
-
-  return toSegments
-    .map((seg, i) => {
-      const orig = fromSegments[i]?.segment ?? '';
-      let cased = restoreCapitalization(orig, seg.segment);
-      cased = restoreProperNounsAndAcronyms(cased);
-      return cased;
-    })
-    .join('');
+  return patched.join('');
 }
