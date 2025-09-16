@@ -502,5 +502,50 @@
   },
   "skip_popup_inject_for_pages_info": {
     "message": "Pridajte URL, ktoré sa majú preskočiť pri vkladaní pop-upu, ak nastanú problémy, napr. kontrola captcha iframe od Cloudflare."
+  },
+  "mellowtel_greetings": {
+    "message": "Ahoj, priateľ 👋"
+  },
+  "mellowtel_text1": {
+    "message": "Ako možno viete, toto rozšírenie je zadarmo a dostupné pre každého... ale aby sme ho udržali, tentokrát potrebujeme vašu akciu!"
+  },
+  "mellowtel_text2": {
+    "message": "Táto nová verzia obsahuje open-source knižnicu { $link }. Táto knižnica vám umožňuje zdieľať nevyužitý internet s dôveryhodnými AI laboratóriami a startupmi, ktoré ho používajú na trénovanie svojich modelov."
+  },
+  "mellowtel_usage_title": {
+    "message": "Používame Mellowtel na:"
+  },
+  "mellowtel_usage1": {
+    "message": "Sledovanie výpadkov služby"
+  },
+  "mellowtel_usage2": {
+    "message": "Meranie kvality služby"
+  },
+  "mellowtel_usage3": {
+    "message": "Ako vývojár tohto rozšírenia získavam malý podiel na príjmoch"
+  },
+  "mellowtel_accept_all_info1": {
+    "message": "Ak zvolíte 'Prijať všetko', použijeme aj Mellowtel API na: umožnenie dôveryhodným partnerom prístup k internetovým zdrojom tým, že časť ich prevádzky bude smerovaná cez váš uzol v sieti."
+  },
+  "mellowtel_accept_all_info2": {
+    "message": "Mellowtel zdieľa iba vašu šírku pásma. Bezpečnosť a súkromie sú 100% zaručené a knižnica je open source pre každého."
+  },
+  "mellowtel_regulation1": {
+    "message": "Nezbiera, nezdieľa ani nepredáva osobné údaje (ani anonymizované dáta)."
+  },
+  "mellowtel_regulation2": {
+    "message": "Je tiež prísne regulovaný: Mellowtel komunikuje s regulátormi Chrome Web Store, aby zaručil bezpečné používanie."
+  },
+  "mellowtel_regulation3": {
+    "message": "Poskytuje tiež regulátorom CWS nástroje na monitorovanie a vynucovanie súladu."
+  },
+  "mellowtel_button_decline": {
+    "message": "Odmietnuť voliteľné použitie"
+  },
+  "mellowtel_button_accept": {
+    "message": "Prijať všetko"
+  },
+  "mellowtel_dialog_footer": {
+    "message": "Ďakujeme, že ste si našli čas na čítanie, tím { $devs }."
   }
 }

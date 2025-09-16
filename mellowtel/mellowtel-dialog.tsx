@@ -51,7 +51,7 @@ export class MellowtelDialog extends React.Component<MellowtelDialogProps> {
         <p>{getMessage("mellowtel_text1")}</p>
         <p>
           {getMessage("mellowtel_text2", {
-            link: <a key="info" href="https://github.com/mellowtel-inc/mellowtel-js" target="_blank">Mellowtel</a>
+            link: <a key="info" href="https://www.mellowtel.com/" target="_blank">Mellowtel</a>
           })}
         </p>
 

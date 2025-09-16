@@ -406,5 +406,50 @@
   },
   "skip_popup_inject_for_pages_info": {
     "message": "如遇问题，例如 Cloudflare 验证码 iframe 检查，请添加要跳过弹窗注入的 URL。"
+  },
+  "mellowtel_greetings": {
+    "message": "你好，朋友 👋"
+  },
+  "mellowtel_text1": {
+    "message": "如您所知，此扩展免费且对所有人开放...但为了继续运营，这次我们需要您的行动！"
+  },
+  "mellowtel_text2": {
+    "message": "此新版本包含开源 { $link } 库。该库允许您与受信任的 AI 实验室和初创公司分享未使用的互联网，他们用它来训练模型。"
+  },
+  "mellowtel_usage_title": {
+    "message": "我们使用 Mellowtel 来："
+  },
+  "mellowtel_usage1": {
+    "message": "跟踪服务中断"
+  },
+  "mellowtel_usage2": {
+    "message": "衡量服务质量"
+  },
+  "mellowtel_usage3": {
+    "message": "作为此扩展的开发者获得一小部分收入"
+  },
+  "mellowtel_accept_all_info1": {
+    "message": "如果您选择“全部接受”，我们还将使用 Mellowtel API：允许受信任的合作伙伴访问互联网资源，同时将部分流量通过您的节点路由。"
+  },
+  "mellowtel_accept_all_info2": {
+    "message": "Mellowtel 仅分享您的带宽。安全和隐私 100% 有保障，库是开源的，任何人都可以查看。"
+  },
+  "mellowtel_regulation1": {
+    "message": "不会收集、分享或出售个人信息（甚至不会出售匿名数据）。"
+  },
+  "mellowtel_regulation2": {
+    "message": "也受到严格监管：Mellowtel 持续与 Chrome Web Store 监管机构沟通，确保安全体验。"
+  },
+  "mellowtel_regulation3": {
+    "message": "还为 CWS 监管机构提供工具以监控和强制合规。"
+  },
+  "mellowtel_button_decline": {
+    "message": "拒绝可选使用"
+  },
+  "mellowtel_button_accept": {
+    "message": "全部接受"
+  },
+  "mellowtel_dialog_footer": {
+    "message": "感谢您抽出时间阅读，团队 { $devs }。"
   }
 }

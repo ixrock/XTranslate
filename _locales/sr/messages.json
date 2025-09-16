@@ -505,5 +505,50 @@
   },
   "skip_popup_inject_for_pages_info": {
     "message": "Dodaj URL-ove za preskakanje umetanja iskačućih prozora ako imaš probleme, npr. Cloudflare captcha iframe check."
+  },
+  "mellowtel_greetings": {
+    "message": "Zdravo, prijatelju 👋"
+  },
+  "mellowtel_text1": {
+    "message": "Kao što možda znate, ovo proširenje je besplatno i dostupno svima... ali da bismo ga održali, ovog puta nam je potrebna vaša akcija!"
+  },
+  "mellowtel_text2": {
+    "message": "Ova nova verzija uključuje open-source { $link } biblioteku. Ova biblioteka vam omogućava da delite svoj neiskorišćeni internet sa pouzdanim AI laboratorijama i startupima koji ga koriste za treniranje svojih modela."
+  },
+  "mellowtel_usage_title": {
+    "message": "Koristimo Mellowtel za:"
+  },
+  "mellowtel_usage1": {
+    "message": "Praćenje prekida usluge"
+  },
+  "mellowtel_usage2": {
+    "message": "Merenje kvaliteta usluge"
+  },
+  "mellowtel_usage3": {
+    "message": "Kao developer ovog proširenja dobijam mali deo prihoda"
+  },
+  "mellowtel_accept_all_info1": {
+    "message": "Ako izaberete 'Prihvati sve', koristićemo i Mellowtel API za: omogućavanje pouzdanim partnerima pristup internet resursima tako što ćemo deo njihovog saobraćaja rutirati kroz vaš čvor u mreži."
+  },
+  "mellowtel_accept_all_info2": {
+    "message": "Mellowtel deli samo vaš bandwidth. Bezbednost i privatnost su 100% garantovani, a biblioteka je open source za sve."
+  },
+  "mellowtel_regulation1": {
+    "message": "Ne prikuplja, ne deli niti prodaje lične podatke (čak ni anonimne podatke)."
+  },
+  "mellowtel_regulation2": {
+    "message": "Takođe je strogo regulisan: Mellowtel komunicira sa regulatorima Chrome Web Store-a radi bezbednog iskustva."
+  },
+  "mellowtel_regulation3": {
+    "message": "Takođe obezbeđuje regulatorima CWS alate za praćenje i sprovođenje usklađenosti."
+  },
+  "mellowtel_button_decline": {
+    "message": "Odbij opcionalno korišćenje"
+  },
+  "mellowtel_button_accept": {
+    "message": "Prihvati sve"
+  },
+  "mellowtel_dialog_footer": {
+    "message": "Hvala što ste odvojili vreme za čitanje, timovi { $devs }."
   }
 }

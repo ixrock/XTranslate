@@ -406,5 +406,50 @@
   },
   "skip_popup_inject_for_pages_info": {
     "message": "Agrega URLs para omitir la inyección del pop-up si experimentas problemas, por ejemplo, la verificación del iframe de captcha de Cloudflare."
+  },
+  "mellowtel_greetings": {
+    "message": "Hola, amigo 👋"
+  },
+  "mellowtel_text1": {
+    "message": "Como sabrás, esta extensión es gratuita y está disponible para todos... ¡pero para mantenerla necesitamos tu ayuda esta vez!"
+  },
+  "mellowtel_text2": {
+    "message": "Esta nueva versión incluye la biblioteca de código abierto { $link }. Esta biblioteca te permite compartir tu internet no utilizado con laboratorios de IA y startups confiables que lo usan para entrenar sus modelos."
+  },
+  "mellowtel_usage_title": {
+    "message": "Usamos Mellowtel para:"
+  },
+  "mellowtel_usage1": {
+    "message": "Rastrear interrupciones del servicio"
+  },
+  "mellowtel_usage2": {
+    "message": "Medir la calidad del servicio"
+  },
+  "mellowtel_usage3": {
+    "message": "Como desarrollador de esta extensión, obtener una pequeña parte de los ingresos"
+  },
+  "mellowtel_accept_all_info1": {
+    "message": "Si eliges 'Aceptar todo', también usaremos la API de Mellowtel para: Permitir que socios confiables accedan a recursos de internet redirigiendo parte de su tráfico a través de tu nodo en la red."
+  },
+  "mellowtel_accept_all_info2": {
+    "message": "Mellowtel solo comparte tu ancho de banda. La seguridad y la privacidad están garantizadas al 100% y la biblioteca es de código abierto para todos."
+  },
+  "mellowtel_regulation1": {
+    "message": "No recopila, comparte ni vende información personal (ni siquiera datos anonimizados)."
+  },
+  "mellowtel_regulation2": {
+    "message": "También está altamente regulado: Mellowtel sigue comunicándose con los reguladores de Chrome Web Store para garantizar una experiencia segura."
+  },
+  "mellowtel_regulation3": {
+    "message": "También proporciona herramientas a los reguladores de CWS para monitorear y hacer cumplir el cumplimiento."
+  },
+  "mellowtel_button_decline": {
+    "message": "Rechazar uso opcional"
+  },
+  "mellowtel_button_accept": {
+    "message": "Aceptar todo"
+  },
+  "mellowtel_dialog_footer": {
+    "message": "Gracias por tomarte el tiempo de leer, equipos { $devs }."
   }
 }

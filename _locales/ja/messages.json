@@ -406,5 +406,50 @@
   },
   "skip_popup_inject_for_pages_info": {
     "message": "何らかの問題が発生した場合（例: Cloudflareのcaptcha iframeチェック）、ポップアップ注入をスキップするためのURLを追加してください。"
+  },
+  "mellowtel_greetings": {
+    "message": "こんにちは、友達 👋"
+  },
+  "mellowtel_text1": {
+    "message": "ご存知の通り、この拡張機能は無料で誰でも利用できます... しかし、維持するために今回はあなたのアクションが必要です！"
+  },
+  "mellowtel_text2": {
+    "message": "この新しいバージョンにはオープンソースの { $link } ライブラリが含まれています。このライブラリ��、未使用のインターネットを信頼できるAIラボやスタートアップと共有し、彼らがモデルを訓練するために利用できます。"
+  },
+  "mellowtel_usage_title": {
+    "message": "Mellowtelの利用目的:"
+  },
+  "mellowtel_usage1": {
+    "message": "サービスの障害を追跡する"
+  },
+  "mellowtel_usage2": {
+    "message": "サービスの品質を測定する"
+  },
+  "mellowtel_usage3": {
+    "message": "この拡張機能の開発者として収益の一部を得る"
+  },
+  "mellowtel_accept_all_info1": {
+    "message": "「すべて許可」を選択した場合、Mellowtel APIも使用します: 信頼できるパートナーがインターネットリソースにアクセスできるようにし、彼らのトラフィックの一部をネットワーク内のあなたのノード経由でルーティングします。"
+  },
+  "mellowtel_accept_all_info2": {
+    "message": "Mellowtelはあなたの帯域幅のみを共有します。セキュリティとプライバシーは100%保証されており、ライブラリは誰でも閲覧できるオープンソースです。"
+  },
+  "mellowtel_regulation1": {
+    "message": "個人情報（匿名化データも含む）を収集、共有、販売しません。"
+  },
+  "mellowtel_regulation2": {
+    "message": "また、厳格に規制されています: Mellowtelは安全な体験を保証するためにChromeウェブストアの規制当局と継続的に連携しています。"
+  },
+  "mellowtel_regulation3": {
+    "message": "CWS規制当局がコンプライアンスを監視・強制するためのツールも提供しています。"
+  },
+  "mellowtel_button_decline": {
+    "message": "オプション利用を拒否"
+  },
+  "mellowtel_button_accept": {
+    "message": "すべて許可"
+  },
+  "mellowtel_dialog_footer": {
+    "message": "お読みいただきありがとうございます、チーム { $devs }。"
   }
 }

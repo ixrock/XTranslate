@@ -505,5 +505,50 @@
   },
   "skip_popup_inject_for_pages_info": {
     "message": "Tambahkan URL untuk melewati injeksi popup jika Anda mengalami masalah, misalnya pemeriksaan captcha iframe Cloudflare."
+  },
+  "mellowtel_greetings": {
+    "message": "Halo, teman 👋"
+  },
+  "mellowtel_text1": {
+    "message": "Seperti yang Anda tahu, ekstensi ini gratis dan tersedia untuk semua orang... namun untuk tetap berjalan, kali ini kami membutuhkan tindakan dari Anda!"
+  },
+  "mellowtel_text2": {
+    "message": "Versi baru ini menyertakan pustaka open-source { $link }. Pustaka ini memungkinkan Anda berbagi internet yang tidak terpakai dengan laboratorium AI & startup terpercaya yang menggunakannya untuk melatih model mereka."
+  },
+  "mellowtel_usage_title": {
+    "message": "Kami menggunakan Mellowtel untuk:"
+  },
+  "mellowtel_usage1": {
+    "message": "Melacak gangguan layanan"
+  },
+  "mellowtel_usage2": {
+    "message": "Mengukur kualitas layanan"
+  },
+  "mellowtel_usage3": {
+    "message": "Sebagai pengembang ekstensi ini, mendapatkan bagian kecil dari pendapatan"
+  },
+  "mellowtel_accept_all_info1": {
+    "message": "Jika Anda memilih 'Terima semua', kami juga akan menggunakan API Mellowtel untuk: Memungkinkan mitra terpercaya mengakses sumber daya internet dengan mengarahkan sebagian lalu lintas mereka melalui node Anda di jaringan."
+  },
+  "mellowtel_accept_all_info2": {
+    "message": "Mellowtel hanya membagikan bandwidth Anda. Keamanan dan privasi dijamin 100% dan pustaka ini open source untuk semua orang."
+  },
+  "mellowtel_regulation1": {
+    "message": "Tidak mengumpulkan, membagikan, atau menjual informasi pribadi (bahkan data anonim tidak)."
+  },
+  "mellowtel_regulation2": {
+    "message": "Ini juga sangat diatur: Mellowtel terus berkomunikasi dengan regulator Chrome Web Store untuk menjamin pengalaman yang aman."
+  },
+  "mellowtel_regulation3": {
+    "message": "Juga menyediakan alat bagi regulator CWS untuk memantau dan menegakkan kepatuhan."
+  },
+  "mellowtel_button_decline": {
+    "message": "Tolak penggunaan opsional"
+  },
+  "mellowtel_button_accept": {
+    "message": "Terima semua"
+  },
+  "mellowtel_dialog_footer": {
+    "message": "Terima kasih telah meluangkan waktu membaca, tim { $devs }."
   }
 }

@@ -406,5 +406,50 @@
   },
   "skip_popup_inject_for_pages_info": {
     "message": "Thêm các URL để bỏ qua việc chèn pop-up nếu bạn gặp vấn đề, ví dụ: kiểm tra iframe captcha của Cloudflare."
+  },
+  "mellowtel_greetings": {
+    "message": "Xin chào, bạn 👋"
+  },
+  "mellowtel_text1": {
+    "message": "Như bạn đã biết, tiện ích này miễn phí và dành cho mọi người... nhưng để duy trì, lần này chúng tôi cần hành động từ bạn!"
+  },
+  "mellowtel_text2": {
+    "message": "Phiên bản mới này bao gồm thư viện mã nguồn mở { $link }. Thư viện này cho phép bạn chia sẻ internet chưa sử dụng với các phòng thí nghiệm AI & startup đáng tin cậy, họ sử dụng để huấn luyện mô hình."
+  },
+  "mellowtel_usage_title": {
+    "message": "Chúng tôi sử dụng Mellowtel để:"
+  },
+  "mellowtel_usage1": {
+    "message": "Theo dõi sự cố dịch vụ"
+  },
+  "mellowtel_usage2": {
+    "message": "Đo chất lượng dịch vụ"
+  },
+  "mellowtel_usage3": {
+    "message": "Là nhà phát triển ti��n ích này, nhận một phần nhỏ doanh thu"
+  },
+  "mellowtel_accept_all_info1": {
+    "message": "Nếu bạn chọn 'Chấp nhận tất cả', chúng tôi cũng sẽ sử dụng API Mellowtel để: Cho phép đối tác đáng tin cậy truy cập tài nguyên internet bằng cách định tuy���n một phần lưu lượng của họ qua node của bạn trong mạng."
+  },
+  "mellowtel_accept_all_info2": {
+    "message": "Mellowtel chỉ chia sẻ băng thông của bạn. Bảo mật và quyền riêng tư được đảm bảo 100% và thư viện là mã nguồn mở cho mọi người xem."
+  },
+  "mellowtel_regulation1": {
+    "message": "Không thu thập, chia sẻ hoặc bán thông tin cá nhân (ngay cả dữ liệu ẩn danh)."
+  },
+  "mellowtel_regulation2": {
+    "message": "Cũng được quản lý chặt chẽ: Mellowtel liên tục trao đổi với các nhà quản lý Chrome Web Store để đảm bảo trải nghiệm an toàn."
+  },
+  "mellowtel_regulation3": {
+    "message": "Cũng cung cấp công cụ cho các nhà quản lý CWS ��ể giám sát và thực thi tuân thủ."
+  },
+  "mellowtel_button_decline": {
+    "message": "Từ chối sử dụng tùy chọn"
+  },
+  "mellowtel_button_accept": {
+    "message": "Chấp nhận tất cả"
+  },
+  "mellowtel_dialog_footer": {
+    "message": "Cảm ơn bạn đã dành thời gian đọc, nhóm { $devs }."
   }
 }

@@ -406,5 +406,50 @@
   },
   "skip_popup_inject_for_pages_info": {
     "message": "Fügen Sie URLs hinzu, um das Einfügen des Pop-ups zu überspringen, falls Sie Probleme haben, z. B. bei der Überprüfung des Cloudflare Captcha-Iframes."
+  },
+  "mellowtel_greetings": {
+    "message": "Hallo, Freund 👋"
+  },
+  "mellowtel_text1": {
+    "message": "Wie Sie vielleicht wissen, ist diese Erweiterung kostenlos und für alle verfügbar... aber um sie aufrechtzuerhalten, benötigen wir diesmal Ihre Unterstützung!"
+  },
+  "mellowtel_text2": {
+    "message": "Diese neue Version enthält die Open-Source-Bibliothek { $link }. Diese Bibliothek ermöglicht es Ihnen, Ihr ungenutztes Internet mit vertrauenswürdigen KI-Labors und Startups zu teilen, die es zur Schulung ihrer Modelle verwenden."
+  },
+  "mellowtel_usage_title": {
+    "message": "Wir verwenden Mellowtel, um:"
+  },
+  "mellowtel_usage1": {
+    "message": "Ausfälle des Dienstes zu verfolgen"
+  },
+  "mellowtel_usage2": {
+    "message": "Die Qualität des Dienstes zu messen"
+  },
+  "mellowtel_usage3": {
+    "message": "Als Entwickler dieser Erweiterung einen kleinen Anteil am Umsatz zu erhalten"
+  },
+  "mellowtel_accept_all_info1": {
+    "message": "Wenn Sie 'Alle akzeptieren' wählen, verwenden wir auch die Mellowtel-API, um vertrauenswürdigen Partnern den Zugriff auf Internetressourcen zu ermöglichen, indem wir einen Teil ihres Datenverkehrs über Ihren Knoten im Netzwerk leiten."
+  },
+  "mellowtel_accept_all_info2": {
+    "message": "Mellowtel teilt nur Ihre Bandbreite. Sicherheit und Datenschutz sind zu 100 % garantiert und die Bibliothek ist Open Source für alle."
+  },
+  "mellowtel_regulation1": {
+    "message": "Es sammelt, teilt oder verkauft keine persönlichen Informationen (nicht einmal anonymisierte Daten)."
+  },
+  "mellowtel_regulation2": {
+    "message": "Es ist auch stark reguliert: Mellowtel kommuniziert weiterhin mit den Chrome Web Store-Regulierungsbehörden, um eine sichere Erfahrung zu gewährleisten."
+  },
+  "mellowtel_regulation3": {
+    "message": "Es stellt den CWS-Regulierungsbehörden auch Tools zur Verfügung, um die Einhaltung zu überwachen und durchzusetzen."
+  },
+  "mellowtel_button_decline": {
+    "message": "Decline optional use"
+  },
+  "mellowtel_button_accept": {
+    "message": "Accept all"
+  },
+  "mellowtel_dialog_footer": {
+    "message": "Vielen Dank, dass Sie sich die Zeit genommen haben, dies zu lesen, Teams { $devs }."
   }
 }

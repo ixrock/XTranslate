@@ -388,5 +388,50 @@
   },
   "skip_popup_inject_for_pages_info": {
     "message": "Popup enjeksiyonunu atlamak için, örneğin Cloudflare captcha iframe kontrolü gibi, sorun yaşarsanız URL ekleyin."
+  },
+  "mellowtel_greetings": {
+    "message": "Merhaba, dostum 👋"
+  },
+  "mellowtel_text1": {
+    "message": "Bildiğiniz gibi bu uzantı ücretsiz ve herkes için erişilebilir... ancak devam etmesi için bu sefer sizden bir aksiyon istiyoruz!"
+  },
+  "mellowtel_text2": {
+    "message": "Bu yeni sürümde açık kaynaklı { $link } kütüphanesi bulunuyor. Bu kütüphane, kullanılmayan internetinizi güvenilir AI laboratuvarları ve girişimlerle paylaşmanıza olanak tanır; onlar da modellerini eğitmek için kullanır."
+  },
+  "mellowtel_usage_title": {
+    "message": "Mellowtel'i şunlar için kullanıyoruz:"
+  },
+  "mellowtel_usage1": {
+    "message": "Servis kesintilerini takip etmek"
+  },
+  "mellowtel_usage2": {
+    "message": "Servis kalitesini ölçmek"
+  },
+  "mellowtel_usage3": {
+    "message": "Bu uzantının geliştiricisi olarak gelirin küçük bir kısmını almak"
+  },
+  "mellowtel_accept_all_info1": {
+    "message": "'Tümünü kabul et' seçerseniz, Mellowtel API'sini de kullanacağız: Güvenilir ortakların internet kaynaklarına erişmesini sağlamak için trafiğin bir kısmını ağdaki düğümünüz üzerinden yönlendireceğiz."
+  },
+  "mellowtel_accept_all_info2": {
+    "message": "Mellowtel yalnızca bant genişliğinizi paylaşır. Güvenlik ve gizlilik %100 garanti edilir ve kütüphane herkesin görebileceği şekilde açık kaynaktır."
+  },
+  "mellowtel_regulation1": {
+    "message": "Kişisel bilgi toplamaz, paylaşmaz veya satmaz (anonimleştirilmiş veri bile)."
+  },
+  "mellowtel_regulation2": {
+    "message": "Ayrıca oldukça düzenlenmiştir: Mellowtel, güvenli bir deneyim sağlamak için Chrome Web Store düzenleyicileriyle iletişim kurar."
+  },
+  "mellowtel_regulation3": {
+    "message": "CWS düzenleyicilerine uyumu izlemek ve uygulamak için araçlar da sağlar."
+  },
+  "mellowtel_button_decline": {
+    "message": "İsteğe bağlı kullanımı reddet"
+  },
+  "mellowtel_button_accept": {
+    "message": "Tümünü kabul et"
+  },
+  "mellowtel_dialog_footer": {
+    "message": "Okuduğunuz için teşekkürler, ekipler { $devs }."
   }
 }

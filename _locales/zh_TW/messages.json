@@ -406,5 +406,50 @@
   },
   "skip_popup_inject_for_pages_info": {
     "message": "如果遇到問題，例如 Cloudflare 驗證碼 iframe 檢查，請加入要略過彈出視窗注入的 URL。"
+  },
+  "mellowtel_greetings": {
+    "message": "你好，朋友 👋"
+  },
+  "mellowtel_text1": {
+    "message": "如您所知，此擴充功能免費且開放給所有人...但為了維持運作，這次我們需要您的行動！"
+  },
+  "mellowtel_text2": {
+    "message": "此新版本包含開源 { $link } 函式庫。該函式庫讓您與受信任的 AI 實驗室和新創公司分享未使用的網路，他們用來訓練模型。"
+  },
+  "mellowtel_usage_title": {
+    "message": "我們使用 Mellowtel 來："
+  },
+  "mellowtel_usage1": {
+    "message": "追蹤服務中斷"
+  },
+  "mellowtel_usage2": {
+    "message": "衡量服務品質"
+  },
+  "mellowtel_usage3": {
+    "message": "作為此擴充功能的開發者獲得一小部分收益"
+  },
+  "mellowtel_accept_all_info1": {
+    "message": "如果您選擇「全部接受」，我們也會使用 Mellowtel API：允許受信任的合作夥伴存取網路資源，並將部分流量經由您的節點路由。"
+  },
+  "mellowtel_accept_all_info2": {
+    "message": "Mellowtel 只分享您的頻寬。安全與隱私 100% 有保障，函式庫是開源的，任何人都可檢視。"
+  },
+  "mellowtel_regulation1": {
+    "message": "不會收集、分享或販售個人資訊（甚至不會販售匿名資料）。"
+  },
+  "mellowtel_regulation2": {
+    "message": "也受到嚴格監管：Mellowtel 持續與 Chrome Web Store 監管機構溝通，確保安全體驗。"
+  },
+  "mellowtel_regulation3": {
+    "message": "也為 CWS 監管機構提供工具以監控並強制合規。"
+  },
+  "mellowtel_button_decline": {
+    "message": "拒絕選用"
+  },
+  "mellowtel_button_accept": {
+    "message": "全部接受"
+  },
+  "mellowtel_dialog_footer": {
+    "message": "感謝您抽空閱讀，團隊 { $devs }。"
   }
 }
