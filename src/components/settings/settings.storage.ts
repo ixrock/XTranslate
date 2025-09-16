@@ -50,6 +50,7 @@ export const settingsStorage = createStorage("settings", {
     grokAiModel: GrokAIModel.RECOMMENDED,
     deepSeekModel: DeepSeekAIModel.RECOMMENDED,
     geminiModel: GeminiAIModel.RECOMMENDED,
+    letterCaseAutoCorrection: true, // split content per sentence
     tts: {
       systemVoiceIndex: 0,
       openAiVoice: OpenAIModelTTSVoice.Alloy,

@@ -1,7 +1,7 @@
 // Base class for all translation providers
 
 import { observable } from "mobx";
-import { autoBind, createLogger } from "../utils";
+import { autoBind, copyCase, CopyCaseParams, createLogger } from "../utils";
 import { isOptionsPage, ProxyRequestPayload, ProxyResponseType } from "../extension";
 import { ProviderCodeName } from "./providers";
 import { getMessage } from "../i18n";
@@ -55,7 +55,12 @@ export abstract class Translator {
 
     this.translate = new Proxy(this.translate, {
       apply: async (translate, callContext, [params]: [TranslateParams]): Promise<ITranslationResult> => {
-        return this.#handleTranslation(translate, params);
+        return this.#handleSingleTranslation(translate, params);
+      }
+    });
+    this.translateMany = new Proxy(this.translateMany, {
+      apply: async (translateManyInstance, callContext, [params]: [TranslateParams]): Promise<string[]> => {
+        return this.#handleMultiTranslation(translateManyInstance, params);
       }
     });
   }
@@ -76,8 +81,40 @@ export abstract class Translator {
     return response as Response;
   }
 
-  async #handleTranslation(
-    originalTranslate: (params: TranslateParams) => Promise<ITranslationResult>,
+  async #handleMultiTranslation(
+    instanceFunc: (params: TranslateParams) => Promise<string[]>,
+    params: TranslateParams,
+  ): Promise<string[]> {
+    const { langTo, langFrom, letterCaseAutoCorrection } = settingsStore.data;
+    const translations = await Reflect.apply(instanceFunc, this, [params]);
+    let correctedTranslations: string[];
+
+    if (letterCaseAutoCorrection) {
+      correctedTranslations = translations.map((sentence, index) => {
+        const originalText = params.texts[index];
+
+        const copyCaseParams: CopyCaseParams = {
+          fromText: originalText,
+          toText: sentence,
+          toLocale: langTo,
+          fromLocale: langFrom === "auto" ? "und" : langFrom,
+        };
+
+        try {
+          return copyCase(copyCaseParams)
+        } catch (err) {
+          this.logger.error(`[CASE-CORRECTION]: failed to copy case for sentence: ${originalText}`, { err, params, copyCaseParams });
+          return sentence;
+        }
+      })
+    }
+
+    this.logger.info('GOT MULTI-TRANSLATIONS', { translations, correctedTranslations });
+    return correctedTranslations ?? translations;
+  }
+
+  async #handleSingleTranslation(
+    instanceFunc: (params: TranslateParams) => Promise<ITranslationResult>,
     params: TranslateParams,
   ): Promise<ITranslationResult> {
     let translation = await getTranslationFromHistoryAction({ provider: this.name, ...params }) as ITranslationResult;
@@ -88,7 +125,7 @@ export abstract class Translator {
       const getTranslationResult = async (customParams: Partial<TranslateParams> = {}) => {
         const reqParams = { ...params, ...customParams };
         try {
-          let result = await Reflect.apply(originalTranslate, this, [reqParams]);
+          let result = await Reflect.apply(instanceFunc, this, [reqParams]);
           result = this.normalize(result, reqParams);
 
           void sendMetric("translate_used", {
