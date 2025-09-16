@@ -85,7 +85,7 @@ export abstract class Translator {
     instanceFunc: (params: TranslateParams) => Promise<string[]>,
     params: TranslateParams,
   ): Promise<string[]> {
-    const { langTo, langFrom, letterCaseAutoCorrection } = settingsStore.data;
+    const { langTo, langFrom, letterCaseAutoCorrection } = settingsStore.data.fullPageTranslation;
     const translations = await Reflect.apply(instanceFunc, this, [params]);
     let correctedTranslations: string[];
 
