@@ -406,40 +406,32 @@ export class PageTranslator {
   }
 
   protected collectNodes(rootElem: HTMLElement | ShadowRoot = document.body): Node[] {
+    const nodes: Node[] = [];
+
     const treeWalker = document.createTreeWalker(
       rootElem,
       NodeFilter.SHOW_TEXT | NodeFilter.SHOW_ELEMENT,
       {
         acceptNode: (node: Node) => {
+          // collect shadow-dom text inner contents first
+          if (node instanceof HTMLElement) {
+            const shadowElem = node.shadowRoot;
+            if (shadowElem) nodes.push(...this.collectNodes(shadowElem));
+          }
+
           const isTranslatable = this.isTranslatableNode(node);
           if (isTranslatable === undefined) return NodeFilter.FILTER_SKIP; // traverse child nodes
+
           return isTranslatable ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
         },
       }
     );
 
-    const nodes: Node[] = [];
     while (treeWalker.nextNode()) {
       nodes.push(treeWalker.currentNode);
     }
 
-    // TODO: try to handle within single `TreeWalker` above
-    const shadowDomNodes = this.collectNodesShadowDOM(rootElem);
-    nodes.push(...shadowDomNodes);
-
     return nodes;
-  }
-
-  protected collectNodesShadowDOM(rootElem: HTMLElement | ShadowRoot): Node[] {
-    const shadowDomElements = Array
-      .from(rootElem.querySelectorAll("*"))
-      .filter(elem => elem.shadowRoot) as HTMLElement[];
-
-    if (shadowDomElements.length) {
-      this.logger.info("collecting texts from shadow-DOM", shadowDomElements);
-      return shadowDomElements.map(elem => this.collectNodes(elem.shadowRoot)).flat();
-    }
-    return [];
   }
 
   protected watchDOMNodeUpdates(rootElem = document.body) {
