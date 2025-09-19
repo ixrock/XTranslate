@@ -406,7 +406,7 @@ export class PageTranslator {
   }
 
   protected collectNodes(rootElem: HTMLElement | ShadowRoot = document.body): Node[] {
-    const nodes: Node[] = [];
+    const nodes = new Set<Node>();
 
     const treeWalker = document.createTreeWalker(
       rootElem,
@@ -416,11 +416,25 @@ export class PageTranslator {
           // collect shadow-dom text inner contents first
           if (node instanceof HTMLElement) {
             const shadowElem = node.shadowRoot;
-            if (shadowElem) nodes.push(...this.collectNodes(shadowElem));
+            if (shadowElem) {
+              this.collectNodes(shadowElem).forEach(node => nodes.add(node));
+            }
+          }
+
+          // handle <select> texts manually since IntersectionObserver can't track them (settings.trafficSaveMode==true)
+          if (node instanceof HTMLSelectElement && this.settings.trafficSaveMode) {
+            window.setTimeout(() => {
+              Array
+                .from(node.querySelectorAll("option, optgroup"))
+                .filter(this.getNodeSelectLabel)
+                .forEach((opt) => this.nodesFromViewport.add(opt));
+            }, 250);
           }
 
           const isTranslatable = this.isTranslatableNode(node);
-          if (isTranslatable === undefined) return NodeFilter.FILTER_SKIP; // traverse child nodes
+          if (isTranslatable === undefined) {
+            return NodeFilter.FILTER_SKIP; // traverse child nodes
+          }
 
           return isTranslatable ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
         },
@@ -428,10 +442,10 @@ export class PageTranslator {
     );
 
     while (treeWalker.nextNode()) {
-      nodes.push(treeWalker.currentNode);
+      nodes.add(treeWalker.currentNode);
     }
 
-    return nodes;
+    return Array.from(nodes);
   }
 
   protected watchDOMNodeUpdates(rootElem = document.body) {
