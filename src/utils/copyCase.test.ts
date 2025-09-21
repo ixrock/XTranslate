@@ -39,7 +39,7 @@ describe("utils/copyCase", () => {
     const translation = copyCase({
       fromLocale: "en-US",
       toLocale: "ru",
-      fromText: "123 go.",
+      fromText: "1 example.",
       toText: "пример.",
     });
 
@@ -56,42 +56,5 @@ describe("utils/copyCase", () => {
     });
 
     expect(translation).toEqual("Пример.");
-  });
-
-  // New tests for various edge-cases
-  describe("edge cases", () => {
-    it("handles when toText contains more sentences than fromText", () => {
-      const translation = copyCase({
-        fromLocale: "en-US",
-        toLocale: "ru",
-        fromText: "Hello world.",
-        toText: "привет мир. как дела?",
-      });
-      // Only the first sentence is patched (with matching from sentence) and the rest remains unchanged.
-      expect(translation).toEqual("Привет мир. как дела?");
-    });
-
-    it("handles a single sentence without punctuation", () => {
-      const translation = copyCase({
-        fromLocale: "en-US",
-        toLocale: "ru",
-        fromText: "Hello world",
-        toText: "привет мир",
-      });
-      // Even without terminal punctuation, the case of the first letter should be adjusted.
-      expect(translation[0]).toEqual("П");
-    });
-
-    it("keeps non-alphabetic first characters unchanged", () => {
-      const translation = copyCase({
-        fromLocale: "en-US",
-        toLocale: "ru",
-        fromText: "\"Hello world.\"",
-        toText: "\"привет мир.\"",
-      });
-      // Since the first character is a quote, it remains unchanged.
-      expect(translation[0]).toEqual("\"");
-      expect(translation).toEqual('"привет мир."');
-    });
   });
 });

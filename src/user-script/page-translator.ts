@@ -179,7 +179,7 @@ export class PageTranslator {
     this.logger.info("UPDATE DOM");
     this.nodes.forEach(node => {
       const translation = this.getTranslation(node);
-      this.updateDOMNode(node, translation);
+      if (translation) this.updateDOMNode(node, translation);
     });
   }
 
@@ -406,40 +406,45 @@ export class PageTranslator {
   }
 
   protected collectNodes(rootElem: HTMLElement | ShadowRoot = document.body): Node[] {
+    const nodes = new Set<Node>();
+
     const treeWalker = document.createTreeWalker(
       rootElem,
       NodeFilter.SHOW_TEXT | NodeFilter.SHOW_ELEMENT,
       {
         acceptNode: (node: Node) => {
+          // collect shadow-dom text inner contents first
+          if (node instanceof HTMLElement) {
+            const shadowElem = node.shadowRoot;
+            if (shadowElem) {
+              this.collectNodes(shadowElem).forEach(node => nodes.add(node));
+            }
+          }
+
+          // handle <select> inner text content manually since `IntersectionObserver` can't track them (settings.trafficSaveMode==true)
+          if (this.settings.trafficSaveMode) {
+            if (node instanceof HTMLOptionElement || node instanceof HTMLOptGroupElement) {
+              if (this.getNodeSelectLabel(node)) {
+                this.nodesFromViewport.add(node);
+              }
+            }
+          }
+
           const isTranslatable = this.isTranslatableNode(node);
-          if (isTranslatable === undefined) return NodeFilter.FILTER_SKIP; // traverse child nodes
+          if (isTranslatable === undefined) {
+            return NodeFilter.FILTER_SKIP; // traverse child nodes
+          }
+
           return isTranslatable ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
         },
       }
     );
 
-    const nodes: Node[] = [];
     while (treeWalker.nextNode()) {
-      nodes.push(treeWalker.currentNode);
+      nodes.add(treeWalker.currentNode);
     }
 
-    // TODO: try to handle within single `TreeWalker` above
-    const shadowDomNodes = this.collectNodesShadowDOM(rootElem);
-    nodes.push(...shadowDomNodes);
-
-    return nodes;
-  }
-
-  protected collectNodesShadowDOM(rootElem: HTMLElement | ShadowRoot): Node[] {
-    const shadowDomElements = Array
-      .from(rootElem.querySelectorAll("*"))
-      .filter(elem => elem.shadowRoot) as HTMLElement[];
-
-    if (shadowDomElements.length) {
-      this.logger.info("collecting texts from shadow-DOM", shadowDomElements);
-      return shadowDomElements.map(elem => this.collectNodes(elem.shadowRoot)).flat();
-    }
-    return [];
+    return Array.from(nodes);
   }
 
   protected watchDOMNodeUpdates(rootElem = document.body) {
@@ -487,9 +492,17 @@ export class PageTranslator {
             }
           }
         }
+
+        // handle native <select> contents since they might NOT be caught within `IntersectionObserver.entries`
+        // e.g. example with async preloaded data for <select> https://oma.kela.fi/paatokset-ja-muut-asiakirjasi/kelan-lahettamat
+        Array.from(document.querySelectorAll("option, optgroup"))
+          .filter(this.isTranslatableNode)
+          .forEach(node => this.nodesFromViewport.add(node));
       }, {
         rootMargin: "0px 0px 50% 0px",
         threshold: 0,
+        // @ts-ignore https://developer.mozilla.org/en-US/docs/Web/API/IntersectionObserver/IntersectionObserver#delay
+        delay: this.params.autoTranslateDelayMs,
       }
     );
 

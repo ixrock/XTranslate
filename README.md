@@ -8,21 +8,23 @@ See more screenshots [here](./screenshots/README.md).
 
 Features:
 -----------
+
 1) Multiple ways to get translation from web-pages:
+
 - full-page text translations: enable/disable auto-translation for full webpage from browser's context-menu or app's action window
 - double-click on the word
 - mouse-over a block of text and press hotkey defined at the extension settings (`Alt + Shift + X` by default), this works for input/textarea fields too!
-- select a text at the webpage and click the XTranslate (X)-icon appeared close to the text 
+- select a text at the webpage and click the XTranslate (X)-icon appeared close to the text
 - just right after text selection _(this option is turned off by default)_
 - click by selected text at the page _(this option is turned off by default)_
-- open the app's action window (extension icon at browser's toolbar) and selected text from the page will be sent for translation 
+- open the app's action window (extension icon at browser's toolbar) and selected text from the page will be sent for translation
 
 You can get even some translation from images by mouse overing the image element and
 press hotkey (`title` or `alt` attributes will be used when applicable).
 
 1) Translate texts in **PDF** files _(disabled by default)_.\
-This option will replace default browser's PDF-viewer and sometimes might not work correctly due [CORS](https://developer.mozilla.org/en-US/docs/Glossary/CORS).\
-Anyway, even when it's enabled you can re-open PDF document with default viewer by clicking special Chrome-logo icon at PDF's top toolbar.
+   This option will replace default browser's PDF-viewer and sometimes might not work correctly due [CORS](https://developer.mozilla.org/en-US/docs/Glossary/CORS).\
+   Anyway, even when it's enabled you can re-open PDF document with default viewer by clicking special Chrome-logo icon at PDF's top toolbar.
 
 2) Listen text-to-speech (TTS) for supported translation providers (e.g. `Google`, `OpenAI`)
 
@@ -39,12 +41,14 @@ Anyway, even when it's enabled you can re-open PDF document with default viewer 
 
 Install extension:
 -----------
+
 * [Chrome's Web Store](https://chrome.google.com/webstore/detail/xtranslate/gfgpkepllngchpmcippidfhmbhlljhoo)
 * [Microsoft Edge Add-ons](https://microsoftedge.microsoft.com/addons/detail/cinfaflgbaachkaamaeglolofeahelkd)
 * [Firefox addons](https://addons.mozilla.org/en-GB/firefox/addon/xtranslate-chrome/) _(outdated version)_
 
 Available translation providers:
 -----------
+
 * [Google](http://translate.google.com/) - ready to use after installation
 * [Bing](http://bing.com/translator/) - ready to use after installation
 * [DeepL](https://www.deepl.com/) _(register and provide at least free api-key with 500K chars/month included)_
@@ -56,6 +60,7 @@ Available translation providers:
 How to enable translator in local HTML/PDF files:
 -----------
 In order to work with local documents (e.g. `file://path/file.pdf`) you must allow access for the extension:
+
 - open extensions page `chrome://extensions/`, find **XTranslate** and click _[Details]_ button
 - enable checkbox **"Allow access to file URLs"**
 
@@ -63,33 +68,33 @@ XTranslate architecture overview:
 -----------
 
 * All parts are connected through the Service Worker.
-* Isomorphic storage (same API in any env), updated sequentially in Service Worker only, _say bye-bye to race-conditions_!
+* Isomorphic storage updated sequentially in Service Worker only: _say bye-bye to race-conditions_!
 * Webpack build handles 3 different targets: `WebPageContentScript(target=web)`, `AppActionWindowScript(target=web)` and `BackgroundServiceWorker(target=worker)`.
 
 ```
-┌─────────────── Web Page ──────────────────┐
+┌─────── Web Page (Browser Tab) ────────────┐
 │ Content Script                            │
 │ — captures text selection                 │
 │ — shows floating UI bubble (updates DOM)  │
 └────────▲──────────────────────────────────┘
-         │ runtime messages, sync store
+         │ messages channel / sync store
          ▼
-┌──── Service Worker ( aka Background ) ────┐
-│ — access to chrome.api.*                  │
-│ — chrome.runtime messages hub             │
-│ — requests to translation APIs            │
-│ — isomorphic storage                      │
-│ — handling metrics (GA)                   │
-│ — https proxy handler                     │
+┌─ Service Worker (aka Background Script) ──┐
+│ — access to allowed chrome.api.*          │
+│ — runtime messages hub                    │
+│ — isomorphic storage (use in any env)     │
+│ — api proxy (HTTP(S)/CSP/providers API)   │
+│ — user metrics (GA)                       │
 └────────▲──────────────────────────────────┘
-         │ runtime messages, sync store
+         │ messages channgel / sync store
          ▼
 ┌─────────────── Action Window ─────────────┐
-│ — popup/options                           │
-│ — text input / settings                   │
+│ — settings page                           │
+│ — popup theming and customization page    │
+│ — text input                              │
+│ — history page                            │
 └───────────────────────────────────────────┘
 ```
-
 
 How to build/contribute to project:
 -----------
