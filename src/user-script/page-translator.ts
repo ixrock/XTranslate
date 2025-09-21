@@ -179,7 +179,7 @@ export class PageTranslator {
     this.logger.info("UPDATE DOM");
     this.nodes.forEach(node => {
       const translation = this.getTranslation(node);
-      this.updateDOMNode(node, translation);
+      if (translation) this.updateDOMNode(node, translation);
     });
   }
 
@@ -421,14 +421,13 @@ export class PageTranslator {
             }
           }
 
-          // handle <select> texts manually since IntersectionObserver can't track them (settings.trafficSaveMode==true)
-          if (node instanceof HTMLSelectElement && this.settings.trafficSaveMode) {
-            window.setTimeout(() => {
-              Array
-                .from(node.querySelectorAll("option, optgroup"))
-                .filter(this.getNodeSelectLabel)
-                .forEach((opt) => this.nodesFromViewport.add(opt));
-            }, 250);
+          // handle <select> inner text content manually since `IntersectionObserver` can't track them (settings.trafficSaveMode==true)
+          if (this.settings.trafficSaveMode) {
+            if (node instanceof HTMLOptionElement || node instanceof HTMLOptGroupElement) {
+              if (this.getNodeSelectLabel(node)) {
+                this.nodesFromViewport.add(node);
+              }
+            }
           }
 
           const isTranslatable = this.isTranslatableNode(node);
@@ -493,9 +492,17 @@ export class PageTranslator {
             }
           }
         }
+
+        // handle native <select> contents since they might NOT be caught within `IntersectionObserver.entries`
+        // e.g. example with async preloaded data for <select> https://oma.kela.fi/paatokset-ja-muut-asiakirjasi/kelan-lahettamat
+        Array.from(document.querySelectorAll("option, optgroup"))
+          .filter(this.isTranslatableNode)
+          .forEach(node => this.nodesFromViewport.add(node));
       }, {
         rootMargin: "0px 0px 50% 0px",
         threshold: 0,
+        // @ts-ignore https://developer.mozilla.org/en-US/docs/Web/API/IntersectionObserver/IntersectionObserver#delay
+        delay: this.params.autoTranslateDelayMs,
       }
     );
 
