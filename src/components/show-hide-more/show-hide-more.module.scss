@@ -1,11 +1,28 @@
 @use "../mixins" as *;
 
-.ExpandBlock {
-  @include pseudo-link;
+.ShowHideMore {
+  display: contents;
+  interpolate-size: allow-keywords; /* allow to animate special keyword values, e.g. "width: max-content"*/
 
-  font-size: small;
-  width: auto;
-  display: flex;
-  align-items: center;
-  gap: var(--theme-spacing-half);
+  > * {
+    transition: 200ms height ease-in-out;
+  }
+
+  &:not(.expanded) > :not(.toggle) {
+    height: 0;
+    overflow: clip;
+  }
+
+  &.expanded > * {
+    height: max-content;
+  }
+
+  .toggle {
+    @include pseudo-link;
+
+    display: flex;
+    align-items: center;
+    font-size: small;
+    gap: var(--theme-spacing-half);
+  }
 }

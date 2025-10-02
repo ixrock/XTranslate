@@ -12,17 +12,21 @@ export interface ShowHideMoreProps extends React.PropsWithChildren {
 }
 
 export function ShowHideMore({ className, visible, children, label, onToggle }: ShowHideMoreProps) {
-  return (
-    <>
-      {visible && children}
+  const cmpClassName = cssNames(styles.ShowHideMore, className, {
+    [styles.expanded]: visible,
+  });
 
-      <div className={cssNames(styles.ExpandBlock, className)} onClick={(evt) => onToggle(!visible, evt)}>
+  return (
+    <div className={cmpClassName}>
+      {children}
+
+      <div className={styles.toggle} onClick={(evt) => onToggle(!visible, evt)}>
         <Icon material={visible ? "expand_less" : "expand_more"}/>
         <span>
           {!visible && (label ?? getMessage("settings_show_more"))}
           {visible && (label ?? getMessage("settings_show_less"))}
         </span>
       </div>
-    </>
+    </div>
   )
 }

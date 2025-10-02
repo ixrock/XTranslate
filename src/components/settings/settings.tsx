@@ -242,11 +242,11 @@ export class Settings extends React.Component {
           />
         </div>
         <ShowHideMore visible={fullPageTranslation.showMore} onToggle={v => fullPageTranslation.showMore = v}>
-          <SettingsUrlList
-            urlList={alwaysTranslatePages}
-            title={getMessage("settings_title_full_page_always_translate")}
-          />
           <div className="settings-fullpage flex column gaps align-start">
+            <SettingsUrlList
+              urlList={alwaysTranslatePages}
+              title={getMessage("settings_title_full_page_always_translate")}
+            />
             <Checkbox
               label={getMessage("settings_title_full_page_show_original_onmouseover")}
               checked={fullPageTranslation.showOriginalOnHover}
