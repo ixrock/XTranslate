@@ -467,6 +467,9 @@
   "ai_choose_model_reasoning_light": {
     "message": "Model uvažovania (light) / rýchle"
   },
+  "ai_choose_model_non_reasoning": {
+    "message": "Nedumejúci model (rýchly)"
+  },
   "auth_access_info_steps_openai": {
     "message": "1) Zaregistrujte sa na platform.openai.com 2) Vytvorte prístupový kľúč API 3) Dobite si kredit (5$+)"
   },

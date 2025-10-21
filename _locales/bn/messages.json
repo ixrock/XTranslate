@@ -395,6 +395,15 @@
   "ai_choose_model_recommended": {
     "message": "সুপারিশকৃত মডেল"
   },
+  "ai_choose_model_reasoning": {
+    "message": "চিন্তা মডেল / ধীর"
+  },
+  "ai_choose_model_reasoning_light": {
+    "message": "হালকা চিন্তা মডেল / দ্রুত"
+  },
+  "ai_choose_model_non_reasoning": {
+    "message": "অ-চিন্তা মডেল (দ্রুত)"
+  },
   "pdf_use_custom_viewer": {
     "message": "PDF ফাইলে অনুবাদ সমর্থন করুন"
   },

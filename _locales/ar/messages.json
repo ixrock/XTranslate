@@ -395,6 +395,15 @@
   "ai_choose_model_recommended": {
     "message": "النموذج الموصى به"
   },
+  "ai_choose_model_reasoning": {
+    "message": "نموذج التفكير / بطيء"
+  },
+  "ai_choose_model_reasoning_light": {
+    "message": "نموذج التفكير الخفيف / أسرع"
+  },
+  "ai_choose_model_non_reasoning": {
+    "message": "نموذج غير مفكر (سريع)"
+  },
   "pdf_use_custom_viewer": {
     "message": "دعم الترجمات في ملفات PDF"
   },

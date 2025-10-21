@@ -395,6 +395,15 @@
   "ai_choose_model_recommended": {
     "message": "권장 모델"
   },
+  "ai_choose_model_reasoning": {
+    "message": "사고 모델 / 느림"
+  },
+  "ai_choose_model_reasoning_light": {
+    "message": "경량 사고 모델 / 빠름"
+  },
+  "ai_choose_model_non_reasoning": {
+    "message": "비사고 모델 (고속)"
+  },
   "pdf_use_custom_viewer": {
     "message": "PDF 파일 내 번역 지원"
   },

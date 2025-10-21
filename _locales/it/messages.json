@@ -395,6 +395,15 @@
   "ai_choose_model_recommended": {
     "message": "Modello raccomandato"
   },
+  "ai_choose_model_reasoning": {
+    "message": "Modello di ragionamento / lento"
+  },
+  "ai_choose_model_reasoning_light": {
+    "message": "Modello di ragionamento leggero / più veloce"
+  },
+  "ai_choose_model_non_reasoning": {
+    "message": "Modello non ragionante (veloce)"
+  },
   "pdf_use_custom_viewer": {
     "message": "Supporto per le traduzioni nei file PDF"
   },

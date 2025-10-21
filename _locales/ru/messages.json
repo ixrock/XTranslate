@@ -467,6 +467,9 @@
   "ai_choose_model_reasoning_light": {
     "message": "Думающая модель 'лайт' / быстрее"
   },
+  "ai_choose_model_non_reasoning": {
+    "message": "Не думающая модель (быстрая)"
+  },
   "auth_access_info_steps_openai": {
     "message": "1) Зарегистрируйтесь на platform.openai.com 2) Создайте ключ доступа к API 3) Пополните баланс (минимально 5$)"
   },

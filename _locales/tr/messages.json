@@ -377,6 +377,12 @@
   "ai_choose_model_reasoning": {
     "message": "Akıl yürütme modeli (seride en yeni ve maliyet etkin)"
   },
+  "ai_choose_model_reasoning_light": {
+    "message": "Hafif akıl yürütme modeli / daha hızlı"
+  },
+  "ai_choose_model_non_reasoning": {
+    "message": "Akıl yürütmeyen model (hızlı)"
+  },
   "pdf_use_custom_viewer": {
     "message": "PDF dosyalarında çevirileri destekle"
   },

@@ -395,6 +395,15 @@
   "ai_choose_model_recommended": {
     "message": "推薦模型"
   },
+  "ai_choose_model_reasoning": {
+    "message": "推理模型 / 慢速"
+  },
+  "ai_choose_model_reasoning_light": {
+    "message": "輕量推理模型 / 更快"
+  },
+  "ai_choose_model_non_reasoning": {
+    "message": "非推理模型（快速）"
+  },
   "pdf_use_custom_viewer": {
     "message": "支援 PDF 文件翻譯"
   },

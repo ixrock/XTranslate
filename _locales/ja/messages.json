@@ -395,6 +395,15 @@
   "ai_choose_model_recommended": {
     "message": "推奨モデル"
   },
+  "ai_choose_model_reasoning": {
+    "message": "思考モデル / 遅い"
+  },
+  "ai_choose_model_reasoning_light": {
+    "message": "軽量思考モデル / 速い"
+  },
+  "ai_choose_model_non_reasoning": {
+    "message": "非思考モデル（高速）"
+  },
   "pdf_use_custom_viewer": {
     "message": "PDFファイル内の翻訳をサポート"
   },

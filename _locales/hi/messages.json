@@ -395,6 +395,15 @@
   "ai_choose_model_recommended": {
     "message": "अनुशंसित मॉडल"
   },
+  "ai_choose_model_reasoning": {
+    "message": "सोचने वाला मॉडल / धीमा"
+  },
+  "ai_choose_model_reasoning_light": {
+    "message": "हल्का सोचने वाला मॉडल / तेज़"
+  },
+  "ai_choose_model_non_reasoning": {
+    "message": "गैर-सोचने वाला मॉडल (तेज़)"
+  },
   "pdf_use_custom_viewer": {
     "message": "PDF फाइलों में अनुवाद समर्थन"
   },

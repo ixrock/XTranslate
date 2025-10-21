@@ -467,6 +467,9 @@
   "ai_choose_model_reasoning_light": {
     "message": "Thinking model light / faster"
   },
+  "ai_choose_model_non_reasoning": {
+    "message": "Non-Thinking model (fast)"
+  },
   "auth_access_info_steps_openai": {
     "message": "1) Register at platform.openai.com 2) Create api access key 3) Top-up your balance (5$+)"
   },

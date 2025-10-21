@@ -395,6 +395,15 @@
   "ai_choose_model_recommended": {
     "message": "Empfohlenes Modell"
   },
+  "ai_choose_model_reasoning": {
+    "message": "Denkmodell / langsam"
+  },
+  "ai_choose_model_reasoning_light": {
+    "message": "Denkmodell light / schneller"
+  },
+  "ai_choose_model_non_reasoning": {
+    "message": "Nicht-denken Modell (schnell)"
+  },
   "pdf_use_custom_viewer": {
     "message": "Unterstützung für Übersetzungen in PDF-Dateien"
   },

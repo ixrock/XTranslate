@@ -467,6 +467,9 @@
   "ai_choose_model_reasoning_light": {
     "message": "Model berpikir ringan / lebih cepat"
   },
+  "ai_choose_model_non_reasoning": {
+    "message": "Model non-berpikir (cepat)"
+  },
   "auth_access_info_steps_openai": {
     "message": "1) Daftar di platform.openai.com 2) Buat API key 3) Isi saldo minimal $5"
   },

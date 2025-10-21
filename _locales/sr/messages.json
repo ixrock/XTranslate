@@ -467,6 +467,9 @@
   "ai_choose_model_reasoning_light": {
     "message": "Lakši model razmišljanja / brži"
   },
+  "ai_choose_model_non_reasoning": {
+    "message": "Nerazmišljajući model (brz)"
+  },
   "auth_access_info_steps_openai": {
     "message": "1) Registruj se na platform.openai.com 2) Kreiraj ključ za pristup API-ju 3) Dopuni svoja novčana sredstva (5$+)"
   },
