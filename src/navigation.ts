@@ -1,3 +1,6 @@
+// TODO: use new view-transition API when available:
+//  https://developer.chrome.com/blog/view-transitions-in-2025
+
 import { createObservableHistory } from "mobx-observable-history";
 import { createTab, getManifest, getURL, isOptionsPage } from "./extension";
 import type { ProviderCodeName } from "./providers";
