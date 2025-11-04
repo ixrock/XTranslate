@@ -198,7 +198,7 @@ export class ContentScript extends React.Component {
         settingsLimitChars: safeTranslationLimit.toString(),
       });
 
-      return window.confirm(`${this.appName}: ${dialogInfo}`);
+      return window.confirm(`${this.appName}: ${dialogInfo}`); // TODO: use custom UI modal dialog
     }
 
     return true;
