@@ -93,19 +93,18 @@ export function onInstallExtension(callback: (reason: "install" | "update" | "ch
   return () => chrome.runtime.onInstalled.removeListener(callbackWrapper);
 }
 
-export function isContextInvalidatedError(err: Error) {
+export function isContextInvalidatedError(err: Error | string): boolean {
   return String(err).includes("Extension context invalidated");
 }
 
-export function isRuntimeConnectionFailedError(err: Error) {
+export function isRuntimeConnectionFailedError(err: Error | string): boolean {
   return String(err).includes("Could not establish connection. Receiving end does not exist");
 }
 
-export async function isRuntimeContextInvalidated(): Promise<boolean> {
+export function isExtensionContextAlive(): boolean {
   try {
-    await sendMessage({ type: MessageType.RUNTIME_ERROR_CONTEXT_INVALIDATED });
-    return false; // if we reach this point, the context is valid
-  } catch (err) {
-    return isContextInvalidatedError(err);
+    return Boolean(chrome?.runtime?.id);
+  } catch {
+    return false;
   }
 }

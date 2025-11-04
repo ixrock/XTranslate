@@ -13,7 +13,7 @@ import orderBy from 'lodash/orderBy';
 import { contentScriptInjectable } from "../config";
 import { preloadAppData } from "../preloadAppData";
 import { autoBind, disposer, getHotkey } from "../utils";
-import { getManifest, getURL, isRuntimeContextInvalidated, MessageType, onMessage, ProxyResponseType, TranslatePayload } from "../extension";
+import { getManifest, getURL, isExtensionContextAlive, MessageType, onMessage, ProxyResponseType, TranslatePayload } from "../extension";
 import { proxyRequest } from "../background/httpProxy.bgc";
 import { sendMetric } from "../background/metrics.bgc";
 import { popupHotkey, popupSkipInjectionUrls, settingsStore } from "../components/settings/settings.storage";
@@ -142,10 +142,9 @@ export class ContentScript extends React.Component {
     );
   }
 
-  async checkContextInvalidationError(): Promise<void> {
-    const isInvalidated = await isRuntimeContextInvalidated();
-    if (isInvalidated) {
-      this.unmount(); // remove previous content-script artifacts in case of "context invalidated" error
+  private checkContextInvalidationError() {
+    if (!isExtensionContextAlive()) {
+      this.unmount(); // remove previous content-script rendered artifacts in case of "context invalidated" error
     }
   }
 
@@ -193,7 +192,7 @@ export class ContentScript extends React.Component {
 
   @action
   async translate(params: Partial<TranslatePayload> = {}) {
-    void this.checkContextInvalidationError();
+    this.checkContextInvalidationError();
     this.hideIcon();
 
     const payload = this.lastParams = {
@@ -587,7 +586,7 @@ export class ContentScript extends React.Component {
   }
 
   showIcon() {
-    void this.checkContextInvalidationError();
+    this.checkContextInvalidationError();
     this.isIconVisible = true;
   }
 
