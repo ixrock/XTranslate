@@ -30,7 +30,7 @@
     "message": "Vyskakovacia ponuka"
   },
   "setting_title_translator_service": {
-    "message": "Služba"
+    "message": "Ďalšie funkcie"
   },
   "settings_title_tts": {
     "message": "Prevod textu na reč"
@@ -76,6 +76,9 @@
   },
   "auto_play_tts": {
     "message": "Automatické prehrávanie prevodu textu na reč"
+  },
+  "show_in_context_menu": {
+    "message": "Zobraziť možnosti prekladač v kontextovej ponuke prehliadača"
   },
   "use_chrome_tts": {
     "message": "Použiť funkciu prevodu textu na reč z Chromu"
@@ -513,3 +516,4 @@
     "message": "Označený text obsahuje { $selectedCountChars } znakov, čo prekračuje limit bezpečného prekladu { $settingsLimitChars } znakov. Preklad rozsiahlych textov môže v závislosti od poskytovateľa prekladu spotrebovať viac zdrojov alebo si vyžiadať dodatočné náklady. Chcete pokračovať v preklade?"
   }
 }
+
