@@ -50,12 +50,14 @@ export const settingsStorage = createStorage("settings", {
     grokAiModel: GrokAIModel.RECOMMENDED,
     deepSeekModel: DeepSeekAIModel.RECOMMENDED,
     geminiModel: GeminiAIModel.RECOMMENDED,
+    safeTranslationLimit: 0, // 0 = unlimited, don't ask user for confirmation, useful for paid-API providers
     tts: {
       systemVoiceIndex: 0,
       openAiVoice: OpenAIModelTTSVoice.Alloy,
       geminiVoice: GeminiAIModelTTSVoice.Puck,
     },
     fullPageTranslation: {
+      showInContextMenu: true,
       provider: "bing" as ProviderCodeName,
       langFrom: "auto",
       langTo: "en",

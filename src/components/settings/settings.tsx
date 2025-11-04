@@ -274,6 +274,13 @@ export class Settings extends React.Component {
         <SubTitle className={styles.SubTitle}>
           {getMessage("setting_title_translator_service")}
         </SubTitle>
+
+        <Checkbox
+          className={styles.inline}
+          label={getMessage("auto_play_tts")}
+          checked={settings.autoPlayText}
+          onChange={v => settings.autoPlayText = v}
+        />
         <Checkbox
           className={styles.inline}
           label={getMessage("pdf_use_custom_viewer")}
@@ -281,6 +288,13 @@ export class Settings extends React.Component {
           checked={settings.customPdfViewer}
           onChange={v => settings.customPdfViewer = v}
         />
+        <Checkbox
+          className={styles.inline}
+          label={getMessage("show_in_context_menu")}
+          checked={settings.fullPageTranslation.showInContextMenu}
+          onChange={v => settings.fullPageTranslation.showInContextMenu = v}
+        />
+
         <div className="translation-icon flex gaps">
           <Checkbox
             label={getMessage("display_icon_near_selection")}
@@ -298,12 +312,6 @@ export class Settings extends React.Component {
             />
           )}
         </div>
-        <Checkbox
-          className={styles.inline}
-          label={getMessage("auto_play_tts")}
-          checked={settings.autoPlayText}
-          onChange={v => settings.autoPlayText = v}
-        />
         <div className={`${styles.inline} flex gaps align-center`}>
           <Checkbox
             className="box noshrink"

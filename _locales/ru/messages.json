@@ -24,7 +24,7 @@
     "message": "Общее"
   },
   "setting_title_translator_service": {
-    "message": "Сервис перевода"
+    "message": "Другие сервисы"
   },
   "setting_title_popup": {
     "message": "Попап"
@@ -76,6 +76,9 @@
   },
   "auto_play_tts": {
     "message": "Автовоспроизведение текста в речь"
+  },
+  "show_in_context_menu": {
+    "message": "Отображать опцию переводчика в контекстном меню браузера"
   },
   "use_chrome_tts": {
     "message": "Использовать системный преобразователь текста в речь"

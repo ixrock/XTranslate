@@ -30,7 +30,7 @@
     "message": "Popup"
   },
   "setting_title_translator_service": {
-    "message": "Service"
+    "message": "Other features"
   },
   "settings_title_tts": {
     "message": "Text-to-speech"
@@ -76,6 +76,9 @@
   },
   "auto_play_tts": {
     "message": "Auto-play text-to-speech"
+  },
+  "show_in_context_menu": {
+    "message": "Show translator option in browser context menu"
   },
   "use_chrome_tts": {
     "message": "Force to use system text-to-speech engine"
