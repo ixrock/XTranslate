@@ -508,5 +508,14 @@
   },
   "skip_popup_inject_for_pages_info": {
     "message": "Add URLs to skip popup injection if you experience some issues, e.g. Cloudflare captcha iframe check."
+  },
+  "popup_safe_translation_chars_limit": {
+    "message": "If the text selection exceeds { $limit } of characters, show a confirmation warning to proceed."
+  },
+  "popup_safe_translation_chars_limit_info": {
+    "message": "This might help you to reduce AI-tokens quota spending on unwanted text requests (0 - no limits)"
+  },
+  "popup_safe_translation_chars_confirmation_dialog_info": {
+    "message": "The selected text contains { $selectedCountChars } characters, which exceeds the safe translation limit of { $settingsLimitChars } characters. Translating large texts may consume more resources or incur additional costs depending on your translation provider. Do you want to proceed with the translation?"
   }
 }

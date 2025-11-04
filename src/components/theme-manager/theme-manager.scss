@@ -1,3 +1,4 @@
+@use "../mixins" as *;
 
 .ThemeManager {
   .theme {
@@ -18,5 +19,9 @@
     .ColorPicker + .ColorPicker {
       margin-left: var(--theme-spacing-half);
     }
+  }
+
+  [contenteditable] {
+    @include pseudo-link;
   }
 }

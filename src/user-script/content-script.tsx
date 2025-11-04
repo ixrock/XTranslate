@@ -12,7 +12,7 @@ import isEqual from 'lodash/isEqual';
 import orderBy from 'lodash/orderBy';
 import { contentScriptInjectable } from "../config";
 import { preloadAppData } from "../preloadAppData";
-import { autoBind, disposer, getHotkey } from "../utils";
+import { autoBind, disposer, getHotkey, strLengthCodePoints } from "../utils";
 import { getManifest, getURL, isExtensionContextAlive, MessageType, onMessage, ProxyResponseType, TranslatePayload } from "../extension";
 import { proxyRequest } from "../background/httpProxy.bgc";
 import { sendMetric } from "../background/metrics.bgc";
@@ -23,6 +23,7 @@ import { XTranslateTooltip } from "./xtranslate-tooltip";
 import { Popup } from "../components/popup/popup";
 import { PageTranslator } from "./page-translator";
 import { Icon } from "@/components/icon";
+import { getMessage } from "@/i18n";
 
 type DOMRectNormalized = Omit<Writeable<DOMRect>, "toJSON" | "x" | "y">;
 
@@ -188,6 +189,21 @@ export class ContentScript extends React.Component {
     }
   }
 
+  private translationConfirmationCheck({ text }: TranslatePayload): boolean {
+    const { safeTranslationLimit } = settingsStore.data;
+
+    if (safeTranslationLimit && strLengthCodePoints(text) > safeTranslationLimit) {
+      const dialogInfo = getMessage("popup_safe_translation_chars_confirmation_dialog_info", {
+        selectedCountChars: strLengthCodePoints(text).toString(),
+        settingsLimitChars: safeTranslationLimit.toString(),
+      });
+
+      return window.confirm(`${this.appName}: ${dialogInfo}`);
+    }
+
+    return true;
+  }
+
   translateLazy = debounce(this.translate, 250);
 
   @action
@@ -201,6 +217,10 @@ export class ContentScript extends React.Component {
       to: params.to ?? settingsStore.data.langTo,
       text: params.text ?? this.selectedText.trim(),
     };
+
+    if (!this.translationConfirmationCheck(payload)) {
+      return;
+    }
 
     this.translation = null;
     this.error = null;

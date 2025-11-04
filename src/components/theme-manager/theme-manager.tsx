@@ -15,9 +15,9 @@ import { Button } from "../button";
 import { SubTitle } from "../sub-title";
 import { ColorPicker } from "../color-picker";
 import { Tab } from "../tabs";
-import { getMessage } from "@/i18n";
+import { formatNumber, getMessage } from "@/i18n";
 import { Icon } from "../icon";
-import { base64Encode } from "@/utils";
+import { base64Encode, isHotkeyPressed } from "@/utils";
 import { SettingsPopup } from "../settings/settings_popup";
 import { ShowHideMore } from "../show-hide-more";
 import { SettingsUrlList } from "@/components/settings/settings_url_list";
@@ -305,6 +305,17 @@ export class ThemeManager extends React.Component {
 
   render() {
     const settings = settingsStore.data;
+
+    const editSafeLimitsElem = (
+      <b
+        contentEditable
+        onKeyDown={evt => isHotkeyPressed({ key: "Enter" }, evt) && (evt.target as HTMLElement).blur()}
+        onFocus={evt => evt.target.textContent = String(settings.safeTranslationLimit)} // restore number from locale-view for editing
+        onBlur={evt => settings.safeTranslationLimit = parseFloat(evt.target.textContent.trim()) || 0}>
+        {formatNumber({ value: settings.safeTranslationLimit })}
+      </b>
+    );
+
     return (
       <div className="ThemeManager flex column gaps align-center">
         <Popup
@@ -335,6 +346,13 @@ export class ThemeManager extends React.Component {
             title={getMessage("skip_popup_inject_for_pages")}
             infoTooltip={getMessage("skip_popup_inject_for_pages_info")}
           />
+
+          <label className="flex gaps align-center">
+            <Icon material="warning_amber" tooltip={getMessage("popup_safe_translation_chars_limit_info")}/>
+            <div>
+              {getMessage("popup_safe_translation_chars_limit", { limit: editSafeLimitsElem })}
+            </div>
+          </label>
         </div>
 
         <ShowHideMore visible={settings.showPopupAdvancedCustomization} onToggle={v => settings.showPopupAdvancedCustomization = v}>

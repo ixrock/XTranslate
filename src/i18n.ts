@@ -140,6 +140,6 @@ function parseMessages(locale: Locale, rawData: LocalizationFile) {
   return messages;
 }
 
-export function formatNumber({ value, locale }: { value: number, locale: Locale }) {
-  return new Intl.NumberFormat(locale).format(value);
+export function formatNumber({ value, locale }: { value: number, locale?: Locale }) {
+  return new Intl.NumberFormat(locale ?? getLocale()).format(value);
 }
