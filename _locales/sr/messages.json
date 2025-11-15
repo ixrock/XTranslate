@@ -30,7 +30,7 @@
     "message": "Iskačući prozor"
   },
   "setting_title_translator_service": {
-    "message": "Prevodilac"
+    "message": "Ostale funkcionalnosti"
   },
   "settings_title_tts": {
     "message": "Pretvaranje teksta u govor (Text-to-speech, TTS)"
@@ -76,6 +76,9 @@
   },
   "auto_play_tts": {
     "message": "Automatski reprodukuj pretvaranje teksta u govor"
+  },
+  "show_in_context_menu": {
+    "message": "Prikaži opciju za prevod u kontekst meniju pretraživača"
   },
   "use_chrome_tts": {
     "message": "Koristi Chrome mehanizam za pretvaranje teksta u govor"
@@ -505,5 +508,14 @@
   },
   "skip_popup_inject_for_pages_info": {
     "message": "Dodaj URL-ove za preskakanje umetanja iskačućih prozora ako imaš probleme, npr. Cloudflare captcha iframe check."
+  },
+  "popup_safe_translation_chars_limit": {
+    "message": "Prikaži upozorenje ako izabrani tekst prelazi granicu od { $limit } karaktera."
+  },
+  "popup_safe_translation_chars_limit_info": {
+    "message": "Ovo vam može pomoći da smanjite potrošnju kvote AI tokena na neželjene zahteve (0 - bez ograničenja)"
+  },
+  "popup_safe_translation_chars_confirmation_dialog_info": {
+    "message": "Izabrani tekst sadrži { $selectedCountChars } karaktera, što prelazi sigurnu granicu od { $settingsLimitChars } karaktera. Prevođenje dugačkih tekstova može trošiti više resursa i napraviti dodatne troškove u zavisnosti od vašeg prevodioca. Želite li da nastavite sa prevođenjem?"
   }
 }
