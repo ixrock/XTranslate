@@ -30,7 +30,7 @@
     "message": "Искачући прозор"
   },
   "setting_title_translator_service": {
-    "message": "Преводилац"
+    "message": "Остале функционалности"
   },
   "settings_title_tts": {
     "message": "Претварање текста у говор (Text-to-speech, TTS)"
@@ -76,6 +76,9 @@
   },
   "auto_play_tts": {
     "message": "Аутоматски репродукуј претварање текста у говор"
+  },
+  "show_in_context_menu": {
+    "message": "Прикажи опцију за превод у контекст менију претраживача"
   },
   "use_chrome_tts": {
     "message": "Користи Chrome механизам за претварање текста у говор"
@@ -505,5 +508,14 @@
   },
   "skip_popup_inject_for_pages_info": {
     "message": "Додај URL-ове за прескакање уметања искачућих прозора ако имаш проблеме, нпр. Cloudflare captcha iframe check."
+  },
+  "popup_safe_translation_chars_limit": {
+    "message": "Прикажи упозорење ако изабрани текст прелази границу од { $limit } карактера."
+  },
+  "popup_safe_translation_chars_limit_info": {
+    "message": "Ово вам може помоћи да смањите потрошњу квоте AI токена на нежељене захтеве (0 - без ограничења)"
+  },
+  "popup_safe_translation_chars_confirmation_dialog_info": {
+    "message": "Изабрани текст садржи { $selectedCountChars } карактера, што прелази сигурну границу од { $settingsLimitChars } карактера. Превођење дугачких текстова може трошити више ресурса и направити додатне трошкове у зависности од вашег преводиоца. Желите ли да наставите са превођењем?"
   }
 }
