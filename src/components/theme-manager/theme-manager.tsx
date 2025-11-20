@@ -303,18 +303,36 @@ export class ThemeManager extends React.Component {
     )
   }
 
-  render() {
+  private safeTranslationLimitElemRef = React.createRef<HTMLElement>();
+
+  renderTranslationSafeLimitsInput() {
     const settings = settingsStore.data;
 
-    const editSafeLimitsElem = (
+    return (
       <b
         contentEditable
-        onKeyDown={evt => isHotkeyPressed({ key: "Enter" }, evt) && (evt.target as HTMLElement).blur()}
-        onFocus={evt => evt.target.textContent = String(settings.safeTranslationLimit)} // restore number from locale-view for editing
-        onBlur={evt => settings.safeTranslationLimit = parseFloat(evt.target.textContent.trim()) || 0}>
+        suppressContentEditableWarning
+        ref={this.safeTranslationLimitElemRef}
+        onKeyDown={evt => isHotkeyPressed({ key: "Enter" }, evt) && evt.currentTarget.blur()}
+        onFocus={action(evt => {
+          console.log('FOCUS:', evt); // edit-mode, no formatting for numbers
+          this.safeTranslationLimitElemRef.current.textContent = String(settings.safeTranslationLimit);
+        })}
+        onBlur={action(evt => {
+          const rawValue = evt.target.textContent.trim();
+          const numericValue = parseFloat(rawValue) || 0;
+          console.log(`BLUR: received number ${numericValue}, all text: ${rawValue}`, evt)
+          settings.safeTranslationLimit = numericValue;
+          this.safeTranslationLimitElemRef.current.textContent = formatNumber({ value: numericValue })
+        })}
+      >
         {formatNumber({ value: settings.safeTranslationLimit })}
       </b>
-    );
+    )
+  }
+
+  render() {
+    const settings = settingsStore.data;
 
     return (
       <div className="ThemeManager flex column gaps align-center">
@@ -350,7 +368,7 @@ export class ThemeManager extends React.Component {
           <label className="flex gaps align-center">
             <Icon material="warning_amber" tooltip={getMessage("popup_safe_translation_chars_limit_info")}/>
             <div>
-              {getMessage("popup_safe_translation_chars_limit", { limit: editSafeLimitsElem })}
+              {getMessage("popup_safe_translation_chars_limit", { limit: this.renderTranslationSafeLimitsInput() })}
             </div>
           </label>
         </div>
