@@ -39,7 +39,7 @@ export enum DeepSeekAIModel {
 
 // Google models
 export enum GeminiAIModel {
-  RECOMMENDED = "gemini-2.0-flash",
+  RECOMMENDED = "gemini-2.5-flash-lite",
   REASONING = "gemini-2.5-flash"
 }
 
