@@ -4,7 +4,6 @@ import { observer } from "mobx-react";
 import { getExtensionUrl } from "@/config";
 import { getManifest } from '@/extension'
 import { getMessage } from "@/i18n";
-import { Icon } from "../icon";
 import { CopyToClipboardIcon } from "../copy-to-clipboard-icon";
 
 @observer
@@ -35,10 +34,6 @@ export class Footer extends React.Component {
           {getMessage("share_with_friends")}:{" "}
           <CopyToClipboardIcon iconName="share" content={this.shareText}/>
         </div>
-        <a className="support box right noshrink flex gaps align-center" href="https://paypal.me/romanesca" target="_blank">
-          <Icon material="rocket_launcher" small/>
-          <span className="text">{getMessage("support_developers")}</span>
-        </a>
       </div>
     );
   }

@@ -517,5 +517,23 @@
   },
   "popup_safe_translation_chars_confirmation_dialog_info": {
     "message": "Выделенный текст содержит { $selectedCountChars } символов, что превышает безопасный лимит перевода в { $settingsLimitChars } символов. Перевод больших текстов может потребовать больше ресурсов или повлечь дополнительные расходы в зависимости от вашего провайдера перевода. Вы хотите продолжить перевод?"
+  },
+  "copy_to_clipboard": {
+    "message": "Копировать в буфер обмена"
+  },
+  "dictionary_supported": {
+    "message": "Поддержка словарей"
+  },
+  "tts_supported": {
+    "message": "Озвучка текста-в-речь"
+  },
+  "pro_version_ai_translator": {
+    "message": "Профессиональный AI-переводчик (предоставляется { $provider })"
+  },
+  "pro_version_ai_tts": {
+    "message": "Качественная озвучка текста-в-речь на основе AI с выбором из 6 голосов (предоставляется { $provider })"
+  },
+  "pro_version_ai_summarize_feature": {
+    "message": "AI-функция для ускоренного понимания и чтения текстов (резюме на 1-2 предложения)"
   }
 }

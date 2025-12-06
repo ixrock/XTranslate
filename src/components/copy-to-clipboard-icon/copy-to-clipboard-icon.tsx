@@ -17,7 +17,7 @@ export function CopyToClipboardIcon(props: CopyToClipboardIconProps) {
   const {
     className,
     iconName = materialIcons.copyTranslation,
-    tooltip,
+    tooltip = getMessage("copy_to_clipboard"),
     content,
   } = props;
 

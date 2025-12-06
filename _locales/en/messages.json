@@ -517,5 +517,26 @@
   },
   "popup_safe_translation_chars_confirmation_dialog_info": {
     "message": "The selected text contains { $selectedCountChars } characters, which exceeds the safe translation limit of { $settingsLimitChars } characters. Translating large texts may consume more resources or incur additional costs depending on your translation provider. Do you want to proceed with the translation?"
+  },
+  "recommended": {
+    "message": "Recommended"
+  },
+  "copy_to_clipboard": {
+    "message": "Copy to clipboard"
+  },
+  "dictionary_supported": {
+    "message": "Dictionary support"
+  },
+  "tts_supported": {
+    "message": "Text-to-speech support"
+  },
+  "pro_version_ai_translator": {
+    "message": "AI-based professional language translator (powered by { $provider })"
+  },
+  "pro_version_ai_tts": {
+    "message": "AI-based human-like text-to-speech with 6 voices on choice (powered by { $provider })"
+  },
+  "pro_version_ai_summarize_feature": {
+    "message": "Turn any texts into a crisp summary powered by AI (get and learn faster)"
   }
 }

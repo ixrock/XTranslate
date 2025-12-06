@@ -100,12 +100,6 @@ export type GoogleMetricEvents = {
     lang_from: string;
     lang_to: string;
   };
-  pro_button_shown: {
-    source: MetricSourceEnv;
-  }
-  pro_button_clicked: {
-    source: MetricSourceEnv;
-  }
   // TODO: use metric
   settings_changed: {
     name: string;

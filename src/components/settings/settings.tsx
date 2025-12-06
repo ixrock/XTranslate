@@ -52,13 +52,29 @@ export class Settings extends React.Component {
   get providerSettings(): Partial<Record<ProviderCodeName, React.ReactNode>> {
     return {
       google: (
-        <>
+        <div className="flex gaps align-center">
+          <Icon material="lyrics" tooltip={getMessage("tts_supported")}/>
           <ReactSelect
             options={this.googleApiDomainOptions}
             value={this.googleApiDomainOptions.find(({ value }) => value === googleApiDomain.get())}
             onChange={({ value }) => googleApiDomain.set(value)}
           />
-        </>
+        </div>
+      ),
+      xtranslate_pro: (
+        <div className="flex gaps align-center">
+          <em>({getMessage("recommended").toLowerCase()})</em>
+          <Icon material="translate" tooltip={getMessage("pro_version_ai_translator", { provider: "Gemini" })}/>
+          <Icon material="lyrics" tooltip={getMessage("pro_version_ai_tts", { provider: "OpenAI" })}/>
+          <Icon material="psychology" tooltip={getMessage("pro_version_ai_summarize_feature")}/>
+          <ReactSelect
+            className={styles.providerSelect}
+            placeholder={getMessage("tts_select_voice_title")}
+            options={this.openAiVoiceOptions}
+            value={this.openAiVoiceOptions.find(voiceOpt => voiceOpt.value === settingsStore.data.tts.openAiVoice)}
+            onChange={({ value }) => settingsStore.data.tts.openAiVoice = value}
+          />
+        </div>
       ),
       openai: (
         <div className="flex gaps align-center">
@@ -67,13 +83,6 @@ export class Settings extends React.Component {
             modelOptions={OpenAIModel}
             getValue={() => settingsStore.data.openAiModel}
             onChange={value => settingsStore.data.openAiModel = value}
-          />
-          <ReactSelect
-            className={styles.providerSelect}
-            placeholder={getMessage("tts_select_voice_title")}
-            options={this.openAiVoiceOptions}
-            value={this.openAiVoiceOptions.find(voiceOpt => voiceOpt.value === settingsStore.data.tts.openAiVoice)}
-            onChange={({ value }) => settingsStore.data.tts.openAiVoice = value}
           />
         </div>
       ),

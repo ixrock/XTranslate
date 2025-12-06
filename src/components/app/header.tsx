@@ -2,7 +2,7 @@ import "./header.scss";
 import React from "react";
 import { makeObservable } from "mobx";
 import { observer } from "mobx-react";
-import { isSystemPage, websiteURL } from "@/config";
+import { isSystemPage } from "@/config";
 import { cssNames } from "@/utils/cssNames";
 import { getTranslator } from "@/providers";
 import { getManifest, translateActivePage } from "@/extension";
@@ -12,21 +12,15 @@ import { Tabs } from "../tabs";
 import { Icon } from "../icon";
 import { getUrlParams, navigate, PageId } from "@/navigation";
 import { pageManager } from "./page-manager";
-import { getLocale, getMessage } from "@/i18n";
+import { getMessage } from "@/i18n";
 import { SelectLocaleIcon } from "../select-locale";
-import { Tooltip } from "../tooltip";
 import { exportSettingsDialogState } from "./export-settings-dialog";
-import { sendMetric } from "@/background/metrics.bgc";
 
 @observer
 export class Header extends React.Component {
   constructor(props: object) {
     super(props);
     makeObservable(this);
-  }
-
-  componentDidMount() {
-    void sendMetric("pro_button_shown", { source: "translate_tab" })
   }
 
   detachWindow = () => {
@@ -49,29 +43,6 @@ export class Header extends React.Component {
   private onTabsChange = async (page: PageId) => {
     await navigate({ page });
     window.scrollTo(0, 0);
-  }
-
-  renderProButtonEarlyAccess() {
-    const earlyAccessUrl = `${websiteURL}/early-access?source=extension&lang=${getLocale()}`;
-
-    const getPro = () => {
-      void sendMetric("pro_button_clicked", { source: "translate_tab" });
-    }
-
-    return (
-      <div className="buy-pro-button box grow flex justify-center">
-        <a id="pro-discount" href={earlyAccessUrl} onMouseDown={getPro} target="_blank">
-          <Icon small material="discount"/>
-          <span>{getMessage("pro_version_promo_link_text")}</span>
-        </a>
-        <Tooltip anchorId="pro-discount" following>
-          <div className="flex gaps align-center">
-            <Icon small material="auto_fix_high"/>
-            <span>{getMessage("pro_version_promo_tooltip")}</span>
-          </div>
-        </Tooltip>
-      </div>
-    )
   }
 
   render() {
@@ -98,36 +69,37 @@ export class Header extends React.Component {
           <div className="app-title">
             {name} <sup className="app-version">{version}</sup>
           </div>
-          {this.renderProButtonEarlyAccess()}
-          {showTranslateIcon && (
+          <div className="action-icons flex gaps box right">
+            {showTranslateIcon && (
+              <Icon
+                small
+                material="g_translate"
+                active={isAutoTranslatingPage}
+                tooltip={translatePageActionTooltip}
+                onClick={this.translateActivePage}
+              />
+            )}
             <Icon
               small
-              material="g_translate"
-              active={isAutoTranslatingPage}
-              tooltip={translatePageActionTooltip}
-              onClick={this.translateActivePage}
+              svg="moon"
+              active={useDarkTheme}
+              tooltip={{ nowrap: true, children: getMessage("use_dark_theme") }}
+              className={cssNames("dark-theme-icon", { active: useDarkTheme })}
+              onClick={() => settingsStore.data.useDarkTheme = !useDarkTheme}
             />
-          )}
-          <Icon
-            small
-            svg="moon"
-            active={useDarkTheme}
-            tooltip={{ nowrap: true, children: getMessage("use_dark_theme") }}
-            className={cssNames("dark-theme-icon", { active: useDarkTheme })}
-            onClick={() => settingsStore.data.useDarkTheme = !useDarkTheme}
-          />
-          <Icon
-            small
-            material="open_in_new"
-            tooltip={{ nowrap: true, children: getMessage("open_in_window") }}
-            onClick={this.detachWindow}
-          />
-          <Icon
-            small
-            material="import_export"
-            tooltip={{ nowrap: true, children: getMessage("import_export_settings") }}
-            onClick={() => exportSettingsDialogState.set(true)}
-          />
+            <Icon
+              small
+              material="open_in_new"
+              tooltip={{ nowrap: true, children: getMessage("open_in_window") }}
+              onClick={this.detachWindow}
+            />
+            <Icon
+              small
+              material="import_export"
+              tooltip={{ nowrap: true, children: getMessage("import_export_settings") }}
+              onClick={() => exportSettingsDialogState.set(true)}
+            />
+          </div>
           <SelectLocaleIcon/>
         </header>
         <Tabs className="Tabs" value={pageId} onChange={this.onTabsChange}>
