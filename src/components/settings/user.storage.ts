@@ -1,6 +1,8 @@
 import { makeObservable } from "mobx";
 import { createStorage } from "@/storage";
 import { getXTranslatePro, XTranslateProUser } from "@/providers";
+import { formatPrice } from "@/utils";
+import { getLocale } from "@/i18n";
 
 export const userSubscriptionStorage = createStorage("user", {
   area: "local",
@@ -9,6 +11,8 @@ export const userSubscriptionStorage = createStorage("user", {
 });
 
 export class UserSubscriptionStore {
+  public pricePerMonthUSDCents = 799;
+
   constructor() {
     makeObservable(this);
     void this.load();
@@ -21,6 +25,14 @@ export class UserSubscriptionStore {
 
   get apiProvider() {
     return getXTranslatePro();
+  }
+
+  get priceFormattedPerMonth() {
+    return formatPrice({
+      value: this.pricePerMonthUSDCents / 100,
+      currency: "USD",
+      locale: getLocale(),
+    });
   }
 
   get data() {

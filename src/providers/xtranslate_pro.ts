@@ -10,7 +10,7 @@ class XTranslatePro extends Translator {
   override publicUrl = websiteURL;
   override apiUrl = `${websiteURL}/api`;
   public authUrl = `${websiteURL}/api/auth/signin`;
-  public userBullingPageUrl = `${websiteURL}/billing`;
+  public subscribePageUrl = `${websiteURL}/subscribe`;
 
   override isRequireApiKey = false;
 

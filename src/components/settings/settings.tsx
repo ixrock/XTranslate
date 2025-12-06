@@ -4,7 +4,7 @@ import { action, makeObservable, observable } from "mobx";
 import { observer } from "mobx-react";
 import isEqual from "lodash/isEqual";
 import startCase from "lodash/startCase";
-import { DeepSeekAIModel, GeminiAIModel, GeminiAIModelTTSVoice, getTranslator, getTranslators, googleApiDomain, googleApiDomains, GrokAIModel, OpenAIModel, OpenAIModelTTSVoice, ProviderCodeName, ProviderWithApiKey, Translator } from "@/providers";
+import { DeepSeekAIModel, GeminiAIModel, getTranslator, getTranslators, googleApiDomain, googleApiDomains, GrokAIModel, OpenAIModel, OpenAIModelTTSVoice, ProviderCodeName, ProviderWithApiKey, Translator } from "@/providers";
 import { XTranslateIcon } from "@/user-script/xtranslate-icon";
 import { SelectLanguage, SelectLanguageChangeEvent } from "../select-language";
 import { Checkbox } from "../checkbox";
@@ -24,12 +24,16 @@ import { materialIcons } from "@/config";
 import { SelectProvider } from "../select-provider";
 import { ShowHideMore } from "../show-hide-more";
 import { SettingsUrlList } from "@/components/settings/settings_url_list";
+import { userSubscriptionStore } from "@/components/settings/user.storage";
+
+const openAiVoiceOptions =
+  Object.values(OpenAIModelTTSVoice).map((voice: string) => ({
+    value: voice,
+    label: startCase(voice),
+  })) as ReactSelectOption<OpenAIModelTTSVoice>[];
 
 @observer
 export class Settings extends React.Component {
-  private openAiVoiceOptions = this.getVoicesOptions(OpenAIModelTTSVoice);
-  private geminiVoiceOptions = this.getVoicesOptions(GeminiAIModelTTSVoice);
-
   private googleApiDomainOptions: ReactSelectOption<string>[] = googleApiDomains.map(({ domain, title }) => {
     return {
       value: domain,
@@ -40,13 +44,6 @@ export class Settings extends React.Component {
   constructor(props: object) {
     super(props);
     makeObservable(this);
-  }
-
-  private getVoicesOptions<Voice extends string>(voiceModels: Record<string, Voice>): ReactSelectOption<Voice>[] {
-    return Object.values(voiceModels).map((voice: Voice) => ({
-      value: voice,
-      label: startCase(voice),
-    }))
   }
 
   get providerSettings(): Partial<Record<ProviderCodeName, React.ReactNode>> {
@@ -61,21 +58,31 @@ export class Settings extends React.Component {
           />
         </div>
       ),
-      xtranslate_pro: (
-        <div className="flex gaps align-center">
-          <em>({getMessage("recommended").toLowerCase()})</em>
-          <Icon material="translate" tooltip={getMessage("pro_version_ai_translator", { provider: "Gemini" })}/>
-          <Icon material="lyrics" tooltip={getMessage("pro_version_ai_tts", { provider: "OpenAI" })}/>
-          <Icon material="psychology" tooltip={getMessage("pro_version_ai_summarize_feature")}/>
-          <ReactSelect
-            className={styles.providerSelect}
-            placeholder={getMessage("tts_select_voice_title")}
-            options={this.openAiVoiceOptions}
-            value={this.openAiVoiceOptions.find(voiceOpt => voiceOpt.value === settingsStore.data.tts.openAiVoice)}
-            onChange={({ value }) => settingsStore.data.tts.openAiVoice = value}
-          />
-        </div>
-      ),
+      get xtranslate_pro() {
+        const { isProEnabled } = userSubscriptionStore;
+
+        return (
+          <div className="flex gaps align-center">
+            <em>({getMessage("recommended").toLowerCase()})</em>
+            <Icon material="translate" tooltip={getMessage("pro_version_ai_translator", { provider: "Gemini" })}/>
+            <Icon material="lyrics" tooltip={getMessage("pro_version_ai_tts", { provider: "OpenAI" })}/>
+            <Icon material="psychology" tooltip={getMessage("pro_version_ai_summarize_feature")}/>
+
+            {isProEnabled && (
+              <>
+                <span>{getMessage("pro_select_tts_voice")}</span>
+                <ReactSelect<OpenAIModelTTSVoice>
+                  className={styles.providerSelect}
+                  placeholder={getMessage("tts_select_voice_title")}
+                  options={openAiVoiceOptions}
+                  value={openAiVoiceOptions.find(voiceOpt => voiceOpt.value === settingsStore.data.tts.openAiVoice)}
+                  onChange={({ value }) => settingsStore.data.tts.openAiVoice = value}
+                />
+              </>
+            )}
+          </div>
+        )
+      },
       openai: (
         <div className="flex gaps align-center">
           <SelectAIModel

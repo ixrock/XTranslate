@@ -16,6 +16,8 @@ import { formatNumber, getLocale, getMessage } from "@/i18n";
 import { SelectLocaleIcon } from "../select-locale";
 import { exportSettingsDialogState } from "./export-settings-dialog";
 import { userSubscriptionStore } from "@/components/settings/user.storage";
+import { Tooltip } from "@/components/tooltip";
+import { Button } from "@/components/button";
 
 @observer
 export class Header extends React.Component {
@@ -51,7 +53,15 @@ export class Header extends React.Component {
   }
 
   renderProUserInfo() {
-    const { isProEnabled, remainTextTokens, remainSecondsTTSRoughly, subscriptionPlan, data: { subscription } } = userSubscriptionStore;
+    const {
+      isProEnabled,
+      remainTextTokens,
+      remainSecondsTTSRoughly,
+      subscriptionPlan,
+      priceFormattedPerMonth,
+      apiProvider: { subscribePageUrl },
+      data: { subscription }
+    } = userSubscriptionStore;
 
     if (isProEnabled) {
       return (
@@ -75,6 +85,22 @@ export class Header extends React.Component {
         </div>
       )
     }
+
+    return (
+      <div className="pro flex column inline">
+        <Button
+          outline
+          href={subscribePageUrl}
+          target="_blank" id="subscribe-pro"
+          label={getMessage("pro_upgrade_button_label")}
+        />
+        <Tooltip anchorId="subscribe-pro" following>
+          {getMessage("pro_upgrade_button_tooltip", {
+            pricePerMonth: priceFormattedPerMonth
+          })}
+        </Tooltip>
+      </div>
+    )
   }
 
   render() {

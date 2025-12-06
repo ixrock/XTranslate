@@ -538,5 +538,14 @@
   },
   "pro_version_ai_summarize_feature": {
     "message": "Turn any text into a crisp summary (promotes faster learning and understanding)"
+  },
+  "pro_upgrade_button_label": {
+    "message": "Upgrade to PRO"
+  },
+  "pro_upgrade_button_tooltip": {
+    "message": "Login, try free plan tokens and subscribe later on for about { $pricePerMonth }/month"
+  },
+  "pro_select_tts_voice": {
+    "message": "Voice"
   }
 }
