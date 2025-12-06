@@ -537,6 +537,6 @@
     "message": "AI-based human-like text-to-speech with 6 voices on choice (powered by { $provider })"
   },
   "pro_version_ai_summarize_feature": {
-    "message": "Turn any texts into a crisp summary powered by AI (get and learn faster)"
+    "message": "Turn any text into a crisp summary (promotes faster learning and understanding)"
   }
 }

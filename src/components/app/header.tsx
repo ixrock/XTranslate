@@ -12,15 +12,20 @@ import { Tabs } from "../tabs";
 import { Icon } from "../icon";
 import { getUrlParams, navigate, PageId } from "@/navigation";
 import { pageManager } from "./page-manager";
-import { getMessage } from "@/i18n";
+import { formatNumber, getLocale, getMessage } from "@/i18n";
 import { SelectLocaleIcon } from "../select-locale";
 import { exportSettingsDialogState } from "./export-settings-dialog";
+import { userSubscriptionStore } from "@/components/settings/user.storage";
 
 @observer
 export class Header extends React.Component {
   constructor(props: object) {
     super(props);
     makeObservable(this);
+  }
+
+  get user() {
+    return userSubscriptionStore.data;
   }
 
   detachWindow = () => {
@@ -43,6 +48,33 @@ export class Header extends React.Component {
   private onTabsChange = async (page: PageId) => {
     await navigate({ page });
     window.scrollTo(0, 0);
+  }
+
+  renderProUserInfo() {
+    const { isProEnabled, remainTextTokens, remainSecondsTTSRoughly, subscriptionPlan, data: { subscription } } = userSubscriptionStore;
+
+    if (isProEnabled) {
+      return (
+        <div className="pro flex column">
+          <p>Welcome back, <em>{this.user.username}</em>!</p>
+          <div className="flex align-center">
+            <Icon small material="info_outline" tooltip={{
+              following: true,
+              children: (
+                <>
+                  <p>Subscription: <b>{subscriptionPlan}</b> (ends {new Date(subscription.periodEnd).toLocaleString(getLocale())})</p>
+                  <p>
+                    Available tokens: <b>{formatNumber({ value: remainTextTokens, locale: getLocale() })}</b> |
+                    Available TTS-seconds: <b>{remainSecondsTTSRoughly}</b>
+                  </p>
+                </>
+              )
+            }}/>
+            <div>PRO-status: <b>{subscription.status}</b></div>
+          </div>
+        </div>
+      )
+    }
   }
 
   render() {
@@ -68,6 +100,9 @@ export class Header extends React.Component {
         <header className="flex gaps align-center">
           <div className="app-title">
             {name} <sup className="app-version">{version}</sup>
+          </div>
+          <div className="box center">
+            {this.renderProUserInfo()}
           </div>
           <div className="action-icons flex gaps box right">
             {showTranslateIcon && (

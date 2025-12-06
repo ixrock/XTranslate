@@ -1,6 +1,6 @@
 import AILanguagesList from "./open-ai.json"
 import { websiteURL } from "@/config";
-import { ITranslationResult, OpenAIModelTTSVoice, ProviderCodeName, TranslateParams, Translator } from "./index";
+import { getTranslator, ITranslationResult, OpenAIModelTTSVoice, ProviderCodeName, TranslateParams, Translator } from "./index";
 import { ProxyResponseType } from "@/extension";
 
 class XTranslatePro extends Translator {
@@ -40,7 +40,7 @@ class XTranslatePro extends Translator {
     return;
   }
 
-  async getUser() {
+  async getUser(): Promise<XTranslateProUser> {
     return this.request<XTranslateProUser>({
       url: `${this.apiUrl}/me`,
       requestInit: { credentials: "include" },
@@ -93,3 +93,7 @@ export interface XTranslateProUserSubscription {
 }
 
 Translator.register(ProviderCodeName.XTRANSLATE_PRO, XTranslatePro);
+
+export function getXTranslatePro() {
+  return getTranslator<XTranslatePro>(ProviderCodeName.XTRANSLATE_PRO);
+}

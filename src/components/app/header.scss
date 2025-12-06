@@ -11,6 +11,12 @@
       color: white;
     }
 
+    .pro {
+      color: var(--theme-bgc-invert);
+      margin: auto;
+      font-size: small;
+    }
+
     .app-version {
       text-transform: lowercase;
       font-weight: normal;
