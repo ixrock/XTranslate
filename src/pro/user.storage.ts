@@ -4,10 +4,10 @@ import { getXTranslatePro, XTranslateProUser } from "@/providers";
 import { formatPrice } from "@/utils";
 import { getLocale } from "@/i18n";
 
-export const userSubscriptionStorage = createStorage("user", {
+export const userStorage = createStorage("user", {
   area: "local",
   autoLoad: false,
-  defaultValue: {} as Partial<XTranslateProUser>,
+  defaultValue: {} as XTranslateProUser,
 });
 
 export class UserSubscriptionStore {
@@ -15,11 +15,10 @@ export class UserSubscriptionStore {
 
   constructor() {
     makeObservable(this);
-    void this.load();
   }
 
   async load() {
-    await userSubscriptionStorage.load();
+    await userStorage.load();
     await this.refreshFromServer();
   }
 
@@ -36,7 +35,7 @@ export class UserSubscriptionStore {
   }
 
   get data() {
-    return userSubscriptionStorage.get();
+    return userStorage.get();
   }
 
   get subscriptionPlan() {
@@ -57,14 +56,19 @@ export class UserSubscriptionStore {
     return Math.round(bytesAvailable / 16000); // ~mp3/128KBps
   }
 
+  resetCache() {
+    userStorage.reset();
+    return userSubscriptionStore.data;
+  }
+
   async refreshFromServer(): Promise<XTranslateProUser> {
     try {
       const userInfo = await this.apiProvider.getUser();
-      userSubscriptionStorage.set(userInfo);
+      userStorage.set(userInfo);
       return userInfo;
     } catch (err) {
-      userSubscriptionStorage.reset();
-      return;
+      console.log('failed to update from server: ', err)
+      return this.resetCache();
     }
   }
 }

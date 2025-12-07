@@ -22,6 +22,7 @@ import { saveToFavoritesAction } from "@/background/history.bgc";
 import { getSelectedText } from "@/extension";
 import { CopyToClipboardIcon } from "../copy-to-clipboard-icon";
 import { SelectProvider } from "../select-provider";
+import { checkProSubscriptionAvailability } from "@/pro/subscription-check";
 
 @observer
 export class InputTranslation extends React.Component {
@@ -134,16 +135,21 @@ export class InputTranslation extends React.Component {
   }
 
   @action
-  onProviderChange = (name: ProviderCodeName) => {
-    const translator = getTranslator(name);
+  onProviderChange = (provider: ProviderCodeName) => {
+    const translator = getTranslator(provider);
     const supportedLanguages = translator.getSupportedLanguages({
       langFrom: this.params.from,
       langTo: this.params.to,
     });
-    this.params.provider = name;
+    const prevProvider = this.params.provider;
+    this.params.provider = provider;
     this.params.from = supportedLanguages.langFrom;
     this.params.to = supportedLanguages.langTo;
-    void this.translate();
+
+    checkProSubscriptionAvailability(provider, () => {
+      this.params.provider = prevProvider;
+      void this.translate();
+    });
   }
 
   private saveToFavorites = (isFavorite: boolean) => {

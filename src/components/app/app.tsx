@@ -20,7 +20,7 @@ import { AppRateDialog } from "./app-rate.dialog";
 import { isRTL } from "@/providers";
 import { getLocale } from "@/i18n";
 import { sendMetric } from "@/background/metrics.bgc";
-import { userSubscriptionStore } from "@/components/settings/user.storage";
+import { userSubscriptionStore } from "@/pro";
 
 @observer
 export class App extends React.Component {

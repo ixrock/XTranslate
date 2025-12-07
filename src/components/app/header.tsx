@@ -15,7 +15,7 @@ import { pageManager } from "./page-manager";
 import { formatNumber, getLocale, getMessage } from "@/i18n";
 import { SelectLocaleIcon } from "../select-locale";
 import { exportSettingsDialogState } from "./export-settings-dialog";
-import { userSubscriptionStore } from "@/components/settings/user.storage";
+import { userSubscriptionStore } from "@/pro";
 import { Tooltip } from "@/components/tooltip";
 import { Button } from "@/components/button";
 
