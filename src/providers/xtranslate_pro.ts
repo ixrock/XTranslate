@@ -3,7 +3,7 @@ import { websiteURL } from "@/config";
 import { getTranslator, ITranslationResult, OpenAIModelTTSVoice, ProviderCodeName, TranslateParams, Translator } from "./index";
 import { ProxyResponseType } from "@/extension";
 
-class XTranslatePro extends Translator {
+export class XTranslatePro extends Translator {
   override name = ProviderCodeName.XTRANSLATE_PRO;
   override title = "XTranslate PRO";
 

@@ -127,7 +127,7 @@ export class Header extends React.Component {
           <div className="app-title">
             {name} <sup className="app-version">{version}</sup>
           </div>
-          <div className="box center">
+          <div className="box grow flex center">
             {this.renderProUserInfo()}
           </div>
           <div className="action-icons flex gaps box right">

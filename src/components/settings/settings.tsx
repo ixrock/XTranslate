@@ -4,7 +4,8 @@ import { action, makeObservable, observable } from "mobx";
 import { observer } from "mobx-react";
 import isEqual from "lodash/isEqual";
 import startCase from "lodash/startCase";
-import { DeepSeekAIModel, GeminiAIModel, getTranslator, getTranslators, googleApiDomain, googleApiDomains, GrokAIModel, OpenAIModel, OpenAIModelTTSVoice, ProviderCodeName, ProviderWithApiKey, Translator } from "@/providers";
+import { createTab } from "@/extension";
+import { DeepSeekAIModel, GeminiAIModel, getTranslator, getTranslators, getXTranslatePro, googleApiDomain, googleApiDomains, GrokAIModel, OpenAIModel, OpenAIModelTTSVoice, ProviderCodeName, ProviderWithApiKey, Translator } from "@/providers";
 import { XTranslateIcon } from "@/user-script/xtranslate-icon";
 import { SelectLanguage, SelectLanguageChangeEvent } from "../select-language";
 import { Checkbox } from "../checkbox";
@@ -204,15 +205,43 @@ export class Settings extends React.Component {
     fullPageTranslation.langFrom = langFrom;
   }
 
-  @action
+  @action.bound
   onFullPageProviderChange = (provider: ProviderCodeName) => {
     const { fullPageTranslation } = settingsStore.data;
+    const prevProvider = fullPageTranslation.provider;
     const translator = getTranslator(provider);
     const supportedLanguages = translator.getSupportedLanguages(fullPageTranslation)
     fullPageTranslation.provider = provider;
     fullPageTranslation.langFrom = supportedLanguages.langFrom;
     fullPageTranslation.langTo = supportedLanguages.langTo;
+    this.checkProSubscriptionAvailability(provider, () => {
+      fullPageTranslation.provider = prevProvider; // fallback
+    });
   };
+
+  @action.bound
+  private onProviderChange = (provider: ProviderCodeName,) => {
+    const prevProvider = settingsStore.data.vendor;
+    settingsStore.setProvider(provider);
+    this.checkProSubscriptionAvailability(provider, () => {
+      settingsStore.setProvider(prevProvider); // fallback
+    });
+  }
+
+  private checkProSubscriptionAvailability(provider: ProviderCodeName, fallbackAction: () => void) {
+    const { isProEnabled } = userSubscriptionStore;
+    if (provider === ProviderCodeName.XTRANSLATE_PRO && !isProEnabled) {
+      const translator = getXTranslatePro();
+
+      const subscribe = window.confirm(getMessage("pro_required_confirm_goto_subscribe"));
+      if (subscribe) {
+        void createTab(translator.subscribePageUrl);
+      } else {
+        // reset to defaults since user at this point doesn't want to subscribe == PRO-apis won't work
+        fallbackAction();
+      }
+    }
+  }
 
   render() {
     const settings = settingsStore.data;
@@ -231,7 +260,7 @@ export class Settings extends React.Component {
           to={settings.langTo}
           onChange={this.onLanguageChange}
         />
-        <RadioGroup className={styles.providers} value={settings.vendor} onChange={v => settingsStore.setProvider(v)}>
+        <RadioGroup className={styles.providers} value={settings.vendor} onChange={this.onProviderChange}>
           {providers.map(this.renderProvider, this)}
         </RadioGroup>
         <ShowHideMore

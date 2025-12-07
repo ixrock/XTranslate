@@ -547,5 +547,8 @@
   },
   "pro_select_tts_voice": {
     "message": "Voice"
+  },
+  "pro_required_confirm_goto_subscribe": {
+    "message": "This option require PRO-subscription, should we go to subscribe page?"
   }
 }
