@@ -148,8 +148,8 @@ export class InputTranslation extends React.Component {
 
     checkProSubscriptionAvailability(provider, () => {
       this.params.provider = prevProvider;
-      void this.translate();
     });
+    void this.translate();
   }
 
   private saveToFavorites = (isFavorite: boolean) => {

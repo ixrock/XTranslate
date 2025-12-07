@@ -66,16 +66,33 @@ export class Header extends React.Component {
     if (isProEnabled) {
       return (
         <div className="pro flex column">
-          <p>Welcome back, <em>{this.user.username}</em>!</p>
+          <p>
+            {getMessage("pro_user_welcome_back", {
+              username: <em>{this.user.username}</em>,
+            })}
+          </p>
           <div className="flex align-center">
             <Icon small material="info_outline" tooltip={{
               following: true,
               children: (
                 <>
-                  <p>Subscription: <b>{subscriptionPlan}</b> (ends {new Date(subscription.periodEnd).toLocaleString(getLocale())})</p>
                   <p>
-                    Available tokens: <b>{formatNumber({ value: remainTextTokens, locale: getLocale() })}</b> |
-                    Available TTS-seconds: <b>{remainSecondsTTSRoughly}</b>
+                    {getMessage("pro_user_subscription", {
+                      plan: subscriptionPlan,
+                      periodEnd: new Date(subscription.periodEnd).toLocaleString(getLocale()),
+                    })}
+                  </p>
+                  <p>
+                    {getMessage("pro_user_remain_text_tokens", {
+                      tokens: formatNumber({ value: remainTextTokens, locale: getLocale() })
+                    })}
+                  </p>
+                  <p>
+                    {
+                      getMessage("pro_user_remain_tts_seconds_approx", {
+                        seconds: remainSecondsTTSRoughly
+                      })
+                    }
                   </p>
                 </>
               )

@@ -6,13 +6,12 @@ import { ProxyResponseType } from "@/extension";
 export class XTranslatePro extends Translator {
   override name = ProviderCodeName.XTRANSLATE_PRO;
   override title = "XTranslate PRO";
+  override isRequireApiKey = false;
 
   override publicUrl = websiteURL;
   override apiUrl = `${websiteURL}/api`;
   public authUrl = `${websiteURL}/api/auth/signin`;
   public subscribePageUrl = `${websiteURL}/subscribe`;
-
-  override isRequireApiKey = false;
 
   constructor() {
     super({
