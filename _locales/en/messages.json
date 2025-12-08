@@ -543,7 +543,7 @@
     "message": "Upgrade to PRO"
   },
   "pro_upgrade_button_tooltip": {
-    "message": "Login, try free plan tokens and subscribe later on for about { $pricePerMonth }/month"
+    "message": "Login, try free plan and subscribe later on for about { $pricePerMonth }/month"
   },
   "pro_select_tts_voice": {
     "message": "Voice"
@@ -554,13 +554,25 @@
   "pro_user_welcome_back": {
     "message": "Welcome back, { $username }!"
   },
+  "pro_user_status": {
+    "message": "PRO-status: { $status }"
+  },
+  "pro_user_status_active": {
+    "message": "active"
+  },
+  "pro_user_status_inactive": {
+    "message": "inactive"
+  },
   "pro_user_subscription": {
     "message": "Subscription: { $plan } (ends { $periodEnd })"
   },
   "pro_user_remain_text_tokens": {
-    "message": "Available tokens: { $tokens }"
+    "message": "Available text tokens: { $tokens }"
   },
   "pro_user_remain_tts_seconds_approx": {
-    "message": "Available TTS-seconds: { $seconds }"
+    "message": "Available text-to-speech time in seconds: { $seconds }"
+  },
+  "pro_unauthorized_error_401": {
+    "message": "You must be logged-in at { $serviceUrl } and have an active subscription to get access."
   }
 }

@@ -60,44 +60,50 @@ export class Header extends React.Component {
       subscriptionPlan,
       priceFormattedPerMonth,
       apiProvider: { subscribePageUrl },
-      data: { subscription }
+      data: { subscription },
     } = userSubscriptionStore;
 
     if (isProEnabled) {
+      const subscriptionDetails = (
+        <>
+          <p>
+            {getMessage("pro_user_subscription", {
+              plan: subscriptionPlan,
+              periodEnd: new Date(subscription.periodEnd).toLocaleString(getLocale()),
+            })}
+          </p>
+          <p>
+            {getMessage("pro_user_remain_text_tokens", {
+              tokens: formatNumber({ value: remainTextTokens, locale: getLocale() })
+            })}
+          </p>
+          <p>
+            {
+              getMessage("pro_user_remain_tts_seconds_approx", {
+                seconds: remainSecondsTTSRoughly
+              })
+            }
+          </p>
+        </>
+      );
+
       return (
         <div className="pro flex column">
-          <p>
+          <div className="pro-greeting">
             {getMessage("pro_user_welcome_back", {
               username: <em>{this.user.username}</em>,
             })}
-          </p>
+          </div>
           <div className="flex align-center">
             <Icon small material="info_outline" tooltip={{
               following: true,
-              children: (
-                <>
-                  <p>
-                    {getMessage("pro_user_subscription", {
-                      plan: subscriptionPlan,
-                      periodEnd: new Date(subscription.periodEnd).toLocaleString(getLocale()),
-                    })}
-                  </p>
-                  <p>
-                    {getMessage("pro_user_remain_text_tokens", {
-                      tokens: formatNumber({ value: remainTextTokens, locale: getLocale() })
-                    })}
-                  </p>
-                  <p>
-                    {
-                      getMessage("pro_user_remain_tts_seconds_approx", {
-                        seconds: remainSecondsTTSRoughly
-                      })
-                    }
-                  </p>
-                </>
-              )
+              children: subscriptionDetails,
             }}/>
-            <div>PRO-status: <b>{subscription.status}</b></div>
+            <div className="pro-status">
+              {getMessage("pro_user_status", {
+                status: <b>{getMessage(`pro_user_status_${subscription.status}`)}</b>
+              })}
+            </div>
           </div>
         </div>
       )

@@ -1,5 +1,6 @@
 //-- Network proxy (to avoid CORS errors in `options` and `content-script` pages)
 
+import type { ITranslationError } from "@/providers";
 import { blobToBase64DataUrl, createLogger, toBinaryFile } from "../utils";
 import { isBackgroundWorker, onMessage, sendMessage } from "../extension/runtime"
 import { MessageType, ProxyRequestPayload, ProxyResponsePayload, ProxyResponseType } from "../extension/messages"
@@ -13,38 +14,38 @@ export function listenProxyRequestActions() {
 export async function handleProxyRequestPayload<Response>({ url, responseType, requestInit }: ProxyRequestPayload) {
   logger.info(`proxying request (${responseType}): ${url}`);
 
-  const httpResponse = await fetch(url, requestInit);
+  const response = await fetch(url, requestInit);
   const payload: ProxyResponsePayload = {
     url,
-    headers: Object.fromEntries(httpResponse.headers),
+    headers: Object.fromEntries(response.headers),
     data: undefined,
   };
 
   switch (responseType) {
   case ProxyResponseType.JSON: {
-    const data = await httpResponse.json();
-    if (httpResponse.ok) payload.data = data;
+    const data = await response.json();
+    if (response.ok) payload.data = data;
     else {
       throw {
-        statusCode: httpResponse.status,
-        message: httpResponse.statusText,
+        statusCode: response.status,
+        message: response.statusText,
         ...data,
-      }
+      } as ITranslationError;
     }
     break;
   }
 
   case ProxyResponseType.TEXT:
-    payload.data = await httpResponse.text();
+    payload.data = await response.text();
     break;
 
   case ProxyResponseType.DATA_URL:
-    const blob = await httpResponse.blob();
+    const blob = await response.blob();
     payload.data = await blobToBase64DataUrl(blob);
     break;
 
   case ProxyResponseType.BLOB:
-    const buffer = await httpResponse.arrayBuffer();
+    const buffer = await response.arrayBuffer();
     const transferableDataContainer = new Uint8Array(buffer);
     payload.data = Array.from(transferableDataContainer);
     break;

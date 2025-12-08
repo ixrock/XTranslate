@@ -535,5 +535,41 @@
   },
   "pro_version_ai_summarize_feature": {
     "message": "AI-функция для ускоренного понимания и чтения текстов (резюме на 1-2 предложения)"
+  },
+  "pro_upgrade_button_label": {
+    "message": "Обновить до PRO"
+  },
+  "pro_upgrade_button_tooltip": {
+    "message": "Авторизуйтесь на сайте, опробуйте бесплатный план и подпишитесь позже примерно за { $pricePerMonth }/месяц."
+  },
+  "pro_select_tts_voice": {
+    "message": "Голос"
+  },
+  "pro_required_confirm_goto_subscribe": {
+    "message": "Эта опция требует PRO-версии приложения, перейти на страницу подписки?"
+  },
+  "pro_user_welcome_back": {
+    "message": "Добро пожаловать, { $username }!"
+  },
+  "pro_user_status": {
+    "message": "PRO-статус: { $status }"
+  },
+  "pro_user_status_active": {
+    "message": "активен"
+  },
+  "pro_user_status_inactive": {
+    "message": "не активен"
+  },
+  "pro_user_subscription": {
+    "message": "Подписка: { $plan } (заканчивается { $periodEnd })"
+  },
+  "pro_user_remain_text_tokens": {
+    "message": "Доступно текстовых токенов: { $tokens }"
+  },
+  "pro_user_remain_tts_seconds_approx": {
+    "message": "Доступнов время для озвучки текста в речь (секунд): { $seconds }"
+  },
+  "pro_unauthorized_error_401": {
+    "message": "Вы должны быть залогинены на { $serviceUrl } и иметь активную подписку для доступа."
   }
 }

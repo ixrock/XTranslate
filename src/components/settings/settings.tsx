@@ -64,9 +64,9 @@ export class Settings extends React.Component {
         return (
           <div className="flex gaps align-center">
             {!isProEnabled && <em>({getMessage("recommended").toLowerCase()})</em>}
+            <Icon material="psychology" tooltip={getMessage("pro_version_ai_summarize_feature")}/>
             <Icon material="translate" tooltip={getMessage("pro_version_ai_translator", { provider: "Gemini" })}/>
             <Icon material="lyrics" tooltip={getMessage("pro_version_ai_tts", { provider: "OpenAI" })}/>
-            <Icon material="psychology" tooltip={getMessage("pro_version_ai_summarize_feature")}/>
 
             {isProEnabled && (
               <>

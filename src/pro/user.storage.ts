@@ -38,12 +38,12 @@ export class UserSubscriptionStore {
     return userStorage.get();
   }
 
-  get subscriptionPlan() {
+  get subscriptionPlan(): string {
     return this.data?.subscription?.planType;
   }
 
-  get isProEnabled() {
-    return this.data?.subscription?.status === "active";
+  get isProEnabled(): boolean {
+    return Boolean(this.data?.subscription);
   }
 
   get remainTextTokens(): number {

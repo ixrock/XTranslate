@@ -304,6 +304,12 @@ export class InputTranslation extends React.Component {
   }
 
   @action.bound
+  onInputChange(val: string) {
+    if (this.error) this.error = null; // reset previous error first (if any)
+    this.params.text = val;
+  }
+
+  @action.bound
   bindInputRef(elem: Input) {
     this.input = elem;
   }
@@ -336,7 +342,7 @@ export class InputTranslation extends React.Component {
             tabIndex={1}
             placeholder={getMessage("text_field_placeholder")}
             defaultValue={text}
-            onChange={v => this.params.text = v}
+            onChange={this.onInputChange}
             onKeyDown={evt => isHotkeyPressed({ key: "Enter" }, evt) && this.translate()}
             ref={this.bindInputRef}
             infoContent={(

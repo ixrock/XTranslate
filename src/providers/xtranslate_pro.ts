@@ -1,7 +1,8 @@
 import AILanguagesList from "./open-ai.json"
 import { websiteURL } from "@/config";
-import { getTranslator, ITranslationResult, OpenAIModelTTSVoice, ProviderCodeName, TranslateParams, Translator } from "./index";
+import { getTranslator, ITranslationError, ITranslationResult, OpenAIModelTTSVoice, ProviderCodeName, TranslateParams, Translator } from "./index";
 import { ProxyResponseType } from "@/extension";
+import { getMessage } from "@/i18n";
 
 export class XTranslatePro extends Translator {
   override name = ProviderCodeName.XTRANSLATE_PRO;
@@ -10,7 +11,6 @@ export class XTranslatePro extends Translator {
 
   override publicUrl = websiteURL;
   override apiUrl = `${websiteURL}/api`;
-  public authUrl = `${websiteURL}/api/auth/signin`;
   public subscribePageUrl = `${websiteURL}/subscribe`;
 
   constructor() {
@@ -19,24 +19,94 @@ export class XTranslatePro extends Translator {
     });
   }
 
-  // TODO: implement me
+  private async translateReq(params: TranslateParams): Promise<XTranslateProTranslateOutput> {
+    const { from, to: langTo, text, texts = [text] } = params;
+    const langFrom = from === "auto" ? undefined : from;
+
+    const payload: XTranslateProTranslateInput = {
+      langFrom,
+      langTo,
+      text: texts,
+    };
+
+    return this.request<XTranslateProTranslateOutput>({
+      url: `${this.apiUrl}/translate`,
+      requestInit: {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify(payload),
+      }
+    });
+  }
+
+  private handleApiError(err: Error | ITranslationError | XTranslateProTranslateError) {
+    const apiError = err as ITranslationError & XTranslateProTranslateError;
+
+    if (apiError.error) {
+      apiError.message = apiError.error;
+    }
+
+    if (apiError.statusCode === 401) {
+      apiError.message = getMessage("pro_unauthorized_error_401", {
+        serviceUrl: `<a href="${this.subscribePageUrl}" target="_blank">${this.publicUrl}</a>`,
+      });
+    }
+
+    throw apiError;
+  }
+
   async translateMany(params: TranslateParams): Promise<string[]> {
-    return [];
+    try {
+      const { translation } = await this.translateReq(params);
+      return translation;
+    } catch (err) {
+      this.handleApiError(err);
+    }
   }
 
-  // TODO: implement me
   async translate(params: TranslateParams): Promise<ITranslationResult> {
-    return;
+    try {
+      const { translation, transcription, detectedLang } = await this.translateReq(params);
+      return {
+        langDetected: detectedLang,
+        translation: translation[0],
+        transcription: transcription
+      };
+    } catch (err) {
+      this.handleApiError(err);
+    }
   }
 
-  // TODO: implement me
-  async summarize(params: XTranslateProSummarizeInput): Promise<XTranslateProSummarizeOutput> {
-    return;
+  async summarize(params: XTranslateProSummarizeInput): Promise<string> {
+    try {
+      const { summary } = await this.request<XTranslateProSummarizeOutput>({
+        url: `${this.apiUrl}/summarize`,
+        requestInit: {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(params),
+          credentials: "include",
+        }
+      });
+      return summary;
+    } catch (err) {
+      this.handleApiError(err);
+    }
   }
 
-  // TODO: implement me
+  // FIXME: handle streaming properly
   async getAudioFile(text: string, lang?: string, voice?: OpenAIModelTTSVoice): Promise<Blob> {
-    return;
+    return this.request<Blob>({
+      url: `${this.apiUrl}/tts`,
+      requestInit: {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text, lang, voice }),
+        credentials: "include",
+      },
+      responseType: ProxyResponseType.BLOB,
+    });
   }
 
   async getUser(): Promise<XTranslateProUser> {
@@ -61,7 +131,7 @@ export interface XTranslateProTranslateOutput {
   tokensTotalUsed: number;
 }
 
-export interface XTranslateProTranslateError {
+export interface XTranslateProTranslateError extends ITranslationError {
   error: string;
 }
 

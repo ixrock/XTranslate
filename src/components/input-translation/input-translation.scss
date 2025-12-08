@@ -90,6 +90,10 @@
 
   .translation-error {
     color: $red-300;
+
+    * {
+      color: inherit;
+    }
   }
 
   .hint {

@@ -3,7 +3,6 @@ import * as styles from "./popup.module.scss"
 import React, { CSSProperties } from "react";
 import { computed, makeObservable } from "mobx";
 import { observer } from "mobx-react";
-import isEqual from "lodash/isEqual";
 import sample from "lodash/sample"
 import LanguagesList from "@/providers/google.json"
 import { materialIcons } from "@/config";
