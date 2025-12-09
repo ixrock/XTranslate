@@ -524,9 +524,6 @@
   "copy_to_clipboard": {
     "message": "Copy to clipboard"
   },
-  "dictionary_supported": {
-    "message": "Dictionary support"
-  },
   "tts_supported": {
     "message": "Text-to-speech support"
   },

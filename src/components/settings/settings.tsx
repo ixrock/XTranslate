@@ -50,7 +50,7 @@ export class Settings extends React.Component {
     return {
       google: (
         <div className="flex gaps align-center">
-          <Icon material="lyrics" tooltip={getMessage("tts_supported")}/>
+          <Icon svg="tts" tooltip={getMessage("tts_supported")}/>
           <ReactSelect
             options={this.googleApiDomainOptions}
             value={this.googleApiDomainOptions.find(({ value }) => value === googleApiDomain.get())}
@@ -64,9 +64,9 @@ export class Settings extends React.Component {
         return (
           <div className="flex gaps align-center">
             {!isProEnabled && <em>({getMessage("recommended").toLowerCase()})</em>}
-            <Icon material="psychology" tooltip={getMessage("pro_version_ai_summarize_feature")}/>
+            <Icon material="auto_awesome" tooltip={getMessage("pro_version_ai_summarize_feature")}/>
             <Icon material="translate" tooltip={getMessage("pro_version_ai_translator", { provider: "Gemini" })}/>
-            <Icon material="lyrics" tooltip={getMessage("pro_version_ai_tts", { provider: "OpenAI" })}/>
+            <Icon svg="tts" tooltip={getMessage("pro_version_ai_tts", { provider: "OpenAI" })}/>
 
             {isProEnabled && (
               <>

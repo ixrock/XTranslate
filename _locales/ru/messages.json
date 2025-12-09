@@ -521,9 +521,6 @@
   "copy_to_clipboard": {
     "message": "Копировать в буфер обмена"
   },
-  "dictionary_supported": {
-    "message": "Поддержка словарей"
-  },
   "tts_supported": {
     "message": "Озвучка текста-в-речь"
   },
