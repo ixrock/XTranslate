@@ -15,7 +15,7 @@ import { pageManager } from "./page-manager";
 import { formatNumber, getLocale, getMessage } from "@/i18n";
 import { SelectLocaleIcon } from "../select-locale";
 import { exportSettingsDialogState } from "./export-settings-dialog";
-import { userSubscriptionStore } from "@/pro";
+import { userStore } from "@/pro";
 import { Tooltip } from "@/components/tooltip";
 import { Button } from "@/components/button";
 
@@ -27,7 +27,7 @@ export class Header extends React.Component {
   }
 
   get user() {
-    return userSubscriptionStore.data;
+    return userStore.data;
   }
 
   detachWindow = () => {
@@ -61,7 +61,7 @@ export class Header extends React.Component {
       priceFormattedPerMonth,
       apiProvider: { subscribePageUrl },
       data: { subscription },
-    } = userSubscriptionStore;
+    } = userStore;
 
     if (isProEnabled) {
       const subscriptionDetails = (

@@ -326,9 +326,6 @@
   "spell_correction": {
     "message": "Возможно, вы имели ввиду { $suggestion }?"
   },
-  "text_input_translation_hint": {
-    "message": "{ $hotkey } для быстрого перевода, задержка: { $timeout }мс"
-  },
   "history_enabled_flag": {
     "message": "Включено"
   },
@@ -568,5 +565,20 @@
   },
   "pro_unauthorized_error_401": {
     "message": "Вы должны быть залогинены на { $serviceUrl } и иметь активную подписку для доступа."
+  },
+  "translate_button": {
+    "message": "Перевести"
+  },
+  "summarize_button": {
+    "message": "Резюмировать"
+  },
+  "text_input_auto_translation_enabled": {
+    "message": "Авто-перевод { $toggle = включен }"
+  },
+  "text_input_auto_translation_disabled": {
+    "message": "Авто-перевод { $toggle = выключен }"
+  },
+  "text_input_auto_translation_timeout": {
+    "message": "Задержка: { $timeout }мс"
   }
 }

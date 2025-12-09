@@ -58,7 +58,7 @@ export class UserSubscriptionStore {
 
   resetCache() {
     userStorage.reset();
-    return userSubscriptionStore.data;
+    return userStore.data;
   }
 
   async refreshFromServer(): Promise<XTranslateProUser> {
@@ -73,4 +73,4 @@ export class UserSubscriptionStore {
   }
 }
 
-export const userSubscriptionStore = new UserSubscriptionStore();
+export const userStore = new UserSubscriptionStore();

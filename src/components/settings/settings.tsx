@@ -24,7 +24,7 @@ import { materialIcons } from "@/config";
 import { SelectProvider } from "../select-provider";
 import { ShowHideMore } from "../show-hide-more";
 import { SettingsUrlList } from "@/components/settings/settings_url_list";
-import { userSubscriptionStore, checkProSubscriptionAvailability } from "@/pro";
+import { proSubscriptionRequiredDialog, userStore } from "@/pro";
 
 const openAiVoiceOptions =
   Object.values(OpenAIModelTTSVoice).map((voice: string) => ({
@@ -59,13 +59,13 @@ export class Settings extends React.Component {
         </div>
       ),
       get xtranslate_pro() {
-        const { isProEnabled } = userSubscriptionStore;
+        const { isProEnabled } = userStore;
 
         return (
           <div className="flex gaps align-center">
             {!isProEnabled && <em>({getMessage("recommended").toLowerCase()})</em>}
-            <Icon material="auto_awesome" tooltip={getMessage("pro_version_ai_summarize_feature")}/>
-            <Icon material="translate" tooltip={getMessage("pro_version_ai_translator", { provider: "Gemini" })}/>
+            <Icon material={materialIcons.summarize} tooltip={getMessage("pro_version_ai_summarize_feature")}/>
+            <Icon material={materialIcons.translate} tooltip={getMessage("pro_version_ai_translator", { provider: "Gemini" })}/>
             <Icon svg="tts" tooltip={getMessage("pro_version_ai_tts", { provider: "OpenAI" })}/>
 
             {isProEnabled && (
@@ -214,9 +214,10 @@ export class Settings extends React.Component {
     fullPageTranslation.langFrom = supportedLanguages.langFrom;
     fullPageTranslation.langTo = supportedLanguages.langTo;
 
-    checkProSubscriptionAvailability(provider, function fallback() {
-      fullPageTranslation.provider = prevProvider;
-    });
+    if (provider === ProviderCodeName.XTRANSLATE_PRO && !userStore.isProEnabled) {
+      fullPageTranslation.provider = prevProvider; // rollback
+      proSubscriptionRequiredDialog();
+    }
   };
 
   @action.bound
@@ -224,9 +225,10 @@ export class Settings extends React.Component {
     const prevProvider = settingsStore.data.vendor;
     settingsStore.setProvider(provider);
 
-    checkProSubscriptionAvailability(provider, function fallback() {
-      settingsStore.setProvider(prevProvider);
-    });
+    if (provider === ProviderCodeName.XTRANSLATE_PRO && !userStore.isProEnabled) {
+      settingsStore.setProvider(prevProvider); // rollback
+      proSubscriptionRequiredDialog();
+    }
   }
 
   render() {

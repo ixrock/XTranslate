@@ -326,9 +326,6 @@
   "spell_correction": {
     "message": "Did you mean { $suggestion }?"
   },
-  "text_input_translation_hint": {
-    "message": "{ $hotkey } to immediate translate, delay: { $timeout }ms"
-  },
   "history_enabled_flag": {
     "message": "Enabled"
   },
@@ -571,5 +568,20 @@
   },
   "pro_unauthorized_error_401": {
     "message": "You must be logged-in at { $serviceUrl } and have an active subscription to get access."
+  },
+  "translate_button": {
+    "message": "Translate"
+  },
+  "summarize_button": {
+    "message": "Summarize"
+  },
+  "text_input_auto_translation_enabled": {
+    "message": "Auto-translation { $toggle = enabled }"
+  },
+  "text_input_auto_translation_disabled": {
+    "message": "Auto-translation { $toggle = disabled }"
+  },
+  "text_input_auto_translation_timeout": {
+    "message": "Timeout: { $timeout }ms"
   }
 }
