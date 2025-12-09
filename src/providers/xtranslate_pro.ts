@@ -70,7 +70,7 @@ export class XTranslatePro extends Translator {
       const { translation, transcription, detectedLang } = await this.translateReq(params);
       return {
         langDetected: detectedLang,
-        translation: translation[0],
+        translation: translation.join("\n"),
         transcription: transcription
       };
     } catch (err) {
