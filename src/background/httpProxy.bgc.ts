@@ -11,6 +11,7 @@ export function listenProxyRequestActions() {
   return onMessage(MessageType.PROXY_REQUEST, handleProxyRequestPayload);
 }
 
+// TODO: support streaming TTS
 export async function handleProxyRequestPayload<Response>({ url, responseType, requestInit }: ProxyRequestPayload) {
   logger.info(`proxying request (${responseType}): ${url}`);
 

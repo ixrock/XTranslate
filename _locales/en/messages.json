@@ -102,7 +102,7 @@
     "message": "Voice"
   },
   "tts_default_system_voice": {
-    "message": "Default system voice"
+    "message": "System TTS voice"
   },
   "tts_select_voice_title": {
     "message": "Select voice"
@@ -575,6 +575,9 @@
   "summarize_button": {
     "message": "Summarize"
   },
+  "tts_button": {
+    "message": "Listen"
+  },
   "text_input_auto_translation_enabled": {
     "message": "Auto-translation { $toggle = enabled }"
   },
@@ -583,5 +586,8 @@
   },
   "text_input_auto_translation_timeout": {
     "message": "Timeout: { $timeout }ms"
+  },
+  "system_tts_info": {
+    "message": "You should select most appropriate localized voice to your primary target language"
   }
 }

@@ -80,12 +80,12 @@ export type GoogleMetricEvents = {
   tts_played: {
     source: MetricSourceEnv;
     provider: ProviderCodeName;
-    lang: string;
+    lang?: string;
   };
   tts_error: {
     source: MetricSourceEnv;
     provider: ProviderCodeName;
-    lang: string;
+    lang?: string;
     error: string;
   };
   history_saved: {

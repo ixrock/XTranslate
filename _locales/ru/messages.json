@@ -90,7 +90,7 @@
     "message": "Переключить темную тему для этого окна"
   },
   "tts_default_system_voice": {
-    "message": "Системный голос по умолчанию"
+    "message": "Системный голос для произношения текста"
   },
   "settings_title_voice": {
     "message": "Голос"
@@ -572,6 +572,9 @@
   "summarize_button": {
     "message": "Резюмировать"
   },
+  "tts_button": {
+    "message": "Прослушать"
+  },
   "text_input_auto_translation_enabled": {
     "message": "Авто-перевод { $toggle = включен }"
   },
@@ -580,5 +583,8 @@
   },
   "text_input_auto_translation_timeout": {
     "message": "Задержка: { $timeout }мс"
+  },
+  "system_tts_info": {
+    "message": "Вам нужно выбрать наиболее подходящий локализованный голос для озвучки вашего целевого языка"
   }
 }

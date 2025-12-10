@@ -1,7 +1,7 @@
 import "./input-translation.scss";
 import isEqual from "lodash/isEqual";
 import React, { Fragment } from "react";
-import { action, comparer, makeObservable, observable, reaction, runInAction, toJS } from "mobx";
+import { action, comparer, makeObservable, observable, reaction, toJS } from "mobx";
 import { observer } from "mobx-react";
 import { getTranslator, getXTranslatePro, isRTL, ITranslationError, ITranslationResult, ProviderCodeName, Translator } from "@/providers";
 import { cssNames, disposer, isHotkeyPressed } from "@/utils";
@@ -82,9 +82,19 @@ export class InputTranslation extends React.Component {
     });
   }
 
-  playText = async () => {
-    const { vendor, langDetected, originalText } = this.translation;
-    await getTranslator(vendor).speak(langDetected, originalText);
+  speak = async () => {
+    const { provider, text, from } = this.params;
+
+    if (!this.translation && from === "auto" && provider === ProviderCodeName.GOOGLE) {
+      await this.translate(); // google-tts api requires `lang` param to be defined
+    }
+
+    if (this.translation) {
+      const { vendor, langDetected, originalText } = this.translation;
+      return getTranslator(vendor).speak(originalText, langDetected);
+    }
+
+    return getTranslator(provider).speak(text, from);
   }
 
   @action.bound
@@ -180,7 +190,7 @@ export class InputTranslation extends React.Component {
               <Icon
                 material={materialIcons.ttsPlay}
                 tooltip={getMessage("popup_play_icon_title")}
-                onClick={this.playText}
+                onClick={this.speak}
               />
               <CopyToClipboardIcon
                 content={this.translation}
@@ -424,6 +434,10 @@ export class InputTranslation extends React.Component {
           <Button primary className="flex gaps align-center" onClick={() => this.translate()}>
             <Icon material={materialIcons.translate}/>
             <span>{getMessage("translate_button")}</span>
+          </Button>
+          <Button outline primary className="flex gaps align-center" onClick={() => this.speak()}>
+            <Icon svg="tts"/>
+            <span>{getMessage("tts_button")}</span>
           </Button>
           <Button className="flex gaps align-center" onClick={() => this.summarize()}>
             <Icon material={materialIcons.summarize}/>

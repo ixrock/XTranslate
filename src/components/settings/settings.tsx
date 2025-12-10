@@ -17,7 +17,7 @@ import { settingsStore, XIconPosition } from "./settings.storage";
 import { pageManager } from "../app/page-manager";
 import { getMessage } from "@/i18n";
 import { SelectVoice } from "../select-tts-voice";
-import { getTTSVoices, speak, stopSpeaking } from "@/tts";
+import { speakSystemTTS, ttsEngine } from "@/tts";
 import { SelectAIModel } from "./select_ai_model";
 import { ProviderAuthSettings } from "./provider_auth_settings";
 import { materialIcons } from "@/config";
@@ -34,6 +34,8 @@ const openAiVoiceOptions =
 
 @observer
 export class Settings extends React.Component {
+  private systemTTS: SpeechSynthesisUtterance;
+
   private googleApiDomainOptions: ReactSelectOption<string>[] = googleApiDomains.map(({ domain, title }) => {
     return {
       value: domain,
@@ -64,8 +66,8 @@ export class Settings extends React.Component {
         return (
           <div className="flex gaps align-center">
             {!isProEnabled && <em>({getMessage("recommended").toLowerCase()})</em>}
-            <Icon material={materialIcons.summarize} tooltip={getMessage("pro_version_ai_summarize_feature")}/>
             <Icon material={materialIcons.translate} tooltip={getMessage("pro_version_ai_translator", { provider: "Gemini" })}/>
+            <Icon material={materialIcons.summarize} tooltip={getMessage("pro_version_ai_summarize_feature")}/>
             <Icon svg="tts" tooltip={getMessage("pro_version_ai_tts", { provider: "OpenAI" })}/>
 
             {isProEnabled && (
@@ -135,21 +137,33 @@ export class Settings extends React.Component {
     const newText = window.prompt(getMessage("tts_play_demo_sound_edit"), this.demoVoiceText);
     if (newText) {
       this.demoVoiceText = newText;
+      this.stopSpeakingSystemTTS();
     }
   }
 
   @action.bound
+  stopSpeakingSystemTTS() {
+    delete this.systemTTS;
+    this.isSpeaking = false;
+    ttsEngine().cancel();
+  }
+
+  @action.bound
   async speakDemoText() {
-    this.isSpeaking = !this.isSpeaking;
+    this.systemTTS ??= await speakSystemTTS(this.demoVoiceText, {
+      onStart: () => this.isSpeaking = true,
+      onPause: () => this.isSpeaking = false,
+      onResume: () => this.isSpeaking = true,
+      onEnd: () => {
+        this.isSpeaking = false;
+        delete this.systemTTS;
+      },
+    });
 
     if (this.isSpeaking) {
-      const voices = await getTTSVoices();
-      const selectedVoice = voices[settingsStore.data.tts.systemVoiceIndex];
-
-      stopSpeaking();
-      speak(this.demoVoiceText, selectedVoice);
+      ttsEngine().pause();
     } else {
-      stopSpeaking();
+      ttsEngine().resume();
     }
   }
 
@@ -347,7 +361,7 @@ export class Settings extends React.Component {
         </div>
         <div className={`${styles.inline} flex gaps align-center`}>
           <Checkbox
-            className="box noshrink"
+            className="box grow"
             label={getMessage("tts_default_system_voice")}
             checked={settings.useSpeechSynthesis}
             onChange={v => settings.useSpeechSynthesis = v}
@@ -357,6 +371,7 @@ export class Settings extends React.Component {
             currentIndex={settings.tts.systemVoiceIndex}
             onChange={v => settings.tts.systemVoiceIndex = v}
           />
+          <Icon small material="info_outline" tooltip={getMessage("system_tts_info")}/>
           <Icon
             small
             material="edit"

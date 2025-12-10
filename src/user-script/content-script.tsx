@@ -295,10 +295,10 @@ export class ContentScript extends React.Component {
     this.setTooltipHTML(""); // reset
   }
 
-  playText() {
+  speak() {
     if (!this.translation) return;
     const { vendor, originalText, langDetected } = this.translation;
-    void getTranslator(vendor).speak(langDetected, originalText);
+    void getTranslator(vendor).speak(originalText, langDetected);
   }
 
   @action
@@ -629,7 +629,7 @@ export class ContentScript extends React.Component {
   }
 
   render() {
-    const { translation, error, popupPosition, playText } = this;
+    const { translation, error, popupPosition, speak } = this;
     return (
       <>
         <link rel="stylesheet" href={ContentScript.cssStylesUrl}/>
@@ -639,7 +639,7 @@ export class ContentScript extends React.Component {
           style={popupPosition}
           translation={translation}
           error={error}
-          onPlayText={playText}
+          onPlayText={speak}
           lastParams={this.lastParams}
           onProviderChange={this.translateWith}
           tooltipParentElem={ContentScript.rootElem}

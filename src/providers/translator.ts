@@ -5,7 +5,7 @@ import { autoBind, copyCase, CopyCaseParams, createLogger } from "../utils";
 import { isOptionsPage, ProxyRequestPayload, ProxyResponseType } from "../extension";
 import { ProviderCodeName } from "./providers";
 import { getMessage } from "../i18n";
-import { getTTSVoices, speak, stopSpeaking, TTSVoice } from "../tts";
+import { speakSystemTTS, ttsEngine } from "../tts";
 import { settingsStore } from "../components/settings/settings.storage";
 import { proxyRequest } from "../background/httpProxy.bgc";
 import { getTranslationFromHistoryAction, saveToHistoryAction } from "../background/history.bgc";
@@ -166,11 +166,11 @@ export abstract class Translator {
   }
 
   protected handleSideEffects(translation: ITranslationResult): ITranslationResult {
-    const { langDetected, originalText } = translation;
+    const { originalText, langDetected } = translation;
     const { autoPlayText, historyEnabled } = settingsStore.data;
 
     if (autoPlayText) {
-      void this.speak(langDetected, originalText);
+      void this.speak(originalText, langDetected);
     }
     if (historyEnabled) {
       void saveToHistoryAction({
@@ -237,68 +237,59 @@ export abstract class Translator {
     ].join(' → ');
   }
 
-  speakSynth(text: string, voice?: TTSVoice) {
+  speakSynth(text: string) {
     try {
-      speak(text, voice); // // tts-play
+      void speakSystemTTS(text);
     } catch (err) {
-      this.logger.error(`[TTS]: speech synthesis failed to speak: ${err}`, { text, voice });
+      this.logger.error(`[TTS]: speech synthesis failed to speak: ${err}`);
     }
   }
 
-  async speak(lang: string, text: string, voice?: TTSVoice) {
+  // TODO: support streaming
+  async speak(text: string, lang?: string) {
     this.stopSpeaking(); // stop previous if any
 
     const audioUrl = this.getAudioUrl(text, lang);
     const audioFile = await this.getAudioFile(text, lang);
     const useSpeechSynthesis = Boolean(settingsStore.data.useSpeechSynthesis || !(audioUrl || audioFile));
 
-    if (!voice) {
-      const voices = await getTTSVoices();
-      voice = voices[settingsStore.data.tts.systemVoiceIndex];
+    if (useSpeechSynthesis) {
+      this.speakSynth(text);
+      return;
     }
 
-    if (useSpeechSynthesis) {
-      this.logger.info(`[TTS]: speaking using system speech synthesis`, {
-        lang, text, voice,
-        voiceIndex: settingsStore.data.tts.systemVoiceIndex,
+    try {
+      const audioBinary = audioFile ?? await this.request<Blob>({
+        url: audioUrl,
+        responseType: ProxyResponseType.BLOB
       });
-      this.speakSynth(text, voice);
-    } else {
-      try {
-        const audioBinary = audioFile ?? await this.request<Blob>({
-          url: audioUrl,
-          responseType: ProxyResponseType.BLOB
-        });
 
-        this.audioDataUrl = URL.createObjectURL(audioBinary);
-        this.logger.info(`[TTS]: speaking via api request`, { lang, text });
-        this.audio = document.createElement("audio");
-        this.audio.src = this.audioDataUrl = URL.createObjectURL(audioBinary);
-        await this.audio.play();
+      this.audioDataUrl = URL.createObjectURL(audioBinary);
+      this.audio = document.createElement("audio");
+      this.audio.src = this.audioDataUrl = URL.createObjectURL(audioBinary);
+      await this.audio.play();
 
-        void sendMetric("tts_played", {
-          source: this.metricSource,
-          provider: this.name,
-          lang: lang,
-        });
-      } catch (error) {
-        this.logger.error(`[TTS]: failed to play: ${error}`, { lang, text });
-        this.speakSynth(text, voice); // fallback to TTS-synthesis engine
+      void sendMetric("tts_played", {
+        source: this.metricSource,
+        provider: this.name,
+        lang,
+      });
+    } catch (error) {
+      this.speakSynth(text); // fallback to TTS-synthesis engine
 
-        void sendMetric("tts_error", {
-          error: String(error),
-          source: this.metricSource,
-          provider: this.name,
-          lang: lang,
-        })
-      }
+      void sendMetric("tts_error", {
+        error: String(error?.message) ?? "Unknown TTS error",
+        source: this.metricSource,
+        provider: this.name,
+        lang,
+      })
     }
   }
 
   stopSpeaking() {
     this.logger.info(`[TTS]: stop speaking`);
     getTranslators().forEach(translator => translator.audio?.pause());
-    stopSpeaking(); // tts-stop
+    ttsEngine().cancel();
     URL.revokeObjectURL(this.audioDataUrl);
   }
 
@@ -306,7 +297,7 @@ export abstract class Translator {
     return;
   }
 
-  getAudioUrl(text: string, lang: string): string {
+  getAudioUrl(text: string, lang?: string): string {
     return;
   }
 

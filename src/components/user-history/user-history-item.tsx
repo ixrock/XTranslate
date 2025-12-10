@@ -53,7 +53,7 @@ export const UserHistoryItem = observer(({ item, showDetails, highlightSearch }:
             <Icon
               className="icons tts"
               material={materialIcons.ttsPlay}
-              onClick={prevDefault(() => translator.speak(langFrom, text))}
+              onClick={prevDefault(() => translator.speak(text, langFrom))}
             />
           )}
           <div className="source-text">
