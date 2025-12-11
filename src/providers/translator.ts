@@ -246,11 +246,11 @@ export abstract class Translator {
   }
 
   // TODO: support streaming
-  async speak(text: string, lang?: string): Promise<void> {
+  async speak(text: string, lang?: string): Promise<HTMLAudioElement | SpeechSynthesisUtterance | void> {
     this.stopSpeaking(); // stop previous if any
 
     try {
-      if (await this.streamAudio(text, lang)) return;
+      if (await this.streamAudio(text, lang)) return this.audio;
     } catch (err) {
       this.logger.error(`[TTS]: streaming failed: ${err}`);
     }
@@ -261,8 +261,7 @@ export abstract class Translator {
     const useSpeechSynthesis = Boolean(settingsStore.data.useSpeechSynthesis || !(audioUrl || audioFile));
 
     if (useSpeechSynthesis) {
-      await this.speakSynth(text);
-      return;
+      return this.speakSynth(text);
     }
 
     try {
@@ -281,15 +280,15 @@ export abstract class Translator {
         provider: this.name,
         lang,
       });
+      return this.audio;
     } catch (error) {
-      await this.speakSynth(text); // fallback to TTS-synthesis engine
-
       void sendMetric("tts_error", {
         error: String(error?.message) ?? "Unknown TTS error",
         source: this.metricSource,
         provider: this.name,
         lang,
-      })
+      });
+      return this.speakSynth(text); // fallback to TTS-synthesis engine
     }
   }
 

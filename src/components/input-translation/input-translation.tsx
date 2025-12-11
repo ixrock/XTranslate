@@ -83,6 +83,7 @@ export class InputTranslation extends React.Component {
   }
 
   @observable isSpeaking = false;
+  @observable isPaused = false;
 
   @action.bound
   speak = async () => {
@@ -101,13 +102,39 @@ export class InputTranslation extends React.Component {
 
     const translator = getTranslator(provider);
 
-    if (!this.isSpeaking) {
-      console.log('ENABLE SPEAK!')
-      this.isSpeaking = true;
-      void translator.speak(text, from);
-    } else {
-      console.log('PAUSE SPEAK!')
+    if (this.isSpeaking) {
+      this.isPaused = !this.isPaused;
       translator.pauseSpeaking();
+      return;
+    }
+
+    this.isSpeaking = true;
+    this.isPaused = false;
+
+    try {
+      const media = await translator.speak(text, from);
+
+      if (this.isPaused) {
+        translator.pauseSpeaking(false);
+      }
+
+      const onEnd = action(() => {
+        this.isSpeaking = false;
+        this.isPaused = false;
+      });
+
+      if (media instanceof HTMLAudioElement) {
+        media.onended = onEnd;
+      } else if (media instanceof SpeechSynthesisUtterance) {
+        media.onend = onEnd;
+      }
+
+      if (!media) {
+        this.isSpeaking = false;
+      }
+    } catch (err) {
+      this.isSpeaking = false;
+      this.isPaused = false;
     }
   }
 
@@ -459,7 +486,10 @@ export class InputTranslation extends React.Component {
             onClick={() => this.speak()}
           >
             <Icon svg="tts"/>
-            <span>{getMessage("tts_button")}</span>
+            <span>
+              {getMessage("tts_button")}
+              {this.isPaused ? <small> (paused)</small> : null}
+            </span>
           </Button>
           <Button
             className="flex gaps align-center"
