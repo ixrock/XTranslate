@@ -96,6 +96,19 @@
     }
   }
 
+  .ttsPaused {
+    opacity: .5;
+
+    &:after {
+      content: "";
+      border-left: 3px solid;
+      border-right: 3px solid;
+      display: block;
+      width: 10px;
+      height: 50%;
+    }
+  }
+
   .hint {
     opacity: .55;
   }

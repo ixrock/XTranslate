@@ -19,7 +19,7 @@ export const pdfViewerSkipUrlHash = "#pdf-raw";
 // Icons, see also: https://fonts.google.com/icons
 export const materialIcons = {
   ttsPlay: "play_circle_outline",
-  ttsPause: "pause_outline",
+  ttsPause: "pause_circle_outline",
   copyTranslation: "content_copy",
   copiedTranslation: "task_alt",
   favorite: "star",

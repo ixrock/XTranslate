@@ -86,14 +86,17 @@ export class InputTranslation extends React.Component {
   @observable isPaused = false;
 
   @action.bound
+  resetSpeakingState() {
+    this.isSpeaking = false;
+    this.isPaused = false;
+  }
+
+  @action.bound
   speak = async () => {
     let { provider, text, from } = this.params;
 
-    if (!this.translation && from === "auto" && provider === ProviderCodeName.GOOGLE) {
+    if (from === "auto" && provider === ProviderCodeName.GOOGLE) {
       await this.translate(); // google-tts api requires `lang` param to be defined
-    }
-
-    if (this.translation) {
       const { vendor, langDetected, originalText } = this.translation;
       provider = vendor;
       from = langDetected;
@@ -104,37 +107,26 @@ export class InputTranslation extends React.Component {
 
     if (this.isSpeaking) {
       this.isPaused = !this.isPaused;
-      translator.pauseSpeaking();
-      return;
+      return translator.pauseSpeaking();
     }
 
-    this.isSpeaking = true;
-    this.isPaused = false;
-
     try {
+      this.isSpeaking = true;
+      this.isPaused = false;
+
       const media = await translator.speak(text, from);
 
-      if (this.isPaused) {
-        translator.pauseSpeaking(false);
-      }
-
-      const onEnd = action(() => {
-        this.isSpeaking = false;
-        this.isPaused = false;
-      });
-
       if (media instanceof HTMLAudioElement) {
-        media.onended = onEnd;
+        media.onended = this.resetSpeakingState;
       } else if (media instanceof SpeechSynthesisUtterance) {
-        media.onend = onEnd;
+        media.onend = this.resetSpeakingState;
       }
 
       if (!media) {
         this.isSpeaking = false;
       }
     } catch (err) {
-      this.isSpeaking = false;
-      this.isPaused = false;
+      this.resetSpeakingState();
     }
   }
 
@@ -173,17 +165,22 @@ export class InputTranslation extends React.Component {
       }
     } finally {
       this.isLoading = false;
-
-      if (!isEqual(this.urlParams, params)) {
-        navigation.searchParams.replace(params); // update url
-      }
+      this.updateUrl(params);
     }
   };
+
+  private updateUrl(newParams = this.params) {
+    if (!isEqual(this.urlParams, newParams)) {
+      navigation.searchParams.replace(newParams);
+    }
+  }
 
   @action
   onLangChange = (from: string, to: string) => {
     this.params.from = from;
     this.params.to = to;
+    this.updateUrl();
+    this.resetSpeakingState();
   }
 
   @action
@@ -200,6 +197,8 @@ export class InputTranslation extends React.Component {
     this.params.provider = provider;
     this.params.from = supportedLanguages.langFrom;
     this.params.to = supportedLanguages.langTo;
+    this.updateUrl();
+    this.resetSpeakingState();
 
     if (provider === ProviderCodeName.XTRANSLATE_PRO && !userStore.isProEnabled) {
       this.params.provider = prevProvider; // rollback
@@ -229,7 +228,7 @@ export class InputTranslation extends React.Component {
           <div className="translation flex gaps align-center">
             <div className="flex column gaps">
               <Icon
-                material={materialIcons.ttsPlay}
+                material={this.isPaused ? materialIcons.ttsPause : materialIcons.ttsPlay}
                 tooltip={getMessage("popup_play_icon_title")}
                 onClick={this.speak}
               />
@@ -420,7 +419,11 @@ export class InputTranslation extends React.Component {
   render() {
     if (!this.params) return;
     const { textInputTranslateDelayMs: delayMs, rememberLastText, textInputAutoTranslateEnabled } = settingsStore.data;
+
     const { provider, from: langFrom, to: langTo, text } = this.params;
+    const ttsClassButton = cssNames("flex gaps align-center", {
+      ttsPaused: this.isPaused,
+    });
 
     return (
       <div className="InputTranslation flex column gaps">
@@ -482,14 +485,11 @@ export class InputTranslation extends React.Component {
           </Button>
           <Button
             outline
-            className="flex gaps align-center"
+            className={ttsClassButton}
             onClick={() => this.speak()}
           >
             <Icon svg="tts"/>
-            <span>
-              {getMessage("tts_button")}
-              {this.isPaused ? <small> (paused)</small> : null}
-            </span>
+            <span>{getMessage("tts_button")}</span>
           </Button>
           <Button
             className="flex gaps align-center"

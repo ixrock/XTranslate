@@ -522,7 +522,7 @@
     "message": "Copy to clipboard"
   },
   "tts_supported": {
-    "message": "Text-to-speech support"
+    "message": "Very limited support of text-to-speech"
   },
   "pro_version_ai_translator": {
     "message": "AI-based professional language translator (powered by { $provider })"

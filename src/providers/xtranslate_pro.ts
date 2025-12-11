@@ -102,7 +102,6 @@ export class XTranslatePro extends Translator {
     this.ttsPort?.disconnect();
   }
 
-  // FIXME: handle streaming properly
   async getAudioFile(text: string, lang?: string, voice?: OpenAIModelTTSVoice): Promise<Blob> {
     return this.request<Blob>({
       url: `${this.apiUrl}/tts`,

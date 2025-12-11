@@ -298,7 +298,7 @@ export class ContentScript extends React.Component {
   speak() {
     if (!this.translation) return;
     const { vendor, originalText, langDetected } = this.translation;
-    void getTranslator(vendor).speak(originalText, langDetected);
+    return getTranslator(vendor).speak(originalText, langDetected);
   }
 
   @action

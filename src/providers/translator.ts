@@ -245,7 +245,6 @@ export abstract class Translator {
     }
   }
 
-  // TODO: support streaming
   async speak(text: string, lang?: string): Promise<HTMLAudioElement | SpeechSynthesisUtterance | void> {
     this.stopSpeaking(); // stop previous if any
 
@@ -258,7 +257,9 @@ export abstract class Translator {
     const audioUrl = this.getAudioUrl(text, lang);
     const audioFile = await this.getAudioFile(text, lang);
 
-    const useSpeechSynthesis = Boolean(settingsStore.data.useSpeechSynthesis || !(audioUrl || audioFile));
+    const useSpeechSynthesis = Boolean(
+      settingsStore.data.useSpeechSynthesis || !(audioUrl || audioFile)
+    );
 
     if (useSpeechSynthesis) {
       return this.speakSynth(text);
@@ -300,16 +301,17 @@ export abstract class Translator {
   @action
   pauseSpeaking(toggle = true) {
     const pause = () => {
-      this.audio?.pause();
-      ttsEngine().pause();
+      if (this.audio) this.audio.pause();
+      else ttsEngine().pause();
     };
     const resume = () => {
-      void this.audio?.play();
-      ttsEngine().resume();
+      if (this.audio) void this.audio.play();
+      else ttsEngine().resume();
     }
     if (toggle) {
-      if (this.audio?.paused || ttsEngine().paused) {
-        resume()
+      const isPaused = this.audio ? this.audio.paused : ttsEngine().paused;
+      if (isPaused) {
+        resume();
       } else {
         pause();
       }
@@ -334,7 +336,6 @@ export abstract class Translator {
   }
 
   getAudioUrl(text: string, lang?: string): string {
-
     return;
   }
 
