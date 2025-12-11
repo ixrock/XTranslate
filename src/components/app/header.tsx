@@ -12,7 +12,7 @@ import { Tabs } from "../tabs";
 import { Icon } from "../icon";
 import { getUrlParams, navigate, PageId } from "@/navigation";
 import { pageManager } from "./page-manager";
-import { formatNumber, getLocale, getMessage } from "@/i18n";
+import { formatNumber, getIntlLocale, getMessage } from "@/i18n";
 import { SelectLocaleIcon } from "../select-locale";
 import { exportSettingsDialogState } from "./export-settings-dialog";
 import { userStore } from "@/pro";
@@ -68,12 +68,12 @@ export class Header extends React.Component {
           <p>
             {getMessage("pro_user_subscription", {
               plan: subscriptionPlan,
-              periodEnd: new Date(this.user.subscription.periodEnd).toLocaleString(getLocale()),
+              periodEnd: new Date(this.user.subscription.periodEnd).toLocaleString(getIntlLocale()),
             })}
           </p>
           <p>
             {getMessage("pro_user_remain_text_tokens", {
-              tokens: formatNumber({ value: remainTextTokens, locale: getLocale() })
+              tokens: formatNumber({ value: remainTextTokens })
             })}
           </p>
           <p>
