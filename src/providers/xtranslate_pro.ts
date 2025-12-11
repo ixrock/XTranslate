@@ -200,8 +200,8 @@ export class XTranslatePro extends Translator {
     });
   }
 
-  async getUser(): Promise<XTranslateProUser> {
-    return this.request<XTranslateProUser>({
+  async getUser(): Promise<XTranslateProUserResponse> {
+    return this.request<XTranslateProUserResponse>({
       url: `${this.apiUrl}/me`,
       requestInit: { credentials: "include" },
       responseType: ProxyResponseType.JSON,
@@ -224,6 +224,7 @@ export interface XTranslateProTranslateOutput {
 
 export interface XTranslateProTranslateError extends ITranslationError {
   error: string;
+  pricing: XTranslatePricing;
 }
 
 export interface XTranslateProSummarizeInput {
@@ -241,6 +242,22 @@ export interface XTranslateProUser {
   email: string,
   image: string,
   subscription?: XTranslateProUserSubscription;
+}
+
+export interface XTranslateProUserResponse {
+  user?: XTranslateProUser;
+  pricing: XTranslatePricing;
+}
+
+export interface XTranslatePricing {
+  freeTokens: number,
+  freeTtsBytes: number;
+  monthlyPriceCentsUSD: number;
+  monthlyTokens: number;
+  monthlyTtsBytes: number;
+  yearlyTokens: number;
+  yearlyTtsBytes: number;
+  yearlyPriceCentsUSD: number;
 }
 
 export interface XTranslateProUserSubscription {

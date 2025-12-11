@@ -27,7 +27,7 @@ export class Header extends React.Component {
   }
 
   get user() {
-    return userStore.data;
+    return userStore.user;
   }
 
   detachWindow = () => {
