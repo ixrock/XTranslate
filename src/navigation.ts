@@ -42,6 +42,11 @@ export function getUrlParams<Params extends NavigationParams>(withDefaults = tru
   return pageParams;
 }
 
+export function getPageUrlAbs<Params = {}>(params: NavigationParams & Params, withDefaults = true): string {
+  if (!params) params = getUrlParams<NavigationParams & Params>(withDefaults);
+  return getURL(`/options.html?${new URLSearchParams({ ...params as NavigationParams })}`);
+}
+
 export function getTranslationPageUrl(params: Partial<TranslationPageParams>): string {
   return `?${new URLSearchParams({ ...params, page: "translate" })}`;
 }

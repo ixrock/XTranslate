@@ -17,13 +17,14 @@ import { getManifest, getURL, isExtensionContextAlive, MessageType, onMessage, P
 import { proxyRequest } from "../background/httpProxy.bgc";
 import { sendMetric } from "../background/metrics.bgc";
 import { popupHotkey, popupSkipInjectionUrls, settingsStore } from "../components/settings/settings.storage";
-import { getNextTranslator, getTranslator, ITranslationError, ITranslationResult, ProviderCodeName } from "../providers";
+import { getNextTranslator, getTranslator, getXTranslatePro, ITranslationError, ITranslationResult, ProviderCodeName } from "../providers";
 import { XTranslateIcon } from "./xtranslate-icon";
 import { XTranslateTooltip } from "./xtranslate-tooltip";
 import { Popup } from "../components/popup/popup";
 import { PageTranslator } from "./page-translator";
 import { Icon } from "@/components/icon";
 import { getMessage } from "@/i18n";
+import { getPageUrlAbs } from "@/navigation";
 
 type DOMRectNormalized = Omit<Writeable<DOMRect>, "toJSON" | "x" | "y">;
 
@@ -643,6 +644,16 @@ export class ContentScript extends React.Component {
           lastParams={this.lastParams}
           onProviderChange={this.translateWith}
           tooltipParentElem={ContentScript.rootElem}
+          showBanner={
+            <div className="flex column">
+              <p><Icon material="celebration"/> <b>PRO-version</b> with premium service features is here!</p>
+              <p>
+                {/* TODO: localize */}
+                See details in the <a href={getPageUrlAbs({ page: "settings" })} target="_blank">app settings</a> and{" "}
+                <a href={getXTranslatePro().subscribePageUrl} target="_blank">subscribe</a>.
+                <Icon material="close" onClick={action(() => settingsStore.data.showPopupBanner = false)}/>
+              </p>
+            </div>}
           ref={(ref: Popup) => {
             this.popup = ref
           }}

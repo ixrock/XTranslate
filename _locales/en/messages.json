@@ -589,5 +589,8 @@
   },
   "system_tts_info": {
     "message": "You should select most appropriate localized voice to your primary target language"
+  },
+  "setting_popup_features": {
+    "message": "Show promo banner"
   }
 }

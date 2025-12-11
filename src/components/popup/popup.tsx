@@ -19,6 +19,7 @@ import { saveToFavoritesAction } from "@/background/history.bgc";
 import { CopyToClipboardIcon } from "../copy-to-clipboard-icon";
 
 export interface PopupProps extends React.HTMLProps<any> {
+  showBanner?: React.ReactNode;
   previewMode?: boolean;
   lastParams: TranslatePayload | undefined;
   translation: ITranslationResult | undefined;
@@ -63,6 +64,10 @@ export class Popup extends React.Component<PopupProps> {
 
   get elem() {
     return this.elemRef.current;
+  }
+
+  get data() {
+    return settingsStore.data;
   }
 
   get isFavorite() {
@@ -132,7 +137,7 @@ export class Popup extends React.Component<PopupProps> {
   };
 
   renderSaveToFavoritesIcon() {
-    if (!settingsStore.data.showSaveToFavoriteIcon || !this.translation) {
+    if (!this.data.showSaveToFavoriteIcon || !this.translation) {
       return;
     }
     return (
@@ -149,7 +154,7 @@ export class Popup extends React.Component<PopupProps> {
   }
 
   renderCopyTranslationIcon() {
-    if (!settingsStore.data.showCopyTranslationIcon) {
+    if (!this.data.showCopyTranslationIcon) {
       return;
     }
     return (
@@ -165,7 +170,7 @@ export class Popup extends React.Component<PopupProps> {
   }
 
   renderPlayTextIcon() {
-    if (!settingsStore.data.showTextToSpeechIcon) {
+    if (!this.data.showTextToSpeechIcon) {
       return;
     }
     return (
@@ -186,7 +191,7 @@ export class Popup extends React.Component<PopupProps> {
   };
 
   renderProviderSelectIcon(): React.ReactNode {
-    if (!settingsStore.data.showProviderSelectIcon) {
+    if (!this.data.showProviderSelectIcon) {
       return;
     }
     const providerName = this.translation?.vendor ?? this.props.lastParams?.provider;
@@ -252,7 +257,7 @@ export class Popup extends React.Component<PopupProps> {
           </div>
         )}
         {
-          settingsStore.data.showTranslatedFrom && (
+          this.data.showTranslatedFrom && (
             <div className={styles.translatedFrom}>
               {getMessage("translated_from", {
                 lang: translator.langFrom[langFrom] ?? langFrom,
@@ -282,8 +287,8 @@ export class Popup extends React.Component<PopupProps> {
   }
 
   render() {
-    const { popupPosition } = settingsStore.data;
-    const { previewMode, error, className, style: customStyle } = this.props;
+    const { popupPosition, showPopupBanner } = this.data;
+    const { previewMode, error, className, style: customStyle, showBanner } = this.props;
     const hasAutoPosition = popupPosition === "";
     const popupClass = cssNames(styles.Popup, className, popupPosition, {
       [styles.visible]: Boolean(this.translation || error),
@@ -297,6 +302,7 @@ export class Popup extends React.Component<PopupProps> {
         style={{ ...this.popupStyle, ...(customStyle ?? {}) }}
         ref={this.elemRef}
       >
+        {showPopupBanner && <div className={styles.topInfoBanner}>{showBanner}</div>}
         {error ? this.renderError() : this.renderResult()}
       </div>
     );
