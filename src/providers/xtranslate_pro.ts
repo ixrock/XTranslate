@@ -154,6 +154,8 @@ export class XTranslatePro extends Translator {
         });
       });
 
+      let audioStarted = false;
+
       this.ttsPort.onMessage.addListener((msg) => {
         if (msg.error) {
           this.logger.error("[TTS-STREAM]", msg.error);
@@ -169,7 +171,10 @@ export class XTranslatePro extends Translator {
 
           // Resolve success on first chunk
           resolve(true);
-          this.audio.play().catch(() => {});
+          if (!audioStarted) {
+            audioStarted = true;
+            this.audio.play().catch(() => {});
+          }
         }
 
         if (msg.done) {
