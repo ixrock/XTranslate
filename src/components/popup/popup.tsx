@@ -323,6 +323,15 @@ export class Popup extends React.Component<PopupProps> {
     )
   }
 
+  renderPromo() {
+    const { previewMode, showBanner } = this.props;
+    if (this.data.showPopupPromoBanner && !previewMode && showBanner) {
+      return (
+        <div className={styles.promoBanner}>{showBanner}</div>
+      )
+    }
+  }
+
   render() {
     const { popupPosition, showPopupPromoBanner } = this.data;
     const { previewMode, error, className, style: customStyle, showBanner } = this.props;
@@ -333,7 +342,7 @@ export class Popup extends React.Component<PopupProps> {
       [styles.previewMode]: previewMode,
     });
 
-    const result = this.renderResult() ?? this.renderSummarized();
+    const result = this.renderPromo() ?? this.renderResult() ?? this.renderSummarized();
 
     return (
       <div
@@ -341,7 +350,6 @@ export class Popup extends React.Component<PopupProps> {
         style={{ ...this.popupStyle, ...(customStyle ?? {}) }}
         ref={this.elemRef}
       >
-        {showPopupPromoBanner && !previewMode && <div className={styles.topInfoBanner}>{showBanner}</div>}
         {error ? this.renderError() : result}
       </div>
     );

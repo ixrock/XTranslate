@@ -1,6 +1,7 @@
 // Format locale numbers and other values
+import { getIntlLocale } from "@/i18n";
 
-export function formatNumber({ value, locale = "en-US" }: { value: number, locale?: string }) {
+export function formatNumber({ value, locale = getIntlLocale() }: { value: number, locale?: string }) {
   try {
     locale = locale.replace("_", "-");
     return new Intl.NumberFormat(locale).format(value);
@@ -10,7 +11,7 @@ export function formatNumber({ value, locale = "en-US" }: { value: number, local
   }
 }
 
-export function formatPrice({ value, locale, currency = "USD" }: { value: number, locale?: string, currency?: string }) {
+export function formatPrice({ value, locale = getIntlLocale(), currency = "USD" }: { value: number, locale?: string, currency?: string }) {
   try {
     locale = locale.replace("_", "-");
     return new Intl.NumberFormat(locale, {

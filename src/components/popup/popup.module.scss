@@ -169,19 +169,4 @@
       cursor: pointer;
     }
   }
-
-  .topInfoBanner {
-    padding: var(--theme-spacing-half);
-    border-radius: var(--theme-border-radius);
-    background: var(--theme-bgc-invert);
-    margin-bottom: var(--theme-spacing);
-
-    &:empty {
-      display: none;
-    }
-
-    > * {
-      margin: 0;
-    }
-  }
 }

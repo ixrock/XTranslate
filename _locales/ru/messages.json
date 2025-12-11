@@ -598,5 +598,14 @@
   },
   "popup_info_banner_pro_see_details": {
     "message": "Смотрите подробности на { $settingsLink = странице настроек} и { $subscribeLink = подписывайтесь }"
+  },
+  "pro_version_subscribe_button": {
+    "message": "Подписаться"
+  },
+  "pro_version_subscribe_price": {
+    "message": "Подпишись на XTranslate PRO фишки всего за { $priceMonthly }/месяц."
+  },
+  "pro_version_continue_use_free_version": {
+    "message": "Продолжить пользоваться бесплатной версий"
   }
 }

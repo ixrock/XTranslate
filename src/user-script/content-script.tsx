@@ -12,7 +12,7 @@ import isEqual from 'lodash/isEqual';
 import orderBy from 'lodash/orderBy';
 import { contentScriptInjectable } from "../config";
 import { preloadAppData } from "../preloadAppData";
-import { autoBind, disposer, getHotkey, strLengthCodePoints } from "../utils";
+import { autoBind, disposer, formatPrice, getHotkey, strLengthCodePoints } from "../utils";
 import { getManifest, getURL, isExtensionContextAlive, MessageType, onMessage, ProxyResponseType, TranslatePayload } from "../extension";
 import { proxyRequest } from "../background/httpProxy.bgc";
 import { sendMetric } from "../background/metrics.bgc";
@@ -20,11 +20,11 @@ import { popupHotkey, popupSkipInjectionUrls, settingsStore } from "../component
 import { getNextTranslator, getTranslator, getXTranslatePro, ITranslationError, ITranslationResult, ProviderCodeName } from "../providers";
 import { XTranslateIcon } from "./xtranslate-icon";
 import { XTranslateTooltip } from "./xtranslate-tooltip";
-import { Popup } from "../components/popup/popup";
 import { PageTranslator } from "./page-translator";
+import { Popup } from "../components/popup/popup";
 import { Icon } from "@/components/icon";
+import { Button } from "@/components/button";
 import { getMessage } from "@/i18n";
-import { getPageUrlAbs } from "@/navigation";
 import { proSubscriptionRequiredDialog, userStore } from "@/pro";
 
 type DOMRectNormalized = Omit<Writeable<DOMRect>, "toJSON" | "x" | "y">;
@@ -675,19 +675,37 @@ export class ContentScript extends React.Component {
     if (userStore.isProEnabled) {
       return;
     }
+    const priceMonthly = formatPrice({
+      value: (userStore.pricing.monthlyPriceCentsUSD ?? 0) / 100,
+      currency: "USD",
+    });
     return (
       <>
-        <p>
+        <div>
           <Icon material="celebration"/>
           <b>{getMessage("popup_info_banner_pro_available")}</b>
-        </p>
-        <p>
-          {getMessage("popup_info_banner_pro_see_details", {
-            settingsLink: v => <a href={getPageUrlAbs({ page: "settings" })} target="_blank">{v}</a>,
-            subscribeLink: v => <b><a href={getXTranslatePro().subscribePageUrl} target="_blank">{v}</a></b>,
-          })}
-          <Icon material="close" onClick={this.hideBanner}/>
-        </p>
+        </div>
+        <div>
+          <b>{getMessage("pro_version_subscribe_price", { priceMonthly })}</b>
+          <ul>
+            <li>{getMessage("pro_version_ai_translator", { provider: "Gemini" })}</li>
+            <li>{getMessage("pro_version_ai_tts", { provider: "OpenAI" })}</li>
+            <li>{getMessage("pro_version_ai_summarize_feature")}</li>
+          </ul>
+        </div>
+        <div className="promoActionButtons">
+          <Button
+            primary
+            label={getMessage("pro_version_subscribe_button")}
+            href={getXTranslatePro().subscribePageUrl}
+            target="_blank"
+          />
+          <Button
+            outline
+            label={getMessage("pro_version_continue_use_free_version")}
+            onClick={this.hideBanner}
+          />
+        </div>
       </>
     )
   }

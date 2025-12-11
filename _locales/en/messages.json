@@ -601,5 +601,14 @@
   },
   "popup_info_banner_pro_see_details": {
     "message": "See details in the { $settingsLink = app settings} and { $subscribeLink = subscribe }"
+  },
+  "pro_version_subscribe_button": {
+    "message": "Subscribe"
+  },
+  "pro_version_subscribe_price": {
+    "message": "Subscribe for XTranslate PRO benefits only for { $priceMonthly }/month."
+  },
+  "pro_version_continue_use_free_version": {
+    "message": "Continue use free version"
   }
 }

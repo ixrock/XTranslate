@@ -11,6 +11,13 @@
   pointer-events: none !important;
   z-index: 1000000000 !important;
 
+  .promoActionButtons {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--theme-spacing);
+  }
+
   *, *:after, *:before {
     box-sizing: border-box;
     outline: none;
