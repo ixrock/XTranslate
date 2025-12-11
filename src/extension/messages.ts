@@ -19,6 +19,7 @@ export enum MessageType {
   GEMINI_TEXT_TO_SPEECH = "GEMINI_TEXT_TO_SPEECH",
   INJECT_CONTENT_SCRIPT = "INJECT_CONTENT_SCRIPT",
   GA_METRICS_SEND_EVENT = "GA_METRICS_SEND_EVENT",
+  HTTP_PROXY_STREAM = "HTTP_PROXY_STREAM",
 }
 
 export interface Message<Payload extends {} | []> {

@@ -1,7 +1,7 @@
 import AILanguagesList from "./open-ai.json"
 import { websiteURL } from "@/config";
 import { getTranslator, ITranslationError, ITranslationResult, OpenAIModelTTSVoice, ProviderCodeName, TranslateParams, Translator } from "./index";
-import { ProxyResponseType } from "@/extension";
+import { MessageType, ProxyResponseType } from "@/extension";
 import { getMessage } from "@/i18n";
 
 export class XTranslatePro extends Translator {
@@ -126,7 +126,7 @@ export class XTranslatePro extends Translator {
     this.audio.src = this.audioDataUrl = URL.createObjectURL(mediaSource);
 
     return new Promise((resolve) => {
-      this.ttsPort = chrome.runtime.connect({ name: "http_proxy_stream" });
+      this.ttsPort = chrome.runtime.connect({ name: MessageType.HTTP_PROXY_STREAM });
 
       const queue: Uint8Array[] = [];
       let sourceBuffer: SourceBuffer;
@@ -183,6 +183,7 @@ export class XTranslatePro extends Translator {
         }
       });
 
+      // init api streaming request and start playing tts-audio asap
       this.ttsPort.postMessage({
         url: `${this.apiUrl}/tts`,
         requestInit: {

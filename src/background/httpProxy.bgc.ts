@@ -16,7 +16,7 @@ export function listenProxyConnection() {
 }
 
 function onProxyConnection(port: chrome.runtime.Port) {
-  if (port.name !== "http_proxy_stream") return;
+  if (port.name !== MessageType.HTTP_PROXY_STREAM) return;
 
   port.onMessage.addListener(async (msg: ProxyRequestPayload) => {
     try {
