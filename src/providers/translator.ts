@@ -249,8 +249,15 @@ export abstract class Translator {
   async speak(text: string, lang?: string) {
     this.stopSpeaking(); // stop previous if any
 
+    try {
+      if (await this.streamAudio(text, lang)) return;
+    } catch (err) {
+      this.logger.error(`[TTS]: streaming failed: ${err}`);
+    }
+
     const audioUrl = this.getAudioUrl(text, lang);
     const audioFile = await this.getAudioFile(text, lang);
+
     const useSpeechSynthesis = Boolean(settingsStore.data.useSpeechSynthesis || !(audioUrl || audioFile));
 
     if (useSpeechSynthesis) {
@@ -297,7 +304,12 @@ export abstract class Translator {
     return;
   }
 
+  async streamAudio(text: string, lang?: string): Promise<boolean> {
+    return false;
+  }
+
   getAudioUrl(text: string, lang?: string): string {
+
     return;
   }
 

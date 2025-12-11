@@ -95,6 +95,13 @@ export class XTranslatePro extends Translator {
     }
   }
 
+  private ttsPort: chrome.runtime.Port;
+
+  override stopSpeaking() {
+    super.stopSpeaking();
+    this.ttsPort?.disconnect();
+  }
+
   // FIXME: handle streaming properly
   async getAudioFile(text: string, lang?: string, voice?: OpenAIModelTTSVoice): Promise<Blob> {
     return this.request<Blob>({
@@ -106,6 +113,85 @@ export class XTranslatePro extends Translator {
         credentials: "include",
       },
       responseType: ProxyResponseType.BLOB,
+    });
+  }
+
+  override async streamAudio(text: string, lang?: string, voice?: OpenAIModelTTSVoice): Promise<boolean> {
+    if (!window.MediaSource || !MediaSource.isTypeSupported("audio/mpeg")) {
+      return false;
+    }
+
+    const mediaSource = new MediaSource();
+    this.audio = document.createElement("audio");
+    this.audio.src = this.audioDataUrl = URL.createObjectURL(mediaSource);
+
+    return new Promise((resolve) => {
+      this.ttsPort = chrome.runtime.connect({ name: "http_proxy_stream" });
+
+      const queue: Uint8Array[] = [];
+      let sourceBuffer: SourceBuffer;
+      let portFinished = false;
+
+      const processQueue = () => {
+        if (queue.length > 0 && sourceBuffer && !sourceBuffer.updating) {
+          try {
+            sourceBuffer.appendBuffer(queue.shift() as BufferSource);
+          } catch (e) {
+            this.logger.error("SourceBuffer append failed", e);
+          }
+        }
+      };
+
+      mediaSource.addEventListener("sourceopen", () => {
+        sourceBuffer = mediaSource.addSourceBuffer("audio/mpeg");
+        sourceBuffer.addEventListener("updateend", () => {
+          processQueue();
+          if (queue.length === 0 && portFinished) {
+            try {
+              mediaSource.endOfStream();
+            } catch (e) { /* ignore */ }
+          }
+        });
+      });
+
+      this.ttsPort.onMessage.addListener((msg) => {
+        if (msg.error) {
+          this.logger.error("[TTS-STREAM]", msg.error);
+          this.ttsPort.disconnect();
+          resolve(false); // Fallback
+          return;
+        }
+
+        if (msg.chunk) {
+          const chunk = new Uint8Array(msg.chunk);
+          queue.push(chunk);
+          processQueue();
+
+          // Resolve success on first chunk
+          resolve(true);
+          this.audio.play().catch(() => {});
+        }
+
+        if (msg.done) {
+          portFinished = true;
+          if (queue.length === 0 && sourceBuffer && !sourceBuffer.updating) {
+            try {
+              mediaSource.endOfStream();
+            } catch (e) { /* ignore */ }
+          }
+          this.ttsPort.disconnect();
+        }
+      });
+
+      this.ttsPort.postMessage({
+        url: `${this.apiUrl}/tts`,
+        requestInit: {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ text, lang, voice }),
+          credentials: "include",
+        }
+      });
     });
   }
 
