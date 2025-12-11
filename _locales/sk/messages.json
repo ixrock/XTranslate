@@ -102,7 +102,7 @@
     "message": "Hlas"
   },
   "tts_default_system_voice": {
-    "message": "Predvolený systémový hlas"
+    "message": "Systémový hlas TTS"
   },
   "tts_select_voice_title": {
     "message": "Vyberte hlas"
@@ -326,9 +326,6 @@
   "spell_correction": {
     "message": "Mysleli ste { $suggestion }?"
   },
-  "text_input_translation_hint": {
-    "message": "Na okamžitý preklad použite { $hotkey }, oneskorenie: { $timeout } ms"
-  },
   "history_enabled_flag": {
     "message": "Zapnuté"
   },
@@ -387,7 +384,7 @@
     "message": "Odobrať položku z obľúbených"
   },
   "history_import_success": {
-    "message": "Úspešne importované položky histórie { $itemsCount }"
+    "message": "Úspešne importované položky histórie ({ $itemsCount })"
   },
   "history_import_file_error": {
     "message": "Chyba pri čítaní súboru '{ $fileName }': { $errorInfo }"
@@ -486,7 +483,10 @@
     "message": "Vytvorte si bezplatný kľúč API na https://aistudio.google.com/apikey"
   },
   "auth_access_info_api_key": {
-    "message": "Zadajte  kľúč API na získanie prekladov { $provider }"
+    "message": "Zadajte  kľúč API na preklad pomocou { $provider }"
+  },
+  "auth_setup_key_info": {
+    "message": "Zadajte kľúč API pre { $provider } "
   },
   "auth_clear_key_info": {
     "message": "Odstrániť kľúč API { $provider }"
@@ -514,7 +514,80 @@
   },
   "popup_safe_translation_chars_confirmation_dialog_info": {
     "message": "Označený text obsahuje { $selectedCountChars } znakov, čo prekračuje limit bezpečného prekladu { $settingsLimitChars } znakov. Preklad rozsiahlych textov môže v závislosti od poskytovateľa prekladu spotrebovať viac zdrojov alebo si vyžiadať dodatočné náklady. Chcete pokračovať v preklade?"
+  },
+  "recommended": {
+    "message": "Odporúčané"
+  },
+  "copy_to_clipboard": {
+    "message": "Kopírovať do schránky"
+  },
+  "tts_supported": {
+    "message": "Podpora prevodu textu na reč"
+  },
+  "pro_version_ai_translator": {
+    "message": "Profesionálny prekladač založený na AI (pomocou { $provider })"
+  },
+  "pro_version_ai_tts": {
+    "message": "Prevod textu na reč založený na AS s výberom 6 hlasov (pomocou { $provider })"
+  },
+  "pro_version_ai_summarize_feature": {
+    "message": "Premeňte akýkoľvek text na prehľadné zhrnutie (podporuje rýchlejšie učenie a pochopenie)"
+  },
+  "pro_upgrade_button_label": {
+    "message": "Upgradovať na PRO"
+  },
+  "pro_upgrade_button_tooltip": {
+    "message": "Prihláste sa, vyskúšajte bezplatný balík a neskôr si predplaťte za približne { $pricePerMonth }/mesiac"
+  },
+  "pro_select_tts_voice": {
+    "message": "Hlas"
+  },
+  "pro_required_confirm_goto_subscribe": {
+    "message": "Táto možnosť vyžaduje predplatné PRO, chcete prejsť na stránku predplatného?"
+  },
+  "pro_user_welcome_back": {
+    "message": "Vitajte späť, { $username }!"
+  },
+  "pro_user_status": {
+    "message": "Stav PRO: { $status }"
+  },
+  "pro_user_status_active": {
+    "message": "aktívne"
+  },
+  "pro_user_status_inactive": {
+    "message": "neaktívne"
+  },
+  "pro_user_subscription": {
+    "message": "Predplatné: { $plan } (končí { $periodEnd })"
+  },
+  "pro_user_remain_text_tokens": {
+    "message": "Dostupné textové tokeny: { $tokens }"
+  },
+  "pro_user_remain_tts_seconds_approx": {
+    "message": "Dostupný čas pre prevod textu na reč v sekundách: { $seconds }"
+  },
+  "pro_unauthorized_error_401": {
+    "message": "Na využívanie musíte byť prihlásení na { $serviceUrl } a mať aktívne predplatné."
+  },
+  "translate_button": {
+    "message": "Preložiť"
+  },
+  "summarize_button": {
+    "message": "Zhrnúť"
+  },
+  "tts_button": {
+    "message": "Počúvať"
+  },
+  "text_input_auto_translation_enabled": {
+    "message": "Automatický preklad { $toggle = zapnuté }"
+  },
+  "text_input_auto_translation_disabled": {
+    "message": "Automatický preklad { $toggle = vypnuté }"
+  },
+  "text_input_auto_translation_timeout": {
+    "message": "Časový limit: { $timeout }ms"
+  },
+  "system_tts_info": {
+    "message": "Vyberte najvhodnejší, prirodzený hlas pre váš hlavný cieľový jazyk."
   }
 }
-
-
