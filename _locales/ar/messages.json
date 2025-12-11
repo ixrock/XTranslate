@@ -406,5 +406,203 @@
   },
   "skip_popup_inject_for_pages_info": {
     "message": "أضف عناوين URL لتخطي حقن النافذة المنبثقة إذا واجهتك مشاكل، مثل فحص iframe لرمز التحقق من Cloudflare."
+  },
+  "settings_title_full_page_translation": {
+    "message": "ترجمة الصفحة كاملة"
+  },
+  "settings_title_full_page_excluded_pages": {
+    "message": "لا تترجم أبداً"
+  },
+  "settings_title_full_page_always_translate": {
+    "message": "ترجم دائماً"
+  },
+  "settings_title_full_page_show_original_onmouseover": {
+    "message": "إظهار النص الأصلي عند تحريك الماوس"
+  },
+  "settings_title_full_page_show_translation_onmouseover": {
+    "message": "إظهار الترجمة عند تحريك الماوس"
+  },
+  "settings_title_full_page_show_replace_texts": {
+    "message": "استبدال نصوص المستند بالترجمات"
+  },
+  "settings_title_full_page_show_traffic_save_mode": {
+    "message": "تفعيل وضع توفير البيانات"
+  },
+  "settings_title_full_page_show_traffic_save_mode_info": {
+    "message": "توفير تكاليف الشبكة / API عن طريق ترجمة النصوص المرئية فقط في إطار العرض"
+  },
+  "settings_select_empty_list": {
+    "message": "قائمة فارغة"
+  },
+  "settings_select_edit_list": {
+    "message": "انقر لرؤية وتحرير القائمة"
+  },
+  "settings_select_add_url": {
+    "message": "إضافة رابط URL"
+  },
+  "settings_select_add_url_error": {
+    "message": "محاولة إضافة رابط غير صالح"
+  },
+  "show_in_context_menu": {
+    "message": "إظهار خيار المترجم في قائمة سياق المتصفح"
+  },
+  "settings_title_advanced_providers_list": {
+    "message": "موفرو ترجمة متقدمون"
+  },
+  "settings_title_advanced_providers_list_show": {
+    "message": "إظهار موفري الترجمة المتقدمين"
+  },
+  "settings_title_advanced_providers_list_hide": {
+    "message": "إخفاء موفري الترجمة المتقدمين"
+  },
+  "settings_title_voice": {
+    "message": "الصوت"
+  },
+  "settings_show_more": {
+    "message": "إظهار المزيد من الإعدادات"
+  },
+  "settings_show_less": {
+    "message": "إظهار إعدادات أقل"
+  },
+  "context_menu_translate_full_page_context_menu": {
+    "message": "ترجم الصفحة إلى { $lang }"
+  },
+  "context_menu_translate_full_page_context_menu_stop": {
+    "message": "إيقاف الترجمة التلقائية لـ { $site }"
+  },
+  "ai_choose_model_reasoning": {
+    "message": "نموذج التفكير / بطيء"
+  },
+  "ai_choose_model_reasoning_light": {
+    "message": "نموذج التفكير الخفيف / أسرع"
+  },
+  "auth_access_info_steps_openai": {
+    "message": "1) سجل في platform.openai.com 2) أنشئ مفتاح API 3) اشحن رصيدك (5$+)"
+  },
+  "auth_access_info_steps_grok": {
+    "message": "سجل في console.x.ai واشحن الرصيد (مثل عبر بطاقة الائتمان)"
+  },
+  "auth_access_info_steps_deepseek": {
+    "message": "سجل في platform.deepseek.com واشحن الرصيد (مثل عبر Paypal)"
+  },
+  "auth_access_info_steps_deepl": {
+    "message": "سجل في www.deepl.com واحصل على مفتاح API مجاني لترجمات DeepL"
+  },
+  "auth_access_info_steps_gemini": {
+    "message": "أنشئ مفتاح API مجاني في https://aistudio.google.com/apikey"
+  },
+  "auth_access_info_api_key": {
+    "message": "أدخل مفتاح API للحصول على ترجمات { $provider }"
+  },
+  "auth_setup_key_info": {
+    "message": "أدخل مفتاح API لـ { $provider }"
+  },
+  "auth_clear_key_info": {
+    "message": "إزالة مفتاح API لـ { $provider }"
+  },
+  "auth_safety_warning_info": {
+    "message": "تحذير: لا تدخل مفتاح API الخاص بك في أي مكان آخر باستثناء نافذة الإضافة هذه"
+  },
+  "pro_version_promo_link_text": {
+    "message": "خصم 20% على PRO"
+  },
+  "pro_version_promo_tooltip": {
+    "message": "نحن نبني نسخة PRO مع ترجمة كاملة للصفحة بالذكاء الاصطناعي. انقر لمعرفة المزيد والحصول على الخصم."
+  },
+  "popup_safe_translation_chars_limit": {
+    "message": "إذا تجاوز النص المحدد { $limit } حرفًا، أظهر تحذير تأكيد للمتابعة."
+  },
+  "popup_safe_translation_chars_limit_info": {
+    "message": "قد يساعدك هذا في تقليل استهلاك حصة الرموز (tokens) على طلبات غير مرغوب فيها (0 - بلا حدود)"
+  },
+  "popup_safe_translation_chars_confirmation_dialog_info": {
+    "message": "النص المحدد يحتوي على { $selectedCountChars } حرفًا، مما يتجاوز حد الترجمة الآمن البالغ { $settingsLimitChars } حرفًا. ترجمة النصوص الكبيرة قد تستهلك المزيد من الموارد أو تتكبد تكاليف إضافية حسب مزود الترجمة. هل تريد المتابعة؟"
+  },
+  "recommended": {
+    "message": "موصى به"
+  },
+  "copy_to_clipboard": {
+    "message": "نسخ إلى الحافظة"
+  },
+  "tts_supported": {
+    "message": "دعم محدود جداً لتحويل النص إلى كلام"
+  },
+  "pro_version_ai_translator": {
+    "message": "مترجم لغة احترافي معتمد على الذكاء الاصطناعي (بدعم من { $provider })"
+  },
+  "pro_version_ai_tts": {
+    "message": "تحويل نص إلى كلام شبيه بالبشر مع 6 أصوات للاختيار (بدعم من { $provider })"
+  },
+  "pro_version_ai_summarize_feature": {
+    "message": "حول أي نص إلى ملخص موجز (يعزز التعلم والفهم السريع)"
+  },
+  "pro_upgrade_button_label": {
+    "message": "الترقية إلى PRO"
+  },
+  "pro_upgrade_button_tooltip": {
+    "message": "سجل الدخول، جرب الخطة المجانية واشترك لاحقًا بحوالي { $pricePerMonth }/شهريًا"
+  },
+  "pro_select_tts_voice": {
+    "message": "الصوت"
+  },
+  "pro_required_confirm_goto_subscribe": {
+    "message": "هذا الخيار يتطلب اشتراك PRO، هل نذهب لصفحة الاشتراك؟"
+  },
+  "pro_user_welcome_back": {
+    "message": "مرحباً بعودتك، { $username }!"
+  },
+  "pro_user_status": {
+    "message": "حالة PRO: { $status }"
+  },
+  "pro_user_status_active": {
+    "message": "نشط"
+  },
+  "pro_user_status_inactive": {
+    "message": "غير نشط"
+  },
+  "pro_user_subscription": {
+    "message": "الاشتراك: { $plan } (ينتهي { $periodEnd })"
+  },
+  "pro_user_remain_text_tokens": {
+    "message": "رموز النص المتاحة: { $tokens }"
+  },
+  "pro_user_remain_tts_seconds_approx": {
+    "message": "وقت تحويل النص إلى كلام المتاح بالثواني: { $seconds }"
+  },
+  "pro_unauthorized_error_401": {
+    "message": "يجب عليك تسجيل الدخول في { $serviceUrl } وامتلاك اشتراك نشط للوصول."
+  },
+  "translate_button": {
+    "message": "ترجم"
+  },
+  "summarize_button": {
+    "message": "لخّص"
+  },
+  "tts_button": {
+    "message": "استمع"
+  },
+  "text_input_auto_translation_enabled": {
+    "message": "الترجمة التلقائية { $toggle = enabled }"
+  },
+  "text_input_auto_translation_disabled": {
+    "message": "الترجمة التلقائية { $toggle = disabled }"
+  },
+  "text_input_auto_translation_timeout": {
+    "message": "المهلة: { $timeout }ms"
+  },
+  "system_tts_info": {
+    "message": "يجب عليك اختيار الصوت المحلي الأكثر ملاءمة للغتك المستهدفة الأساسية"
+  },
+  "setting_popup_promo_features": {
+    "message": "إظهار لافتة الترويج"
+  },
+  "setting_popup_summarize_action_icon": {
+    "message": "إظهار أيقونة التلخيص"
+  },
+  "popup_info_banner_pro_available": {
+    "message": "نسخة PRO مع ميزات الخدمة المميزة هنا!"
+  },
+  "popup_info_banner_pro_see_details": {
+    "message": "انظر التفاصيل في { $settingsLink = إعدادات التطبيق } و { $subscribeLink = الاشتراك }"
   }
 }

@@ -406,5 +406,203 @@
   },
   "skip_popup_inject_for_pages_info": {
     "message": "如遇问题，例如 Cloudflare 验证码 iframe 检查，请添加要跳过弹窗注入的 URL。"
+  },
+  "settings_title_full_page_translation": {
+    "message": "整页翻译"
+  },
+  "settings_title_full_page_excluded_pages": {
+    "message": "从不翻译"
+  },
+  "settings_title_full_page_always_translate": {
+    "message": "总是翻译"
+  },
+  "settings_title_full_page_show_original_onmouseover": {
+    "message": "鼠标悬停时显示原文"
+  },
+  "settings_title_full_page_show_translation_onmouseover": {
+    "message": "鼠标悬停时显示译文"
+  },
+  "settings_title_full_page_show_replace_texts": {
+    "message": "用译文替换文档文本"
+  },
+  "settings_title_full_page_show_traffic_save_mode": {
+    "message": "启用流量节省模式"
+  },
+  "settings_title_full_page_show_traffic_save_mode_info": {
+    "message": "仅翻译视口中可见的文本以节省网络/API成本"
+  },
+  "settings_select_empty_list": {
+    "message": "空列表"
+  },
+  "settings_select_edit_list": {
+    "message": "点击查看和编辑列表"
+  },
+  "settings_select_add_url": {
+    "message": "添加 URL"
+  },
+  "settings_select_add_url_error": {
+    "message": "尝试添加无效 URL"
+  },
+  "show_in_context_menu": {
+    "message": "在浏览器上下文菜单中显示翻译选项"
+  },
+  "settings_title_advanced_providers_list": {
+    "message": "高级翻译提供商"
+  },
+  "settings_title_advanced_providers_list_show": {
+    "message": "显示高级翻译提供商"
+  },
+  "settings_title_advanced_providers_list_hide": {
+    "message": "隐藏高级翻译提供商"
+  },
+  "settings_title_voice": {
+    "message": "语音"
+  },
+  "settings_show_more": {
+    "message": "显示更多设置"
+  },
+  "settings_show_less": {
+    "message": "显示更少设置"
+  },
+  "context_menu_translate_full_page_context_menu": {
+    "message": "翻译页面至 { $lang }"
+  },
+  "context_menu_translate_full_page_context_menu_stop": {
+    "message": "停止 { $site } 的自动翻译"
+  },
+  "ai_choose_model_reasoning": {
+    "message": "思考模型 / 慢速"
+  },
+  "ai_choose_model_reasoning_light": {
+    "message": "思考模型轻量版 / 更快"
+  },
+  "auth_access_info_steps_openai": {
+    "message": "1) 在 platform.openai.com 注册 2) 创建 API 访问密钥 3) 充值余额 (5$+)"
+  },
+  "auth_access_info_steps_grok": {
+    "message": "在 console.x.ai 注册并充值余额 (例如通过信用卡)"
+  },
+  "auth_access_info_steps_deepseek": {
+    "message": "在 platform.deepseek.com 注册并充值余额 (例如通过 Paypal)"
+  },
+  "auth_access_info_steps_deepl": {
+    "message": "在 www.deepl.com 注册并获取用于 DeepL 翻译的免费 API 密钥"
+  },
+  "auth_access_info_steps_gemini": {
+    "message": "在 https://aistudio.google.com/apikey 创建您的免费 API 密钥"
+  },
+  "auth_access_info_api_key": {
+    "message": "提供您的 API 密钥以获取 { $provider } 翻译"
+  },
+  "auth_setup_key_info": {
+    "message": "提供 { $provider } API 密钥"
+  },
+  "auth_clear_key_info": {
+    "message": "移除 { $provider } API 密钥"
+  },
+  "auth_safety_warning_info": {
+    "message": "警告：请勿在此扩展窗口以外的任何地方输入您的 API 密钥"
+  },
+  "pro_version_promo_link_text": {
+    "message": "PRO 版 8 折"
+  },
+  "pro_version_promo_tooltip": {
+    "message": "我们正在构建具有全页 AI 翻译功能的 PRO 版本。点击了解更多并领取您的折扣。"
+  },
+  "popup_safe_translation_chars_limit": {
+    "message": "如果选中的文本超过 { $limit } 个字符，显示确认警告以继续。"
+  },
+  "popup_safe_translation_chars_limit_info": {
+    "message": "这可能有助于您减少在不需要的文本请求上的 AI代币配额支出 (0 - 无限制)"
+  },
+  "popup_safe_translation_chars_confirmation_dialog_info": {
+    "message": "选中的文本包含 { $selectedCountChars } 个字符，超过了 { $settingsLimitChars } 个字符的安全翻译限制。翻译大文本可能会消耗更多资源或产生额外费用，具体取决于您的翻译提供商。您想继续翻译吗？"
+  },
+  "recommended": {
+    "message": "推荐"
+  },
+  "copy_to_clipboard": {
+    "message": "复制到剪贴板"
+  },
+  "tts_supported": {
+    "message": "非常有限的文本转语音支持"
+  },
+  "pro_version_ai_translator": {
+    "message": "基于 AI 的专业语言翻译器 (由 { $provider } 提供支持)"
+  },
+  "pro_version_ai_tts": {
+    "message": "基于 AI 的类人文本转语音，有 6 种声音可供选择 (由 { $provider } 提供支持)"
+  },
+  "pro_version_ai_summarize_feature": {
+    "message": "将任何文本转化为清晰的摘要 (促进更快的学习和理解)"
+  },
+  "pro_upgrade_button_label": {
+    "message": "升级到 PRO"
+  },
+  "pro_upgrade_button_tooltip": {
+    "message": "登录，试用免费计划，稍后以约 { $pricePerMonth }/月的价格订阅"
+  },
+  "pro_select_tts_voice": {
+    "message": "语音"
+  },
+  "pro_required_confirm_goto_subscribe": {
+    "message": "此选项需要 PRO 订阅，我们要去订阅页面吗？"
+  },
+  "pro_user_welcome_back": {
+    "message": "欢迎回来，{ $username }！"
+  },
+  "pro_user_status": {
+    "message": "PRO 状态: { $status }"
+  },
+  "pro_user_status_active": {
+    "message": "活跃"
+  },
+  "pro_user_status_inactive": {
+    "message": "非活跃"
+  },
+  "pro_user_subscription": {
+    "message": "订阅: { $plan } ({ $periodEnd } 结束)"
+  },
+  "pro_user_remain_text_tokens": {
+    "message": "可用文本代币: { $tokens }"
+  },
+  "pro_user_remain_tts_seconds_approx": {
+    "message": "可用文本转语音时间 (秒): { $seconds }"
+  },
+  "pro_unauthorized_error_401": {
+    "message": "您必须在 { $serviceUrl } 登录并拥有有效订阅才能获取访问权限。"
+  },
+  "translate_button": {
+    "message": "翻译"
+  },
+  "summarize_button": {
+    "message": "摘要"
+  },
+  "tts_button": {
+    "message": "收听"
+  },
+  "text_input_auto_translation_enabled": {
+    "message": "自动翻译 { $toggle = 已启用 }"
+  },
+  "text_input_auto_translation_disabled": {
+    "message": "自动翻译 { $toggle = 已禁用 }"
+  },
+  "text_input_auto_translation_timeout": {
+    "message": "超时: { $timeout }ms"
+  },
+  "system_tts_info": {
+    "message": "您应该为您的主要目标语言选择最合适的本地化语音"
+  },
+  "setting_popup_promo_features": {
+    "message": "显示促销横幅"
+  },
+  "setting_popup_summarize_action_icon": {
+    "message": "显示摘要图标"
+  },
+  "popup_info_banner_pro_available": {
+    "message": "具有高级服务功能的 PRO 版本来了！"
+  },
+  "popup_info_banner_pro_see_details": {
+    "message": "在 { $settingsLink = 应用设置 } 和 { $subscribeLink = 订阅 } 中查看详情"
   }
 }

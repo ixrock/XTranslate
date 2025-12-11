@@ -406,5 +406,203 @@
   },
   "skip_popup_inject_for_pages_info": {
     "message": "যদি আপনি কিছু সমস্যা, যেমন Cloudflare captcha iframe চেক, সম্মুখীন হন, পপআপ ইনজেকশন এড়াতে URL যুক্ত করুন।"
+  },
+  "settings_title_full_page_translation": {
+    "message": "সম্পূর্ণ পৃষ্ঠা অনুবাদ"
+  },
+  "settings_title_full_page_excluded_pages": {
+    "message": "কখনও অনুবাদ করবেন না"
+  },
+  "settings_title_full_page_always_translate": {
+    "message": "সর্বদা অনুবাদ করুন"
+  },
+  "settings_title_full_page_show_original_onmouseover": {
+    "message": "মাউস হোভারে মূল পাঠ্য দেখান"
+  },
+  "settings_title_full_page_show_translation_onmouseover": {
+    "message": "মাউস হোভারে অনুবাদ দেখান"
+  },
+  "settings_title_full_page_show_replace_texts": {
+    "message": "অনুবাদ দিয়ে নথির পাঠ্য প্রতিস্থাপন করুন"
+  },
+  "settings_title_full_page_show_traffic_save_mode": {
+    "message": "ট্রাফিক সেভিং মোড সক্ষম করুন"
+  },
+  "settings_title_full_page_show_traffic_save_mode_info": {
+    "message": "শুধুমাত্র দৃশ্যমান পাঠ্য অনুবাদ করে নেটওয়ার্ক / API খরচ বাঁচান"
+  },
+  "settings_select_empty_list": {
+    "message": "খালি তালিকা"
+  },
+  "settings_select_edit_list": {
+    "message": "তালিকা দেখতে এবং সম্পাদনা করতে ক্লিক করুন"
+  },
+  "settings_select_add_url": {
+    "message": "URL যোগ করুন"
+  },
+  "settings_select_add_url_error": {
+    "message": "অবৈধ URL যোগ করার চেষ্টা"
+  },
+  "show_in_context_menu": {
+    "message": "ব্রাউজার প্রসঙ্গ মেনুতে অনুবাদক বিকল্প দেখান"
+  },
+  "settings_title_advanced_providers_list": {
+    "message": "উন্নত অনুবাদ প্রদানকারী"
+  },
+  "settings_title_advanced_providers_list_show": {
+    "message": "উন্নত অনুবাদ প্রদানকারী দেখান"
+  },
+  "settings_title_advanced_providers_list_hide": {
+    "message": "উন্নত অনুবাদ প্রদানকারী লুকান"
+  },
+  "settings_title_voice": {
+    "message": "কণ্ঠস্বর"
+  },
+  "settings_show_more": {
+    "message": "আরও সেটিংস দেখান"
+  },
+  "settings_show_less": {
+    "message": "কম সেটিংস দেখান"
+  },
+  "context_menu_translate_full_page_context_menu": {
+    "message": "পৃষ্ঠাটি { $lang }-এ অনুবাদ করুন"
+  },
+  "context_menu_translate_full_page_context_menu_stop": {
+    "message": "{ $site } এর জন্য স্বয়ংক্রিয় অনুবাদ বন্ধ করুন"
+  },
+  "ai_choose_model_reasoning": {
+    "message": "চিন্তার মডেল / ধীর"
+  },
+  "ai_choose_model_reasoning_light": {
+    "message": "চিন্তার মডেল লাইট / দ্রুত"
+  },
+  "auth_access_info_steps_openai": {
+    "message": "১) platform.openai.com এ নিবন্ধন করুন ২) API অ্যাক্সেস কি তৈরি করুন ৩) ব্যালেন্স টপ-আপ করুন ($৫+)"
+  },
+  "auth_access_info_steps_grok": {
+    "message": "console.x.ai এ নিবন্ধন করুন এবং ব্যালেন্স টপ-আপ করুন"
+  },
+  "auth_access_info_steps_deepseek": {
+    "message": "platform.deepseek.com এ নিবন্ধন করুন এবং ব্যালেন্স টপ-আপ করুন"
+  },
+  "auth_access_info_steps_deepl": {
+    "message": "www.deepl.com এ নিবন্ধন করুন এবং DeepL অনুবাদের জন্য নিজস্ব ফ্রি API-কি পান"
+  },
+  "auth_access_info_steps_gemini": {
+    "message": "https://aistudio.google.com/apikey এ আপনার ফ্রি API-কি তৈরি করুন"
+  },
+  "auth_access_info_api_key": {
+    "message": "{ $provider } অনুবাদ পেতে আপনার API কি প্রদান করুন"
+  },
+  "auth_setup_key_info": {
+    "message": "{ $provider } API-কি প্রদান করুন"
+  },
+  "auth_clear_key_info": {
+    "message": "{ $provider } API কি সরান"
+  },
+  "auth_safety_warning_info": {
+    "message": "সতর্কতা: এই এক্সটেনশন উইন্ডো ছাড়া অন্য কোথাও আপনার API কি প্রবেশ করাবেন না"
+  },
+  "pro_version_promo_link_text": {
+    "message": "PRO তে ২০% ছাড়"
+  },
+  "pro_version_promo_tooltip": {
+    "message": "আমরা সম্পূর্ণ পৃষ্ঠা AI অনুবাদ সহ একটি PRO সংস্করণ তৈরি করছি। আরও জানতে এবং আপনার ডিসকাউন্ট দাবি করতে ক্লিক করুন।"
+  },
+  "popup_safe_translation_chars_limit": {
+    "message": "যদি নির্বাচিত পাঠ্য { $limit } অক্ষরের বেশি হয়, তবে এগিয়ে যাওয়ার জন্য একটি নিশ্চিতকরণ সতর্কতা দেখান।"
+  },
+  "popup_safe_translation_chars_limit_info": {
+    "message": "এটি আপনাকে অবাঞ্ছিত টেক্সট অনুরোধে AI-টোকেন কোটা খরচ কমাতে সাহায্য করতে পারে (০ - কোনো সীমা নেই)"
+  },
+  "popup_safe_translation_chars_confirmation_dialog_info": {
+    "message": "নির্বাচিত পাঠ্যে { $selectedCountChars } অক্ষর রয়েছে, যা { $settingsLimitChars } অক্ষরের নিরাপদ অনুবাদের সীমা অতিক্রম করে। বড় পাঠ্য অনুবাদ করতে আরও সংস্থান লাগতে পারে বা আপনার অনুবাদ প্রদানকারীর উপর নির্ভর করে অতিরিক্ত খরচ হতে পারে। আপনি কি অনুবাদ চালিয়ে যেতে চান?"
+  },
+  "recommended": {
+    "message": "প্রস্তাবিত"
+  },
+  "copy_to_clipboard": {
+    "message": "ক্লিপবোর্ডে কপি করুন"
+  },
+  "tts_supported": {
+    "message": "টেক্সট-টু-স্পীচ এর খুব সীমিত সমর্থন"
+  },
+  "pro_version_ai_translator": {
+    "message": "AI-ভিত্তিক পেশাদার ভাষা অনুবাদক ({ $provider } দ্বারা চালিত)"
+  },
+  "pro_version_ai_tts": {
+    "message": "৬টি কণ্ঠস্বরের পছন্দ সহ AI-ভিত্তিক মানুষের মতো টেক্সট-টু-স্পীচ ({ $provider } দ্বারা চালিত)"
+  },
+  "pro_version_ai_summarize_feature": {
+    "message": "যেকোনো পাঠ্যকে একটি সংক্ষিপ্ত সারাংশে পরিণত করুন (দ্রুত শেখার এবং বোঝার প্রচার করে)"
+  },
+  "pro_upgrade_button_label": {
+    "message": "PRO তে আপগ্রেড করুন"
+  },
+  "pro_upgrade_button_tooltip": {
+    "message": "লগইন করুন, ফ্রি প্ল্যান চেষ্টা করুন এবং পরে প্রায় { $pricePerMonth }/মাসে সাবস্ক্রাইব করুন"
+  },
+  "pro_select_tts_voice": {
+    "message": "কণ্ঠস্বর"
+  },
+  "pro_required_confirm_goto_subscribe": {
+    "message": "এই বিকল্পটির জন্য PRO-সাবস্ক্রিপশন প্রয়োজন, আমরা কি সাবস্ক্রাইব পৃষ্ঠায় যাব?"
+  },
+  "pro_user_welcome_back": {
+    "message": "স্বাগতম, { $username }!"
+  },
+  "pro_user_status": {
+    "message": "PRO-স্থিতি: { $status }"
+  },
+  "pro_user_status_active": {
+    "message": "সক্রিয়"
+  },
+  "pro_user_status_inactive": {
+    "message": "নিষ্ক্রিয়"
+  },
+  "pro_user_subscription": {
+    "message": "সাবস্ক্রিপশন: { $plan } ({ $periodEnd } এ শেষ হবে)"
+  },
+  "pro_user_remain_text_tokens": {
+    "message": "উপলব্ধ টেক্সট টোকেন: { $tokens }"
+  },
+  "pro_user_remain_tts_seconds_approx": {
+    "message": "সেকেন্ডে উপলব্ধ টেক্সট-টু-স্পীচ সময়: { $seconds }"
+  },
+  "pro_unauthorized_error_401": {
+    "message": "অ্যাক্সেস পেতে আপনাকে অবশ্যই { $serviceUrl } এ লগ-ইন করতে হবে এবং একটি সক্রিয় সাবস্ক্রিপশন থাকতে হবে।"
+  },
+  "translate_button": {
+    "message": "অনুবাদ করুন"
+  },
+  "summarize_button": {
+    "message": "সারাংশ"
+  },
+  "tts_button": {
+    "message": "শুনুন"
+  },
+  "text_input_auto_translation_enabled": {
+    "message": "স্বয়ংক্রিয় অনুবাদ { $toggle = সক্রিয় }"
+  },
+  "text_input_auto_translation_disabled": {
+    "message": "স্বয়ংক্রিয় অনুবাদ { $toggle = নিষ্ক্রিয় }"
+  },
+  "text_input_auto_translation_timeout": {
+    "message": "টাইমআউট: { $timeout }ms"
+  },
+  "system_tts_info": {
+    "message": "আপনার প্রাথমিক লক্ষ্য ভাষার জন্য সবচেয়ে উপযুক্ত স্থানীয় কণ্ঠস্বর নির্বাচন করা উচিত"
+  },
+  "setting_popup_promo_features": {
+    "message": "প্রোমো ব্যানার দেখান"
+  },
+  "setting_popup_summarize_action_icon": {
+    "message": "সারাংশ আইকন দেখান"
+  },
+  "popup_info_banner_pro_available": {
+    "message": "প্রিমিয়াম পরিষেবা বৈশিষ্ট্য সহ PRO-সংস্করণ এখানে!"
+  },
+  "popup_info_banner_pro_see_details": {
+    "message": "{ $settingsLink = অ্যাপ সেটিংস} এবং { $subscribeLink = সাবস্ক্রাইব } এ বিস্তারিত দেখুন"
   }
 }

@@ -589,5 +589,17 @@
   },
   "system_tts_info": {
     "message": "Vyberte najvhodnejší, prirodzený hlas pre váš hlavný cieľový jazyk."
+  },
+  "setting_popup_promo_features": {
+    "message": "Zobraziť propagačný banner"
+  },
+  "setting_popup_summarize_action_icon": {
+    "message": "Zobraziť ikonu zhrnutia"
+  },
+  "popup_info_banner_pro_available": {
+    "message": "Verzia PRO s funkciami prémiových služieb je tu!"
+  },
+  "popup_info_banner_pro_see_details": {
+    "message": "Pozrite si podrobnosti v { $settingsLink = nastaveniach aplikácie } a { $subscribeLink = predplatiť }"
   }
 }

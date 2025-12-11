@@ -406,5 +406,203 @@
   },
   "skip_popup_inject_for_pages_info": {
     "message": "何らかの問題が発生した場合（例: Cloudflareのcaptcha iframeチェック）、ポップアップ注入をスキップするためのURLを追加してください。"
+  },
+  "settings_title_full_page_translation": {
+    "message": "ページ全体の翻訳"
+  },
+  "settings_title_full_page_excluded_pages": {
+    "message": "翻訳しない"
+  },
+  "settings_title_full_page_always_translate": {
+    "message": "常に翻訳"
+  },
+  "settings_title_full_page_show_original_onmouseover": {
+    "message": "マウスオーバーで原文を表示"
+  },
+  "settings_title_full_page_show_translation_onmouseover": {
+    "message": "マウスオーバーで翻訳を表示"
+  },
+  "settings_title_full_page_show_replace_texts": {
+    "message": "ドキュメントのテキストを翻訳に置き換える"
+  },
+  "settings_title_full_page_show_traffic_save_mode": {
+    "message": "通信節約モードを有効にする"
+  },
+  "settings_title_full_page_show_traffic_save_mode_info": {
+    "message": "ビューポート内の表示テキストのみを翻訳してネットワーク/APIコストを節約"
+  },
+  "settings_select_empty_list": {
+    "message": "リストが空です"
+  },
+  "settings_select_edit_list": {
+    "message": "クリックしてリストを表示・編集"
+  },
+  "settings_select_add_url": {
+    "message": "URLを追加"
+  },
+  "settings_select_add_url_error": {
+    "message": "無効なURLを追加しようとしました"
+  },
+  "show_in_context_menu": {
+    "message": "ブラウザのコンテキストメニューに翻訳オプションを表示"
+  },
+  "settings_title_advanced_providers_list": {
+    "message": "高度な翻訳プロバイダー"
+  },
+  "settings_title_advanced_providers_list_show": {
+    "message": "高度な翻訳プロバイダーを表示"
+  },
+  "settings_title_advanced_providers_list_hide": {
+    "message": "高度な翻訳プロバイダーを隠す"
+  },
+  "settings_title_voice": {
+    "message": "音声"
+  },
+  "settings_show_more": {
+    "message": "詳細設定を表示"
+  },
+  "settings_show_less": {
+    "message": "設定を折りたたむ"
+  },
+  "context_menu_translate_full_page_context_menu": {
+    "message": "ページを { $lang } に翻訳"
+  },
+  "context_menu_translate_full_page_context_menu_stop": {
+    "message": "{ $site } の自動翻訳を停止"
+  },
+  "ai_choose_model_reasoning": {
+    "message": "思考モデル / 遅い"
+  },
+  "ai_choose_model_reasoning_light": {
+    "message": "思考モデル・ライト / より速い"
+  },
+  "auth_access_info_steps_openai": {
+    "message": "1) platform.openai.com で登録 2) APIアクセスキーを作成 3) 残高をチャージ (5ドル以上)"
+  },
+  "auth_access_info_steps_grok": {
+    "message": "console.x.ai で登録して残高をチャージ (例: クレジットカード)"
+  },
+  "auth_access_info_steps_deepseek": {
+    "message": "platform.deepseek.com で登録して残高をチャージ (例: Paypal)"
+  },
+  "auth_access_info_steps_deepl": {
+    "message": "www.deepl.com で登録してDeepL翻訳用の無料APIキーを取得"
+  },
+  "auth_access_info_steps_gemini": {
+    "message": "https://aistudio.google.com/apikey で無料APIキーを作成"
+  },
+  "auth_access_info_api_key": {
+    "message": "{ $provider } 翻訳を取得するためのAPIキーを入力してください"
+  },
+  "auth_setup_key_info": {
+    "message": "{ $provider } APIキーを入力"
+  },
+  "auth_clear_key_info": {
+    "message": "{ $provider } APIキーを削除"
+  },
+  "auth_safety_warning_info": {
+    "message": "警告: この拡張機能のウィンドウ以外にはAPIキーを入力しないでください"
+  },
+  "pro_version_promo_link_text": {
+    "message": "PRO版 20% OFF"
+  },
+  "pro_version_promo_tooltip": {
+    "message": "AIによるページ全体翻訳機能を備えたPRO版を開発中です。クリックして詳細を確認し、割引を受け取ってください。"
+  },
+  "popup_safe_translation_chars_limit": {
+    "message": "選択したテキストが { $limit } 文字を超える場合、続行する前に確認の警告を表示します。"
+  },
+  "popup_safe_translation_chars_limit_info": {
+    "message": "これにより、不要なテキストリクエストによるAIトークン割り当ての消費を抑えることができます (0 - 無制限)"
+  },
+  "popup_safe_translation_chars_confirmation_dialog_info": {
+    "message": "選択されたテキストは { $selectedCountChars } 文字を含み、安全な翻訳制限の { $settingsLimitChars } 文字を超えています。大きなテキストの翻訳は、翻訳プロバイダーによってはより多くのリソースを消費したり、追加コストが発生したりする場合があります。翻訳を続行しますか？"
+  },
+  "recommended": {
+    "message": "推奨"
+  },
+  "copy_to_clipboard": {
+    "message": "クリップボードにコピー"
+  },
+  "tts_supported": {
+    "message": "テキスト読み上げのサポートは非常に限定的です"
+  },
+  "pro_version_ai_translator": {
+    "message": "AIベースのプロフェッショナル言語翻訳 ({ $provider } 提供)"
+  },
+  "pro_version_ai_tts": {
+    "message": "6つの音声から選べるAIベースの人間のようなテキスト読み上げ ({ $provider } 提供)"
+  },
+  "pro_version_ai_summarize_feature": {
+    "message": "あらゆるテキストを簡潔な要約に変換 (より速い学習と理解を促進)"
+  },
+  "pro_upgrade_button_label": {
+    "message": "PROにアップグレード"
+  },
+  "pro_upgrade_button_tooltip": {
+    "message": "ログインして無料プランを試し、後で月額約 { $pricePerMonth } で購読してください"
+  },
+  "pro_select_tts_voice": {
+    "message": "音声"
+  },
+  "pro_required_confirm_goto_subscribe": {
+    "message": "このオプションにはPROサブスクリプションが必要です。購読ページに移動しますか？"
+  },
+  "pro_user_welcome_back": {
+    "message": "お帰りなさい、{ $username } さん！"
+  },
+  "pro_user_status": {
+    "message": "PROステータス: { $status }"
+  },
+  "pro_user_status_active": {
+    "message": "有効"
+  },
+  "pro_user_status_inactive": {
+    "message": "無効"
+  },
+  "pro_user_subscription": {
+    "message": "サブスクリプション: { $plan } ({ $periodEnd } 終了)"
+  },
+  "pro_user_remain_text_tokens": {
+    "message": "利用可能なテキストトークン: { $tokens }"
+  },
+  "pro_user_remain_tts_seconds_approx": {
+    "message": "利用可能なテキスト読み上げ時間 (秒): { $seconds }"
+  },
+  "pro_unauthorized_error_401": {
+    "message": "アクセスするには { $serviceUrl } にログインし、有効なサブスクリプションが必要です。"
+  },
+  "translate_button": {
+    "message": "翻訳"
+  },
+  "summarize_button": {
+    "message": "要約"
+  },
+  "tts_button": {
+    "message": "聞く"
+  },
+  "text_input_auto_translation_enabled": {
+    "message": "自動翻訳 { $toggle = 有効 }"
+  },
+  "text_input_auto_translation_disabled": {
+    "message": "自動翻訳 { $toggle = 無効 }"
+  },
+  "text_input_auto_translation_timeout": {
+    "message": "タイムアウト: { $timeout }ms"
+  },
+  "system_tts_info": {
+    "message": "主なターゲット言語に最も適したローカライズされた音声を選択する必要があります"
+  },
+  "setting_popup_promo_features": {
+    "message": "プロモバナーを表示"
+  },
+  "setting_popup_summarize_action_icon": {
+    "message": "要約アイコンを表示"
+  },
+  "popup_info_banner_pro_available": {
+    "message": "プレミアムサービス機能を備えたPROバージョンが登場！"
+  },
+  "popup_info_banner_pro_see_details": {
+    "message": "{ $settingsLink = アプリ設定 } と { $subscribeLink = 購読 } で詳細を確認"
   }
 }

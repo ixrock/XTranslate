@@ -406,5 +406,203 @@
   },
   "skip_popup_inject_for_pages_info": {
     "message": "Agrega URLs para omitir la inyección del pop-up si experimentas problemas, por ejemplo, la verificación del iframe de captcha de Cloudflare."
+  },
+  "settings_title_full_page_translation": {
+    "message": "Traducción de página completa"
+  },
+  "settings_title_full_page_excluded_pages": {
+    "message": "Nunca traducir"
+  },
+  "settings_title_full_page_always_translate": {
+    "message": "Siempre traducir"
+  },
+  "settings_title_full_page_show_original_onmouseover": {
+    "message": "Mostrar texto original al pasar el ratón"
+  },
+  "settings_title_full_page_show_translation_onmouseover": {
+    "message": "Mostrar traducción al pasar el ratón"
+  },
+  "settings_title_full_page_show_replace_texts": {
+    "message": "Reemplazar textos del documento con traducciones"
+  },
+  "settings_title_full_page_show_traffic_save_mode": {
+    "message": "Habilitar modo de ahorro de tráfico"
+  },
+  "settings_title_full_page_show_traffic_save_mode_info": {
+    "message": "Ahorrar costos de red / API traduciendo solo textos visibles en la ventana"
+  },
+  "settings_select_empty_list": {
+    "message": "Lista vacía"
+  },
+  "settings_select_edit_list": {
+    "message": "Clic para ver y editar la lista"
+  },
+  "settings_select_add_url": {
+    "message": "Añadir URL"
+  },
+  "settings_select_add_url_error": {
+    "message": "Intento de añadir URL inválida"
+  },
+  "show_in_context_menu": {
+    "message": "Mostrar opción de traductor en el menú contextual del navegador"
+  },
+  "settings_title_advanced_providers_list": {
+    "message": "Proveedores de traducción avanzados"
+  },
+  "settings_title_advanced_providers_list_show": {
+    "message": "Mostrar proveedores de traducción avanzados"
+  },
+  "settings_title_advanced_providers_list_hide": {
+    "message": "Ocultar proveedores de traducción avanzados"
+  },
+  "settings_title_voice": {
+    "message": "Voz"
+  },
+  "settings_show_more": {
+    "message": "Mostrar más configuraciones"
+  },
+  "settings_show_less": {
+    "message": "Mostrar menos configuraciones"
+  },
+  "context_menu_translate_full_page_context_menu": {
+    "message": "Traducir página a { $lang }"
+  },
+  "context_menu_translate_full_page_context_menu_stop": {
+    "message": "Detener traducción automática para { $site }"
+  },
+  "ai_choose_model_reasoning": {
+    "message": "Modelo de razonamiento / lento"
+  },
+  "ai_choose_model_reasoning_light": {
+    "message": "Modelo de razonamiento ligero / más rápido"
+  },
+  "auth_access_info_steps_openai": {
+    "message": "1) Regístrese en platform.openai.com 2) Cree clave de acceso API 3) Recargue su saldo (5$+)"
+  },
+  "auth_access_info_steps_grok": {
+    "message": "Regístrese en console.x.ai y recargue saldo (ej. vía Tarjeta de Crédito)"
+  },
+  "auth_access_info_steps_deepseek": {
+    "message": "Regístrese en platform.deepseek.com y recargue saldo (ej. vía Paypal)"
+  },
+  "auth_access_info_steps_deepl": {
+    "message": "Regístrese en www.deepl.com y obtenga su propia clave API gratuita para traducciones DeepL"
+  },
+  "auth_access_info_steps_gemini": {
+    "message": "Cree su clave API gratuita en https://aistudio.google.com/apikey"
+  },
+  "auth_access_info_api_key": {
+    "message": "Proporcione su clave API para obtener traducciones de { $provider }"
+  },
+  "auth_setup_key_info": {
+    "message": "Proporcionar clave API de { $provider }"
+  },
+  "auth_clear_key_info": {
+    "message": "Eliminar clave API de { $provider }"
+  },
+  "auth_safety_warning_info": {
+    "message": "Advertencia: NO introduzca su clave API en ningún otro lugar excepto en esta ventana de extensión"
+  },
+  "pro_version_promo_link_text": {
+    "message": "20% de descuento en PRO"
+  },
+  "pro_version_promo_tooltip": {
+    "message": "Estamos creando una versión PRO con traducción de página completa por IA. Haga clic para saber más y reclamar su descuento."
+  },
+  "popup_safe_translation_chars_limit": {
+    "message": "Si la selección de texto excede { $limit } caracteres, mostrar una advertencia de confirmación para proceder."
+  },
+  "popup_safe_translation_chars_limit_info": {
+    "message": "Esto podría ayudarle a reducir el gasto de cuota de tokens de IA en solicitudes de texto no deseadas (0 - sin límites)"
+  },
+  "popup_safe_translation_chars_confirmation_dialog_info": {
+    "message": "El texto seleccionado contiene { $selectedCountChars } caracteres, lo cual excede el límite de traducción segura de { $settingsLimitChars } caracteres. Traducir textos grandes puede consumir más recursos o incurrir en costos adicionales dependiendo de su proveedor de traducción. ¿Desea proceder con la traducción?"
+  },
+  "recommended": {
+    "message": "Recomendado"
+  },
+  "copy_to_clipboard": {
+    "message": "Copiar al portapapeles"
+  },
+  "tts_supported": {
+    "message": "Soporte muy limitado de texto a voz"
+  },
+  "pro_version_ai_translator": {
+    "message": "Traductor de idiomas profesional basado en IA (impulsado por { $provider })"
+  },
+  "pro_version_ai_tts": {
+    "message": "Texto a voz similar al humano basado en IA con 6 voces a elegir (impulsado por { $provider })"
+  },
+  "pro_version_ai_summarize_feature": {
+    "message": "Convierta cualquier texto en un resumen nítido (promueve un aprendizaje y comprensión más rápidos)"
+  },
+  "pro_upgrade_button_label": {
+    "message": "Actualizar a PRO"
+  },
+  "pro_upgrade_button_tooltip": {
+    "message": "Inicie sesión, pruebe el plan gratuito y suscríbase más tarde por aproximadamente { $pricePerMonth }/mes"
+  },
+  "pro_select_tts_voice": {
+    "message": "Voz"
+  },
+  "pro_required_confirm_goto_subscribe": {
+    "message": "Esta opción requiere suscripción PRO, ¿deberíamos ir a la página de suscripción?"
+  },
+  "pro_user_welcome_back": {
+    "message": "¡Bienvenido de nuevo, { $username }!"
+  },
+  "pro_user_status": {
+    "message": "Estado PRO: { $status }"
+  },
+  "pro_user_status_active": {
+    "message": "activo"
+  },
+  "pro_user_status_inactive": {
+    "message": "inactivo"
+  },
+  "pro_user_subscription": {
+    "message": "Suscripción: { $plan } (termina el { $periodEnd })"
+  },
+  "pro_user_remain_text_tokens": {
+    "message": "Tokens de texto disponibles: { $tokens }"
+  },
+  "pro_user_remain_tts_seconds_approx": {
+    "message": "Tiempo de texto a voz disponible en segundos: { $seconds }"
+  },
+  "pro_unauthorized_error_401": {
+    "message": "Debe haber iniciado sesión en { $serviceUrl } y tener una suscripción activa para obtener acceso."
+  },
+  "translate_button": {
+    "message": "Traducir"
+  },
+  "summarize_button": {
+    "message": "Resumir"
+  },
+  "tts_button": {
+    "message": "Escuchar"
+  },
+  "text_input_auto_translation_enabled": {
+    "message": "Traducción automática { $toggle = activada }"
+  },
+  "text_input_auto_translation_disabled": {
+    "message": "Traducción automática { $toggle = desactivada }"
+  },
+  "text_input_auto_translation_timeout": {
+    "message": "Tiempo de espera: { $timeout }ms"
+  },
+  "system_tts_info": {
+    "message": "Debe seleccionar la voz localizada más apropiada para su idioma de destino principal"
+  },
+  "setting_popup_promo_features": {
+    "message": "Mostrar banner promocional"
+  },
+  "setting_popup_summarize_action_icon": {
+    "message": "Mostrar icono de resumen"
+  },
+  "popup_info_banner_pro_available": {
+    "message": "¡La versión PRO con características de servicio premium está aquí!"
+  },
+  "popup_info_banner_pro_see_details": {
+    "message": "Ver detalles en la { $settingsLink = configuración de la aplicación } y { $subscribeLink = suscribirse }"
   }
 }

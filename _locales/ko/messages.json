@@ -406,5 +406,203 @@
   },
   "skip_popup_inject_for_pages_info": {
     "message": "문제가 발생할 경우(예: Cloudflare 캡차 iframe 검사) 팝업 주입을 건너뛰기 위해 URL을 추가하세요."
+  },
+  "settings_title_full_page_translation": {
+    "message": "전체 페이지 번역"
+  },
+  "settings_title_full_page_excluded_pages": {
+    "message": "절대 번역하지 않음"
+  },
+  "settings_title_full_page_always_translate": {
+    "message": "항상 번역"
+  },
+  "settings_title_full_page_show_original_onmouseover": {
+    "message": "마우스 오버 시 원문 표시"
+  },
+  "settings_title_full_page_show_translation_onmouseover": {
+    "message": "마우스 오버 시 번역 표시"
+  },
+  "settings_title_full_page_show_replace_texts": {
+    "message": "문서 텍스트를 번역으로 교체"
+  },
+  "settings_title_full_page_show_traffic_save_mode": {
+    "message": "트래픽 절약 모드 활성화"
+  },
+  "settings_title_full_page_show_traffic_save_mode_info": {
+    "message": "화면에 보이는 텍스트만 번역하여 네트워크/API 비용 절약"
+  },
+  "settings_select_empty_list": {
+    "message": "빈 목록"
+  },
+  "settings_select_edit_list": {
+    "message": "목록을 보고 편집하려면 클릭"
+  },
+  "settings_select_add_url": {
+    "message": "URL 추가"
+  },
+  "settings_select_add_url_error": {
+    "message": "유효하지 않은 URL 추가 시도"
+  },
+  "show_in_context_menu": {
+    "message": "브라우저 컨텍스트 메뉴에 번역기 옵션 표시"
+  },
+  "settings_title_advanced_providers_list": {
+    "message": "고급 번역 제공자"
+  },
+  "settings_title_advanced_providers_list_show": {
+    "message": "고급 번역 제공자 표시"
+  },
+  "settings_title_advanced_providers_list_hide": {
+    "message": "고급 번역 제공자 숨기기"
+  },
+  "settings_title_voice": {
+    "message": "음성"
+  },
+  "settings_show_more": {
+    "message": "설정 더 보기"
+  },
+  "settings_show_less": {
+    "message": "설정 간단히 보기"
+  },
+  "context_menu_translate_full_page_context_menu": {
+    "message": "페이지를 { $lang }로 번역"
+  },
+  "context_menu_translate_full_page_context_menu_stop": {
+    "message": "{ $site }에 대한 자동 번역 중지"
+  },
+  "ai_choose_model_reasoning": {
+    "message": "생각하는 모델 / 느림"
+  },
+  "ai_choose_model_reasoning_light": {
+    "message": "생각하는 모델 라이트 / 더 빠름"
+  },
+  "auth_access_info_steps_openai": {
+    "message": "1) platform.openai.com에 가입 2) API 액세스 키 생성 3) 잔액 충전 ($5+)"
+  },
+  "auth_access_info_steps_grok": {
+    "message": "console.x.ai에 가입하고 잔액 충전 (예: 신용카드)"
+  },
+  "auth_access_info_steps_deepseek": {
+    "message": "platform.deepseek.com에 가입하고 잔액 충전 (예: 페이팔)"
+  },
+  "auth_access_info_steps_deepl": {
+    "message": "www.deepl.com에 가입하고 DeepL 번역을 위한 무료 API 키 받기"
+  },
+  "auth_access_info_steps_gemini": {
+    "message": "https://aistudio.google.com/apikey에서 무료 API 키 생성"
+  },
+  "auth_access_info_api_key": {
+    "message": "{ $provider } 번역을 받기 위해 API 키를 제공하세요"
+  },
+  "auth_setup_key_info": {
+    "message": "{ $provider } API 키 제공"
+  },
+  "auth_clear_key_info": {
+    "message": "{ $provider } API 키 제거"
+  },
+  "auth_safety_warning_info": {
+    "message": "경고: 이 확장 프로그램 창 이외의 다른 곳에 API 키를 입력하지 마십시오"
+  },
+  "pro_version_promo_link_text": {
+    "message": "PRO 20% 할인"
+  },
+  "pro_version_promo_tooltip": {
+    "message": "AI 전체 페이지 번역이 포함된 PRO 버전을 만들고 있습니다. 자세히 알아보고 할인을 받으려면 클릭하세요."
+  },
+  "popup_safe_translation_chars_limit": {
+    "message": "텍스트 선택이 { $limit }자를 초과하면 진행 확인 경고를 표시합니다."
+  },
+  "popup_safe_translation_chars_limit_info": {
+    "message": "원치 않는 텍스트 요청에 대한 AI 토큰 할당량 지출을 줄이는 데 도움이 될 수 있습니다 (0 - 제한 없음)"
+  },
+  "popup_safe_translation_chars_confirmation_dialog_info": {
+    "message": "선택한 텍스트는 { $selectedCountChars }자를 포함하며, 이는 안전한 번역 제한인 { $settingsLimitChars }자를 초과합니다. 큰 텍스트를 번역하면 번역 제공자에 따라 더 많은 리소스를 소비하거나 추가 비용이 발생할 수 있습니다. 번역을 진행하시겠습니까?"
+  },
+  "recommended": {
+    "message": "추천"
+  },
+  "copy_to_clipboard": {
+    "message": "클립보드에 복사"
+  },
+  "tts_supported": {
+    "message": "텍스트 음성 변환 지원이 매우 제한적임"
+  },
+  "pro_version_ai_translator": {
+    "message": "AI 기반 전문 언어 번역기 ({ $provider } 제공)"
+  },
+  "pro_version_ai_tts": {
+    "message": "6가지 음성 선택이 가능한 AI 기반 인간 유사 텍스트 음성 변환 ({ $provider } 제공)"
+  },
+  "pro_version_ai_summarize_feature": {
+    "message": "모든 텍스트를 명확한 요약으로 변환 (더 빠른 학습 및 이해 촉진)"
+  },
+  "pro_upgrade_button_label": {
+    "message": "PRO로 업그레이드"
+  },
+  "pro_upgrade_button_tooltip": {
+    "message": "로그인하고 무료 플랜을 사용해 보고 나중에 약 { $pricePerMonth }/월로 구독하세요"
+  },
+  "pro_select_tts_voice": {
+    "message": "음성"
+  },
+  "pro_required_confirm_goto_subscribe": {
+    "message": "이 옵션은 PRO 구독이 필요합니다. 구독 페이지로 이동할까요?"
+  },
+  "pro_user_welcome_back": {
+    "message": "{ $username }님, 다시 오신 것을 환영합니다!"
+  },
+  "pro_user_status": {
+    "message": "PRO 상태: { $status }"
+  },
+  "pro_user_status_active": {
+    "message": "활성"
+  },
+  "pro_user_status_inactive": {
+    "message": "비활성"
+  },
+  "pro_user_subscription": {
+    "message": "구독: { $plan } ({ $periodEnd } 종료)"
+  },
+  "pro_user_remain_text_tokens": {
+    "message": "사용 가능한 텍스트 토큰: { $tokens }"
+  },
+  "pro_user_remain_tts_seconds_approx": {
+    "message": "사용 가능한 텍스트 음성 변환 시간(초): { $seconds }"
+  },
+  "pro_unauthorized_error_401": {
+    "message": "액세스하려면 { $serviceUrl }에 로그인하고 활성 구독이 있어야 합니다."
+  },
+  "translate_button": {
+    "message": "번역"
+  },
+  "summarize_button": {
+    "message": "요약"
+  },
+  "tts_button": {
+    "message": "듣기"
+  },
+  "text_input_auto_translation_enabled": {
+    "message": "자동 번역 { $toggle = 활성화됨 }"
+  },
+  "text_input_auto_translation_disabled": {
+    "message": "자동 번역 { $toggle = 비활성화됨 }"
+  },
+  "text_input_auto_translation_timeout": {
+    "message": "타임아웃: { $timeout }ms"
+  },
+  "system_tts_info": {
+    "message": "기본 대상 언어에 가장 적합한 현지화된 음성을 선택해야 합니다"
+  },
+  "setting_popup_promo_features": {
+    "message": "프로모션 배너 표시"
+  },
+  "setting_popup_summarize_action_icon": {
+    "message": "요약 아이콘 표시"
+  },
+  "popup_info_banner_pro_available": {
+    "message": "프리미엄 서비스 기능을 갖춘 PRO 버전이 여기 있습니다!"
+  },
+  "popup_info_banner_pro_see_details": {
+    "message": "{ $settingsLink = 앱 설정 } 및 { $subscribeLink = 구독 }에서 세부 정보 확인"
   }
 }

@@ -517,5 +517,92 @@
   },
   "popup_safe_translation_chars_confirmation_dialog_info": {
     "message": "Изабрани текст садржи { $selectedCountChars } карактера, што прелази сигурну границу од { $settingsLimitChars } карактера. Превођење дугачких текстова може трошити више ресурса и направити додатне трошкове у зависности од вашег преводиоца. Желите ли да наставите са превођењем?"
+  },
+  "recommended": {
+    "message": "Препоручено"
+  },
+  "copy_to_clipboard": {
+    "message": "Копирај у клипборд"
+  },
+  "tts_supported": {
+    "message": "Врло ограничена подршка за текст у говор"
+  },
+  "pro_version_ai_translator": {
+    "message": "Професионални преводилац заснован на АИ (покреће { $provider })"
+  },
+  "pro_version_ai_tts": {
+    "message": "Текст у говор сличан људском заснован на АИ са 6 гласова на избор (покреће { $provider })"
+  },
+  "pro_version_ai_summarize_feature": {
+    "message": "Претворите било који текст у јасан сажетак (подстиче брже учење и разумевање)"
+  },
+  "pro_upgrade_button_label": {
+    "message": "Надоградите на ПРО"
+  },
+  "pro_upgrade_button_tooltip": {
+    "message": "Пријавите се, испробајте бесплатни план и претплатите се касније за око { $pricePerMonth }/месечно"
+  },
+  "pro_select_tts_voice": {
+    "message": "Глас"
+  },
+  "pro_required_confirm_goto_subscribe": {
+    "message": "Ова опција захтева ПРО претплату, да ли да идемо на страницу за претплату?"
+  },
+  "pro_user_welcome_back": {
+    "message": "Добродошли назад, { $username }!"
+  },
+  "pro_user_status": {
+    "message": "ПРО статус: { $status }"
+  },
+  "pro_user_status_active": {
+    "message": "активан"
+  },
+  "pro_user_status_inactive": {
+    "message": "неактиван"
+  },
+  "pro_user_subscription": {
+    "message": "Претплата: { $plan } (завршава се { $periodEnd })"
+  },
+  "pro_user_remain_text_tokens": {
+    "message": "Доступни текстуални токени: { $tokens }"
+  },
+  "pro_user_remain_tts_seconds_approx": {
+    "message": "Доступно време за текст у говор у секундама: { $seconds }"
+  },
+  "pro_unauthorized_error_401": {
+    "message": "Морате бити пријављени на { $serviceUrl } и имати активну претплату да бисте добили приступ."
+  },
+  "translate_button": {
+    "message": "Преведи"
+  },
+  "summarize_button": {
+    "message": "Резимирај"
+  },
+  "tts_button": {
+    "message": "Слушај"
+  },
+  "text_input_auto_translation_enabled": {
+    "message": "Аутоматско превођење { $toggle = омогућено }"
+  },
+  "text_input_auto_translation_disabled": {
+    "message": "Аутоматско превођење { $toggle = онемогућено }"
+  },
+  "text_input_auto_translation_timeout": {
+    "message": "Временско ограничење: { $timeout }ms"
+  },
+  "system_tts_info": {
+    "message": "Требало би да изаберете најприкладнији локализовани глас за ваш примарни циљни језик"
+  },
+  "setting_popup_promo_features": {
+    "message": "Прикажи промо банер"
+  },
+  "setting_popup_summarize_action_icon": {
+    "message": "Прикажи иконицу за резиме"
+  },
+  "popup_info_banner_pro_available": {
+    "message": "ПРО верзија са премиум сервисним функцијама је овде!"
+  },
+  "popup_info_banner_pro_see_details": {
+    "message": "Погледајте детаље у { $settingsLink = подешавањима апликације } и { $subscribeLink = претплатите се }"
   }
 }

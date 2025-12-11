@@ -517,5 +517,92 @@
   },
   "popup_safe_translation_chars_confirmation_dialog_info": {
     "message": "Izabrani tekst sadrži { $selectedCountChars } karaktera, što prelazi sigurnu granicu od { $settingsLimitChars } karaktera. Prevođenje dugačkih tekstova može trošiti više resursa i napraviti dodatne troškove u zavisnosti od vašeg prevodioca. Želite li da nastavite sa prevođenjem?"
+  },
+  "recommended": {
+    "message": "Preporučeno"
+  },
+  "copy_to_clipboard": {
+    "message": "Kopiraj u klipbord"
+  },
+  "tts_supported": {
+    "message": "Vrlo ograničena podrška za tekst u govor"
+  },
+  "pro_version_ai_translator": {
+    "message": "Profesionalni prevodilac zasnovan na AI (pokreće { $provider })"
+  },
+  "pro_version_ai_tts": {
+    "message": "Tekst u govor sličan ljudskom zasnovan na AI sa 6 glasova na izbor (pokreće { $provider })"
+  },
+  "pro_version_ai_summarize_feature": {
+    "message": "Pretvorite bilo koji tekst u jasan sažetak (podstiče brže učenje i razumevanje)"
+  },
+  "pro_upgrade_button_label": {
+    "message": "Nadogradite na PRO"
+  },
+  "pro_upgrade_button_tooltip": {
+    "message": "Prijavite se, isprobajte besplatni plan i pretplatite se kasnije za oko { $pricePerMonth }/mesečno"
+  },
+  "pro_select_tts_voice": {
+    "message": "Glas"
+  },
+  "pro_required_confirm_goto_subscribe": {
+    "message": "Ova opcija zahteva PRO pretplatu, da li da idemo na stranicu za pretplatu?"
+  },
+  "pro_user_welcome_back": {
+    "message": "Dobrodošli nazad, { $username }!"
+  },
+  "pro_user_status": {
+    "message": "PRO status: { $status }"
+  },
+  "pro_user_status_active": {
+    "message": "aktivan"
+  },
+  "pro_user_status_inactive": {
+    "message": "neaktivan"
+  },
+  "pro_user_subscription": {
+    "message": "Pretplata: { $plan } (završava se { $periodEnd })"
+  },
+  "pro_user_remain_text_tokens": {
+    "message": "Dostupni tekstualni tokeni: { $tokens }"
+  },
+  "pro_user_remain_tts_seconds_approx": {
+    "message": "Dostupno vreme za tekst u govor u sekundama: { $seconds }"
+  },
+  "pro_unauthorized_error_401": {
+    "message": "Morate biti prijavljeni na { $serviceUrl } i imati aktivnu pretplatu da biste dobili pristup."
+  },
+  "translate_button": {
+    "message": "Prevedi"
+  },
+  "summarize_button": {
+    "message": "Rezimiraj"
+  },
+  "tts_button": {
+    "message": "Slušaj"
+  },
+  "text_input_auto_translation_enabled": {
+    "message": "Automatsko prevođenje { $toggle = omogućeno }"
+  },
+  "text_input_auto_translation_disabled": {
+    "message": "Automatsko prevođenje { $toggle = onemogućeno }"
+  },
+  "text_input_auto_translation_timeout": {
+    "message": "Vremensko ograničenje: { $timeout }ms"
+  },
+  "system_tts_info": {
+    "message": "Trebalo bi da izaberete najprikladniji lokalizovani glas za vaš primarni ciljni jezik"
+  },
+  "setting_popup_promo_features": {
+    "message": "Prikaži promo baner"
+  },
+  "setting_popup_summarize_action_icon": {
+    "message": "Prikaži ikonicu za rezime"
+  },
+  "popup_info_banner_pro_available": {
+    "message": "PRO verzija sa premium servisnim funkcijama je ovde!"
+  },
+  "popup_info_banner_pro_see_details": {
+    "message": "Pogledajte detalje u { $settingsLink = podešavanjima aplikacije } i { $subscribeLink = pretplatite se }"
   }
 }

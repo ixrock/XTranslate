@@ -406,5 +406,203 @@
   },
   "skip_popup_inject_for_pages_info": {
     "message": "यदि आपको कुछ समस्याएँ, जैसे कि Cloudflare captcha iframe जाँच का सामना करना पड़े, तो पॉपअप इंजेक्शन को छोड़ने के लिए URL जोड़ें।"
+  },
+  "settings_title_full_page_translation": {
+    "message": "पूर्ण पृष्ठ अनुवाद"
+  },
+  "settings_title_full_page_excluded_pages": {
+    "message": "कभी अनुवाद न करें"
+  },
+  "settings_title_full_page_always_translate": {
+    "message": "हमेशा अनुवाद करें"
+  },
+  "settings_title_full_page_show_original_onmouseover": {
+    "message": "माउसओवर पर मूल पाठ दिखाएं"
+  },
+  "settings_title_full_page_show_translation_onmouseover": {
+    "message": "माउसओवर पर अनुवाद दिखाएं"
+  },
+  "settings_title_full_page_show_replace_texts": {
+    "message": "दस्तावेज़ पाठ को अनुवाद से बदलें"
+  },
+  "settings_title_full_page_show_traffic_save_mode": {
+    "message": "ट्रैफिक बचत मोड सक्षम करें"
+  },
+  "settings_title_full_page_show_traffic_save_mode_info": {
+    "message": "वेबपेज व्यूपोर्ट से केवल दृश्यमान पाठ का अनुवाद करके नेटवर्क / API लागत बचाएं"
+  },
+  "settings_select_empty_list": {
+    "message": "खाली सूची"
+  },
+  "settings_select_edit_list": {
+    "message": "सूची देखने और संपादित करने के लिए क्लिक करें"
+  },
+  "settings_select_add_url": {
+    "message": "URL जोड़ें"
+  },
+  "settings_select_add_url_error": {
+    "message": "अमान्य URL जोड़ने का प्रयास"
+  },
+  "show_in_context_menu": {
+    "message": "ब्राउज़र संदर्भ मेनू में अनुवादक विकल्प दिखाएं"
+  },
+  "settings_title_advanced_providers_list": {
+    "message": "उन्नत अनुवाद प्रदाता"
+  },
+  "settings_title_advanced_providers_list_show": {
+    "message": "उन्नत अनुवाद प्रदाता दिखाएं"
+  },
+  "settings_title_advanced_providers_list_hide": {
+    "message": "उन्नत अनुवाद प्रदाता छिपाएं"
+  },
+  "settings_title_voice": {
+    "message": "आवाज़"
+  },
+  "settings_show_more": {
+    "message": "अधिक सेटिंग्स दिखाएं"
+  },
+  "settings_show_less": {
+    "message": "कम सेटिंग्स दिखाएं"
+  },
+  "context_menu_translate_full_page_context_menu": {
+    "message": "पृष्ठ को { $lang } में अनुवाद करें"
+  },
+  "context_menu_translate_full_page_context_menu_stop": {
+    "message": "{ $site } के लिए स्वचालित अनुवाद रोकें"
+  },
+  "ai_choose_model_reasoning": {
+    "message": "सोचने वाला मॉडल / धीमा"
+  },
+  "ai_choose_model_reasoning_light": {
+    "message": "सोचने वाला मॉडल लाइट / तेज़"
+  },
+  "auth_access_info_steps_openai": {
+    "message": "1) platform.openai.com पर पंजीकरण करें 2) API एक्सेस कुंजी बनाएं 3) अपना बैलेंस टॉप-अप करें (5$+)"
+  },
+  "auth_access_info_steps_grok": {
+    "message": "console.x.ai पर पंजीकरण करें और बैलेंस टॉप-अप करें (जैसे क्रेडिट कार्ड के माध्यम से)"
+  },
+  "auth_access_info_steps_deepseek": {
+    "message": "platform.deepseek.com पर पंजीकरण करें और बैलेंस टॉप-अप करें (जैसे पेपैल के माध्यम से)"
+  },
+  "auth_access_info_steps_deepl": {
+    "message": "www.deepl.com पर पंजीकरण करें और DeepL अनुवादों के लिए अपनी निःशुल्क API-कुंजी प्राप्त करें"
+  },
+  "auth_access_info_steps_gemini": {
+    "message": "https://aistudio.google.com/apikey पर अपनी निःशुल्क API-कुंजी बनाएं"
+  },
+  "auth_access_info_api_key": {
+    "message": "{ $provider } अनुवाद प्राप्त करने के लिए अपनी API कुंजी प्रदान करें"
+  },
+  "auth_setup_key_info": {
+    "message": "{ $provider } API-कुंजी प्रदान करें"
+  },
+  "auth_clear_key_info": {
+    "message": "{ $provider } API कुंजी निकालें"
+  },
+  "auth_safety_warning_info": {
+    "message": "चेतावनी: इस एक्सटेंशन विंडो के अलावा अपनी API कुंजी किसी अन्य स्थान पर दर्ज न करें"
+  },
+  "pro_version_promo_link_text": {
+    "message": "PRO पर 20% की छूट"
+  },
+  "pro_version_promo_tooltip": {
+    "message": "हम पूर्ण-पृष्ठ AI अनुवाद के साथ एक PRO संस्करण बना रहे हैं। अधिक जानने और अपनी छूट का दावा करने के लिए क्लिक करें।"
+  },
+  "popup_safe_translation_chars_limit": {
+    "message": "यदि पाठ चयन { $limit } वर्णों से अधिक है, तो आगे बढ़ने के लिए एक पुष्टि चेतावनी दिखाएं।"
+  },
+  "popup_safe_translation_chars_limit_info": {
+    "message": "यह आपको अवांछित पाठ अनुरोधों पर AI-टोकन कोटा खर्च कम करने में मदद कर सकता है (0 - कोई सीमा नहीं)"
+  },
+  "popup_safe_translation_chars_confirmation_dialog_info": {
+    "message": "चयनित पाठ में { $selectedCountChars } वर्ण हैं, जो { $settingsLimitChars } वर्णों की सुरक्षित अनुवाद सीमा से अधिक है। बड़े पाठों का अनुवाद करने में अधिक संसाधन लग सकते हैं या आपके अनुवाद प्रदाता के आधार पर अतिरिक्त लागत आ सकती है। क्या आप अनुवाद के साथ आगे बढ़ना चाहते हैं?"
+  },
+  "recommended": {
+    "message": "अनुशंसित"
+  },
+  "copy_to_clipboard": {
+    "message": "क्लिपबोर्ड पर कॉपी करें"
+  },
+  "tts_supported": {
+    "message": "टेक्स्ट-टू-स्पीच का बहुत सीमित समर्थन"
+  },
+  "pro_version_ai_translator": {
+    "message": "AI-आधारित पेशेवर भाषा अनुवादक ({ $provider } द्वारा संचालित)"
+  },
+  "pro_version_ai_tts": {
+    "message": "6 आवाज़ों के विकल्प के साथ AI-आधारित मानव-जैसी टेक्स्ट-टू-स्पीच ({ $provider } द्वारा संचालित)"
+  },
+  "pro_version_ai_summarize_feature": {
+    "message": "किसी भी पाठ को एक स्पष्ट सारांश में बदलें (तेजी से सीखने और समझने को बढ़ावा देता है)"
+  },
+  "pro_upgrade_button_label": {
+    "message": "PRO में अपग्रेड करें"
+  },
+  "pro_upgrade_button_tooltip": {
+    "message": "लॉगिन करें, मुफ्त योजना आज़माएं और बाद में लगभग { $pricePerMonth }/माह के लिए सदस्यता लें"
+  },
+  "pro_select_tts_voice": {
+    "message": "आवाज़"
+  },
+  "pro_required_confirm_goto_subscribe": {
+    "message": "इस विकल्प के लिए PRO-सदस्यता की आवश्यकता है, क्या हमें सदस्यता पृष्ठ पर जाना चाहिए?"
+  },
+  "pro_user_welcome_back": {
+    "message": "वापसी पर स्वागत है, { $username }!"
+  },
+  "pro_user_status": {
+    "message": "PRO-स्थिति: { $status }"
+  },
+  "pro_user_status_active": {
+    "message": "सक्रिय"
+  },
+  "pro_user_status_inactive": {
+    "message": "निष्क्रिय"
+  },
+  "pro_user_subscription": {
+    "message": "सदस्यता: { $plan } ({ $periodEnd } को समाप्त)"
+  },
+  "pro_user_remain_text_tokens": {
+    "message": "उपलब्ध पाठ टोकन: { $tokens }"
+  },
+  "pro_user_remain_tts_seconds_approx": {
+    "message": "सेकंड में उपलब्ध टेक्स्ट-टू-स्पीच समय: { $seconds }"
+  },
+  "pro_unauthorized_error_401": {
+    "message": "एक्सेस प्राप्त करने के लिए आपको { $serviceUrl } पर लॉग-इन होना चाहिए और एक सक्रिय सदस्यता होनी चाहिए।"
+  },
+  "translate_button": {
+    "message": "अनुवाद करें"
+  },
+  "summarize_button": {
+    "message": "सारांशित करें"
+  },
+  "tts_button": {
+    "message": "सुनें"
+  },
+  "text_input_auto_translation_enabled": {
+    "message": "स्वतः-अनुवाद { $toggle = सक्षम }"
+  },
+  "text_input_auto_translation_disabled": {
+    "message": "स्वतः-अनुवाद { $toggle = अक्षम }"
+  },
+  "text_input_auto_translation_timeout": {
+    "message": "समय समाप्त: { $timeout }ms"
+  },
+  "system_tts_info": {
+    "message": "आपको अपनी प्राथमिक लक्ष्य भाषा के लिए सबसे उपयुक्त स्थानीयकृत आवाज़ का चयन करना चाहिए"
+  },
+  "setting_popup_promo_features": {
+    "message": "प्रोमो बैनर दिखाएं"
+  },
+  "setting_popup_summarize_action_icon": {
+    "message": "सारांश आइकन दिखाएं"
+  },
+  "popup_info_banner_pro_available": {
+    "message": "प्रीमियम सेवा सुविधाओं के साथ PRO-संस्करण यहाँ है!"
+  },
+  "popup_info_banner_pro_see_details": {
+    "message": "{ $settingsLink = ऐप सेटिंग्स} और { $subscribeLink = सदस्यता लें } में विवरण देखें"
   }
 }
