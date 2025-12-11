@@ -25,6 +25,7 @@ import { PageTranslator } from "./page-translator";
 import { Icon } from "@/components/icon";
 import { getMessage } from "@/i18n";
 import { getPageUrlAbs } from "@/navigation";
+import { proSubscriptionRequiredDialog, userStore } from "@/pro";
 
 type DOMRectNormalized = Omit<Writeable<DOMRect>, "toJSON" | "x" | "y">;
 
@@ -36,7 +37,7 @@ export class ContentScript extends React.Component {
   static cssStylesUrl: string;
 
   static async init(window: Window = globalThis.window.self) {
-    await preloadAppData(); // wait for dependent data before first render
+    await preloadAppData({ forceUserLoad: false }); // wait for dependent data before first render
     await this.preloadCss();
     await popupSkipInjectionUrls.load();
 
@@ -96,6 +97,7 @@ export class ContentScript extends React.Component {
   @observable.ref translation: ITranslationResult;
   @observable.ref error: ITranslationError;
   @observable.ref selectionRects: DOMRectNormalized[] = [];
+  @observable summarized = "";
   @observable popupPosition: React.CSSProperties = {};
   @observable selectedText = "";
   @observable isSelectingText = false;
@@ -109,10 +111,6 @@ export class ContentScript extends React.Component {
     if (this.pageTranslator.isEnabled) {
       this.startPageAutoTranslation();
     }
-  }
-
-  private getShadowDomElements(rootElem = document.body) {
-    return Array.from(rootElem.querySelectorAll("*")).filter(elem => elem.shadowRoot) as HTMLElement[];
   }
 
   private bindEvents() {
@@ -151,7 +149,7 @@ export class ContentScript extends React.Component {
   }
 
   @computed get isPopupHidden() {
-    return !(this.translation || this.error);
+    return !(this.translation || this.error) && !this.summarized;
   }
 
   @computed get iconPosition(): React.CSSProperties {
@@ -208,16 +206,23 @@ export class ContentScript extends React.Component {
   translateLazy = debounce(this.translate, 250);
 
   @action
-  async translate(params: Partial<TranslatePayload> = {}) {
-    this.checkContextInvalidationError();
-    this.hideIcon();
-
-    const payload = this.lastParams = {
+  refreshAndGetPayload(params: Partial<TranslatePayload> = {}) {
+    this.lastParams = {
       provider: params.provider ?? settingsStore.data.vendor,
       from: params.from ?? settingsStore.data.langFrom,
       to: params.to ?? settingsStore.data.langTo,
       text: params.text ?? this.selectedText.trim(),
     };
+
+    return this.lastParams;
+  }
+
+  @action
+  async translate(params: Partial<TranslatePayload> = {}) {
+    this.checkContextInvalidationError();
+    this.hideIcon();
+
+    const payload = this.refreshAndGetPayload(params);
 
     if (!this.translationConfirmationCheck(payload)) {
       return;
@@ -226,6 +231,7 @@ export class ContentScript extends React.Component {
     this.translation = null;
     this.error = null;
     this.isLoading = true;
+    this.summarized = "";
 
     try {
       const translation = await getTranslator(payload.provider).translate(payload);
@@ -310,6 +316,7 @@ export class ContentScript extends React.Component {
     if (this.translation) {
       getTranslator(this.translation.vendor).stopSpeaking();
     }
+    this.summarized = "";
     this.translation = null;
     this.error = null;
     this.popupPosition = {};
@@ -629,8 +636,64 @@ export class ContentScript extends React.Component {
     )
   }
 
+  @action
+  async summarize(evt: React.MouseEvent) {
+    evt.stopPropagation();
+
+    if (!this.lastParams) {
+      this.refreshAndGetPayload();
+    }
+
+    if (!userStore.isProEnabled) {
+      proSubscriptionRequiredDialog();
+      return "";
+    }
+
+    this.lastParams.provider = ProviderCodeName.XTRANSLATE_PRO;
+    this.translation = null;
+    this.error = null;
+    this.isLoading = true;
+    this.summarized = "";
+
+    try {
+      const { text, to: targetLang } = this.lastParams;
+      this.summarized = await getXTranslatePro().summarize({ text, targetLang });
+    } catch (err) {
+      this.error = err;
+    } finally {
+      this.isLoading = false
+    }
+  }
+
+  @action
+  hideBanner() {
+    settingsStore.data.showPopupPromoBanner = false;
+    settingsStore.data.showPopupPromoBannerLastTimestamp = Date.now();
+  }
+
+  renderBanner() {
+    if (userStore.isProEnabled) {
+      return;
+    }
+    return (
+      <>
+        <p>
+          <Icon material="celebration"/>
+          <b>{getMessage("popup_info_banner_pro_available")}</b>
+        </p>
+        <p>
+          {getMessage("popup_info_banner_pro_see_details", {
+            settingsLink: v => <a href={getPageUrlAbs({ page: "settings" })} target="_blank">{v}</a>,
+            subscribeLink: v => <b><a href={getXTranslatePro().subscribePageUrl} target="_blank">{v}</a></b>,
+          })}
+          <Icon material="close" onClick={this.hideBanner}/>
+        </p>
+      </>
+    )
+  }
+
   render() {
-    const { translation, error, popupPosition, speak } = this;
+    const { translation, error, popupPosition, speak, summarized, summarize } = this;
     return (
       <>
         <link rel="stylesheet" href={ContentScript.cssStylesUrl}/>
@@ -640,20 +703,13 @@ export class ContentScript extends React.Component {
           style={popupPosition}
           translation={translation}
           error={error}
-          onPlayText={speak}
+          speak={speak}
           lastParams={this.lastParams}
           onProviderChange={this.translateWith}
           tooltipParentElem={ContentScript.rootElem}
-          showBanner={
-            <div className="flex column">
-              <p><Icon material="celebration"/> <b>PRO-version</b> with premium service features is here!</p>
-              <p>
-                {/* TODO: localize */}
-                See details in the <a href={getPageUrlAbs({ page: "settings" })} target="_blank">app settings</a> and{" "}
-                <a href={getXTranslatePro().subscribePageUrl} target="_blank">subscribe</a>.
-                <Icon material="close" onClick={action(() => settingsStore.data.showPopupBanner = false)}/>
-              </p>
-            </div>}
+          summarize={summarize}
+          summarized={summarized}
+          showBanner={this.renderBanner()}
           ref={(ref: Popup) => {
             this.popup = ref
           }}

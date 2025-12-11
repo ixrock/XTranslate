@@ -60,16 +60,15 @@ export class Header extends React.Component {
       subscriptionPlan,
       priceFormattedPerMonth,
       apiProvider: { subscribePageUrl },
-      data: { subscription },
     } = userStore;
 
-    if (isProEnabled) {
+    if (isProEnabled && this.user) {
       const subscriptionDetails = (
         <>
           <p>
             {getMessage("pro_user_subscription", {
               plan: subscriptionPlan,
-              periodEnd: new Date(subscription.periodEnd).toLocaleString(getLocale()),
+              periodEnd: new Date(this.user.subscription.periodEnd).toLocaleString(getLocale()),
             })}
           </p>
           <p>
@@ -101,7 +100,7 @@ export class Header extends React.Component {
             }}/>
             <div className="pro-status">
               {getMessage("pro_user_status", {
-                status: <b>{getMessage(`pro_user_status_${subscription.status}`)}</b>
+                status: <b>{getMessage(`pro_user_status_${this.user?.subscription.status}`)}</b>
               })}
             </div>
           </div>

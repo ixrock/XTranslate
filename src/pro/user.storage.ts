@@ -4,22 +4,29 @@ import { getXTranslatePro, XTranslateProUser } from "@/providers";
 import { formatPrice } from "@/utils";
 import { getLocale } from "@/i18n";
 
-export const userStorage = createStorage("user", {
+export interface UserStorage {
+  user?: XTranslateProUser;
+  preloadLastTime?: number;
+}
+
+export const userStorage = createStorage<UserStorage>("user_storage", {
   area: "local",
   autoLoad: false,
-  defaultValue: {} as XTranslateProUser,
+  defaultValue: {
+    user: null,
+    preloadLastTime: 0,
+  },
 });
 
 export class UserSubscriptionStore {
-  public pricePerMonthUSDCents = 799;
+  public pricePerMonthUSDCents = 799; // TODO: took from user APIs
 
   constructor() {
     makeObservable(this);
   }
 
-  async load() {
-    await userStorage.load();
-    await this.refreshFromServer();
+  async load({ force = false } = {}) {
+    await this.refreshFromServer({ force });
   }
 
   get apiProvider() {
@@ -35,7 +42,7 @@ export class UserSubscriptionStore {
   }
 
   get data() {
-    return userStorage.get();
+    return userStorage.get().user;
   }
 
   get subscriptionPlan(): string {
@@ -61,14 +68,23 @@ export class UserSubscriptionStore {
     return userStore.data;
   }
 
-  async refreshFromServer(): Promise<XTranslateProUser> {
+  async refreshFromServer({ force = false } = {}): Promise<void> {
+    await userStorage.load();
+
+    const hasUserData = Boolean(userStore.data);
+    if (hasUserData && !force) {
+      return; // return cache from chrome.storage.local
+    }
+
     try {
       const userInfo = await this.apiProvider.getUser();
-      userStorage.set(userInfo);
-      return userInfo;
+      userStorage.set({
+        user: userInfo,
+        preloadLastTime: Date.now(),
+      });
     } catch (err) {
       console.log('failed to update from server: ', err)
-      return this.resetCache();
+      this.resetCache();
     }
   }
 }

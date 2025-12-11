@@ -7,15 +7,6 @@
     padding-top: var(--theme-spacing);
     border-top: 1px solid var(--theme-border-color);
 
-    > .flex {
-      padding: var(--theme-spacing);
-      padding-top: 0;
-
-      &.auto {
-        padding-left: 0;
-      }
-    }
-
     .ColorPicker + .ColorPicker {
       margin-left: var(--theme-spacing-half);
     }

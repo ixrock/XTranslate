@@ -590,7 +590,16 @@
   "system_tts_info": {
     "message": "You should select most appropriate localized voice to your primary target language"
   },
-  "setting_popup_features": {
+  "setting_popup_promo_features": {
     "message": "Show promo banner"
+  },
+  "setting_popup_summarize_action_icon": {
+    "message": "Show summarize icon"
+  },
+  "popup_info_banner_pro_available": {
+    "message": "PRO-version with premium service features is here!"
+  },
+  "popup_info_banner_pro_see_details": {
+    "message": "See details in the { $settingsLink = app settings} and { $subscribeLink = subscribe }"
   }
 }

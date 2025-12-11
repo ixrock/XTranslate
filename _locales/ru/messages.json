@@ -587,7 +587,16 @@
   "system_tts_info": {
     "message": "Вам нужно выбрать наиболее подходящий локализованный голос для озвучки вашего целевого языка"
   },
-  "setting_popup_features": {
+  "setting_popup_promo_features": {
     "message": "Отображать промо баннер"
+  },
+  "setting_popup_summarize_action_icon": {
+    "message": "Показывать иконку суммирования (резюме)"
+  },
+  "popup_info_banner_pro_available": {
+    "message": "PRO-версия с премиум функциями уже здесь!"
+  },
+  "popup_info_banner_pro_see_details": {
+    "message": "Смотрите подробности на { $settingsLink = странице настроек} и { $subscribeLink = подписывайтесь }"
   }
 }

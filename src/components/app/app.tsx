@@ -20,13 +20,14 @@ import { AppRateDialog } from "./app-rate.dialog";
 import { isRTL } from "@/providers";
 import { getLocale } from "@/i18n";
 import { sendMetric } from "@/background/metrics.bgc";
-import { userStore } from "@/pro";
 
 @observer
 export class App extends React.Component {
   static async init() {
-    void userStore.load(); // preload user-info for PRO-subscription
-    await preloadAppData(); // preload dependent data before initial app rendering
+    // preload dependent data before initial app rendering
+    await preloadAppData({
+      forceUserLoad: true, // always update actual user-subscription info in the header
+    });
 
     const { name: appName, description: appDescription } = getManifest();
     document.title = `${appName} - ${appDescription}`;

@@ -24,9 +24,11 @@ export interface PopupProps extends React.HTMLProps<any> {
   lastParams: TranslatePayload | undefined;
   translation: ITranslationResult | undefined;
   error: ITranslationError | undefined;
+  summarized?: string;
   tooltipParentElem?: HTMLElement;
   onProviderChange?(name: ProviderCodeName): void;
-  onPlayText?(): void;
+  speak?(): Promise<HTMLAudioElement | SpeechSynthesisUtterance | void>;
+  summarize?(evt: React.MouseEvent): Promise<string>;
 }
 
 @observer
@@ -74,6 +76,11 @@ export class Popup extends React.Component<PopupProps> {
     return isFavorite(this.translation);
   }
 
+  get isVisible() {
+    const { summarized, error } = this.props;
+    return error ?? this.translation ?? summarized;
+  }
+
   get translation(): ITranslationResult | undefined {
     if (this.props.previewMode) {
       this.translationMock ??= Popup.translationMock;
@@ -118,9 +125,10 @@ export class Popup extends React.Component<PopupProps> {
     };
   }
 
-  @computed get settingsStyle(): CSSProperties {
+  @computed get resultStyles(): CSSProperties {
     let { maxHeight, maxWidth, minHeight, minWidth } = themeStore.data;
     return {
+      direction: isRTL(getLocale()) ? "rtl" : "ltr",
       maxWidth: !maxWidth ? "" : Math.max(maxWidth, minWidth),
       maxHeight: !maxHeight ? "" : Math.max(maxHeight, minHeight),
       minWidth: minWidth,
@@ -153,14 +161,14 @@ export class Popup extends React.Component<PopupProps> {
     )
   }
 
-  renderCopyTranslationIcon() {
+  renderCopyTranslationIcon(content: string | ITranslationResult) {
     if (!this.data.showCopyTranslationIcon) {
       return;
     }
     return (
       <CopyToClipboardIcon
         className={styles.icon}
-        content={this.translation}
+        content={content}
         tooltip={{
           children: getMessage("popup_copy_translation_title"),
           parentElement: this.props.tooltipParentElem,
@@ -181,7 +189,22 @@ export class Popup extends React.Component<PopupProps> {
           children: getMessage("popup_play_icon_title"),
           parentElement: this.props.tooltipParentElem,
         }}
-        onClick={prevDefault(this.props.onPlayText)}
+        onClick={prevDefault(this.props.speak)}
+      />
+    );
+  }
+
+  renderSummarizeIcon() {
+    if (!this.data.showPopupSummarizeIcon) {
+      return;
+    }
+
+    return (
+      <Icon
+        className={styles.icon}
+        material={materialIcons.summarize}
+        tooltip={getMessage("summarize_button")}
+        onClick={prevDefault(this.props.summarize)}
       />
     );
   }
@@ -215,20 +238,14 @@ export class Popup extends React.Component<PopupProps> {
 
   renderResult() {
     if (!this.translation) return;
-
     let { translation, transcription, dictionary, vendor, langFrom, langTo, langDetected } = this.translation;
     if (langDetected) langFrom = langDetected;
 
     const translator = getTranslator(vendor);
-    const directionUI = isRTL(getLocale()) ? "rtl" : "ltr";
     const directionResults = isRTL(langTo) ? "rtl" : "ltr";
-    const popupResultStyle: React.CSSProperties = {
-      ...this.settingsStyle,
-      direction: directionUI,
-    };
 
     return (
-      <div className={styles.translationResult} style={popupResultStyle}>
+      <div className={styles.translationResult} style={this.resultStyles}>
         <div className={styles.translation}>
           {this.renderPlayTextIcon()}
           <div className={styles.value} style={{ direction: directionResults }}>
@@ -236,8 +253,9 @@ export class Popup extends React.Component<PopupProps> {
             {transcription ? <i className={styles.transcription}>{" "}[{transcription}]</i> : null}
           </div>
           <div className={styles.icons}>
+            {this.renderSummarizeIcon()}
             {this.renderSaveToFavoritesIcon()}
-            {this.renderCopyTranslationIcon()}
+            {this.renderCopyTranslationIcon(this.translation)}
             {this.renderProviderSelectIcon()}
           </div>
         </div>
@@ -286,15 +304,36 @@ export class Popup extends React.Component<PopupProps> {
     )
   }
 
+  renderSummarized() {
+    const { summarized, error } = this.props;
+    if (!summarized || error) return;
+
+    return (
+      <div className={styles.translationResult} style={this.resultStyles}>
+        <div className={styles.translation}>
+          <span className={styles.value}>
+            {summarized}
+          </span>
+          <div className={styles.icons}>
+            {this.renderCopyTranslationIcon(summarized)}
+            {this.renderProviderSelectIcon()}
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   render() {
-    const { popupPosition, showPopupBanner } = this.data;
+    const { popupPosition, showPopupPromoBanner } = this.data;
     const { previewMode, error, className, style: customStyle, showBanner } = this.props;
     const hasAutoPosition = popupPosition === "";
     const popupClass = cssNames(styles.Popup, className, popupPosition, {
-      [styles.visible]: Boolean(this.translation || error),
+      [styles.visible]: this.isVisible,
       [styles.fixedPos]: !previewMode && !hasAutoPosition,
       [styles.previewMode]: previewMode,
     });
+
+    const result = this.renderResult() ?? this.renderSummarized();
 
     return (
       <div
@@ -302,8 +341,8 @@ export class Popup extends React.Component<PopupProps> {
         style={{ ...this.popupStyle, ...(customStyle ?? {}) }}
         ref={this.elemRef}
       >
-        {showPopupBanner && <div className={styles.topInfoBanner}>{showBanner}</div>}
-        {error ? this.renderError() : this.renderResult()}
+        {showPopupPromoBanner && !previewMode && <div className={styles.topInfoBanner}>{showBanner}</div>}
+        {error ? this.renderError() : result}
       </div>
     );
   }
