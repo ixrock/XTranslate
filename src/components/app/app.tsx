@@ -18,8 +18,11 @@ import { ExportSettingsDialog } from "./export-settings-dialog";
 import { PrivacyDialog } from "./privacy-dialog";
 import { AppRateDialog } from "./app-rate.dialog";
 import { isRTL } from "@/providers";
-import { getLocale } from "@/i18n";
+import { getLocale, i18nStorage } from "@/i18n";
 import { sendMetric } from "@/background/metrics.bgc";
+import { userStore } from "@/pro";
+import { favoritesStorage } from "@/components/user-history/favorites.storage";
+import { themeStore } from "@/components/theme-manager/theme.storage";
 
 @observer
 export class App extends React.Component {
@@ -83,3 +86,11 @@ export class App extends React.Component {
 
 // render app
 void App.init();
+
+export {
+  i18nStorage,
+  settingsStore,
+  userStore,
+  themeStore,
+  favoritesStorage,
+}

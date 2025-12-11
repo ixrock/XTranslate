@@ -671,7 +671,7 @@ export class ContentScript extends React.Component {
     settingsStore.data.showPopupPromoBannerLastTimestamp = Date.now();
   }
 
-  renderBanner() {
+  renderPromoBanner() {
     if (userStore.isProEnabled) {
       return;
     }
@@ -709,7 +709,7 @@ export class ContentScript extends React.Component {
           tooltipParentElem={ContentScript.rootElem}
           summarize={summarize}
           summarized={summarized}
-          showBanner={this.renderBanner()}
+          showBanner={this.renderPromoBanner()}
           ref={(ref: Popup) => {
             this.popup = ref
           }}
