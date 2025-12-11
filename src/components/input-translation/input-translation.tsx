@@ -445,7 +445,6 @@ export class InputTranslation extends React.Component {
             autoFocus={true}
             multiLine={true}
             rows={2}
-            tabIndex={1}
             placeholder={getMessage("text_field_placeholder")}
             defaultValue={text}
             onChange={this.onInputChange}
