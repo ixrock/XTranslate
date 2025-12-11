@@ -1,6 +1,6 @@
 // Base class for all translation providers
 
-import { observable } from "mobx";
+import { observable, action } from "mobx";
 import { autoBind, copyCase, CopyCaseParams, createLogger } from "../utils";
 import { isOptionsPage, ProxyRequestPayload, ProxyResponseType } from "../extension";
 import { ProviderCodeName } from "./providers";
@@ -237,16 +237,16 @@ export abstract class Translator {
     ].join(' → ');
   }
 
-  speakSynth(text: string) {
+  speakSynth(text: string): Promise<SpeechSynthesisUtterance> {
     try {
-      void speakSystemTTS(text);
+      return speakSystemTTS(text);
     } catch (err) {
       this.logger.error(`[TTS]: speech synthesis failed to speak: ${err}`);
     }
   }
 
   // TODO: support streaming
-  async speak(text: string, lang?: string) {
+  async speak(text: string, lang?: string): Promise<void> {
     this.stopSpeaking(); // stop previous if any
 
     try {
@@ -261,7 +261,7 @@ export abstract class Translator {
     const useSpeechSynthesis = Boolean(settingsStore.data.useSpeechSynthesis || !(audioUrl || audioFile));
 
     if (useSpeechSynthesis) {
-      this.speakSynth(text);
+      await this.speakSynth(text);
       return;
     }
 
@@ -282,7 +282,7 @@ export abstract class Translator {
         lang,
       });
     } catch (error) {
-      this.speakSynth(text); // fallback to TTS-synthesis engine
+      await this.speakSynth(text); // fallback to TTS-synthesis engine
 
       void sendMetric("tts_error", {
         error: String(error?.message) ?? "Unknown TTS error",
@@ -290,6 +290,32 @@ export abstract class Translator {
         provider: this.name,
         lang,
       })
+    }
+  }
+
+  isSpeaking(): boolean {
+    const mediaFile = this.audio && !(this.audio.paused || this.audio.ended);
+    return mediaFile ?? ttsEngine().speaking;
+  }
+
+  @action
+  pauseSpeaking(toggle = true) {
+    const pause = () => {
+      this.audio?.pause();
+      ttsEngine().pause();
+    };
+    const resume = () => {
+      void this.audio?.play();
+      ttsEngine().resume();
+    }
+    if (toggle) {
+      if (this.audio?.paused || ttsEngine().paused) {
+        resume()
+      } else {
+        pause();
+      }
+    } else {
+      pause();
     }
   }
 

@@ -82,8 +82,11 @@ export class InputTranslation extends React.Component {
     });
   }
 
+  @observable isSpeaking = false;
+
+  @action.bound
   speak = async () => {
-    const { provider, text, from } = this.params;
+    let { provider, text, from } = this.params;
 
     if (!this.translation && from === "auto" && provider === ProviderCodeName.GOOGLE) {
       await this.translate(); // google-tts api requires `lang` param to be defined
@@ -91,10 +94,21 @@ export class InputTranslation extends React.Component {
 
     if (this.translation) {
       const { vendor, langDetected, originalText } = this.translation;
-      return getTranslator(vendor).speak(originalText, langDetected);
+      provider = vendor;
+      from = langDetected;
+      text = originalText;
     }
 
-    return getTranslator(provider).speak(text, from);
+    const translator = getTranslator(provider);
+
+    if (!this.isSpeaking) {
+      console.log('ENABLE SPEAK!')
+      this.isSpeaking = true;
+      void translator.speak(text, from);
+    } else {
+      console.log('PAUSE SPEAK!')
+      translator.pauseSpeaking();
+    }
   }
 
   @action.bound
@@ -431,15 +445,26 @@ export class InputTranslation extends React.Component {
         {this.renderTranslation()}
 
         <div className="buttons flex gaps justify-center">
-          <Button primary className="flex gaps align-center" onClick={() => this.translate()}>
+          <Button
+            primary
+            className="flex gaps align-center"
+            onClick={() => this.translate()}
+          >
             <Icon material={materialIcons.translate}/>
             <span>{getMessage("translate_button")}</span>
           </Button>
-          <Button outline primary className="flex gaps align-center" onClick={() => this.speak()}>
+          <Button
+            outline
+            className="flex gaps align-center"
+            onClick={() => this.speak()}
+          >
             <Icon svg="tts"/>
             <span>{getMessage("tts_button")}</span>
           </Button>
-          <Button className="flex gaps align-center" onClick={() => this.summarize()}>
+          <Button
+            className="flex gaps align-center"
+            onClick={() => this.summarize()}
+          >
             <Icon material={materialIcons.summarize}/>
             <span>{getMessage("summarize_button")}</span>
           </Button>
