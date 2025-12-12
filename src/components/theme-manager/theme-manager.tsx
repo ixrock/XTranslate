@@ -126,49 +126,51 @@ export class ThemeManager extends React.Component {
     const isDefault = themeStorage.isDefaultValue(theme) && customFont.isDefaultValue(this.customFont);
 
     return (
-      <div className="theme">
-        <div className="box">
-          <SubTitle>{getMessage("sub_header_background")}</SubTitle>
-          <div className="flex gaps align-center">
-            <span className="heading">{getMessage("background_color")}</span>
-            <div className="flex align-center">
-              <ColorPicker
-                value={theme.bgcMain}
-                onChange={v => theme.bgcMain = v}
-              />
-              <ColorPicker
-                value={theme.bgcSecondary}
-                onChange={v => theme.bgcSecondary = v}
-                disabled={!theme.bgcLinear}
+      <div className="theme flex column">
+        <div className="box grow flex gaps">
+          <div className="flex column box grow">
+            <SubTitle>{getMessage("sub_header_background")}</SubTitle>
+            <div className="box grow flex gaps align-center">
+              <span className="heading">{getMessage("background_color")}</span>
+              <div className="flex align-center">
+                <ColorPicker
+                  value={theme.bgcMain}
+                  onChange={v => theme.bgcMain = v}
+                />
+                <ColorPicker
+                  value={theme.bgcSecondary}
+                  onChange={v => theme.bgcSecondary = v}
+                  disabled={!theme.bgcLinear}
+                />
+              </div>
+              <Checkbox
+                label={getMessage("background_linear_gradient")}
+                checked={theme.bgcLinear}
+                onChange={v => theme.bgcLinear = v}
               />
             </div>
-            <Checkbox
-              label={getMessage("background_linear_gradient")}
-              checked={theme.bgcLinear}
-              onChange={v => theme.bgcLinear = v}
-            />
           </div>
-        </div>
-        <div className="box">
-          <SubTitle>{getMessage("sub_header_box_shadow")}</SubTitle>
-          <div className="flex gaps align-center">
-            <NumberInput
-              className="box grow"
-              min={0} max={100}
-              value={theme.boxShadowBlur}
-              onChange={v => theme.boxShadowBlur = v}
-            />
-            <span className="heading">{getMessage("box_shadow_color")}</span>
-            <ColorPicker
-              position={{ bottom: true, right: true }}
-              value={theme.boxShadowColor}
-              onChange={v => theme.boxShadowColor = v}
-            />
-            <Checkbox
-              label={getMessage("box_shadow_inner")}
-              checked={theme.boxShadowInner}
-              onChange={v => theme.boxShadowInner = v}
-            />
+          <div className="flex column box grow">
+            <SubTitle>{getMessage("sub_header_box_shadow")}</SubTitle>
+            <div className="flex gaps align-center">
+              <NumberInput
+                className="box grow"
+                min={0} max={100}
+                value={theme.boxShadowBlur}
+                onChange={v => theme.boxShadowBlur = v}
+              />
+              <span className="heading">{getMessage("box_shadow_color")}</span>
+              <ColorPicker
+                position={{ bottom: true, right: true }}
+                value={theme.boxShadowColor}
+                onChange={v => theme.boxShadowColor = v}
+              />
+              <Checkbox
+                label={getMessage("box_shadow_inner")}
+                checked={theme.boxShadowInner}
+                onChange={v => theme.boxShadowInner = v}
+              />
+            </div>
           </div>
         </div>
 
