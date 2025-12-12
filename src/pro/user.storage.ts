@@ -6,7 +6,7 @@ import { getLocale } from "@/i18n";
 
 export interface UserStorage {
   user?: XTranslateProUser;
-  pricing: XTranslatePricing;
+  pricing?: XTranslatePricing;
   preloadLastTime?: number;
 }
 
@@ -15,13 +15,12 @@ export const userStorage = createStorage<UserStorage>("user_storage", {
   autoLoad: false,
   defaultValue: {
     user: null,
-    pricing: {} as XTranslatePricing,
+    pricing: null,
     preloadLastTime: 0,
   },
 });
 
 export class UserSubscriptionStore {
-  private storage = userStorage;
   @observable pricing: XTranslatePricing;
 
   constructor() {

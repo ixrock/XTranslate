@@ -676,7 +676,7 @@ export class ContentScript extends React.Component {
       return;
     }
     const priceMonthly = formatPrice({
-      value: (userStore.pricing.monthlyPriceCentsUSD ?? 0) / 100,
+      value: (userStore.pricing?.monthlyPriceCentsUSD ?? 0) / 100,
       currency: "USD",
     });
     return (
