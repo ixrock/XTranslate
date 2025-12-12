@@ -601,5 +601,14 @@
   },
   "popup_info_banner_pro_see_details": {
     "message": "Pozrite si podrobnosti v { $settingsLink = nastaveniach aplikácie } a { $subscribeLink = predplatiť }"
+  },
+  "pro_version_subscribe_button": {
+    "message": "Predplatiť"
+  },
+  "pro_version_subscribe_price": {
+    "message": "Predplaťte si výhody XTranslate PRO len za { $priceMonthly }/mesiac."
+  },
+  "pro_version_continue_use_free_version": {
+    "message": "Pokračovať s bezplatnou verziou"
   }
 }
