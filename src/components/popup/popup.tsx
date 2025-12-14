@@ -325,7 +325,7 @@ export class Popup extends React.Component<PopupProps> {
 
   renderPromo() {
     const { previewMode, showBanner } = this.props;
-    if (this.data.showPopupPromoBanner && !previewMode && showBanner) {
+    if (this.data.showPopupPromoBanner && showBanner && !previewMode) {
       return (
         <div className={styles.promoBanner}>{showBanner}</div>
       )
@@ -333,8 +333,8 @@ export class Popup extends React.Component<PopupProps> {
   }
 
   render() {
-    const { popupPosition, showPopupPromoBanner } = this.data;
-    const { previewMode, error, className, style: customStyle, showBanner } = this.props;
+    const { popupPosition } = this.data;
+    const { previewMode, error, className, style: customStyle } = this.props;
     const hasAutoPosition = popupPosition === "";
     const popupClass = cssNames(styles.Popup, className, popupPosition, {
       [styles.visible]: this.isVisible,

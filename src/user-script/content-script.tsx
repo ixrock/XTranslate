@@ -12,7 +12,7 @@ import isEqual from 'lodash/isEqual';
 import orderBy from 'lodash/orderBy';
 import { contentScriptInjectable } from "../config";
 import { preloadAppData } from "../preloadAppData";
-import { autoBind, disposer, formatPrice, getHotkey, strLengthCodePoints } from "../utils";
+import { autoBind, disposer, getHotkey, strLengthCodePoints } from "../utils";
 import { getManifest, getURL, isExtensionContextAlive, MessageType, onMessage, ProxyResponseType, TranslatePayload } from "../extension";
 import { proxyRequest } from "../background/httpProxy.bgc";
 import { sendMetric } from "../background/metrics.bgc";
@@ -37,7 +37,7 @@ export class ContentScript extends React.Component {
   static cssStylesUrl: string;
 
   static async init(window: Window = globalThis.window.self) {
-    await preloadAppData({ forceUserLoad: false }); // wait for dependent data before first render
+    await preloadAppData(); // wait for dependent data before first render
     await this.preloadCss();
     await popupSkipInjectionUrls.load();
 
@@ -672,13 +672,9 @@ export class ContentScript extends React.Component {
   }
 
   renderPromoBanner() {
-    if (userStore.isProEnabled) {
-      return;
-    }
-    const priceMonthly = formatPrice({
-      value: (userStore.pricing?.monthlyPriceCentsUSD ?? 0) / 100,
-      currency: "USD",
-    });
+    const { isProEnabled, pricePerMonth } = userStore;
+    if (isProEnabled) return;
+
     return (
       <>
         <div>
@@ -686,7 +682,7 @@ export class ContentScript extends React.Component {
           <b>{getMessage("popup_info_banner_pro_available")}</b>
         </div>
         <div>
-          <b>{getMessage("pro_version_subscribe_price", { priceMonthly })}</b>
+          <b>{getMessage("pro_version_subscribe_price", { priceMonthly: pricePerMonth })}</b>
           <ul>
             <li>{getMessage("pro_version_ai_translator", { provider: "Gemini" })}</li>
             <li>{getMessage("pro_version_ai_tts", { provider: "OpenAI" })}</li>

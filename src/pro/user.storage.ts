@@ -12,7 +12,7 @@ export interface UserStorage {
 
 export const userStorage = createStorage<UserStorage>("user_storage", {
   area: "local",
-  autoLoad: false,
+  autoLoad: true,
   defaultValue: {
     user: null,
     pricing: null,
@@ -25,10 +25,11 @@ export class UserSubscriptionStore {
 
   constructor() {
     makeObservable(this);
+    userStorage.whenReady.then(() => this.load());
   }
 
-  async load({ force = false } = {}) {
-    await this.refreshFromServer({ force });
+  async load() {
+    await this.refreshFromServer();
   }
 
   get apiProvider() {
@@ -78,13 +79,8 @@ export class UserSubscriptionStore {
   }
 
   @action
-  async refreshFromServer({ force = false } = {}): Promise<void> {
+  async refreshFromServer(): Promise<void> {
     await userStorage.load();
-
-    const hasData = Boolean(this.user || this.pricing);
-    if (hasData && !force) {
-      return; // return cache from chrome.storage.local
-    }
 
     try {
       const { user, pricing } = await this.apiProvider.getUser();
