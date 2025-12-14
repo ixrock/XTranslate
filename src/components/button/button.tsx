@@ -20,6 +20,11 @@ export class Button extends React.PureComponent<ButtonProps, {}> {
   private link: HTMLAnchorElement;
   private button: HTMLButtonElement;
 
+  focus() {
+    this.link?.focus();
+    this.button?.focus();
+  }
+
   render() {
     var { className, waiting, label, primary, accent, outline, hidden, active, big, round, children, ...props } = this.props;
     var btnProps = props as Partial<ButtonProps>;

@@ -92,6 +92,7 @@ export class ContentScript extends React.Component {
   private mouseTarget: HTMLElement = document.body;
   private pageTranslator = new PageTranslator();
   private tooltipRef = React.createRef<HTMLElement>();
+  private subscribeBtnRef = React.createRef<Button | null>();
 
   @observable.ref lastParams: TranslatePayload; // last used translation payload
   @observable.ref translation: ITranslationResult;
@@ -675,6 +676,10 @@ export class ContentScript extends React.Component {
     const { isProEnabled, pricePerMonth } = userStore;
     if (isProEnabled) return;
 
+    requestAnimationFrame(() => {
+      this.subscribeBtnRef.current?.focus();
+    });
+
     return (
       <>
         <div>
@@ -695,6 +700,7 @@ export class ContentScript extends React.Component {
             label={getMessage("pro_version_subscribe_button")}
             href={getXTranslatePro().subscribePageUrl}
             target="_blank"
+            ref={this.subscribeBtnRef}
           />
           <Button
             outline
