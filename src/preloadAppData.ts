@@ -15,12 +15,12 @@ export async function preloadAppData({ forceUserLoad = false } = {}) {
 
   try {
     loadingTimer.start();
+    void userStore.load({ force: forceUserLoad }); // don't wait since external http-request
     await Promise.all([
       i18nInit(),
       settingsStore.load(),
       themeStore.load(),
       favoritesStorage.load(),
-      userStore.load({ force: forceUserLoad }),
     ]);
     loadingTimer.stop();
   } catch (error) {

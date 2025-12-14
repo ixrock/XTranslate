@@ -58,7 +58,7 @@ export class Header extends React.Component {
       remainTextTokens,
       remainSecondsTTSRoughly,
       subscriptionPlan,
-      priceFormattedPerMonth,
+      pricePerMonth,
       apiProvider: { subscribePageUrl },
     } = userStore;
 
@@ -118,7 +118,7 @@ export class Header extends React.Component {
         />
         <Tooltip anchorId="subscribe-pro" following>
           {getMessage("pro_upgrade_button_tooltip", {
-            pricePerMonth: priceFormattedPerMonth
+            pricePerMonth: pricePerMonth,
           })}
         </Tooltip>
       </div>

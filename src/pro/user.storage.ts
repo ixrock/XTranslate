@@ -21,7 +21,7 @@ export const userStorage = createStorage<UserStorage>("user_storage", {
 });
 
 export class UserSubscriptionStore {
-  @observable pricing: XTranslatePricing;
+  @observable pricing = {} as XTranslatePricing;
 
   constructor() {
     makeObservable(this);
@@ -35,14 +35,12 @@ export class UserSubscriptionStore {
     return getXTranslatePro();
   }
 
-  get priceFormattedPerMonth() {
-    const { monthlyPriceCentsUSD } = this.pricing;
+  get pricePerMonth() {
+    return this.getPriceFormatted(this.pricing.monthlyPriceCentsUSD ?? 0);
+  }
 
-    return formatPrice({
-      value: monthlyPriceCentsUSD / 100,
-      currency: "USD",
-      locale: getLocale(),
-    });
+  get pricePerYear() {
+    return this.getPriceFormatted(this.pricing.yearlyPriceCentsUSD ?? 0);
   }
 
   get user(): XTranslateProUser {
@@ -65,6 +63,14 @@ export class UserSubscriptionStore {
     const bytesAvailable = this.user?.subscription?.ttsBytesRemain ?? 0;
 
     return Math.round(bytesAvailable / 16000); // ~mp3/128KBps
+  }
+
+  private getPriceFormatted(priceUSDCents = 0) {
+    return formatPrice({
+      value: priceUSDCents / 100,
+      currency: "USD",
+      locale: getLocale(),
+    });
   }
 
   resetCache() {
