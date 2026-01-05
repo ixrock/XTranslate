@@ -102,7 +102,7 @@
     "message": "Glas"
   },
   "tts_default_system_voice": {
-    "message": "Podrazumevani sistemski glas"
+    "message": "Sistemski TTS glas"
   },
   "tts_select_voice_title": {
     "message": "Izaberi glas"
@@ -326,9 +326,6 @@
   "spell_correction": {
     "message": "Da li ste mislili: { $suggestion }?"
   },
-  "text_input_translation_hint": {
-    "message": "{ $hotkey } za trenutni prevod, kašnjenje: { $timeout }ms"
-  },
   "history_enabled_flag": {
     "message": "Omogućeno"
   },
@@ -423,7 +420,7 @@
     "message": "Podseti me kasnije"
   },
   "target_lang_placeholder": {
-    "message": "Ciljani jezici"
+    "message": "Ciljni jezici"
   },
   "source_lang_placeholder": {
     "message": "Izvorni jezici"
@@ -522,16 +519,16 @@
     "message": "Preporučeno"
   },
   "copy_to_clipboard": {
-    "message": "Kopiraj u klipbord"
+    "message": "Kopiraj u clipboard"
   },
   "tts_supported": {
-    "message": "Vrlo ograničena podrška za tekst u govor"
+    "message": "Veoma ograničena podrška za tekst u govor"
   },
   "pro_version_ai_translator": {
-    "message": "Profesionalni prevodilac zasnovan na AI (pokreće { $provider })"
+    "message": "Profesionalni prevodilac zasnovan na AI-ju (pokreće { $provider })"
   },
   "pro_version_ai_tts": {
-    "message": "Tekst u govor sličan ljudskom zasnovan na AI sa 6 glasova na izbor (pokreće { $provider })"
+    "message": "Tekst u govor sličan ljudskom zasnovan na AI-ju sa 6 mogućih glasova (pokreće { $provider })"
   },
   "pro_version_ai_summarize_feature": {
     "message": "Pretvorite bilo koji tekst u jasan sažetak (podstiče brže učenje i razumevanje)"
@@ -546,10 +543,10 @@
     "message": "Glas"
   },
   "pro_required_confirm_goto_subscribe": {
-    "message": "Ova opcija zahteva PRO pretplatu, da li da idemo na stranicu za pretplatu?"
+    "message": "Ova opcija zahteva PRO pretplatu, idemo li na stranicu za pretplatu?"
   },
   "pro_user_welcome_back": {
-    "message": "Dobrodošli nazad, { $username }!"
+    "message": "Dobro došli nazad, { $username }!"
   },
   "pro_user_status": {
     "message": "PRO status: { $status }"
@@ -600,9 +597,18 @@
     "message": "Prikaži ikonicu za rezime"
   },
   "popup_info_banner_pro_available": {
-    "message": "PRO verzija sa premium servisnim funkcijama je ovde!"
+    "message": "PRO verzija sa premijum funkcionalnostima je stigla!"
   },
   "popup_info_banner_pro_see_details": {
     "message": "Pogledajte detalje u { $settingsLink = podešavanjima aplikacije } i { $subscribeLink = pretplatite se }"
+  },
+  "pro_version_subscribe_button": {
+    "message": "Pretplati se"
+  },
+  "pro_version_subscribe_price": {
+    "message": "Pretplati se na XTranslate PRO benefite za samo { $priceMonthly }/mesečno."
+  },
+  "pro_version_continue_use_free_version": {
+    "message": "Nastavi korišćenje besplatne verzije"
   }
 }
