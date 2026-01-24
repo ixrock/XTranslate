@@ -68,7 +68,7 @@ export class Popup extends React.Component<PopupProps> {
     return this.elemRef.current;
   }
 
-  get data() {
+  get settings() {
     return settingsStore.data;
   }
 
@@ -145,7 +145,7 @@ export class Popup extends React.Component<PopupProps> {
   };
 
   renderSaveToFavoritesIcon() {
-    if (!this.data.showSaveToFavoriteIcon || !this.translation) {
+    if (!this.settings.showSaveToFavoriteIcon || !this.translation) {
       return;
     }
     return (
@@ -162,7 +162,7 @@ export class Popup extends React.Component<PopupProps> {
   }
 
   renderCopyTranslationIcon(content: string | ITranslationResult) {
-    if (!this.data.showCopyTranslationIcon) {
+    if (!this.settings.showCopyTranslationIcon) {
       return;
     }
     return (
@@ -178,7 +178,7 @@ export class Popup extends React.Component<PopupProps> {
   }
 
   renderPlayTextIcon() {
-    if (!this.data.showTextToSpeechIcon) {
+    if (!this.settings.showTextToSpeechIcon) {
       return;
     }
     return (
@@ -195,7 +195,7 @@ export class Popup extends React.Component<PopupProps> {
   }
 
   renderSummarizeIcon() {
-    if (!this.data.showPopupSummarizeIcon) {
+    if (!this.settings.showPopupSummarizeIcon) {
       return;
     }
 
@@ -214,7 +214,7 @@ export class Popup extends React.Component<PopupProps> {
   };
 
   renderProviderSelectIcon(): React.ReactNode {
-    if (!this.data.showProviderSelectIcon) {
+    if (!this.settings.showProviderSelectIcon) {
       return;
     }
     const providerName = this.translation?.vendor ?? this.props.lastParams?.provider;
@@ -275,7 +275,7 @@ export class Popup extends React.Component<PopupProps> {
           </div>
         )}
         {
-          this.data.showTranslatedFrom && (
+          this.settings.showTranslatedFrom && (
             <div className={styles.translatedFrom}>
               {getMessage("translated_from", {
                 lang: translator.langFrom[langFrom] ?? langFrom,
@@ -324,16 +324,16 @@ export class Popup extends React.Component<PopupProps> {
   }
 
   renderPromo() {
-    const { previewMode, showBanner } = this.props;
-    if (this.data.showPopupPromoBanner && showBanner && !previewMode) {
+    const { previewMode, showBanner: promoContent } = this.props;
+    if (this.settings.showPopupPromoBanner && !!promoContent && !previewMode) {
       return (
-        <div className={styles.promoBanner}>{showBanner}</div>
+        <div className={styles.promoBanner}>{promoContent}</div>
       )
     }
   }
 
   render() {
-    const { popupPosition } = this.data;
+    const { popupPosition } = this.settings;
     const { previewMode, error, className, style: customStyle } = this.props;
     const hasAutoPosition = popupPosition === "";
     const popupClass = cssNames(styles.Popup, className, popupPosition, {
