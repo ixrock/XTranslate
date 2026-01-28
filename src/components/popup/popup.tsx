@@ -247,7 +247,9 @@ export class Popup extends React.Component<PopupProps> {
     return (
       <div className={styles.translationResult} style={this.resultStyles}>
         <div className={styles.translation}>
-          {this.renderPlayTextIcon()}
+          <div className={styles.icons}>
+            {this.renderPlayTextIcon()}
+          </div>
           <div className={styles.value} style={{ direction: directionResults }}>
             <span>{translation}</span>
             {transcription ? <i className={styles.transcription}>{" "}[{transcription}]</i> : null}
@@ -294,12 +296,16 @@ export class Popup extends React.Component<PopupProps> {
     const { statusCode, message } = error;
     return (
       <div className={styles.translationError}>
-        <Icon material="error_outline" className={styles.errorIcon}/>
         <div className={styles.errorInfo}>
-          <p>{statusCode}: {getMessage("translation_data_failed")}</p>
+          <div>
+            <Icon material="error_outline" className={styles.errorIcon}/>{" "}
+            {statusCode}: {getMessage("translation_data_failed")}
+          </div>
           <p dangerouslySetInnerHTML={{ __html: message }}/>
         </div>
-        {this.renderProviderSelectIcon()}
+        <div className={styles.icons}>
+          {this.renderProviderSelectIcon()}
+        </div>
       </div>
     )
   }
