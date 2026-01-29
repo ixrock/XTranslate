@@ -56,6 +56,12 @@ export class UserSubscriptionStore {
     return Boolean(this.user?.subscription);
   }
 
+  get isProExpired(): boolean {
+    const expiryTime = new Date(this.user?.subscription.periodEnd).getTime();
+
+    return expiryTime > 0 && expiryTime < Date.now();
+  }
+
   get remainTextTokens(): number {
     return this.user?.subscription?.tokensRemain;
   }

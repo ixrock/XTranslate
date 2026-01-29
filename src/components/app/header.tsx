@@ -55,6 +55,7 @@ export class Header extends React.Component {
   renderProUserInfo() {
     const {
       isProEnabled,
+      isProExpired,
       remainTextTokens,
       remainSecondsTTSRoughly,
       subscriptionPlan,
@@ -63,12 +64,14 @@ export class Header extends React.Component {
     } = userStore;
 
     if (isProEnabled && this.user) {
-      const subscriptionDetails = (
+      const expirationDate = new Date(this.user.subscription.periodEnd).toLocaleString(getIntlLocale());
+
+      const subscriptionActiveTooltip = (
         <>
           <p>
             {getMessage("pro_user_subscription", {
               plan: subscriptionPlan,
-              periodEnd: new Date(this.user.subscription.periodEnd).toLocaleString(getIntlLocale()),
+              periodEnd: expirationDate,
             })}
           </p>
           <p>
@@ -86,6 +89,14 @@ export class Header extends React.Component {
         </>
       );
 
+      const subscriptionExpiredTooltip = (
+        <>
+          {getMessage("pro_user_subscription_expired", {
+            periodEnd: expirationDate,
+          })}
+        </>
+      );
+
       return (
         <div className="pro flex column">
           <div className="pro-greeting">
@@ -96,7 +107,7 @@ export class Header extends React.Component {
           <div className="flex align-center">
             <Icon small material="info_outline" tooltip={{
               following: true,
-              children: subscriptionDetails,
+              children: isProExpired ? subscriptionExpiredTooltip : subscriptionActiveTooltip,
             }}/>
             <div className="pro-status">
               {getMessage("pro_user_status", {

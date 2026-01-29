@@ -563,6 +563,9 @@
   "pro_user_subscription": {
     "message": "Abonnement: { $plan } (endet { $periodEnd })"
   },
+  "pro_user_subscription_expired": {
+    "message": "Abonnement abgelaufen am { $periodEnd }"
+  },
   "pro_user_remain_text_tokens": {
     "message": "Verfügbare Text-Token: { $tokens }"
   },

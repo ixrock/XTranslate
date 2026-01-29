@@ -560,6 +560,9 @@
   "pro_user_subscription": {
     "message": "Predplatné: { $plan } (končí { $periodEnd })"
   },
+  "pro_user_subscription_expired": {
+    "message": "Predplatné vypršalo { $periodEnd }"
+  },
   "pro_user_remain_text_tokens": {
     "message": "Dostupné textové tokeny: { $tokens }"
   },

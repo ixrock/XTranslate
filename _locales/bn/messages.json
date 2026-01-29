@@ -563,6 +563,9 @@
   "pro_user_subscription": {
     "message": "সাবস্ক্রিপশন: { $plan } ({ $periodEnd } এ শেষ হবে)"
   },
+  "pro_user_subscription_expired": {
+    "message": "সাবস্ক্রিপশন { $periodEnd } এ শেষ হয়েছে"
+  },
   "pro_user_remain_text_tokens": {
     "message": "উপলব্ধ টেক্সট টোকেন: { $tokens }"
   },

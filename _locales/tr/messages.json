@@ -566,6 +566,9 @@
   "pro_user_subscription": {
     "message": "Abonelik: { $plan } ({ $periodEnd } tarihinde bitiyor)"
   },
+  "pro_user_subscription_expired": {
+    "message": "Abonelik { $periodEnd } tarihinde sona erdi"
+  },
   "pro_user_remain_text_tokens": {
     "message": "Mevcut metin tokenleri: { $tokens }"
   },

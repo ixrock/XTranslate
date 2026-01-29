@@ -563,6 +563,9 @@
   "pro_user_subscription": {
     "message": "Abonnement : { $plan } (se termine le { $periodEnd })"
   },
+  "pro_user_subscription_expired": {
+    "message": "Abonnement expiré le { $periodEnd }"
+  },
   "pro_user_remain_text_tokens": {
     "message": "Jetons de texte disponibles : { $tokens }"
   },

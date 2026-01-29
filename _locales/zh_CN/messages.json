@@ -563,6 +563,9 @@
   "pro_user_subscription": {
     "message": "订阅: { $plan } ({ $periodEnd } 结束)"
   },
+  "pro_user_subscription_expired": {
+    "message": "订阅已于 { $periodEnd } 到期"
+  },
   "pro_user_remain_text_tokens": {
     "message": "可用文本代币: { $tokens }"
   },

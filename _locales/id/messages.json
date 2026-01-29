@@ -563,6 +563,9 @@
   "pro_user_subscription": {
     "message": "Langganan: { $plan } (berakhir { $periodEnd })"
   },
+  "pro_user_subscription_expired": {
+    "message": "Langganan kedaluwarsa pada { $periodEnd }"
+  },
   "pro_user_remain_text_tokens": {
     "message": "Token teks tersedia: { $tokens }"
   },

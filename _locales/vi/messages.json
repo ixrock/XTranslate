@@ -563,6 +563,9 @@
   "pro_user_subscription": {
     "message": "Đăng ký: { $plan } (kết thúc { $periodEnd })"
   },
+  "pro_user_subscription_expired": {
+    "message": "Gói đăng ký đã hết hạn vào { $periodEnd }"
+  },
   "pro_user_remain_text_tokens": {
     "message": "Token văn bản có sẵn: { $tokens }"
   },

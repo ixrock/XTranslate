@@ -563,6 +563,9 @@
   "pro_user_subscription": {
     "message": "सदस्यता: { $plan } ({ $periodEnd } को समाप्त)"
   },
+  "pro_user_subscription_expired": {
+    "message": "सदस्यता { $periodEnd } को समाप्त हो गई"
+  },
   "pro_user_remain_text_tokens": {
     "message": "उपलब्ध पाठ टोकन: { $tokens }"
   },

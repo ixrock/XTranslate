@@ -563,6 +563,9 @@
   "pro_user_subscription": {
     "message": "الاشتراك: { $plan } (ينتهي { $periodEnd })"
   },
+  "pro_user_subscription_expired": {
+    "message": "انتهى الاشتراك في { $periodEnd }"
+  },
   "pro_user_remain_text_tokens": {
     "message": "رموز النص المتاحة: { $tokens }"
   },

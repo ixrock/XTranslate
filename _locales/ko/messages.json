@@ -563,6 +563,9 @@
   "pro_user_subscription": {
     "message": "구독: { $plan } ({ $periodEnd } 종료)"
   },
+  "pro_user_subscription_expired": {
+    "message": "구독이 { $periodEnd }에 만료되었습니다"
+  },
   "pro_user_remain_text_tokens": {
     "message": "사용 가능한 텍스트 토큰: { $tokens }"
   },

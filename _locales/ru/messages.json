@@ -557,6 +557,9 @@
   "pro_user_subscription": {
     "message": "Подписка: { $plan } (заканчивается { $periodEnd })"
   },
+  "pro_user_subscription_expired": {
+    "message": "Подписка истекла { $periodEnd }"
+  },
   "pro_user_remain_text_tokens": {
     "message": "Доступно текстовых токенов: { $tokens }"
   },

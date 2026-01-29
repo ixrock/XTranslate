@@ -563,6 +563,9 @@
   "pro_user_subscription": {
     "message": "サブスクリプション: { $plan } ({ $periodEnd } 終了)"
   },
+  "pro_user_subscription_expired": {
+    "message": "サブスクリプションは { $periodEnd } に終了しました"
+  },
   "pro_user_remain_text_tokens": {
     "message": "利用可能なテキストトークン: { $tokens }"
   },

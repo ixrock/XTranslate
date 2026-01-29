@@ -560,6 +560,9 @@
   "pro_user_subscription": {
     "message": "Pretplata: { $plan } (završava se { $periodEnd })"
   },
+  "pro_user_subscription_expired": {
+    "message": "Pretplata je istekla { $periodEnd }"
+  },
   "pro_user_remain_text_tokens": {
     "message": "Dostupni tekstualni tokeni: { $tokens }"
   },
