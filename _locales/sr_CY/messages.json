@@ -613,5 +613,8 @@
   },
   "pro_version_continue_use_free_version": {
     "message": "Настави коришћење бесплатне верзије"
+  },
+  "pro_user_subscription_inactive": {
+    "message": "Претплата неактивна. План: {$plan}, Статус: {$status}, Завршава се: {$periodEnd}"
   }
 }

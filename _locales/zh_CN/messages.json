@@ -607,5 +607,8 @@
   },
   "popup_info_banner_pro_see_details": {
     "message": "在 { $settingsLink = 应用设置 } 和 { $subscribeLink = 订阅 } 中查看详情"
+  },
+  "pro_user_subscription_inactive": {
+    "message": "订阅不活跃。计划: {$plan}, 状态: {$status}, 结束: {$periodEnd}"
   }
 }

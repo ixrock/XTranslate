@@ -610,5 +610,8 @@
   },
   "popup_info_banner_pro_see_details": {
     "message": "{ $settingsLink = uygulama ayarları } ve { $subscribeLink = abone ol } bölümünde ayrıntıları görün"
+  },
+  "pro_user_subscription_inactive": {
+    "message": "Abonelik etkin değil. Plan: {$plan}, Durum: {$status}, Bitiş: {$periodEnd}"
   }
 }

@@ -607,5 +607,8 @@
   },
   "popup_info_banner_pro_see_details": {
     "message": "انظر التفاصيل في { $settingsLink = إعدادات التطبيق } و { $subscribeLink = الاشتراك }"
+  },
+  "pro_user_subscription_inactive": {
+    "message": "الاشتراك غير نشط. الخطة: {$plan}، الحالة: {$status}، ينتهي في: {$periodEnd}"
   }
 }

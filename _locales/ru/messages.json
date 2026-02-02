@@ -534,7 +534,7 @@
     "message": "Обновить до PRO"
   },
   "pro_upgrade_button_tooltip": {
-    "message": "Авторизуйтесь на сайте, опробуйте бесплатный план и подпишитесь позже примерно за { $pricePerMonth }/месяц."
+    "message": "Авторизуйтесь на сайте, опробуйте бесплатный план и подпишитесь позже примерно за { $pricePerMonth }/месяц"
   },
   "pro_select_tts_voice": {
     "message": "Голос"
@@ -602,13 +602,7 @@
   "popup_info_banner_pro_see_details": {
     "message": "Смотрите подробности на { $settingsLink = странице настроек} и { $subscribeLink = подписывайтесь }"
   },
-  "pro_version_subscribe_button": {
-    "message": "Подписаться"
-  },
-  "pro_version_subscribe_price": {
-    "message": "Подпишись на XTranslate PRO фишки всего за { $priceMonthly }/месяц."
-  },
-  "pro_version_continue_use_free_version": {
-    "message": "Продолжить пользоваться бесплатной версий"
+  "pro_user_subscription_inactive": {
+    "message": "Подписка неактивна. План: {$plan}, Статус: {$status}, Истекает: {$periodEnd}"
   }
 }

@@ -607,5 +607,8 @@
   },
   "popup_info_banner_pro_see_details": {
     "message": "Lihat detail di { $settingsLink = pengaturan aplikasi } dan { $subscribeLink = berlangganan }"
+  },
+  "pro_user_subscription_inactive": {
+    "message": "Langganan tidak aktif. Paket: {$plan}, Status: {$status}, Berakhir: {$periodEnd}"
   }
 }

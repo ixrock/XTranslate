@@ -605,6 +605,9 @@
   "popup_info_banner_pro_see_details": {
     "message": "Pozrite si podrobnosti v { $settingsLink = nastaveniach aplikácie } a { $subscribeLink = predplatiť }"
   },
+  "pro_user_subscription_inactive": {
+    "message": "Predplatné neaktívne. Plán: {$plan}, Stav: {$status}, Končí: {$periodEnd}"
+  },
   "pro_version_subscribe_button": {
     "message": "Predplatiť"
   },

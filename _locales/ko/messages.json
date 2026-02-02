@@ -607,5 +607,8 @@
   },
   "popup_info_banner_pro_see_details": {
     "message": "{ $settingsLink = 앱 설정 } 및 { $subscribeLink = 구독 }에서 세부 정보 확인"
+  },
+  "pro_user_subscription_inactive": {
+    "message": "구독 비활성. 플랜: {$plan}, 상태: {$status}, 종료: {$periodEnd}"
   }
 }

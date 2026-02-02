@@ -607,5 +607,8 @@
   },
   "popup_info_banner_pro_see_details": {
     "message": "Details in den { $settingsLink = App-Einstellungen} und { $subscribeLink = Abonnieren } ansehen"
+  },
+  "pro_user_subscription_inactive": {
+    "message": "Abonnement inaktiv. Plan: {$plan}, Status: {$status}, Endet: {$periodEnd}"
   }
 }

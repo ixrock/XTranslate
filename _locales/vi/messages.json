@@ -607,5 +607,8 @@
   },
   "popup_info_banner_pro_see_details": {
     "message": "Xem chi tiết trong { $settingsLink = cài đặt ứng dụng } và { $subscribeLink = đăng ký }"
+  },
+  "pro_user_subscription_inactive": {
+    "message": "Gói đăng ký không hoạt động. Gói: {$plan}, Trạng thái: {$status}, Kết thúc: {$periodEnd}"
   }
 }

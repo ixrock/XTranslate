@@ -1,12 +1,12 @@
 import { action, makeObservable, observable } from "mobx";
 import { createStorage } from "@/storage";
-import { getXTranslatePro, XTranslatePricing, XTranslateProTranslateError, XTranslateProUser } from "@/providers";
+import { getXTranslatePro, XTranslateProPricing, XTranslateProTranslateError, XTranslateProUser } from "@/providers";
 import { formatPrice } from "@/utils";
 import { getLocale } from "@/i18n";
 
 export interface UserStorage {
   user?: XTranslateProUser;
-  pricing?: XTranslatePricing;
+  pricing?: XTranslateProPricing;
   preloadLastTime?: number;
 }
 
@@ -21,7 +21,7 @@ export const userStorage = createStorage<UserStorage>("user_storage", {
 });
 
 export class UserSubscriptionStore {
-  @observable pricing = {} as XTranslatePricing;
+  @observable pricing = {} as XTranslateProPricing;
 
   constructor() {
     makeObservable(this);
@@ -37,11 +37,7 @@ export class UserSubscriptionStore {
   }
 
   get pricePerMonth() {
-    return this.getPriceFormatted(this.pricing.monthlyPriceCentsUSD ?? 0);
-  }
-
-  get pricePerYear() {
-    return this.getPriceFormatted(this.pricing.yearlyPriceCentsUSD ?? 0);
+    return this.getPriceFormatted(this.pricing.MONTHLY?.priceCentsUSD ?? 0);
   }
 
   get user(): XTranslateProUser {
@@ -54,6 +50,12 @@ export class UserSubscriptionStore {
 
   get isProEnabled(): boolean {
     return Boolean(this.user?.subscription);
+  }
+
+  get isProActive(): boolean {
+    return this.isProEnabled
+      && !this.isProExpired
+      && this.user.subscription?.status === 'active';
   }
 
   get isProExpired(): boolean {

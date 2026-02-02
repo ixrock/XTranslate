@@ -148,7 +148,9 @@ export class XTranslatePro extends Translator {
           if (queue.length === 0 && portFinished) {
             try {
               mediaSource.endOfStream();
-            } catch (e) { /* ignore */ }
+            } catch (e) {
+              /* ignore */
+            }
           }
         });
       });
@@ -172,7 +174,8 @@ export class XTranslatePro extends Translator {
           resolve(true);
           if (!audioStarted) {
             audioStarted = true;
-            this.audio.play().catch(() => {});
+            this.audio.play().catch(() => {
+            });
           }
         }
 
@@ -181,7 +184,9 @@ export class XTranslatePro extends Translator {
           if (queue.length === 0 && sourceBuffer && !sourceBuffer.updating) {
             try {
               mediaSource.endOfStream();
-            } catch (e) { /* ignore */ }
+            } catch (e) {
+              /* ignore */
+            }
           }
           this.ttsPort.disconnect();
         }
@@ -224,7 +229,7 @@ export interface XTranslateProTranslateOutput {
 
 export interface XTranslateProTranslateError extends ITranslationError {
   error: string;
-  pricing: XTranslatePricing;
+  pricing: XTranslateProPricing;
 }
 
 export interface XTranslateProSummarizeInput {
@@ -246,23 +251,25 @@ export interface XTranslateProUser {
 
 export interface XTranslateProUserResponse {
   user?: XTranslateProUser;
-  pricing: XTranslatePricing;
+  pricing: XTranslateProPricing;
 }
 
-export interface XTranslatePricing {
-  freeTokens: number,
-  freeTtsBytes: number;
-  monthlyPriceCentsUSD: number;
-  monthlyTokens: number;
-  monthlyTtsBytes: number;
-  yearlyTokens: number;
-  yearlyTtsBytes: number;
-  yearlyPriceCentsUSD: number;
+export type XTranslateProPricing = Record<XTranslateProPlanType, XTranslateProPlan>;
+
+export interface XTranslateProPlan {
+  stripePriceId?: string;
+  priceCentsUSD: number;
+  textTokensIncluded: number
+  ttsBytesIncluded: number;
 }
+
+export type XTranslateProPlanType = "FREE_PLAN" | "MONTHLY" | "YEARLY";
+export type XTranslateProStatus = "PAID" | "FAILED" | "REFUNDED" | "CANCELED";
 
 export interface XTranslateProUserSubscription {
-  planType: "FREE_PLAN" | "MONTHLY" | "YEARLY";
-  status: 'active' | 'inactive',
+  status: 'active' | 'inactive';
+  planType: XTranslateProPlanType;
+  cycleStatus: XTranslateProStatus;
   periodStart: string, // iso-date
   periodEnd: string; // iso-date
   tokensRemain: number,

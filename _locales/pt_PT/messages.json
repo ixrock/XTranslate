@@ -607,5 +607,8 @@
   },
   "popup_info_banner_pro_see_details": {
     "message": "Ver detalhes nas { $settingsLink = definições da aplicação } e { $subscribeLink = subscrever }"
+  },
+  "pro_user_subscription_inactive": {
+    "message": "Subscrição inativa. Plano: {$plan}, Estado: {$status}, Termina: {$periodEnd}"
   }
 }

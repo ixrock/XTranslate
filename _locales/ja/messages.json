@@ -607,5 +607,8 @@
   },
   "popup_info_banner_pro_see_details": {
     "message": "{ $settingsLink = アプリ設定 } と { $subscribeLink = 購読 } で詳細を確認"
+  },
+  "pro_user_subscription_inactive": {
+    "message": "購読が無効です。プラン：{$plan}、ステータス：{$status}、終了日：{$periodEnd}"
   }
 }

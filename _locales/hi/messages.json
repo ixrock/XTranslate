@@ -607,5 +607,8 @@
   },
   "popup_info_banner_pro_see_details": {
     "message": "{ $settingsLink = ऐप सेटिंग्स} और { $subscribeLink = सदस्यता लें } में विवरण देखें"
+  },
+  "pro_user_subscription_inactive": {
+    "message": "सदस्यता निष्क्रिय। प्लान: {$plan}, स्थिति: {$status}, समाप्त: {$periodEnd}"
   }
 }
