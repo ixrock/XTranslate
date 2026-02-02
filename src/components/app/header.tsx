@@ -125,94 +125,96 @@ export class Header extends React.Component {
   }
 }
 
-export function ProUserInfo() {
-  const {
-    user,
-    isProEnabled,
-    isProActive,
-    remainTextTokens,
-    remainSecondsTTSRoughly,
-    subscriptionPlan,
-    pricePerMonth,
-    apiProvider: { subscribePageUrl },
-  } = userStore;
+export const ProUserInfo = observer(
+  function () {
+    const {
+      user,
+      isProEnabled,
+      isProActive,
+      remainTextTokens,
+      remainSecondsTTSRoughly,
+      subscriptionPlan,
+      pricePerMonth,
+      apiProvider: { subscribePageUrl },
+    } = userStore;
 
-  if (isProEnabled && user) {
-    const expirationDate = new Date(user.subscription.periodEnd)
-      .toLocaleString(getIntlLocale());
+    if (isProEnabled && user) {
+      const expirationDate = new Date(user.subscription.periodEnd)
+        .toLocaleString(getIntlLocale());
 
-    const subscriptionActiveTooltip = (
-      <>
-        <p>
-          {getMessage("pro_user_subscription", {
-            plan: subscriptionPlan,
+      const subscriptionActiveTooltip = (
+        <>
+          <p>
+            {getMessage("pro_user_subscription", {
+              plan: subscriptionPlan,
+              periodEnd: expirationDate,
+            })}
+          </p>
+          <p>
+            {getMessage("pro_user_remain_text_tokens", {
+              tokens: formatNumber({ value: remainTextTokens })
+            })}
+          </p>
+          <p>
+            {
+              getMessage("pro_user_remain_tts_seconds_approx", {
+                seconds: remainSecondsTTSRoughly
+              })
+            }
+          </p>
+        </>
+      );
+
+      const subscriptionDeactivatedTooltip = (
+        <>
+          {getMessage("pro_user_subscription_inactive", {
+            plan: user.subscription.planType,
+            status: user.subscription.cycleStatus,
             periodEnd: expirationDate,
           })}
-        </p>
-        <p>
-          {getMessage("pro_user_remain_text_tokens", {
-            tokens: formatNumber({ value: remainTextTokens })
-          })}
-        </p>
-        <p>
-          {
-            getMessage("pro_user_remain_tts_seconds_approx", {
-              seconds: remainSecondsTTSRoughly
-            })
-          }
-        </p>
-      </>
-    );
+        </>
+      );
 
-    const subscriptionDeactivatedTooltip = (
-      <>
-        {getMessage("pro_user_subscription_inactive", {
-          plan: user.subscription.planType,
-          status: user.subscription.cycleStatus,
-          periodEnd: expirationDate,
-        })}
-      </>
-    );
+      const subscriptionInfoTooltip = isProActive
+        ? subscriptionActiveTooltip
+        : subscriptionDeactivatedTooltip;
 
-    const subscriptionInfoTooltip = isProActive
-      ? subscriptionActiveTooltip
-      : subscriptionDeactivatedTooltip;
-
-    return (
-      <div className="ProUserInfo flex column">
-        <div className="pro-greeting">
-          {getMessage("pro_user_welcome_back", {
-            username: <em>{user.username}</em>,
-          })}
-        </div>
-        <div className="flex align-center">
-          <Icon small material="info_outline" tooltip={{
-            following: true,
-            children: subscriptionInfoTooltip,
-          }}/>
-          <div className="pro-status">
-            {getMessage("pro_user_status", {
-              status: <b>{getMessage(`pro_user_status_${user.subscription.status}`)}</b>
+      return (
+        <div className="ProUserInfo flex column">
+          <div className="pro-greeting">
+            {getMessage("pro_user_welcome_back", {
+              username: <em>{user.username}</em>,
             })}
           </div>
+          <div className="flex align-center">
+            <Icon small material="info_outline" tooltip={{
+              following: true,
+              children: subscriptionInfoTooltip,
+            }}/>
+            <div className="pro-status">
+              {getMessage("pro_user_status", {
+                status: <b>{getMessage(`pro_user_status_${user.subscription.status}`)}</b>
+              })}
+            </div>
+          </div>
         </div>
+      )
+    }
+
+    return (
+      <div className="ProUserInfo flex column inline">
+        <Button
+          outline
+          href={subscribePageUrl}
+          target="_blank" id="subscribe-pro"
+          label={getMessage("pro_upgrade_button_label")}
+        />
+        <Tooltip anchorId="subscribe-pro" following>
+          {getMessage("pro_upgrade_button_tooltip", {
+            pricePerMonth: pricePerMonth,
+          })}
+        </Tooltip>
       </div>
     )
   }
-
-  return (
-    <div className="ProUserInfo flex column inline">
-      <Button
-        outline
-        href={subscribePageUrl}
-        target="_blank" id="subscribe-pro"
-        label={getMessage("pro_upgrade_button_label")}
-      />
-      <Tooltip anchorId="subscribe-pro" following>
-        {getMessage("pro_upgrade_button_tooltip", {
-          pricePerMonth: pricePerMonth,
-        })}
-      </Tooltip>
-    </div>
-  )
-}
+);

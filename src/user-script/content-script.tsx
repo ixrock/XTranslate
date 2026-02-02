@@ -21,9 +21,8 @@ import { getNextTranslator, getTranslator, getXTranslatePro, ITranslationError, 
 import { XTranslateIcon } from "./xtranslate-icon";
 import { XTranslateTooltip } from "./xtranslate-tooltip";
 import { PageTranslator } from "./page-translator";
-import { Popup } from "../components/popup/popup";
+import { Popup } from "../components/popup";
 import { Icon } from "@/components/icon";
-import { Button } from "@/components/button";
 import { getMessage } from "@/i18n";
 import { proSubscriptionRequiredDialog, userStore } from "@/pro";
 
@@ -92,7 +91,6 @@ export class ContentScript extends React.Component {
   private mouseTarget: HTMLElement = document.body;
   private pageTranslator = new PageTranslator();
   private tooltipRef = React.createRef<HTMLElement>();
-  private subscribeBtnRef = React.createRef<Button | null>();
 
   @observable.ref lastParams: TranslatePayload; // last used translation payload
   @observable.ref translation: ITranslationResult;
@@ -666,54 +664,9 @@ export class ContentScript extends React.Component {
     }
   }
 
-  @action
-  hideBanner() {
-    settingsStore.data.showPopupPromoBanner = false;
-    settingsStore.data.showPopupPromoBannerLastTimestamp = Date.now();
-  }
-
-  renderPromoBanner() {
-    const { isProEnabled, pricePerMonth } = userStore;
-    if (isProEnabled) return;
-
-    requestAnimationFrame(() => {
-      this.subscribeBtnRef.current?.focus();
-    });
-
-    return (
-      <>
-        <div>
-          <Icon material="celebration"/>
-          <b>{getMessage("popup_info_banner_pro_available")}</b>
-        </div>
-        <div>
-          <b>{getMessage("pro_version_subscribe_price", { priceMonthly: pricePerMonth })}</b>
-          <ul>
-            <li>{getMessage("pro_version_ai_translator", { provider: "Gemini" })}</li>
-            <li>{getMessage("pro_version_ai_tts", { provider: "OpenAI" })}</li>
-            <li>{getMessage("pro_version_ai_summarize_feature")}</li>
-          </ul>
-        </div>
-        <div className="promoActionButtons">
-          <Button
-            primary
-            label={getMessage("pro_version_subscribe_button")}
-            href={getXTranslatePro().subscribePageUrl}
-            target="_blank"
-            ref={this.subscribeBtnRef}
-          />
-          <Button
-            outline
-            label={getMessage("pro_version_continue_use_free_version")}
-            onClick={this.hideBanner}
-          />
-        </div>
-      </>
-    )
-  }
-
   render() {
-    const { translation, error, popupPosition, speak, summarized, summarize } = this;
+    const { translation, error, popupPosition, speak, summarized, summarize, isPopupHidden } = this;
+
     return (
       <>
         <link rel="stylesheet" href={ContentScript.cssStylesUrl}/>
@@ -729,7 +682,7 @@ export class ContentScript extends React.Component {
           tooltipParentElem={ContentScript.rootElem}
           summarize={summarize}
           summarized={summarized}
-          showBanner={this.renderPromoBanner()}
+          showPromoBanner={!isPopupHidden}
           ref={(ref: Popup) => {
             this.popup = ref
           }}

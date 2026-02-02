@@ -55,7 +55,7 @@ export class UserSubscriptionStore {
   get isProActive(): boolean {
     return this.isProEnabled
       && !this.isProExpired
-      && this.user.subscription?.status === 'active';
+      && this.user.subscription?.status === "active";
   }
 
   get isProExpired(): boolean {

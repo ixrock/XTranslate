@@ -1,0 +1,14 @@
+@use "../mixins" as *;
+
+.PopupPromo {
+  .promoActionButtons {
+    display: flex;
+    gap: var(--theme-spacing);
+    align-items: center;
+    justify-content: space-between;
+
+    > * {
+      flex: 1 0;
+    }
+  }
+}

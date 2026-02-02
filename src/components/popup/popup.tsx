@@ -17,10 +17,11 @@ import { isFavorite } from "../user-history/favorites.storage";
 import { getLocale, getMessage } from "@/i18n";
 import { saveToFavoritesAction } from "@/background/history.bgc";
 import { CopyToClipboardIcon } from "../copy-to-clipboard-icon";
+import { PopupPromoBanner } from "@/components/popup/popup_promo";
 
 export interface PopupProps extends React.HTMLProps<any> {
-  showBanner?: React.ReactNode;
   previewMode?: boolean;
+  showPromoBanner?: boolean;
   lastParams: TranslatePayload | undefined;
   translation: ITranslationResult | undefined;
   error: ITranslationError | undefined;
@@ -329,18 +330,9 @@ export class Popup extends React.Component<PopupProps> {
     )
   }
 
-  renderPromo() {
-    const { previewMode, showBanner: promoContent } = this.props;
-    if (this.settings.showPopupPromoBanner && !!promoContent && !previewMode) {
-      return (
-        <div className={styles.promoBanner}>{promoContent}</div>
-      )
-    }
-  }
-
   render() {
     const { popupPosition } = this.settings;
-    const { previewMode, error, className, style: customStyle } = this.props;
+    const { previewMode, error, className, style: customStyle, showPromoBanner } = this.props;
     const hasAutoPosition = popupPosition === "";
     const popupClass = cssNames(styles.Popup, className, popupPosition, {
       [styles.visible]: this.isVisible,
@@ -348,7 +340,8 @@ export class Popup extends React.Component<PopupProps> {
       [styles.previewMode]: previewMode,
     });
 
-    const result = this.renderPromo() ?? this.renderResult() ?? this.renderSummarized();
+    const promoBanner = showPromoBanner && PopupPromoBanner.isVisible ? <PopupPromoBanner/> : null;
+    const mainContent = promoBanner ?? this.renderResult() ?? this.renderSummarized();
 
     return (
       <div
@@ -356,7 +349,7 @@ export class Popup extends React.Component<PopupProps> {
         style={{ ...this.popupStyle, ...(customStyle ?? {}) }}
         ref={this.elemRef}
       >
-        {error ? this.renderError() : result}
+        {error ? this.renderError() : mainContent}
       </div>
     );
   }
