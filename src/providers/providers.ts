@@ -8,10 +8,11 @@ export enum ProviderCodeName {
   DEEPSEEK = "deepseek",
   GROK = "grok",
   GEMINI = "gemini",
+  XTRANSLATE_PRO = "xtranslate_pro",
 }
 
 export type Provider = (typeof ProviderCodeName)[keyof typeof ProviderCodeName];
-export type ProviderWithApiKey = Exclude<Provider, "google" | "bing">;
+export type ProviderWithApiKey = Exclude<Provider, "google" | "bing" | "xtranslate_pro">;
 
 export type AIModelTranslationKey =
   Lowercase<keyof typeof OpenAIModel>
@@ -39,8 +40,8 @@ export enum DeepSeekAIModel {
 
 // Google models
 export enum GeminiAIModel {
-  RECOMMENDED = "gemini-2.5-flash",
-  REASONING = "gemini-2.5-pro"
+  RECOMMENDED = "gemini-2.5-flash-lite",
+  REASONING = "gemini-2.5-flash"
 }
 
 //

@@ -24,7 +24,7 @@
     "message": "Общее"
   },
   "setting_title_translator_service": {
-    "message": "Сервис перевода"
+    "message": "Другие сервисы"
   },
   "setting_title_popup": {
     "message": "Попап"
@@ -77,6 +77,9 @@
   "auto_play_tts": {
     "message": "Автовоспроизведение текста в речь"
   },
+  "show_in_context_menu": {
+    "message": "Отображать опцию переводчика в контекстном меню браузера"
+  },
   "use_chrome_tts": {
     "message": "Использовать системный преобразователь текста в речь"
   },
@@ -87,7 +90,7 @@
     "message": "Переключить темную тему для этого окна"
   },
   "tts_default_system_voice": {
-    "message": "Системный голос по умолчанию"
+    "message": "Системный голос для произношения текста"
   },
   "settings_title_voice": {
     "message": "Голос"
@@ -323,9 +326,6 @@
   "spell_correction": {
     "message": "Возможно, вы имели ввиду { $suggestion }?"
   },
-  "text_input_translation_hint": {
-    "message": "{ $hotkey } для быстрого перевода, задержка: { $timeout }мс"
-  },
   "history_enabled_flag": {
     "message": "Включено"
   },
@@ -550,5 +550,104 @@
   },
   "mellowtel_dialog_footer": {
     "message": "Спасибо за то прочли до сюда, команды { $devs }."
+  },
+  "popup_safe_translation_chars_limit": {
+    "message": "Если выделенный текст превышает { $limit } символов, показывать предупреждение."
+  },
+  "popup_safe_translation_chars_limit_info": {
+    "message": "Это может помочь вам сократить расходы на токены AI на нежелательные текстовые запросы (0 - без ограничений)"
+  },
+  "popup_safe_translation_chars_confirmation_dialog_info": {
+    "message": "Выделенный текст содержит { $selectedCountChars } символов, что превышает безопасный лимит перевода в { $settingsLimitChars } символов. Перевод больших текстов может потребовать больше ресурсов или повлечь дополнительные расходы в зависимости от вашего провайдера перевода. Вы хотите продолжить перевод?"
+  },
+  "copy_to_clipboard": {
+    "message": "Копировать в буфер обмена"
+  },
+  "tts_supported": {
+    "message": "Озвучка текста-в-речь очень ограничена объёмом входного текста"
+  },
+  "pro_version_ai_translator": {
+    "message": "Профессиональный AI-переводчик (предоставляется { $provider })"
+  },
+  "pro_version_ai_tts": {
+    "message": "Качественная озвучка текста-в-речь на основе AI с выбором из 6 голосов (предоставляется { $provider })"
+  },
+  "pro_version_ai_summarize_feature": {
+    "message": "AI-функция для ускоренного понимания и чтения текстов (резюме на 1-2 предложения)"
+  },
+  "pro_upgrade_button_label": {
+    "message": "Обновить до PRO"
+  },
+  "pro_upgrade_button_tooltip": {
+    "message": "Авторизуйтесь на сайте, опробуйте бесплатный план и подпишитесь позже примерно за { $pricePerMonth }/месяц"
+  },
+  "pro_select_tts_voice": {
+    "message": "Голос"
+  },
+  "pro_required_confirm_goto_subscribe": {
+    "message": "Эта опция требует PRO-версии приложения, перейти на страницу подписки?"
+  },
+  "pro_user_welcome_back": {
+    "message": "Добро пожаловать, { $username }!"
+  },
+  "pro_user_status": {
+    "message": "PRO-статус: { $status }"
+  },
+  "pro_user_status_active": {
+    "message": "активен"
+  },
+  "pro_user_status_inactive": {
+    "message": "не активен"
+  },
+  "pro_user_subscription": {
+    "message": "Подписка: { $plan } (заканчивается { $periodEnd })"
+  },
+  "pro_user_subscription_expired": {
+    "message": "Подписка истекла { $periodEnd }"
+  },
+  "pro_user_remain_text_tokens": {
+    "message": "Доступно текстовых токенов: { $tokens }"
+  },
+  "pro_user_remain_tts_seconds_approx": {
+    "message": "Доступнов время для озвучки текста в речь (секунд): { $seconds }"
+  },
+  "pro_unauthorized_error_401": {
+    "message": "Вы должны быть залогинены на { $serviceUrl } и иметь активную подписку для доступа."
+  },
+  "translate_button": {
+    "message": "Перевести"
+  },
+  "summarize_button": {
+    "message": "Резюмировать"
+  },
+  "tts_button": {
+    "message": "Прослушать"
+  },
+  "text_input_auto_translation_enabled": {
+    "message": "Авто-перевод { $toggle = включен }"
+  },
+  "text_input_auto_translation_disabled": {
+    "message": "Авто-перевод { $toggle = выключен }"
+  },
+  "text_input_auto_translation_timeout": {
+    "message": "Задержка: { $timeout }мс"
+  },
+  "system_tts_info": {
+    "message": "Вам нужно выбрать наиболее подходящий локализованный голос для озвучки вашего целевого языка"
+  },
+  "setting_popup_promo_features": {
+    "message": "Отображать промо баннер"
+  },
+  "setting_popup_summarize_action_icon": {
+    "message": "Показывать иконку суммирования (резюме)"
+  },
+  "popup_info_banner_pro_available": {
+    "message": "PRO-версия с премиум функциями уже здесь!"
+  },
+  "popup_info_banner_pro_see_details": {
+    "message": "Смотрите подробности на { $settingsLink = странице настроек} и { $subscribeLink = подписывайтесь }"
+  },
+  "pro_user_subscription_inactive": {
+    "message": "Подписка неактивна. План: {$plan}, Статус: {$status}, Истекает: {$periodEnd}"
   }
 }

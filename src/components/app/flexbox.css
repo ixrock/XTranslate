@@ -17,6 +17,18 @@
     flex: 1 1 0;
   }
 
+  &.justify-around {
+    justify-content: space-around;
+  }
+
+  &.justify-between {
+    justify-content: space-between;
+  }
+
+  &.justify-evenly {
+    justify-content: space-evenly;
+  }
+
   &.justify-center {
     justify-content: center;
   }

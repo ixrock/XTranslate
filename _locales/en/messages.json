@@ -30,7 +30,7 @@
     "message": "Popup"
   },
   "setting_title_translator_service": {
-    "message": "Service"
+    "message": "Other features"
   },
   "settings_title_tts": {
     "message": "Text-to-speech"
@@ -77,6 +77,9 @@
   "auto_play_tts": {
     "message": "Auto-play text-to-speech"
   },
+  "show_in_context_menu": {
+    "message": "Show translator option in browser context menu"
+  },
   "use_chrome_tts": {
     "message": "Force to use system text-to-speech engine"
   },
@@ -99,7 +102,7 @@
     "message": "Voice"
   },
   "tts_default_system_voice": {
-    "message": "Default system voice"
+    "message": "System TTS voice"
   },
   "tts_select_voice_title": {
     "message": "Select voice"
@@ -322,9 +325,6 @@
   },
   "spell_correction": {
     "message": "Did you mean { $suggestion }?"
-  },
-  "text_input_translation_hint": {
-    "message": "{ $hotkey } to immediate translate, delay: { $timeout }ms"
   },
   "history_enabled_flag": {
     "message": "Enabled"
@@ -550,5 +550,116 @@
   },
   "mellowtel_dialog_footer": {
     "message": "Thanks for taking the time to read, teams { $devs }."
+  },
+  "popup_safe_translation_chars_limit": {
+    "message": "If the text selection exceeds { $limit } of characters, show a confirmation warning to proceed."
+  },
+  "popup_safe_translation_chars_limit_info": {
+    "message": "This might help you to reduce AI-tokens quota spending on unwanted text requests (0 - no limits)"
+  },
+  "popup_safe_translation_chars_confirmation_dialog_info": {
+    "message": "The selected text contains { $selectedCountChars } characters, which exceeds the safe translation limit of { $settingsLimitChars } characters. Translating large texts may consume more resources or incur additional costs depending on your translation provider. Do you want to proceed with the translation?"
+  },
+  "recommended": {
+    "message": "Recommended"
+  },
+  "copy_to_clipboard": {
+    "message": "Copy to clipboard"
+  },
+  "tts_supported": {
+    "message": "Very limited support of text-to-speech"
+  },
+  "pro_version_ai_translator": {
+    "message": "AI-based professional language translator (powered by { $provider })"
+  },
+  "pro_version_ai_tts": {
+    "message": "AI-based human-like text-to-speech with 6 voices on choice (powered by { $provider })"
+  },
+  "pro_version_ai_summarize_feature": {
+    "message": "Turn any text into a crisp summary (promotes faster learning and understanding)"
+  },
+  "pro_upgrade_button_label": {
+    "message": "Upgrade to PRO"
+  },
+  "pro_upgrade_button_tooltip": {
+    "message": "Login, try free plan and subscribe later on for about { $pricePerMonth }/month"
+  },
+  "pro_select_tts_voice": {
+    "message": "Voice"
+  },
+  "pro_required_confirm_goto_subscribe": {
+    "message": "This option require PRO-subscription, should we go to subscribe page?"
+  },
+  "pro_user_welcome_back": {
+    "message": "Welcome back, { $username }!"
+  },
+  "pro_user_status": {
+    "message": "PRO-status: { $status }"
+  },
+  "pro_user_status_active": {
+    "message": "active"
+  },
+  "pro_user_status_inactive": {
+    "message": "inactive"
+  },
+  "pro_user_subscription": {
+    "message": "Subscription: { $plan } (ends { $periodEnd })"
+  },
+  "pro_user_subscription_inactive": {
+    "message": "Subscription inactive. Plan: {$plan}, Status: {$status}, Ends: { $periodEnd }"
+  },
+  "pro_user_subscription_expired": {
+    "message": "Subscription expired at { $periodEnd }"
+  },
+  "pro_user_remain_text_tokens": {
+    "message": "Available text tokens: { $tokens }"
+  },
+  "pro_user_remain_tts_seconds_approx": {
+    "message": "Available text-to-speech time in seconds: { $seconds }"
+  },
+  "pro_unauthorized_error_401": {
+    "message": "You must be logged-in at { $serviceUrl } and have an active subscription to get access."
+  },
+  "translate_button": {
+    "message": "Translate"
+  },
+  "summarize_button": {
+    "message": "Summarize"
+  },
+  "tts_button": {
+    "message": "Listen"
+  },
+  "text_input_auto_translation_enabled": {
+    "message": "Auto-translation { $toggle = enabled }"
+  },
+  "text_input_auto_translation_disabled": {
+    "message": "Auto-translation { $toggle = disabled }"
+  },
+  "text_input_auto_translation_timeout": {
+    "message": "Timeout: { $timeout }ms"
+  },
+  "system_tts_info": {
+    "message": "You should select most appropriate localized voice to your primary target language"
+  },
+  "setting_popup_promo_features": {
+    "message": "Show promo banner"
+  },
+  "setting_popup_summarize_action_icon": {
+    "message": "Show summarize icon"
+  },
+  "popup_info_banner_pro_available": {
+    "message": "PRO-version with premium service features is here!"
+  },
+  "popup_info_banner_pro_see_details": {
+    "message": "See details in the { $settingsLink = app settings} and { $subscribeLink = subscribe }"
+  },
+  "pro_version_subscribe_button": {
+    "message": "Subscribe"
+  },
+  "pro_version_subscribe_price": {
+    "message": "Subscribe for XTranslate PRO benefits only for { $priceMonthly }/month."
+  },
+  "pro_version_continue_use_free_version": {
+    "message": "Continue use free version"
   }
 }

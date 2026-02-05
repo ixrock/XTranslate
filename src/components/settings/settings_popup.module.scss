@@ -1,5 +1,17 @@
 .SettingsPopup {
-  width: 100%;
+  columns: 1;
+  column-gap: var(--theme-spacing-double);
+  margin-bottom: var(--theme-spacing-double);
+
+  @media (width >= 650px) {
+    & {
+      columns: 2;
+    }
+  }
+
+  > :not(:last-child) {
+    margin-bottom: var(--theme-spacing);
+  }
 }
 
 .hotkey {

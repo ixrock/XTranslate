@@ -451,5 +451,209 @@
   },
   "mellowtel_dialog_footer": {
     "message": "感謝您抽空閱讀，團隊 { $devs }。"
+  },
+  "settings_title_full_page_translation": {
+    "message": "整頁翻譯"
+  },
+  "settings_title_full_page_excluded_pages": {
+    "message": "永不翻譯"
+  },
+  "settings_title_full_page_always_translate": {
+    "message": "總是翻譯"
+  },
+  "settings_title_full_page_show_original_onmouseover": {
+    "message": "滑鼠懸停時顯示原文"
+  },
+  "settings_title_full_page_show_translation_onmouseover": {
+    "message": "滑鼠懸停時顯示翻譯"
+  },
+  "settings_title_full_page_show_replace_texts": {
+    "message": "用翻譯替換文件文字"
+  },
+  "settings_title_full_page_show_traffic_save_mode": {
+    "message": "啟用流量節省模式"
+  },
+  "settings_title_full_page_show_traffic_save_mode_info": {
+    "message": "僅翻譯視窗中可見的文字以節省網路/API成本"
+  },
+  "settings_select_empty_list": {
+    "message": "空列表"
+  },
+  "settings_select_edit_list": {
+    "message": "點擊查看和編輯列表"
+  },
+  "settings_select_add_url": {
+    "message": "新增 URL"
+  },
+  "settings_select_add_url_error": {
+    "message": "嘗試新增無效 URL"
+  },
+  "show_in_context_menu": {
+    "message": "在瀏覽器上下文選單中顯示翻譯選項"
+  },
+  "settings_title_advanced_providers_list": {
+    "message": "進階翻譯提供商"
+  },
+  "settings_title_advanced_providers_list_show": {
+    "message": "顯示進階翻譯提供商"
+  },
+  "settings_title_advanced_providers_list_hide": {
+    "message": "隱藏進階翻譯提供商"
+  },
+  "settings_title_voice": {
+    "message": "語音"
+  },
+  "settings_show_more": {
+    "message": "顯示更多設定"
+  },
+  "settings_show_less": {
+    "message": "顯示較少設定"
+  },
+  "context_menu_translate_full_page_context_menu": {
+    "message": "翻譯頁面至 { $lang }"
+  },
+  "context_menu_translate_full_page_context_menu_stop": {
+    "message": "停止 { $site } 的自動翻譯"
+  },
+  "ai_choose_model_reasoning": {
+    "message": "思考模型 / 慢速"
+  },
+  "ai_choose_model_reasoning_light": {
+    "message": "思考模型輕量版 / 更快"
+  },
+  "auth_access_info_steps_openai": {
+    "message": "1) 在 platform.openai.com 註冊 2) 建立 API 存取金鑰 3) 儲值餘額 (5$+)"
+  },
+  "auth_access_info_steps_grok": {
+    "message": "在 console.x.ai 註冊並儲值餘額 (例如透過信用卡)"
+  },
+  "auth_access_info_steps_deepseek": {
+    "message": "在 platform.deepseek.com 註冊並儲值餘額 (例如透過 Paypal)"
+  },
+  "auth_access_info_steps_deepl": {
+    "message": "在 www.deepl.com 註冊並獲取用於 DeepL 翻譯的免費 API 金鑰"
+  },
+  "auth_access_info_steps_gemini": {
+    "message": "在 https://aistudio.google.com/apikey 建立您的免費 API 金鑰"
+  },
+  "auth_access_info_api_key": {
+    "message": "提供您的 API 金鑰以獲取 { $provider } 翻譯"
+  },
+  "auth_setup_key_info": {
+    "message": "提供 { $provider } API 金鑰"
+  },
+  "auth_clear_key_info": {
+    "message": "移除 { $provider } API 金鑰"
+  },
+  "auth_safety_warning_info": {
+    "message": "警告：請勿在此擴充功能視窗以外的任何地方輸入您的 API 金鑰"
+  },
+  "pro_version_promo_link_text": {
+    "message": "PRO 版 8 折"
+  },
+  "pro_version_promo_tooltip": {
+    "message": "我們正在構建具有全頁 AI 翻譯功能的 PRO 版本。點擊了解更多並領取您的折扣。"
+  },
+  "popup_safe_translation_chars_limit": {
+    "message": "如果選中的文字超過 { $limit } 個字元，顯示確認警告以繼續。"
+  },
+  "popup_safe_translation_chars_limit_info": {
+    "message": "這可能以助於您減少在不需要的文字請求上的 AI 代幣配額支出 (0 - 無限制)"
+  },
+  "popup_safe_translation_chars_confirmation_dialog_info": {
+    "message": "選中的文字包含 { $selectedCountChars } 個字元，超過了 { $settingsLimitChars } 個字元的安全翻譯限制。翻譯大段文字可能會消耗更多資源或產生額外費用，具體取決於您的翻譯提供商。您想繼續翻譯嗎？"
+  },
+  "recommended": {
+    "message": "推薦"
+  },
+  "copy_to_clipboard": {
+    "message": "複製到剪貼簿"
+  },
+  "tts_supported": {
+    "message": "非常有限的文字轉語音支援"
+  },
+  "pro_version_ai_translator": {
+    "message": "基於 AI 的專業語言翻譯器 (由 { $provider } 提供支援)"
+  },
+  "pro_version_ai_tts": {
+    "message": "基於 AI 的類人文字轉語音，有 6 種聲音可供選擇 (由 { $provider } 提供支援)"
+  },
+  "pro_version_ai_summarize_feature": {
+    "message": "將任何文字轉化為清晰的摘要 (促進更快的學習和理解)"
+  },
+  "pro_upgrade_button_label": {
+    "message": "升級到 PRO"
+  },
+  "pro_upgrade_button_tooltip": {
+    "message": "登入，試用免費計劃，稍後以約 { $pricePerMonth }/月的價格訂閱"
+  },
+  "pro_select_tts_voice": {
+    "message": "語音"
+  },
+  "pro_required_confirm_goto_subscribe": {
+    "message": "此選項需要 PRO 訂閱，我們要去訂閱頁面嗎？"
+  },
+  "pro_user_welcome_back": {
+    "message": "歡迎回來，{ $username }！"
+  },
+  "pro_user_status": {
+    "message": "PRO 狀態: { $status }"
+  },
+  "pro_user_status_active": {
+    "message": "活躍"
+  },
+  "pro_user_status_inactive": {
+    "message": "非活躍"
+  },
+  "pro_user_subscription": {
+    "message": "訂閱: { $plan } ({ $periodEnd } 結束)"
+  },
+  "pro_user_subscription_expired": {
+    "message": "訂閱已於 { $periodEnd } 到期"
+  },
+  "pro_user_remain_text_tokens": {
+    "message": "可用文字代幣: { $tokens }"
+  },
+  "pro_user_remain_tts_seconds_approx": {
+    "message": "可用文字轉語音時間 (秒): { $seconds }"
+  },
+  "pro_unauthorized_error_401": {
+    "message": "您必須在 { $serviceUrl } 登入並擁有有效訂閱才能獲取存取權限。"
+  },
+  "translate_button": {
+    "message": "翻譯"
+  },
+  "summarize_button": {
+    "message": "摘要"
+  },
+  "tts_button": {
+    "message": "收聽"
+  },
+  "text_input_auto_translation_enabled": {
+    "message": "自動翻譯 { $toggle = 已啟用 }"
+  },
+  "text_input_auto_translation_disabled": {
+    "message": "自動翻譯 { $toggle = 已禁用 }"
+  },
+  "text_input_auto_translation_timeout": {
+    "message": "超時: { $timeout }ms"
+  },
+  "system_tts_info": {
+    "message": "您應該為您的主要目標語言選擇最合適的本地化語音"
+  },
+  "setting_popup_promo_features": {
+    "message": "顯示促銷橫幅"
+  },
+  "setting_popup_summarize_action_icon": {
+    "message": "顯示摘要圖示"
+  },
+  "popup_info_banner_pro_available": {
+    "message": "具有高級服務功能的 PRO 版本來了！"
+  },
+  "popup_info_banner_pro_see_details": {
+    "message": "在 { $settingsLink = 應用設定 } 和 { $subscribeLink = 訂閱 } 中查看詳情"
+  },
+  "pro_user_subscription_inactive": {
+    "message": "訂閱無效。方案：{$plan}，狀態：{$status}，結束：{$periodEnd}"
   }
 }

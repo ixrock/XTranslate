@@ -15,9 +15,9 @@ import { Button } from "../button";
 import { SubTitle } from "../sub-title";
 import { ColorPicker } from "../color-picker";
 import { Tab } from "../tabs";
-import { getMessage } from "@/i18n";
+import { formatNumber, getMessage } from "@/i18n";
 import { Icon } from "../icon";
-import { base64Encode } from "@/utils";
+import { base64Encode, isHotkeyPressed } from "@/utils";
 import { SettingsPopup } from "../settings/settings_popup";
 import { ShowHideMore } from "../show-hide-more";
 import { SettingsUrlList } from "@/components/settings/settings_url_list";
@@ -126,11 +126,11 @@ export class ThemeManager extends React.Component {
     const isDefault = themeStorage.isDefaultValue(theme) && customFont.isDefaultValue(this.customFont);
 
     return (
-      <div className="theme">
-        <div className="flex gaps auto">
-          <div className="box">
+      <div className="theme flex column">
+        <div className="box grow flex gaps">
+          <div className="flex column box grow">
             <SubTitle>{getMessage("sub_header_background")}</SubTitle>
-            <div className="flex gaps align-center">
+            <div className="box grow flex gaps align-center">
               <span className="heading">{getMessage("background_color")}</span>
               <div className="flex align-center">
                 <ColorPicker
@@ -150,7 +150,7 @@ export class ThemeManager extends React.Component {
               />
             </div>
           </div>
-          <div className="box">
+          <div className="flex column box grow">
             <SubTitle>{getMessage("sub_header_box_shadow")}</SubTitle>
             <div className="flex gaps align-center">
               <NumberInput
@@ -303,8 +303,37 @@ export class ThemeManager extends React.Component {
     )
   }
 
+  private safeTranslationLimitElemRef = React.createRef<HTMLElement>();
+
+  renderTranslationSafeLimitsInput() {
+    const settings = settingsStore.data;
+
+    return (
+      <b
+        contentEditable
+        suppressContentEditableWarning
+        ref={this.safeTranslationLimitElemRef}
+        onKeyDown={evt => isHotkeyPressed({ key: "Enter" }, evt) && evt.currentTarget.blur()}
+        onFocus={action(evt => {
+          console.log('FOCUS:', evt); // edit-mode, no formatting for numbers
+          this.safeTranslationLimitElemRef.current.textContent = String(settings.safeTranslationLimit);
+        })}
+        onBlur={action(evt => {
+          const rawValue = evt.target.textContent.trim();
+          const numericValue = parseFloat(rawValue) || 0;
+          console.log(`BLUR: received number ${numericValue}, all text: ${rawValue}`, evt)
+          settings.safeTranslationLimit = numericValue;
+          this.safeTranslationLimitElemRef.current.textContent = formatNumber({ value: numericValue })
+        })}
+      >
+        {formatNumber({ value: settings.safeTranslationLimit })}
+      </b>
+    )
+  }
+
   render() {
     const settings = settingsStore.data;
+
     return (
       <div className="ThemeManager flex column gaps align-center">
         <Popup
@@ -335,6 +364,13 @@ export class ThemeManager extends React.Component {
             title={getMessage("skip_popup_inject_for_pages")}
             infoTooltip={getMessage("skip_popup_inject_for_pages_info")}
           />
+
+          <label className="flex gaps align-center">
+            <Icon material="warning_amber" tooltip={getMessage("popup_safe_translation_chars_limit_info")}/>
+            <div>
+              {getMessage("popup_safe_translation_chars_limit", { limit: this.renderTranslationSafeLimitsInput() })}
+            </div>
+          </label>
         </div>
 
         <ShowHideMore visible={settings.showPopupAdvancedCustomization} onToggle={v => settings.showPopupAdvancedCustomization = v}>

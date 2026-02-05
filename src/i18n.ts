@@ -39,6 +39,10 @@ export function getLocale(): Locale {
   return i18nStorage.get().lang;
 }
 
+export function getIntlLocale(): string {
+  return getLocale().replace("_", "-");
+}
+
 export function getSystemLocale(): Locale {
   const systemLocale = (chrome.i18n.getUILanguage?.() ?? navigator.language) as Locale;
   if (availableLocales[systemLocale]) {
@@ -140,6 +144,6 @@ function parseMessages(locale: Locale, rawData: LocalizationFile) {
   return messages;
 }
 
-export function formatNumber({ value, locale }: { value: number, locale: Locale }) {
-  return new Intl.NumberFormat(locale).format(value);
+export function formatNumber({ value, locale }: { value: number, locale?: Locale }) {
+  return new Intl.NumberFormat(locale ?? getIntlLocale()).format(value);
 }

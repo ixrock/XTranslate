@@ -451,5 +451,209 @@
   },
   "mellowtel_dialog_footer": {
     "message": "Cảm ơn bạn đã dành thời gian đọc, nhóm { $devs }."
+  },
+  "settings_title_full_page_translation": {
+    "message": "Dịch toàn trang"
+  },
+  "settings_title_full_page_excluded_pages": {
+    "message": "Không bao giờ dịch"
+  },
+  "settings_title_full_page_always_translate": {
+    "message": "Luôn dịch"
+  },
+  "settings_title_full_page_show_original_onmouseover": {
+    "message": "Hiển thị văn bản gốc khi di chuột qua"
+  },
+  "settings_title_full_page_show_translation_onmouseover": {
+    "message": "Hiển thị bản dịch khi di chuột qua"
+  },
+  "settings_title_full_page_show_replace_texts": {
+    "message": "Thay thế văn bản tài liệu bằng bản dịch"
+  },
+  "settings_title_full_page_show_traffic_save_mode": {
+    "message": "Bật chế độ tiết kiệm lưu lượng"
+  },
+  "settings_title_full_page_show_traffic_save_mode_info": {
+    "message": "Tiết kiệm chi phí mạng / API bằng cách chỉ dịch các văn bản hiển thị trong khung nhìn"
+  },
+  "settings_select_empty_list": {
+    "message": "Danh sách trống"
+  },
+  "settings_select_edit_list": {
+    "message": "Nhấp để xem và chỉnh sửa danh sách"
+  },
+  "settings_select_add_url": {
+    "message": "Thêm URL"
+  },
+  "settings_select_add_url_error": {
+    "message": "Cố gắng thêm URL không hợp lệ"
+  },
+  "show_in_context_menu": {
+    "message": "Hiển thị tùy chọn dịch trong menu ngữ cảnh trình duyệt"
+  },
+  "settings_title_advanced_providers_list": {
+    "message": "Nhà cung cấp dịch thuật nâng cao"
+  },
+  "settings_title_advanced_providers_list_show": {
+    "message": "Hiển thị nhà cung cấp dịch thuật nâng cao"
+  },
+  "settings_title_advanced_providers_list_hide": {
+    "message": "Ẩn nhà cung cấp dịch thuật nâng cao"
+  },
+  "settings_title_voice": {
+    "message": "Giọng nói"
+  },
+  "settings_show_more": {
+    "message": "Hiển thị thêm cài đặt"
+  },
+  "settings_show_less": {
+    "message": "Hiển thị ít cài đặt hơn"
+  },
+  "context_menu_translate_full_page_context_menu": {
+    "message": "Dịch trang sang { $lang }"
+  },
+  "context_menu_translate_full_page_context_menu_stop": {
+    "message": "Dừng dịch tự động cho { $site }"
+  },
+  "ai_choose_model_reasoning": {
+    "message": "Mô hình tư duy / chậm"
+  },
+  "ai_choose_model_reasoning_light": {
+    "message": "Mô hình tư duy nhẹ / nhanh hơn"
+  },
+  "auth_access_info_steps_openai": {
+    "message": "1) Đăng ký tại platform.openai.com 2) Tạo khóa truy cập API 3) Nạp tiền vào số dư (5$+)"
+  },
+  "auth_access_info_steps_grok": {
+    "message": "Đăng ký tại console.x.ai và nạp tiền (ví dụ: qua thẻ tín dụng)"
+  },
+  "auth_access_info_steps_deepseek": {
+    "message": "Đăng ký tại platform.deepseek.com và nạp tiền (ví dụ: qua Paypal)"
+  },
+  "auth_access_info_steps_deepl": {
+    "message": "Đăng ký tại www.deepl.com và nhận khóa API miễn phí riêng cho bản dịch DeepL"
+  },
+  "auth_access_info_steps_gemini": {
+    "message": "Tạo khóa API miễn phí của bạn tại https://aistudio.google.com/apikey"
+  },
+  "auth_access_info_api_key": {
+    "message": "Cung cấp khóa API của bạn để nhận bản dịch { $provider }"
+  },
+  "auth_setup_key_info": {
+    "message": "Cung cấp khóa API { $provider }"
+  },
+  "auth_clear_key_info": {
+    "message": "Xóa khóa API { $provider }"
+  },
+  "auth_safety_warning_info": {
+    "message": "Cảnh báo: KHÔNG nhập khóa API của bạn ở bất kỳ nơi nào khác ngoài cửa sổ tiện ích mở rộng này"
+  },
+  "pro_version_promo_link_text": {
+    "message": "Giảm 20% cho PRO"
+  },
+  "pro_version_promo_tooltip": {
+    "message": "Chúng tôi đang xây dựng phiên bản PRO với tính năng dịch toàn trang bằng AI. Nhấp để tìm hiểu thêm và nhận giảm giá của bạn."
+  },
+  "popup_safe_translation_chars_limit": {
+    "message": "Nếu lựa chọn văn bản vượt quá { $limit } ký tự, hiển thị cảnh báo xác nhận để tiếp tục."
+  },
+  "popup_safe_translation_chars_limit_info": {
+    "message": "Điều này có thể giúp bạn giảm chi tiêu hạn ngạch token AI cho các yêu cầu văn bản không mong muốn (0 - không giới hạn)"
+  },
+  "popup_safe_translation_chars_confirmation_dialog_info": {
+    "message": "Văn bản đã chọn chứa { $selectedCountChars } ký tự, vượt quá giới hạn dịch an toàn là { $settingsLimitChars } ký tự. Dịch văn bản lớn có thể tiêu tốn nhiều tài nguyên hơn hoặc phát sinh thêm chi phí tùy thuộc vào nhà cung cấp dịch thuật của bạn. Bạn có muốn tiếp tục dịch không?"
+  },
+  "recommended": {
+    "message": "Được đề xuất"
+  },
+  "copy_to_clipboard": {
+    "message": "Sao chép vào bảng nhớ tạm"
+  },
+  "tts_supported": {
+    "message": "Hỗ trợ văn bản thành giọng nói rất hạn chế"
+  },
+  "pro_version_ai_translator": {
+    "message": "Trình dịch ngôn ngữ chuyên nghiệp dựa trên AI (được cung cấp bởi { $provider })"
+  },
+  "pro_version_ai_tts": {
+    "message": "Văn bản thành giọng nói giống con người dựa trên AI với 6 giọng nói để lựa chọn (được cung cấp bởi { $provider })"
+  },
+  "pro_version_ai_summarize_feature": {
+    "message": "Biến bất kỳ văn bản nào thành bản tóm tắt rõ ràng (thúc đẩy học tập và hiểu nhanh hơn)"
+  },
+  "pro_upgrade_button_label": {
+    "message": "Nâng cấp lên PRO"
+  },
+  "pro_upgrade_button_tooltip": {
+    "message": "Đăng nhập, dùng thử gói miễn phí và đăng ký sau với giá khoảng { $pricePerMonth }/tháng"
+  },
+  "pro_select_tts_voice": {
+    "message": "Giọng nói"
+  },
+  "pro_required_confirm_goto_subscribe": {
+    "message": "Tùy chọn này yêu cầu đăng ký PRO, chúng tôi có nên đến trang đăng ký không?"
+  },
+  "pro_user_welcome_back": {
+    "message": "Chào mừng trở lại, { $username }!"
+  },
+  "pro_user_status": {
+    "message": "Trạng thái PRO: { $status }"
+  },
+  "pro_user_status_active": {
+    "message": "hoạt động"
+  },
+  "pro_user_status_inactive": {
+    "message": "không hoạt động"
+  },
+  "pro_user_subscription": {
+    "message": "Đăng ký: { $plan } (kết thúc { $periodEnd })"
+  },
+  "pro_user_subscription_expired": {
+    "message": "Gói đăng ký đã hết hạn vào { $periodEnd }"
+  },
+  "pro_user_remain_text_tokens": {
+    "message": "Token văn bản có sẵn: { $tokens }"
+  },
+  "pro_user_remain_tts_seconds_approx": {
+    "message": "Thời gian văn bản thành giọng nói có sẵn tính bằng giây: { $seconds }"
+  },
+  "pro_unauthorized_error_401": {
+    "message": "Bạn phải đăng nhập tại { $serviceUrl } và có đăng ký đang hoạt động để có quyền truy cập."
+  },
+  "translate_button": {
+    "message": "Dịch"
+  },
+  "summarize_button": {
+    "message": "Tóm tắt"
+  },
+  "tts_button": {
+    "message": "Nghe"
+  },
+  "text_input_auto_translation_enabled": {
+    "message": "Dịch tự động { $toggle = đã bật }"
+  },
+  "text_input_auto_translation_disabled": {
+    "message": "Dịch tự động { $toggle = đã tắt }"
+  },
+  "text_input_auto_translation_timeout": {
+    "message": "Thời gian chờ: { $timeout }ms"
+  },
+  "system_tts_info": {
+    "message": "Bạn nên chọn giọng nói bản địa hóa phù hợp nhất cho ngôn ngữ đích chính của mình"
+  },
+  "setting_popup_promo_features": {
+    "message": "Hiển thị biểu ngữ quảng cáo"
+  },
+  "setting_popup_summarize_action_icon": {
+    "message": "Hiển thị biểu tượng tóm tắt"
+  },
+  "popup_info_banner_pro_available": {
+    "message": "Phiên bản PRO với các tính năng dịch vụ cao cấp đã có mặt!"
+  },
+  "popup_info_banner_pro_see_details": {
+    "message": "Xem chi tiết trong { $settingsLink = cài đặt ứng dụng } và { $subscribeLink = đăng ký }"
+  },
+  "pro_user_subscription_inactive": {
+    "message": "Gói đăng ký không hoạt động. Gói: {$plan}, Trạng thái: {$status}, Kết thúc: {$periodEnd}"
   }
 }

@@ -31,23 +31,17 @@ export async function getInjectableTabs(): Promise<BrowserTab[]> {
   });
 }
 
-export interface BroadcastMessageParams {
-  acceptFilter?: (tab: BrowserTab) => boolean;
-}
-
 /**
  * Broadcast message to all window tabs (context pages) and extension windows (options page)
  */
-export async function broadcastMessage<T>(msg: Message<T>, { acceptFilter }: BroadcastMessageParams = {}) {
+export async function broadcastMessage<T>(msg: Message<T>) {
   try {
     await sendMessage<T>(msg); // send a message to background service-worker (if called from webpage)
   } catch (err) {
     if (!isRuntimeConnectionFailedError(err)) throw err;
   }
 
-  return sendMessageToTabs<T>(msg, {
-    filter: acceptFilter,
-  });
+  return sendMessageToTabs<T>(msg);
 }
 
 export async function getActiveTab(): Promise<BrowserTab> {

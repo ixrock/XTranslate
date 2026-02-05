@@ -90,10 +90,26 @@
 
   .translation-error {
     color: $red-300;
+
+    * {
+      color: inherit;
+    }
+  }
+
+  .ttsPaused {
+    opacity: .5;
+
+    &:after {
+      content: "";
+      border-left: 3px solid;
+      border-right: 3px solid;
+      display: block;
+      width: 10px;
+      height: 50%;
+    }
   }
 
   .hint {
     opacity: .55;
-    padding-right: 60px; // input's max-length block
   }
 }

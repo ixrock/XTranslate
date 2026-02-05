@@ -5,6 +5,7 @@ import { createLogger } from "./createLogger";
 import noop from "lodash/noop";
 import isPlainObject from "lodash/isPlainObject";
 import isEqual from "lodash/isEqual";
+import isEmpty from "lodash/isEmpty";
 import merge from "lodash/merge";
 
 export interface StorageHelperOptions<T> {
@@ -209,5 +210,9 @@ export class StorageHelper<T> {
 
   toJS(): T {
     return toJS(this.get());
+  }
+
+  isEmpty() {
+    return isEmpty(this.toJS());
   }
 }

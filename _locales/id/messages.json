@@ -550,5 +550,110 @@
   },
   "mellowtel_dialog_footer": {
     "message": "Terima kasih telah meluangkan waktu membaca, tim { $devs }."
+  },
+  "show_in_context_menu": {
+    "message": "Tampilkan opsi penerjemah di menu konteks browser"
+  },
+  "popup_safe_translation_chars_limit": {
+    "message": "Jika pilihan teks melebihi { $limit } karakter, tampilkan peringatan konfirmasi untuk melanjutkan."
+  },
+  "popup_safe_translation_chars_limit_info": {
+    "message": "Ini mungkin membantu Anda mengurangi pengeluaran kuota token AI pada permintaan teks yang tidak diinginkan (0 - tanpa batas)"
+  },
+  "popup_safe_translation_chars_confirmation_dialog_info": {
+    "message": "Teks yang dipilih berisi { $selectedCountChars } karakter, yang melebihi batas terjemahan aman { $settingsLimitChars } karakter. Menerjemahkan teks besar mungkin memakan lebih banyak sumber daya atau menimbulkan biaya tambahan tergantung pada penyedia terjemahan Anda. Apakah Anda ingin melanjutkan terjemahan?"
+  },
+  "recommended": {
+    "message": "Direkomendasikan"
+  },
+  "copy_to_clipboard": {
+    "message": "Salin ke papan klip"
+  },
+  "tts_supported": {
+    "message": "Dukungan teks-ke-ucapan sangat terbatas"
+  },
+  "pro_version_ai_translator": {
+    "message": "Penerjemah bahasa profesional berbasis AI (didukung oleh { $provider })"
+  },
+  "pro_version_ai_tts": {
+    "message": "Teks-ke-ucapan mirip manusia berbasis AI dengan 6 pilihan suara (didukung oleh { $provider })"
+  },
+  "pro_version_ai_summarize_feature": {
+    "message": "Ubah teks apa pun menjadi ringkasan singkat (mempromosikan pembelajaran dan pemahaman yang lebih cepat)"
+  },
+  "pro_upgrade_button_label": {
+    "message": "Tingkatkan ke PRO"
+  },
+  "pro_upgrade_button_tooltip": {
+    "message": "Masuk, coba paket gratis dan berlangganan nanti dengan harga sekitar { $pricePerMonth }/bulan"
+  },
+  "pro_select_tts_voice": {
+    "message": "Suara"
+  },
+  "pro_required_confirm_goto_subscribe": {
+    "message": "Opsi ini memerlukan langganan PRO, haruskah kita pergi ke halaman berlangganan?"
+  },
+  "pro_user_welcome_back": {
+    "message": "Selamat datang kembali, { $username }!"
+  },
+  "pro_user_status": {
+    "message": "Status PRO: { $status }"
+  },
+  "pro_user_status_active": {
+    "message": "aktif"
+  },
+  "pro_user_status_inactive": {
+    "message": "tidak aktif"
+  },
+  "pro_user_subscription": {
+    "message": "Langganan: { $plan } (berakhir { $periodEnd })"
+  },
+  "pro_user_subscription_expired": {
+    "message": "Langganan kedaluwarsa pada { $periodEnd }"
+  },
+  "pro_user_remain_text_tokens": {
+    "message": "Token teks tersedia: { $tokens }"
+  },
+  "pro_user_remain_tts_seconds_approx": {
+    "message": "Waktu teks-ke-ucapan tersedia dalam detik: { $seconds }"
+  },
+  "pro_unauthorized_error_401": {
+    "message": "Anda harus masuk di { $serviceUrl } dan memiliki langganan aktif untuk mendapatkan akses."
+  },
+  "translate_button": {
+    "message": "Terjemahkan"
+  },
+  "summarize_button": {
+    "message": "Ringkas"
+  },
+  "tts_button": {
+    "message": "Dengarkan"
+  },
+  "text_input_auto_translation_enabled": {
+    "message": "Terjemahan otomatis { $toggle = aktif }"
+  },
+  "text_input_auto_translation_disabled": {
+    "message": "Terjemahan otomatis { $toggle = nonaktif }"
+  },
+  "text_input_auto_translation_timeout": {
+    "message": "Waktu habis: { $timeout }ms"
+  },
+  "system_tts_info": {
+    "message": "Anda harus memilih suara lokal yang paling sesuai untuk bahasa target utama Anda"
+  },
+  "setting_popup_promo_features": {
+    "message": "Tampilkan spanduk promo"
+  },
+  "setting_popup_summarize_action_icon": {
+    "message": "Tampilkan ikon ringkasan"
+  },
+  "popup_info_banner_pro_available": {
+    "message": "Versi PRO dengan fitur layanan premium hadir di sini!"
+  },
+  "popup_info_banner_pro_see_details": {
+    "message": "Lihat detail di { $settingsLink = pengaturan aplikasi } dan { $subscribeLink = berlangganan }"
+  },
+  "pro_user_subscription_inactive": {
+    "message": "Langganan tidak aktif. Paket: {$plan}, Status: {$status}, Berakhir: {$periodEnd}"
   }
 }

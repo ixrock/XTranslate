@@ -433,5 +433,230 @@
   },
   "mellowtel_dialog_footer": {
     "message": "Okuduğunuz için teşekkürler, ekipler { $devs }."
+  },
+  "settings_title_full_page_translation": {
+    "message": "Tam sayfa çeviri"
+  },
+  "settings_title_full_page_excluded_pages": {
+    "message": "Asla çevirme"
+  },
+  "settings_title_full_page_always_translate": {
+    "message": "Her zaman çevir"
+  },
+  "settings_title_full_page_show_original_onmouseover": {
+    "message": "Fare üzerindeyken orijinal metni göster"
+  },
+  "settings_title_full_page_show_translation_onmouseover": {
+    "message": "Fare üzerindeyken çeviriyi göster"
+  },
+  "settings_title_full_page_show_replace_texts": {
+    "message": "Belge metinlerini çevirilerle değiştir"
+  },
+  "settings_title_full_page_show_traffic_save_mode": {
+    "message": "Veri tasarrufu modunu etkinleştir"
+  },
+  "settings_title_full_page_show_traffic_save_mode_info": {
+    "message": "Görüntüleme alanındaki yalnızca görünür metinleri çevirerek ağ / API maliyetlerinden tasarruf edin"
+  },
+  "settings_select_empty_list": {
+    "message": "Boş liste"
+  },
+  "settings_select_edit_list": {
+    "message": "Listeyi görmek ve düzenlemek için tıklayın"
+  },
+  "settings_select_add_url": {
+    "message": "URL Ekle"
+  },
+  "settings_select_add_url_error": {
+    "message": "Geçersiz URL ekleme girişimi"
+  },
+  "show_in_context_menu": {
+    "message": "Tarayıcı bağlam menüsünde çevirmen seçeneğini göster"
+  },
+  "settings_title_advanced_providers_list": {
+    "message": "Gelişmiş çeviri sağlayıcıları"
+  },
+  "settings_title_advanced_providers_list_show": {
+    "message": "Gelişmiş çeviri sağlayıcılarını göster"
+  },
+  "settings_title_advanced_providers_list_hide": {
+    "message": "Gelişmiş çeviri sağlayıcılarını gizle"
+  },
+  "settings_title_voice": {
+    "message": "Ses"
+  },
+  "tts_default_system_voice": {
+    "message": "Varsayılan sistem sesi"
+  },
+  "tts_select_voice_title": {
+    "message": "Ses seç"
+  },
+  "tts_play_demo_sound": {
+    "message": "Demo sesini çal"
+  },
+  "tts_play_demo_sound_edit": {
+    "message": "Ses demosu için metni düzenle"
+  },
+  "reverse_translate_select_placeholder": {
+    "message": "Ters çeviri dili"
+  },
+  "reverse_translate_add_action": {
+    "message": "Ters dil ekle: { $lang } -> ? (yalnızca 'Otomatik algılama' seçeneğiyle uygulanabilir)"
+  },
+  "reverse_translate_delete_action": {
+    "message": "Ters çeviri dilini kaldır"
+  },
+  "custom_font_select": {
+    "message": "Özel yazı tipi seç"
+  },
+  "settings_show_more": {
+    "message": "Daha fazla ayar göster"
+  },
+  "settings_show_less": {
+    "message": "Daha az ayar göster"
+  },
+  "context_menu_translate_full_page_context_menu": {
+    "message": "Sayfayı { $lang } diline çevir"
+  },
+  "context_menu_translate_full_page_context_menu_stop": {
+    "message": "{ $site } için otomatik çeviriyi durdur"
+  },
+  "ai_choose_model_reasoning_light": {
+    "message": "Akıl yürütme modeli hafif / daha hızlı"
+  },
+  "auth_access_info_steps_openai": {
+    "message": "1) platform.openai.com'a kaydolun 2) API erişim anahtarı oluşturun 3) Bakiyenizi doldurun (5$+)"
+  },
+  "auth_access_info_steps_grok": {
+    "message": "console.x.ai'ye kaydolun ve bakiyenizi doldurun (ör. Kredi kartı ile)"
+  },
+  "auth_access_info_steps_deepseek": {
+    "message": "platform.deepseek.com'a kaydolun ve bakiyenizi doldurun (ör. Paypal ile)"
+  },
+  "auth_access_info_steps_deepl": {
+    "message": "www.deepl.com'a kaydolun ve DeepL çevirileri için kendi ücretsiz API anahtarınızı alın"
+  },
+  "auth_access_info_steps_gemini": {
+    "message": "https://aistudio.google.com/apikey adresinde ücretsiz API anahtarınızı oluşturun"
+  },
+  "auth_access_info_api_key": {
+    "message": "{ $provider } çevirilerini almak için API anahtarınızı sağlayın"
+  },
+  "auth_setup_key_info": {
+    "message": "{ $provider } API anahtarı sağla"
+  },
+  "auth_clear_key_info": {
+    "message": "{ $provider } API anahtarını kaldır"
+  },
+  "auth_safety_warning_info": {
+    "message": "Uyarı: API anahtarınızı bu uzantı penceresi dışında başka bir yere GİRMEYİN"
+  },
+  "pro_version_promo_link_text": {
+    "message": "PRO'da %20 indirim"
+  },
+  "pro_version_promo_tooltip": {
+    "message": "AI tam sayfa çevirisi içeren bir PRO sürümü oluşturuyoruz. Daha fazla bilgi edinmek ve indiriminizi talep etmek için tıklayın."
+  },
+  "popup_safe_translation_chars_limit": {
+    "message": "Metin seçimi { $limit } karakteri aşarsa, devam etmek için bir onay uyarısı göster."
+  },
+  "popup_safe_translation_chars_limit_info": {
+    "message": "Bu, istenmeyen metin isteklerinde AI token kotası harcamasını azaltmanıza yardımcı olabilir (0 - limit yok)"
+  },
+  "popup_safe_translation_chars_confirmation_dialog_info": {
+    "message": "Seçilen metin { $selectedCountChars } karakter içeriyor, bu da { $settingsLimitChars } karakterlik güvenli çeviri limitini aşıyor. Büyük metinleri çevirmek, çeviri sağlayıcınıza bağlı olarak daha fazla kaynak tüketebilir veya ek maliyetler doğurabilir. Çeviriye devam etmek istiyor musunuz?"
+  },
+  "recommended": {
+    "message": "Önerilen"
+  },
+  "copy_to_clipboard": {
+    "message": "Panoya kopyala"
+  },
+  "tts_supported": {
+    "message": "Metin okuma desteği çok sınırlı"
+  },
+  "pro_version_ai_translator": {
+    "message": "AI tabanlı profesyonel dil çevirmeni ({ $provider } tarafından desteklenmektedir)"
+  },
+  "pro_version_ai_tts": {
+    "message": "6 ses seçeneği ile AI tabanlı insan benzeri metin okuma ({ $provider } tarafından desteklenmektedir)"
+  },
+  "pro_version_ai_summarize_feature": {
+    "message": "Herhangi bir metni net bir özete dönüştürün (daha hızlı öğrenmeyi ve anlamayı teşvik eder)"
+  },
+  "pro_upgrade_button_label": {
+    "message": "PRO'ya yükselt"
+  },
+  "pro_upgrade_button_tooltip": {
+    "message": "Giriş yapın, ücretsiz planı deneyin ve daha sonra yaklaşık { $pricePerMonth }/ay karşılığında abone olun"
+  },
+  "pro_select_tts_voice": {
+    "message": "Ses"
+  },
+  "pro_required_confirm_goto_subscribe": {
+    "message": "Bu seçenek PRO aboneliği gerektirir, abonelik sayfasına gidelim mi?"
+  },
+  "pro_user_welcome_back": {
+    "message": "Tekrar hoş geldiniz, { $username }!"
+  },
+  "pro_user_status": {
+    "message": "PRO durumu: { $status }"
+  },
+  "pro_user_status_active": {
+    "message": "aktif"
+  },
+  "pro_user_status_inactive": {
+    "message": "inaktif"
+  },
+  "pro_user_subscription": {
+    "message": "Abonelik: { $plan } ({ $periodEnd } tarihinde bitiyor)"
+  },
+  "pro_user_subscription_expired": {
+    "message": "Abonelik { $periodEnd } tarihinde sona erdi"
+  },
+  "pro_user_remain_text_tokens": {
+    "message": "Mevcut metin tokenleri: { $tokens }"
+  },
+  "pro_user_remain_tts_seconds_approx": {
+    "message": "Saniye cinsinden mevcut metin okuma süresi: { $seconds }"
+  },
+  "pro_unauthorized_error_401": {
+    "message": "Erişim sağlamak için { $serviceUrl } adresinde oturum açmış ve aktif bir aboneliğe sahip olmalısınız."
+  },
+  "translate_button": {
+    "message": "Çevir"
+  },
+  "summarize_button": {
+    "message": "Özetle"
+  },
+  "tts_button": {
+    "message": "Dinle"
+  },
+  "text_input_auto_translation_enabled": {
+    "message": "Otomatik çeviri { $toggle = etkin }"
+  },
+  "text_input_auto_translation_disabled": {
+    "message": "Otomatik çeviri { $toggle = devre dışı }"
+  },
+  "text_input_auto_translation_timeout": {
+    "message": "Zaman aşımı: { $timeout }ms"
+  },
+  "system_tts_info": {
+    "message": "Birincil hedef diliniz için en uygun yerelleştirilmiş sesi seçmelisiniz"
+  },
+  "setting_popup_promo_features": {
+    "message": "Promosyon afişini göster"
+  },
+  "setting_popup_summarize_action_icon": {
+    "message": "Özet simgesini göster"
+  },
+  "popup_info_banner_pro_available": {
+    "message": "Premium hizmet özelliklerine sahip PRO sürümü burada!"
+  },
+  "popup_info_banner_pro_see_details": {
+    "message": "{ $settingsLink = uygulama ayarları } ve { $subscribeLink = abone ol } bölümünde ayrıntıları görün"
+  },
+  "pro_user_subscription_inactive": {
+    "message": "Abonelik etkin değil. Plan: {$plan}, Durum: {$status}, Bitiş: {$periodEnd}"
   }
 }

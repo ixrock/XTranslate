@@ -32,10 +32,13 @@ export const settingsStorage = createStorage("settings", {
     showPopupOnHotkey: true,
     showTranslatedFrom: true,
     showPopupAdvancedCustomization: false,
+    showPopupPromoBannerLastTimestamp: 0,
+    showPopupSummarizeIcon: true,
     rememberLastText: false,
+    textInputAutoTranslateEnabled: false,
     textInputTranslateDelayMs: 1000,
     showAdvancedProviders: false, // advanced-list requires some setup from the user (e.g. adding api-key)
-    vendor: "bing" as ProviderCodeName,
+    vendor: "bing" as ProviderCodeName, // api provider
     langFrom: "auto",
     langTo: navigator.language.split('-')[0],
     langToReverse: "", // applied in case when `langFrom` == "auto" && `langDetected` == `langTo`
@@ -50,12 +53,14 @@ export const settingsStorage = createStorage("settings", {
     grokAiModel: GrokAIModel.RECOMMENDED,
     deepSeekModel: DeepSeekAIModel.RECOMMENDED,
     geminiModel: GeminiAIModel.RECOMMENDED,
+    safeTranslationLimit: 0, // 0 = unlimited, don't ask user for confirmation, useful for paid-API providers
     tts: {
       systemVoiceIndex: 0,
       openAiVoice: OpenAIModelTTSVoice.Alloy,
       geminiVoice: GeminiAIModelTTSVoice.Puck,
     },
     fullPageTranslation: {
+      showInContextMenu: true,
       provider: "bing" as ProviderCodeName,
       langFrom: "auto",
       langTo: "en",
@@ -139,14 +144,14 @@ export class SettingsStore {
     this.data.favorites[provider][sourceType] = Array.from(favorites);
   }
 
-  @action
-  setProvider(name: ProviderCodeName) {
-    const translator = getTranslator(name);
+  @action.bound
+  setProvider(providerCodeName: ProviderCodeName) {
+    const translator = getTranslator(providerCodeName);
     const { vendor, langFrom, langTo } = this.data;
-    if (vendor === name) return;
+    if (vendor === providerCodeName) return;
 
     const supportedLanguages = translator.getSupportedLanguages({ langFrom, langTo });
-    this.data.vendor = name;
+    this.data.vendor = providerCodeName;
     this.data.langFrom = supportedLanguages.langFrom;
     this.data.langTo = supportedLanguages.langTo;
   }

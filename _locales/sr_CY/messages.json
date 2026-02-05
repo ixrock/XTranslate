@@ -30,7 +30,7 @@
     "message": "Искачући прозор"
   },
   "setting_title_translator_service": {
-    "message": "Преводилац"
+    "message": "Остале функционалности"
   },
   "settings_title_tts": {
     "message": "Претварање текста у говор (Text-to-speech, TTS)"
@@ -77,6 +77,9 @@
   "auto_play_tts": {
     "message": "Аутоматски репродукуј претварање текста у говор"
   },
+  "show_in_context_menu": {
+    "message": "Прикажи опцију за превод у контекст менију претраживача"
+  },
   "use_chrome_tts": {
     "message": "Користи Chrome механизам за претварање текста у говор"
   },
@@ -99,7 +102,7 @@
     "message": "Глас"
   },
   "tts_default_system_voice": {
-    "message": "Подразумевани системски глас"
+    "message": "Системски TTS глас"
   },
   "tts_select_voice_title": {
     "message": "Изабери глас"
@@ -323,9 +326,6 @@
   "spell_correction": {
     "message": "Да ли сте мислили: { $suggestion }?"
   },
-  "text_input_translation_hint": {
-    "message": "{ $hotkey } за тренутни превод, кашњење: { $timeout }ms"
-  },
   "history_enabled_flag": {
     "message": "Омогућено"
   },
@@ -420,7 +420,7 @@
     "message": "Подсети ме касније"
   },
   "target_lang_placeholder": {
-    "message": "Циљани језици"
+    "message": "Циљни језици"
   },
   "source_lang_placeholder": {
     "message": "Изворни језици"
@@ -550,5 +550,116 @@
   },
   "mellowtel_dialog_footer": {
     "message": "Хвала што сте одвојили време за читање, тимови { $devs }."
+  },
+  "popup_safe_translation_chars_limit": {
+    "message": "Прикажи упозорење ако изабрани текст прелази границу од { $limit } карактера."
+  },
+  "popup_safe_translation_chars_limit_info": {
+    "message": "Ово вам може помоћи да смањите потрошњу квоте AI токена на нежељене захтеве (0 - без ограничења)"
+  },
+  "popup_safe_translation_chars_confirmation_dialog_info": {
+    "message": "Изабрани текст садржи { $selectedCountChars } карактера, што прелази сигурну границу од { $settingsLimitChars } карактера. Превођење дугачких текстова може трошити више ресурса и направити додатне трошкове у зависности од вашег преводиоца. Желите ли да наставите са превођењем?"
+  },
+  "recommended": {
+    "message": "Препоручено"
+  },
+  "copy_to_clipboard": {
+    "message": "Копирај у clipboard"
+  },
+  "tts_supported": {
+    "message": "Веома ограничена подршка за текст у говор"
+  },
+  "pro_version_ai_translator": {
+    "message": "Професионални преводилац заснован на AI-ју (покреће { $provider })"
+  },
+  "pro_version_ai_tts": {
+    "message": "Текст у говор сличан људском заснован на AI-ју са 6 могућих гласова (покреће { $provider })"
+  },
+  "pro_version_ai_summarize_feature": {
+    "message": "Претворите било који текст у јасан сажетак (подстиче брже учење и разумевање)"
+  },
+  "pro_upgrade_button_label": {
+    "message": "Надоградите на PRO"
+  },
+  "pro_upgrade_button_tooltip": {
+    "message": "Пријавите се, испробајте бесплатни план и претплатите се касније за око { $pricePerMonth }/месечно"
+  },
+  "pro_select_tts_voice": {
+    "message": "Глас"
+  },
+  "pro_required_confirm_goto_subscribe": {
+    "message": "Ова опција захтева PRO претплату, идемо ли на страницу за претплату?"
+  },
+  "pro_user_welcome_back": {
+    "message": "Добро дошли назад, { $username }!"
+  },
+  "pro_user_status": {
+    "message": "PRO статус: { $status }"
+  },
+  "pro_user_status_active": {
+    "message": "активан"
+  },
+  "pro_user_status_inactive": {
+    "message": "неактиван"
+  },
+  "pro_user_subscription": {
+    "message": "Претплата: { $plan } (завршава се { $periodEnd })"
+  },
+  "pro_user_subscription_expired": {
+    "message": "Претплата је истекла { $periodEnd }"
+  },
+  "pro_user_remain_text_tokens": {
+    "message": "Доступни текстуални токени: { $tokens }"
+  },
+  "pro_user_remain_tts_seconds_approx": {
+    "message": "Доступно време за текст у говор у секундама: { $seconds }"
+  },
+  "pro_unauthorized_error_401": {
+    "message": "Морате бити пријављени на { $serviceUrl } и имати активну претплату да бисте добили приступ."
+  },
+  "translate_button": {
+    "message": "Преведи"
+  },
+  "summarize_button": {
+    "message": "Резимирај"
+  },
+  "tts_button": {
+    "message": "Слушај"
+  },
+  "text_input_auto_translation_enabled": {
+    "message": "Аутоматско превођење { $toggle = омогућено }"
+  },
+  "text_input_auto_translation_disabled": {
+    "message": "Аутоматско превођење { $toggle = онемогућено }"
+  },
+  "text_input_auto_translation_timeout": {
+    "message": "Временско ограничење: { $timeout }ms"
+  },
+  "system_tts_info": {
+    "message": "Требало би да изаберете најприкладнији локализовани глас за ваш примарни циљни језик"
+  },
+  "setting_popup_promo_features": {
+    "message": "Прикажи промо банер"
+  },
+  "setting_popup_summarize_action_icon": {
+    "message": "Прикажи иконицу за резиме"
+  },
+  "popup_info_banner_pro_available": {
+    "message": "PRO верзија са премијум функционалностима је стигла!"
+  },
+  "popup_info_banner_pro_see_details": {
+    "message": "Погледајте детаље у { $settingsLink = подешавањима апликације } и { $subscribeLink = претплатите се }"
+  },
+  "pro_version_subscribe_button": {
+    "message": "Претплати се"
+  },
+  "pro_version_subscribe_price": {
+    "message": "Претплати се на XTranslate PRO бенефите за само { $priceMonthly }/месечно."
+  },
+  "pro_version_continue_use_free_version": {
+    "message": "Настави коришћење бесплатне верзије"
+  },
+  "pro_user_subscription_inactive": {
+    "message": "Претплата неактивна. План: {$plan}, Статус: {$status}, Завршава се: {$periodEnd}"
   }
 }

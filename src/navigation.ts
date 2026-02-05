@@ -1,3 +1,6 @@
+// TODO: use new view-transition API when available:
+//  https://developer.chrome.com/blog/view-transitions-in-2025
+
 import { createObservableHistory } from "mobx-observable-history";
 import { createTab, getManifest, getURL, isOptionsPage } from "./extension";
 import type { ProviderCodeName } from "./providers";
@@ -37,6 +40,11 @@ export function getUrlParams<Params extends NavigationParams>(withDefaults = tru
   }
 
   return pageParams;
+}
+
+export function getPageUrlAbs<Params = {}>(params: NavigationParams & Params, withDefaults = true): string {
+  if (!params) params = getUrlParams<NavigationParams & Params>(withDefaults);
+  return getURL(`/options.html?${new URLSearchParams({ ...params as NavigationParams })}`);
 }
 
 export function getTranslationPageUrl(params: Partial<TranslationPageParams>): string {

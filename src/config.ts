@@ -3,7 +3,8 @@
 export const isDevelopment = process.env.NODE_ENV === "development";
 
 // Extension's public urls for different browsers besides Chrome, e.g. Brave, MS Edge, etc.
-export const websiteURL = 'https://xtranslate.dev';
+// export const websiteURL = 'http://localhost:3000/';
+export const websiteURL = 'https://www.xtranslate.dev';
 export const chromeStoreURL = 'https://chrome.google.com/webstore/detail/gfgpkepllngchpmcippidfhmbhlljhoo';
 export const edgeAddonsURL = 'https://microsoftedge.microsoft.com/addons/detail/cinfaflgbaachkaamaeglolofeahelkd';
 
@@ -18,11 +19,13 @@ export const pdfViewerSkipUrlHash = "#pdf-raw";
 // Icons, see also: https://fonts.google.com/icons
 export const materialIcons = {
   ttsPlay: "play_circle_outline",
-  ttsPause: "pause_outline",
+  ttsPause: "pause_circle_outline",
   copyTranslation: "content_copy",
   copiedTranslation: "task_alt",
   favorite: "star",
   unfavorite: "star_outline",
+  summarize: "auto_awesome",
+  translate: "translate",
 };
 
 //

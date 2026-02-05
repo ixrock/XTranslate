@@ -15,7 +15,14 @@ export async function initContextMenu() {
   await i18nInit();
 
   return autorun(() => {
-    const { fullPageTranslation: { provider, langTo, alwaysTranslatePages } } = settingsStorage.get();
+    const { fullPageTranslation } = settingsStorage.get();
+    const { provider, langTo, alwaysTranslatePages, showInContextMenu } = fullPageTranslation;
+
+    if (!showInContextMenu) {
+      chrome.contextMenus.removeAll();
+      return;
+    }
+
     const translator = getTranslator(provider);
     const activeTab = activeTabStorage.get();
     const autoTranslateEnabled = activeTab.url && alwaysTranslatePages.includes(new URL(activeTab.url).origin);

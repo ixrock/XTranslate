@@ -4,7 +4,7 @@ import { observer } from "mobx-react";
 import { getExtensionUrl } from "@/config";
 import { getManifest } from '@/extension'
 import { getMessage } from "@/i18n";
-import { Icon } from "../icon";
+import { Icon } from "@/components/icon";
 import { CopyToClipboardIcon } from "../copy-to-clipboard-icon";
 import { mellowtelDialogVisibility } from "../../../mellowtel";
 

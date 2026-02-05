@@ -80,12 +80,12 @@ export type GoogleMetricEvents = {
   tts_played: {
     source: MetricSourceEnv;
     provider: ProviderCodeName;
-    lang: string;
+    lang?: string;
   };
   tts_error: {
     source: MetricSourceEnv;
     provider: ProviderCodeName;
-    lang: string;
+    lang?: string;
     error: string;
   };
   history_saved: {
@@ -100,12 +100,6 @@ export type GoogleMetricEvents = {
     lang_from: string;
     lang_to: string;
   };
-  pro_button_shown: {
-    source: MetricSourceEnv;
-  }
-  pro_button_clicked: {
-    source: MetricSourceEnv;
-  }
   // TODO: use metric
   settings_changed: {
     name: string;
