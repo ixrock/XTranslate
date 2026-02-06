@@ -6,6 +6,7 @@ import { action, makeObservable } from "mobx";
 import { getMessage } from "../src/i18n";
 import { Button } from "../src/components/button";
 import { Icon } from "../src/components/icon";
+import { userStore } from "@/pro/user.storage";
 import { mellowtelActivateAction, mellowtelDeactivateAction, mellowtelDialogVisibility, mellowtelOptOutTime, mellowtelStatusAction } from "./index";
 
 export interface MellowtelDialogProps extends Omit<DialogProps, "isOpen"> {
@@ -40,10 +41,12 @@ export class MellowtelDialog extends React.Component<MellowtelDialogProps> {
   }
 
   render() {
+    const isOpen = mellowtelDialogVisibility.get() && !userStore.isProActive;
+
     return (
       <Dialog
         pinned
-        isOpen={mellowtelDialogVisibility.get()}
+        isOpen={isOpen}
         className={styles.MellowtelDialog}
         contentClassName="flex gaps column"
       >

@@ -7,7 +7,6 @@ import { getLocale } from "@/i18n";
 export interface UserStorage {
   user?: XTranslateProUser;
   pricing?: XTranslateProPricing;
-  preloadLastTime?: number;
 }
 
 export const userStorage = createStorage<UserStorage>("user_storage", {
@@ -16,7 +15,6 @@ export const userStorage = createStorage<UserStorage>("user_storage", {
   defaultValue: {
     user: null,
     pricing: null,
-    preloadLastTime: 0,
   },
 });
 
@@ -96,7 +94,6 @@ export class UserSubscriptionStore {
       userStorage.set({
         user,
         pricing,
-        preloadLastTime: Date.now(),
       });
     } catch (err: XTranslateProTranslateError | unknown) {
       const apiError = err as XTranslateProTranslateError;
