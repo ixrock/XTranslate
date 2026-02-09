@@ -610,5 +610,14 @@
   },
   "pro_user_subscription_inactive": {
     "message": "सदस्यता निष्क्रिय। प्लान: {$plan}, स्थिति: {$status}, समाप्त: {$periodEnd}"
+  },
+  "pro_version_subscribe_button": {
+    "message": "सदस्यता लें"
+  },
+  "pro_version_subscribe_price": {
+    "message": "केवल { $priceMonthly }/माह में XTranslate PRO के फ़ायदे की सदस्यता लें।"
+  },
+  "pro_version_continue_use_free_version": {
+    "message": "मुफ़्त संस्करण का उपयोग जारी रखें"
   }
 }

@@ -610,5 +610,14 @@
   },
   "pro_user_subscription_inactive": {
     "message": "구독 비활성. 플랜: {$plan}, 상태: {$status}, 종료: {$periodEnd}"
+  },
+  "pro_version_subscribe_button": {
+    "message": "구독"
+  },
+  "pro_version_subscribe_price": {
+    "message": "XTranslate PRO 혜택을 한 달에 { $priceMonthly }에 구독하세요."
+  },
+  "pro_version_continue_use_free_version": {
+    "message": "무료 버전 계속 사용"
   }
 }

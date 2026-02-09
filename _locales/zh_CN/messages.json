@@ -610,5 +610,14 @@
   },
   "pro_user_subscription_inactive": {
     "message": "订阅不活跃。计划: {$plan}, 状态: {$status}, 结束: {$periodEnd}"
+  },
+  "pro_version_subscribe_button": {
+    "message": "订阅"
+  },
+  "pro_version_subscribe_price": {
+    "message": "每月仅需 { $priceMonthly }，即可订阅 XTranslate PRO 权益。"
+  },
+  "pro_version_continue_use_free_version": {
+    "message": "继续使用免费版本"
   }
 }

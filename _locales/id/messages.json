@@ -610,5 +610,14 @@
   },
   "pro_user_subscription_inactive": {
     "message": "Langganan tidak aktif. Paket: {$plan}, Status: {$status}, Berakhir: {$periodEnd}"
+  },
+  "pro_version_subscribe_button": {
+    "message": "Berlangganan"
+  },
+  "pro_version_subscribe_price": {
+    "message": "Berlangganan manfaat XTranslate PRO hanya { $priceMonthly }/bulan."
+  },
+  "pro_version_continue_use_free_version": {
+    "message": "Tetap gunakan versi gratis"
   }
 }

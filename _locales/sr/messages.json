@@ -607,5 +607,14 @@
   },
   "pro_user_subscription_inactive": {
     "message": "Pretplata neaktivna. Plan: {$plan}, Status: {$status}, Završava se: {$periodEnd}"
+  },
+  "pro_version_subscribe_button": {
+    "message": "Pretplati se"
+  },
+  "pro_version_subscribe_price": {
+    "message": "Pretplati se na XTranslate PRO benefite za samo { $priceMonthly } mesečno."
+  },
+  "pro_version_continue_use_free_version": {
+    "message": "Nastavi korišćenje besplatne verzije"
   }
 }

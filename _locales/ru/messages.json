@@ -604,5 +604,17 @@
   },
   "pro_user_subscription_inactive": {
     "message": "Подписка неактивна. План: {$plan}, Статус: {$status}, Истекает: {$periodEnd}"
+  },
+  "recommended": {
+    "message": "Рекомендовано"
+  },
+  "pro_version_subscribe_button": {
+    "message": "Подписаться"
+  },
+  "pro_version_subscribe_price": {
+    "message": "Подпишитесь на XTranslate PRO всего за { $priceMonthly }/месяц."
+  },
+  "pro_version_continue_use_free_version": {
+    "message": "Продолжить использовать бесплатную версию"
   }
 }
