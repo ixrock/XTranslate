@@ -655,5 +655,14 @@
   },
   "pro_user_subscription_inactive": {
     "message": "সাবস্ক্রিপশন নিষ্ক্রিয়। প্ল্যান: {$plan}, স্ট্যাটাস: {$status}, শেষ হবে: {$periodEnd}"
+  },
+  "pro_version_subscribe_button": {
+    "message": "সাবস্ক্রাইব করুন"
+  },
+  "pro_version_subscribe_price": {
+    "message": "শুধু { $priceMonthly }/মাসে XTranslate PRO সুবিধাগুলোর জন্য সাবস্ক্রাইব করুন।"
+  },
+  "pro_version_continue_use_free_version": {
+    "message": "বিনামূল্যের সংস্করণ ব্যবহার চালিয়ে যান"
   }
 }

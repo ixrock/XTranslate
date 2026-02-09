@@ -147,3 +147,22 @@ function parseMessages(locale: Locale, rawData: LocalizationFile) {
 export function formatNumber({ value, locale }: { value: number, locale?: Locale }) {
   return new Intl.NumberFormat(locale ?? getIntlLocale()).format(value);
 }
+
+export async function dumpMissingLocalizationKeys(): Promise<Record<Locale, LocalizationKey[]>> {
+  const locales = Object.keys(AvailableLocales).filter(loc => loc !== defaultLocale) as Locale[];
+  const baseKeys = new Set(Object.keys(DefaultLocale));
+
+  const messages = await Promise.all(
+    locales.map(
+      locale => proxyRequest({ url: getURL(`_locales/${locale}/messages.json`) })
+    ) as Promise<LocalizationFile>[]
+  );
+
+  return locales.reduce((missingKeys, locale, index) => {
+    missingKeys[locale] = Array.from(
+      baseKeys.difference(new Set(Object.keys(messages[index])))
+    ) as LocalizationKey[];
+
+    return missingKeys;
+  }, {} as Record<Locale, LocalizationKey[]>);
+}

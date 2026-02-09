@@ -655,5 +655,14 @@
   },
   "pro_user_subscription_inactive": {
     "message": "الاشتراك غير نشط. الخطة: {$plan}، الحالة: {$status}، ينتهي في: {$periodEnd}"
+  },
+  "pro_version_subscribe_button": {
+    "message": "اشترك"
+  },
+  "pro_version_subscribe_price": {
+    "message": "اشترك في مزايا XTranslate PRO مقابل { $priceMonthly } فقط شهريًا."
+  },
+  "pro_version_continue_use_free_version": {
+    "message": "متابعة استخدام النسخة المجانية"
   }
 }

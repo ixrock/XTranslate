@@ -655,5 +655,14 @@
   },
   "pro_user_subscription_inactive": {
     "message": "Suscripción inactiva. Plan: {$plan}, Estado: {$status}, Termina: {$periodEnd}"
+  },
+  "pro_version_subscribe_button": {
+    "message": "Suscribirse"
+  },
+  "pro_version_subscribe_price": {
+    "message": "Suscríbete a las ventajas de XTranslate PRO por solo { $priceMonthly }/mes."
+  },
+  "pro_version_continue_use_free_version": {
+    "message": "Seguir usando la versión gratuita"
   }
 }

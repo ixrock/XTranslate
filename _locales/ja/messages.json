@@ -655,5 +655,14 @@
   },
   "pro_user_subscription_inactive": {
     "message": "購読が無効です。プラン：{$plan}、ステータス：{$status}、終了日：{$periodEnd}"
+  },
+  "pro_version_subscribe_button": {
+    "message": "購読する"
+  },
+  "pro_version_subscribe_price": {
+    "message": "XTranslate PRO の特典を月額 { $priceMonthly } で利用できます。"
+  },
+  "pro_version_continue_use_free_version": {
+    "message": "無料版を使い続ける"
   }
 }

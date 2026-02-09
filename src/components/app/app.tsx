@@ -19,7 +19,7 @@ import { PrivacyDialog } from "./privacy-dialog";
 import { AppRateDialog } from "./app-rate.dialog";
 import { MellowtelDialog } from "../../../mellowtel/mellowtel-dialog";
 import { isRTL } from "@/providers";
-import { getLocale, i18nStorage } from "@/i18n";
+import { dumpMissingLocalizationKeys, getLocale, i18nStorage } from "@/i18n";
 import { sendMetric } from "@/background/metrics.bgc";
 import { userStore } from "@/pro";
 import { favoritesStorage } from "@/components/user-history/favorites.storage";
@@ -93,4 +93,5 @@ export {
   userStore,
   themeStore,
   favoritesStorage,
+  dumpMissingLocalizationKeys,
 }

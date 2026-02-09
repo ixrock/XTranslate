@@ -658,5 +658,14 @@
   },
   "pro_user_subscription_inactive": {
     "message": "Abonelik etkin değil. Plan: {$plan}, Durum: {$status}, Bitiş: {$periodEnd}"
+  },
+  "pro_version_subscribe_button": {
+    "message": "Abone ol"
+  },
+  "pro_version_subscribe_price": {
+    "message": "XTranslate PRO avantajlarına ayda sadece { $priceMonthly } karşılığında abone olun."
+  },
+  "pro_version_continue_use_free_version": {
+    "message": "Ücretsiz sürümü kullanmaya devam et"
   }
 }

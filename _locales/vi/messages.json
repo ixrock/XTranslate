@@ -655,5 +655,14 @@
   },
   "pro_user_subscription_inactive": {
     "message": "Gói đăng ký không hoạt động. Gói: {$plan}, Trạng thái: {$status}, Kết thúc: {$periodEnd}"
+  },
+  "pro_version_subscribe_button": {
+    "message": "Đăng ký"
+  },
+  "pro_version_subscribe_price": {
+    "message": "Đăng ký các quyền lợi XTranslate PRO chỉ với { $priceMonthly }/tháng."
+  },
+  "pro_version_continue_use_free_version": {
+    "message": "Tiếp tục dùng phiên bản miễn phí"
   }
 }
