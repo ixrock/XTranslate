@@ -11,9 +11,11 @@ import { installOrUpdateAppActions } from "./install.bgc";
 import { initActiveTabWatcher } from "./tabs.bgc";
 import { initContextMenu } from "./contextMenu.bgc";
 import { listenProxyConnection, listenProxyRequestActions } from "./httpProxy.bgc";
+import { listenUserSubscriptionUpdateRequest } from "./user.bgc";
 
 initContextMenu();
 initActiveTabWatcher();
 installOrUpdateAppActions();
 listenProxyRequestActions();
 listenProxyConnection();
+listenUserSubscriptionUpdateRequest();

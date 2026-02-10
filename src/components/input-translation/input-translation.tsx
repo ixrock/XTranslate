@@ -23,7 +23,7 @@ import { getSelectedText } from "@/extension";
 import { CopyToClipboardIcon } from "../copy-to-clipboard-icon";
 import { SelectProvider } from "../select-provider";
 import { Button } from "@/components/button";
-import { proSubscriptionRequiredDialog, userStore } from "@/pro";
+import { userStore } from "@/pro";
 
 @observer
 export class InputTranslation extends React.Component {
@@ -202,7 +202,7 @@ export class InputTranslation extends React.Component {
 
     if (provider === ProviderCodeName.XTRANSLATE_PRO && !userStore.isProEnabled) {
       this.params.provider = prevProvider; // rollback
-      proSubscriptionRequiredDialog();
+      userStore.subscribeSuggestionDialog();
     } else if (textInputAutoTranslateEnabled) {
       void this.translate();
     }
@@ -383,7 +383,8 @@ export class InputTranslation extends React.Component {
   @action
   async summarize() {
     if (!userStore.isProEnabled) {
-      return proSubscriptionRequiredDialog();
+      userStore.subscribeSuggestionDialog();
+      return;
     }
 
     const { provider, to: langTo, text } = this.params;

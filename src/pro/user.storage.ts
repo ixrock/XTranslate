@@ -1,13 +1,14 @@
-import { action, makeObservable, observable } from "mobx";
+import { action } from "mobx";
 import { createStorage } from "@/storage";
 import { getXTranslatePro, XTranslateProPricing, XTranslateProTranslateError, XTranslateProUser } from "@/providers";
+import { MessageType, sendMessage } from "@/extension";
 import { formatPrice } from "@/utils";
-import { getLocale } from "@/i18n";
+import { getLocale, getMessage } from "@/i18n";
 
 export interface UserStorage {
   user?: XTranslateProUser;
   pricing?: XTranslateProPricing;
-  preloadLastTime?: number;
+  lastUpdatedTime?: number;
 }
 
 export const userStorage = createStorage<UserStorage>("user_storage", {
@@ -16,20 +17,25 @@ export const userStorage = createStorage<UserStorage>("user_storage", {
   defaultValue: {
     user: null,
     pricing: null,
-    preloadLastTime: 0,
+    lastUpdatedTime: 0,
   },
 });
 
-export class UserSubscriptionStore {
-  @observable pricing = {} as XTranslateProPricing;
-
-  constructor() {
-    makeObservable(this);
-    userStorage.whenReady.then(() => this.load());
-  }
+export class UserStore {
+  private isRefreshing = false;
 
   async load() {
-    await this.refreshFromServer();
+    await userStorage.load();
+
+    return sendMessage({
+      type: MessageType.USER_DATA_UPDATE_REQUEST,
+    });
+  }
+
+  get isStale() {
+    const cacheWindowMs = 3600 * 1000; // 1 hour
+    const { lastUpdatedTime } = userStorage.get();
+    return !lastUpdatedTime || (lastUpdatedTime + cacheWindowMs < Date.now());
   }
 
   get apiProvider() {
@@ -37,7 +43,8 @@ export class UserSubscriptionStore {
   }
 
   get pricePerMonth() {
-    return this.getPriceFormatted(this.pricing.MONTHLY?.priceCentsUSD ?? 0);
+    const { pricing } = userStorage.get();
+    return this.formatPrice(pricing?.MONTHLY.priceCentsUSD ?? 0);
   }
 
   get user(): XTranslateProUser {
@@ -74,43 +81,47 @@ export class UserSubscriptionStore {
     return Math.round(bytesAvailable / 16000); // ~mp3/128KBps
   }
 
-  private getPriceFormatted(priceUSDCents = 0) {
+  private formatPrice(cents = 0) {
     return formatPrice({
-      value: priceUSDCents / 100,
+      value: cents / 100,
       currency: "USD",
       locale: getLocale(),
     });
   }
 
-  resetCache() {
-    userStorage.reset();
-  }
-
   @action
   async refreshFromServer(): Promise<void> {
-    await userStorage.load();
+    if (this.isRefreshing) return;
+    this.isRefreshing = true;
 
     try {
       const { user, pricing } = await this.apiProvider.getUser();
-      this.pricing = pricing;
       userStorage.set({
         user,
         pricing,
-        preloadLastTime: Date.now(),
+        lastUpdatedTime: Date.now(),
       });
     } catch (err: XTranslateProTranslateError | unknown) {
+      userStorage.reset();
+
       const apiError = err as XTranslateProTranslateError;
 
       if (apiError.pricing) {
-        this.pricing = apiError.pricing;
-        userStorage.merge({
-          pricing: apiError.pricing,
-        });
+        userStorage.merge({ pricing: apiError.pricing });
       }
-      console.log('failed to update from server: ', err)
-      this.resetCache();
+    } finally {
+      this.isRefreshing = false;
+    }
+  }
+
+  subscribeSuggestionDialog(): boolean {
+    const subscribe = window.confirm(getMessage("pro_required_confirm_goto_subscribe"));
+
+    if (subscribe) {
+      window.open(this.apiProvider.subscribePageUrl, "_blank");
+      return true;
     }
   }
 }
 
-export const userStore = new UserSubscriptionStore();
+export const userStore = new UserStore();
