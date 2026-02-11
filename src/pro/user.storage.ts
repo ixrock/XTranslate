@@ -32,8 +32,10 @@ export class UserStore {
     });
   }
 
+  // TODO: maybe provide some global settings from backend server, e.g. `/api/translator-settings`
+  //  e.g. for faster switching extension-settings without re-upload new version to CWS (what might be useful in cases like caching)
   get isStale() {
-    const cacheWindowMs = 3600 * 1000; // 1 hour
+    const cacheWindowMs = 24 * 3600 * 1000; // 1 day
     const { lastUpdatedTime } = userStorage.get();
     return !lastUpdatedTime || (lastUpdatedTime + cacheWindowMs < Date.now());
   }
