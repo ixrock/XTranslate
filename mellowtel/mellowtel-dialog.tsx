@@ -20,6 +20,9 @@ export class MellowtelDialog extends React.Component<MellowtelDialogProps> {
   }
 
   async componentDidMount() {
+    await userStore.load();
+    if (userStore.isProActive) return;
+
     const { enabled } = await mellowtelStatusAction();
     mellowtelDialogVisibility.set(!enabled);
   }
@@ -41,7 +44,7 @@ export class MellowtelDialog extends React.Component<MellowtelDialogProps> {
   }
 
   render() {
-    const isOpen = mellowtelDialogVisibility.get() && !userStore.isProActive;
+    const isOpen = mellowtelDialogVisibility.get();
 
     return (
       <Dialog
