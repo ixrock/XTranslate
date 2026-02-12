@@ -24,7 +24,7 @@ import { PageTranslator } from "./page-translator";
 import { Popup } from "../components/popup";
 import { Icon } from "@/components/icon";
 import { getMessage } from "@/i18n";
-import { proSubscriptionRequiredDialog, userStore } from "@/pro";
+import { userStore } from "@/pro";
 
 type DOMRectNormalized = Omit<Writeable<DOMRect>, "toJSON" | "x" | "y">;
 
@@ -36,9 +36,12 @@ export class ContentScript extends React.Component {
   static cssStylesUrl: string;
 
   static async init(window: Window = globalThis.window.self) {
-    await preloadAppData(); // wait for dependent data before first render
-    await this.preloadCss();
-    await popupSkipInjectionUrls.load();
+    // wait for dependent data before first render
+    await preloadAppData(
+      this.preloadCss(),
+      popupSkipInjectionUrls.load(),
+      userStore.load(),
+    );
 
     // skip content-script injection for specific urls to avoid bugs, e.g. for cloudflare captcha iframe checks
     const skipInjection = popupSkipInjectionUrls.get().some(url => window.document.URL.startsWith(url));
@@ -644,7 +647,7 @@ export class ContentScript extends React.Component {
     }
 
     if (!userStore.isProEnabled) {
-      proSubscriptionRequiredDialog();
+      userStore.subscribeSuggestionDialog();
       return "";
     }
 

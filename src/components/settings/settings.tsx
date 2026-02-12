@@ -24,7 +24,7 @@ import { materialIcons } from "@/config";
 import { SelectProvider } from "../select-provider";
 import { ShowHideMore } from "../show-hide-more";
 import { SettingsUrlList } from "@/components/settings/settings_url_list";
-import { proSubscriptionRequiredDialog, userStore } from "@/pro";
+import { userStore } from "@/pro";
 
 const openAiVoiceOptions =
   Object.values(OpenAIModelTTSVoice).map((voice: string) => ({
@@ -230,7 +230,7 @@ export class Settings extends React.Component {
 
     if (provider === ProviderCodeName.XTRANSLATE_PRO && !userStore.isProEnabled) {
       fullPageTranslation.provider = prevProvider; // rollback
-      proSubscriptionRequiredDialog();
+      userStore.subscribeSuggestionDialog();
     }
   };
 
@@ -241,7 +241,7 @@ export class Settings extends React.Component {
 
     if (provider === ProviderCodeName.XTRANSLATE_PRO && !userStore.isProEnabled) {
       settingsStore.setProvider(prevProvider); // rollback
-      proSubscriptionRequiredDialog();
+      userStore.subscribeSuggestionDialog();
     }
   }
 

@@ -211,7 +211,6 @@ export class SelectLanguage extends React.Component<SelectLanguageProps> {
       <div className={cssNames("SelectLanguage flex gaps align-center", className)}>
         <ReactSelect
           className="Select"
-          menuPlacement="top"
           placeholder={getMessage("source_lang_placeholder")}
           value={sourceLang}
           options={this.sourceLanguageOptions}
@@ -228,7 +227,6 @@ export class SelectLanguage extends React.Component<SelectLanguageProps> {
 
         <ReactSelect
           className="Select"
-          menuPlacement="top"
           placeholder={getMessage("target_lang_placeholder")}
           value={targetLang}
           options={this.targetLanguageOptions}

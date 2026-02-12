@@ -7,11 +7,12 @@ import "./history.bgc";
 import "./ai.bgc";
 import "./metrics.bgc";
 
+import { initBackground as initMellowtel } from "../../mellowtel";
 import { installOrUpdateAppActions } from "./install.bgc";
 import { initActiveTabWatcher } from "./tabs.bgc";
 import { initContextMenu } from "./contextMenu.bgc";
 import { listenProxyConnection, listenProxyRequestActions } from "./httpProxy.bgc";
-import { initBackground as initMellowtel } from "../../mellowtel";
+import { listenUserSubscriptionUpdateRequest } from "./user.bgc";
 
 initMellowtel();
 initContextMenu();
@@ -19,3 +20,4 @@ initActiveTabWatcher();
 installOrUpdateAppActions();
 listenProxyRequestActions();
 listenProxyConnection();
+listenUserSubscriptionUpdateRequest();
