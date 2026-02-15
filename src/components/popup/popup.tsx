@@ -11,6 +11,7 @@ import { toCssColor } from "@/utils/toCssColor";
 import { TranslatePayload } from "@/extension";
 import { getTranslator, getTranslators, isRTL, ITranslationError, ITranslationResult, ProviderCodeName } from "@/providers";
 import { Icon } from "../icon";
+import { userStore } from "@/pro";
 import { settingsStore } from "../settings/settings.storage";
 import { themeStore } from "../theme-manager/theme.storage";
 import { isFavorite } from "../user-history/favorites.storage";
@@ -29,7 +30,7 @@ export interface PopupProps extends React.HTMLProps<any> {
   tooltipParentElem?: HTMLElement;
   onProviderChange?(name: ProviderCodeName): void;
   speak?(): Promise<HTMLAudioElement | SpeechSynthesisUtterance | void>;
-  summarize?(evt: React.MouseEvent): Promise<string>;
+  summarize?(evt: React.MouseEvent): Promise<void>;
 }
 
 @observer
@@ -340,7 +341,7 @@ export class Popup extends React.Component<PopupProps> {
       [styles.previewMode]: previewMode,
     });
 
-    const promoBanner = showPromoBanner && PopupPromoBanner.isVisible ? <PopupPromoBanner/> : null;
+    const promoBanner = showPromoBanner && userStore.isPromoVisible ? <PopupPromoBanner/> : null;
     const mainContent = promoBanner ?? this.renderResult() ?? this.renderSummarized();
 
     return (

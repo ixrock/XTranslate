@@ -129,24 +129,22 @@ export const ProUserInfo = observer(
   function () {
     const {
       user,
-      isProEnabled,
+      subscription,
       isProActive,
       remainTextTokens,
       remainSecondsTTSRoughly,
-      subscriptionPlan,
       pricePerMonth,
-      apiProvider: { subscribePageUrl },
+      apiProvider,
     } = userStore;
 
-    if (isProEnabled && user) {
-      const expirationDate = new Date(user.subscription.periodEnd)
-        .toLocaleString(getIntlLocale());
+    if (isProActive) {
+      const expirationDate = new Date(subscription.periodEnd).toLocaleString(getIntlLocale());
 
       const subscriptionActiveTooltip = (
         <>
           <p>
             {getMessage("pro_user_subscription", {
-              plan: subscriptionPlan,
+              plan: subscription.planType,
               periodEnd: expirationDate,
             })}
           </p>
@@ -158,7 +156,7 @@ export const ProUserInfo = observer(
           <p>
             {
               getMessage("pro_user_remain_tts_seconds_approx", {
-                seconds: remainSecondsTTSRoughly
+                seconds: remainSecondsTTSRoughly // TODO: show remain time in HH:MM
               })
             }
           </p>
@@ -168,8 +166,8 @@ export const ProUserInfo = observer(
       const subscriptionDeactivatedTooltip = (
         <>
           {getMessage("pro_user_subscription_inactive", {
-            plan: user.subscription.planType,
-            status: user.subscription.cycleStatus,
+            plan: subscription.planType,
+            status: subscription.cycleStatus,
             periodEnd: expirationDate,
           })}
         </>
@@ -193,7 +191,7 @@ export const ProUserInfo = observer(
             }}/>
             <div className="pro-status">
               {getMessage("pro_user_status", {
-                status: <b>{getMessage(`pro_user_status_${user.subscription.status}`)}</b>
+                status: <b>{getMessage(`pro_user_status_${subscription.status}`)}</b>
               })}
             </div>
           </div>
@@ -205,7 +203,7 @@ export const ProUserInfo = observer(
       <div className="ProUserInfo flex column inline">
         <Button
           outline
-          href={subscribePageUrl}
+          href={apiProvider.subscribePageUrl}
           target="_blank" id="subscribe-pro"
           label={getMessage("pro_upgrade_button_label")}
         />

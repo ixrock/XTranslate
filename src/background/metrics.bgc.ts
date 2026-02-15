@@ -100,9 +100,5 @@ export type GoogleMetricEvents = {
     lang_from: string;
     lang_to: string;
   };
-  // TODO: use metric
-  settings_changed: {
-    name: string;
-    value: string | boolean | number
-  }
+  promo_banner_shown: {}
 };

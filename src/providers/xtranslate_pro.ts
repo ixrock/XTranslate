@@ -205,11 +205,23 @@ export class XTranslatePro extends Translator {
     });
   }
 
-  async getUser(): Promise<XTranslateProUserResponse> {
-    return this.request<XTranslateProUserResponse>({
-      url: `${this.apiUrl}/me`,
+  async loadPricing(): Promise<XTranslateProPricing> {
+    return this.request({
+      url: `${this.apiUrl}/pricing`,
+    });
+  }
+
+  async loadUser(): Promise<XTranslateProUser> {
+    return this.request({
+      url: `${this.apiUrl}/user`,
       requestInit: { credentials: "include" },
-      responseType: ProxyResponseType.JSON,
+    });
+  }
+
+  async loadSubscription(): Promise<XTranslateProSubscription> {
+    return this.request({
+      url: `${this.apiUrl}/user/plan`,
+      requestInit: { credentials: "include" },
     });
   }
 }
@@ -229,7 +241,6 @@ export interface XTranslateProTranslateOutput {
 
 export interface XTranslateProTranslateError extends ITranslationError {
   error: string;
-  pricing: XTranslateProPricing;
 }
 
 export interface XTranslateProSummarizeInput {
@@ -243,15 +254,9 @@ export interface XTranslateProSummarizeOutput {
 }
 
 export interface XTranslateProUser {
-  username: string,
-  email: string,
-  image: string,
-  subscription?: XTranslateProUserSubscription;
-}
-
-export interface XTranslateProUserResponse {
-  user?: XTranslateProUser;
-  pricing: XTranslateProPricing;
+  username: string;
+  email: string;
+  image: string;
 }
 
 export type XTranslateProPricing = Record<XTranslateProPlanType, XTranslateProPlan>;
@@ -266,7 +271,7 @@ export interface XTranslateProPlan {
 export type XTranslateProPlanType = "FREE_PLAN" | "MONTHLY" | "YEARLY";
 export type XTranslateProStatus = "PAID" | "FAILED" | "REFUNDED" | "CANCELED";
 
-export interface XTranslateProUserSubscription {
+export interface XTranslateProSubscription {
   status: 'active' | 'inactive';
   planType: XTranslateProPlanType;
   cycleStatus: XTranslateProStatus;

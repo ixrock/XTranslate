@@ -200,7 +200,7 @@ export class InputTranslation extends React.Component {
     this.updateUrl();
     this.resetSpeakingState();
 
-    if (provider === ProviderCodeName.XTRANSLATE_PRO && !userStore.isProEnabled) {
+    if (provider === ProviderCodeName.XTRANSLATE_PRO && !userStore.isProActive) {
       this.params.provider = prevProvider; // rollback
       userStore.subscribeSuggestionDialog();
     } else if (textInputAutoTranslateEnabled) {
@@ -382,7 +382,7 @@ export class InputTranslation extends React.Component {
 
   @action
   async summarize() {
-    if (!userStore.isProEnabled) {
+    if (!userStore.isProActive) {
       userStore.subscribeSuggestionDialog();
       return;
     }

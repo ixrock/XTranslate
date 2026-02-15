@@ -28,7 +28,7 @@ import { themeStore } from "@/components/theme-manager/theme.storage";
 export class App extends React.Component {
   static async init() {
     await preloadAppData(); // preload dependent data before initial app rendering
-    void userStore.refreshFromServer(); // get latest user-subscription data
+    void userStore.load(); // get latest active subscription info
 
     const { name: appName, description: appDescription } = getManifest();
     document.title = `${appName} - ${appDescription}`;

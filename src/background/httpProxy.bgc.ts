@@ -95,15 +95,14 @@ export async function handleProxyRequestPayload<Response>({ url, responseType, r
 export async function proxyRequest<Response>(payload: ProxyRequestPayload): Promise<Response> {
   let response: ProxyResponsePayload<Response>;
 
+  payload.responseType ??= ProxyResponseType.JSON;
+
   if (isBackgroundWorker()) {
     response = await handleProxyRequestPayload(payload);
   } else {
     response = await sendMessage<ProxyRequestPayload, ProxyResponsePayload<Response>>({
       type: MessageType.PROXY_REQUEST,
-      payload: {
-        responseType: ProxyResponseType.JSON, /*default*/
-        ...payload,
-      },
+      payload,
     });
   }
 

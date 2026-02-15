@@ -61,16 +61,16 @@ export class Settings extends React.Component {
         </div>
       ),
       get xtranslate_pro() {
-        const { isProEnabled } = userStore;
+        const { isProActive } = userStore;
 
         return (
           <div className="flex gaps align-center">
-            {!isProEnabled && <em>({getMessage("recommended").toLowerCase()})</em>}
+            {!isProActive && <em>({getMessage("recommended").toLowerCase()})</em>}
             <Icon material={materialIcons.translate} tooltip={getMessage("pro_version_ai_translator", { provider: "Gemini" })}/>
             <Icon material={materialIcons.summarize} tooltip={getMessage("pro_version_ai_summarize_feature")}/>
             <Icon svg="tts" tooltip={getMessage("pro_version_ai_tts", { provider: "OpenAI" })}/>
 
-            {isProEnabled && (
+            {isProActive && (
               <>
                 <span>{getMessage("pro_select_tts_voice")}</span>
                 <ReactSelect<OpenAIModelTTSVoice>
@@ -228,7 +228,7 @@ export class Settings extends React.Component {
     fullPageTranslation.langFrom = supportedLanguages.langFrom;
     fullPageTranslation.langTo = supportedLanguages.langTo;
 
-    if (provider === ProviderCodeName.XTRANSLATE_PRO && !userStore.isProEnabled) {
+    if (provider === ProviderCodeName.XTRANSLATE_PRO && !userStore.isProActive) {
       fullPageTranslation.provider = prevProvider; // rollback
       userStore.subscribeSuggestionDialog();
     }
@@ -239,7 +239,7 @@ export class Settings extends React.Component {
     const prevProvider = settingsStore.data.vendor;
     settingsStore.setProvider(provider);
 
-    if (provider === ProviderCodeName.XTRANSLATE_PRO && !userStore.isProEnabled) {
+    if (provider === ProviderCodeName.XTRANSLATE_PRO && !userStore.isProActive) {
       settingsStore.setProvider(prevProvider); // rollback
       userStore.subscribeSuggestionDialog();
     }
@@ -289,7 +289,7 @@ export class Settings extends React.Component {
           />
         </div>
         <ShowHideMore visible={fullPageTranslation.showMore} onToggle={v => fullPageTranslation.showMore = v}>
-          <div className="settings-fullpage flex column gaps align-start">
+          <div className="settings-fullpage flex column gaps align-start" style={{ width: "100%" }}>
             <SettingsUrlList
               urlList={alwaysTranslatePages}
               title={getMessage("settings_title_full_page_always_translate")}

@@ -4,7 +4,7 @@ This document provides context for the Gemini code assistant to understand the X
 
 ## Project Overview
 
-XTranslate is a Chrome browser extension that provides in-place translation of web pages. It allows users to translate single words, selected text, or entire pages. The extension supports multiple translation providers, including Google, Bing, DeepL, OpenAI, Grok, DeepSeek and Gemini.
+XTranslate is a Chrome browser extension that provides in-place translation of web pages. It allows users to translate single words, selected text, or entire pages. The extension supports multiple translation providers, including Google, Bing, OpenAI, Grok, DeepSeek and Gemini.
 
 The project is built using TypeScript, React, and MobX. It uses Webpack for bundling and Sass for styling. The architecture is based on a service worker that acts as a central hub for communication between the content scripts and the extension's UI.
 

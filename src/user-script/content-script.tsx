@@ -40,7 +40,7 @@ export class ContentScript extends React.Component {
     await preloadAppData(
       this.preloadCss(),
       popupSkipInjectionUrls.load(),
-      userStore.load(),
+      userStore.initContentScript(),
     );
 
     // skip content-script injection for specific urls to avoid bugs, e.g. for cloudflare captcha iframe checks
@@ -207,16 +207,13 @@ export class ContentScript extends React.Component {
 
   translateLazy = debounce(this.translate, 250);
 
-  @action
-  refreshAndGetPayload(params: Partial<TranslatePayload> = {}) {
-    this.lastParams = {
+  private getPayloadParams(params: Partial<TranslatePayload> = {}) {
+    return {
       provider: params.provider ?? settingsStore.data.vendor,
       from: params.from ?? settingsStore.data.langFrom,
       to: params.to ?? settingsStore.data.langTo,
       text: params.text ?? this.selectedText.trim(),
     };
-
-    return this.lastParams;
   }
 
   @action
@@ -224,7 +221,7 @@ export class ContentScript extends React.Component {
     this.checkContextInvalidationError();
     this.hideIcon();
 
-    const payload = this.refreshAndGetPayload(params);
+    const payload = this.lastParams = this.getPayloadParams(params);
 
     if (!this.translationConfirmationCheck(payload)) {
       return;
@@ -643,12 +640,7 @@ export class ContentScript extends React.Component {
     evt.stopPropagation();
 
     if (!this.lastParams) {
-      this.refreshAndGetPayload();
-    }
-
-    if (!userStore.isProEnabled) {
-      userStore.subscribeSuggestionDialog();
-      return "";
+      this.lastParams = this.getPayloadParams();
     }
 
     this.lastParams.provider = ProviderCodeName.XTRANSLATE_PRO;

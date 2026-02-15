@@ -32,7 +32,6 @@ export const settingsStorage = createStorage("settings", {
     showPopupOnHotkey: true,
     showTranslatedFrom: true,
     showPopupAdvancedCustomization: false,
-    showPopupPromoBannerLastTimestamp: 0,
     showPopupSummarizeIcon: true,
     rememberLastText: false,
     textInputAutoTranslateEnabled: false,
