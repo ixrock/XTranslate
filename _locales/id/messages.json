@@ -570,7 +570,7 @@
     "message": "Token teks tersedia: { $tokens }"
   },
   "pro_user_remain_tts_seconds_approx": {
-    "message": "Waktu teks-ke-ucapan tersedia dalam detik: { $seconds }"
+    "message": "Waktu text-to-speech yang tersedia: { $timeRange }"
   },
   "pro_unauthorized_error_401": {
     "message": "Anda harus masuk di { $serviceUrl } dan memiliki langganan aktif untuk mendapatkan akses."

@@ -570,7 +570,7 @@
     "message": "Token văn bản có sẵn: { $tokens }"
   },
   "pro_user_remain_tts_seconds_approx": {
-    "message": "Thời gian văn bản thành giọng nói có sẵn tính bằng giây: { $seconds }"
+    "message": "Thời lượng chuyển văn bản thành giọng nói còn lại: { $timeRange }"
   },
   "pro_unauthorized_error_401": {
     "message": "Bạn phải đăng nhập tại { $serviceUrl } và có đăng ký đang hoạt động để có quyền truy cập."

@@ -570,7 +570,7 @@
     "message": "رموز النص المتاحة: { $tokens }"
   },
   "pro_user_remain_tts_seconds_approx": {
-    "message": "وقت تحويل النص إلى كلام المتاح بالثواني: { $seconds }"
+    "message": "الوقت المتاح لتحويل النص إلى كلام: { $timeRange }"
   },
   "pro_unauthorized_error_401": {
     "message": "يجب عليك تسجيل الدخول في { $serviceUrl } وامتلاك اشتراك نشط للوصول."

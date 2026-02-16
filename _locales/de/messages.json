@@ -570,7 +570,7 @@
     "message": "Verfügbare Text-Token: { $tokens }"
   },
   "pro_user_remain_tts_seconds_approx": {
-    "message": "Verfügbare Text-zu-Sprache-Zeit in Sekunden: { $seconds }"
+    "message": "Verfügbare Text-zu-Sprache-Zeit: { $timeRange }"
   },
   "pro_unauthorized_error_401": {
     "message": "Sie müssen bei { $serviceUrl } eingeloggt sein und ein aktives Abonnement haben, um Zugriff zu erhalten."

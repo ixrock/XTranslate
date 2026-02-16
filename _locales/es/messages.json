@@ -570,7 +570,7 @@
     "message": "Tokens de texto disponibles: { $tokens }"
   },
   "pro_user_remain_tts_seconds_approx": {
-    "message": "Tiempo de texto a voz disponible en segundos: { $seconds }"
+    "message": "Tiempo disponible de texto a voz: { $timeRange }"
   },
   "pro_unauthorized_error_401": {
     "message": "Debe haber iniciado sesión en { $serviceUrl } y tener una suscripción activa para obtener acceso."

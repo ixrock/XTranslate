@@ -570,7 +570,7 @@
     "message": "उपलब्ध पाठ टोकन: { $tokens }"
   },
   "pro_user_remain_tts_seconds_approx": {
-    "message": "सेकंड में उपलब्ध टेक्स्ट-टू-स्पीच समय: { $seconds }"
+    "message": "उपलब्ध टेक्स्ट-टू-स्पीच समय: { $timeRange }"
   },
   "pro_unauthorized_error_401": {
     "message": "एक्सेस प्राप्त करने के लिए आपको { $serviceUrl } पर लॉग-इन होना चाहिए और एक सक्रिय सदस्यता होनी चाहिए।"

@@ -570,7 +570,7 @@
     "message": "Jetons de texte disponibles : { $tokens }"
   },
   "pro_user_remain_tts_seconds_approx": {
-    "message": "Temps de synthèse vocale disponible en secondes : { $seconds }"
+    "message": "Temps de synthèse vocale disponible : { $timeRange }"
   },
   "pro_unauthorized_error_401": {
     "message": "Vous devez être connecté à { $serviceUrl } et avoir un abonnement actif pour obtenir l'accès."

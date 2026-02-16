@@ -570,7 +570,7 @@
     "message": "উপলব্ধ টেক্সট টোকেন: { $tokens }"
   },
   "pro_user_remain_tts_seconds_approx": {
-    "message": "সেকেন্ডে উপলব্ধ টেক্সট-টু-স্পীচ সময়: { $seconds }"
+    "message": "উপলব্ধ টেক্সট-টু-স্পিচ সময়: { $timeRange }"
   },
   "pro_unauthorized_error_401": {
     "message": "অ্যাক্সেস পেতে আপনাকে অবশ্যই { $serviceUrl } এ লগ-ইন করতে হবে এবং একটি সক্রিয় সাবস্ক্রিপশন থাকতে হবে।"

@@ -120,6 +120,7 @@ export class UserStore {
     }
   }
 
+  // TODO: optimize/reduce Vercel Edge Invocations by merging api endpoints (?)
   async refreshSubscription() {
     try {
       const user = await this.apiProvider.loadUser();

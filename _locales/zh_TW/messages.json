@@ -570,7 +570,7 @@
     "message": "可用文字代幣: { $tokens }"
   },
   "pro_user_remain_tts_seconds_approx": {
-    "message": "可用文字轉語音時間 (秒): { $seconds }"
+    "message": "可用的文字轉語音時長：{ $timeRange }"
   },
   "pro_unauthorized_error_401": {
     "message": "您必須在 { $serviceUrl } 登入並擁有有效訂閱才能獲取存取權限。"

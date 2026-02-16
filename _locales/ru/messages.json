@@ -564,7 +564,7 @@
     "message": "Доступно текстовых токенов: { $tokens }"
   },
   "pro_user_remain_tts_seconds_approx": {
-    "message": "Доступнов время для озвучки текста в речь (секунд): { $seconds }"
+    "message": "Доступное время синтеза речи (TTS): { $timeRange }"
   },
   "pro_unauthorized_error_401": {
     "message": "Вы должны быть залогинены на { $serviceUrl } и иметь активную подписку для доступа."

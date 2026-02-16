@@ -567,7 +567,7 @@
     "message": "Доступни текстуални токени: { $tokens }"
   },
   "pro_user_remain_tts_seconds_approx": {
-    "message": "Доступно време за текст у говор у секундама: { $seconds }"
+    "message": "Доступно време за претварање текста у говор: { $timeRange }"
   },
   "pro_unauthorized_error_401": {
     "message": "Морате бити пријављени на { $serviceUrl } и имати активну претплату да бисте добили приступ."

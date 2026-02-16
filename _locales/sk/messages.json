@@ -567,7 +567,7 @@
     "message": "Dostupné textové tokeny: { $tokens }"
   },
   "pro_user_remain_tts_seconds_approx": {
-    "message": "Dostupný čas pre prevod textu na reč v sekundách: { $seconds }"
+    "message": "Dostupný čas prevodu textu na reč: { $timeRange }"
   },
   "pro_unauthorized_error_401": {
     "message": "Na využívanie musíte byť prihlásení na { $serviceUrl } a mať aktívne predplatné."

@@ -573,7 +573,7 @@
     "message": "Mevcut metin tokenleri: { $tokens }"
   },
   "pro_user_remain_tts_seconds_approx": {
-    "message": "Saniye cinsinden mevcut metin okuma süresi: { $seconds }"
+    "message": "Kullanılabilir metin-konuşma süresi: { $timeRange }"
   },
   "pro_unauthorized_error_401": {
     "message": "Erişim sağlamak için { $serviceUrl } adresinde oturum açmış ve aktif bir aboneliğe sahip olmalısınız."

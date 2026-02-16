@@ -476,9 +476,6 @@
   "auth_access_info_steps_deepseek": {
     "message": "Register at platform.deepseek.com and top-up balance (e.g. via Paypal)"
   },
-  "auth_access_info_steps_deepl": {
-    "message": "Register at www.deepl.com and get own free authorization API-key for DeepL translations"
-  },
   "auth_access_info_steps_gemini": {
     "message": "Create your free API-key at https://aistudio.google.com/apikey"
   },
@@ -570,7 +567,7 @@
     "message": "Available text tokens: { $tokens }"
   },
   "pro_user_remain_tts_seconds_approx": {
-    "message": "Available text-to-speech time in seconds: { $seconds }"
+    "message": "Available text-to-speech time: { $timeRange }"
   },
   "pro_unauthorized_error_401": {
     "message": "You must be logged-in at { $serviceUrl } and have an active subscription to get access."

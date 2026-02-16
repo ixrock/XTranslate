@@ -570,7 +570,7 @@
     "message": "利用可能なテキストトークン: { $tokens }"
   },
   "pro_user_remain_tts_seconds_approx": {
-    "message": "利用可能なテキスト読み上げ時間 (秒): { $seconds }"
+    "message": "利用可能なテキスト読み上げ時間: { $timeRange }"
   },
   "pro_unauthorized_error_401": {
     "message": "アクセスするには { $serviceUrl } にログインし、有効なサブスクリプションが必要です。"

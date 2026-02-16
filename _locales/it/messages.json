@@ -570,7 +570,7 @@
     "message": "Token di testo disponibili: { $tokens }"
   },
   "pro_user_remain_tts_seconds_approx": {
-    "message": "Tempo di sintesi vocale disponibile in secondi: { $seconds }"
+    "message": "Tempo disponibile per la sintesi vocale: { $timeRange }"
   },
   "pro_unauthorized_error_401": {
     "message": "Devi aver effettuato l'accesso su { $serviceUrl } e avere un abbonamento attivo per ottenere l'accesso."

@@ -570,7 +570,7 @@
     "message": "可用文本代币: { $tokens }"
   },
   "pro_user_remain_tts_seconds_approx": {
-    "message": "可用文本转语音时间 (秒): { $seconds }"
+    "message": "可用的文本转语音时长：{ $timeRange }"
   },
   "pro_unauthorized_error_401": {
     "message": "您必须在 { $serviceUrl } 登录并拥有有效订阅才能获取访问权限。"
