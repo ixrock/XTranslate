@@ -27,7 +27,6 @@ export interface PopupProps extends React.HTMLProps<any> {
   translation: ITranslationResult | undefined;
   error: ITranslationError | undefined;
   summarized?: string;
-  tooltipParentElem?: HTMLElement;
   onProviderChange?(name: ProviderCodeName): void;
   speak?(): Promise<HTMLAudioElement | SpeechSynthesisUtterance | void>;
   summarize?(evt: React.MouseEvent): Promise<void>;
@@ -155,10 +154,7 @@ export class Popup extends React.Component<PopupProps> {
         className={styles.icon}
         material={this.isFavorite ? materialIcons.favorite : materialIcons.unfavorite}
         onClick={this.toggleFavorites}
-        tooltip={{
-          children: getMessage("history_mark_as_favorite"),
-          parentElement: this.props.tooltipParentElem,
-        }}
+        tooltip={getMessage("history_mark_as_favorite")}
       />
     )
   }
@@ -171,10 +167,7 @@ export class Popup extends React.Component<PopupProps> {
       <CopyToClipboardIcon
         className={styles.icon}
         content={content}
-        tooltip={{
-          children: getMessage("popup_copy_translation_title"),
-          parentElement: this.props.tooltipParentElem,
-        }}
+        tooltip={getMessage("popup_copy_translation_title")}
       />
     )
   }
@@ -187,10 +180,7 @@ export class Popup extends React.Component<PopupProps> {
       <Icon
         className={styles.icon}
         material={materialIcons.ttsPlay}
-        tooltip={{
-          children: getMessage("popup_play_icon_title"),
-          parentElement: this.props.tooltipParentElem,
-        }}
+        tooltip={getMessage("popup_play_icon_title")}
         onClick={prevDefault(this.props.speak)}
       />
     );

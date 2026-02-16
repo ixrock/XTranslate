@@ -674,7 +674,6 @@ export class ContentScript extends React.Component {
           speak={speak}
           lastParams={this.lastParams}
           onProviderChange={this.translateWith}
-          tooltipParentElem={ContentScript.rootElem}
           summarize={summarize}
           summarized={summarized}
           showPromoBanner={!isPopupHidden}
