@@ -1,8 +1,9 @@
-import { MessageType, onMessage } from "../extension";
+import { createIsomorphicAction, MessageType } from "../extension";
 import { userStore } from "@/pro";
 
-export function listenUserSubscriptionUpdateRequest() {
-  return onMessage(MessageType.USER_DATA_UPDATE_REQUEST, async () => {
-     await userStore.refreshFromContentScript();
-  });
-}
+export const refreshUserSubscriptionAction = createIsomorphicAction({
+  messageType: MessageType.USER_SUBSCRIPTION_UPDATE_REQ,
+  handler() {
+    return userStore.refreshSubscriptionCheck();
+  }
+});

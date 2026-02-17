@@ -1,7 +1,5 @@
-import { action } from "mobx";
 import { createStorage } from "@/storage";
 import { getXTranslatePro, XTranslateProPricing, XTranslateProSubscription, XTranslateProTranslateError, XTranslateProUser } from "@/providers";
-import { MessageType, sendMessage } from "@/extension";
 import { formatPrice } from "@/utils";
 import { getLocale, getMessage } from "@/i18n";
 
@@ -66,7 +64,7 @@ export class UserStore {
   }
 
   get isProActive(): boolean {
-    if (!this.user || !this.subscription) return false;
+    if (!this.subscription) return false;
 
     return !this.isProExpired && this.subscription.status === "active";
   }
@@ -106,24 +104,47 @@ export class UserStore {
     });
   }
 
-  async initContentScript() {
-    return sendMessage({
-      type: MessageType.USER_DATA_UPDATE_REQUEST,
+  private async safeLoadWithPromiseDedupe(callback: () => Promise<any>) {
+    if (this.refreshPromise) return this.refreshPromise;
+
+    this.refreshPromise = (async () => {
+      try {
+        return await callback();
+      } catch (err) {
+        throw err;
+      } finally {
+        this.refreshPromise = null;
+      }
+    })();
+
+    return this.refreshPromise;
+  }
+
+  async load(): Promise<void> {
+    return this.safeLoadWithPromiseDedupe(async () => {
+      await this.loadSubscription();
     });
   }
 
-  async refreshPricing() {
-    try {
-      const pricing = await this.apiProvider.loadPricing();
-      this.storage.merge({ pricing });
-    } catch (err) {
-    }
+  async loadPricing(force = false) {
+    return await this.safeLoadWithPromiseDedupe(async () => {
+      try {
+        if (this.pricing && !force) {
+          return; // prices needed to be loaded once mostly
+        }
+        const pricing = await this.apiProvider.loadPricing();
+        this.storage.merge({ pricing });
+      } catch (err) {
+        console.error("loading prices has failed", err);
+      }
+    })
   }
 
-  // TODO: optimize/reduce Vercel Edge Invocations by merging api endpoints (?)
-  async refreshSubscription() {
+  async loadSubscription() {
+    await this.storage.load();
+
     try {
-      const user = await this.apiProvider.loadUser();
+      const user = await this.apiProvider.loadUser(); // TODO: merge in single endpoint (?) to reduce Vercel costs
       const subscription = await this.apiProvider.loadSubscription();
 
       this.storage.merge({
@@ -143,54 +164,27 @@ export class UserStore {
     }
   }
 
-  private async safeLoadWithPromiseDedupe(callback: () => Promise<any>) {
-    if (this.refreshPromise) return this.refreshPromise;
+  get cacheResetRequiredForContentScript(): boolean {
+    const { lastUpdateDateTime } = this.data;
+    const isFirstUpdate = lastUpdateDateTime === 0;
+    const freeUserRefreshTimeMs = 30 * 24 * 3600 * 1000; // 1 month
+    const paidUserRefreshTimeMs = 24 * 3600 * 1000; // 1 day
 
-    this.refreshPromise = (async () => {
-      try {
-        return await callback();
-      } catch (err) {
-        throw err;
-      } finally {
-        this.refreshPromise = null;
-      }
-    })();
-
-    return this.refreshPromise;
+    return [
+      isFirstUpdate,
+      this.isFreeUser && (lastUpdateDateTime + freeUserRefreshTimeMs < Date.now()),
+      this.isPaidUser && (lastUpdateDateTime + paidUserRefreshTimeMs < Date.now())
+    ].some(v => v)
   }
 
-  @action
-  async load(): Promise<void> {
-    return this.safeLoadWithPromiseDedupe(async () => {
-      await this.storage.load();
-      if (!this.pricing) await this.refreshPricing();
-      await this.refreshSubscription();
-    })
-  }
+  async refreshSubscriptionCheck(): Promise<void> {
+    await this.storage.load(); // preload storage first (!)
 
-  async refreshFromContentScript() {
-    return this.safeLoadWithPromiseDedupe(async () => {
-      await this.storage.load();
+    if (!this.cacheResetRequiredForContentScript) return;
 
-      const { pricing, lastUpdateDateTime } = this.data;
-      const isFirstUpdate = lastUpdateDateTime === 0;
-      const freeUserRefreshTimeMs = 30 * 24 * 3600 * 1000; // 1 month
-      const paidUserRefreshTimeMs = 24 * 3600 * 1000; // 1 day
-
+    return await this.safeLoadWithPromiseDedupe(async () => {
       try {
-        if (!pricing) {
-          await this.refreshPricing();
-        }
-
-        const updateRequired = [
-          isFirstUpdate,
-          this.isFreeUser && (lastUpdateDateTime + freeUserRefreshTimeMs < Date.now()),
-          this.isPaidUser && (lastUpdateDateTime + paidUserRefreshTimeMs < Date.now())
-        ].some(v => v);
-
-        if (updateRequired) {
-          await this.refreshSubscription();
-        }
+        return await this.loadSubscription();
       } catch (err) {
         const { statusCode } = err as XTranslateProTranslateError;
         if (statusCode === 401) {
