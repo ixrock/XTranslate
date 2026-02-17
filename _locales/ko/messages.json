@@ -485,9 +485,6 @@
   "auth_access_info_steps_deepseek": {
     "message": "platform.deepseek.com에 가입하고 잔액 충전 (예: 페이팔)"
   },
-  "auth_access_info_steps_deepl": {
-    "message": "www.deepl.com에 가입하고 DeepL 번역을 위한 무료 API 키 받기"
-  },
   "auth_access_info_steps_gemini": {
     "message": "https://aistudio.google.com/apikey에서 무료 API 키 생성"
   },

@@ -476,9 +476,6 @@
   "auth_access_info_steps_deepseek": {
     "message": "Региструј се на platform.deepseek.com и допуни своја новчана средства (нпр. помоћу Paypal-а)"
   },
-  "auth_access_info_steps_deepl": {
-    "message": "Региструј се на www.deepl.com да би добио бесплатан кључ за ауторизацију на DeepL API"
-  },
   "auth_access_info_steps_gemini": {
     "message": "Креирај бесплатан API кључ на https://aistudio.google.com/apikey"
   },

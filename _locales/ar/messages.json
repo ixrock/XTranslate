@@ -485,9 +485,6 @@
   "auth_access_info_steps_deepseek": {
     "message": "سجل في platform.deepseek.com واشحن الرصيد (مثل عبر Paypal)"
   },
-  "auth_access_info_steps_deepl": {
-    "message": "سجل في www.deepl.com واحصل على مفتاح API مجاني لترجمات DeepL"
-  },
   "auth_access_info_steps_gemini": {
     "message": "أنشئ مفتاح API مجاني في https://aistudio.google.com/apikey"
   },

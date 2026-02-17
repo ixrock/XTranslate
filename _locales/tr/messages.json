@@ -488,9 +488,6 @@
   "auth_access_info_steps_deepseek": {
     "message": "platform.deepseek.com'a kaydolun ve bakiyenizi doldurun (ör. Paypal ile)"
   },
-  "auth_access_info_steps_deepl": {
-    "message": "www.deepl.com'a kaydolun ve DeepL çevirileri için kendi ücretsiz API anahtarınızı alın"
-  },
   "auth_access_info_steps_gemini": {
     "message": "https://aistudio.google.com/apikey adresinde ücretsiz API anahtarınızı oluşturun"
   },

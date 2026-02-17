@@ -485,9 +485,6 @@
   "auth_access_info_steps_deepseek": {
     "message": "platform.deepseek.com पर पंजीकरण करें और बैलेंस टॉप-अप करें (जैसे पेपैल के माध्यम से)"
   },
-  "auth_access_info_steps_deepl": {
-    "message": "www.deepl.com पर पंजीकरण करें और DeepL अनुवादों के लिए अपनी निःशुल्क API-कुंजी प्राप्त करें"
-  },
   "auth_access_info_steps_gemini": {
     "message": "https://aistudio.google.com/apikey पर अपनी निःशुल्क API-कुंजी बनाएं"
   },

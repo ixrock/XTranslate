@@ -476,9 +476,6 @@
   "auth_access_info_steps_deepseek": {
     "message": "Registruj se na platform.deepseek.com i dopuni svoja novčana sredstva (npr. pomoću Paypal-a)"
   },
-  "auth_access_info_steps_deepl": {
-    "message": "Registruj se na www.deepl.com da bi dobio besplatan ključ za autorizaciju na DeepL API"
-  },
   "auth_access_info_steps_gemini": {
     "message": "Kreiraj besplatan API ključ na https://aistudio.google.com/apikey"
   },

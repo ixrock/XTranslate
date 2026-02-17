@@ -485,9 +485,6 @@
   "auth_access_info_steps_deepseek": {
     "message": "Registrati su platform.deepseek.com e ricarica il saldo (es. via Paypal)"
   },
-  "auth_access_info_steps_deepl": {
-    "message": "Registrati su www.deepl.com e ottieni la tua chiave API gratuita per le traduzioni DeepL"
-  },
   "auth_access_info_steps_gemini": {
     "message": "Crea la tua chiave API gratuita su https://aistudio.google.com/apikey"
   },

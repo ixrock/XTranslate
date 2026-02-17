@@ -476,9 +476,6 @@
   "auth_access_info_steps_deepseek": {
     "message": "Zaregistrujte sa na platform.deepseek.com a dobite si kredit (napr. cez Paypal)"
   },
-  "auth_access_info_steps_deepl": {
-    "message": "Zaregistrujte sa na www.deepl.com a získať vlastný bezplatný autorizačný kľúč API na preklady pomocou DeepL"
-  },
   "auth_access_info_steps_gemini": {
     "message": "Vytvorte si bezplatný kľúč API na https://aistudio.google.com/apikey"
   },

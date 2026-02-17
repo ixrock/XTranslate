@@ -476,9 +476,6 @@
   "auth_access_info_steps_deepseek": {
     "message": "Daftar di platform.deepseek.com dan isi saldo (contoh via Paypal)"
   },
-  "auth_access_info_steps_deepl": {
-    "message": "Daftar di www.deepl.com dan dapatkan API key gratis untuk terjemahan DeepL"
-  },
   "auth_access_info_steps_gemini": {
     "message": "Buat API key gratis di https://aistudio.google.com/apikey"
   },

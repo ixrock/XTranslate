@@ -476,9 +476,6 @@
   "auth_access_info_steps_deepseek": {
     "message": "Зарегистрируйтесь на platform.deepseek.com и пополните баланс (2$+)"
   },
-  "auth_access_info_steps_deepl": {
-    "message": "Зарегистрируйтесь на www.deepl.com и получите бесплатный ключ авторизации для DeepL-переводов"
-  },
   "auth_access_info_steps_gemini": {
     "message": "Создайте свой бесплатный API-ключ на странице https://aistudio.google.com/apikey"
   },

@@ -485,9 +485,6 @@
   "auth_access_info_steps_deepseek": {
     "message": "platform.deepseek.com এ নিবন্ধন করুন এবং ব্যালেন্স টপ-আপ করুন"
   },
-  "auth_access_info_steps_deepl": {
-    "message": "www.deepl.com এ নিবন্ধন করুন এবং DeepL অনুবাদের জন্য নিজস্ব ফ্রি API-কি পান"
-  },
   "auth_access_info_steps_gemini": {
     "message": "https://aistudio.google.com/apikey এ আপনার ফ্রি API-কি তৈরি করুন"
   },

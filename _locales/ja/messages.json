@@ -485,9 +485,6 @@
   "auth_access_info_steps_deepseek": {
     "message": "platform.deepseek.com で登録して残高をチャージ (例: Paypal)"
   },
-  "auth_access_info_steps_deepl": {
-    "message": "www.deepl.com で登録してDeepL翻訳用の無料APIキーを取得"
-  },
   "auth_access_info_steps_gemini": {
     "message": "https://aistudio.google.com/apikey で無料APIキーを作成"
   },

@@ -485,9 +485,6 @@
   "auth_access_info_steps_deepseek": {
     "message": "Đăng ký tại platform.deepseek.com và nạp tiền (ví dụ: qua Paypal)"
   },
-  "auth_access_info_steps_deepl": {
-    "message": "Đăng ký tại www.deepl.com và nhận khóa API miễn phí riêng cho bản dịch DeepL"
-  },
   "auth_access_info_steps_gemini": {
     "message": "Tạo khóa API miễn phí của bạn tại https://aistudio.google.com/apikey"
   },

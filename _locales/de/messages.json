@@ -485,9 +485,6 @@
   "auth_access_info_steps_deepseek": {
     "message": "Registrieren auf platform.deepseek.com und Guthaben aufladen (z. B. per Paypal)"
   },
-  "auth_access_info_steps_deepl": {
-    "message": "Registrieren auf www.deepl.com und kostenlosen API-Schlüssel für DeepL-Übersetzungen erhalten"
-  },
   "auth_access_info_steps_gemini": {
     "message": "Kostenlosen API-Schlüssel erstellen unter https://aistudio.google.com/apikey"
   },

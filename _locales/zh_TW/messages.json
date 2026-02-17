@@ -485,9 +485,6 @@
   "auth_access_info_steps_deepseek": {
     "message": "在 platform.deepseek.com 註冊並儲值餘額 (例如透過 Paypal)"
   },
-  "auth_access_info_steps_deepl": {
-    "message": "在 www.deepl.com 註冊並獲取用於 DeepL 翻譯的免費 API 金鑰"
-  },
   "auth_access_info_steps_gemini": {
     "message": "在 https://aistudio.google.com/apikey 建立您的免費 API 金鑰"
   },
