@@ -245,11 +245,11 @@ export abstract class Translator {
     }
   }
 
-  async speak(text: string, lang?: string): Promise<HTMLAudioElement | SpeechSynthesisUtterance | void> {
+  async speak(text: string, lang?: string, ...args: any[]): Promise<HTMLAudioElement | SpeechSynthesisUtterance | void> {
     this.stopSpeaking(); // stop previous if any
 
     try {
-      if (await this.streamAudio(text, lang)) return this.audio;
+      if (await this.streamAudio(text, lang, ...args)) return this.audio;
     } catch (err) {
       this.logger.error(`[TTS]: streaming failed: ${err}`);
     }
@@ -327,11 +327,11 @@ export abstract class Translator {
     URL.revokeObjectURL(this.audioDataUrl);
   }
 
-  async getAudioFile(text: string, lang?: string): Promise<Blob> {
+  async getAudioFile(text: string, lang?: string, ...otherParams: any[]): Promise<Blob> {
     return;
   }
 
-  async streamAudio(text: string, lang?: string): Promise<boolean> {
+  async streamAudio(text: string, lang?: string, ...otherParams: any[]): Promise<boolean> {
     return false;
   }
 

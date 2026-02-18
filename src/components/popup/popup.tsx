@@ -172,6 +172,7 @@ export class Popup extends React.Component<PopupProps> {
     )
   }
 
+  // TODO: support paused/playing icon state
   renderPlayTextIcon() {
     if (!this.settings.showTextToSpeechIcon) {
       return;

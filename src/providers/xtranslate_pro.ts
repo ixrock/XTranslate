@@ -3,6 +3,7 @@ import { websiteURL } from "@/config";
 import { getTranslator, ITranslationError, ITranslationResult, OpenAIModelTTSVoice, ProviderCodeName, TranslateParams, Translator } from "./index";
 import { MessageType, ProxyResponseType } from "@/extension";
 import { getMessage } from "@/i18n";
+import { settingsStore } from "@/components/settings/settings.storage";
 
 export class XTranslatePro extends Translator {
   override name = ProviderCodeName.XTRANSLATE_PRO;
@@ -97,13 +98,22 @@ export class XTranslatePro extends Translator {
 
   private ttsPort: chrome.runtime.Port;
 
+  override async speak(text: string, lang?: string, voice?: OpenAIModelTTSVoice): Promise<HTMLAudioElement | SpeechSynthesisUtterance | void> {
+    voice ??= settingsStore.data.tts.openAiVoice; // use default value from app's UI settings
+
+    return super.speak(text, lang, voice);
+  }
+
   override stopSpeaking() {
     super.stopSpeaking();
     this.ttsPort?.disconnect();
   }
 
+  // TODO: support receiving stream chunks from background
   async getAudioFile(text: string, lang?: string, voice?: OpenAIModelTTSVoice): Promise<Blob> {
-    return this.request<Blob>({
+    this.logger.info("attempt for text-to-speech with params", { text, lang, voice });
+
+    return await this.request<Blob>({
       url: `${this.apiUrl}/tts`,
       requestInit: {
         method: "POST",
@@ -125,7 +135,9 @@ export class XTranslatePro extends Translator {
     this.audio.src = this.audioDataUrl = URL.createObjectURL(mediaSource);
 
     return new Promise((resolve) => {
-      this.ttsPort = chrome.runtime.connect({ name: MessageType.HTTP_PROXY_STREAM });
+      this.ttsPort = chrome.runtime.connect({
+        name: MessageType.HTTP_PROXY_STREAM,
+      });
 
       const queue: Uint8Array[] = [];
       let sourceBuffer: SourceBuffer;
