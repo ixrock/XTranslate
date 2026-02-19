@@ -616,5 +616,14 @@
   },
   "pro_version_continue_use_free_version": {
     "message": "Continuer à utiliser la version gratuite"
+  },
+  "show_in_context_menu_mode_off": {
+    "message": "Ne pas afficher"
+  },
+  "show_in_context_menu_mode_all_providers": {
+    "message": "Tous les fournisseurs"
+  },
+  "show_in_context_menu_mode_active_provider": {
+    "message": "Uniquement le fournisseur actif"
   }
 }

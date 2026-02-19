@@ -616,5 +616,14 @@
   },
   "pro_version_continue_use_free_version": {
     "message": "Tetap gunakan versi gratis"
+  },
+  "show_in_context_menu_mode_off": {
+    "message": "Jangan tampilkan"
+  },
+  "show_in_context_menu_mode_all_providers": {
+    "message": "Semua penyedia"
+  },
+  "show_in_context_menu_mode_active_provider": {
+    "message": "Hanya penyedia aktif"
   }
 }

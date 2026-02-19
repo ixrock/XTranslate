@@ -616,5 +616,14 @@
   },
   "pro_version_continue_use_free_version": {
     "message": "無料版を使い続ける"
+  },
+  "show_in_context_menu_mode_off": {
+    "message": "表示しない"
+  },
+  "show_in_context_menu_mode_all_providers": {
+    "message": "すべてのプロバイダー"
+  },
+  "show_in_context_menu_mode_active_provider": {
+    "message": "アクティブなプロバイダーのみ"
   }
 }

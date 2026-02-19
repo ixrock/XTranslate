@@ -8,6 +8,7 @@ import "./ai.bgc";
 import "./metrics.bgc";
 import "./user.bgc";
 import "./translate-page.bgc";
+import "./get-selected-text.bgc";
 
 import { installOrUpdateAppActions } from "./install.bgc";
 import { initActiveTabWatcher } from "./tabs.bgc";

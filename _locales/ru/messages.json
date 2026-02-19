@@ -80,6 +80,15 @@
   "show_in_context_menu": {
     "message": "Отображать опцию переводчика в контекстном меню браузера"
   },
+  "show_in_context_menu_mode_off": {
+    "message": "Не отображать"
+  },
+  "show_in_context_menu_mode_all_providers": {
+    "message": "Все провайдеры"
+  },
+  "show_in_context_menu_mode_active_provider": {
+    "message": "Только активный"
+  },
   "use_chrome_tts": {
     "message": "Использовать системный преобразователь текста в речь"
   },

@@ -616,5 +616,14 @@
   },
   "pro_version_continue_use_free_version": {
     "message": "繼續使用免費版本"
+  },
+  "show_in_context_menu_mode_off": {
+    "message": "不顯示"
+  },
+  "show_in_context_menu_mode_all_providers": {
+    "message": "所有提供者"
+  },
+  "show_in_context_menu_mode_active_provider": {
+    "message": "僅限當前提供者"
   }
 }

@@ -1,34 +1,15 @@
-import {
-  createIsomorphicAction,
-  getActiveTabId,
-  isRuntimeConnectionFailedError,
-  MessageType,
-  sendMessage,
-  sendMessageSafe,
-} from "../extension";
-import { tryInjectContentScript } from "./scripting.bgc";
+import { createIsomorphicAction, MessageType, TranslateFullPagePayload } from "../extension";
+import { ActiveTabPayload, sendActiveTabMessageWithRetry } from "./active-tab-request.bgc";
 
-export interface TranslateActivePagePayload {
-  tabId?: number;
-}
+export interface TranslateActivePagePayload extends ActiveTabPayload, TranslateFullPagePayload {}
 
-async function translateActivePageHandler({ tabId }: TranslateActivePagePayload = {}) {
-  const targetTabId = tabId ?? await getActiveTabId();
-
-  try {
-    return await sendMessage<void, void>({
+async function translateActivePageHandler({ tabId, ...payload }: TranslateActivePagePayload = {}) {
+  return sendActiveTabMessageWithRetry<TranslateFullPagePayload, void>({
+    tabId,
+    message: {
       type: MessageType.TRANSLATE_FULL_PAGE,
-      tabId: targetTabId,
-    });
-  } catch (err) {
-    if (!isRuntimeConnectionFailedError(err)) throw err;
-  }
-
-  await tryInjectContentScript({ tabId: targetTabId });
-
-  return sendMessageSafe<void, void>({
-    type: MessageType.TRANSLATE_FULL_PAGE,
-    tabId: targetTabId,
+      payload,
+    },
   });
 }
 
@@ -36,7 +17,3 @@ export const translateActivePageAction = createIsomorphicAction({
   messageType: MessageType.TRANSLATE_ACTIVE_PAGE,
   handler: translateActivePageHandler,
 });
-
-export function translateActivePageContextMenuAction(_: chrome.contextMenus.OnClickData, tab?: chrome.tabs.Tab): Promise<void> {
-  return translateActivePageAction({ tabId: tab?.id });
-}

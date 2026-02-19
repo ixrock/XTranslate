@@ -1,10 +1,10 @@
 import "./input-translation.scss";
 import isEqual from "lodash/isEqual";
 import React, { Fragment } from "react";
-import { action, comparer, makeObservable, observable, reaction, toJS } from "mobx";
+import { action, comparer, IReactionDisposer, makeObservable, observable, reaction, toJS } from "mobx";
 import { observer } from "mobx-react";
 import { getTranslator, getXTranslatePro, isRTL, ITranslationError, ITranslationResult, ProviderCodeName, Translator } from "@/providers";
-import { cssNames, disposer, isHotkeyPressed } from "@/utils";
+import { cssNames, isHotkeyPressed } from "@/utils";
 import { SelectLanguage } from "../select-language";
 import { Input } from "../input";
 import { Spinner } from "../spinner";
@@ -19,7 +19,7 @@ import { getMessage } from "@/i18n";
 import { materialIcons } from "@/config";
 import { isFavorite } from "../user-history/favorites.storage";
 import { saveToFavoritesAction } from "@/background/history.bgc";
-import { getSelectedText } from "@/extension";
+import { getSelectedTextAction } from "@/background/get-selected-text.bgc";
 import { CopyToClipboardIcon } from "../copy-to-clipboard-icon";
 import { SelectProvider } from "../select-provider";
 import { Button } from "@/components/button";
@@ -27,8 +27,8 @@ import { userStore } from "@/pro";
 
 @observer
 export class InputTranslation extends React.Component {
-  private dispose = disposer();
   private input?: Input;
+  private unBindAutoTranslate?: IReactionDisposer;
   private lastParams?: TranslationPageParams;
   private lastInputText = createStorage<string>("last_input_text");
 
@@ -42,20 +42,28 @@ export class InputTranslation extends React.Component {
   @observable translation?: ITranslationResult;
   @observable error?: ITranslationError;
   @observable summarized = "";
+  @observable isSpeaking = false;
+  @observable isPaused = false;
 
   constructor(props: object) {
     super(props);
     makeObservable(this);
   }
 
-  @action
-  async componentDidMount() {
-    this.dispose.push(this.bindAutoTranslate());
+  componentDidMount() {
+    this.bindAutoTranslate();
+    void this.checkUserSelectionFromActiveTabAndTranslateIfAny();
+  }
 
+  componentWillUnmount() {
+    this.unBindAutoTranslate?.();
+  }
+
+  private async checkUserSelectionFromActiveTabAndTranslateIfAny() {
     await this.lastInputText.load();
 
     const { rememberLastText, vendor, langFrom, langTo, textInputAutoTranslateEnabled } = settingsStore.data;
-    const selectedText = await getSelectedText();
+    const selectedText = await getSelectedTextAction();
 
     this.params = {
       page: "translate",
@@ -65,15 +73,13 @@ export class InputTranslation extends React.Component {
       text: this.urlParams.text || selectedText || (rememberLastText ? this.lastInputText.get() : ""),
     };
 
-    if (textInputAutoTranslateEnabled) void this.translate();
-  }
-
-  componentWillUnmount() {
-    this.dispose();
+    if (textInputAutoTranslateEnabled) {
+      void this.translate();
+    }
   }
 
   private bindAutoTranslate() {
-    return reaction(() => toJS(this.params), (params: TranslationPageParams) => {
+    this.unBindAutoTranslate = reaction(() => toJS(this.params), (params: TranslationPageParams) => {
       if (!settingsStore.data.textInputAutoTranslateEnabled) return;
       void this.translate(params);
     }, {
@@ -81,9 +87,6 @@ export class InputTranslation extends React.Component {
       delay: settingsStore.data.textInputTranslateDelayMs,
     });
   }
-
-  @observable isSpeaking = false;
-  @observable isPaused = false;
 
   @action.bound
   resetSpeakingState() {
@@ -138,6 +141,8 @@ export class InputTranslation extends React.Component {
 
   @action.bound
   async translate(params = { ...this.params }) {
+    this.summarized = "";
+
     if (!params.text || isEqual(this.lastParams, params)) {
       return;
     }
@@ -147,7 +152,6 @@ export class InputTranslation extends React.Component {
     this.translation = null;
     this.error = null;
     this.isLoading = true;
-    this.summarized = "";
 
     try {
       this.lastParams = params;
@@ -399,10 +403,12 @@ export class InputTranslation extends React.Component {
     this.translation = null;
 
     try {
+      this.unBindAutoTranslate?.();
       this.summarized = await getXTranslatePro().summarize({ text, targetLang: langTo });
     } catch (err) {
       this.error = err;
     } finally {
+      this.bindAutoTranslate();
       this.isLoading = false;
     }
   }

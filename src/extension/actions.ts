@@ -1,6 +1,5 @@
-import { isBackgroundWorker, onMessage, sendMessage, sendMessageSafe } from "./runtime";
+import { isBackgroundWorker, onMessage, sendMessage } from "./runtime";
 import { MessageType } from "./messages";
-import { getActiveTabId } from "./tabs";
 
 export interface IsomorphicActionParams<Payload extends any[], Result> {
   messageType: MessageType;
@@ -27,11 +26,4 @@ export function createIsomorphicAction<Payload extends any[], Result>(params: Is
       payload,
     });
   };
-}
-
-export async function getSelectedText(): Promise<string> {
-  return sendMessageSafe<void, string>({
-    type: MessageType.GET_SELECTED_TEXT,
-    tabId: await getActiveTabId(),
-  });
 }

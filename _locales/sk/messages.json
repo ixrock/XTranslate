@@ -613,5 +613,14 @@
   },
   "pro_version_continue_use_free_version": {
     "message": "Pokračovať s bezplatnou verziou"
+  },
+  "show_in_context_menu_mode_off": {
+    "message": "Nezobrazovať"
+  },
+  "show_in_context_menu_mode_all_providers": {
+    "message": "Všetci poskytovatelia"
+  },
+  "show_in_context_menu_mode_active_provider": {
+    "message": "Len aktívny poskytovateľ"
   }
 }

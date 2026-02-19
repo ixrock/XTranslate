@@ -13,7 +13,7 @@ import { ReactSelect, ReactSelectOption } from "../select";
 import { Icon } from "../icon";
 import { SubTitle } from "../sub-title";
 import { Tab } from "../tabs";
-import { settingsStore, XIconPosition } from "./settings.storage";
+import { FullPageContextMenuMode, settingsStore, XIconPosition } from "./settings.storage";
 import { pageManager } from "../app/page-manager";
 import { getMessage } from "@/i18n";
 import { SelectVoice } from "../select-tts-voice";
@@ -126,6 +126,14 @@ export class Settings extends React.Component {
       { value: { right: true, top: true }, label: getMessage("popup_position_right_top") },
       { value: { right: true, bottom: true }, label: getMessage("popup_position_right_bottom") },
       { value: { left: true, bottom: true }, label: getMessage("popup_position_left_bottom") },
+    ];
+  };
+
+  private get contextMenuModeOptions(): ReactSelectOption<FullPageContextMenuMode>[] {
+    return [
+      { value: FullPageContextMenuMode.OFF, label: getMessage("show_in_context_menu_mode_off") },
+      { value: FullPageContextMenuMode.ALL_PROVIDERS, label: getMessage("show_in_context_menu_mode_all_providers") },
+      { value: FullPageContextMenuMode.ACTIVE_PROVIDER, label: getMessage("show_in_context_menu_mode_active_provider") },
     ];
   };
 
@@ -335,12 +343,6 @@ export class Settings extends React.Component {
           checked={settings.customPdfViewer}
           onChange={v => settings.customPdfViewer = v}
         />
-        <Checkbox
-          className={styles.inline}
-          label={getMessage("show_in_context_menu")}
-          checked={settings.fullPageTranslation.showInContextMenu}
-          onChange={v => settings.fullPageTranslation.showInContextMenu = v}
-        />
 
         <div className="translation-icon flex gaps">
           <Checkbox
@@ -388,6 +390,17 @@ export class Settings extends React.Component {
             onClick={this.speakDemoText}
           />
         </div>
+
+        <div className={`${styles.inline} flex gaps align-center`}>
+          <span className="box grow">{getMessage("show_in_context_menu")}</span>
+          <ReactSelect<FullPageContextMenuMode>
+            className="box noshrink"
+            options={this.contextMenuModeOptions}
+            value={this.contextMenuModeOptions.find(({ value }) => value === settings.fullPageTranslation.contextMenuMode)}
+            onChange={({ value }) => settings.fullPageTranslation.contextMenuMode = value}
+          />
+        </div>
+
       </main>
     );
   }

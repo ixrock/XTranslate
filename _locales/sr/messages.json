@@ -613,5 +613,14 @@
   },
   "pro_version_continue_use_free_version": {
     "message": "Nastavi korišćenje besplatne verzije"
+  },
+  "show_in_context_menu_mode_off": {
+    "message": "Ne prikazuj"
+  },
+  "show_in_context_menu_mode_all_providers": {
+    "message": "Svi provajderi"
+  },
+  "show_in_context_menu_mode_active_provider": {
+    "message": "Samo aktivni provajder"
   }
 }

@@ -613,5 +613,14 @@
   },
   "pro_user_subscription_inactive": {
     "message": "Претплата неактивна. План: {$plan}, Статус: {$status}, Завршава се: {$periodEnd}"
+  },
+  "show_in_context_menu_mode_off": {
+    "message": "Не приказуј"
+  },
+  "show_in_context_menu_mode_all_providers": {
+    "message": "Сви провајдери"
+  },
+  "show_in_context_menu_mode_active_provider": {
+    "message": "Само активни провајдер"
   }
 }

@@ -616,5 +616,14 @@
   },
   "pro_version_continue_use_free_version": {
     "message": "무료 버전 계속 사용"
+  },
+  "show_in_context_menu_mode_off": {
+    "message": "표시하지 않음"
+  },
+  "show_in_context_menu_mode_all_providers": {
+    "message": "모든 제공자"
+  },
+  "show_in_context_menu_mode_active_provider": {
+    "message": "활성 제공자만"
   }
 }

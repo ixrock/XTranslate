@@ -12,6 +12,12 @@ export type XIconPosition = {
   left?: boolean;
 };
 
+export enum FullPageContextMenuMode {
+  OFF = "off",
+  ALL_PROVIDERS = "all_providers",
+  ACTIVE_PROVIDER = "active_provider",
+}
+
 export type SettingsStorageModel = typeof settingsStorage.defaultValue;
 export type PopupHotkeyStorageModel = typeof popupHotkey.defaultValue;
 
@@ -59,7 +65,7 @@ export const settingsStorage = createStorage("settings", {
       geminiVoice: GeminiAIModelTTSVoice.Puck,
     },
     fullPageTranslation: {
-      showInContextMenu: true,
+      contextMenuMode: FullPageContextMenuMode.ALL_PROVIDERS,
       provider: "bing" as ProviderCodeName,
       langFrom: "auto",
       langTo: "en",

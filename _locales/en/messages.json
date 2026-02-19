@@ -80,6 +80,15 @@
   "show_in_context_menu": {
     "message": "Show translator option in browser context menu"
   },
+  "show_in_context_menu_mode_off": {
+    "message": "Do not show"
+  },
+  "show_in_context_menu_mode_all_providers": {
+    "message": "All providers"
+  },
+  "show_in_context_menu_mode_active_provider": {
+    "message": "Active provider only"
+  },
   "use_chrome_tts": {
     "message": "Force to use system text-to-speech engine"
   },

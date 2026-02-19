@@ -13,7 +13,7 @@ import orderBy from 'lodash/orderBy';
 import { contentScriptInjectable } from "../config";
 import { preloadAppData } from "../preloadAppData";
 import { autoBind, disposer, getHotkey, strLengthCodePoints } from "../utils";
-import { getManifest, getURL, isExtensionContextAlive, MessageType, onMessage, ProxyResponseType, TranslatePayload } from "../extension";
+import { getManifest, getURL, isExtensionContextAlive, MessageType, onMessage, ProxyResponseType, TranslateFullPagePayload, TranslatePayload } from "../extension";
 import { proxyRequest } from "../background/httpProxy.bgc";
 import { sendMetric } from "../background/metrics.bgc";
 import { popupHotkey, popupSkipInjectionUrls, settingsStore } from "../components/settings/settings.storage";
@@ -266,13 +266,52 @@ export class ContentScript extends React.Component {
   }
 
   private getSelectedTextAction() {
-    return this.selectedText;
+    const selectedText = this.selectedText || this.selection?.toString().trim();
+    return selectedText || "";
   }
 
-  private togglePageAutoTranslation() {
-    if (this.pageTranslator.isEnabled) {
+  private setFullPageProvider(provider?: ProviderCodeName) {
+    if (!provider || this.pageTranslator.settings.provider === provider) {
+      return;
+    }
+
+    const translator = getTranslator(provider);
+    if (!translator) return;
+    const supportedLanguages = translator.getSupportedLanguages(this.pageTranslator.settings);
+    this.pageTranslator.settings.provider = provider;
+    this.pageTranslator.settings.langFrom = supportedLanguages.langFrom;
+    this.pageTranslator.settings.langTo = supportedLanguages.langTo;
+  }
+
+  private togglePageAutoTranslation(params: TranslateFullPagePayload = {}) {
+    const { action = "toggle", provider } = params;
+    const isEnabled = this.pageTranslator.isEnabled;
+
+    if (action === "stop") {
+      if (isEnabled) {
+        this.stopPageAutoTranslation();
+      }
+      return;
+    }
+
+    if (action === "start") {
+      this.setFullPageProvider(provider);
+
+      if (!isEnabled) {
+        this.startPageAutoTranslation();
+      }
+      return;
+    }
+
+    if (provider && isEnabled) {
+      this.setFullPageProvider(provider);
+      return;
+    }
+
+    if (isEnabled) {
       this.stopPageAutoTranslation();
     } else {
+      this.setFullPageProvider(provider);
       this.startPageAutoTranslation();
     }
   }

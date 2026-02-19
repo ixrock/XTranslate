@@ -616,5 +616,14 @@
   },
   "pro_version_continue_use_free_version": {
     "message": "मुफ़्त संस्करण का उपयोग जारी रखें"
+  },
+  "show_in_context_menu_mode_off": {
+    "message": "प्रदर्शित न करें"
+  },
+  "show_in_context_menu_mode_all_providers": {
+    "message": "सभी प्रदाता"
+  },
+  "show_in_context_menu_mode_active_provider": {
+    "message": "केवल सक्रिय प्रदाता"
   }
 }

@@ -616,5 +616,14 @@
   },
   "pro_version_continue_use_free_version": {
     "message": "متابعة استخدام النسخة المجانية"
+  },
+  "show_in_context_menu_mode_off": {
+    "message": "لا يظهر"
+  },
+  "show_in_context_menu_mode_all_providers": {
+    "message": "جميع المزودين"
+  },
+  "show_in_context_menu_mode_active_provider": {
+    "message": "مزود نشط فقط"
   }
 }
