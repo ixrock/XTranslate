@@ -14,10 +14,24 @@ export interface PageTranslatorParams {
   autoTranslateDelayMs?: number; /* default: 500 */
 }
 
+interface TranslationUnit {
+  node: Node;
+  text: string;
+  partIndex: number;
+  partCount: number;
+}
+
 export class PageTranslator {
   static readonly RX_LETTER = /\p{L}/u;
   static readonly SKIP_TAGS = ["SCRIPT", "STYLE", "NOSCRIPT", "CODE"];
-  static readonly MAX_API_LIMIT_CHARS_PER_REQUEST = 5000;
+
+  static readonly MAX_CONCURRENT_TRANSLATE_REQUESTS = 3;
+  static readonly DEFAULT_API_LIMIT_CHARS_PER_REQUEST = 5000;
+  static readonly FULL_PAGE_API_LIMIT_CHARS_PER_REQUEST: Partial<Record<ProviderCodeName, number>> = {
+    [ProviderCodeName.GOOGLE]: 5000,
+    [ProviderCodeName.BING]: 5000,
+    [ProviderCodeName.XTRANSLATE_PRO]: 30000,
+  };
 
   protected logger = createLogger({ systemPrefix: "[PAGE-TRANSLATOR]", prefixColor: LoggerColor.INFO_SYSTEM });
   protected dispose = disposer();
@@ -247,7 +261,7 @@ export class PageTranslator {
     });
   });
 
-  protected importNode(node: Node, nodes: Node[]) {
+  protected importNode(node: Node) {
     if (this.nodesAll.has(node)) return;
 
     this.nodesAll.add(node);
@@ -259,11 +273,9 @@ export class PageTranslator {
 
       const parentElem = node.parentElement;
       if (parentElem) {
-        if (!this.tooltipNodes.get(parentElem)) {
-          const childrenTexts = nodes.filter(textNode => parentElem.contains(textNode)) as Text[]; // TODO: optimize?
-          this.tooltipNodes.set(parentElem, new Set(childrenTexts));
-        }
-        this.tooltipNodes.get(parentElem).add(node);
+        const childrenTexts = this.tooltipNodes.get(parentElem) ?? new Set<Text>();
+        childrenTexts.add(node);
+        this.tooltipNodes.set(parentElem, childrenTexts);
       }
     }
     if (node instanceof HTMLImageElement || node instanceof HTMLAreaElement) {
@@ -289,7 +301,7 @@ export class PageTranslator {
   }
 
   protected processNodes(nodes: Node[]) {
-    nodes.forEach(node => this.importNode(node, nodes));
+    nodes.forEach(node => this.importNode(node));
 
     if (this.settings.trafficSaveMode) {
       this.dispose.push(this.enableTrafficSaveMode(nodes));
@@ -308,23 +320,106 @@ export class PageTranslator {
     return spaces;
   }
 
-  // TODO: split big sentences with `Intl.Segmenter` for better API-caching
-  protected packNodes(nodes: Node[]): Node[][] {
-    const limit = PageTranslator.MAX_API_LIMIT_CHARS_PER_REQUEST;
-    const packs: Node[][] = [];
-    let currentPack: Node[] = [];
-    let bufferLen = 0; // in code-points
+  protected getApiLimitCharsPerRequest(provider = this.settings.provider): number {
+    return (
+      PageTranslator.FULL_PAGE_API_LIMIT_CHARS_PER_REQUEST[provider]
+      ?? PageTranslator.DEFAULT_API_LIMIT_CHARS_PER_REQUEST
+    );
+  }
+
+  protected splitByCodePoints(text: string, chunkSize: number): string[] {
+    const chunks: string[] = [];
+    const chars = Array.from(text);
+
+    for (let i = 0; i < chars.length; i += chunkSize) {
+      chunks.push(chars.slice(i, i + chunkSize).join(""));
+    }
+
+    return chunks;
+  }
+
+  protected splitTextForApi(text: string): string[] {
+    const limit = this.getApiLimitCharsPerRequest();
+    const textLen = strLengthCodePoints(text);
+    if (textLen <= limit) return [text];
+
+    const locale = this.settings.langFrom !== "auto" ? this.settings.langFrom : undefined;
+    const segmenter = new Intl.Segmenter(locale, { granularity: "sentence" });
+    const segments = Array.from(segmenter.segment(text), ({ segment }) => segment).filter(Boolean);
+
+    if (!segments.length) {
+      return this.splitByCodePoints(text, limit);
+    }
+
+    const chunks: string[] = [];
+    let buffer = "";
+    let bufferLen = 0;
+
+    const pushBuffer = () => {
+      if (buffer) {
+        chunks.push(buffer);
+        buffer = "";
+        bufferLen = 0;
+      }
+    };
+
+    for (const segment of segments) {
+      const len = strLengthCodePoints(segment); // safe for chars like: 😊 𐍈 等
+
+      if (len > limit) {
+        pushBuffer();
+        chunks.push(...this.splitByCodePoints(segment, limit));
+        continue;
+      }
+      if (bufferLen + len > limit) {
+        pushBuffer();
+      }
+
+      buffer += segment;
+      bufferLen += len;
+    }
+
+    pushBuffer();
+    return chunks.length ? chunks : this.splitByCodePoints(text, limit);
+  }
+
+  protected createTranslationUnits(nodes: Node[]): TranslationUnit[] {
+    const units: TranslationUnit[] = [];
 
     for (const node of nodes) {
-      const txt = this.originalText.get(node);
-      const len = strLengthCodePoints(txt); // safe for chars like: 😊 𐍈 等
+      const originalText = this.originalText.get(node);
+      if (!originalText) continue;
+
+      const textChunks = this.splitTextForApi(originalText);
+      textChunks.forEach((text, partIndex) => {
+        units.push({
+          node,
+          text,
+          partIndex,
+          partCount: textChunks.length,
+        });
+      });
+    }
+
+    return units;
+  }
+
+  protected packTranslationUnits<T extends { text: string }>(units: T[]): T[][] {
+    const limit = this.getApiLimitCharsPerRequest();
+    const packs: T[][] = [];
+    let currentPack: T[] = [];
+    let bufferLen = 0;
+
+    for (const unit of units) {
+      const len = strLengthCodePoints(unit.text);
 
       if (bufferLen + len > limit) {
         if (currentPack.length) packs.push(currentPack);
         currentPack = [];
         bufferLen = 0;
       }
-      currentPack.push(node);
+
+      currentPack.push(unit);
       bufferLen += len;
     }
 
@@ -333,27 +428,88 @@ export class PageTranslator {
   }
 
   protected async translateNodes(nodes = this.nodes): Promise<string[]> {
+    const providerId = this.getProviderHashId();
     const freshNodes = nodes.filter(node => !this.getTranslation(node));
-    freshNodes.forEach(node => this.importNode(node, nodes));
+    freshNodes.forEach(node => this.importNode(node));
 
-    this.logger.info("TRANSLATING NODES", { nodes: freshNodes })
+    this.logger.info("TRANSLATING NODES", { nodes: freshNodes });
 
-    const packedNodes = this.packNodes(freshNodes);
-    return (
-      await Promise.all(
-        packedNodes.map(async nodes => {
-          const translations = await this.translateApiRequest(nodes);
-          if (this.params.sessionCache) this.saveStorageCache(nodes, translations);
-          return translations;
-        })
-      )
-    ).flat();
+    const units = this.createTranslationUnits(freshNodes);
+    const unitTranslations: (string | undefined)[] = new Array(units.length);
+    const unitsToTranslate: (TranslationUnit & { unitIndex: number })[] = [];
+
+    units.forEach((unit, unitIndex) => {
+      const cachedTranslation = this.params.sessionCache ? this.getStorageCacheByText(unit.text, providerId) : undefined;
+      if (cachedTranslation !== undefined && cachedTranslation !== null) {
+        unitTranslations[unitIndex] = cachedTranslation;
+      } else {
+        unitsToTranslate.push({ ...unit, unitIndex });
+      }
+    });
+
+    const packedUnits = this.packTranslationUnits(unitsToTranslate);
+    let nextPackIndex = 0;
+    const workersCount = Math.min(PageTranslator.MAX_CONCURRENT_TRANSLATE_REQUESTS, packedUnits.length);
+
+    await Promise.all(
+      Array.from({ length: workersCount }, async () => {
+        while (true) {
+          const packIndex = nextPackIndex++;
+          const pack = packedUnits[packIndex];
+          if (!pack) break;
+
+          const texts = pack.map(unit => unit.text);
+          const translations = await this.translateApiRequest(texts);
+          if (this.params.sessionCache) this.saveStorageCacheByText(texts, translations, providerId);
+
+          pack.forEach((unit, translationIndex) => {
+            const translation = translations[translationIndex];
+            if (translation !== undefined) {
+              unitTranslations[unit.unitIndex] = translation;
+            }
+          });
+        }
+      })
+    );
+
+    const partsByNode = new Map<Node, (string | undefined)[]>();
+    units.forEach((unit, unitIndex) => {
+      const nodeParts = partsByNode.get(unit.node) ?? Array<string | undefined>(unit.partCount).fill(undefined);
+      nodeParts[unit.partIndex] = unitTranslations[unitIndex];
+      partsByNode.set(unit.node, nodeParts);
+    });
+
+    const resolvedTranslations: string[] = [];
+    const cacheTexts: string[] = [];
+    const cacheTranslations: string[] = [];
+    freshNodes.forEach(node => {
+      const parts = partsByNode.get(node);
+      if (!parts || parts.some(part => part === undefined)) return;
+
+      const translation = parts.join("");
+      const savedTranslations = this.translations.get(node) ?? {} as Record<TranslationHashId, string>;
+      savedTranslations[providerId] = translation;
+      this.translations.set(node, savedTranslations);
+      resolvedTranslations.push(translation);
+
+      if (this.params.sessionCache) {
+        const originalText = this.originalText.get(node);
+        if (originalText) {
+          cacheTexts.push(originalText);
+          cacheTranslations.push(translation);
+        }
+      }
+    });
+
+    if (this.params.sessionCache && cacheTexts.length) {
+      this.saveStorageCacheByText(cacheTexts, cacheTranslations, providerId);
+    }
+
+    return resolvedTranslations;
   }
 
-  async translateApiRequest(nodes: Node[]): Promise<string[]> {
+  async translateApiRequest(texts: string[]): Promise<string[]> {
     const { provider, langFrom, langTo } = this.settings;
-    const providerId = this.getProviderHashId();
-    const texts = nodes.map(node => this.originalText.get(node));
     const translator = getTranslator(provider);
 
     try {
@@ -364,13 +520,7 @@ export class PageTranslator {
       });
 
       const result = texts.map((originalText, i) => [originalText, translations[i]]);
-      this.logger.info(`TRANSLATED TEXTS: ${nodes.length}`, { result });
-
-      translations.forEach((translation, index) => {
-        const node = nodes[index];
-        const savedTranslations = this.translations.get(node);
-        savedTranslations[providerId] = translation;
-      });
+      this.logger.info(`TRANSLATED TEXTS: ${texts.length}`, { result });
 
       return translations;
     } catch (err) {
@@ -518,26 +668,27 @@ export class PageTranslator {
     return `${providerId}--${md5(text)}`;
   }
 
-  protected saveStorageCache(nodes: Node[], translations: string[]): void {
+  protected saveStorageCacheByText(texts: string[], translations: string[], providerId = this.getProviderHashId()): void {
     queueMicrotask(() => {
-      nodes.forEach((node, index) => {
-        const originalText = this.originalText.get(node);
-        if (originalText) {
-          const translation = translations[index];
-          if (translation) {
-            const translationCacheId = this.getStorageHashId(originalText);
-            sessionStorage.setItem(translationCacheId, translation);
-          }
+      texts.forEach((text, index) => {
+        const translation = translations[index];
+        if (text && translation) {
+          const translationCacheId = this.getStorageHashId(text, providerId);
+          sessionStorage.setItem(translationCacheId, translation);
         }
-      })
+      });
     });
   }
 
   protected getStorageCache(node: Node, providerId = this.getProviderHashId()): string | undefined {
     const text = this.originalText.get(node);
     if (text) {
-      const storageCacheId = this.getStorageHashId(text, providerId);
-      return sessionStorage.getItem(storageCacheId);
+      return this.getStorageCacheByText(text, providerId);
     }
+  }
+
+  protected getStorageCacheByText(text: string, providerId = this.getProviderHashId()): string | undefined {
+    const storageCacheId = this.getStorageHashId(text, providerId);
+    return sessionStorage.getItem(storageCacheId);
   }
 }
