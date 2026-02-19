@@ -1,11 +1,12 @@
 // Global browser's context menu
 
 import { autorun } from "mobx";
-import { getManifest, translateActivePage } from "../extension";
+import { getManifest } from "../extension";
 import { settingsStorage } from "../components/settings/settings.storage";
 import { activeTabStorage } from "./tabs.bgc";
 import { getTranslator } from "../providers";
 import { getMessage, i18nInit } from "../i18n";
+import { translateActivePageContextMenuAction } from "./translate-page.bgc";
 
 export async function initContextMenu() {
   const { name: appName } = getManifest();
@@ -41,6 +42,6 @@ export async function initContextMenu() {
       title: autoTranslateEnabled ? stopTranslatePageTitle : startTranslatePageTitle,
     });
 
-    chrome.contextMenus.onClicked.addListener(translateActivePage);
+    chrome.contextMenus.onClicked.addListener(translateActivePageContextMenuAction);
   })
 }

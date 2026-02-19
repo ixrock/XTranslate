@@ -5,8 +5,9 @@ import { observer } from "mobx-react";
 import { isSystemPage } from "@/config";
 import { cssNames } from "@/utils";
 import { getTranslator } from "@/providers";
-import { getManifest, translateActivePage } from "@/extension";
+import { getManifest } from "@/extension";
 import { activeTabStorage } from "@/background/tabs.bgc";
+import { translateActivePageAction } from "@/background/translate-page.bgc";
 import { settingsStore } from '../settings/settings.storage'
 import { Tabs } from "../tabs";
 import { Icon } from "../icon";
@@ -37,8 +38,11 @@ export class Header extends React.Component {
   }
 
   private translateActivePage = async () => {
-    void translateActivePage();
-    window.close();
+    try {
+      await translateActivePageAction();
+    } finally {
+      window.close();
+    }
   }
 
   private onTabsChange = async (page: PageId) => {

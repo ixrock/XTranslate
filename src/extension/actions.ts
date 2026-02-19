@@ -35,10 +35,3 @@ export async function getSelectedText(): Promise<string> {
     tabId: await getActiveTabId(),
   });
 }
-
-export async function translateActivePage() {
-  return sendMessageSafe({
-    type: MessageType.TRANSLATE_FULL_PAGE,
-    tabId: await getActiveTabId(),
-  });
-}
