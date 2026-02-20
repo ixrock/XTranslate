@@ -476,9 +476,6 @@
   "auth_access_info_steps_deepseek": {
     "message": "Региструј се на platform.deepseek.com и допуни своја новчана средства (нпр. помоћу Paypal-а)"
   },
-  "auth_access_info_steps_deepl": {
-    "message": "Региструј се на www.deepl.com да би добио бесплатан кључ за ауторизацију на DeepL API"
-  },
   "auth_access_info_steps_gemini": {
     "message": "Креирај бесплатан API кључ на https://aistudio.google.com/apikey"
   },
@@ -612,7 +609,7 @@
     "message": "Доступни текстуални токени: { $tokens }"
   },
   "pro_user_remain_tts_seconds_approx": {
-    "message": "Доступно време за текст у говор у секундама: { $seconds }"
+    "message": "Доступно време за претварање текста у говор: { $timeRange }"
   },
   "pro_unauthorized_error_401": {
     "message": "Морате бити пријављени на { $serviceUrl } и имати активну претплату да бисте добили приступ."
@@ -661,5 +658,14 @@
   },
   "pro_user_subscription_inactive": {
     "message": "Претплата неактивна. План: {$plan}, Статус: {$status}, Завршава се: {$periodEnd}"
+  },
+  "show_in_context_menu_mode_off": {
+    "message": "Не приказуј"
+  },
+  "show_in_context_menu_mode_all_providers": {
+    "message": "Сви провајдери"
+  },
+  "show_in_context_menu_mode_active_provider": {
+    "message": "Само активни провајдер"
   }
 }

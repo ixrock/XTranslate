@@ -530,9 +530,6 @@
   "auth_access_info_steps_deepseek": {
     "message": "platform.deepseek.com এ নিবন্ধন করুন এবং ব্যালেন্স টপ-আপ করুন"
   },
-  "auth_access_info_steps_deepl": {
-    "message": "www.deepl.com এ নিবন্ধন করুন এবং DeepL অনুবাদের জন্য নিজস্ব ফ্রি API-কি পান"
-  },
   "auth_access_info_steps_gemini": {
     "message": "https://aistudio.google.com/apikey এ আপনার ফ্রি API-কি তৈরি করুন"
   },
@@ -615,7 +612,7 @@
     "message": "উপলব্ধ টেক্সট টোকেন: { $tokens }"
   },
   "pro_user_remain_tts_seconds_approx": {
-    "message": "সেকেন্ডে উপলব্ধ টেক্সট-টু-স্পীচ সময়: { $seconds }"
+    "message": "উপলব্ধ টেক্সট-টু-স্পিচ সময়: { $timeRange }"
   },
   "pro_unauthorized_error_401": {
     "message": "অ্যাক্সেস পেতে আপনাকে অবশ্যই { $serviceUrl } এ লগ-ইন করতে হবে এবং একটি সক্রিয় সাবস্ক্রিপশন থাকতে হবে।"
@@ -664,5 +661,14 @@
   },
   "pro_version_continue_use_free_version": {
     "message": "বিনামূল্যের সংস্করণ ব্যবহার চালিয়ে যান"
+  },
+  "show_in_context_menu_mode_off": {
+    "message": "প্রদর্শন করবেন না"
+  },
+  "show_in_context_menu_mode_all_providers": {
+    "message": "সব প্রদানকারী"
+  },
+  "show_in_context_menu_mode_active_provider": {
+    "message": "শুধুমাত্র সক্রিয় প্রদানকারী"
   }
 }

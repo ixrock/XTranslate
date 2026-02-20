@@ -1,9 +1,8 @@
 import AILanguagesList from "./open-ai.json"
-import { ITranslationResult, OpenAIModelTTS, ProviderCodeName, TranslateParams, Translator } from "./index";
+import { ITranslationResult, ProviderCodeName, TranslateParams, Translator } from "./index";
 import { createStorage } from "../storage";
-import { ttsOpenAIAction, translateTextAction } from "../background/ai.bgc";
+import { translateTextWithAI } from "../background/ai.bgc";
 import { settingsStore } from "../components/settings/settings.storage";
-import { toBinaryFile } from "../utils/binary";
 
 export class OpenAITranslator extends Translator {
   override name = ProviderCodeName.OPENAI;
@@ -20,7 +19,7 @@ export class OpenAITranslator extends Translator {
   async translate({ from, to, text }: TranslateParams): Promise<ITranslationResult> {
     await this.#apiKey.load();
 
-    return translateTextAction({
+    return translateTextWithAI({
       provider: this.name,
       model: settingsStore.data.openAiModel,
       apiKey: this.#apiKey.get(),
@@ -28,22 +27,6 @@ export class OpenAITranslator extends Translator {
       sourceLanguage: from !== "auto" ? this.langFrom[from] : undefined,
       text,
     })
-  }
-
-  async getAudioFile(text: string, lang?: string): Promise<Blob> {
-    await this.#apiKey.load();
-
-    const data = await ttsOpenAIAction({
-      provider: this.name,
-      model: OpenAIModelTTS.MINI,
-      apiKey: this.#apiKey.get(),
-      voice: settingsStore.data.tts.openAiVoice,
-      text,
-      targetLanguage: lang,
-      response_format: "mp3",
-    });
-
-    return toBinaryFile(data, "audio/mpeg");
   }
 
   getAuthSettings() {

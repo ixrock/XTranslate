@@ -5,7 +5,11 @@ import type { GoogleMetricEvents } from "../background/metrics.bgc";
 
 export enum MessageType {
   PROXY_REQUEST = "PROXY_REQUEST",
+  HTTP_PROXY_STREAM = "HTTP_PROXY_STREAM",
+  TRANSLATE_ACTIVE_PAGE = "TRANSLATE_ACTIVE_PAGE",
   TRANSLATE_FULL_PAGE = "TRANSLATE_FULL_PAGE",
+  TRANSLATE_TEXT_WITH_AI = "TRANSLATE_TEXT_WITH_AI",
+  GET_SELECTED_TEXT_ACTIVE_PAGE = "GET_SELECTED_TEXT_ACTIVE_PAGE",
   GET_SELECTED_TEXT = "GET_SELECTED_TEXT",
   SAVE_TO_HISTORY = "SAVE_TO_HISTORY",
   SAVE_TO_FAVORITES = "SAVE_TO_FAVORITES",
@@ -14,16 +18,12 @@ export enum MessageType {
   STORAGE_DATA_WRITE = "WRITE_TO_EXTERNAL_STORAGE",
   STORAGE_DATA_REMOVE = "REMOVE_FROM_EXTERNAL_STORAGE",
   STORAGE_DATA_SYNC = "SYNC_STORAGE",
-  OPENAI_TRANSLATION = "OPENAI_TRANSLATION",
-  OPENAI_TEXT_TO_SPEECH = "OPENAI_TEXT_TO_SPEECH",
-  GEMINI_TEXT_TO_SPEECH = "GEMINI_TEXT_TO_SPEECH",
+  INJECT_CONTENT_SCRIPT = "INJECT_CONTENT_SCRIPT",
+  GA_METRICS_SEND_EVENT = "GA_METRICS_SEND_EVENT",
+  PRO_USER_SUB_UPDATE_REQ = "PRO_USER_SUB_UPDATE_REQ",
   MELLOWTEL_STATUS = "MELLOWTEL_STATUS",
   MELLOWTEL_ACTIVATE = "MELLOWTEL_ACTIVATE",
   MELLOWTEL_DEACTIVATE = "MELLOWTEL_DEACTIVATE",
-  INJECT_CONTENT_SCRIPT = "INJECT_CONTENT_SCRIPT",
-  GA_METRICS_SEND_EVENT = "GA_METRICS_SEND_EVENT",
-  HTTP_PROXY_STREAM = "HTTP_PROXY_STREAM",
-  USER_DATA_UPDATE_REQUEST = "USER_DATA_UPDATE_REQUEST",
 }
 
 export interface Message<Payload extends {} | []> {
@@ -55,12 +55,48 @@ export interface ProxyResponsePayload<Data = unknown> {
   data: Data;
 }
 
+export interface ProxyStreamPayload extends Omit<ProxyRequestPayload, "responseType"> {
+}
+
+export interface ProxyStreamHeadersMessage {
+  headers: { [header: string]: string; "content-type"?: string };
+  statusCode: number;
+  statusText: string;
+}
+
+export interface ProxyStreamChunkMessage {
+  chunk: number[];
+}
+
+export interface ProxyStreamDoneMessage {
+  done: true;
+}
+
+export interface ProxyStreamErrorMessage {
+  error: string;
+  statusCode?: number;
+  statusText?: string;
+}
+
+export type ProxyStreamResponsePayload =
+  ProxyStreamHeadersMessage
+  | ProxyStreamChunkMessage
+  | ProxyStreamDoneMessage
+  | ProxyStreamErrorMessage;
+
 export interface InjectContentScriptPayload {
   tabId?: number;
 }
 
 export interface TranslatePayload extends TranslateParams {
   provider: ProviderCodeName;
+}
+
+export type FullPageTranslationAction = "toggle" | "start" | "stop";
+
+export interface TranslateFullPagePayload {
+  action?: FullPageTranslationAction;
+  provider?: ProviderCodeName;
 }
 
 export interface SaveToHistoryPayload {

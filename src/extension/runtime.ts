@@ -7,6 +7,10 @@ export function getManifest() {
   return chrome.runtime.getManifest() as chrome.runtime.ManifestV3;
 }
 
+export function getExtensionId() {
+  return chrome.runtime.id;
+}
+
 export function getURL(path = ""): string {
   return chrome.runtime.getURL(path);
 }

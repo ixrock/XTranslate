@@ -1,7 +1,7 @@
 import { action, makeObservable } from "mobx";
 import { Hotkey } from "@/utils/parseHotkey";
 import { createStorage } from "@/storage";
-import { DeepSeekAIModel, GeminiAIModel, GeminiAIModelTTSVoice, getTranslator, GrokAIModel, OpenAIModel, OpenAIModelTTSVoice, ProviderCodeName } from "@/providers";
+import { DeepSeekAIModel, GeminiAIModel, getTranslator, GrokAIModel, OpenAIModel, ProviderCodeName } from "@/providers";
 
 export type PopupPosition = "" /*auto*/ | "left top" | "left bottom" | "right top" | "right bottom";
 
@@ -11,6 +11,12 @@ export type XIconPosition = {
   bottom?: boolean;
   left?: boolean;
 };
+
+export enum FullPageContextMenuMode {
+  OFF = "off",
+  ALL_PROVIDERS = "all_providers",
+  ACTIVE_PROVIDER = "active_provider",
+}
 
 export type SettingsStorageModel = typeof settingsStorage.defaultValue;
 export type PopupHotkeyStorageModel = typeof popupHotkey.defaultValue;
@@ -32,7 +38,6 @@ export const settingsStorage = createStorage("settings", {
     showPopupOnHotkey: true,
     showTranslatedFrom: true,
     showPopupAdvancedCustomization: false,
-    showPopupPromoBannerLastTimestamp: 0,
     showPopupSummarizeIcon: true,
     rememberLastText: false,
     textInputAutoTranslateEnabled: false,
@@ -54,13 +59,9 @@ export const settingsStorage = createStorage("settings", {
     deepSeekModel: DeepSeekAIModel.RECOMMENDED,
     geminiModel: GeminiAIModel.RECOMMENDED,
     safeTranslationLimit: 0, // 0 = unlimited, don't ask user for confirmation, useful for paid-API providers
-    tts: {
-      systemVoiceIndex: 0,
-      openAiVoice: OpenAIModelTTSVoice.Alloy,
-      geminiVoice: GeminiAIModelTTSVoice.Puck,
-    },
+    systemTTSEngineVoiceIndex: 0,
     fullPageTranslation: {
-      showInContextMenu: true,
+      contextMenuMode: FullPageContextMenuMode.ALL_PROVIDERS,
       provider: "bing" as ProviderCodeName,
       langFrom: "auto",
       langTo: "en",

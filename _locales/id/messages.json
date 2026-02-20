@@ -476,9 +476,6 @@
   "auth_access_info_steps_deepseek": {
     "message": "Daftar di platform.deepseek.com dan isi saldo (contoh via Paypal)"
   },
-  "auth_access_info_steps_deepl": {
-    "message": "Daftar di www.deepl.com dan dapatkan API key gratis untuk terjemahan DeepL"
-  },
   "auth_access_info_steps_gemini": {
     "message": "Buat API key gratis di https://aistudio.google.com/apikey"
   },
@@ -615,7 +612,7 @@
     "message": "Token teks tersedia: { $tokens }"
   },
   "pro_user_remain_tts_seconds_approx": {
-    "message": "Waktu teks-ke-ucapan tersedia dalam detik: { $seconds }"
+    "message": "Waktu text-to-speech yang tersedia: { $timeRange }"
   },
   "pro_unauthorized_error_401": {
     "message": "Anda harus masuk di { $serviceUrl } dan memiliki langganan aktif untuk mendapatkan akses."
@@ -664,5 +661,14 @@
   },
   "pro_version_continue_use_free_version": {
     "message": "Tetap gunakan versi gratis"
+  },
+  "show_in_context_menu_mode_off": {
+    "message": "Jangan tampilkan"
+  },
+  "show_in_context_menu_mode_all_providers": {
+    "message": "Semua penyedia"
+  },
+  "show_in_context_menu_mode_active_provider": {
+    "message": "Hanya penyedia aktif"
   }
 }

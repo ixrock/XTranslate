@@ -7,25 +7,12 @@ import { getXTranslatePro } from "@/providers";
 import { getMessage } from "@/i18n";
 import { Icon } from "../icon";
 import { Button } from "@/components/button";
-import { settingsStore } from "../settings/settings.storage";
 import { userStore } from "@/pro";
+import { sendMetric } from "@/background/metrics.bgc";
 
 @observer
 export class PopupPromoBanner extends React.Component<{}> {
   private subscribeBtnRef = React.createRef<Button>();
-
-  static get isVisible(): boolean {
-    if (userStore.isProActive) {
-      return false;
-    }
-
-    const promoSkippedLastTime = settingsStore.data.showPopupPromoBannerLastTimestamp || 0;
-    const remindPromoDelay = 90 * 24 * 60 * 60 * 1000; // every 3 months
-
-    return !promoSkippedLastTime || (
-      promoSkippedLastTime + remindPromoDelay <= Date.now()
-    );
-  }
 
   constructor(props: {}) {
     super(props);
@@ -34,18 +21,15 @@ export class PopupPromoBanner extends React.Component<{}> {
 
   componentDidMount() {
     this.subscribeBtnRef.current?.focus();
+    void sendMetric("promo_banner_shown", {});
   }
 
-  @action.bound
+  @action
   hideBanner() {
-    settingsStore.data.showPopupPromoBannerLastTimestamp = Date.now();
+    userStore.data.promoBannerShowTime = Date.now();
   }
 
   render() {
-    if (!PopupPromoBanner.isVisible) {
-      return;
-    }
-
     return (
       <div className={styles.PopupPromo}>
         <div>

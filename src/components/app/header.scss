@@ -24,15 +24,6 @@
     }
   }
 
-  #pro-discount {
-    text-decoration: none;
-    gap: 3px;
-    color: white;
-    font-weight: 500;
-    font-size: small;
-    text-shadow: 0 0 5px #000000aa;
-  }
-
   .Tabs > .Tab {
     flex-direction: row;
     padding: calc(var(--theme-spacing) * 1.5) var(--theme-spacing-double);

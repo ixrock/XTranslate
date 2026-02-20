@@ -1,8 +1,9 @@
 import AILanguagesList from "./open-ai.json"
-import { websiteURL } from "@/config";
 import { getTranslator, ITranslationError, ITranslationResult, OpenAIModelTTSVoice, ProviderCodeName, TranslateParams, Translator } from "./index";
-import { MessageType, ProxyResponseType } from "@/extension";
+import { MessageType, ProxyResponseType, ProxyStreamResponsePayload } from "@/extension";
 import { getMessage } from "@/i18n";
+import { websiteURL } from "@/config";
+import { userStore } from "@/pro";
 
 export class XTranslatePro extends Translator {
   override name = ProviderCodeName.XTRANSLATE_PRO;
@@ -95,7 +96,13 @@ export class XTranslatePro extends Translator {
     }
   }
 
-  private ttsPort: chrome.runtime.Port;
+  private ttsPort?: chrome.runtime.Port;
+
+  override async speak(text: string, lang?: string, voice?: OpenAIModelTTSVoice): Promise<HTMLAudioElement | SpeechSynthesisUtterance | void> {
+    voice ??= userStore.data.ttsVoice; // use default value from app's UI settings
+
+    return super.speak(text, lang, voice);
+  }
 
   override stopSpeaking() {
     super.stopSpeaking();
@@ -103,7 +110,9 @@ export class XTranslatePro extends Translator {
   }
 
   async getAudioFile(text: string, lang?: string, voice?: OpenAIModelTTSVoice): Promise<Blob> {
-    return this.request<Blob>({
+    this.logger.info("attempt for text-to-speech with params", { text, lang, voice });
+
+    return await this.request<Blob>({
       url: `${this.apiUrl}/tts`,
       requestInit: {
         method: "POST",
@@ -125,70 +134,122 @@ export class XTranslatePro extends Translator {
     this.audio.src = this.audioDataUrl = URL.createObjectURL(mediaSource);
 
     return new Promise((resolve) => {
-      this.ttsPort = chrome.runtime.connect({ name: MessageType.HTTP_PROXY_STREAM });
+      this.ttsPort = chrome.runtime.connect({
+        name: MessageType.HTTP_PROXY_STREAM,
+      });
 
       const queue: Uint8Array[] = [];
-      let sourceBuffer: SourceBuffer;
+      let sourceBuffer: SourceBuffer | undefined;
       let portFinished = false;
+      let streamStarted = false;
+      let isResolved = false;
+      let audioStarted = false;
+
+      const resolveOnce = (result: boolean) => {
+        if (isResolved) return;
+        isResolved = true;
+        resolve(result);
+      };
+
+      const endOfStream = () => {
+        if (mediaSource.readyState !== "open") return;
+        try {
+          mediaSource.endOfStream();
+        } catch {
+          /* ignore */
+        }
+      };
 
       const processQueue = () => {
-        if (queue.length > 0 && sourceBuffer && !sourceBuffer.updating) {
+        if (!sourceBuffer || sourceBuffer.updating) return;
+
+        if (queue.length > 0) {
           try {
             sourceBuffer.appendBuffer(queue.shift() as BufferSource);
-          } catch (e) {
-            this.logger.error("SourceBuffer append failed", e);
+          } catch (error) {
+            this.logger.error("[TTS-STREAM]: SourceBuffer append failed", error);
+            resolveOnce(false);
+            this.ttsPort?.disconnect();
           }
+          return;
+        }
+
+        if (portFinished) {
+          endOfStream();
         }
       };
 
       mediaSource.addEventListener("sourceopen", () => {
-        sourceBuffer = mediaSource.addSourceBuffer("audio/mpeg");
-        sourceBuffer.addEventListener("updateend", () => {
-          processQueue();
-          if (queue.length === 0 && portFinished) {
-            try {
-              mediaSource.endOfStream();
-            } catch (e) {
-              /* ignore */
-            }
-          }
-        });
-      });
-
-      let audioStarted = false;
-
-      this.ttsPort.onMessage.addListener((msg) => {
-        if (msg.error) {
-          this.logger.error("[TTS-STREAM]", msg.error);
-          this.ttsPort.disconnect();
-          resolve(false); // Fallback
+        try {
+          sourceBuffer = mediaSource.addSourceBuffer("audio/mpeg");
+        } catch (error) {
+          this.logger.error("[TTS-STREAM]: SourceBuffer init failed", error);
+          resolveOnce(false);
+          this.ttsPort?.disconnect();
           return;
         }
 
-        if (msg.chunk) {
-          const chunk = new Uint8Array(msg.chunk);
-          queue.push(chunk);
+        sourceBuffer.addEventListener("updateend", () => {
           processQueue();
+        });
+        processQueue();
+      }, { once: true });
 
-          // Resolve success on first chunk
-          resolve(true);
-          if (!audioStarted) {
-            audioStarted = true;
-            this.audio.play().catch(() => {
-            });
-          }
+      this.ttsPort.onDisconnect.addListener(() => {
+        if (!streamStarted) {
+          resolveOnce(false);
+        }
+      });
+
+      this.ttsPort.onMessage.addListener((msg: ProxyStreamResponsePayload) => {
+        if ("error" in msg && msg.error) {
+          this.logger.error("[TTS-STREAM]", {
+            error: msg.error,
+            statusCode: msg.statusCode,
+            statusText: msg.statusText,
+          });
+          portFinished = true;
+          endOfStream();
+          resolveOnce(false);
+          this.ttsPort?.disconnect();
+          return;
         }
 
-        if (msg.done) {
+        if ("statusCode" in msg && msg.statusCode >= 400) {
+          this.logger.error("[TTS-STREAM]", {
+            statusCode: msg.statusCode,
+            statusText: msg.statusText,
+          });
           portFinished = true;
-          if (queue.length === 0 && sourceBuffer && !sourceBuffer.updating) {
-            try {
-              mediaSource.endOfStream();
-            } catch (e) {
-              /* ignore */
-            }
+          endOfStream();
+          resolveOnce(false);
+          this.ttsPort?.disconnect();
+          return;
+        }
+
+        if ("chunk" in msg && msg.chunk?.length) {
+          const chunk = new Uint8Array(msg.chunk);
+          queue.push(chunk);
+          streamStarted = true;
+          processQueue();
+
+          if (!audioStarted) {
+            audioStarted = true;
+            resolveOnce(true);
+            void this.audio.play().catch((error: unknown): void => {
+              this.logger.info("[TTS-STREAM]: autoplay was blocked", error);
+            });
           }
-          this.ttsPort.disconnect();
+          return;
+        }
+
+        if ("done" in msg && msg.done) {
+          portFinished = true;
+          processQueue();
+          if (!streamStarted) {
+            resolveOnce(false);
+          }
+          this.ttsPort?.disconnect();
         }
       });
 
@@ -205,11 +266,23 @@ export class XTranslatePro extends Translator {
     });
   }
 
-  async getUser(): Promise<XTranslateProUserResponse> {
-    return this.request<XTranslateProUserResponse>({
-      url: `${this.apiUrl}/me`,
+  async loadPricing(): Promise<XTranslateProPricing> {
+    return this.request({
+      url: `${this.apiUrl}/pricing`,
+    });
+  }
+
+  async loadUser(): Promise<XTranslateProUser> {
+    return this.request({
+      url: `${this.apiUrl}/user`,
       requestInit: { credentials: "include" },
-      responseType: ProxyResponseType.JSON,
+    });
+  }
+
+  async loadSubscription(): Promise<XTranslateProSubscription> {
+    return this.request({
+      url: `${this.apiUrl}/user/plan`,
+      requestInit: { credentials: "include" },
     });
   }
 }
@@ -229,7 +302,6 @@ export interface XTranslateProTranslateOutput {
 
 export interface XTranslateProTranslateError extends ITranslationError {
   error: string;
-  pricing: XTranslateProPricing;
 }
 
 export interface XTranslateProSummarizeInput {
@@ -243,15 +315,9 @@ export interface XTranslateProSummarizeOutput {
 }
 
 export interface XTranslateProUser {
-  username: string,
-  email: string,
-  image: string,
-  subscription?: XTranslateProUserSubscription;
-}
-
-export interface XTranslateProUserResponse {
-  user?: XTranslateProUser;
-  pricing: XTranslateProPricing;
+  username: string;
+  email: string;
+  image: string;
 }
 
 export type XTranslateProPricing = Record<XTranslateProPlanType, XTranslateProPlan>;
@@ -266,7 +332,7 @@ export interface XTranslateProPlan {
 export type XTranslateProPlanType = "FREE_PLAN" | "MONTHLY" | "YEARLY";
 export type XTranslateProStatus = "PAID" | "FAILED" | "REFUNDED" | "CANCELED";
 
-export interface XTranslateProUserSubscription {
+export interface XTranslateProSubscription {
   status: 'active' | 'inactive';
   planType: XTranslateProPlanType;
   cycleStatus: XTranslateProStatus;

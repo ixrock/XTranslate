@@ -530,9 +530,6 @@
   "auth_access_info_steps_deepseek": {
     "message": "Registrati su platform.deepseek.com e ricarica il saldo (es. via Paypal)"
   },
-  "auth_access_info_steps_deepl": {
-    "message": "Registrati su www.deepl.com e ottieni la tua chiave API gratuita per le traduzioni DeepL"
-  },
   "auth_access_info_steps_gemini": {
     "message": "Crea la tua chiave API gratuita su https://aistudio.google.com/apikey"
   },
@@ -615,7 +612,7 @@
     "message": "Token di testo disponibili: { $tokens }"
   },
   "pro_user_remain_tts_seconds_approx": {
-    "message": "Tempo di sintesi vocale disponibile in secondi: { $seconds }"
+    "message": "Tempo disponibile per la sintesi vocale: { $timeRange }"
   },
   "pro_unauthorized_error_401": {
     "message": "Devi aver effettuato l'accesso su { $serviceUrl } e avere un abbonamento attivo per ottenere l'accesso."
@@ -664,5 +661,14 @@
   },
   "pro_version_continue_use_free_version": {
     "message": "Continua a usare la versione gratuita"
+  },
+  "show_in_context_menu_mode_off": {
+    "message": "Non mostrare"
+  },
+  "show_in_context_menu_mode_all_providers": {
+    "message": "Tutti i provider"
+  },
+  "show_in_context_menu_mode_active_provider": {
+    "message": "Solo il provider attivo"
   }
 }

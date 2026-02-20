@@ -20,7 +20,7 @@ export function ttsEngine() {
 
 export async function speakSystemTTS(text: string, params: SpeakSystemTTSParams = {}): Promise<SpeechSynthesisUtterance> {
   const {
-    voiceIndex = settingsStore.data.tts.systemVoiceIndex,
+    voiceIndex = settingsStore.data.systemTTSEngineVoiceIndex,
     speed = 0.75,
     onStart, onPause, onResume, onEnd,
   } = params;

@@ -13,7 +13,7 @@ import { ReactSelect, ReactSelectOption } from "../select";
 import { Icon } from "../icon";
 import { SubTitle } from "../sub-title";
 import { Tab } from "../tabs";
-import { settingsStore, XIconPosition } from "./settings.storage";
+import { FullPageContextMenuMode, settingsStore, XIconPosition } from "./settings.storage";
 import { pageManager } from "../app/page-manager";
 import { getMessage } from "@/i18n";
 import { SelectVoice } from "../select-tts-voice";
@@ -61,24 +61,24 @@ export class Settings extends React.Component {
         </div>
       ),
       get xtranslate_pro() {
-        const { isProEnabled } = userStore;
+        const { isProActive } = userStore;
 
         return (
           <div className="flex gaps align-center">
-            {!isProEnabled && <em>({getMessage("recommended").toLowerCase()})</em>}
+            {!isProActive && <em>({getMessage("recommended").toLowerCase()})</em>}
             <Icon material={materialIcons.translate} tooltip={getMessage("pro_version_ai_translator", { provider: "Gemini" })}/>
             <Icon material={materialIcons.summarize} tooltip={getMessage("pro_version_ai_summarize_feature")}/>
             <Icon svg="tts" tooltip={getMessage("pro_version_ai_tts", { provider: "OpenAI" })}/>
 
-            {isProEnabled && (
+            {isProActive && (
               <>
                 <span>{getMessage("pro_select_tts_voice")}</span>
                 <ReactSelect<OpenAIModelTTSVoice>
                   className={styles.providerSelect}
                   placeholder={getMessage("tts_select_voice_title")}
                   options={openAiVoiceOptions}
-                  value={openAiVoiceOptions.find(voiceOpt => voiceOpt.value === settingsStore.data.tts.openAiVoice)}
-                  onChange={({ value }) => settingsStore.data.tts.openAiVoice = value}
+                  value={openAiVoiceOptions.find(voiceOpt => voiceOpt.value === userStore.data.ttsVoice)}
+                  onChange={({ value }) => userStore.data.ttsVoice = value}
                 />
               </>
             )}
@@ -126,6 +126,14 @@ export class Settings extends React.Component {
       { value: { right: true, top: true }, label: getMessage("popup_position_right_top") },
       { value: { right: true, bottom: true }, label: getMessage("popup_position_right_bottom") },
       { value: { left: true, bottom: true }, label: getMessage("popup_position_left_bottom") },
+    ];
+  };
+
+  private get contextMenuModeOptions(): ReactSelectOption<FullPageContextMenuMode>[] {
+    return [
+      { value: FullPageContextMenuMode.OFF, label: getMessage("show_in_context_menu_mode_off") },
+      { value: FullPageContextMenuMode.ALL_PROVIDERS, label: getMessage("show_in_context_menu_mode_all_providers") },
+      { value: FullPageContextMenuMode.ACTIVE_PROVIDER, label: getMessage("show_in_context_menu_mode_active_provider") },
     ];
   };
 
@@ -228,7 +236,7 @@ export class Settings extends React.Component {
     fullPageTranslation.langFrom = supportedLanguages.langFrom;
     fullPageTranslation.langTo = supportedLanguages.langTo;
 
-    if (provider === ProviderCodeName.XTRANSLATE_PRO && !userStore.isProEnabled) {
+    if (provider === ProviderCodeName.XTRANSLATE_PRO && !userStore.isProActive) {
       fullPageTranslation.provider = prevProvider; // rollback
       userStore.subscribeSuggestionDialog();
     }
@@ -239,7 +247,7 @@ export class Settings extends React.Component {
     const prevProvider = settingsStore.data.vendor;
     settingsStore.setProvider(provider);
 
-    if (provider === ProviderCodeName.XTRANSLATE_PRO && !userStore.isProEnabled) {
+    if (provider === ProviderCodeName.XTRANSLATE_PRO && !userStore.isProActive) {
       settingsStore.setProvider(prevProvider); // rollback
       userStore.subscribeSuggestionDialog();
     }
@@ -289,7 +297,7 @@ export class Settings extends React.Component {
           />
         </div>
         <ShowHideMore visible={fullPageTranslation.showMore} onToggle={v => fullPageTranslation.showMore = v}>
-          <div className="settings-fullpage flex column gaps align-start">
+          <div className="settings-fullpage flex column gaps align-start" style={{ width: "100%" }}>
             <SettingsUrlList
               urlList={alwaysTranslatePages}
               title={getMessage("settings_title_full_page_always_translate")}
@@ -335,12 +343,6 @@ export class Settings extends React.Component {
           checked={settings.customPdfViewer}
           onChange={v => settings.customPdfViewer = v}
         />
-        <Checkbox
-          className={styles.inline}
-          label={getMessage("show_in_context_menu")}
-          checked={settings.fullPageTranslation.showInContextMenu}
-          onChange={v => settings.fullPageTranslation.showInContextMenu = v}
-        />
 
         <div className="translation-icon flex gaps">
           <Checkbox
@@ -368,8 +370,8 @@ export class Settings extends React.Component {
             tooltip={getMessage("use_chrome_tts_tooltip_info")}
           />
           <SelectVoice
-            currentIndex={settings.tts.systemVoiceIndex}
-            onChange={v => settings.tts.systemVoiceIndex = v}
+            currentIndex={settings.systemTTSEngineVoiceIndex}
+            onChange={v => settings.systemTTSEngineVoiceIndex = v}
           />
           <Icon small material="info_outline" tooltip={getMessage("system_tts_info")}/>
           <Icon
@@ -388,6 +390,17 @@ export class Settings extends React.Component {
             onClick={this.speakDemoText}
           />
         </div>
+
+        <div className={`${styles.inline} flex gaps align-center`}>
+          <span className="box grow">{getMessage("show_in_context_menu")}</span>
+          <ReactSelect<FullPageContextMenuMode>
+            className="box noshrink"
+            options={this.contextMenuModeOptions}
+            value={this.contextMenuModeOptions.find(({ value }) => value === settings.fullPageTranslation.contextMenuMode)}
+            onChange={({ value }) => settings.fullPageTranslation.contextMenuMode = value}
+          />
+        </div>
+
       </main>
     );
   }

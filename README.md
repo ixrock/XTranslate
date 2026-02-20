@@ -44,14 +44,13 @@ Install extension:
 
 * [Chrome's Web Store](https://chrome.google.com/webstore/detail/xtranslate/gfgpkepllngchpmcippidfhmbhlljhoo)
 * [Microsoft Edge Add-ons](https://microsoftedge.microsoft.com/addons/detail/cinfaflgbaachkaamaeglolofeahelkd)
-* [Firefox addons](https://addons.mozilla.org/en-GB/firefox/addon/xtranslate-chrome/) _(outdated version)_
+* [Firefox addons](https://addons.mozilla.org/en-GB/firefox/addon/xtranslate-chrome/) _(very outdated version)_
 
 Available translation providers:
 -----------
 
 * [Google](http://translate.google.com/) - ready to use after installation
 * [Bing](http://bing.com/translator/) - ready to use after installation
-* [DeepL](https://www.deepl.com/) _(register and provide at least free api-key with 500K chars/month included)_
 * [OpenAI](https://platform.openai.com) _(register, top-up balance and create api-key for the extension)_
 * [Grok](https://console.x.ai) _(register, top-up balance and create api-key)_
 * [DeepSeek](https://platform.deepseek.com) _(register, top-up balance and create api-key)_

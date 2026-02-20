@@ -3,31 +3,26 @@ import React from "react";
 import { makeObservable } from "mobx";
 import { observer } from "mobx-react";
 import { isSystemPage } from "@/config";
-import { cssNames } from "@/utils/cssNames";
+import { cssNames } from "@/utils";
 import { getTranslator } from "@/providers";
-import { getManifest, translateActivePage } from "@/extension";
+import { getManifest } from "@/extension";
 import { activeTabStorage } from "@/background/tabs.bgc";
+import { translateActivePageAction } from "@/background/translate-page.bgc";
 import { settingsStore } from '../settings/settings.storage'
 import { Tabs } from "../tabs";
 import { Icon } from "../icon";
 import { getUrlParams, navigate, PageId } from "@/navigation";
 import { pageManager } from "./page-manager";
-import { formatNumber, getIntlLocale, getMessage } from "@/i18n";
+import { getMessage } from "@/i18n";
 import { SelectLocaleIcon } from "../select-locale";
 import { exportSettingsDialogState } from "./export-settings-dialog";
-import { userStore } from "@/pro";
-import { Tooltip } from "@/components/tooltip";
-import { Button } from "@/components/button";
+import { ProUserInfo } from "@/components/app/pro-user-info";
 
 @observer
 export class Header extends React.Component {
   constructor(props: object) {
     super(props);
     makeObservable(this);
-  }
-
-  get user() {
-    return userStore.user;
   }
 
   detachWindow = () => {
@@ -43,8 +38,11 @@ export class Header extends React.Component {
   }
 
   private translateActivePage = async () => {
-    void translateActivePage();
-    window.close();
+    try {
+      await translateActivePageAction();
+    } finally {
+      window.close();
+    }
   }
 
   private onTabsChange = async (page: PageId) => {
@@ -124,97 +122,3 @@ export class Header extends React.Component {
     );
   }
 }
-
-export const ProUserInfo = observer(
-  function () {
-    const {
-      user,
-      isProEnabled,
-      isProActive,
-      remainTextTokens,
-      remainSecondsTTSRoughly,
-      subscriptionPlan,
-      pricePerMonth,
-      apiProvider: { subscribePageUrl },
-    } = userStore;
-
-    if (isProEnabled && user) {
-      const expirationDate = new Date(user.subscription.periodEnd)
-        .toLocaleString(getIntlLocale());
-
-      const subscriptionActiveTooltip = (
-        <>
-          <p>
-            {getMessage("pro_user_subscription", {
-              plan: subscriptionPlan,
-              periodEnd: expirationDate,
-            })}
-          </p>
-          <p>
-            {getMessage("pro_user_remain_text_tokens", {
-              tokens: formatNumber({ value: remainTextTokens })
-            })}
-          </p>
-          <p>
-            {
-              getMessage("pro_user_remain_tts_seconds_approx", {
-                seconds: remainSecondsTTSRoughly
-              })
-            }
-          </p>
-        </>
-      );
-
-      const subscriptionDeactivatedTooltip = (
-        <>
-          {getMessage("pro_user_subscription_inactive", {
-            plan: user.subscription.planType,
-            status: user.subscription.cycleStatus,
-            periodEnd: expirationDate,
-          })}
-        </>
-      );
-
-      const subscriptionInfoTooltip = isProActive
-        ? subscriptionActiveTooltip
-        : subscriptionDeactivatedTooltip;
-
-      return (
-        <div className="ProUserInfo flex column">
-          <div className="pro-greeting">
-            {getMessage("pro_user_welcome_back", {
-              username: <em>{user.username}</em>,
-            })}
-          </div>
-          <div className="flex align-center">
-            <Icon small material="info_outline" tooltip={{
-              following: true,
-              children: subscriptionInfoTooltip,
-            }}/>
-            <div className="pro-status">
-              {getMessage("pro_user_status", {
-                status: <b>{getMessage(`pro_user_status_${user.subscription.status}`)}</b>
-              })}
-            </div>
-          </div>
-        </div>
-      )
-    }
-
-    return (
-      <div className="ProUserInfo flex column inline">
-        <Button
-          outline
-          href={subscribePageUrl}
-          target="_blank" id="subscribe-pro"
-          label={getMessage("pro_upgrade_button_label")}
-        />
-        <Tooltip anchorId="subscribe-pro" following>
-          {getMessage("pro_upgrade_button_tooltip", {
-            pricePerMonth: pricePerMonth,
-          })}
-        </Tooltip>
-      </div>
-    )
-  }
-);

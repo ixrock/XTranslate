@@ -530,9 +530,6 @@
   "auth_access_info_steps_deepseek": {
     "message": "سجل في platform.deepseek.com واشحن الرصيد (مثل عبر Paypal)"
   },
-  "auth_access_info_steps_deepl": {
-    "message": "سجل في www.deepl.com واحصل على مفتاح API مجاني لترجمات DeepL"
-  },
   "auth_access_info_steps_gemini": {
     "message": "أنشئ مفتاح API مجاني في https://aistudio.google.com/apikey"
   },
@@ -615,7 +612,7 @@
     "message": "رموز النص المتاحة: { $tokens }"
   },
   "pro_user_remain_tts_seconds_approx": {
-    "message": "وقت تحويل النص إلى كلام المتاح بالثواني: { $seconds }"
+    "message": "الوقت المتاح لتحويل النص إلى كلام: { $timeRange }"
   },
   "pro_unauthorized_error_401": {
     "message": "يجب عليك تسجيل الدخول في { $serviceUrl } وامتلاك اشتراك نشط للوصول."
@@ -664,5 +661,14 @@
   },
   "pro_version_continue_use_free_version": {
     "message": "متابعة استخدام النسخة المجانية"
+  },
+  "show_in_context_menu_mode_off": {
+    "message": "لا يظهر"
+  },
+  "show_in_context_menu_mode_all_providers": {
+    "message": "جميع المزودين"
+  },
+  "show_in_context_menu_mode_active_provider": {
+    "message": "مزود نشط فقط"
   }
 }

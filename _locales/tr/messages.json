@@ -533,9 +533,6 @@
   "auth_access_info_steps_deepseek": {
     "message": "platform.deepseek.com'a kaydolun ve bakiyenizi doldurun (ör. Paypal ile)"
   },
-  "auth_access_info_steps_deepl": {
-    "message": "www.deepl.com'a kaydolun ve DeepL çevirileri için kendi ücretsiz API anahtarınızı alın"
-  },
   "auth_access_info_steps_gemini": {
     "message": "https://aistudio.google.com/apikey adresinde ücretsiz API anahtarınızı oluşturun"
   },
@@ -618,7 +615,7 @@
     "message": "Mevcut metin tokenleri: { $tokens }"
   },
   "pro_user_remain_tts_seconds_approx": {
-    "message": "Saniye cinsinden mevcut metin okuma süresi: { $seconds }"
+    "message": "Kullanılabilir metin-konuşma süresi: { $timeRange }"
   },
   "pro_unauthorized_error_401": {
     "message": "Erişim sağlamak için { $serviceUrl } adresinde oturum açmış ve aktif bir aboneliğe sahip olmalısınız."
@@ -667,5 +664,14 @@
   },
   "pro_version_continue_use_free_version": {
     "message": "Ücretsiz sürümü kullanmaya devam et"
+  },
+  "show_in_context_menu_mode_off": {
+    "message": "Gösterme"
+  },
+  "show_in_context_menu_mode_all_providers": {
+    "message": "Tüm sağlayıcılar"
+  },
+  "show_in_context_menu_mode_active_provider": {
+    "message": "Sadece etkin sağlayıcı"
   }
 }

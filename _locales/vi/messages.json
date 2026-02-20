@@ -530,9 +530,6 @@
   "auth_access_info_steps_deepseek": {
     "message": "Đăng ký tại platform.deepseek.com và nạp tiền (ví dụ: qua Paypal)"
   },
-  "auth_access_info_steps_deepl": {
-    "message": "Đăng ký tại www.deepl.com và nhận khóa API miễn phí riêng cho bản dịch DeepL"
-  },
   "auth_access_info_steps_gemini": {
     "message": "Tạo khóa API miễn phí của bạn tại https://aistudio.google.com/apikey"
   },
@@ -615,7 +612,7 @@
     "message": "Token văn bản có sẵn: { $tokens }"
   },
   "pro_user_remain_tts_seconds_approx": {
-    "message": "Thời gian văn bản thành giọng nói có sẵn tính bằng giây: { $seconds }"
+    "message": "Thời lượng chuyển văn bản thành giọng nói còn lại: { $timeRange }"
   },
   "pro_unauthorized_error_401": {
     "message": "Bạn phải đăng nhập tại { $serviceUrl } và có đăng ký đang hoạt động để có quyền truy cập."
@@ -664,5 +661,14 @@
   },
   "pro_version_continue_use_free_version": {
     "message": "Tiếp tục dùng phiên bản miễn phí"
+  },
+  "show_in_context_menu_mode_off": {
+    "message": "Không hiển thị"
+  },
+  "show_in_context_menu_mode_all_providers": {
+    "message": "Tất cả nhà cung cấp"
+  },
+  "show_in_context_menu_mode_active_provider": {
+    "message": "Chỉ nhà cung cấp đang hoạt động"
   }
 }

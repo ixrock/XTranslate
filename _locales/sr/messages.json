@@ -476,9 +476,6 @@
   "auth_access_info_steps_deepseek": {
     "message": "Registruj se na platform.deepseek.com i dopuni svoja novčana sredstva (npr. pomoću Paypal-a)"
   },
-  "auth_access_info_steps_deepl": {
-    "message": "Registruj se na www.deepl.com da bi dobio besplatan ključ za autorizaciju na DeepL API"
-  },
   "auth_access_info_steps_gemini": {
     "message": "Kreiraj besplatan API ključ na https://aistudio.google.com/apikey"
   },
@@ -612,7 +609,7 @@
     "message": "Dostupni tekstualni tokeni: { $tokens }"
   },
   "pro_user_remain_tts_seconds_approx": {
-    "message": "Dostupno vreme za tekst u govor u sekundama: { $seconds }"
+    "message": "Dostupno vreme za pretvaranje teksta u govor: { $timeRange }"
   },
   "pro_unauthorized_error_401": {
     "message": "Morate biti prijavljeni na { $serviceUrl } i imati aktivnu pretplatu da biste dobili pristup."
@@ -661,5 +658,14 @@
   },
   "pro_version_continue_use_free_version": {
     "message": "Nastavi korišćenje besplatne verzije"
+  },
+  "show_in_context_menu_mode_off": {
+    "message": "Ne prikazuj"
+  },
+  "show_in_context_menu_mode_all_providers": {
+    "message": "Svi provajderi"
+  },
+  "show_in_context_menu_mode_active_provider": {
+    "message": "Samo aktivni provajder"
   }
 }

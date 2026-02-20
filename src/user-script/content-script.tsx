@@ -13,7 +13,7 @@ import orderBy from 'lodash/orderBy';
 import { contentScriptInjectable } from "../config";
 import { preloadAppData } from "../preloadAppData";
 import { autoBind, disposer, getHotkey, strLengthCodePoints } from "../utils";
-import { getManifest, getURL, isExtensionContextAlive, MessageType, onMessage, ProxyResponseType, TranslatePayload } from "../extension";
+import { getManifest, getURL, isExtensionContextAlive, MessageType, onMessage, ProxyResponseType, TranslateFullPagePayload, TranslatePayload } from "../extension";
 import { proxyRequest } from "../background/httpProxy.bgc";
 import { sendMetric } from "../background/metrics.bgc";
 import { popupHotkey, popupSkipInjectionUrls, settingsStore } from "../components/settings/settings.storage";
@@ -24,7 +24,7 @@ import { PageTranslator } from "./page-translator";
 import { Popup } from "../components/popup";
 import { Icon } from "@/components/icon";
 import { getMessage } from "@/i18n";
-import { userStore } from "@/pro";
+import { refreshUserSubscriptionAction } from "@/background/user.bgc";
 
 type DOMRectNormalized = Omit<Writeable<DOMRect>, "toJSON" | "x" | "y">;
 
@@ -40,7 +40,7 @@ export class ContentScript extends React.Component {
     await preloadAppData(
       this.preloadCss(),
       popupSkipInjectionUrls.load(),
-      userStore.load(),
+      refreshUserSubscriptionAction(),
     );
 
     // skip content-script injection for specific urls to avoid bugs, e.g. for cloudflare captcha iframe checks
@@ -207,16 +207,13 @@ export class ContentScript extends React.Component {
 
   translateLazy = debounce(this.translate, 250);
 
-  @action
-  refreshAndGetPayload(params: Partial<TranslatePayload> = {}) {
-    this.lastParams = {
+  private getPayloadParams(params: Partial<TranslatePayload> = {}) {
+    return {
       provider: params.provider ?? settingsStore.data.vendor,
       from: params.from ?? settingsStore.data.langFrom,
       to: params.to ?? settingsStore.data.langTo,
       text: params.text ?? this.selectedText.trim(),
     };
-
-    return this.lastParams;
   }
 
   @action
@@ -224,7 +221,7 @@ export class ContentScript extends React.Component {
     this.checkContextInvalidationError();
     this.hideIcon();
 
-    const payload = this.refreshAndGetPayload(params);
+    const payload = this.lastParams = this.getPayloadParams(params);
 
     if (!this.translationConfirmationCheck(payload)) {
       return;
@@ -269,13 +266,52 @@ export class ContentScript extends React.Component {
   }
 
   private getSelectedTextAction() {
-    return this.selectedText;
+    const selectedText = this.selectedText || this.selection?.toString().trim();
+    return selectedText || "";
   }
 
-  private togglePageAutoTranslation() {
-    if (this.pageTranslator.isEnabled) {
+  private setFullPageProvider(provider?: ProviderCodeName) {
+    if (!provider || this.pageTranslator.settings.provider === provider) {
+      return;
+    }
+
+    const translator = getTranslator(provider);
+    if (!translator) return;
+    const supportedLanguages = translator.getSupportedLanguages(this.pageTranslator.settings);
+    this.pageTranslator.settings.provider = provider;
+    this.pageTranslator.settings.langFrom = supportedLanguages.langFrom;
+    this.pageTranslator.settings.langTo = supportedLanguages.langTo;
+  }
+
+  private togglePageAutoTranslation(params: TranslateFullPagePayload = {}) {
+    const { action = "toggle", provider } = params;
+    const isEnabled = this.pageTranslator.isEnabled;
+
+    if (action === "stop") {
+      if (isEnabled) {
+        this.stopPageAutoTranslation();
+      }
+      return;
+    }
+
+    if (action === "start") {
+      this.setFullPageProvider(provider);
+
+      if (!isEnabled) {
+        this.startPageAutoTranslation();
+      }
+      return;
+    }
+
+    if (provider && isEnabled) {
+      this.setFullPageProvider(provider);
+      return;
+    }
+
+    if (isEnabled) {
       this.stopPageAutoTranslation();
     } else {
+      this.setFullPageProvider(provider);
       this.startPageAutoTranslation();
     }
   }
@@ -643,12 +679,7 @@ export class ContentScript extends React.Component {
     evt.stopPropagation();
 
     if (!this.lastParams) {
-      this.refreshAndGetPayload();
-    }
-
-    if (!userStore.isProEnabled) {
-      userStore.subscribeSuggestionDialog();
-      return "";
+      this.lastParams = this.getPayloadParams();
     }
 
     this.lastParams.provider = ProviderCodeName.XTRANSLATE_PRO;
@@ -682,7 +713,6 @@ export class ContentScript extends React.Component {
           speak={speak}
           lastParams={this.lastParams}
           onProviderChange={this.translateWith}
-          tooltipParentElem={ContentScript.rootElem}
           summarize={summarize}
           summarized={summarized}
           showPromoBanner={!isPopupHidden}

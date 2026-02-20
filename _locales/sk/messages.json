@@ -476,9 +476,6 @@
   "auth_access_info_steps_deepseek": {
     "message": "Zaregistrujte sa na platform.deepseek.com a dobite si kredit (napr. cez Paypal)"
   },
-  "auth_access_info_steps_deepl": {
-    "message": "Zaregistrujte sa na www.deepl.com a získať vlastný bezplatný autorizačný kľúč API na preklady pomocou DeepL"
-  },
   "auth_access_info_steps_gemini": {
     "message": "Vytvorte si bezplatný kľúč API na https://aistudio.google.com/apikey"
   },
@@ -612,7 +609,7 @@
     "message": "Dostupné textové tokeny: { $tokens }"
   },
   "pro_user_remain_tts_seconds_approx": {
-    "message": "Dostupný čas pre prevod textu na reč v sekundách: { $seconds }"
+    "message": "Dostupný čas prevodu textu na reč: { $timeRange }"
   },
   "pro_unauthorized_error_401": {
     "message": "Na využívanie musíte byť prihlásení na { $serviceUrl } a mať aktívne predplatné."
@@ -661,5 +658,14 @@
   },
   "pro_version_continue_use_free_version": {
     "message": "Pokračovať s bezplatnou verziou"
+  },
+  "show_in_context_menu_mode_off": {
+    "message": "Nezobrazovať"
+  },
+  "show_in_context_menu_mode_all_providers": {
+    "message": "Všetci poskytovatelia"
+  },
+  "show_in_context_menu_mode_active_provider": {
+    "message": "Len aktívny poskytovateľ"
   }
 }

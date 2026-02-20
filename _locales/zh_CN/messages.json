@@ -530,9 +530,6 @@
   "auth_access_info_steps_deepseek": {
     "message": "在 platform.deepseek.com 注册并充值余额 (例如通过 Paypal)"
   },
-  "auth_access_info_steps_deepl": {
-    "message": "在 www.deepl.com 注册并获取用于 DeepL 翻译的免费 API 密钥"
-  },
   "auth_access_info_steps_gemini": {
     "message": "在 https://aistudio.google.com/apikey 创建您的免费 API 密钥"
   },
@@ -615,7 +612,7 @@
     "message": "可用文本代币: { $tokens }"
   },
   "pro_user_remain_tts_seconds_approx": {
-    "message": "可用文本转语音时间 (秒): { $seconds }"
+    "message": "可用的文本转语音时长：{ $timeRange }"
   },
   "pro_unauthorized_error_401": {
     "message": "您必须在 { $serviceUrl } 登录并拥有有效订阅才能获取访问权限。"
@@ -664,5 +661,14 @@
   },
   "pro_version_continue_use_free_version": {
     "message": "继续使用免费版本"
+  },
+  "show_in_context_menu_mode_off": {
+    "message": "不显示"
+  },
+  "show_in_context_menu_mode_all_providers": {
+    "message": "所有提供者"
+  },
+  "show_in_context_menu_mode_active_provider": {
+    "message": "仅活动提供者"
   }
 }

@@ -80,6 +80,15 @@
   "show_in_context_menu": {
     "message": "Отображать опцию переводчика в контекстном меню браузера"
   },
+  "show_in_context_menu_mode_off": {
+    "message": "Не отображать"
+  },
+  "show_in_context_menu_mode_all_providers": {
+    "message": "Все провайдеры"
+  },
+  "show_in_context_menu_mode_active_provider": {
+    "message": "Только активный"
+  },
   "use_chrome_tts": {
     "message": "Использовать системный преобразователь текста в речь"
   },
@@ -476,9 +485,6 @@
   "auth_access_info_steps_deepseek": {
     "message": "Зарегистрируйтесь на platform.deepseek.com и пополните баланс (2$+)"
   },
-  "auth_access_info_steps_deepl": {
-    "message": "Зарегистрируйтесь на www.deepl.com и получите бесплатный ключ авторизации для DeepL-переводов"
-  },
   "auth_access_info_steps_gemini": {
     "message": "Создайте свой бесплатный API-ключ на странице https://aistudio.google.com/apikey"
   },
@@ -609,7 +615,7 @@
     "message": "Доступно текстовых токенов: { $tokens }"
   },
   "pro_user_remain_tts_seconds_approx": {
-    "message": "Доступнов время для озвучки текста в речь (секунд): { $seconds }"
+    "message": "Доступное время синтеза речи (TTS): { $timeRange }"
   },
   "pro_unauthorized_error_401": {
     "message": "Вы должны быть залогинены на { $serviceUrl } и иметь активную подписку для доступа."
