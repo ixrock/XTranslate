@@ -23,8 +23,9 @@ export class MellowtelDialog extends React.Component<MellowtelDialogProps> {
     await userStore.load();
     if (userStore.isProActive) return;
 
-    const { enabled } = await mellowtelStatusAction();
-    mellowtelDialogVisibility.set(!enabled);
+    const { enabled, timeToRemindForSupport } = await mellowtelStatusAction();
+    if (enabled) return;
+    mellowtelDialogVisibility.set(timeToRemindForSupport);
   }
 
   optIn = async () => {

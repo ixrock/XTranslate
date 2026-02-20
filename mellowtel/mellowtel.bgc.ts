@@ -5,7 +5,6 @@ import { createIsomorphicAction, MessageType } from "../src/extension";
 import { createLogger } from "../src/utils/createLogger";
 import { mellowtelOptOutTime } from "./mellowtel.storage";
 import { mellowtelOptInReminderDuration } from "./mellowtel.config";
-import { userStore } from "@/pro";
 
 const logger = createLogger({ systemPrefix: "[MELLOWTEL]" });
 
@@ -44,10 +43,11 @@ export const mellowtelStatusAction = createIsomorphicAction({
 
     const enabled = await mellowtelApi().getOptInStatus();
     const lastOptOutTime = mellowtelOptOutTime.get();
-    const timeToRemindForSupport = lastOptOutTime + mellowtelOptInReminderDuration > Date.now();
+    const timeToRemindForSupport = lastOptOutTime + mellowtelOptInReminderDuration < Date.now();
 
     return {
-      enabled: enabled || timeToRemindForSupport
+      enabled,
+      timeToRemindForSupport,
     };
   },
 });
@@ -59,8 +59,6 @@ export function mellowtelApi() {
 
 export async function initBackground() {
   try {
-    await userStore.load();
-    if (userStore.isProActive) return;
     await mellowtelApi().initBackground();
   } catch (err) {
     logger.error(`init background failed: ${String(err)}`);
@@ -73,8 +71,6 @@ export type InitContentPageParams = Parameters<
 
 export async function initContentPage(params: InitContentPageParams) {
   try {
-    await userStore.load();
-    if (userStore.isProActive) return;
     await mellowtelApi().initContentScript(params);
   } catch (err) {
     logger.error(`init content page script failed: ${String(err)}`, params);
