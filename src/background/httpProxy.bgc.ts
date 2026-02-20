@@ -3,9 +3,33 @@
 import type { ITranslationError } from "@/providers";
 import { blobToBase64DataUrl, createLogger, toBinaryFile } from "../utils";
 import { isBackgroundWorker, onMessage, sendMessage } from "../extension/runtime"
-import { MessageType, ProxyRequestPayload, ProxyResponsePayload, ProxyResponseType } from "../extension/messages"
+import { MessageType, ProxyRequestPayload, ProxyResponsePayload, ProxyResponseType, ProxyStreamPayload, ProxyStreamResponsePayload } from "../extension/messages"
 
 const logger = createLogger({ systemPrefix: '[HTTP-PROXY]' });
+
+function getErrorMessage(error: unknown): string {
+  if (error instanceof Error) return error.message;
+  if (typeof error === "string") return error;
+
+  try {
+    return JSON.stringify(error);
+  } catch {
+    return "Unknown proxy error";
+  }
+}
+
+function toHeadersObject(headers: Headers): ProxyResponsePayload["headers"] {
+  return Object.fromEntries(headers);
+}
+
+function postStreamMessage(port: chrome.runtime.Port, message: ProxyStreamResponsePayload) {
+  try {
+    port.postMessage(message);
+    return true;
+  } catch {
+    return false;
+  }
+}
 
 export function listenProxyRequestActions() {
   return onMessage(MessageType.PROXY_REQUEST, handleProxyRequestPayload);
@@ -18,18 +42,39 @@ export function listenProxyConnection() {
 function onProxyConnection(port: chrome.runtime.Port) {
   if (port.name !== MessageType.HTTP_PROXY_STREAM) return;
 
-  port.onMessage.addListener(async (msg: ProxyRequestPayload) => {
-    try {
-      const response = await fetch(msg.url, msg.requestInit);
+  port.onMessage.addListener(async (msg: ProxyStreamPayload) => {
+    const abortController = new AbortController();
+    const onDisconnect = () => abortController.abort();
+    port.onDisconnect.addListener(onDisconnect);
 
-      port.postMessage({
-        headers: Object.fromEntries(response.headers),
+    try {
+      const response = await fetch(msg.url, {
+        ...msg.requestInit,
+        signal: abortController.signal,
+      });
+      const headers = toHeadersObject(response.headers);
+
+      if (!response.ok) {
+        const responseText = await response.text().catch(() => "");
+        postStreamMessage(port, {
+          error: responseText || response.statusText || `HTTP ${response.status}`,
+          statusCode: response.status,
+          statusText: response.statusText,
+        });
+        postStreamMessage(port, { done: true });
+        return;
+      }
+
+      if (!postStreamMessage(port, {
+        headers,
         statusCode: response.status,
         statusText: response.statusText,
-      });
+      })) {
+        return;
+      }
 
       if (!response.body) {
-        port.postMessage({ done: true });
+        postStreamMessage(port, { done: true });
         return;
       }
 
@@ -37,18 +82,26 @@ function onProxyConnection(port: chrome.runtime.Port) {
       while (true) {
         const { done, value } = await reader.read();
         if (done) {
-          port.postMessage({ done: true });
+          postStreamMessage(port, { done: true });
           break;
         }
-        port.postMessage({ chunk: Array.from(value) });
+        if (!postStreamMessage(port, { chunk: Array.from(value) })) {
+          abortController.abort();
+          break;
+        }
       }
-    } catch (error) {
-      port.postMessage({ error: error.message });
+    } catch (error: unknown) {
+      if (abortController.signal.aborted) return;
+      postStreamMessage(port, {
+        error: getErrorMessage(error),
+      });
+      postStreamMessage(port, { done: true });
+    } finally {
+      port.onDisconnect.removeListener(onDisconnect);
     }
   });
 }
 
-// TODO: support streaming TTS
 export async function handleProxyRequestPayload<Response>({ url, responseType, requestInit }: ProxyRequestPayload) {
   logger.info(`proxying request (${responseType}): ${url}`);
 

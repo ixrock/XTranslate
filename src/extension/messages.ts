@@ -52,6 +52,35 @@ export interface ProxyResponsePayload<Data = unknown> {
   data: Data;
 }
 
+export interface ProxyStreamPayload extends Omit<ProxyRequestPayload, "responseType"> {
+}
+
+export interface ProxyStreamHeadersMessage {
+  headers: { [header: string]: string; "content-type"?: string };
+  statusCode: number;
+  statusText: string;
+}
+
+export interface ProxyStreamChunkMessage {
+  chunk: number[];
+}
+
+export interface ProxyStreamDoneMessage {
+  done: true;
+}
+
+export interface ProxyStreamErrorMessage {
+  error: string;
+  statusCode?: number;
+  statusText?: string;
+}
+
+export type ProxyStreamResponsePayload =
+  ProxyStreamHeadersMessage
+  | ProxyStreamChunkMessage
+  | ProxyStreamDoneMessage
+  | ProxyStreamErrorMessage;
+
 export interface InjectContentScriptPayload {
   tabId?: number;
 }
