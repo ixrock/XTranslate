@@ -77,8 +77,8 @@ export class Settings extends React.Component {
                   className={styles.providerSelect}
                   placeholder={getMessage("tts_select_voice_title")}
                   options={openAiVoiceOptions}
-                  value={openAiVoiceOptions.find(voiceOpt => voiceOpt.value === settingsStore.data.tts.openAiVoice)}
-                  onChange={({ value }) => settingsStore.data.tts.openAiVoice = value}
+                  value={openAiVoiceOptions.find(voiceOpt => voiceOpt.value === userStore.data.ttsVoice)}
+                  onChange={({ value }) => userStore.data.ttsVoice = value}
                 />
               </>
             )}
@@ -370,8 +370,8 @@ export class Settings extends React.Component {
             tooltip={getMessage("use_chrome_tts_tooltip_info")}
           />
           <SelectVoice
-            currentIndex={settings.tts.systemVoiceIndex}
-            onChange={v => settings.tts.systemVoiceIndex = v}
+            currentIndex={settings.systemTTSEngineVoiceIndex}
+            onChange={v => settings.systemTTSEngineVoiceIndex = v}
           />
           <Icon small material="info_outline" tooltip={getMessage("system_tts_info")}/>
           <Icon

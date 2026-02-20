@@ -1,5 +1,5 @@
 import { createStorage } from "@/storage";
-import { getXTranslatePro, XTranslateProPricing, XTranslateProSubscription, XTranslateProTranslateError, XTranslateProUser } from "@/providers";
+import { getXTranslatePro, OpenAIModelTTSVoice, XTranslateProPricing, XTranslateProSubscription, XTranslateProTranslateError, XTranslateProUser } from "@/providers";
 import { formatPrice } from "@/utils";
 import { getLocale, getMessage } from "@/i18n";
 
@@ -7,6 +7,7 @@ export interface UserStorage {
   user?: XTranslateProUser;
   subscription?: XTranslateProSubscription;
   pricing?: XTranslateProPricing;
+  ttsVoice?: OpenAIModelTTSVoice;
   lastUpdateDateTime?: number;
   promoBannerShowTime?: number;
 }
@@ -17,6 +18,7 @@ const userStorage = createStorage<UserStorage>("user_pro", {
   defaultValue: {
     user: null,
     pricing: null,
+    ttsVoice: OpenAIModelTTSVoice.Alloy,
     lastUpdateDateTime: 0,
     promoBannerShowTime: 0,
   },

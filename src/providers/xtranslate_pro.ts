@@ -1,9 +1,9 @@
 import AILanguagesList from "./open-ai.json"
-import { websiteURL } from "@/config";
 import { getTranslator, ITranslationError, ITranslationResult, OpenAIModelTTSVoice, ProviderCodeName, TranslateParams, Translator } from "./index";
 import { MessageType, ProxyResponseType } from "@/extension";
 import { getMessage } from "@/i18n";
-import { settingsStore } from "@/components/settings/settings.storage";
+import { websiteURL } from "@/config";
+import { userStore } from "@/pro";
 
 export class XTranslatePro extends Translator {
   override name = ProviderCodeName.XTRANSLATE_PRO;
@@ -99,7 +99,7 @@ export class XTranslatePro extends Translator {
   private ttsPort: chrome.runtime.Port;
 
   override async speak(text: string, lang?: string, voice?: OpenAIModelTTSVoice): Promise<HTMLAudioElement | SpeechSynthesisUtterance | void> {
-    voice ??= settingsStore.data.tts.openAiVoice; // use default value from app's UI settings
+    voice ??= userStore.data.ttsVoice; // use default value from app's UI settings
 
     return super.speak(text, lang, voice);
   }

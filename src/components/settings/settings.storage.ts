@@ -59,10 +59,9 @@ export const settingsStorage = createStorage("settings", {
     deepSeekModel: DeepSeekAIModel.RECOMMENDED,
     geminiModel: GeminiAIModel.RECOMMENDED,
     safeTranslationLimit: 0, // 0 = unlimited, don't ask user for confirmation, useful for paid-API providers
+    systemTTSEngineVoiceIndex: 0,
     tts: {
-      systemVoiceIndex: 0,
       openAiVoice: OpenAIModelTTSVoice.Alloy,
-      geminiVoice: GeminiAIModelTTSVoice.Puck,
     },
     fullPageTranslation: {
       contextMenuMode: FullPageContextMenuMode.ALL_PROVIDERS,
