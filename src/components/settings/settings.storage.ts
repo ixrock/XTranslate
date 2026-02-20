@@ -60,9 +60,6 @@ export const settingsStorage = createStorage("settings", {
     geminiModel: GeminiAIModel.RECOMMENDED,
     safeTranslationLimit: 0, // 0 = unlimited, don't ask user for confirmation, useful for paid-API providers
     systemTTSEngineVoiceIndex: 0,
-    tts: {
-      openAiVoice: OpenAIModelTTSVoice.Alloy,
-    },
     fullPageTranslation: {
       contextMenuMode: FullPageContextMenuMode.ALL_PROVIDERS,
       provider: "bing" as ProviderCodeName,
