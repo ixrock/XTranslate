@@ -7,7 +7,7 @@ import { StorageAdapter, StorageHelper, StorageHelperOptions } from "./utils/sto
 import { isBackgroundWorker, onMessage } from "./extension/runtime";
 import { MessageType, StorageSyncPayload } from "./extension/messages";
 import { listenExternalStorageChanges, readFromExternalStorageAction, removeFromExternalStorageAction, StorageArea, writeToExternalStorageAction } from "./background/storage.bgc";
-import { isDevelopment, isFirefox } from "./common-vars";
+import { isDevelopment, isFirefox } from "./config";
 
 const logger = createLogger({ systemPrefix: "STORAGE(helper)" });
 
