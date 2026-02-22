@@ -1,8 +1,629 @@
 {
   "short_description": {
-    "message": "輕鬆地翻譯在網頁上的文字"
+    "message": "簡單翻譯網頁上的文字"
   },
   "description": {
-    "message": "翻譯網頁內容文字，自訂您的彈出式方塊的風格，新增語言到最愛，以及更多功能。"
+    "message": "在頁面上下文中翻譯文字，自定義彈出框樣式等更多功能。"
+  },
+  "open_in_window": {
+    "message": "在外部視窗中開啟"
+  },
+  "tab_settings": {
+    "message": "設定"
+  },
+  "tab_theme": {
+    "message": "彈出框"
+  },
+  "tab_text_input": {
+    "message": "翻譯"
+  },
+  "tab_history": {
+    "message": "歷史記錄"
+  },
+  "setting_title_common": {
+    "message": "通用"
+  },
+  "setting_title_text_input": {
+    "message": "翻譯"
+  },
+  "setting_title_popup": {
+    "message": "彈出框"
+  },
+  "setting_title_translator_service": {
+    "message": "服務"
+  },
+  "settings_title_tts": {
+    "message": "語音合成"
+  },
+  "settings_title_appearance": {
+    "message": "外觀"
+  },
+  "auto_play_tts": {
+    "message": "自動播放語音"
+  },
+  "use_chrome_tts": {
+    "message": "強制使用系統語音引擎"
+  },
+  "use_chrome_tts_tooltip_info": {
+    "message": "當翻譯器沒有自帶語音引擎時，此選項會自動啟用"
+  },
+  "use_dark_theme": {
+    "message": "切換到深色主題"
+  },
+  "tts_default_system_voice": {
+    "message": "預設系統語音"
+  },
+  "tts_select_voice_title": {
+    "message": "選擇語音"
+  },
+  "tts_play_demo_sound": {
+    "message": "播放示範音效"
+  },
+  "tts_play_demo_sound_edit": {
+    "message": "編輯語音示範文字"
+  },
+  "import_export_settings": {
+    "message": "匯入或匯出設定"
+  },
+  "export_settings_button_label": {
+    "message": "匯出設定"
+  },
+  "import_settings_button_label": {
+    "message": "匯入設定"
+  },
+  "import_incorrect_file_format": {
+    "message": "檔案格式不正確（應為 { $fileNameJson }）"
+  },
+  "imported_setting_successful": {
+    "message": "已成功匯入鍵值為 { $key } 的設定"
+  },
+  "display_icon_near_selection": {
+    "message": "在選中文本附近顯示圖示"
+  },
+  "show_tts_icon_inside_popup": {
+    "message": "顯示語音合成圖示"
+  },
+  "show_select_provider_icon_in_popup": {
+    "message": "顯示下個翻譯器圖示"
+  },
+  "show_copy_translation_icon": {
+    "message": "顯示複製翻譯圖示"
+  },
+  "show_save_as_favorite_icon": {
+    "message": "顯示保存為收藏圖示"
+  },
+  "show_close_popup_button": {
+    "message": "在右上角顯示關閉彈出框按鈕"
+  },
+  "show_detected_language_block": {
+    "message": "顯示檢測到的語言"
+  },
+  "display_on_click_by_selected_text": {
+    "message": "點擊選取文字後顯示"
+  },
+  "display_popup_after_text_selected": {
+    "message": "選擇文字後即時顯示"
+  },
+  "display_popup_on_double_click": {
+    "message": "雙擊單詞時顯示"
+  },
+  "display_popup_on_hotkey": {
+    "message": "按下快捷鍵時顯示"
+  },
+  "remember_last_typed_text": {
+    "message": "記住上次輸入的文字"
+  },
+  "sub_header_quick_access_hotkey": {
+    "message": "設置全域快捷鍵"
+  },
+  "quick_access_configure_link": {
+    "message": "配置快捷鍵以快速訪問此視窗"
+  },
+  "swap_languages": {
+    "message": "交換語言"
+  },
+  "popup_position_title": {
+    "message": "位置"
+  },
+  "popup_position_auto": {
+    "message": "自動（對齊文字）"
+  },
+  "popup_position_left_top": {
+    "message": "左上角"
+  },
+  "popup_position_right_top": {
+    "message": "右上角"
+  },
+  "popup_position_left_bottom": {
+    "message": "左下角"
+  },
+  "popup_position_right_bottom": {
+    "message": "右下角"
+  },
+  "translation_delay": {
+    "message": "翻譯延遲"
+  },
+  "translation_delay_info": {
+    "message": "如果您經常遇到來自 Google 或其他服務的封鎖（503 錯誤），請設置較大的延遲值"
+  },
+  "reverse_translate_select_placeholder": {
+    "message": "反向翻譯語言"
+  },
+  "reverse_translate_add_action": {
+    "message": "添加反向語言：{ $lang } -> ? （僅適用於“自動檢測”選項）"
+  },
+  "reverse_translate_delete_action": {
+    "message": "移除反向翻譯語言"
+  },
+  "custom_font_select": {
+    "message": "選擇自定義字體"
+  },
+  "popup_play_icon_title": {
+    "message": "播放"
+  },
+  "popup_copy_translation_title": {
+    "message": "複製翻譯"
+  },
+  "popup_next_vendor_icon_title": {
+    "message": "使用 { $translator } 翻譯"
+  },
+  "popup_demo_translation": {
+    "message": "翻譯的文字"
+  },
+  "popup_demo_dictionary_noun": {
+    "message": "名詞"
+  },
+  "popup_demo_dictionary_values": {
+    "message": "詞語 1，詞語 2 等"
+  },
+  "sub_header_background": {
+    "message": "背景"
+  },
+  "sub_header_box_shadow": {
+    "message": "陰影"
+  },
+  "sub_header_text": {
+    "message": "文字"
+  },
+  "sub_header_border": {
+    "message": "邊框"
+  },
+  "sub_header_box_size": {
+    "message": "框尺寸"
+  },
+  "background_color": {
+    "message": "顏色"
+  },
+  "background_linear_gradient": {
+    "message": "漸層"
+  },
+  "box_shadow_color": {
+    "message": "顏色"
+  },
+  "box_shadow_inner": {
+    "message": "內部"
+  },
+  "text_size": {
+    "message": "大小"
+  },
+  "text_font_family": {
+    "message": "字體"
+  },
+  "text_color": {
+    "message": "顏色"
+  },
+  "text_shadow": {
+    "message": "陰影"
+  },
+  "text_shadow_size": {
+    "message": "模糊半徑"
+  },
+  "text_shadow_offset_x": {
+    "message": "水平偏移"
+  },
+  "text_shadow_offset_y": {
+    "message": "垂直偏移"
+  },
+  "text_shadow_color": {
+    "message": "顏色"
+  },
+  "border_width": {
+    "message": "寬度"
+  },
+  "border_style": {
+    "message": "樣式"
+  },
+  "border_color": {
+    "message": "顏色"
+  },
+  "border_radius": {
+    "message": "半徑"
+  },
+  "box_size_min_width": {
+    "message": "最小寬度"
+  },
+  "box_size_min_height": {
+    "message": "最小高度"
+  },
+  "box_size_max_width": {
+    "message": "最大寬度"
+  },
+  "box_size_max_height": {
+    "message": "最大高度"
+  },
+  "reset_to_default_button_text": {
+    "message": "重置為預設值"
+  },
+  "text_field_placeholder": {
+    "message": "開始輸入以獲取翻譯"
+  },
+  "translated_with": {
+    "message": "使用 { $translator } 翻譯 ({ $lang })"
+  },
+  "translated_from": {
+    "message": "翻譯來源：{ $lang }"
+  },
+  "translate_also_from": {
+    "message": "也翻譯自"
+  },
+  "spell_correction": {
+    "message": "您是指 { $suggestion }？"
+  },
+  "text_input_translation_hint": {
+    "message": "按下 { $hotkey } 即時翻譯，延遲：{ $timeout }ms"
+  },
+  "history_enabled_flag": {
+    "message": "已啟用"
+  },
+  "history_settings_save_words_only": {
+    "message": "僅保存字典詞彙"
+  },
+  "history_search_input_placeholder": {
+    "message": "搜索歷史記錄"
+  },
+  "history_clear_period_hour": {
+    "message": "最近一小時"
+  },
+  "history_clear_period_day": {
+    "message": "最近一天"
+  },
+  "history_clear_period_month": {
+    "message": "最近一個月"
+  },
+  "history_clear_period_year": {
+    "message": "最近一年"
+  },
+  "history_clear_period_all": {
+    "message": "全部"
+  },
+  "history_button_clear": {
+    "message": "清除歷史記錄"
+  },
+  "history_button_show_more": {
+    "message": "顯示更多"
+  },
+  "history_export_entries": {
+    "message": "匯出 { $format }"
+  },
+  "history_import_entries": {
+    "message": "匯入 { $format }"
+  },
+  "history_page_size": {
+    "message": "每頁大小"
+  },
+  "history_icon_tooltip_search": {
+    "message": "搜索"
+  },
+  "history_icon_tooltip_imp_exp": {
+    "message": "匯入 / 匯出"
+  },
+  "history_icon_tooltip_settings": {
+    "message": "設定"
+  },
+  "history_show_favorites_only": {
+    "message": "僅顯示收藏"
+  },
+  "history_mark_as_favorite": {
+    "message": "將項目標記為收藏"
+  },
+  "history_unmark_as_favorite": {
+    "message": "取消收藏"
+  },
+  "history_import_success": {
+    "message": "成功匯入 { $itemsCount } 條歷史記錄"
+  },
+  "history_import_file_error": {
+    "message": "讀取檔案 '{ $fileName }' 錯誤：{ $errorInfo }"
+  },
+  "context_menu_translate_full_page": {
+    "message": "翻譯成 { $lang }"
+  },
+  "context_menu_translate_selection": {
+    "message": "使用 { $translator } 翻譯 { $selection }"
+  },
+  "share_with_friends": {
+    "message": "如果您喜歡此應用，請與您的朋友分享"
+  },
+  "translation_data_failed": {
+    "message": "數據加載失敗"
+  },
+  "rate_app_info1": {
+    "message": "喜歡此應用嗎？請給我們打 5 星好評！"
+  },
+  "rate_app_info2": {
+    "message": "這將幫助其他用戶發現此擴充功能並傳播其好處。"
+  },
+  "rate_app_button": {
+    "message": "在擴充功能商店中評分"
+  },
+  "rate_app_button_later": {
+    "message": "稍後提醒我"
+  },
+  "target_lang_placeholder": {
+    "message": "目標語言"
+  },
+  "source_lang_placeholder": {
+    "message": "來源語言"
+  },
+  "favorites_lang_title": {
+    "message": "收藏"
+  },
+  "support_developers": {
+    "message": "支援開發者"
+  },
+  "service_unavailable": {
+    "message": "服務不可用。請稍後 5-25 分鐘後再試。如果此情況經常發生，請在設定中增加翻譯延遲。"
+  },
+  "service_confirm_not_a_robot": {
+    "message": "您也可以訪問 { $link } 並確認您不是機器人。"
+  },
+  "privacy_policy_title_updated": {
+    "message": "隱私政策已更新"
+  },
+  "privacy_policy_accept_terms": {
+    "message": "接受條款與條件"
+  },
+  "error_403_auth_failed": {
+    "message": "授權失敗。請在設定中提供有效的 API 金鑰"
+  },
+  "ai_choose_model": {
+    "message": "選擇 AI 模型"
+  },
+  "ai_choose_model_cost_effective": {
+    "message": "最具成本效益"
+  },
+  "ai_choose_model_recommended": {
+    "message": "推薦模型"
+  },
+  "pdf_use_custom_viewer": {
+    "message": "支援 PDF 文件翻譯"
+  },
+  "pdf_use_custom_viewer_info": {
+    "message": "此選項將替換預設的 PDF 檢視器"
+  },
+  "skip_popup_inject_for_pages": {
+    "message": "略過 URL"
+  },
+  "skip_popup_inject_for_pages_info": {
+    "message": "如果遇到問題，例如 Cloudflare 驗證碼 iframe 檢查，請加入要略過彈出視窗注入的 URL。"
+  },
+  "settings_title_full_page_translation": {
+    "message": "整頁翻譯"
+  },
+  "settings_title_full_page_excluded_pages": {
+    "message": "永不翻譯"
+  },
+  "settings_title_full_page_always_translate": {
+    "message": "總是翻譯"
+  },
+  "settings_title_full_page_show_original_onmouseover": {
+    "message": "滑鼠懸停時顯示原文"
+  },
+  "settings_title_full_page_show_translation_onmouseover": {
+    "message": "滑鼠懸停時顯示翻譯"
+  },
+  "settings_title_full_page_show_replace_texts": {
+    "message": "用翻譯替換文件文字"
+  },
+  "settings_title_full_page_show_traffic_save_mode": {
+    "message": "啟用流量節省模式"
+  },
+  "settings_title_full_page_show_traffic_save_mode_info": {
+    "message": "僅翻譯視窗中可見的文字以節省網路/API成本"
+  },
+  "settings_select_empty_list": {
+    "message": "空列表"
+  },
+  "settings_select_edit_list": {
+    "message": "點擊查看和編輯列表"
+  },
+  "settings_select_add_url": {
+    "message": "新增 URL"
+  },
+  "settings_select_add_url_error": {
+    "message": "嘗試新增無效 URL"
+  },
+  "show_in_context_menu": {
+    "message": "在瀏覽器上下文選單中顯示翻譯選項"
+  },
+  "settings_title_advanced_providers_list": {
+    "message": "進階翻譯提供商"
+  },
+  "settings_title_advanced_providers_list_show": {
+    "message": "顯示進階翻譯提供商"
+  },
+  "settings_title_advanced_providers_list_hide": {
+    "message": "隱藏進階翻譯提供商"
+  },
+  "settings_title_voice": {
+    "message": "語音"
+  },
+  "settings_show_more": {
+    "message": "顯示更多設定"
+  },
+  "settings_show_less": {
+    "message": "顯示較少設定"
+  },
+  "context_menu_translate_full_page_context_menu": {
+    "message": "翻譯頁面至 { $lang }"
+  },
+  "context_menu_translate_full_page_context_menu_stop": {
+    "message": "停止 { $site } 的自動翻譯"
+  },
+  "ai_choose_model_reasoning": {
+    "message": "思考模型 / 慢速"
+  },
+  "ai_choose_model_reasoning_light": {
+    "message": "思考模型輕量版 / 更快"
+  },
+  "auth_access_info_steps_openai": {
+    "message": "1) 在 platform.openai.com 註冊 2) 建立 API 存取金鑰 3) 儲值餘額 (5$+)"
+  },
+  "auth_access_info_steps_grok": {
+    "message": "在 console.x.ai 註冊並儲值餘額 (例如透過信用卡)"
+  },
+  "auth_access_info_steps_deepseek": {
+    "message": "在 platform.deepseek.com 註冊並儲值餘額 (例如透過 Paypal)"
+  },
+  "auth_access_info_steps_gemini": {
+    "message": "在 https://aistudio.google.com/apikey 建立您的免費 API 金鑰"
+  },
+  "auth_access_info_api_key": {
+    "message": "提供您的 API 金鑰以獲取 { $provider } 翻譯"
+  },
+  "auth_setup_key_info": {
+    "message": "提供 { $provider } API 金鑰"
+  },
+  "auth_clear_key_info": {
+    "message": "移除 { $provider } API 金鑰"
+  },
+  "auth_safety_warning_info": {
+    "message": "警告：請勿在此擴充功能視窗以外的任何地方輸入您的 API 金鑰"
+  },
+  "pro_version_promo_link_text": {
+    "message": "PRO 版 8 折"
+  },
+  "pro_version_promo_tooltip": {
+    "message": "我們正在構建具有全頁 AI 翻譯功能的 PRO 版本。點擊了解更多並領取您的折扣。"
+  },
+  "popup_safe_translation_chars_limit": {
+    "message": "如果選中的文字超過 { $limit } 個字元，顯示確認警告以繼續。"
+  },
+  "popup_safe_translation_chars_limit_info": {
+    "message": "這可能以助於您減少在不需要的文字請求上的 AI 代幣配額支出 (0 - 無限制)"
+  },
+  "popup_safe_translation_chars_confirmation_dialog_info": {
+    "message": "選中的文字包含 { $selectedCountChars } 個字元，超過了 { $settingsLimitChars } 個字元的安全翻譯限制。翻譯大段文字可能會消耗更多資源或產生額外費用，具體取決於您的翻譯提供商。您想繼續翻譯嗎？"
+  },
+  "recommended": {
+    "message": "推薦"
+  },
+  "copy_to_clipboard": {
+    "message": "複製到剪貼簿"
+  },
+  "tts_supported": {
+    "message": "非常有限的文字轉語音支援"
+  },
+  "pro_version_ai_translator": {
+    "message": "基於 AI 的專業語言翻譯器 (由 { $provider } 提供支援)"
+  },
+  "pro_version_ai_tts": {
+    "message": "基於 AI 的類人文字轉語音，有 6 種聲音可供選擇 (由 { $provider } 提供支援)"
+  },
+  "pro_version_ai_summarize_feature": {
+    "message": "將任何文字轉化為清晰的摘要 (促進更快的學習和理解)"
+  },
+  "pro_upgrade_button_label": {
+    "message": "升級到 PRO"
+  },
+  "pro_upgrade_button_tooltip": {
+    "message": "登入，試用免費計劃，稍後以約 { $pricePerMonth }/月的價格訂閱"
+  },
+  "pro_select_tts_voice": {
+    "message": "語音"
+  },
+  "pro_required_confirm_goto_subscribe": {
+    "message": "此選項需要 PRO 訂閱，我們要去訂閱頁面嗎？"
+  },
+  "pro_user_welcome_back": {
+    "message": "歡迎回來，{ $username }！"
+  },
+  "pro_user_status": {
+    "message": "PRO 狀態: { $status }"
+  },
+  "pro_user_status_active": {
+    "message": "活躍"
+  },
+  "pro_user_status_inactive": {
+    "message": "非活躍"
+  },
+  "pro_user_subscription": {
+    "message": "訂閱: { $plan } ({ $periodEnd } 結束)"
+  },
+  "pro_user_subscription_expired": {
+    "message": "訂閱已於 { $periodEnd } 到期"
+  },
+  "pro_user_remain_text_tokens": {
+    "message": "可用文字代幣: { $tokens }"
+  },
+  "pro_user_remain_tts_seconds_approx": {
+    "message": "可用的文字轉語音時長：{ $timeRange }"
+  },
+  "pro_unauthorized_error_401": {
+    "message": "您必須在 { $serviceUrl } 登入並擁有有效訂閱才能獲取存取權限。"
+  },
+  "translate_button": {
+    "message": "翻譯"
+  },
+  "summarize_button": {
+    "message": "摘要"
+  },
+  "tts_button": {
+    "message": "收聽"
+  },
+  "text_input_auto_translation_enabled": {
+    "message": "自動翻譯 { $toggle = 已啟用 }"
+  },
+  "text_input_auto_translation_disabled": {
+    "message": "自動翻譯 { $toggle = 已禁用 }"
+  },
+  "text_input_auto_translation_timeout": {
+    "message": "超時: { $timeout }ms"
+  },
+  "system_tts_info": {
+    "message": "您應該為您的主要目標語言選擇最合適的本地化語音"
+  },
+  "setting_popup_promo_features": {
+    "message": "顯示促銷橫幅"
+  },
+  "setting_popup_summarize_action_icon": {
+    "message": "顯示摘要圖示"
+  },
+  "popup_info_banner_pro_available": {
+    "message": "具有高級服務功能的 PRO 版本來了！"
+  },
+  "popup_info_banner_pro_see_details": {
+    "message": "在 { $settingsLink = 應用設定 } 和 { $subscribeLink = 訂閱 } 中查看詳情"
+  },
+  "pro_user_subscription_inactive": {
+    "message": "訂閱無效。方案：{$plan}，狀態：{$status}，結束：{$periodEnd}"
+  },
+  "pro_version_subscribe_button": {
+    "message": "訂閱"
+  },
+  "pro_version_subscribe_price": {
+    "message": "每月只需 { $priceMonthly }，即可訂閱 XTranslate PRO 方案。"
+  },
+  "pro_version_continue_use_free_version": {
+    "message": "繼續使用免費版本"
+  },
+  "show_in_context_menu_mode_off": {
+    "message": "不顯示"
+  },
+  "show_in_context_menu_mode_all_providers": {
+    "message": "所有提供者"
+  },
+  "show_in_context_menu_mode_active_provider": {
+    "message": "僅限當前提供者"
   }
 }

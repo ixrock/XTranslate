@@ -4,5 +4,626 @@
   },
   "description": {
     "message": "Traduza textos no contexto da página, personalize seu próprio estilo de bloco pop-up e muito mais."
+  },
+  "open_in_window": {
+    "message": "Abrir em janela externa"
+  },
+  "tab_settings": {
+    "message": "Configurações"
+  },
+  "tab_theme": {
+    "message": "Pop-up"
+  },
+  "tab_text_input": {
+    "message": "Traduzir"
+  },
+  "tab_history": {
+    "message": "Histórico"
+  },
+  "setting_title_common": {
+    "message": "Comum"
+  },
+  "setting_title_text_input": {
+    "message": "Traduzir"
+  },
+  "setting_title_popup": {
+    "message": "Pop-up"
+  },
+  "setting_title_translator_service": {
+    "message": "Serviço"
+  },
+  "settings_title_tts": {
+    "message": "Texto para fala"
+  },
+  "settings_title_appearance": {
+    "message": "Aparência"
+  },
+  "auto_play_tts": {
+    "message": "Reprodução automática de texto para fala"
+  },
+  "use_chrome_tts": {
+    "message": "Forçar o uso do motor de texto para fala do sistema"
+  },
+  "use_chrome_tts_tooltip_info": {
+    "message": "Esta opção é ativada automaticamente quando o tradutor não tem seu próprio motor TTS"
+  },
+  "use_dark_theme": {
+    "message": "Alternar para tema escuro nesta janela"
+  },
+  "tts_default_system_voice": {
+    "message": "Voz do sistema padrão"
+  },
+  "tts_select_voice_title": {
+    "message": "Selecionar voz"
+  },
+  "tts_play_demo_sound": {
+    "message": "Reproduzir som de demonstração"
+  },
+  "tts_play_demo_sound_edit": {
+    "message": "Editar texto para demonstração de voz"
+  },
+  "import_export_settings": {
+    "message": "Importar ou exportar configurações"
+  },
+  "export_settings_button_label": {
+    "message": "Exportar configurações"
+  },
+  "import_settings_button_label": {
+    "message": "Importar configurações"
+  },
+  "import_incorrect_file_format": {
+    "message": "Formato de arquivo incorreto (provavelmente deveria ser { $fileNameJson })"
+  },
+  "imported_setting_successful": {
+    "message": "Configurações sob a chave { $key } importadas com sucesso"
+  },
+  "display_icon_near_selection": {
+    "message": "Mostrar ícone perto do texto selecionado"
+  },
+  "show_tts_icon_inside_popup": {
+    "message": "Mostrar ícone de texto para fala"
+  },
+  "show_select_provider_icon_in_popup": {
+    "message": "Mostrar ícone de próxima tradução"
+  },
+  "show_copy_translation_icon": {
+    "message": "Mostrar ícone de copiar tradução"
+  },
+  "show_save_as_favorite_icon": {
+    "message": "Mostrar ícone de salvar como favorito"
+  },
+  "show_close_popup_button": {
+    "message": "Mostrar botão de fechar pop-up no canto direito"
+  },
+  "show_detected_language_block": {
+    "message": "Mostrar idioma detectado"
+  },
+  "display_on_click_by_selected_text": {
+    "message": "Mostrar ao clicar na seleção"
+  },
+  "display_popup_after_text_selected": {
+    "message": "Mostrar logo após a seleção do texto"
+  },
+  "display_popup_on_double_click": {
+    "message": "Mostrar ao clicar duas vezes em uma palavra"
+  },
+  "display_popup_on_hotkey": {
+    "message": "Mostrar quando pressionar a tecla de atalho"
+  },
+  "remember_last_typed_text": {
+    "message": "Lembrar do último texto digitado"
+  },
+  "sub_header_quick_access_hotkey": {
+    "message": "Configurar atalho global"
+  },
+  "quick_access_configure_link": {
+    "message": "Configurar atalho de teclado para acesso rápido a esta janela"
+  },
+  "swap_languages": {
+    "message": "Trocar idiomas"
+  },
+  "popup_position_title": {
+    "message": "Posição"
+  },
+  "popup_position_auto": {
+    "message": "Auto (alinhado ao texto)"
+  },
+  "popup_position_left_top": {
+    "message": "Canto superior esquerdo"
+  },
+  "popup_position_right_top": {
+    "message": "Canto superior direito"
+  },
+  "popup_position_left_bottom": {
+    "message": "Canto inferior esquerdo"
+  },
+  "popup_position_right_bottom": {
+    "message": "Canto inferior direito"
+  },
+  "translation_delay": {
+    "message": "Atraso na tradução"
+  },
+  "translation_delay_info": {
+    "message": "Se você frequentemente enfrenta bloqueios (erro 503) do Google ou outros serviços, defina um valor maior de atraso"
+  },
+  "reverse_translate_select_placeholder": {
+    "message": "Traduzir idioma de forma inversa"
+  },
+  "reverse_translate_add_action": {
+    "message": "Adicionar idioma inverso: { $lang } -> ? (aplicável apenas com a opção 'Auto-detectar')"
+  },
+  "reverse_translate_delete_action": {
+    "message": "Remover tradução inversa do idioma"
+  },
+  "custom_font_select": {
+    "message": "Selecionar fonte personalizada"
+  },
+  "popup_play_icon_title": {
+    "message": "Ouvir"
+  },
+  "popup_copy_translation_title": {
+    "message": "Copiar tradução"
+  },
+  "popup_next_vendor_icon_title": {
+    "message": "Traduzir com { $translator }"
+  },
+  "popup_demo_translation": {
+    "message": "Texto traduzido"
+  },
+  "popup_demo_dictionary_noun": {
+    "message": "substantivo"
+  },
+  "popup_demo_dictionary_values": {
+    "message": "Palavra 1, palavra 2, etc."
+  },
+  "sub_header_background": {
+    "message": "Fundo"
+  },
+  "sub_header_box_shadow": {
+    "message": "Sombra da caixa"
+  },
+  "sub_header_text": {
+    "message": "Texto"
+  },
+  "sub_header_border": {
+    "message": "Borda"
+  },
+  "sub_header_box_size": {
+    "message": "Tamanho da caixa"
+  },
+  "background_color": {
+    "message": "Cor"
+  },
+  "background_linear_gradient": {
+    "message": "Linear"
+  },
+  "box_shadow_color": {
+    "message": "Cor"
+  },
+  "box_shadow_inner": {
+    "message": "Interno"
+  },
+  "text_size": {
+    "message": "Tamanho"
+  },
+  "text_font_family": {
+    "message": "Fonte"
+  },
+  "text_color": {
+    "message": "Cor"
+  },
+  "text_shadow": {
+    "message": "Sombra"
+  },
+  "text_shadow_size": {
+    "message": "Raio de desfoque"
+  },
+  "text_shadow_offset_x": {
+    "message": "Deslocamento horizontal"
+  },
+  "text_shadow_offset_y": {
+    "message": "Deslocamento vertical"
+  },
+  "text_shadow_color": {
+    "message": "Cor"
+  },
+  "border_width": {
+    "message": "Largura"
+  },
+  "border_style": {
+    "message": "Estilo"
+  },
+  "border_color": {
+    "message": "Cor"
+  },
+  "border_radius": {
+    "message": "Raio"
+  },
+  "box_size_min_width": {
+    "message": "Largura mínima"
+  },
+  "box_size_min_height": {
+    "message": "Altura mínima"
+  },
+  "box_size_max_width": {
+    "message": "Largura máxima"
+  },
+  "box_size_max_height": {
+    "message": "Altura máxima"
+  },
+  "reset_to_default_button_text": {
+    "message": "Restaurar para padrão"
+  },
+  "text_field_placeholder": {
+    "message": "Comece a digitar aqui para obter a tradução"
+  },
+  "translated_with": {
+    "message": "Traduzido com { $translator } ({ $lang })"
+  },
+  "translated_from": {
+    "message": "Traduzido de: { $lang }"
+  },
+  "translate_also_from": {
+    "message": "Também traduzir de"
+  },
+  "spell_correction": {
+    "message": "Você quis dizer { $suggestion }?"
+  },
+  "text_input_translation_hint": {
+    "message": "{ $hotkey } para tradução imediata, atraso: { $timeout }ms"
+  },
+  "history_enabled_flag": {
+    "message": "Ativado"
+  },
+  "history_settings_save_words_only": {
+    "message": "Salvar apenas palavras do dicionário"
+  },
+  "history_search_input_placeholder": {
+    "message": "Pesquisar no histórico"
+  },
+  "history_clear_period_hour": {
+    "message": "Última hora"
+  },
+  "history_clear_period_day": {
+    "message": "Último dia"
+  },
+  "history_clear_period_month": {
+    "message": "Último mês"
+  },
+  "history_clear_period_year": {
+    "message": "Último ano"
+  },
+  "history_clear_period_all": {
+    "message": "Tudo"
+  },
+  "history_button_clear": {
+    "message": "Limpar histórico"
+  },
+  "history_button_show_more": {
+    "message": "Mostrar mais"
+  },
+  "history_export_entries": {
+    "message": "Exportar { $format }"
+  },
+  "history_import_entries": {
+    "message": "Importar { $format }"
+  },
+  "history_page_size": {
+    "message": "Tamanho da página"
+  },
+  "history_icon_tooltip_search": {
+    "message": "Pesquisar"
+  },
+  "history_icon_tooltip_imp_exp": {
+    "message": "Importar / Exportar"
+  },
+  "history_icon_tooltip_settings": {
+    "message": "Configurações"
+  },
+  "history_show_favorites_only": {
+    "message": "Mostrar apenas favoritos"
+  },
+  "history_mark_as_favorite": {
+    "message": "Marcar item como favorito"
+  },
+  "history_unmark_as_favorite": {
+    "message": "Desmarcar item como favorito"
+  },
+  "history_import_success": {
+    "message": "{ $itemsCount } entradas de histórico importadas com sucesso"
+  },
+  "history_import_file_error": {
+    "message": "Erro ao ler o arquivo '{ $fileName }': { $errorInfo }"
+  },
+  "context_menu_translate_full_page": {
+    "message": "Traduzir para { $lang }"
+  },
+  "context_menu_translate_selection": {
+    "message": "Traduzir { $selection } com { $translator }"
+  },
+  "share_with_friends": {
+    "message": "Se você gosta do aplicativo, compartilhe com seus amigos"
+  },
+  "translation_data_failed": {
+    "message": "Falha ao carregar dados"
+  },
+  "rate_app_info1": {
+    "message": "Você gosta de usar o aplicativo? Por favor, nos avalie com 5 estrelas!"
+  },
+  "rate_app_info2": {
+    "message": "Isso ajudará outros usuários a encontrar a extensão e espalhar seus benefícios."
+  },
+  "rate_app_button": {
+    "message": "Avaliar na loja de extensões"
+  },
+  "rate_app_button_later": {
+    "message": "Lembre-me mais tarde"
+  },
+  "target_lang_placeholder": {
+    "message": "Idiomas de destino"
+  },
+  "source_lang_placeholder": {
+    "message": "Idiomas de origem"
+  },
+  "favorites_lang_title": {
+    "message": "Favoritos"
+  },
+  "support_developers": {
+    "message": "Suporte aos desenvolvedores"
+  },
+  "service_unavailable": {
+    "message": "Serviço indisponível. Tente novamente após 5-25 minutos. Se isso ocorrer constantemente, aumente o atraso de tradução nas configurações."
+  },
+  "service_confirm_not_a_robot": {
+    "message": "Você também pode ir para { $link } e confirmar que não é um robô."
+  },
+  "privacy_policy_title_updated": {
+    "message": "A Política de Privacidade foi atualizada"
+  },
+  "privacy_policy_accept_terms": {
+    "message": "Aceitar termos e condições"
+  },
+  "error_403_auth_failed": {
+    "message": "Falha na autorização. Por favor, forneça uma chave de API válida nas configurações."
+  },
+  "ai_choose_model": {
+    "message": "Escolha o modelo de IA"
+  },
+  "ai_choose_model_cost_effective": {
+    "message": "Mais eficiente em termos de custo"
+  },
+  "ai_choose_model_recommended": {
+    "message": "Modelo recomendado"
+  },
+  "pdf_use_custom_viewer": {
+    "message": "Suporte para traduções em arquivos PDF"
+  },
+  "pdf_use_custom_viewer_info": {
+    "message": "Esta opção substituirá o visualizador de PDF padrão"
+  },
+  "skip_popup_inject_for_pages": {
+    "message": "Omitir URLs"
+  },
+  "skip_popup_inject_for_pages_info": {
+    "message": "Adicione URLs para omitir a injeção do pop-up se encontrar problemas, por exemplo, a verificação do iframe de captcha do Cloudflare."
+  },
+  "settings_title_full_page_translation": {
+    "message": "Tradução de página inteira"
+  },
+  "settings_title_full_page_excluded_pages": {
+    "message": "Nunca traduzir"
+  },
+  "settings_title_full_page_always_translate": {
+    "message": "Traduzir sempre"
+  },
+  "settings_title_full_page_show_original_onmouseover": {
+    "message": "Mostrar texto original ao passar o rato"
+  },
+  "settings_title_full_page_show_translation_onmouseover": {
+    "message": "Mostrar tradução ao passar o rato"
+  },
+  "settings_title_full_page_show_replace_texts": {
+    "message": "Substituir textos do documento por traduções"
+  },
+  "settings_title_full_page_show_traffic_save_mode": {
+    "message": "Ativar modo de poupança de tráfego"
+  },
+  "settings_title_full_page_show_traffic_save_mode_info": {
+    "message": "Poupar custos de rede / API traduzindo apenas textos visíveis na janela de visualização"
+  },
+  "settings_select_empty_list": {
+    "message": "Lista vazia"
+  },
+  "settings_select_edit_list": {
+    "message": "Clique para ver e editar a lista"
+  },
+  "settings_select_add_url": {
+    "message": "Adicionar URL"
+  },
+  "settings_select_add_url_error": {
+    "message": "Tentativa de adicionar URL inválido"
+  },
+  "show_in_context_menu": {
+    "message": "Mostrar opção de tradutor no menu de contexto do navegador"
+  },
+  "settings_title_advanced_providers_list": {
+    "message": "Fornecedores de tradução avançados"
+  },
+  "settings_title_advanced_providers_list_show": {
+    "message": "Mostrar fornecedores de tradução avançados"
+  },
+  "settings_title_advanced_providers_list_hide": {
+    "message": "Ocultar fornecedores de tradução avançados"
+  },
+  "settings_title_voice": {
+    "message": "Voz"
+  },
+  "settings_show_more": {
+    "message": "Mostrar mais definições"
+  },
+  "settings_show_less": {
+    "message": "Mostrar menos definições"
+  },
+  "context_menu_translate_full_page_context_menu": {
+    "message": "Traduzir página para { $lang }"
+  },
+  "context_menu_translate_full_page_context_menu_stop": {
+    "message": "Parar tradução automática para { $site }"
+  },
+  "ai_choose_model_reasoning": {
+    "message": "Modelo de raciocínio / lento"
+  },
+  "ai_choose_model_reasoning_light": {
+    "message": "Modelo de raciocínio leve / mais rápido"
+  },
+  "auth_access_info_steps_openai": {
+    "message": "1) Registe-se em platform.openai.com 2) Crie chave de acesso API 3) Carregue o saldo (5$+)"
+  },
+  "auth_access_info_steps_grok": {
+    "message": "Registe-se em console.x.ai e carregue o saldo (ex: via Cartão de Crédito)"
+  },
+  "auth_access_info_steps_deepseek": {
+    "message": "Registe-se em platform.deepseek.com e carregue o saldo (ex: via Paypal)"
+  },
+  "auth_access_info_steps_gemini": {
+    "message": "Crie a sua chave API gratuita em https://aistudio.google.com/apikey"
+  },
+  "auth_access_info_api_key": {
+    "message": "Forneça a sua chave API para obter traduções { $provider }"
+  },
+  "auth_setup_key_info": {
+    "message": "Fornecer chave API { $provider }"
+  },
+  "auth_clear_key_info": {
+    "message": "Remover chave API { $provider }"
+  },
+  "auth_safety_warning_info": {
+    "message": "Aviso: NÃO introduza a sua chave API em nenhum outro lugar exceto nesta janela da extensão"
+  },
+  "pro_version_promo_link_text": {
+    "message": "20% de desconto no PRO"
+  },
+  "pro_version_promo_tooltip": {
+    "message": "Estamos a criar uma versão PRO com tradução de página inteira por IA. Clique para saber mais e reclamar o seu desconto."
+  },
+  "popup_safe_translation_chars_limit": {
+    "message": "Se a seleção de texto exceder { $limit } caracteres, mostrar um aviso de confirmação para prosseguir."
+  },
+  "popup_safe_translation_chars_limit_info": {
+    "message": "Isto pode ajudá-lo a reduzir o consumo de quota de tokens de IA em pedidos de texto indesejados (0 - sem limites)"
+  },
+  "popup_safe_translation_chars_confirmation_dialog_info": {
+    "message": "O texto selecionado contém { $selectedCountChars } caracteres, o que excede o limite de tradução segura de { $settingsLimitChars } caracteres. Traduzir textos grandes pode consumir mais recursos ou incorrer em custos adicionais dependendo do seu fornecedor de tradução. Deseja prosseguir com a tradução?"
+  },
+  "recommended": {
+    "message": "Recomendado"
+  },
+  "copy_to_clipboard": {
+    "message": "Copiar para a área de transferência"
+  },
+  "tts_supported": {
+    "message": "Suporte muito limitado de texto para fala"
+  },
+  "pro_version_ai_translator": {
+    "message": "Tradutor de idiomas profissional baseado em IA (alimentado por { $provider })"
+  },
+  "pro_version_ai_tts": {
+    "message": "Texto para fala semelhante ao humano baseado em IA com 6 vozes à escolha (alimentado por { $provider })"
+  },
+  "pro_version_ai_summarize_feature": {
+    "message": "Transforme qualquer texto num resumo nítido (promove aprendizagem e compreensão mais rápidas)"
+  },
+  "pro_upgrade_button_label": {
+    "message": "Atualizar para PRO"
+  },
+  "pro_upgrade_button_tooltip": {
+    "message": "Inicie sessão, experimente o plano gratuito e subscreva mais tarde por cerca de { $pricePerMonth }/mês"
+  },
+  "pro_select_tts_voice": {
+    "message": "Voz"
+  },
+  "pro_required_confirm_goto_subscribe": {
+    "message": "Esta opção requer subscrição PRO, devemos ir para a página de subscrição?"
+  },
+  "pro_user_welcome_back": {
+    "message": "Bem-vindo de volta, { $username }!"
+  },
+  "pro_user_status": {
+    "message": "Estado PRO: { $status }"
+  },
+  "pro_user_status_active": {
+    "message": "ativo"
+  },
+  "pro_user_status_inactive": {
+    "message": "inativo"
+  },
+  "pro_user_subscription": {
+    "message": "Subscrição: { $plan } (termina a { $periodEnd })"
+  },
+  "pro_user_subscription_expired": {
+    "message": "Subscrição expirou em { $periodEnd }"
+  },
+  "pro_user_remain_text_tokens": {
+    "message": "Tokens de texto disponíveis: { $tokens }"
+  },
+  "pro_user_remain_tts_seconds_approx": {
+    "message": "Tempo disponível de texto-para-fala: { $timeRange }"
+  },
+  "pro_unauthorized_error_401": {
+    "message": "Tem de ter sessão iniciada em { $serviceUrl } e ter uma subscrição ativa para obter acesso."
+  },
+  "translate_button": {
+    "message": "Traduzir"
+  },
+  "summarize_button": {
+    "message": "Resumir"
+  },
+  "tts_button": {
+    "message": "Ouvir"
+  },
+  "text_input_auto_translation_enabled": {
+    "message": "Tradução automática { $toggle = ativada }"
+  },
+  "text_input_auto_translation_disabled": {
+    "message": "Tradução automática { $toggle = desativada }"
+  },
+  "text_input_auto_translation_timeout": {
+    "message": "Tempo limite: { $timeout }ms"
+  },
+  "system_tts_info": {
+    "message": "Deve selecionar a voz localizada mais apropriada para o seu idioma de destino principal"
+  },
+  "setting_popup_promo_features": {
+    "message": "Mostrar banner promocional"
+  },
+  "setting_popup_summarize_action_icon": {
+    "message": "Mostrar ícone de resumo"
+  },
+  "popup_info_banner_pro_available": {
+    "message": "A versão PRO com funcionalidades de serviço premium chegou!"
+  },
+  "popup_info_banner_pro_see_details": {
+    "message": "Ver detalhes nas { $settingsLink = definições da aplicação } e { $subscribeLink = subscrever }"
+  },
+  "pro_user_subscription_inactive": {
+    "message": "Subscrição inativa. Plano: {$plan}, Estado: {$status}, Termina: {$periodEnd}"
+  },
+  "pro_version_subscribe_button": {
+    "message": "Subscrever"
+  },
+  "pro_version_subscribe_price": {
+    "message": "Subscreva as vantagens do XTranslate PRO por apenas { $priceMonthly }/mês."
+  },
+  "pro_version_continue_use_free_version": {
+    "message": "Continuar a usar a versão gratuita"
+  },
+  "show_in_context_menu_mode_off": {
+    "message": "Não mostrar"
+  },
+  "show_in_context_menu_mode_all_providers": {
+    "message": "Todos os fornecedores"
+  },
+  "show_in_context_menu_mode_active_provider": {
+    "message": "Apenas o fornecedor ativo"
   }
 }

@@ -1,9 +1,12 @@
+// TODO: use native dialogs / popover API
+//  see: https://developer.mozilla.org/en-US/docs/Web/API/Popover_API
+//  see: https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/dialog
 import * as styles from "./dialog.module.scss";
 
 import React from "react";
 import { createPortal } from "react-dom";
 import { Animate } from "../animate";
-import { cssNames, IClassName, noop, stopPropagation } from "../../utils";
+import { cssNames, IClassName, noop, stopPropagation } from "@/utils";
 import { Icon } from "../icon";
 
 export interface DialogProps extends React.PropsWithChildren {

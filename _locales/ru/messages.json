@@ -4,5 +4,623 @@
   },
   "description": {
     "message": "Переводите текст в контексте просматриваемой страницы, настройте свой стиль всплывающего блока, и др."
+  },
+  "open_in_window": {
+    "message": "Открыть в отдельном окне"
+  },
+  "tab_settings": {
+    "message": "Настройки"
+  },
+  "tab_theme": {
+    "message": "Попап"
+  },
+  "tab_text_input": {
+    "message": "Перевести"
+  },
+  "tab_history": {
+    "message": "История"
+  },
+  "setting_title_common": {
+    "message": "Общее"
+  },
+  "setting_title_translator_service": {
+    "message": "Другие сервисы"
+  },
+  "setting_title_popup": {
+    "message": "Попап"
+  },
+  "setting_title_text_input": {
+    "message": "Переводчик"
+  },
+  "settings_title_tts": {
+    "message": "Воспроизведение речи"
+  },
+  "settings_title_appearance": {
+    "message": "Видимость"
+  },
+  "settings_title_full_page_translation": {
+    "message": "Перевод всей страницы"
+  },
+  "settings_title_full_page_excluded_pages": {
+    "message": "Никогда не переводить"
+  },
+  "settings_title_full_page_always_translate": {
+    "message": "Всегда переводить"
+  },
+  "settings_select_empty_list": {
+    "message": "Пустой список"
+  },
+  "settings_select_edit_list": {
+    "message": "Нажмите для просмотра и редактирования списка"
+  },
+  "settings_select_add_url": {
+    "message": "Добавить URL"
+  },
+  "settings_select_add_url_error": {
+    "message": "Попытка добавить некорректный URL"
+  },
+  "settings_title_full_page_show_original_onmouseover": {
+    "message": "Отображать оригинальный текст при наведении курсора мыши"
+  },
+  "settings_title_full_page_show_translation_onmouseover": {
+    "message": "Показывать перевод при наведении курсора мыши на текст"
+  },
+  "settings_title_full_page_show_replace_texts": {
+    "message": "Заменять тексты документа на переводы"
+  },
+  "settings_title_full_page_show_traffic_save_mode": {
+    "message": "Режим экономии трафика"
+  },
+  "settings_title_full_page_show_traffic_save_mode_info": {
+    "message": "Сохраняет трафик и переводит только видимые части страницы документа"
+  },
+  "auto_play_tts": {
+    "message": "Автовоспроизведение текста в речь"
+  },
+  "show_in_context_menu": {
+    "message": "Отображать опцию переводчика в контекстном меню браузера"
+  },
+  "show_in_context_menu_mode_off": {
+    "message": "Не отображать"
+  },
+  "show_in_context_menu_mode_all_providers": {
+    "message": "Все провайдеры"
+  },
+  "show_in_context_menu_mode_active_provider": {
+    "message": "Только активный"
+  },
+  "use_chrome_tts": {
+    "message": "Использовать системный преобразователь текста в речь"
+  },
+  "use_chrome_tts_tooltip_info": {
+    "message": "Эта опция используется по умолчанию когда поставщик перевода не имеет доступную систему озвучки текста"
+  },
+  "use_dark_theme": {
+    "message": "Переключить темную тему для этого окна"
+  },
+  "tts_default_system_voice": {
+    "message": "Системный голос для произношения текста"
+  },
+  "settings_title_voice": {
+    "message": "Голос"
+  },
+  "settings_title_advanced_providers_list": {
+    "message": "Продвинутый список переводчиков"
+  },
+  "settings_title_advanced_providers_list_show": {
+    "message": "Показать расширенные настройки"
+  },
+  "settings_title_advanced_providers_list_hide": {
+    "message": "Скрыть расширенные настройки"
+  },
+  "tts_select_voice_title": {
+    "message": "Выбрать голос"
+  },
+  "tts_play_demo_sound": {
+    "message": "Воспроизвести демо звук"
+  },
+  "tts_play_demo_sound_edit": {
+    "message": "Редактировать текст демо воспроизведения"
+  },
+  "import_export_settings": {
+    "message": "Импорт и экспорт настроек"
+  },
+  "export_settings_button_label": {
+    "message": "Экспорт настроек"
+  },
+  "import_settings_button_label": {
+    "message": "Импорт настроек"
+  },
+  "import_incorrect_file_format": {
+    "message": "Неверный файл настроек (вероятно, нужен файл { $fileNameJson })"
+  },
+  "imported_setting_successful": {
+    "message": "Настройки приложения для '{ $key }' успешно импортированы"
+  },
+  "show_tts_icon_inside_popup": {
+    "message": "Показывать иконку озвучивания"
+  },
+  "display_icon_near_selection": {
+    "message": "Отображать иконку перевода рядом с выделенным текстом"
+  },
+  "show_select_provider_icon_in_popup": {
+    "message": "Отображать иконку выбора провайдера перевода"
+  },
+  "show_copy_translation_icon": {
+    "message": "Отображать иконку копирования перевода"
+  },
+  "show_close_popup_button": {
+    "message": "Отображать иконку закрытие попапа"
+  },
+  "show_save_as_favorite_icon": {
+    "message": "Отображать иконку для сохранения в избранное"
+  },
+  "display_popup_after_text_selected": {
+    "message": "Отображать сразу после выделения текста"
+  },
+  "display_on_click_by_selected_text": {
+    "message": "Отображать по клику на выделенном тексте"
+  },
+  "show_detected_language_block": {
+    "message": "Отображать оригинал языка перевода"
+  },
+  "display_popup_on_double_click": {
+    "message": "Отображать при двойном клике на слове"
+  },
+  "display_popup_on_hotkey": {
+    "message": "Отображать при нажатии горячей клавиши"
+  },
+  "remember_last_typed_text": {
+    "message": "Запоминать последний набранный текст"
+  },
+  "sub_header_quick_access_hotkey": {
+    "message": "Быстрый доступ к окну"
+  },
+  "quick_access_configure_link": {
+    "message": "Настройте горячую клавишу для быстрого доступа к окну приложения"
+  },
+  "swap_languages": {
+    "message": "Поменять языки местами"
+  },
+  "popup_position_title": {
+    "message": "Расположение"
+  },
+  "popup_position_auto": {
+    "message": "Авто (выровнять по тексту)"
+  },
+  "popup_position_left_top": {
+    "message": "Левый верхний угол"
+  },
+  "popup_position_right_top": {
+    "message": "Правый верхний угол"
+  },
+  "popup_position_left_bottom": {
+    "message": "Левый нижний угол"
+  },
+  "popup_position_right_bottom": {
+    "message": "Правый нижний угол"
+  },
+  "translation_delay": {
+    "message": "Задержка перевода"
+  },
+  "translation_delay_info": {
+    "message": "Если вы часто сталкиваетесь с блокировкой (503 ошибка) от Google или других сервисов, установите большее значение задержки"
+  },
+  "reverse_translate_select_placeholder": {
+    "message": "Язык обратного перевода"
+  },
+  "reverse_translate_add_action": {
+    "message": "Добавить язык обратного перевода: { $lang } -> ? (применимо только в случае когда выбрана опция авто-определения языка)"
+  },
+  "reverse_translate_delete_action": {
+    "message": "Удалить язык обратного перевода"
+  },
+  "custom_font_select": {
+    "message": "Выбрать свой шрифт"
+  },
+  "settings_show_more": {
+    "message": "Показать больше настроек"
+  },
+  "settings_show_less": {
+    "message": "Показать меньше настроек"
+  },
+  "popup_play_icon_title": {
+    "message": "Прослушать"
+  },
+  "popup_copy_translation_title": {
+    "message": "Копировать перевод"
+  },
+  "popup_next_vendor_icon_title": {
+    "message": "Перевести с { $translator }"
+  },
+  "popup_demo_translation": {
+    "message": "Перевод текста"
+  },
+  "popup_demo_dictionary_noun": {
+    "message": "существительное"
+  },
+  "popup_demo_dictionary_values": {
+    "message": "Слово 1, слово 2, и т.д."
+  },
+  "sub_header_background": {
+    "message": "Фон"
+  },
+  "sub_header_box_shadow": {
+    "message": "Тень"
+  },
+  "sub_header_text": {
+    "message": "Текст"
+  },
+  "sub_header_border": {
+    "message": "Рамка"
+  },
+  "sub_header_box_size": {
+    "message": "Размер блока"
+  },
+  "background_color": {
+    "message": "Цвет"
+  },
+  "background_linear_gradient": {
+    "message": "Линейный"
+  },
+  "box_shadow_color": {
+    "message": "Цвет"
+  },
+  "box_shadow_inner": {
+    "message": "Внутри"
+  },
+  "text_size": {
+    "message": "Размер"
+  },
+  "text_font_family": {
+    "message": "Шрифт"
+  },
+  "text_color": {
+    "message": "Цвет"
+  },
+  "text_shadow": {
+    "message": "Тень"
+  },
+  "text_shadow_size": {
+    "message": "Радиус размытия"
+  },
+  "text_shadow_offset_x": {
+    "message": "Смещение по горизонтали"
+  },
+  "text_shadow_offset_y": {
+    "message": "Смещение по вертикали"
+  },
+  "text_shadow_color": {
+    "message": "Цвет"
+  },
+  "border_width": {
+    "message": "Ширина"
+  },
+  "border_style": {
+    "message": "Стиль"
+  },
+  "border_color": {
+    "message": "Цвет"
+  },
+  "border_radius": {
+    "message": "Радиус"
+  },
+  "box_size_min_width": {
+    "message": "Мин. ширина"
+  },
+  "box_size_min_height": {
+    "message": "Мин. высота"
+  },
+  "box_size_max_width": {
+    "message": "Макс. ширина"
+  },
+  "box_size_max_height": {
+    "message": "Макс. высота"
+  },
+  "reset_to_default_button_text": {
+    "message": "Сбросить по умолчанию"
+  },
+  "text_field_placeholder": {
+    "message": "Начните печатать здесь, чтобы получить перевод"
+  },
+  "translated_with": {
+    "message": "Переведено с { $translator } ({ $lang })"
+  },
+  "translated_from": {
+    "message": "Переведено c: { $lang }"
+  },
+  "translate_also_from": {
+    "message": "Перевести также с"
+  },
+  "spell_correction": {
+    "message": "Возможно, вы имели ввиду { $suggestion }?"
+  },
+  "history_enabled_flag": {
+    "message": "Включено"
+  },
+  "history_settings_save_words_only": {
+    "message": "Сохранять слова только со словарем"
+  },
+  "history_search_input_placeholder": {
+    "message": "Поиск в истории"
+  },
+  "history_clear_period_hour": {
+    "message": "За последний час"
+  },
+  "history_clear_period_day": {
+    "message": "За последний день"
+  },
+  "history_clear_period_month": {
+    "message": "За последний месяц"
+  },
+  "history_clear_period_year": {
+    "message": "За последний год"
+  },
+  "history_clear_period_all": {
+    "message": "Всё"
+  },
+  "history_button_clear": {
+    "message": "Очистить историю"
+  },
+  "history_button_show_more": {
+    "message": "Показать еще"
+  },
+  "history_export_entries": {
+    "message": "Экспорт { $format }"
+  },
+  "history_import_entries": {
+    "message": "Импорт { $format }"
+  },
+  "history_page_size": {
+    "message": "Размер страницы"
+  },
+  "history_icon_tooltip_search": {
+    "message": "Поиск"
+  },
+  "history_icon_tooltip_imp_exp": {
+    "message": "Импорт/экспорт"
+  },
+  "history_icon_tooltip_settings": {
+    "message": "Настройки"
+  },
+  "history_show_favorites_only": {
+    "message": "Отображать только избранные"
+  },
+  "history_mark_as_favorite": {
+    "message": "Добавить в избранное"
+  },
+  "history_unmark_as_favorite": {
+    "message": "Удалить отметку избранное"
+  },
+  "history_import_success": {
+    "message": "Успешно добавлено { $itemsCount } записей истории"
+  },
+  "history_import_file_error": {
+    "message": "Ошибка чтения файла '{ $fileName }': { $errorInfo }"
+  },
+  "context_menu_translate_full_page_context_menu": {
+    "message": "Перевести страницу на { $lang }"
+  },
+  "context_menu_translate_full_page_context_menu_stop": {
+    "message": "Остановить перевод страниц для { $site }"
+  },
+  "context_menu_translate_full_page": {
+    "message": "Перевести страницу '{ $pageTitle }' на { $lang }"
+  },
+  "context_menu_translate_selection": {
+    "message": "Перевести { $selection } с { $translator }"
+  },
+  "share_with_friends": {
+    "message": "Если вам нравится приложение, поделитесь им со своими друзьями"
+  },
+  "translation_data_failed": {
+    "message": "Ошибка получения данных"
+  },
+  "rate_app_info1": {
+    "message": "Нравится приложение? Пожалуйста, оцените нас на 5 звезд!"
+  },
+  "rate_app_info2": {
+    "message": "Это поможет другим пользователям найти расширение и распространять вкусности."
+  },
+  "rate_app_button": {
+    "message": "Оставить отзыв"
+  },
+  "rate_app_button_later": {
+    "message": "Напомнить позже"
+  },
+  "target_lang_placeholder": {
+    "message": "Целевой язык"
+  },
+  "source_lang_placeholder": {
+    "message": "Исходный язык"
+  },
+  "favorites_lang_title": {
+    "message": "Избранное"
+  },
+  "support_developers": {
+    "message": "Поддержка разработчиков"
+  },
+  "service_unavailable": {
+    "message": "Сервис недоступен. Попытайтесь снова через 5-25 минут. Если это случается периодически увеличьте задержку перевода в настройках."
+  },
+  "service_confirm_not_a_robot": {
+    "message": "Также вы можете попытаться перейти по ссылке { $link } и подтвердить что вы не робот."
+  },
+  "privacy_policy_title_updated": {
+    "message": "Политика конфиденциальности обновлена"
+  },
+  "privacy_policy_accept_terms": {
+    "message": "Принять условия использования"
+  },
+  "error_403_auth_failed": {
+    "message": "Авторизация не удалась. Пожалуйста, предоставьте действительный ключ авторизации в настройках"
+  },
+  "pdf_use_custom_viewer": {
+    "message": "Поддержка переводов в PDF файлах"
+  },
+  "pdf_use_custom_viewer_info": {
+    "message": "Эта опция заменит стандартный просмоторщик PDF файлов"
+  },
+  "ai_choose_model": {
+    "message": "Выберите AI-модель"
+  },
+  "ai_choose_model_cost_effective": {
+    "message": "Наиболее экономичная"
+  },
+  "ai_choose_model_recommended": {
+    "message": "Рекомендуемая модель"
+  },
+  "ai_choose_model_reasoning": {
+    "message": "Думающая модель / медленная"
+  },
+  "ai_choose_model_reasoning_light": {
+    "message": "Думающая модель 'лайт' / быстрее"
+  },
+  "auth_access_info_steps_openai": {
+    "message": "1) Зарегистрируйтесь на platform.openai.com 2) Создайте ключ доступа к API 3) Пополните баланс (минимально 5$)"
+  },
+  "auth_access_info_steps_grok": {
+    "message": "Зарегистрируйтесь на console.x.ai и пополните баланс (например, с помощью кредитной карты)"
+  },
+  "auth_access_info_steps_deepseek": {
+    "message": "Зарегистрируйтесь на platform.deepseek.com и пополните баланс (2$+)"
+  },
+  "auth_access_info_steps_gemini": {
+    "message": "Создайте свой бесплатный API-ключ на странице https://aistudio.google.com/apikey"
+  },
+  "auth_access_info_api_key": {
+    "message": "Предоставьте свой API-ключ для получения переводов { $provider }"
+  },
+  "auth_setup_key_info": {
+    "message": "Сохранить API-ключ для { $provider }"
+  },
+  "auth_clear_key_info": {
+    "message": "Удалить API-ключ доступа { $provider }"
+  },
+  "auth_safety_warning_info": {
+    "message": "Предупреждение: НЕ вводите свой API-ключ в других местах, кроме как в этом окне расширения"
+  },
+  "pro_version_promo_link_text": {
+    "message": "Скидка 20% на PRO"
+  },
+  "pro_version_promo_tooltip": {
+    "message": "Мы готовим PRO-версию с поддержкой AI-переводов целых страниц. Кликните, чтобы узнать подробности и получить скидку."
+  },
+  "skip_popup_inject_for_pages": {
+    "message": "Пропуск URL"
+  },
+  "skip_popup_inject_for_pages_info": {
+    "message": "Добавьте URL для пропуска внедрения попапа, если возникают проблемы, например, проверка iframe капчи Cloudflare."
+  },
+  "popup_safe_translation_chars_limit": {
+    "message": "Если выделенный текст превышает { $limit } символов, показывать предупреждение."
+  },
+  "popup_safe_translation_chars_limit_info": {
+    "message": "Это может помочь вам сократить расходы на токены AI на нежелательные текстовые запросы (0 - без ограничений)"
+  },
+  "popup_safe_translation_chars_confirmation_dialog_info": {
+    "message": "Выделенный текст содержит { $selectedCountChars } символов, что превышает безопасный лимит перевода в { $settingsLimitChars } символов. Перевод больших текстов может потребовать больше ресурсов или повлечь дополнительные расходы в зависимости от вашего провайдера перевода. Вы хотите продолжить перевод?"
+  },
+  "copy_to_clipboard": {
+    "message": "Копировать в буфер обмена"
+  },
+  "tts_supported": {
+    "message": "Озвучка текста-в-речь очень ограничена объёмом входного текста"
+  },
+  "pro_version_ai_translator": {
+    "message": "Профессиональный AI-переводчик (предоставляется { $provider })"
+  },
+  "pro_version_ai_tts": {
+    "message": "Качественная озвучка текста-в-речь на основе AI с выбором из 6 голосов (предоставляется { $provider })"
+  },
+  "pro_version_ai_summarize_feature": {
+    "message": "AI-функция для ускоренного понимания и чтения текстов (резюме на 1-2 предложения)"
+  },
+  "pro_upgrade_button_label": {
+    "message": "Обновить до PRO"
+  },
+  "pro_upgrade_button_tooltip": {
+    "message": "Авторизуйтесь на сайте, опробуйте бесплатный план и подпишитесь позже примерно за { $pricePerMonth }/месяц"
+  },
+  "pro_select_tts_voice": {
+    "message": "Голос"
+  },
+  "pro_required_confirm_goto_subscribe": {
+    "message": "Эта опция требует PRO-версии приложения, перейти на страницу подписки?"
+  },
+  "pro_user_welcome_back": {
+    "message": "Добро пожаловать, { $username }!"
+  },
+  "pro_user_status": {
+    "message": "PRO-статус: { $status }"
+  },
+  "pro_user_status_active": {
+    "message": "активен"
+  },
+  "pro_user_status_inactive": {
+    "message": "не активен"
+  },
+  "pro_user_subscription": {
+    "message": "Подписка: { $plan } (заканчивается { $periodEnd })"
+  },
+  "pro_user_subscription_expired": {
+    "message": "Подписка истекла { $periodEnd }"
+  },
+  "pro_user_remain_text_tokens": {
+    "message": "Доступно текстовых токенов: { $tokens }"
+  },
+  "pro_user_remain_tts_seconds_approx": {
+    "message": "Доступное время синтеза речи (TTS): { $timeRange }"
+  },
+  "pro_unauthorized_error_401": {
+    "message": "Вы должны быть залогинены на { $serviceUrl } и иметь активную подписку для доступа."
+  },
+  "translate_button": {
+    "message": "Перевести"
+  },
+  "summarize_button": {
+    "message": "Резюмировать"
+  },
+  "tts_button": {
+    "message": "Прослушать"
+  },
+  "text_input_auto_translation_enabled": {
+    "message": "Авто-перевод { $toggle = включен }"
+  },
+  "text_input_auto_translation_disabled": {
+    "message": "Авто-перевод { $toggle = выключен }"
+  },
+  "text_input_auto_translation_timeout": {
+    "message": "Задержка: { $timeout }мс"
+  },
+  "system_tts_info": {
+    "message": "Вам нужно выбрать наиболее подходящий локализованный голос для озвучки вашего целевого языка"
+  },
+  "setting_popup_promo_features": {
+    "message": "Отображать промо баннер"
+  },
+  "setting_popup_summarize_action_icon": {
+    "message": "Показывать иконку суммирования (резюме)"
+  },
+  "popup_info_banner_pro_available": {
+    "message": "PRO-версия с премиум функциями уже здесь!"
+  },
+  "popup_info_banner_pro_see_details": {
+    "message": "Смотрите подробности на { $settingsLink = странице настроек} и { $subscribeLink = подписывайтесь }"
+  },
+  "pro_user_subscription_inactive": {
+    "message": "Подписка неактивна. План: {$plan}, Статус: {$status}, Истекает: {$periodEnd}"
+  },
+  "recommended": {
+    "message": "Рекомендовано"
+  },
+  "pro_version_subscribe_button": {
+    "message": "Подписаться"
+  },
+  "pro_version_subscribe_price": {
+    "message": "Подпишитесь на XTranslate PRO всего за { $priceMonthly }/месяц."
+  },
+  "pro_version_continue_use_free_version": {
+    "message": "Продолжить использовать бесплатную версию"
   }
 }

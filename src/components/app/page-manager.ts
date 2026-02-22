@@ -1,7 +1,7 @@
 import { observable } from "mobx";
 import type React from "react";
 import type { TabProps } from "../tabs";
-import type { PageId } from "../../navigation";
+import type { PageId } from "@/navigation";
 
 export interface PageComponents {
   Tab?: React.ComponentType<TabProps>;

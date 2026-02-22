@@ -53,7 +53,7 @@ declare module "*.ftl" { // fluent (localization)
 }
 
 //
-// Global generics
+// Advanced types
 //
 declare type Writeable<T> = { -readonly [P in keyof T]: T[P] };
 

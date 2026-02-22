@@ -1,11 +1,15 @@
 // [IPC]: inter-process communications for [options-page] <-> [background] <-> [content-pages]
-import { ITranslationResult, OpenAIVoiceTTS, ProviderCodeName, TranslateParams } from "../providers";
+import { GeminiAIModelTTSVoice, ITranslationResult, OpenAIModelTTSVoice, ProviderCodeName, TranslateParams } from "../providers";
 import type { IHistoryItem } from "../components/user-history/history.storage";
 import type { GoogleMetricEvents } from "../background/metrics.bgc";
 
 export enum MessageType {
   PROXY_REQUEST = "PROXY_REQUEST",
+  HTTP_PROXY_STREAM = "HTTP_PROXY_STREAM",
+  TRANSLATE_ACTIVE_PAGE = "TRANSLATE_ACTIVE_PAGE",
   TRANSLATE_FULL_PAGE = "TRANSLATE_FULL_PAGE",
+  TRANSLATE_TEXT_WITH_AI = "TRANSLATE_TEXT_WITH_AI",
+  GET_SELECTED_TEXT_ACTIVE_PAGE = "GET_SELECTED_TEXT_ACTIVE_PAGE",
   GET_SELECTED_TEXT = "GET_SELECTED_TEXT",
   SAVE_TO_HISTORY = "SAVE_TO_HISTORY",
   SAVE_TO_FAVORITES = "SAVE_TO_FAVORITES",
@@ -14,11 +18,9 @@ export enum MessageType {
   STORAGE_DATA_WRITE = "WRITE_TO_EXTERNAL_STORAGE",
   STORAGE_DATA_REMOVE = "REMOVE_FROM_EXTERNAL_STORAGE",
   STORAGE_DATA_SYNC = "SYNC_STORAGE",
-  OPENAI_TRANSLATION = "OPENAI_TRANSLATION",
-  OPENAI_TEXT_TO_SPEECH = "OPENAI_TEXT_TO_SPEECH",
   INJECT_CONTENT_SCRIPT = "INJECT_CONTENT_SCRIPT",
-  RUNTIME_ERROR_CONTEXT_INVALIDATED = "RUNTIME_ERROR_CONTEXT_INVALIDATED",
   GA_METRICS_SEND_EVENT = "GA_METRICS_SEND_EVENT",
+  PRO_USER_SUB_UPDATE_REQ = "PRO_USER_SUB_UPDATE_REQ",
 }
 
 export interface Message<Payload extends {} | []> {
@@ -50,12 +52,48 @@ export interface ProxyResponsePayload<Data = unknown> {
   data: Data;
 }
 
+export interface ProxyStreamPayload extends Omit<ProxyRequestPayload, "responseType"> {
+}
+
+export interface ProxyStreamHeadersMessage {
+  headers: { [header: string]: string; "content-type"?: string };
+  statusCode: number;
+  statusText: string;
+}
+
+export interface ProxyStreamChunkMessage {
+  chunk: number[];
+}
+
+export interface ProxyStreamDoneMessage {
+  done: true;
+}
+
+export interface ProxyStreamErrorMessage {
+  error: string;
+  statusCode?: number;
+  statusText?: string;
+}
+
+export type ProxyStreamResponsePayload =
+  ProxyStreamHeadersMessage
+  | ProxyStreamChunkMessage
+  | ProxyStreamDoneMessage
+  | ProxyStreamErrorMessage;
+
 export interface InjectContentScriptPayload {
   tabId?: number;
 }
 
 export interface TranslatePayload extends TranslateParams {
   provider: ProviderCodeName;
+}
+
+export type FullPageTranslationAction = "toggle" | "start" | "stop";
+
+export interface TranslateFullPagePayload {
+  action?: FullPageTranslationAction;
+  provider?: ProviderCodeName;
 }
 
 export interface SaveToHistoryPayload {
@@ -78,6 +116,7 @@ export interface StorageWritePayload<T = any> {
   key: string;
   area: chrome.storage.AreaName;
   state: T;
+  resourceId?: string; // source context id for de-duplicating storage sync updates
 }
 
 export interface StorageSyncPayload<T = any> extends StorageWritePayload<T> {
@@ -103,9 +142,13 @@ export interface AITextToSpeechPayload {
   targetLanguage?: string; /* or auto-detect if not provided */
   speed?: number; /* 0.5 - 4.0 */
   voice?: string;
-  response_format?: "mp3"
+  response_format?: "mp3" | "aac" | "flac" | "wav" | "pcm"
 }
 
 export interface OpenAITextToSpeechPayload extends AITextToSpeechPayload {
-  voice?: OpenAIVoiceTTS;
+  voice: OpenAIModelTTSVoice;
+}
+
+export interface GeminiTextToSpeechPayload extends AITextToSpeechPayload {
+  voice: GeminiAIModelTTSVoice;
 }

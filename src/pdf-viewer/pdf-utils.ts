@@ -1,5 +1,5 @@
 import { settingsStore } from "../components/settings/settings.storage";
-import { useCustomPdfViewer, pdfViewerEntry, pdfViewerSkipUrlHash } from "../common-vars";
+import { useCustomPdfViewer, pdfViewerEntry, pdfViewerSkipUrlHash } from "../config";
 import { getURL, ProxyResponseType } from "../extension";
 import { proxyRequest } from "../background/httpProxy.bgc";
 

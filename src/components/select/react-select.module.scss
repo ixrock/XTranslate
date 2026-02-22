@@ -43,6 +43,7 @@
   .menu {
     background: var(--theme-bgc);
     border: 1px solid var(--theme-border-color);
+    line-break: anywhere;
 
     &.menuNoWrap {
       min-width: 100%;

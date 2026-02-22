@@ -4,8 +4,8 @@ import { action, makeObservable, observable } from "mobx";
 import { observer } from "mobx-react";
 import isEqual from "lodash/isEqual";
 import startCase from "lodash/startCase";
-import { DeepSeekAIModel, getTranslator, getTranslators, googleApiDomain, googleApiDomains, GrokAIModel, OpenAIModel, OpenAIVoiceTTS, ProviderCodeName, Translator } from "../../providers";
-import { XTranslateIcon } from "../../user-script/xtranslate-icon";
+import { DeepSeekAIModel, GeminiAIModel, getTranslator, getTranslators, googleApiDomain, googleApiDomains, GrokAIModel, OpenAIModel, OpenAIModelTTSVoice, ProviderCodeName, ProviderWithApiKey, Translator } from "@/providers";
+import { XTranslateIcon } from "@/user-script/xtranslate-icon";
 import { SelectLanguage, SelectLanguageChangeEvent } from "../select-language";
 import { Checkbox } from "../checkbox";
 import { Radio, RadioGroup } from "../radio";
@@ -13,27 +13,28 @@ import { ReactSelect, ReactSelectOption } from "../select";
 import { Icon } from "../icon";
 import { SubTitle } from "../sub-title";
 import { Tab } from "../tabs";
-import { settingsStore, XIconPosition } from "./settings.storage";
+import { FullPageContextMenuMode, settingsStore, XIconPosition } from "./settings.storage";
 import { pageManager } from "../app/page-manager";
-import { getMessage } from "../../i18n";
+import { getMessage } from "@/i18n";
 import { SelectVoice } from "../select-tts-voice";
-import { getTTSVoices, speak, stopSpeaking } from "../../tts";
+import { speakSystemTTS, ttsEngine } from "@/tts";
 import { SelectAIModel } from "./select_ai_model";
-import { ProviderAuthSettings } from "./auth_settings";
-import { materialIcons } from "../../common-vars";
-import { Notifications } from "../notifications";
-import { Button } from "../button";
+import { ProviderAuthSettings } from "./provider_auth_settings";
+import { materialIcons } from "@/config";
 import { SelectProvider } from "../select-provider";
+import { ShowHideMore } from "../show-hide-more";
+import { SettingsUrlList } from "@/components/settings/settings_url_list";
+import { userStore } from "@/pro";
+
+const openAiVoiceOptions =
+  Object.values(OpenAIModelTTSVoice).map((voice: string) => ({
+    value: voice,
+    label: startCase(voice),
+  })) as ReactSelectOption<OpenAIModelTTSVoice>[];
 
 @observer
 export class Settings extends React.Component {
-  private openAiVoiceOptions: ReactSelectOption<OpenAIVoiceTTS>[] = Object.values(OpenAIVoiceTTS)
-    .map((voice: OpenAIVoiceTTS) => {
-      return {
-        value: voice,
-        label: startCase(voice),
-      } as ReactSelectOption<OpenAIVoiceTTS>;
-    });
+  private systemTTS: SpeechSynthesisUtterance;
 
   private googleApiDomainOptions: ReactSelectOption<string>[] = googleApiDomains.map(({ domain, title }) => {
     return {
@@ -50,34 +51,52 @@ export class Settings extends React.Component {
   get providerSettings(): Partial<Record<ProviderCodeName, React.ReactNode>> {
     return {
       google: (
-        <>
+        <div className="flex gaps align-center">
+          <Icon svg="tts" tooltip={getMessage("tts_supported")}/>
           <ReactSelect
             options={this.googleApiDomainOptions}
             value={this.googleApiDomainOptions.find(({ value }) => value === googleApiDomain.get())}
             onChange={({ value }) => googleApiDomain.set(value)}
           />
-        </>
+        </div>
       ),
+      get xtranslate_pro() {
+        const { isProActive } = userStore;
+
+        return (
+          <div className="flex gaps align-center">
+            {!isProActive && <em>({getMessage("recommended").toLowerCase()})</em>}
+            <Icon material={materialIcons.translate} tooltip={getMessage("pro_version_ai_translator", { provider: "Gemini" })}/>
+            <Icon material={materialIcons.summarize} tooltip={getMessage("pro_version_ai_summarize_feature")}/>
+            <Icon svg="tts" tooltip={getMessage("pro_version_ai_tts", { provider: "OpenAI" })}/>
+
+            {isProActive && (
+              <>
+                <span>{getMessage("pro_select_tts_voice")}</span>
+                <ReactSelect<OpenAIModelTTSVoice>
+                  className={styles.providerSelect}
+                  placeholder={getMessage("tts_select_voice_title")}
+                  options={openAiVoiceOptions}
+                  value={openAiVoiceOptions.find(voiceOpt => voiceOpt.value === userStore.data.ttsVoice)}
+                  onChange={({ value }) => userStore.data.ttsVoice = value}
+                />
+              </>
+            )}
+          </div>
+        )
+      },
       openai: (
-        <div className="openai_settings flex gaps align-center">
+        <div className="flex gaps align-center">
           <SelectAIModel
             className={styles.providerSelect}
             modelOptions={OpenAIModel}
             getValue={() => settingsStore.data.openAiModel}
             onChange={value => settingsStore.data.openAiModel = value}
           />
-          <ReactSelect
-            className={styles.providerSelect}
-            placeholder={getMessage("tts_select_voice_title")}
-            options={this.openAiVoiceOptions}
-            value={this.openAiVoiceOptions.find(voiceOpt => voiceOpt.value === settingsStore.data.openAiTtsVoice)}
-            onChange={({ value }) => settingsStore.data.openAiTtsVoice = value}
-          />
         </div>
       ),
       grok: (
         <SelectAIModel
-          className="grok_settings"
           modelOptions={GrokAIModel}
           getValue={() => settingsStore.data.grokAiModel}
           onChange={value => settingsStore.data.grokAiModel = value}
@@ -85,10 +104,16 @@ export class Settings extends React.Component {
       ),
       deepseek: (
         <SelectAIModel
-          className="deepseek_settings"
           modelOptions={DeepSeekAIModel}
           getValue={() => settingsStore.data.deepSeekModel}
           onChange={value => settingsStore.data.deepSeekModel = value}
+        />
+      ),
+      gemini: (
+        <SelectAIModel
+          modelOptions={GeminiAIModel}
+          getValue={() => settingsStore.data.geminiModel}
+          onChange={value => settingsStore.data.geminiModel = value}
         />
       )
     }
@@ -104,6 +129,14 @@ export class Settings extends React.Component {
     ];
   };
 
+  private get contextMenuModeOptions(): ReactSelectOption<FullPageContextMenuMode>[] {
+    return [
+      { value: FullPageContextMenuMode.OFF, label: getMessage("show_in_context_menu_mode_off") },
+      { value: FullPageContextMenuMode.ALL_PROVIDERS, label: getMessage("show_in_context_menu_mode_all_providers") },
+      { value: FullPageContextMenuMode.ACTIVE_PROVIDER, label: getMessage("show_in_context_menu_mode_active_provider") },
+    ];
+  };
+
   @observable demoVoiceText = "Quick brown fox jumps over the lazy dog";
   @observable isSpeaking = false;
 
@@ -112,21 +145,33 @@ export class Settings extends React.Component {
     const newText = window.prompt(getMessage("tts_play_demo_sound_edit"), this.demoVoiceText);
     if (newText) {
       this.demoVoiceText = newText;
+      this.stopSpeakingSystemTTS();
     }
   }
 
   @action.bound
+  stopSpeakingSystemTTS() {
+    delete this.systemTTS;
+    this.isSpeaking = false;
+    ttsEngine().cancel();
+  }
+
+  @action.bound
   async speakDemoText() {
-    this.isSpeaking = !this.isSpeaking;
+    this.systemTTS ??= await speakSystemTTS(this.demoVoiceText, {
+      onStart: () => this.isSpeaking = true,
+      onPause: () => this.isSpeaking = false,
+      onResume: () => this.isSpeaking = true,
+      onEnd: () => {
+        this.isSpeaking = false;
+        delete this.systemTTS;
+      },
+    });
 
     if (this.isSpeaking) {
-      const voices = await getTTSVoices();
-      const selectedVoice = voices[settingsStore.data.ttsVoiceIndex];
-
-      stopSpeaking();
-      speak(this.demoVoiceText, selectedVoice);
+      ttsEngine().pause();
     } else {
-      stopSpeaking();
+      ttsEngine().resume();
     }
   }
 
@@ -140,10 +185,9 @@ export class Settings extends React.Component {
           <ProviderAuthSettings
             {...authSettings}
             provider={provider}
-            accessInfo={getMessage(`auth_access_info_steps_${provider}`)}
-            accessInfo2={getMessage(`auth_access_info_api_key`, { provider: title })}
+            accessInfo={getMessage(`auth_access_info_api_key`, { provider: title })}
+            accessInfoSetupSteps={getMessage(`auth_access_info_steps_${provider as ProviderWithApiKey}`)}
             clearKeyInfo={getMessage(`auth_clear_key_info`, { provider: title })}
-            warningInfo={getMessage(`auth_safety_warning_info`)}
           />
         )}
         {translator.isAvailable() && this.providerSettings[provider]}
@@ -182,43 +226,31 @@ export class Settings extends React.Component {
     fullPageTranslation.langFrom = langFrom;
   }
 
-  @action
+  @action.bound
   onFullPageProviderChange = (provider: ProviderCodeName) => {
     const { fullPageTranslation } = settingsStore.data;
+    const prevProvider = fullPageTranslation.provider;
     const translator = getTranslator(provider);
     const supportedLanguages = translator.getSupportedLanguages(fullPageTranslation)
     fullPageTranslation.provider = provider;
     fullPageTranslation.langFrom = supportedLanguages.langFrom;
     fullPageTranslation.langTo = supportedLanguages.langTo;
+
+    if (provider === ProviderCodeName.XTRANSLATE_PRO && !userStore.isProActive) {
+      fullPageTranslation.provider = prevProvider; // rollback
+      userStore.subscribeSuggestionDialog();
+    }
   };
 
-  private addPageException(pageAddr: string, list: string[]) {
-    try {
-      const pageUrl = String(new URL(pageAddr));
-      const alreadyExists = list.find(url => pageUrl === url);
-      if (!alreadyExists) list.push(pageUrl);
-    } catch (err) {
-      Notifications.error(`${getMessage("settings_title_full_page_add_url_error")}: ${pageAddr}`);
+  @action.bound
+  private onProviderChange = (provider: ProviderCodeName,) => {
+    const prevProvider = settingsStore.data.vendor;
+    settingsStore.setProvider(provider);
+
+    if (provider === ProviderCodeName.XTRANSLATE_PRO && !userStore.isProActive) {
+      settingsStore.setProvider(prevProvider); // rollback
+      userStore.subscribeSuggestionDialog();
     }
-  }
-
-  private formatPageUrlLabel(pageUrl: string, list: string[]): React.ReactNode {
-    const removeItem = () => {
-      const index = list.indexOf(pageUrl);
-      if (index > -1) list.splice(index, 1);
-    };
-    return (
-      <div className="page-url-exception flex gaps">
-        <span className="box grow">{pageUrl}</span>
-        <Icon small material="clear" onClick={removeItem}/>
-      </div>
-    )
-  }
-
-  @action
-  addAlwaysTranslatePage(pageUrl?: string) {
-    pageUrl ??= window.prompt(getMessage("settings_title_full_page_always_translate"));
-    if (pageUrl) this.addPageException(pageUrl, settingsStore.data.fullPageTranslation.alwaysTranslatePages);
   }
 
   render() {
@@ -232,25 +264,24 @@ export class Settings extends React.Component {
     return (
       <main className={styles.Settings}>
         <SelectLanguage
-          showInfoIcon
           showReverseTranslation
           provider={settings.vendor}
           from={settings.langFrom}
           to={settings.langTo}
           onChange={this.onLanguageChange}
         />
-        <RadioGroup className={styles.providers} value={settings.vendor} onChange={v => settingsStore.setProvider(v)}>
+        <RadioGroup className={styles.providers} value={settings.vendor} onChange={this.onProviderChange}>
           {providers.map(this.renderProvider, this)}
         </RadioGroup>
-        <a className={`${styles.showAdvanced} flex gaps`} onClick={() => settings.showAdvancedProviders = !settings.showAdvancedProviders}>
-          <Icon material={settings.showAdvancedProviders ? "expand_less" : "expand_more"}/>
-          <span>
-              {!settings.showAdvancedProviders && getMessage("settings_title_advanced_providers_list_show")}
-            {settings.showAdvancedProviders && getMessage("settings_title_advanced_providers_list_hide")}
-            </span>
-        </a>
-
-        <SubTitle>{getMessage("settings_title_full_page_translation")}</SubTitle>
+        <ShowHideMore
+          visible={settings.showAdvancedProviders}
+          onToggle={visible => settings.showAdvancedProviders = visible}
+          label={settings.showAdvancedProviders
+            ? getMessage("settings_title_advanced_providers_list_hide")
+            : getMessage("settings_title_advanced_providers_list_show")
+          }
+        />
+        <SubTitle className={styles.SubTitle}>{getMessage("settings_title_full_page_translation")}</SubTitle>
         <div className="flex gaps align-center">
           <SelectLanguage
             className="box grow"
@@ -265,50 +296,47 @@ export class Settings extends React.Component {
             filter={(provider) => provider.isAvailable() && provider.canTranslateFullPage()}
           />
         </div>
-        <div className="alwaysTranslatePages flex gaps align-center">
-          <span>{getMessage("settings_title_full_page_always_translate")} <b>({alwaysTranslatePages.length})</b></span>
-          <ReactSelect
-            value={null}
-            className="box grow"
-            menuNowrap={false}
-            closeMenuOnSelect={false}
-            placeholder={getMessage("settings_title_full_page_see_edit_list")}
-            noOptionsMessage={() => getMessage("settings_title_full_page_empty_list")}
-            options={alwaysTranslatePages.map(value => ({ value, label: value }))}
-            formatOptionLabel={({ value }: ReactSelectOption<string>) => this.formatPageUrlLabel(value, alwaysTranslatePages)}
-          />
-          <Button
-            primary
-            label={getMessage("settings_title_full_page_add_url")}
-            onClick={() => this.addAlwaysTranslatePage()}
-          />
-        </div>
-        <div className={styles.grid}>
-          <Checkbox
-            label={getMessage("settings_title_full_page_show_original_onmouseover")}
-            checked={fullPageTranslation.showOriginalOnHover}
-            onChange={val => fullPageTranslation.showOriginalOnHover = val}
-          />
-          <Checkbox
-            label={getMessage("settings_title_full_page_show_translation_onmouseover")}
-            checked={fullPageTranslation.showTranslationOnHover}
-            onChange={val => fullPageTranslation.showTranslationOnHover = val}
-          />
-          <Checkbox
-            label={getMessage("settings_title_full_page_show_replace_texts")}
-            checked={fullPageTranslation.showTranslationInDOM}
-            onChange={val => fullPageTranslation.showTranslationInDOM = val}
-          />
-          <Checkbox
-            label={getMessage("settings_title_full_page_show_traffic_save_mode")}
-            tooltip={getMessage("settings_title_full_page_show_traffic_save_mode_info")}
-            checked={fullPageTranslation.trafficSaveMode}
-            onChange={val => fullPageTranslation.trafficSaveMode = val}
-          />
-        </div>
+        <ShowHideMore visible={fullPageTranslation.showMore} onToggle={v => fullPageTranslation.showMore = v}>
+          <div className="settings-fullpage flex column gaps align-start" style={{ width: "100%" }}>
+            <SettingsUrlList
+              urlList={alwaysTranslatePages}
+              title={getMessage("settings_title_full_page_always_translate")}
+            />
+            <Checkbox
+              label={getMessage("settings_title_full_page_show_original_onmouseover")}
+              checked={fullPageTranslation.showOriginalOnHover}
+              onChange={val => fullPageTranslation.showOriginalOnHover = val}
+            />
+            <Checkbox
+              label={getMessage("settings_title_full_page_show_translation_onmouseover")}
+              checked={fullPageTranslation.showTranslationOnHover}
+              onChange={val => fullPageTranslation.showTranslationOnHover = val}
+            />
+            <Checkbox
+              label={getMessage("settings_title_full_page_show_replace_texts")}
+              checked={fullPageTranslation.showTranslationInDOM}
+              onChange={val => fullPageTranslation.showTranslationInDOM = val}
+            />
+            <Checkbox
+              label={getMessage("settings_title_full_page_show_traffic_save_mode")}
+              tooltip={getMessage("settings_title_full_page_show_traffic_save_mode_info")}
+              checked={fullPageTranslation.trafficSaveMode}
+              onChange={val => fullPageTranslation.trafficSaveMode = val}
+            />
+          </div>
+        </ShowHideMore>
 
-        <SubTitle>{getMessage("settings_title_appearance")}</SubTitle>
-        <div className="flex gaps">
+        <SubTitle className={styles.SubTitle}>
+          {getMessage("setting_title_translator_service")}
+        </SubTitle>
+
+        <Checkbox
+          className={styles.inline}
+          label={getMessage("auto_play_tts")}
+          checked={settings.autoPlayText}
+          onChange={v => settings.autoPlayText = v}
+        />
+        <div className="translation-icon flex gaps">
           <Checkbox
             label={getMessage("display_icon_near_selection")}
             checked={settings.showIconNearSelection}
@@ -325,26 +353,19 @@ export class Settings extends React.Component {
             />
           )}
         </div>
-
-        <SubTitle>{getMessage("settings_title_tts")}</SubTitle>
-        <Checkbox
-          className={styles.inline}
-          label={getMessage("auto_play_tts")}
-          checked={settings.autoPlayText}
-          onChange={v => settings.autoPlayText = v}
-        />
         <div className={`${styles.inline} flex gaps align-center`}>
           <Checkbox
-            className="box noshrink"
+            className="box grow"
             label={getMessage("tts_default_system_voice")}
             checked={settings.useSpeechSynthesis}
             onChange={v => settings.useSpeechSynthesis = v}
             tooltip={getMessage("use_chrome_tts_tooltip_info")}
           />
           <SelectVoice
-            currentIndex={settings.ttsVoiceIndex}
-            onChange={v => settings.ttsVoiceIndex = v}
+            currentIndex={settings.systemTTSEngineVoiceIndex}
+            onChange={v => settings.systemTTSEngineVoiceIndex = v}
           />
+          <Icon small material="info_outline" tooltip={getMessage("system_tts_info")}/>
           <Icon
             small
             material="edit"
@@ -361,6 +382,17 @@ export class Settings extends React.Component {
             onClick={this.speakDemoText}
           />
         </div>
+
+        <div className={`${styles.inline} flex gaps align-center`}>
+          <span className="box grow">{getMessage("show_in_context_menu")}</span>
+          <ReactSelect<FullPageContextMenuMode>
+            className="box noshrink"
+            options={this.contextMenuModeOptions}
+            value={this.contextMenuModeOptions.find(({ value }) => value === settings.fullPageTranslation.contextMenuMode)}
+            onChange={({ value }) => settings.fullPageTranslation.contextMenuMode = value}
+          />
+        </div>
+
       </main>
     );
   }

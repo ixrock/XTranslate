@@ -3,9 +3,9 @@ import React from "react";
 import { makeObservable, observable } from "mobx";
 import { observer } from "mobx-react";
 import { ReactSelect, ReactSelectOption } from "../select";
-import { getMessage } from "../../i18n";
-import { getTTSVoices, TTSVoice } from "../../tts";
-import { cssNames, IClassName } from "../../utils";
+import { getMessage } from "@/i18n";
+import { getTTSVoices, SystemTTSVoice } from "@/tts";
+import { cssNames, IClassName } from "@/utils";
 
 export interface SelectVoiceProps {
   className?: IClassName;
@@ -19,7 +19,7 @@ export class SelectVoice extends React.Component<SelectVoiceProps> {
     currentIndex: 0,
   }
 
-  voices = observable.array<TTSVoice>([], { deep: false });
+  voices = observable.array<SystemTTSVoice>([], { deep: false });
 
   constructor(props: SelectVoiceProps) {
     super(props);

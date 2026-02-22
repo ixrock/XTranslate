@@ -5,6 +5,7 @@ import { createLogger } from "./createLogger";
 import noop from "lodash/noop";
 import isPlainObject from "lodash/isPlainObject";
 import isEqual from "lodash/isEqual";
+import isEmpty from "lodash/isEmpty";
 import merge from "lodash/merge";
 
 export interface StorageHelperOptions<T> {
@@ -37,6 +38,7 @@ export class StorageHelper<T> {
   @observable saving = false;
   @observable loading = false;
   @observable loaded = false;
+  protected loadPromise: Promise<void> | null = null;
 
   get whenReady(): Promise<void> {
     return when(() => this.initialized && this.loaded);
@@ -78,8 +80,13 @@ export class StorageHelper<T> {
 
   @action
   load({ force = false } = {}) {
-    if ((this.loading || this.loaded) && !force) {
-      return this.whenReady; // skip if loaded already or in progress
+    if (!force) {
+      if (this.loaded) {
+        return this.whenReady; // skip if loaded already
+      }
+      if (this.loadPromise) {
+        return this.loadPromise; // skip if loading in progress
+      }
     }
 
     this.logger.info(`loading "${this.key}"`);
@@ -90,18 +97,34 @@ export class StorageHelper<T> {
     try {
       const data = this.storage?.getItem(this.key);
       if (data instanceof Promise) {
-        return data.then(this.onData, this.onError);
-      } else {
-        this.onData(data);
+        const pendingLoad = data
+          .then((fetchedData) => {
+            this.onData(fetchedData);
+          })
+          .catch((error) => {
+            this.logger.error("loading failed", error);
+            this.onError(error);
+          })
+          .finally(() => {
+            if (this.loadPromise === pendingLoad) {
+              this.loading = false;
+              this.loadPromise = null;
+            }
+          });
+
+        this.loadPromise = pendingLoad;
+        return pendingLoad;
       }
+
+      this.onData(data as T);
+      this.loading = false;
+      return this.whenReady;
     } catch (error) {
       this.logger.error("loading failed", error);
       this.onError(error);
-    } finally {
       this.loading = false;
+      return this.whenReady;
     }
-
-    return this.whenReady;
   }
 
   @action.bound
@@ -110,12 +133,12 @@ export class StorageHelper<T> {
       this.logger.info(`saving state to external storage"`, {
         state,
         key: this.key,
-        origin: location?.href,
+        origin: StorageHelper.getResourceOrigin(),
       });
       this.saving = true;
       await this.storage?.setItem(this.key, state);
     } catch (error) {
-      this.logger.error("saving state to external storage has failed", error);
+      console.error("saving state to external storage has failed", error);
     } finally {
       this.saving = false;
     }
@@ -209,5 +232,9 @@ export class StorageHelper<T> {
 
   toJS(): T {
     return toJS(this.get());
+  }
+
+  isEmpty() {
+    return isEmpty(this.toJS());
   }
 }

@@ -1,30 +1,34 @@
 //-- Main window app (options page)
 
 import "./app.scss";
-import "../../setup";
+import "@/setup";
 import React from "react";
 import { createRoot } from "react-dom/client"
 import { reaction } from "mobx";
 import { observer } from "mobx-react";
-import { preloadAppData } from "../../preloadAppData";
-import { getManifest } from "../../extension";
+import { preloadAppData } from "@/preloadAppData";
+import { getManifest } from "@/extension";
 import { settingsStore } from '../settings/settings.storage'
 import { Header } from "./header";
 import { Footer } from './footer'
 import { Notifications } from "../notifications";
-import { getUrlParams } from "../../navigation";
+import { getUrlParams } from "@/navigation";
 import { pageManager } from "./page-manager";
 import { ExportSettingsDialog } from "./export-settings-dialog";
 import { PrivacyDialog } from "./privacy-dialog";
 import { AppRateDialog } from "./app-rate.dialog";
-import { isRTL } from "../../providers";
-import { getLocale } from "../../i18n";
-import { sendMetric } from "../../background/metrics.bgc";
+import { isRTL } from "@/providers";
+import { dumpMissingLocalizationKeys, getLocale, i18nStorage } from "@/i18n";
+import { sendMetric } from "@/background/metrics.bgc";
+import { userStore } from "@/pro";
+import { favoritesStorage } from "@/components/user-history/favorites.storage";
+import { themeStore } from "@/components/theme-manager/theme.storage";
 
 @observer
 export class App extends React.Component {
   static async init() {
     await preloadAppData(); // preload dependent data before initial app rendering
+    void userStore.load(); // always get latest user-subscription update
 
     const { name: appName, description: appDescription } = getManifest();
     document.title = `${appName} - ${appDescription}`;
@@ -80,3 +84,12 @@ export class App extends React.Component {
 
 // render app
 void App.init();
+
+export {
+  i18nStorage,
+  settingsStore,
+  userStore,
+  themeStore,
+  favoritesStorage,
+  dumpMissingLocalizationKeys,
+}

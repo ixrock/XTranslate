@@ -1,6 +1,6 @@
 import type { PageId } from "../navigation";
 import type { ProviderCodeName } from "../providers";
-import { isDevelopment } from "../common-vars";
+import { isDevelopment } from "../config";
 import { createStorage } from "../storage";
 import { createIsomorphicAction, MessageType } from "../extension";
 
@@ -9,7 +9,7 @@ export const GA_API_SECRET = "1bWF6YDXSM295O3ONY9esw";
 
 export const gaClientId = createStorage("ga_client_id", {
   area: "sync",
-  defaultValue: crypto.randomUUID(),
+  defaultValue: crypto.randomUUID?.() ?? Math.random().toString(36).substring(2),
   saveDefaultWhenEmpty: true,
 });
 
@@ -80,12 +80,12 @@ export type GoogleMetricEvents = {
   tts_played: {
     source: MetricSourceEnv;
     provider: ProviderCodeName;
-    lang: string;
+    lang?: string;
   };
   tts_error: {
     source: MetricSourceEnv;
     provider: ProviderCodeName;
-    lang: string;
+    lang?: string;
     error: string;
   };
   history_saved: {
@@ -100,9 +100,5 @@ export type GoogleMetricEvents = {
     lang_from: string;
     lang_to: string;
   };
-  // TODO: use metric
-  settings_changed: {
-    name: string;
-    value: string | boolean | number
-  }
+  promo_banner_shown: {}
 };

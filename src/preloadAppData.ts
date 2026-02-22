@@ -8,7 +8,7 @@ import { settingsStore } from "./components/settings/settings.storage";
 import { themeStore } from "./components/theme-manager/theme.storage";
 import { favoritesStorage } from "./components/user-history/favorites.storage";
 
-export async function preloadAppData() {
+export async function preloadAppData(...extras: Promise<any>[]) {
   const logger = createLogger({ systemPrefix: `[PRELOAD]`, prefixColor: LoggerColor.INFO_SYSTEM });
   const loadingTimer = logger.time("preloadAppData()");
 
@@ -19,6 +19,7 @@ export async function preloadAppData() {
       settingsStore.load(),
       themeStore.load(),
       favoritesStorage.load(),
+      ...extras,
     ]);
     loadingTimer.stop();
   } catch (error) {

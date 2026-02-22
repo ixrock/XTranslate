@@ -26,7 +26,7 @@ export function getStorageApi(area: StorageArea = "local") {
   return chrome.storage[area];
 }
 
-export async function readFromExternalStorage<T>({ key, area }: StorageReadPayload): Promise<T> {
+export async function readFromExternalStorage({ key, area }: StorageReadPayload): Promise<any> {
   const storageApi = getStorageApi(area);
 
   const items = await storageApi.get(key) ?? {};

@@ -77,7 +77,7 @@
 
     .translation {
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       gap: var(--flexGap);
 
       .value {
@@ -94,6 +94,8 @@
         display: flex;
         gap: 2px;
         align-items: center;
+        position: sticky;
+        top: .3em;
       }
     }
 
@@ -116,7 +118,7 @@
 
   .translationError {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: var(--flexGap);
 
     .errorInfo {

@@ -1,9 +1,12 @@
+// TODO: use native popover API
+//  see: https://developer.mozilla.org/en-US/docs/Web/API/Popover_API
 import * as styles from './menu.module.scss'
+
 import React, { Fragment, ReactElement, ReactNode, PropsWithChildren } from "react";
 import { createPortal } from "react-dom";
 import { observer } from "mobx-react";
 import { action, makeObservable, observable } from "mobx";
-import { autoBind, cssNames } from "../../utils";
+import { autoBind, cssNames } from "@/utils";
 import { Animate } from "../animate";
 import { MenuContext } from './menu-context';
 import { MenuItem, MenuItemProps } from './menu-item';

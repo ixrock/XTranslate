@@ -1,6 +1,6 @@
 import * as styles from "./react-select.module.scss";
 import React from "react";
-import { cssNames } from "../../utils";
+import { cssNames } from "@/utils";
 import ReactSelectComponent, { GroupBase, Props, PropsValue, OptionsOrGroups, SelectInstance } from "react-select";
 
 export { FormatOptionLabelMeta } from "react-select";

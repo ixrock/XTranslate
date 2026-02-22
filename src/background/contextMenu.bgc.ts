@@ -1,39 +1,108 @@
 // Global browser's context menu
 
 import { autorun } from "mobx";
-import { getManifest, translateActivePage } from "../extension";
-import { settingsStorage } from "../components/settings/settings.storage";
+import { getManifest, TranslateFullPagePayload } from "../extension";
+import { FullPageContextMenuMode, settingsStorage } from "../components/settings/settings.storage";
 import { activeTabStorage } from "./tabs.bgc";
-import { getTranslator } from "../providers";
+import { getTranslator, getTranslators, ProviderCodeName } from "../providers";
 import { getMessage, i18nInit } from "../i18n";
+import { translateActivePageAction } from "./translate-page.bgc";
 
 export async function initContextMenu() {
   const { name: appName } = getManifest();
+  const menuPrefix = `${appName}_menu_`;
+  const contextMenuActionMap = new Map<string, TranslateFullPagePayload>();
 
   await settingsStorage.load();
   await activeTabStorage.load();
   await i18nInit();
 
-  return autorun(() => {
-    const { fullPageTranslation: { provider, langTo, alwaysTranslatePages } } = settingsStorage.get();
-    const translator = getTranslator(provider);
-    const activeTab = activeTabStorage.get();
-    const autoTranslateEnabled = activeTab.url && alwaysTranslatePages.includes(new URL(activeTab.url).origin);
+  const onContextMenuClicked = (data: chrome.contextMenus.OnClickData, tab?: chrome.tabs.Tab) => {
+    const menuItemId = String(data.menuItemId);
+    const actionPayload = contextMenuActionMap.get(menuItemId);
+    if (!actionPayload) return;
 
-    const startTranslatePageTitle = getMessage("context_menu_translate_full_page_context_menu", {
-      lang: translator.langTo[langTo] ?? langTo,
-    });
+    return translateActivePageAction({ tabId: tab?.id, ...actionPayload });
+  };
+
+  chrome.contextMenus.onClicked.removeListener(onContextMenuClicked);
+  chrome.contextMenus.onClicked.addListener(onContextMenuClicked);
+
+  return autorun(() => {
+    const { fullPageTranslation } = settingsStorage.get();
+    const { provider, langTo, alwaysTranslatePages } = fullPageTranslation;
+    const menuMode = fullPageTranslation.contextMenuMode;
+
+    if (menuMode === FullPageContextMenuMode.OFF) {
+      contextMenuActionMap.clear();
+      chrome.contextMenus.removeAll();
+      return;
+    }
+
+    const activeTab = activeTabStorage.get();
+    const activeTabOrigin = getTabOrigin(activeTab.url);
+    const autoTranslateEnabled = activeTabOrigin && alwaysTranslatePages.includes(activeTabOrigin);
     const stopTranslatePageTitle = getMessage("context_menu_translate_full_page_context_menu_stop", {
       site: `"${activeTab.title}" - ${activeTab.url}`,
     });
 
+    contextMenuActionMap.clear();
     chrome.contextMenus.removeAll();
-    chrome.contextMenus.create({
-      id: appName,
-      contexts: [chrome.contextMenus.ContextType.ALL],
-      title: autoTranslateEnabled ? stopTranslatePageTitle : startTranslatePageTitle,
+
+    if (menuMode === FullPageContextMenuMode.ACTIVE_PROVIDER) {
+      const startTranslatePageTitle = getStartPageTranslationTitle(provider, langTo);
+
+      contextMenuActionMap.set(appName, { action: "toggle" });
+      chrome.contextMenus.create({
+        id: appName,
+        contexts: [chrome.contextMenus.ContextType.ALL],
+        title: autoTranslateEnabled ? stopTranslatePageTitle : startTranslatePageTitle,
+      });
+      return;
+    }
+
+    const providers = getTranslators().filter((translator) => {
+      return translator.isAvailable() && translator.canTranslateFullPage();
     });
 
-    chrome.contextMenus.onClicked.addListener(translateActivePage);
+    providers.forEach((translator) => {
+      const menuId = `${menuPrefix}_${translator.name}`;
+      const { langTo: supportedLangTo } = translator.getSupportedLanguages(fullPageTranslation);
+      const isCurrentProvider = translator.name === provider;
+      const shouldRenderStopAction = Boolean(autoTranslateEnabled && isCurrentProvider);
+
+      const actionTitle = shouldRenderStopAction
+        ? stopTranslatePageTitle
+        : getStartPageTranslationTitle(translator.name, supportedLangTo);
+
+      contextMenuActionMap.set(menuId, {
+        action: shouldRenderStopAction ? "stop" : "start",
+        provider: shouldRenderStopAction ? undefined : translator.name,
+      });
+      chrome.contextMenus.create({
+        id: menuId,
+        contexts: [chrome.contextMenus.ContextType.ALL],
+        title: `${translator.title}: ${actionTitle}`,
+      });
+    });
   })
+}
+
+function getTabOrigin(url: string): string {
+  try {
+    return new URL(url).origin;
+  } catch {
+    return "";
+  }
+}
+
+function getStartPageTranslationTitle(provider: ProviderCodeName, langTo: string): string {
+  const translator = getTranslator(provider);
+  if (!translator) {
+    return getMessage("context_menu_translate_full_page_context_menu", { lang: langTo });
+  }
+
+  return getMessage("context_menu_translate_full_page_context_menu", {
+    lang: translator.langTo[langTo] ?? langTo,
+  });
 }

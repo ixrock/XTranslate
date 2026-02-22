@@ -1,12 +1,10 @@
 import "./input-translation.scss";
-
-import debounce from "lodash/debounce";
 import isEqual from "lodash/isEqual";
 import React, { Fragment } from "react";
-import { action, comparer, computed, makeObservable, observable, reaction, toJS } from "mobx";
+import { action, comparer, IReactionDisposer, makeObservable, observable, reaction, toJS } from "mobx";
 import { observer } from "mobx-react";
-import { getTranslator, isRTL, ITranslationError, ITranslationResult, ProviderCodeName, Translator } from "../../providers";
-import { createLogger, cssNames, disposer } from "../../utils";
+import { getTranslator, getXTranslatePro, isRTL, ITranslationError, ITranslationResult, ProviderCodeName, Translator } from "@/providers";
+import { cssNames, isHotkeyPressed } from "@/utils";
 import { SelectLanguage } from "../select-language";
 import { Input } from "../input";
 import { Spinner } from "../spinner";
@@ -15,157 +13,169 @@ import { pageManager } from "../app/page-manager";
 import { Tab } from "../tabs";
 import { Icon } from "../icon";
 import { Tooltip } from "../tooltip";
-import { getUrlParams, navigation, TranslationPageParams } from "../../navigation";
-import { createStorage } from "../../storage";
-import { getMessage } from "../../i18n";
-import { isMac, materialIcons } from "../../common-vars";
+import { getUrlParams, navigation, TranslationPageParams } from "@/navigation";
+import { createStorage } from "@/storage";
+import { getMessage } from "@/i18n";
+import { materialIcons } from "@/config";
 import { isFavorite } from "../user-history/favorites.storage";
-import { saveToFavoritesAction } from "../../background/history.bgc";
-import { getSelectedText } from "../../extension";
+import { saveToFavoritesAction } from "@/background/history.bgc";
+import { getSelectedTextAction } from "@/background/get-selected-text.bgc";
 import { CopyToClipboardIcon } from "../copy-to-clipboard-icon";
 import { SelectProvider } from "../select-provider";
-
-export const lastInputText = createStorage("last_input_text", {
-  defaultValue: "",
-});
+import { Button } from "@/components/button";
+import { userStore } from "@/pro";
 
 @observer
 export class InputTranslation extends React.Component {
-  private dispose = disposer();
-  private logger = createLogger({ systemPrefix: "[INPUT-TRANSLATION]" });
   private input?: Input;
+  private unBindAutoTranslate?: IReactionDisposer;
+  private lastParams?: TranslationPageParams;
+  private lastInputText = createStorage<string>("last_input_text");
 
-  @computed get urlParams(): TranslationPageParams {
+  get urlParams(): TranslationPageParams {
     const { provider, text, to, from } = getUrlParams<TranslationPageParams>();
     return { page: "translate", provider, from, to, text };
   }
 
-  @observable params: TranslationPageParams = {
-    page: "translate",
-    provider: this.urlParams.provider ?? settingsStore.data.vendor,
-    from: this.urlParams.from ?? settingsStore.data.langFrom,
-    to: this.urlParams.to ?? settingsStore.data.langTo,
-    text: this.urlParams.text ?? "",
-  }
-
   @observable isLoading = false;
+  @observable params?: TranslationPageParams;
   @observable translation?: ITranslationResult;
   @observable error?: ITranslationError;
+  @observable summarized = "";
+  @observable isSpeaking = false;
+  @observable isPaused = false;
 
   constructor(props: object) {
     super(props);
     makeObservable(this);
   }
 
-  async componentDidMount() {
-    void this.translateSelectedTextFromActiveTabIfAny();
-
-    // bind event handlers
-    this.dispose.push(
-      this.bindAutoSaveLatestUserInputText(),
-      this.syncParamsWithUrl(),
-    );
+  componentDidMount() {
+    this.bindAutoTranslate();
+    void this.checkUserSelectionFromActiveTabAndTranslateIfAny();
   }
 
   componentWillUnmount() {
-    this.dispose();
+    this.unBindAutoTranslate?.();
   }
 
-  private async translateSelectedTextFromActiveTabIfAny() {
-    const selectedText = await getSelectedText();
-    if (selectedText) this.translateText(selectedText);
+  private async checkUserSelectionFromActiveTabAndTranslateIfAny() {
+    await this.lastInputText.load();
+
+    const { rememberLastText, vendor, langFrom, langTo, textInputAutoTranslateEnabled } = settingsStore.data;
+    const selectedText = await getSelectedTextAction();
+
+    this.params = {
+      page: "translate",
+      provider: this.urlParams.provider ?? vendor,
+      from: this.urlParams.from ?? langFrom,
+      to: this.urlParams.to ?? langTo,
+      text: this.urlParams.text || selectedText || (rememberLastText ? this.lastInputText.get() : ""),
+    };
+
+    if (textInputAutoTranslateEnabled) {
+      void this.translate();
+    }
   }
 
-  private syncParamsWithUrl() {
-    return disposer(
-      reaction(() => toJS(this.params), (params: TranslationPageParams) => {
-        void this.translate(); // auto-translate text (if any)
-        if (!isEqual(this.urlParams, params)) {
-          navigation.searchParams.replace(params); // update url
-        }
-      }, {
-        fireImmediately: true,
-        equals: comparer.structural,
-      }),
-
-      reaction(() => this.urlParams, ({ provider, text, to, from }) => {
-        if (provider) this.params.provider = provider;
-        if (to) this.params.to = to;
-        if (from) this.params.from = from;
-        if (text) {
-          this.params.text = text;
-        } else {
-          this.input?.setValue(""); // clear input field
-        }
-      }),
-    )
+  private bindAutoTranslate() {
+    this.unBindAutoTranslate = reaction(() => toJS(this.params), (params: TranslationPageParams) => {
+      if (!settingsStore.data.textInputAutoTranslateEnabled) return;
+      void this.translate(params);
+    }, {
+      equals: comparer.structural,
+      delay: settingsStore.data.textInputTranslateDelayMs,
+    });
   }
 
-  private bindAutoSaveLatestUserInputText() {
-    return disposer(
-      reaction(() => this.params.text, (text: string) => {
-        if (!settingsStore.data.rememberLastText) return; // exit: option is not enabled in the settings
-        lastInputText.set(text);
-      }, {
-        delay: 250, // reduce excessive writings to underlying storage
-      }),
-
-      reaction(() => settingsStore.data.rememberLastText, rememberText => {
-        if (rememberText && !this.params.text) {
-          const savedUserText = lastInputText.get();
-          this.translateText(savedUserText);
-        }
-      }, {
-        fireImmediately: true, // translate previously saved input's text asap
-      }),
-    );
+  @action.bound
+  resetSpeakingState() {
+    this.isSpeaking = false;
+    this.isPaused = false;
   }
 
-  playText = async () => {
-    const { vendor, langDetected, originalText } = this.translation;
-    await getTranslator(vendor).speak(langDetected, originalText);
+  @action.bound
+  speak = async () => {
+    let { provider, text, from } = this.params;
+
+    if (from === "auto" && provider === ProviderCodeName.GOOGLE) {
+      await this.translate(); // google-tts api requires `lang` param to be defined
+      const { vendor, langDetected, originalText } = this.translation;
+      provider = vendor;
+      from = langDetected;
+      text = originalText;
+    }
+
+    const translator = getTranslator(provider);
+
+    if (this.isSpeaking) {
+      this.isPaused = !this.isPaused;
+      return translator.pauseSpeaking();
+    }
+
+    try {
+      this.isSpeaking = true;
+      this.isPaused = false;
+
+      const media = await translator.speak(text, from);
+
+      if (media instanceof HTMLAudioElement) {
+        media.onended = this.resetSpeakingState;
+      } else if (media instanceof SpeechSynthesisUtterance) {
+        media.onend = this.resetSpeakingState;
+      }
+
+      if (!media) {
+        this.isSpeaking = false;
+      }
+    } catch (err) {
+      this.resetSpeakingState();
+    }
   }
 
   @action.bound
   translateText(text: string) {
     this.params.text = text;
+    return this.translate();
   }
 
-  @action
-  async translate() {
-    const payload = { ...this.params };
+  @action.bound
+  async translate(params = { ...this.params }) {
+    this.summarized = "";
+
+    if (!params.text || isEqual(this.lastParams, params)) {
+      return;
+    }
 
     this.input?.focus(); // autofocus input-field
-    this.input?.setValue(payload.text || ""); // update input value manually since @defaultValue is utilized
+    this.input?.setValue(params.text); // update input value manually since @defaultValue is utilized
     this.translation = null;
     this.error = null;
-
-    if (!payload.text) return;
     this.isLoading = true;
 
     try {
-      const translation = await getTranslator(payload.provider).translate(payload);
-      if (isEqual(payload, this.params)) {
+      this.lastParams = params;
+      const translation = await getTranslator(params.provider).translate({
+        from: params.from,
+        to: params.to,
+        text: params.text.trim(),
+      });
+      if (isEqual(params, this.params)) {
         this.translation = translation;
       }
     } catch (error) {
-      if (isEqual(payload, this.params)) {
+      if (isEqual(params, this.params)) {
         this.error = error;
       }
     } finally {
       this.isLoading = false;
+      this.updateUrl(params);
     }
   };
 
-  onInputChange = debounce(
-    (text: string) => this.params.text = text.trim(),
-    settingsStore.data.textInputTranslateDelayMs,
-  );
-
-  onKeyDown = (evt: React.KeyboardEvent<HTMLInputElement>) => {
-    var isCmdEnter = (evt.metaKey || evt.ctrlKey) && evt.code === "Enter";
-    if (isCmdEnter) {
-      this.onInputChange.flush();
+  private updateUrl(newParams = this.params) {
+    if (!isEqual(this.urlParams, newParams)) {
+      navigation.searchParams.replace(newParams);
     }
   }
 
@@ -173,19 +183,33 @@ export class InputTranslation extends React.Component {
   onLangChange = (from: string, to: string) => {
     this.params.from = from;
     this.params.to = to;
+    this.updateUrl();
+    this.resetSpeakingState();
   }
 
   @action
-  onProviderChange = (name: ProviderCodeName) => {
-    const translator = getTranslator(name);
+  onProviderChange = (provider: ProviderCodeName) => {
+    const translator = getTranslator(provider);
+    const { textInputAutoTranslateEnabled } = settingsStore.data;
+
     const supportedLanguages = translator.getSupportedLanguages({
       langFrom: this.params.from,
       langTo: this.params.to,
     });
-    this.params.provider = name;
+
+    const prevProvider = this.params.provider;
+    this.params.provider = provider;
     this.params.from = supportedLanguages.langFrom;
     this.params.to = supportedLanguages.langTo;
-    this.input.focus();
+    this.updateUrl();
+    this.resetSpeakingState();
+
+    if (provider === ProviderCodeName.XTRANSLATE_PRO && !userStore.isProActive) {
+      this.params.provider = prevProvider; // rollback
+      userStore.subscribeSuggestionDialog();
+    } else if (textInputAutoTranslateEnabled) {
+      void this.translate();
+    }
   }
 
   private saveToFavorites = (isFavorite: boolean) => {
@@ -208,9 +232,9 @@ export class InputTranslation extends React.Component {
           <div className="translation flex gaps align-center">
             <div className="flex column gaps">
               <Icon
-                material={materialIcons.ttsPlay}
+                material={this.isPaused ? materialIcons.ttsPause : materialIcons.ttsPlay}
                 tooltip={getMessage("popup_play_icon_title")}
-                onClick={this.playText}
+                onClick={this.speak}
               />
               <CopyToClipboardIcon
                 content={this.translation}
@@ -272,7 +296,7 @@ export class InputTranslation extends React.Component {
                   <td className="word-type" colSpan={2}>{wordType}</td>
                 </tr>
                 {meanings.map(meaning => {
-                  var examples = meaning.examples
+                  const examples = meaning.examples
                     ? meaning.examples.map(example => example.join(" - ")).join("\n")
                     : "";
                   return (
@@ -289,7 +313,7 @@ export class InputTranslation extends React.Component {
                       </td>
                       <td className="word-meanings">
                         {meaning.translation.map((word, i, list) => {
-                          var last = i === list.length - 1;
+                          const last = i === list.length - 1;
                           return [
                             <span key={i} className="link" onClick={() => this.translateText(word)}>{word}</span>,
                             !last ? ", " : null
@@ -309,7 +333,7 @@ export class InputTranslation extends React.Component {
   }
 
   renderTranslationError() {
-    var { statusCode, message } = this.error;
+    const { statusCode, message } = this.error;
     return (
       <div className="translation-error flex column gaps">
         <p>{statusCode}: {getMessage("translation_data_failed")}</p>
@@ -318,11 +342,20 @@ export class InputTranslation extends React.Component {
     );
   }
 
+  renderSummarizeResult() {
+    return (
+      <div className={cssNames("translation-results", { rtl: isRTL(this.params.to) })}>
+        {this.summarized}
+      </div>
+    )
+  }
+
   renderTranslation() {
-    var { params, isLoading, translation, error } = this;
+    const { params, isLoading, translation, error, summarized } = this;
     if (!params.text) return;
     if (isLoading) return <Spinner center/>;
     if (translation) return this.renderTranslationResult();
+    if (summarized) return this.renderSummarizeResult();
     if (error) return this.renderTranslationError();
   }
 
@@ -340,13 +373,64 @@ export class InputTranslation extends React.Component {
   }
 
   @action.bound
+  onInputChange(val: string) {
+    this.params.text = val;
+
+    if (this.error) {
+      this.error = null; // reset previous error first (if any)
+    }
+    if (settingsStore.data.rememberLastText) {
+      this.lastInputText.set(val);
+    }
+  }
+
+  @action
+  async summarize() {
+    if (!userStore.isProActive) {
+      userStore.subscribeSuggestionDialog();
+      return;
+    }
+
+    const { provider, to: langTo, text } = this.params;
+    if (!text) return;
+
+    if (provider !== ProviderCodeName.XTRANSLATE_PRO) {
+      this.params.provider = ProviderCodeName.XTRANSLATE_PRO;
+    }
+
+    this.isLoading = true;
+    this.error = null;
+    this.translation = null;
+
+    try {
+      this.unBindAutoTranslate?.();
+      this.summarized = await getXTranslatePro().summarize({ text, targetLang: langTo });
+    } catch (err) {
+      this.error = err;
+    } finally {
+      this.bindAutoTranslate();
+      this.isLoading = false;
+    }
+  }
+
+  @action.bound
+  toggleAutoTranslation() {
+    settingsStore.data.textInputAutoTranslateEnabled = !settingsStore.data.textInputAutoTranslateEnabled;
+  }
+
+  @action.bound
   bindInputRef(elem: Input) {
     this.input = elem;
   }
 
   render() {
-    const { textInputTranslateDelayMs: delayMs, rememberLastText } = settingsStore.data;
+    if (!this.params) return;
+    const { textInputTranslateDelayMs: delayMs, rememberLastText, textInputAutoTranslateEnabled } = settingsStore.data;
+
     const { provider, from: langFrom, to: langTo, text } = this.params;
+    const ttsClassButton = cssNames("flex gaps align-center", {
+      ttsPaused: this.isPaused,
+    });
 
     return (
       <div className="InputTranslation flex column gaps">
@@ -368,17 +452,19 @@ export class InputTranslation extends React.Component {
             autoFocus={true}
             multiLine={true}
             rows={2}
-            tabIndex={1}
             placeholder={getMessage("text_field_placeholder")}
             defaultValue={text}
-            onChange={(text: string) => this.onInputChange(text)}
-            onKeyDown={this.onKeyDown}
+            onChange={this.onInputChange}
+            onKeyDown={evt => isHotkeyPressed({ key: "Enter" }, evt) && this.translate()}
             ref={this.bindInputRef}
             infoContent={(
               <small className="hint">
-                {getMessage("text_input_translation_hint", {
-                  hotkey: `${isMac() ? "Cmd" : "Ctrl"}+Enter`,
-                  timeout: <a key="delay" onClick={this.setTranslationDelay}>{delayMs || 0}</a>,
+                {getMessage(textInputAutoTranslateEnabled ? "text_input_auto_translation_enabled" : "text_input_auto_translation_disabled", {
+                  toggle: v => <a onClick={this.toggleAutoTranslation}><b>{v}</b></a>
+                })}
+                {" | "}
+                {getMessage("text_input_auto_translation_timeout", {
+                  timeout: <a onClick={this.setTranslationDelay}><b>{delayMs || 0}</b></a>,
                 })}
               </small>
             )}
@@ -391,7 +477,34 @@ export class InputTranslation extends React.Component {
             onClick={action(() => settingsStore.data.rememberLastText = !rememberLastText)}
           />
         </div>
+
         {this.renderTranslation()}
+
+        <div className="buttons flex gaps justify-center">
+          <Button
+            primary
+            className="flex gaps align-center"
+            onClick={() => this.translate()}
+          >
+            <Icon material={materialIcons.translate}/>
+            <span>{getMessage("translate_button")}</span>
+          </Button>
+          <Button
+            outline
+            className={ttsClassButton}
+            onClick={() => this.speak()}
+          >
+            <Icon svg="tts"/>
+            <span>{getMessage("tts_button")}</span>
+          </Button>
+          <Button
+            className="flex gaps align-center"
+            onClick={() => this.summarize()}
+          >
+            <Icon material={materialIcons.summarize}/>
+            <span>{getMessage("summarize_button")}</span>
+          </Button>
+        </div>
       </div>
     );
   }

@@ -1,11 +1,11 @@
 // Base class for all translation providers
 
-import { observable } from "mobx";
-import { autoBind, createLogger, JsonResponseError } from "../utils";
+import { observable, action } from "mobx";
+import { autoBind, copyCase, CopyCaseParams, createLogger } from "../utils";
 import { isOptionsPage, ProxyRequestPayload, ProxyResponseType } from "../extension";
 import { ProviderCodeName } from "./providers";
 import { getMessage } from "../i18n";
-import { getTTSVoices, speak, stopSpeaking, TTSVoice } from "../tts";
+import { speakSystemTTS, ttsEngine } from "../tts";
 import { settingsStore } from "../components/settings/settings.storage";
 import { proxyRequest } from "../background/httpProxy.bgc";
 import { getTranslationFromHistoryAction, saveToHistoryAction } from "../background/history.bgc";
@@ -55,7 +55,12 @@ export abstract class Translator {
 
     this.translate = new Proxy(this.translate, {
       apply: async (translate, callContext, [params]: [TranslateParams]): Promise<ITranslationResult> => {
-        return this.#handleTranslation(translate, params);
+        return this.#handleSingleTranslation(translate, params);
+      }
+    });
+    this.translateMany = new Proxy(this.translateMany, {
+      apply: async (translateManyInstance, callContext, [params]: [TranslateParams]): Promise<string[]> => {
+        return this.#handleMultiTranslation(translateManyInstance, params);
       }
     });
   }
@@ -76,8 +81,40 @@ export abstract class Translator {
     return response as Response;
   }
 
-  async #handleTranslation(
-    originalTranslate: (params: TranslateParams) => Promise<ITranslationResult>,
+  async #handleMultiTranslation(
+    instanceFunc: (params: TranslateParams) => Promise<string[]>,
+    params: TranslateParams,
+  ): Promise<string[]> {
+    const { langTo, langFrom, letterCaseAutoCorrection } = settingsStore.data.fullPageTranslation;
+    const translations = await Reflect.apply(instanceFunc, this, [params]);
+    let correctedTranslations: string[];
+
+    if (letterCaseAutoCorrection) {
+      correctedTranslations = translations.map((sentence, index) => {
+        const originalText = params.texts[index];
+
+        const copyCaseParams: CopyCaseParams = {
+          fromText: originalText,
+          toText: sentence,
+          toLocale: langTo,
+          fromLocale: langFrom === "auto" ? "und" : langFrom,
+        };
+
+        try {
+          return copyCase(copyCaseParams)
+        } catch (err) {
+          this.logger.error(`[CASE-CORRECTION]: failed to copy case for sentence: ${originalText}`, { err, params, copyCaseParams });
+          return sentence;
+        }
+      })
+    }
+
+    this.logger.info('GOT MULTI-TRANSLATIONS', { translations, correctedTranslations });
+    return correctedTranslations ?? translations;
+  }
+
+  async #handleSingleTranslation(
+    instanceFunc: (params: TranslateParams) => Promise<ITranslationResult>,
     params: TranslateParams,
   ): Promise<ITranslationResult> {
     let translation = await getTranslationFromHistoryAction({ provider: this.name, ...params }) as ITranslationResult;
@@ -88,7 +125,7 @@ export abstract class Translator {
       const getTranslationResult = async (customParams: Partial<TranslateParams> = {}) => {
         const reqParams = { ...params, ...customParams };
         try {
-          let result = await Reflect.apply(originalTranslate, this, [reqParams]);
+          let result = await Reflect.apply(instanceFunc, this, [reqParams]);
           result = this.normalize(result, reqParams);
 
           void sendMetric("translate_used", {
@@ -101,7 +138,7 @@ export abstract class Translator {
           return result;
         } catch (err) {
           void sendMetric("translate_error", {
-            error: isTranslationError(err) ? err.message : String(err),
+            error: isTranslationError(err) ? err.message : JSON.stringify(err),
             source: this.metricSource,
             provider: this.name,
             lang_from: reqParams.from,
@@ -129,11 +166,11 @@ export abstract class Translator {
   }
 
   protected handleSideEffects(translation: ITranslationResult): ITranslationResult {
-    const { langDetected, originalText } = translation;
+    const { originalText, langDetected } = translation;
     const { autoPlayText, historyEnabled } = settingsStore.data;
 
     if (autoPlayText) {
-      void this.speak(langDetected, originalText);
+      void this.speak(originalText, langDetected);
     }
     if (historyEnabled) {
       void saveToHistoryAction({
@@ -148,20 +185,14 @@ export abstract class Translator {
   protected normalize(result: ITranslationResult, params: TranslateParams): ITranslationResult {
     const { from: langFrom, to: langTo, text: originalText } = params;
 
-    function toLowerCase(output: string) {
-      const isDictionaryWord = !!result.dictionary;
-      return isDictionaryWord ? output.toLowerCase() : output;
-    }
-
     return {
       ...result,
       vendor: this.name,
-      translation: toLowerCase(result.translation),
       dictionary: result.dictionary ?? [],
       langFrom,
       langTo,
+      originalText,
       langDetected: result.langDetected ?? langFrom,
-      originalText: toLowerCase(originalText),
     };
   }
 
@@ -206,76 +237,105 @@ export abstract class Translator {
     ].join(' → ');
   }
 
-  speakSynth(text: string, voice?: TTSVoice) {
+  speakSynth(text: string): Promise<SpeechSynthesisUtterance> {
     try {
-      speak(text, voice); // // tts-play
+      return speakSystemTTS(text);
     } catch (err) {
-      this.logger.error(`[TTS]: speech synthesis failed to speak: ${err}`, { text, voice });
+      this.logger.error(`[TTS]: speech synthesis failed to speak: ${err}`);
     }
   }
 
-  async speak(lang: string, text: string, voice?: TTSVoice) {
+  async speak(text: string, lang?: string, ...args: any[]): Promise<HTMLAudioElement | SpeechSynthesisUtterance | void> {
     this.stopSpeaking(); // stop previous if any
+
+    try {
+      if (await this.streamAudio(text, lang, ...args)) return this.audio;
+    } catch (err) {
+      this.logger.error(`[TTS]: streaming failed: ${err}`);
+    }
 
     const audioUrl = this.getAudioUrl(text, lang);
     const audioFile = await this.getAudioFile(text, lang);
-    const useSpeechSynthesis = Boolean(settingsStore.data.useSpeechSynthesis || !(audioUrl || audioFile));
 
-    if (!voice) {
-      const voices = await getTTSVoices();
-      voice = voices[settingsStore.data.ttsVoiceIndex];
-    }
+    const useSpeechSynthesis = Boolean(
+      settingsStore.data.useSpeechSynthesis || !(audioUrl || audioFile)
+    );
 
     if (useSpeechSynthesis) {
-      this.logger.info(`[TTS]: speaking using system speech synthesis`, {
-        lang, text, voice,
-        voiceIndex: settingsStore.data.ttsVoiceIndex,
+      return this.speakSynth(text);
+    }
+
+    try {
+      const audioBinary = audioFile ?? await this.request<Blob>({
+        url: audioUrl,
+        responseType: ProxyResponseType.BLOB
       });
-      this.speakSynth(text, voice);
-    } else {
-      try {
-        const audioBinary = audioFile ?? await this.request<Blob>({
-          url: audioUrl,
-          responseType: ProxyResponseType.BLOB
-        });
 
-        this.audioDataUrl = URL.createObjectURL(audioBinary);
-        this.logger.info(`[TTS]: speaking via api request`, { lang, text });
-        this.audio = document.createElement("audio");
-        this.audio.src = this.audioDataUrl = URL.createObjectURL(audioBinary);
-        await this.audio.play();
+      this.audioDataUrl = URL.createObjectURL(audioBinary);
+      this.audio = document.createElement("audio");
+      this.audio.src = this.audioDataUrl = URL.createObjectURL(audioBinary);
+      await this.audio.play();
 
-        void sendMetric("tts_played", {
-          source: this.metricSource,
-          provider: this.name,
-          lang: lang,
-        });
-      } catch (error) {
-        this.logger.error(`[TTS]: failed to play: ${error}`, { lang, text });
-        this.speakSynth(text, voice); // fallback to TTS-synthesis engine
+      void sendMetric("tts_played", {
+        source: this.metricSource,
+        provider: this.name,
+        lang,
+      });
+      return this.audio;
+    } catch (error) {
+      void sendMetric("tts_error", {
+        error: String(error?.message) ?? "Unknown TTS error",
+        source: this.metricSource,
+        provider: this.name,
+        lang,
+      });
+      return this.speakSynth(text); // fallback to TTS-synthesis engine
+    }
+  }
 
-        void sendMetric("tts_error", {
-          error: String(error),
-          source: this.metricSource,
-          provider: this.name,
-          lang: lang,
-        })
+  isSpeaking(): boolean {
+    const mediaFile = this.audio && !(this.audio.paused || this.audio.ended);
+    return mediaFile ?? ttsEngine().speaking;
+  }
+
+  @action
+  pauseSpeaking(toggle = true) {
+    const pause = () => {
+      if (this.audio) this.audio.pause();
+      else ttsEngine().pause();
+    };
+    const resume = () => {
+      if (this.audio) void this.audio.play();
+      else ttsEngine().resume();
+    }
+    if (toggle) {
+      const isPaused = this.audio ? this.audio.paused : ttsEngine().paused;
+      if (isPaused) {
+        resume();
+      } else {
+        pause();
       }
+    } else {
+      pause();
     }
   }
 
   stopSpeaking() {
     this.logger.info(`[TTS]: stop speaking`);
     getTranslators().forEach(translator => translator.audio?.pause());
-    stopSpeaking(); // tts-stop
+    ttsEngine().cancel();
     URL.revokeObjectURL(this.audioDataUrl);
   }
 
-  async getAudioFile(text: string, lang?: string): Promise<Blob> {
+  async getAudioFile(text: string, lang?: string, ...otherParams: any[]): Promise<Blob> {
     return;
   }
 
-  getAudioUrl(text: string, lang: string): string {
+  async streamAudio(text: string, lang?: string, ...otherParams: any[]): Promise<boolean> {
+    return false;
+  }
+
+  getAudioUrl(text: string, lang?: string): string {
     return;
   }
 
@@ -358,7 +418,9 @@ export interface ITranslationDictionaryMeaning {
   examples?: string[][] // examples in source lang
 }
 
-export interface ITranslationError extends JsonResponseError {
+export interface ITranslationError {
+  statusCode: number;
+  message: string;
 }
 
 export function isTranslationResult(data: ITranslationResult | unknown): data is ITranslationResult {

@@ -4,15 +4,19 @@ import "../setup";
 import "./storage.bgc";
 import "./scripting.bgc";
 import "./history.bgc";
-import "./open-ai.bgc";
+import "./ai.bgc";
 import "./metrics.bgc";
+import "./user.bgc";
+import "./translate-page.bgc";
+import "./get-selected-text.bgc";
 
 import { installOrUpdateAppActions } from "./install.bgc";
 import { initActiveTabWatcher } from "./tabs.bgc";
 import { initContextMenu } from "./contextMenu.bgc";
-import { listenProxyRequestActions } from "./httpProxy.bgc";
+import { listenProxyConnection, listenProxyRequestActions } from "./httpProxy.bgc";
 
 initContextMenu();
 initActiveTabWatcher();
 installOrUpdateAppActions();
 listenProxyRequestActions();
+listenProxyConnection();

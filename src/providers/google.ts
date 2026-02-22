@@ -14,7 +14,7 @@ class Google extends Translator {
   override title = 'Google';
   override publicUrl = 'https://translate.google.com';
   protected apiClients = ["gtx", "dict-chrome-ex"];
-  protected ttsMaxLength = 187;
+  protected ttsMaxLength = 250;
   override isRequireApiKey = false;
 
   protected apiClient = createStorage<string>("google_api_client", {

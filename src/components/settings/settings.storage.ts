@@ -1,7 +1,7 @@
 import { action, makeObservable } from "mobx";
-import { Hotkey } from "../../utils/parseHotkey";
-import { createStorage } from "../../storage";
-import { DeepSeekAIModel, getTranslator, GrokAIModel, OpenAIModel, OpenAIVoiceTTS, ProviderCodeName } from "../../providers";
+import { Hotkey } from "@/utils/parseHotkey";
+import { createStorage } from "@/storage";
+import { DeepSeekAIModel, GeminiAIModel, getTranslator, GrokAIModel, OpenAIModel, ProviderCodeName } from "@/providers";
 
 export type PopupPosition = "" /*auto*/ | "left top" | "left bottom" | "right top" | "right bottom";
 
@@ -11,6 +11,12 @@ export type XIconPosition = {
   bottom?: boolean;
   left?: boolean;
 };
+
+export enum FullPageContextMenuMode {
+  OFF = "off",
+  ALL_PROVIDERS = "all_providers",
+  ACTIVE_PROVIDER = "active_provider",
+}
 
 export type SettingsStorageModel = typeof settingsStorage.defaultValue;
 export type PopupHotkeyStorageModel = typeof popupHotkey.defaultValue;
@@ -31,10 +37,13 @@ export const settingsStorage = createStorage("settings", {
     showPopupOnDoubleClick: true,
     showPopupOnHotkey: true,
     showTranslatedFrom: true,
+    showPopupAdvancedCustomization: false,
+    showPopupSummarizeIcon: true,
     rememberLastText: false,
-    textInputTranslateDelayMs: 750,
-    showAdvancedProviders: false, // e.g. "advanced" == requires at least api-key from user-input to start working
-    vendor: "google" as ProviderCodeName,
+    textInputAutoTranslateEnabled: false,
+    textInputTranslateDelayMs: 1000,
+    showAdvancedProviders: false, // advanced-list requires some setup from the user (e.g. adding api-key)
+    vendor: "bing" as ProviderCodeName, // api provider
     langFrom: "auto",
     langTo: navigator.language.split('-')[0],
     langToReverse: "", // applied in case when `langFrom` == "auto" && `langDetected` == `langTo`
@@ -44,13 +53,15 @@ export const settingsStorage = createStorage("settings", {
     favorites: {} as FavoritesList,
     popupPosition: "" as PopupPosition,
     iconPosition: {} as XIconPosition,
-    ttsVoiceIndex: 0,
-    openAiTtsVoice: OpenAIVoiceTTS.ALLOY,
+    customPdfViewer: false,
     openAiModel: OpenAIModel.RECOMMENDED,
     grokAiModel: GrokAIModel.RECOMMENDED,
     deepSeekModel: DeepSeekAIModel.RECOMMENDED,
-    customPdfViewer: false,
+    geminiModel: GeminiAIModel.RECOMMENDED,
+    safeTranslationLimit: 0, // 0 = unlimited, don't ask user for confirmation, useful for paid-API providers
+    systemTTSEngineVoiceIndex: 0,
     fullPageTranslation: {
+      contextMenuMode: FullPageContextMenuMode.ALL_PROVIDERS,
       provider: "bing" as ProviderCodeName,
       langFrom: "auto",
       langTo: "en",
@@ -59,8 +70,19 @@ export const settingsStorage = createStorage("settings", {
       showTranslationInDOM: true,
       trafficSaveMode: true,
       alwaysTranslatePages: [],
-    },
+      showMore: false,
+      letterCaseAutoCorrection: true, // split content per sentence
+    }
   }
+});
+
+export const popupSkipInjectionUrls = createStorage<string[]>("popup_skip_inject", {
+  area: "sync",
+  autoLoad: true,
+  deepMergeOnLoad: false,
+  defaultValue: [
+    "https://challenges.cloudflare.com/"
+  ]
 });
 
 export const popupHotkey = createStorage("popup_hotkey", {
@@ -123,14 +145,14 @@ export class SettingsStore {
     this.data.favorites[provider][sourceType] = Array.from(favorites);
   }
 
-  @action
-  setProvider(name: ProviderCodeName) {
-    const translator = getTranslator(name);
+  @action.bound
+  setProvider(providerCodeName: ProviderCodeName) {
+    const translator = getTranslator(providerCodeName);
     const { vendor, langFrom, langTo } = this.data;
-    if (vendor === name) return;
+    if (vendor === providerCodeName) return;
 
     const supportedLanguages = translator.getSupportedLanguages({ langFrom, langTo });
-    this.data.vendor = name;
+    this.data.vendor = providerCodeName;
     this.data.langFrom = supportedLanguages.langFrom;
     this.data.langTo = supportedLanguages.langTo;
   }

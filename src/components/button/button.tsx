@@ -1,6 +1,6 @@
 import * as styles from "./button.module.scss";
 import React, { ButtonHTMLAttributes, ReactNode } from "react";
-import { cssNames } from "../../utils";
+import { cssNames } from "@/utils";
 
 export interface ButtonProps extends ButtonHTMLAttributes<any> {
   label?: React.ReactNode;
@@ -19,6 +19,11 @@ export interface ButtonProps extends ButtonHTMLAttributes<any> {
 export class Button extends React.PureComponent<ButtonProps, {}> {
   private link: HTMLAnchorElement;
   private button: HTMLButtonElement;
+
+  focus() {
+    this.link?.focus();
+    this.button?.focus();
+  }
 
   render() {
     var { className, waiting, label, primary, accent, outline, hidden, active, big, round, children, ...props } = this.props;

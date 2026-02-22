@@ -20,6 +20,7 @@ export function createStorage<T>(key: string, options: ChromeStorageHelperOption
     area = "local",
     ...storageOptions
   } = options;
+  const resourceId = `${StorageHelper.getResourceOrigin() ?? "unknown"}:${Math.random().toString(36).slice(2)}`;
 
   if (isFirefox()) {
     area = "local"; // area "sync" requires firefox account
@@ -27,15 +28,15 @@ export function createStorage<T>(key: string, options: ChromeStorageHelperOption
 
   const storageAdapter: StorageAdapter<T> = {
     async setItem(key: string, state: T): Promise<void> {
-      return writeToExternalStorageAction<T>({ key, area, state });
+      return writeToExternalStorageAction<T>({ key, area, state, resourceId });
     },
 
-    async getItem(key: string): Promise<T> {
-      return readFromExternalStorageAction<T>({ area, key });
+    async getItem(key: string): Promise<any> {
+      return readFromExternalStorageAction({ area, key });
     },
 
     async removeItem(key: string): Promise<void> {
-      return removeFromExternalStorageAction({ area, key });
+      return removeFromExternalStorageAction({ area, key, resourceId });
     },
   };
 
@@ -57,11 +58,12 @@ export function createStorage<T>(key: string, options: ChromeStorageHelperOption
   // sync storage updates for options-page (app) and content-script pages
   onMessage(MessageType.STORAGE_DATA_SYNC, async (payload: StorageSyncPayload<T>) => {
     const msgOrigin = StorageHelper.getResourceOrigin();
-    const { key: evtKey, area: evtArea, state } = payload;
+    const { key: evtKey, area: evtArea, state, resourceId: evtResourceId } = payload;
     const storageKeyMatched = evtKey === key;
     const isSameArea = evtArea === area;
+    const isOwnSyncEvent = evtResourceId === resourceId;
 
-    if (storageKeyMatched && isSameArea) {
+    if (storageKeyMatched && isSameArea && !isOwnSyncEvent) {
       logger.info(`PAGE SYNC "${key}" at ${msgOrigin}`, payload);
       storageHelper.sync(state);
     }

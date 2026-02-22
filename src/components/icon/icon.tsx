@@ -1,7 +1,7 @@
 import * as styles from "./icon.module.scss";
 import uniqueId from "lodash/uniqueId";
 import React, { type ReactNode } from "react";
-import { base64Decode, cssNames } from "../../utils";
+import { base64Decode, cssNames } from "@/utils";
 import { Tooltip, TooltipProps } from "../tooltip";
 
 export interface IconProps extends React.HTMLAttributes<any> {

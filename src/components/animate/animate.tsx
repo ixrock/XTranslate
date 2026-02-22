@@ -1,8 +1,8 @@
 import * as styles from "./animate.module.scss";
 import React from "react";
-import { action, makeObservable, observable, reaction } from "mobx";
+import { action, makeObservable, observable } from "mobx";
 import { observer } from "mobx-react";
-import { autoBind, cssNames, disposer, noop } from "../../utils";
+import { autoBind, cssNames, disposer, noop } from "@/utils";
 
 export type AnimateName = "opacity" | "slide-right" | "opacity-scale"; // predefined classnames in css
 

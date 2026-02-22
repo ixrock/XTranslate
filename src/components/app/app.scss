@@ -1,6 +1,6 @@
 @use "./flexbox" as *;
 @use "../mixins" as *;
-@use "../theme" as *;
+@use "../theme-vars" as *;
 
 @include theme-setup();
 

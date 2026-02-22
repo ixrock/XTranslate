@@ -1,7 +1,7 @@
 import AILanguagesList from "./open-ai.json"
 import { ITranslationResult, ProviderCodeName, TranslateParams, Translator } from "./index";
 import { createStorage } from "../storage";
-import { translateTextAction } from "../background/open-ai.bgc";
+import { translateTextWithAI } from "../background/ai.bgc";
 import { settingsStore } from "../components/settings/settings.storage";
 
 export class DeepSeekTranslator extends Translator {
@@ -19,7 +19,7 @@ export class DeepSeekTranslator extends Translator {
   async translate({ from, to, text }: TranslateParams): Promise<ITranslationResult> {
     await this.#apiKey.load();
 
-    return translateTextAction({
+    return translateTextWithAI({
       provider: this.name,
       model: settingsStore.data.deepSeekModel,
       apiKey: this.#apiKey.get(),

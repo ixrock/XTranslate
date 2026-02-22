@@ -1,8 +1,629 @@
 {
   "short_description": {
-    "message": "वेबपेज पर पाठ को आसानी से अनुवाद करें"
+    "message": "वेब पेजों पर टेक्स्ट का आसानी से अनुवाद करें"
   },
   "description": {
-    "message": "पेज के संदर्भ में पाठ का अनुवाद करें, पॉपअप ब्लॉक की अपनी स्टाइल को कस्टमाइज करें, और बहुत कुछ।"
+    "message": "पेज के संदर्भ में टेक्स्ट का अनुवाद करें, अपने पॉप-अप ब्लॉक की शैली को कस्टमाइज़ करें, और बहुत कुछ।"
+  },
+  "open_in_window": {
+    "message": "बाहरी विंडो में खोलें"
+  },
+  "tab_settings": {
+    "message": "सेटिंग्स"
+  },
+  "tab_theme": {
+    "message": "पॉप-अप"
+  },
+  "tab_text_input": {
+    "message": "अनुवाद करें"
+  },
+  "tab_history": {
+    "message": "इतिहास"
+  },
+  "setting_title_common": {
+    "message": "सामान्य"
+  },
+  "setting_title_text_input": {
+    "message": "अनुवाद"
+  },
+  "setting_title_popup": {
+    "message": "पॉप-अप"
+  },
+  "setting_title_translator_service": {
+    "message": "सेवा"
+  },
+  "settings_title_tts": {
+    "message": "टेक्स्ट-टू-स्पीच"
+  },
+  "settings_title_appearance": {
+    "message": "उपस्थिति"
+  },
+  "auto_play_tts": {
+    "message": "ऑटो-प्ले टेक्स्ट-टू-स्पीच"
+  },
+  "use_chrome_tts": {
+    "message": "सिस्टम टेक्स्ट-टू-स्पीच इंजन का उपयोग करने के लिए मजबूर करें"
+  },
+  "use_chrome_tts_tooltip_info": {
+    "message": "जब अनुवादक के पास अपना स्वयं का TTS इंजन नहीं होता है तब यह विकल्प स्वतः सक्रिय हो जाता है"
+  },
+  "use_dark_theme": {
+    "message": "इस विंडो के लिए डार्क थीम पर स्विच करें"
+  },
+  "tts_default_system_voice": {
+    "message": "डिफ़ॉल्ट सिस्टम वॉइस"
+  },
+  "tts_select_voice_title": {
+    "message": "वॉइस चुनें"
+  },
+  "tts_play_demo_sound": {
+    "message": "डेमो ध्वनि बजाएं"
+  },
+  "tts_play_demo_sound_edit": {
+    "message": "वॉइस डेमो के लिए टेक्स्ट संपादित करें"
+  },
+  "import_export_settings": {
+    "message": "सेटिंग्स आयात या निर्यात करें"
+  },
+  "export_settings_button_label": {
+    "message": "सेटिंग्स निर्यात करें"
+  },
+  "import_settings_button_label": {
+    "message": "सेटिंग्स आयात करें"
+  },
+  "import_incorrect_file_format": {
+    "message": "असही फाइल फॉर्मेट (शायद { $fileNameJson } होना चाहिए था)"
+  },
+  "imported_setting_successful": {
+    "message": "कुंजी { $key } के तहत सेटिंग्स सफलतापूर्वक आयात की गईं"
+  },
+  "display_icon_near_selection": {
+    "message": "चयनित टेक्स्ट के पास आइकन दिखाएं"
+  },
+  "show_tts_icon_inside_popup": {
+    "message": "टेक्स्ट-टू-स्पीच आइकन दिखाएं"
+  },
+  "show_select_provider_icon_in_popup": {
+    "message": "अगला-अनुवाद आइकन दिखाएं"
+  },
+  "show_copy_translation_icon": {
+    "message": "अनुवाद कॉपी करने का आइकन दिखाएं"
+  },
+  "show_save_as_favorite_icon": {
+    "message": "पसंदीदा में सहेजने का आइकन दिखाएं"
+  },
+  "show_close_popup_button": {
+    "message": "दाहिने कोने में पॉप-अप बंद करने का बटन दिखाएं"
+  },
+  "show_detected_language_block": {
+    "message": "पहचानी गई भाषा दिखाएं"
+  },
+  "display_on_click_by_selected_text": {
+    "message": "चयन पर क्लिक करने पर दिखाएं"
+  },
+  "display_popup_after_text_selected": {
+    "message": "टेक्स्ट चयनित होने के बाद दिखाएं"
+  },
+  "display_popup_on_double_click": {
+    "message": "शब्द पर डबल-क्लिक करने पर दिखाएं"
+  },
+  "display_popup_on_hotkey": {
+    "message": "जब मैं हॉटकी दबाऊं तब दिखाएं"
+  },
+  "remember_last_typed_text": {
+    "message": "आखिरी टाइप किया गया टेक्स्ट याद रखें"
+  },
+  "sub_header_quick_access_hotkey": {
+    "message": "ग्लोबल हॉटकी सेट करें"
+  },
+  "quick_access_configure_link": {
+    "message": "इस विंडो को तेजी से एक्सेस करने के लिए कीबोर्ड शॉर्टकट कॉन्फ़िगर करें"
+  },
+  "swap_languages": {
+    "message": "भाषाएँ बदलें"
+  },
+  "popup_position_title": {
+    "message": "स्थान"
+  },
+  "popup_position_auto": {
+    "message": "ऑटो (टेक्स्ट के अनुसार संरेखित)"
+  },
+  "popup_position_left_top": {
+    "message": "बाएं-ऊपरी कोना"
+  },
+  "popup_position_right_top": {
+    "message": "दाएं-ऊपरी कोना"
+  },
+  "popup_position_left_bottom": {
+    "message": "बाएं-नीचे कोना"
+  },
+  "popup_position_right_bottom": {
+    "message": "दाएं-नीचे कोना"
+  },
+  "translation_delay": {
+    "message": "अनुवाद में देरी"
+  },
+  "translation_delay_info": {
+    "message": "यदि आप अक्सर Google या अन्य सेवाओं से ब्लॉकिंग (503 एरर) का अनुभव करते हैं तो देरी का मान बढ़ाएँ"
+  },
+  "reverse_translate_select_placeholder": {
+    "message": "विपरीत अनुवाद भाषा"
+  },
+  "reverse_translate_add_action": {
+    "message": "विपरीत भाषा जोड़ें: { $lang } -> ? (केवल 'ऑटो-डिटेक्ट' विकल्प के साथ लागू होता है)"
+  },
+  "reverse_translate_delete_action": {
+    "message": "विपरीत अनुवाद भाषा हटाएं"
+  },
+  "custom_font_select": {
+    "message": "कस्टम फॉन्ट चुनें"
+  },
+  "popup_play_icon_title": {
+    "message": "सुनें"
+  },
+  "popup_copy_translation_title": {
+    "message": "अनुवाद कॉपी करें"
+  },
+  "popup_next_vendor_icon_title": {
+    "message": "{ $translator } के साथ अनुवाद करें"
+  },
+  "popup_demo_translation": {
+    "message": "अनुवादित टेक्स्ट"
+  },
+  "popup_demo_dictionary_noun": {
+    "message": "संज्ञा"
+  },
+  "popup_demo_dictionary_values": {
+    "message": "शब्द 1, शब्द 2, आदि।"
+  },
+  "sub_header_background": {
+    "message": "पृष्ठभूमि"
+  },
+  "sub_header_box_shadow": {
+    "message": "बॉक्स छाया"
+  },
+  "sub_header_text": {
+    "message": "टेक्स्ट"
+  },
+  "sub_header_border": {
+    "message": "सीमा"
+  },
+  "sub_header_box_size": {
+    "message": "बॉक्स आकार"
+  },
+  "background_color": {
+    "message": "रंग"
+  },
+  "background_linear_gradient": {
+    "message": "रेखीय"
+  },
+  "box_shadow_color": {
+    "message": "रंग"
+  },
+  "box_shadow_inner": {
+    "message": "अंदर"
+  },
+  "text_size": {
+    "message": "आकार"
+  },
+  "text_font_family": {
+    "message": "फॉन्ट"
+  },
+  "text_color": {
+    "message": "रंग"
+  },
+  "text_shadow": {
+    "message": "छाया"
+  },
+  "text_shadow_size": {
+    "message": "ब्लर रेडियस"
+  },
+  "text_shadow_offset_x": {
+    "message": "क्षैतिज ऑफ़सेट"
+  },
+  "text_shadow_offset_y": {
+    "message": "ऊर्ध्वाधर ऑफ़सेट"
+  },
+  "text_shadow_color": {
+    "message": "रंग"
+  },
+  "border_width": {
+    "message": "चौड़ाई"
+  },
+  "border_style": {
+    "message": "शैली"
+  },
+  "border_color": {
+    "message": "रंग"
+  },
+  "border_radius": {
+    "message": "रेडियस"
+  },
+  "box_size_min_width": {
+    "message": "न्यूनतम चौड़ाई"
+  },
+  "box_size_min_height": {
+    "message": "न्यूनतम ऊंचाई"
+  },
+  "box_size_max_width": {
+    "message": "अधिकतम चौड़ाई"
+  },
+  "box_size_max_height": {
+    "message": "अधिकतम ऊंचाई"
+  },
+  "reset_to_default_button_text": {
+    "message": "डिफ़ॉल्ट पर रीसेट करें"
+  },
+  "text_field_placeholder": {
+    "message": "यहाँ अनुवाद पाने के लिए टाइपिंग शुरू करें"
+  },
+  "translated_with": {
+    "message": "{ $translator } ({ $lang }) के साथ अनुवादित"
+  },
+  "translated_from": {
+    "message": "अनुवादित से: { $lang }"
+  },
+  "translate_also_from": {
+    "message": "इससे भी अनुवाद करें"
+  },
+  "spell_correction": {
+    "message": "क्या आपका मतलब { $suggestion } है?"
+  },
+  "text_input_translation_hint": {
+    "message": "तुरंत अनुवाद करने के लिए { $hotkey }, देरी: { $timeout }ms"
+  },
+  "history_enabled_flag": {
+    "message": "सक्रिय"
+  },
+  "history_settings_save_words_only": {
+    "message": "केवल शब्दकोश के शब्द सहेजें"
+  },
+  "history_search_input_placeholder": {
+    "message": "इतिहास में खोजें"
+  },
+  "history_clear_period_hour": {
+    "message": "पिछला घंटा"
+  },
+  "history_clear_period_day": {
+    "message": "पिछला दिन"
+  },
+  "history_clear_period_month": {
+    "message": "पिछला महीना"
+  },
+  "history_clear_period_year": {
+    "message": "पिछला वर्ष"
+  },
+  "history_clear_period_all": {
+    "message": "सभी"
+  },
+  "history_button_clear": {
+    "message": "इतिहास साफ़ करें"
+  },
+  "history_button_show_more": {
+    "message": "अधिक दिखाएं"
+  },
+  "history_export_entries": {
+    "message": "{ $format } निर्यात करें"
+  },
+  "history_import_entries": {
+    "message": "{ $format } आयात करें"
+  },
+  "history_page_size": {
+    "message": "पेज आकार"
+  },
+  "history_icon_tooltip_search": {
+    "message": "खोज"
+  },
+  "history_icon_tooltip_imp_exp": {
+    "message": "आयात / निर्यात"
+  },
+  "history_icon_tooltip_settings": {
+    "message": "सेटिंग्स"
+  },
+  "history_show_favorites_only": {
+    "message": "केवल पसंदीदा दिखाएं"
+  },
+  "history_mark_as_favorite": {
+    "message": "आइटम को पसंदीदा के रूप में चिह्नित करें"
+  },
+  "history_unmark_as_favorite": {
+    "message": "आइटम को पसंदीदा से अचिह्नित करें"
+  },
+  "history_import_success": {
+    "message": "{ $itemsCount } इतिहास प्रविष्टियां सफलतापूर्वक आयात की गई"
+  },
+  "history_import_file_error": {
+    "message": "फ़ाइल '{ $fileName }' पढ़ने में त्रुटि: { $errorInfo }"
+  },
+  "context_menu_translate_full_page": {
+    "message": "{ $lang } में अनुवाद करें"
+  },
+  "context_menu_translate_selection": {
+    "message": "{ $translator } के साथ { $selection } का अनुवाद करें"
+  },
+  "share_with_friends": {
+    "message": "यदि आपको ऐप पसंद है तो अपने दोस्तों के साथ साझा करें"
+  },
+  "translation_data_failed": {
+    "message": "डेटा लोड करने में विफल"
+  },
+  "rate_app_info1": {
+    "message": "क्या आप ऐप का उपयोग करके आनंद ले रहे हैं? कृपया हमें 5 सितारे दें!"
+  },
+  "rate_app_info2": {
+    "message": "यह अन्य उपयोगकर्ताओं को एक्सटेंशन ढूंढने और उसके लाभों को फैलाने में मदद करेगा।"
+  },
+  "rate_app_button": {
+    "message": "एक्सटेंशन स्टोर में रेट करें"
+  },
+  "rate_app_button_later": {
+    "message": "बाद में मुझे याद दिलाएं"
+  },
+  "target_lang_placeholder": {
+    "message": "लक्ष्य भाषाएँ"
+  },
+  "source_lang_placeholder": {
+    "message": "स्रोत भाषाएँ"
+  },
+  "favorites_lang_title": {
+    "message": "पसंदीदा"
+  },
+  "support_developers": {
+    "message": "डेवलपर्स का समर्थन"
+  },
+  "service_unavailable": {
+    "message": "सेवा उपलब्ध नहीं है। 5-25 मिनट बाद पुनः प्रयास करें। यदि यह लगातार होता है तो सेटिंग्स में अनुवाद देरी बढ़ाएं।"
+  },
+  "service_confirm_not_a_robot": {
+    "message": "आप { $link } पर भी जा सकते हैं और यह पुष्टि कर सकते हैं कि आप रोबोट नहीं हैं।"
+  },
+  "privacy_policy_title_updated": {
+    "message": "गोपनीयता नीति अपडेट हो गई है"
+  },
+  "privacy_policy_accept_terms": {
+    "message": "नियम और शर्तें स्वीकार करें"
+  },
+  "error_403_auth_failed": {
+    "message": "प्रमाणीकरण विफल। कृपया सेटिंग्स में एक वैध auth api कुंजी प्रदान करें"
+  },
+  "ai_choose_model": {
+    "message": "AI मॉडल चुनें"
+  },
+  "ai_choose_model_cost_effective": {
+    "message": "सबसे लागत-प्रभावी"
+  },
+  "ai_choose_model_recommended": {
+    "message": "अनुशंसित मॉडल"
+  },
+  "pdf_use_custom_viewer": {
+    "message": "PDF फाइलों में अनुवाद समर्थन"
+  },
+  "pdf_use_custom_viewer_info": {
+    "message": "यह विकल्प डिफ़ॉल्ट PDF दर्शक को प्रतिस्थापित करेगा"
+  },
+  "skip_popup_inject_for_pages": {
+    "message": "URL छोड़ना"
+  },
+  "skip_popup_inject_for_pages_info": {
+    "message": "यदि आपको कुछ समस्याएँ, जैसे कि Cloudflare captcha iframe जाँच का सामना करना पड़े, तो पॉपअप इंजेक्शन को छोड़ने के लिए URL जोड़ें।"
+  },
+  "settings_title_full_page_translation": {
+    "message": "पूर्ण पृष्ठ अनुवाद"
+  },
+  "settings_title_full_page_excluded_pages": {
+    "message": "कभी अनुवाद न करें"
+  },
+  "settings_title_full_page_always_translate": {
+    "message": "हमेशा अनुवाद करें"
+  },
+  "settings_title_full_page_show_original_onmouseover": {
+    "message": "माउसओवर पर मूल पाठ दिखाएं"
+  },
+  "settings_title_full_page_show_translation_onmouseover": {
+    "message": "माउसओवर पर अनुवाद दिखाएं"
+  },
+  "settings_title_full_page_show_replace_texts": {
+    "message": "दस्तावेज़ पाठ को अनुवाद से बदलें"
+  },
+  "settings_title_full_page_show_traffic_save_mode": {
+    "message": "ट्रैफिक बचत मोड सक्षम करें"
+  },
+  "settings_title_full_page_show_traffic_save_mode_info": {
+    "message": "वेबपेज व्यूपोर्ट से केवल दृश्यमान पाठ का अनुवाद करके नेटवर्क / API लागत बचाएं"
+  },
+  "settings_select_empty_list": {
+    "message": "खाली सूची"
+  },
+  "settings_select_edit_list": {
+    "message": "सूची देखने और संपादित करने के लिए क्लिक करें"
+  },
+  "settings_select_add_url": {
+    "message": "URL जोड़ें"
+  },
+  "settings_select_add_url_error": {
+    "message": "अमान्य URL जोड़ने का प्रयास"
+  },
+  "show_in_context_menu": {
+    "message": "ब्राउज़र संदर्भ मेनू में अनुवादक विकल्प दिखाएं"
+  },
+  "settings_title_advanced_providers_list": {
+    "message": "उन्नत अनुवाद प्रदाता"
+  },
+  "settings_title_advanced_providers_list_show": {
+    "message": "उन्नत अनुवाद प्रदाता दिखाएं"
+  },
+  "settings_title_advanced_providers_list_hide": {
+    "message": "उन्नत अनुवाद प्रदाता छिपाएं"
+  },
+  "settings_title_voice": {
+    "message": "आवाज़"
+  },
+  "settings_show_more": {
+    "message": "अधिक सेटिंग्स दिखाएं"
+  },
+  "settings_show_less": {
+    "message": "कम सेटिंग्स दिखाएं"
+  },
+  "context_menu_translate_full_page_context_menu": {
+    "message": "पृष्ठ को { $lang } में अनुवाद करें"
+  },
+  "context_menu_translate_full_page_context_menu_stop": {
+    "message": "{ $site } के लिए स्वचालित अनुवाद रोकें"
+  },
+  "ai_choose_model_reasoning": {
+    "message": "सोचने वाला मॉडल / धीमा"
+  },
+  "ai_choose_model_reasoning_light": {
+    "message": "सोचने वाला मॉडल लाइट / तेज़"
+  },
+  "auth_access_info_steps_openai": {
+    "message": "1) platform.openai.com पर पंजीकरण करें 2) API एक्सेस कुंजी बनाएं 3) अपना बैलेंस टॉप-अप करें (5$+)"
+  },
+  "auth_access_info_steps_grok": {
+    "message": "console.x.ai पर पंजीकरण करें और बैलेंस टॉप-अप करें (जैसे क्रेडिट कार्ड के माध्यम से)"
+  },
+  "auth_access_info_steps_deepseek": {
+    "message": "platform.deepseek.com पर पंजीकरण करें और बैलेंस टॉप-अप करें (जैसे पेपैल के माध्यम से)"
+  },
+  "auth_access_info_steps_gemini": {
+    "message": "https://aistudio.google.com/apikey पर अपनी निःशुल्क API-कुंजी बनाएं"
+  },
+  "auth_access_info_api_key": {
+    "message": "{ $provider } अनुवाद प्राप्त करने के लिए अपनी API कुंजी प्रदान करें"
+  },
+  "auth_setup_key_info": {
+    "message": "{ $provider } API-कुंजी प्रदान करें"
+  },
+  "auth_clear_key_info": {
+    "message": "{ $provider } API कुंजी निकालें"
+  },
+  "auth_safety_warning_info": {
+    "message": "चेतावनी: इस एक्सटेंशन विंडो के अलावा अपनी API कुंजी किसी अन्य स्थान पर दर्ज न करें"
+  },
+  "pro_version_promo_link_text": {
+    "message": "PRO पर 20% की छूट"
+  },
+  "pro_version_promo_tooltip": {
+    "message": "हम पूर्ण-पृष्ठ AI अनुवाद के साथ एक PRO संस्करण बना रहे हैं। अधिक जानने और अपनी छूट का दावा करने के लिए क्लिक करें।"
+  },
+  "popup_safe_translation_chars_limit": {
+    "message": "यदि पाठ चयन { $limit } वर्णों से अधिक है, तो आगे बढ़ने के लिए एक पुष्टि चेतावनी दिखाएं।"
+  },
+  "popup_safe_translation_chars_limit_info": {
+    "message": "यह आपको अवांछित पाठ अनुरोधों पर AI-टोकन कोटा खर्च कम करने में मदद कर सकता है (0 - कोई सीमा नहीं)"
+  },
+  "popup_safe_translation_chars_confirmation_dialog_info": {
+    "message": "चयनित पाठ में { $selectedCountChars } वर्ण हैं, जो { $settingsLimitChars } वर्णों की सुरक्षित अनुवाद सीमा से अधिक है। बड़े पाठों का अनुवाद करने में अधिक संसाधन लग सकते हैं या आपके अनुवाद प्रदाता के आधार पर अतिरिक्त लागत आ सकती है। क्या आप अनुवाद के साथ आगे बढ़ना चाहते हैं?"
+  },
+  "recommended": {
+    "message": "अनुशंसित"
+  },
+  "copy_to_clipboard": {
+    "message": "क्लिपबोर्ड पर कॉपी करें"
+  },
+  "tts_supported": {
+    "message": "टेक्स्ट-टू-स्पीच का बहुत सीमित समर्थन"
+  },
+  "pro_version_ai_translator": {
+    "message": "AI-आधारित पेशेवर भाषा अनुवादक ({ $provider } द्वारा संचालित)"
+  },
+  "pro_version_ai_tts": {
+    "message": "6 आवाज़ों के विकल्प के साथ AI-आधारित मानव-जैसी टेक्स्ट-टू-स्पीच ({ $provider } द्वारा संचालित)"
+  },
+  "pro_version_ai_summarize_feature": {
+    "message": "किसी भी पाठ को एक स्पष्ट सारांश में बदलें (तेजी से सीखने और समझने को बढ़ावा देता है)"
+  },
+  "pro_upgrade_button_label": {
+    "message": "PRO में अपग्रेड करें"
+  },
+  "pro_upgrade_button_tooltip": {
+    "message": "लॉगिन करें, मुफ्त योजना आज़माएं और बाद में लगभग { $pricePerMonth }/माह के लिए सदस्यता लें"
+  },
+  "pro_select_tts_voice": {
+    "message": "आवाज़"
+  },
+  "pro_required_confirm_goto_subscribe": {
+    "message": "इस विकल्प के लिए PRO-सदस्यता की आवश्यकता है, क्या हमें सदस्यता पृष्ठ पर जाना चाहिए?"
+  },
+  "pro_user_welcome_back": {
+    "message": "वापसी पर स्वागत है, { $username }!"
+  },
+  "pro_user_status": {
+    "message": "PRO-स्थिति: { $status }"
+  },
+  "pro_user_status_active": {
+    "message": "सक्रिय"
+  },
+  "pro_user_status_inactive": {
+    "message": "निष्क्रिय"
+  },
+  "pro_user_subscription": {
+    "message": "सदस्यता: { $plan } ({ $periodEnd } को समाप्त)"
+  },
+  "pro_user_subscription_expired": {
+    "message": "सदस्यता { $periodEnd } को समाप्त हो गई"
+  },
+  "pro_user_remain_text_tokens": {
+    "message": "उपलब्ध पाठ टोकन: { $tokens }"
+  },
+  "pro_user_remain_tts_seconds_approx": {
+    "message": "उपलब्ध टेक्स्ट-टू-स्पीच समय: { $timeRange }"
+  },
+  "pro_unauthorized_error_401": {
+    "message": "एक्सेस प्राप्त करने के लिए आपको { $serviceUrl } पर लॉग-इन होना चाहिए और एक सक्रिय सदस्यता होनी चाहिए।"
+  },
+  "translate_button": {
+    "message": "अनुवाद करें"
+  },
+  "summarize_button": {
+    "message": "सारांशित करें"
+  },
+  "tts_button": {
+    "message": "सुनें"
+  },
+  "text_input_auto_translation_enabled": {
+    "message": "स्वतः-अनुवाद { $toggle = सक्षम }"
+  },
+  "text_input_auto_translation_disabled": {
+    "message": "स्वतः-अनुवाद { $toggle = अक्षम }"
+  },
+  "text_input_auto_translation_timeout": {
+    "message": "समय समाप्त: { $timeout }ms"
+  },
+  "system_tts_info": {
+    "message": "आपको अपनी प्राथमिक लक्ष्य भाषा के लिए सबसे उपयुक्त स्थानीयकृत आवाज़ का चयन करना चाहिए"
+  },
+  "setting_popup_promo_features": {
+    "message": "प्रोमो बैनर दिखाएं"
+  },
+  "setting_popup_summarize_action_icon": {
+    "message": "सारांश आइकन दिखाएं"
+  },
+  "popup_info_banner_pro_available": {
+    "message": "प्रीमियम सेवा सुविधाओं के साथ PRO-संस्करण यहाँ है!"
+  },
+  "popup_info_banner_pro_see_details": {
+    "message": "{ $settingsLink = ऐप सेटिंग्स} और { $subscribeLink = सदस्यता लें } में विवरण देखें"
+  },
+  "pro_user_subscription_inactive": {
+    "message": "सदस्यता निष्क्रिय। प्लान: {$plan}, स्थिति: {$status}, समाप्त: {$periodEnd}"
+  },
+  "pro_version_subscribe_button": {
+    "message": "सदस्यता लें"
+  },
+  "pro_version_subscribe_price": {
+    "message": "केवल { $priceMonthly }/माह में XTranslate PRO के फ़ायदे की सदस्यता लें।"
+  },
+  "pro_version_continue_use_free_version": {
+    "message": "मुफ़्त संस्करण का उपयोग जारी रखें"
+  },
+  "show_in_context_menu_mode_off": {
+    "message": "प्रदर्शित न करें"
+  },
+  "show_in_context_menu_mode_all_providers": {
+    "message": "सभी प्रदाता"
+  },
+  "show_in_context_menu_mode_active_provider": {
+    "message": "केवल सक्रिय प्रदाता"
   }
 }

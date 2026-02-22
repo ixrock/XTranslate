@@ -17,12 +17,32 @@
     flex: 1 1 0;
   }
 
+  &.justify-around {
+    justify-content: space-around;
+  }
+
+  &.justify-between {
+    justify-content: space-between;
+  }
+
+  &.justify-evenly {
+    justify-content: space-evenly;
+  }
+
   &.justify-center {
     justify-content: center;
   }
 
   &.align-center {
     align-items: center;
+  }
+
+  &.align-start {
+    align-items: flex-start;
+  }
+
+  &.align-end {
+    align-items: flex-end;
   }
 
   > .box {

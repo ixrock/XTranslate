@@ -1,9 +1,9 @@
 import { EventEmitter } from "events"
 import { reaction } from "mobx";
 import { Color } from "react-color"
-import { getURL } from "../../extension";
-import { createLogger, disposer, LoggerColor } from "../../utils";
-import { createStorage } from "../../storage";
+import { getURL } from "@/extension";
+import { createLogger, disposer, LoggerColor } from "@/utils";
+import { createStorage } from "@/storage";
 
 export type ThemeStorageModel = typeof themeStorage.defaultValue;
 
@@ -97,12 +97,12 @@ export class ThemeStore {
   }
 
   async load() {
-    if (themeStorage.loading) {
-      return themeStorage.whenReady;
-    }
-
     await this.loadFont(this.iconsFont);
-    await themeStorage.load();
+    if (themeStorage.loading) {
+      await themeStorage.whenReady;
+    } else {
+      await themeStorage.load();
+    }
     this.bindEvents();
   }
 

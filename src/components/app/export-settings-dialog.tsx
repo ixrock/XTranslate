@@ -2,12 +2,12 @@ import * as styles from "./export-settings.module.scss";
 
 import React from "react";
 import { Dialog, DialogProps } from "../dialog";
-import { cssNames, download } from "../../utils";
+import { cssNames, download } from "@/utils";
 import { observer } from "mobx-react";
 import { action, makeObservable, observable } from "mobx";
-import { getManifest } from "../../extension";
+import { getManifest } from "@/extension";
 import { Button } from "../button";
-import { getMessage } from "../../i18n";
+import { getMessage } from "@/i18n";
 import { Icon } from "../icon";
 import { FileInput, ImportingFile } from "../input";
 import { Notifications } from "../notifications";

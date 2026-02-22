@@ -10,18 +10,21 @@ import debounce from 'lodash/debounce';
 import isEmpty from 'lodash/isEmpty';
 import isEqual from 'lodash/isEqual';
 import orderBy from 'lodash/orderBy';
-import { contentScriptInjectable } from "../common-vars";
+import { contentScriptInjectable } from "../config";
 import { preloadAppData } from "../preloadAppData";
-import { autoBind, disposer, getHotkey } from "../utils";
-import { getManifest, getURL, isRuntimeContextInvalidated, MessageType, onMessage, ProxyResponseType, TranslatePayload } from "../extension";
+import { autoBind, disposer, getHotkey, strLengthCodePoints } from "../utils";
+import { getManifest, getURL, isExtensionContextAlive, MessageType, onMessage, ProxyResponseType, TranslateFullPagePayload, TranslatePayload } from "../extension";
 import { proxyRequest } from "../background/httpProxy.bgc";
 import { sendMetric } from "../background/metrics.bgc";
-import { popupHotkey, settingsStore } from "../components/settings/settings.storage";
-import { getNextTranslator, getTranslator, ITranslationError, ITranslationResult, ProviderCodeName } from "../providers";
+import { popupHotkey, popupSkipInjectionUrls, settingsStore } from "../components/settings/settings.storage";
+import { getNextTranslator, getTranslator, getXTranslatePro, ITranslationError, ITranslationResult, ProviderCodeName } from "../providers";
 import { XTranslateIcon } from "./xtranslate-icon";
 import { XTranslateTooltip } from "./xtranslate-tooltip";
-import { Popup } from "../components/popup/popup";
 import { PageTranslator } from "./page-translator";
+import { Popup } from "../components/popup";
+import { Icon } from "@/components/icon";
+import { getMessage } from "@/i18n";
+import { refreshUserSubscriptionAction } from "@/background/user.bgc";
 
 type DOMRectNormalized = Omit<Writeable<DOMRect>, "toJSON" | "x" | "y">;
 
@@ -33,8 +36,16 @@ export class ContentScript extends React.Component {
   static cssStylesUrl: string;
 
   static async init(window: Window = globalThis.window.self) {
-    await preloadAppData(); // wait for dependent data before first render
-    await this.preloadCss();
+    // wait for dependent data before first render
+    await preloadAppData(
+      this.preloadCss(),
+      popupSkipInjectionUrls.load(),
+      refreshUserSubscriptionAction(),
+    );
+
+    // skip content-script injection for specific urls to avoid bugs, e.g. for cloudflare captcha iframe checks
+    const skipInjection = popupSkipInjectionUrls.get().some(url => window.document.URL.startsWith(url));
+    if (skipInjection) return;
 
     const appElem = window.document.createElement("div");
     appElem.classList.add("XTranslate");
@@ -87,9 +98,11 @@ export class ContentScript extends React.Component {
   @observable.ref lastParams: TranslatePayload; // last used translation payload
   @observable.ref translation: ITranslationResult;
   @observable.ref error: ITranslationError;
-  @observable.ref selectionRects: DOMRectNormalized[];
+  @observable.ref selectionRects: DOMRectNormalized[] = [];
+  @observable summarized = "";
   @observable popupPosition: React.CSSProperties = {};
   @observable selectedText = "";
+  @observable isSelectingText = false;
   @observable isRtlSelection = false;
   @observable isIconVisible = false;
   @observable isLoading = false;
@@ -100,10 +113,6 @@ export class ContentScript extends React.Component {
     if (this.pageTranslator.isEnabled) {
       this.startPageAutoTranslation();
     }
-  }
-
-  private getShadowDomElements(rootElem = document.body) {
-    return Array.from(rootElem.querySelectorAll("*")).filter(elem => elem.shadowRoot) as HTMLElement[];
   }
 
   private bindEvents() {
@@ -135,23 +144,26 @@ export class ContentScript extends React.Component {
     );
   }
 
-  async checkContextInvalidationError(): Promise<void> {
-    const isInvalidated = await isRuntimeContextInvalidated();
-    if (isInvalidated) {
-      this.unmount(); // remove previous content-script artifacts in case of "context invalidated" error
+  private checkContextInvalidationError() {
+    if (!isExtensionContextAlive()) {
+      this.unmount(); // remove previous content-script rendered artifacts in case of "context invalidated" error
     }
   }
 
   @computed get isPopupHidden() {
-    return !(this.translation || this.error);
+    return !(this.translation || this.error) && !this.summarized;
   }
 
   @computed get iconPosition(): React.CSSProperties {
     const { iconPosition } = settingsStore.data;
     const { selectionRects, isRtlSelection } = this;
-    const firstRect = selectionRects[0];
-    const lastRect = selectionRects.slice(-1)[0];
+    const commonStyles = { position: "absolute", width: 25, height: 25 } as React.CSSProperties;
 
+    if (!selectionRects.length) {
+      return {};
+    }
+
+    // fixed position
     if (!isEmpty(iconPosition)) {
       const top = iconPosition.top ? orderBy(selectionRects, "top", "asc")[0].top : undefined;
       const left = iconPosition.left ? orderBy(selectionRects, "left", "asc")[0].left : undefined;
@@ -159,36 +171,66 @@ export class ContentScript extends React.Component {
       const bottom = iconPosition.bottom ? orderBy(selectionRects, "bottom", "desc")[0].bottom : undefined;
 
       return {
+        ...commonStyles,
         left: left ?? right,
         top: top ?? bottom,
         transform: `translate(${left ? -100 : 0}%, ${top ? -100 : 0}%)`,
       }
     }
 
+    const firstRect = selectionRects[0];
+    const lastRect = selectionRects.slice(-1)[0];
+
+    // auto-position
     return {
+      ...commonStyles,
       left: isRtlSelection ? firstRect.left : lastRect.right,
       top: isRtlSelection ? firstRect.top : lastRect.bottom,
       transform: isRtlSelection ? "translate(-100%, -100%)" : undefined,
     }
   }
 
+  private translationConfirmationCheck({ text }: TranslatePayload): boolean {
+    const { safeTranslationLimit } = settingsStore.data;
+
+    if (safeTranslationLimit && strLengthCodePoints(text) > safeTranslationLimit) {
+      const dialogInfo = getMessage("popup_safe_translation_chars_confirmation_dialog_info", {
+        selectedCountChars: strLengthCodePoints(text).toString(),
+        settingsLimitChars: safeTranslationLimit.toString(),
+      });
+
+      return window.confirm(`${this.appName}: ${dialogInfo}`); // TODO: use custom UI modal dialog
+    }
+
+    return true;
+  }
+
   translateLazy = debounce(this.translate, 250);
 
-  @action
-  async translate(params: Partial<TranslatePayload> = {}) {
-    void this.checkContextInvalidationError();
-    this.hideIcon();
-
-    const payload = this.lastParams = {
+  private getPayloadParams(params: Partial<TranslatePayload> = {}) {
+    return {
       provider: params.provider ?? settingsStore.data.vendor,
       from: params.from ?? settingsStore.data.langFrom,
       to: params.to ?? settingsStore.data.langTo,
       text: params.text ?? this.selectedText.trim(),
     };
+  }
+
+  @action
+  async translate(params: Partial<TranslatePayload> = {}) {
+    this.checkContextInvalidationError();
+    this.hideIcon();
+
+    const payload = this.lastParams = this.getPayloadParams(params);
+
+    if (!this.translationConfirmationCheck(payload)) {
+      return;
+    }
 
     this.translation = null;
     this.error = null;
     this.isLoading = true;
+    this.summarized = "";
 
     try {
       const translation = await getTranslator(payload.provider).translate(payload);
@@ -224,13 +266,52 @@ export class ContentScript extends React.Component {
   }
 
   private getSelectedTextAction() {
-    return this.selectedText;
+    const selectedText = this.selectedText || this.selection?.toString().trim();
+    return selectedText || "";
   }
 
-  private togglePageAutoTranslation() {
-    if (this.pageTranslator.isEnabled) {
+  private setFullPageProvider(provider?: ProviderCodeName) {
+    if (!provider || this.pageTranslator.settings.provider === provider) {
+      return;
+    }
+
+    const translator = getTranslator(provider);
+    if (!translator) return;
+    const supportedLanguages = translator.getSupportedLanguages(this.pageTranslator.settings);
+    this.pageTranslator.settings.provider = provider;
+    this.pageTranslator.settings.langFrom = supportedLanguages.langFrom;
+    this.pageTranslator.settings.langTo = supportedLanguages.langTo;
+  }
+
+  private togglePageAutoTranslation(params: TranslateFullPagePayload = {}) {
+    const { action = "toggle", provider } = params;
+    const isEnabled = this.pageTranslator.isEnabled;
+
+    if (action === "stop") {
+      if (isEnabled) {
+        this.stopPageAutoTranslation();
+      }
+      return;
+    }
+
+    if (action === "start") {
+      this.setFullPageProvider(provider);
+
+      if (!isEnabled) {
+        this.startPageAutoTranslation();
+      }
+      return;
+    }
+
+    if (provider && isEnabled) {
+      this.setFullPageProvider(provider);
+      return;
+    }
+
+    if (isEnabled) {
       this.stopPageAutoTranslation();
     } else {
+      this.setFullPageProvider(provider);
       this.startPageAutoTranslation();
     }
   }
@@ -259,19 +340,10 @@ export class ContentScript extends React.Component {
     this.setTooltipHTML(""); // reset
   }
 
-  playText() {
+  speak() {
     if (!this.translation) return;
     const { vendor, originalText, langDetected } = this.translation;
-    void getTranslator(vendor).speak(langDetected, originalText);
-  }
-
-  showIcon() {
-    void this.checkContextInvalidationError();
-    this.isIconVisible = true;
-  }
-
-  hideIcon() {
-    this.isIconVisible = false;
+    return getTranslator(vendor).speak(originalText, langDetected);
   }
 
   @action
@@ -282,10 +354,11 @@ export class ContentScript extends React.Component {
     if (this.translation) {
       getTranslator(this.translation.vendor).stopSpeaking();
     }
+    this.summarized = "";
     this.translation = null;
     this.error = null;
-    this.popupPosition = null;
-    this.selectionRects = null;
+    this.popupPosition = {};
+    this.selectionRects = [];
     this.isDblClicked = false;
     this.isHotkeyActivated = false;
     this.selection.removeAllRanges();
@@ -353,7 +426,7 @@ export class ContentScript extends React.Component {
   @action
   refinePosition() {
     const hasAutoPosition = settingsStore.data.popupPosition === "";
-    if (!hasAutoPosition || !this.selectionRects) {
+    if (!hasAutoPosition || !this.selectionRects.length) {
       return; // skip: no position refining is needed
     }
 
@@ -420,7 +493,7 @@ export class ContentScript extends React.Component {
   }
 
   isClickedOnSelection() {
-    if (!this.selectedText || !this.selectionRects) return;
+    if (!this.selectedText || !this.selectionRects.length) return;
     const { x, y } = this.mousePos;
 
     return this.selectionRects.some(({ left, top, right, bottom }) => {
@@ -428,12 +501,27 @@ export class ContentScript extends React.Component {
     });
   }
 
-  onSelectionChange = debounce(action(() => {
+  onSelectionEnd = debounce(() => this.isSelectingText = false, 100);
+
+  onSelectionChange = action(() => {
     this.selectedText = this.selection.toString().trim();
-    if (ContentScript.isEditableElement(document.activeElement) || !this.selectedText) {
+
+    const isEditableElem = ContentScript.isEditableElement(document.activeElement);
+    const emptyText = !this.selectedText;
+
+    if (isEditableElem || emptyText) {
+      this.isSelectingText = false;
       return;
     }
+
+    this.isSelectingText = true;
+    this.onSelectionEnd.cancel();
+    this.handleTextSelection();
+  });
+
+  handleTextSelection = debounce(action(() => {
     const { showPopupAfterSelection, showIconNearSelection } = settingsStore.data;
+
     if (showPopupAfterSelection) {
       this.saveSelectionRects();
       this.translateLazy();
@@ -447,13 +535,9 @@ export class ContentScript extends React.Component {
         this.showIcon();
       }
     }
-  }), 250);
 
-  onIconClick(evt: React.MouseEvent) {
-    evt.stopPropagation();
-    void this.translate();
-    void sendMetric("translate_action", { trigger: "icon" });
-  }
+    this.onSelectionEnd();
+  }), 250);
 
   private getMouseTargetTopElem(evt: MouseEvent): HTMLElement {
     return evt.composedPath()[0] as HTMLElement;
@@ -561,29 +645,77 @@ export class ContentScript extends React.Component {
     this.refinePosition();
   }), 250);
 
-  render() {
-    const { translation, error, popupPosition, playText, onIconClick, isIconVisible } = this;
+  onIconClick(evt: React.MouseEvent) {
+    evt.stopPropagation();
+    void this.translate();
+    void sendMetric("translate_action", { trigger: "icon" });
+  }
+
+  showIcon() {
+    this.checkContextInvalidationError();
+    this.isIconVisible = true;
+  }
+
+  hideIcon() {
+    this.isIconVisible = false;
+  }
+
+  renderIcon() {
+    const { appName, onIconClick, isIconVisible, isLoading, iconPosition } = this;
     const { langFrom, langTo, vendor } = settingsStore.data;
     const translator = getTranslator(vendor);
+    const translateIconTitle = `${appName}: ${translator.getLangPairTitle(langFrom, langTo)}`;
+
+    return (
+      <div style={iconPosition} inert={this.isSelectingText}>
+        {isLoading && <Icon svg="spinner"/>}
+        {!isLoading && isIconVisible && <XTranslateIcon onMouseDown={onIconClick} title={translateIconTitle}/>}
+      </div>
+    )
+  }
+
+  @action
+  async summarize(evt: React.MouseEvent) {
+    evt.stopPropagation();
+
+    if (!this.lastParams) {
+      this.lastParams = this.getPayloadParams();
+    }
+
+    this.lastParams.provider = ProviderCodeName.XTRANSLATE_PRO;
+    this.translation = null;
+    this.error = null;
+    this.isLoading = true;
+    this.summarized = "";
+
+    try {
+      const { text, to: targetLang } = this.lastParams;
+      this.summarized = await getXTranslatePro().summarize({ text, targetLang });
+    } catch (err) {
+      this.error = err;
+    } finally {
+      this.isLoading = false
+    }
+  }
+
+  render() {
+    const { translation, error, popupPosition, speak, summarized, summarize, isPopupHidden } = this;
+
     return (
       <>
         <link rel="stylesheet" href={ContentScript.cssStylesUrl}/>
-        {isIconVisible && (
-          <XTranslateIcon
-            style={this.iconPosition}
-            onMouseDown={onIconClick}
-            title={`${this.appName}: ${translator.getLangPairTitle(langFrom, langTo)}`}
-          />
-        )}
+        {this.renderIcon()}
         <XTranslateTooltip ref={this.tooltipRef}/>
         <Popup
           style={popupPosition}
           translation={translation}
           error={error}
-          onPlayText={playText}
+          speak={speak}
           lastParams={this.lastParams}
           onProviderChange={this.translateWith}
-          tooltipParentElem={ContentScript.rootElem}
+          summarize={summarize}
+          summarized={summarized}
+          showPromoBanner={!isPopupHidden}
           ref={(ref: Popup) => {
             this.popup = ref
           }}

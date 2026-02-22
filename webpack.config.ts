@@ -3,7 +3,7 @@ import path from 'path'
 import HtmlWebpackPlugin from 'html-webpack-plugin'
 import CopyWebpackPlugin from 'copy-webpack-plugin'
 import MiniCssExtractPlugin from 'mini-css-extract-plugin'
-import { appEntry, contentScriptEntry, contentScriptInjectable, pdfViewerEntry, serviceWorkerEntry } from "./src/common-vars";
+import { appEntry, contentScriptEntry, contentScriptInjectable, pdfViewerEntry, serviceWorkerEntry } from "@/config";
 
 const srcPath = path.resolve(__dirname, "src");
 const distPath = path.resolve(__dirname, "dist");
@@ -56,6 +56,9 @@ function webpackBaseConfig({ mode }: WebpackConfigEnv): webpack.Configuration {
 
     resolve: {
       extensions: ['.ts', '.tsx', '.js', '.mjs', '.json'],
+      alias: {
+        "@": srcPath,
+      },
       fallback: {
         // ignore browser polyfill warnings
         zlib: false,

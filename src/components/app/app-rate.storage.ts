@@ -1,4 +1,4 @@
-import { createStorage } from "../../storage";
+import { createStorage } from "@/storage";
 
 export const rateButtonClicked = createStorage<boolean>("rate_btn_click", {
   defaultValue: false,

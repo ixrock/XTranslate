@@ -1,14 +1,14 @@
 import React from "react";
 import { observer } from "mobx-react";
 import startCase from "lodash/startCase";
-import { cssNames, prevDefault } from "../../utils";
-import { getTranslator, isRTL, Translator } from "../../providers";
+import { cssNames, prevDefault } from "@/utils";
+import { getTranslator, isRTL, Translator } from "@/providers";
 import { clearHistoryItem, IHistoryItem } from "./history.storage";
 import { Icon } from "../icon";
-import { materialIcons } from "../../common-vars";
+import { materialIcons } from "@/config";
 import { isFavorite, removeFavorite } from "./favorites.storage";
-import { getTranslationPageUrl, navigate } from "../../navigation";
-import { saveToFavoritesAction } from "../../background/history.bgc";
+import { getTranslationPageUrl, navigate } from "@/navigation";
+import { saveToFavoritesAction } from "@/background/history.bgc";
 
 export interface UserHistoryItemProps {
   item: IHistoryItem;
@@ -53,7 +53,7 @@ export const UserHistoryItem = observer(({ item, showDetails, highlightSearch }:
             <Icon
               className="icons tts"
               material={materialIcons.ttsPlay}
-              onClick={prevDefault(() => translator.speak(langFrom, text))}
+              onClick={prevDefault(() => translator.speak(text, langFrom))}
             />
           )}
           <div className="source-text">

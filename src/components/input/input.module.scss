@@ -69,9 +69,11 @@
 
   textarea {
     line-height: 1.2;
-    min-height: 2rem;
     overflow: overlay;
     resize: vertical;
+    min-height: 2rem;
+    max-height: calc(100vh - 260px);
+    field-sizing: content; /* allow textarea grow by it's content */
   }
 
   fieldset:disabled &,

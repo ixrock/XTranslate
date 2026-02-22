@@ -1,7 +1,7 @@
 {
   "name": "XTranslate",
   "description": "__MSG_short_description__",
-  "version": "5.2.0",
+  "version": "5.7.3",
   "manifest_version": 3,
   "default_locale": "en",
   "browser_specific_settings": {
@@ -62,6 +62,7 @@
   },
   "host_permissions": [
     "*://*/*",
+    "https://www.xtranslate.dev/*",
     "\u003Call_urls\u003E"
   ],
   "permissions": [

@@ -32,6 +32,7 @@
     background: var(--bgc-outline);
     box-shadow: 0 0 0 1px inset;
     transition: 100ms box-shadow ease-out;
+    border: none;
 
     &:focus,
     &:hover {

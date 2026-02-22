@@ -1,10 +1,10 @@
 import * as styles from "./select-locale.module.scss"
 
 import React from "react";
-import { cssNames, IClassName } from "../../utils";
+import { cssNames, IClassName } from "@/utils";
 import { Menu, MenuItem } from "../menu";
 import { Icon } from "../icon";
-import { availableLocales, getLocale, Locale, setLocale } from "../../i18n";
+import { availableLocales, getLocale, Locale, setLocale } from "@/i18n";
 
 export interface SelectLocaleIconProps {
   id?: string; // DOM Element.id (default: "select_locale")

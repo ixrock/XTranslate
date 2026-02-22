@@ -14,7 +14,10 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "resolveJsonModule": true,
-    "useDefineForClassFields": true
+    "useDefineForClassFields": true,
+    "paths": {
+      "@/*": ["./src/*"],
+    }
   },
   "include": [
     "_locales",
@@ -22,7 +25,7 @@
     "custom-types.d.ts",
     "webpack.config.ts",
     "jest.setup.ts",
-    "package.json",
+    "package.json"
   ],
   "exclude": [
     "node_modules"

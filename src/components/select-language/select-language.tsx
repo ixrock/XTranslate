@@ -4,9 +4,9 @@ import React from "react";
 import { action } from "mobx";
 import { observer } from "mobx-react";
 import { ReactSelect, ReactSelectGroup, ReactSelectOption } from "../select";
-import { cssNames } from "../../utils";
-import { getTranslator, ProviderCodeName } from "../../providers";
-import { getMessage } from "../../i18n";
+import { cssNames } from "@/utils";
+import { getTranslator, ProviderCodeName } from "@/providers";
+import { getMessage } from "@/i18n";
 import { Icon } from "../icon";
 import { FavoriteLangDirection, settingsStore } from "../settings/settings.storage";
 import { getFlagIcon } from "./flag-icons";
@@ -16,7 +16,6 @@ export interface SelectLanguageProps {
   from: string;
   to: string;
   className?: string;
-  showInfoIcon?: boolean;
   showReverseTranslation?: boolean;
   onChange(update: SelectLanguageChangeEvent): void;
 }
@@ -154,7 +153,6 @@ export class SelectLanguage extends React.Component<SelectLanguageProps> {
     )
   }
 
-
   renderReverseTranslationSettingsPanel() {
     const { to: langTo, provider } = this.props;
     const langToTitle = getTranslator(provider).langTo[langTo];
@@ -196,7 +194,7 @@ export class SelectLanguage extends React.Component<SelectLanguageProps> {
 
   render() {
     const {
-      className, showInfoIcon, showReverseTranslation,
+      className, showReverseTranslation,
       from: langFrom,
       to: langTo,
     } = this.props;
@@ -213,7 +211,6 @@ export class SelectLanguage extends React.Component<SelectLanguageProps> {
       <div className={cssNames("SelectLanguage flex gaps align-center", className)}>
         <ReactSelect
           className="Select"
-          menuPlacement="top"
           placeholder={getMessage("source_lang_placeholder")}
           value={sourceLang}
           options={this.sourceLanguageOptions}
@@ -230,7 +227,6 @@ export class SelectLanguage extends React.Component<SelectLanguageProps> {
 
         <ReactSelect
           className="Select"
-          menuPlacement="top"
           placeholder={getMessage("target_lang_placeholder")}
           value={targetLang}
           options={this.targetLanguageOptions}
@@ -239,14 +235,6 @@ export class SelectLanguage extends React.Component<SelectLanguageProps> {
         />
 
         {showReverseTranslation && this.renderReverseTranslationSettingsPanel()}
-        {showInfoIcon && (
-          <Icon
-            small
-            material="info_outline"
-            tooltip={
-              getMessage("favorites_info_tooltip", { hotkey: "Cmd / Alt+Shift" })
-            }/>
-        )}
       </div>
     );
   }
