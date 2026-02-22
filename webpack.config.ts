@@ -165,7 +165,6 @@ export default [
 
     config.entry = {
       [appEntry]: configEntries[appEntry],
-      [pdfViewerEntry]: configEntries[pdfViewerEntry],
     };
 
     config.plugins.push(...[
@@ -175,12 +174,6 @@ export default [
         filename: "options.html",
       }),
 
-      new HtmlWebpackPlugin({
-        inject: true,
-        chunks: [pdfViewerEntry],
-        filename: `${pdfViewerEntry}.html`,
-      }),
-
       new CopyWebpackPlugin({
         patterns: [
           { from: "README.md" },
@@ -188,7 +181,6 @@ export default [
           { from: "manifest.json" },
           { from: "_locales", to: "_locales" },
           { from: "assets", to: "assets" },
-          { from: "node_modules/pdf.js/build/generic", to: "assets/pdfjs" },
         ]
       }),
     ]);
