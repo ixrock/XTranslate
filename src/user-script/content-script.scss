@@ -1,6 +1,6 @@
 @use "../components/theme-vars" as *;
 
-:host-context(.XTranslate) {
+:host {
   @include theme-vars;
 
   position: fixed !important;
