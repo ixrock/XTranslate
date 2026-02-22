@@ -46,7 +46,7 @@ function webpackBaseConfig({ mode }: WebpackConfigEnv): webpack.Configuration {
     },
 
     optimization: {
-      minimize: !isDevelopment,
+      minimize: false, // never compress for "FireFox addons" store reviewers
     },
 
     ignoreWarnings: [
