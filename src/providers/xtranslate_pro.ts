@@ -74,11 +74,12 @@ export class XTranslatePro extends Translator {
 
   async translate(params: TranslateParams): Promise<ITranslationResult> {
     try {
-      const { translation, transcription, detectedLang } = await this.translateReq(params);
+      const { translation, transcription, detectedLang, spellCorrection } = await this.translateReq(params);
       return {
         langDetected: detectedLang,
         translation: translation.join("\n"),
-        transcription: transcription
+        transcription: transcription,
+        spellCorrection,
       };
     } catch (err) {
       this.handleApiError(err);
@@ -646,6 +647,7 @@ export interface XTranslateProTranslateOutput {
   detectedLang: string;
   translation: string[];
   transcription?: string;
+  spellCorrection?: string;
   tokensTotalUsed: number;
 }
 
