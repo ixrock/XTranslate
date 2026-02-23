@@ -219,4 +219,38 @@ describe("renderer/utils/StorageHelper", () => {
     expect(setItemMock).toHaveBeenCalledWith(storageKey, defaultValue);
   });
 
+  it("load() dedupes concurrent async loading calls", async () => {
+    const storageKey = "asyncLoadDedupe";
+    const defaultValue = { message: "default" };
+    let resolveGetItem: (value: { message: string }) => void = () => undefined;
+    const getItemPromise = new Promise<{ message: string }>((resolve) => {
+      resolveGetItem = resolve;
+    });
+    const getItemMock = jest.fn(() => getItemPromise);
+
+    const storageHelper = new StorageHelper(storageKey, {
+      autoLoad: false,
+      defaultValue,
+      storageAdapter: {
+        getItem: getItemMock,
+        setItem: jest.fn(),
+        removeItem: jest.fn(),
+      },
+    });
+
+    const firstLoad = storageHelper.load();
+    const secondLoad = storageHelper.load();
+
+    expect(getItemMock).toHaveBeenCalledTimes(1);
+    expect(firstLoad).toBe(secondLoad);
+    expect(storageHelper.loading).toBeTruthy();
+
+    resolveGetItem({ message: "saved-before" });
+    await firstLoad;
+
+    expect(storageHelper.loading).toBeFalsy();
+    expect(storageHelper.loaded).toBeTruthy();
+    expect(storageHelper.get().message).toBe("saved-before");
+  });
+
 });

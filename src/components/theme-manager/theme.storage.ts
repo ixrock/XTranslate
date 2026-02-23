@@ -97,12 +97,12 @@ export class ThemeStore {
   }
 
   async load() {
-    if (themeStorage.loading) {
-      return themeStorage.whenReady;
-    }
-
     await this.loadFont(this.iconsFont);
-    await themeStorage.load();
+    if (themeStorage.loading) {
+      await themeStorage.whenReady;
+    } else {
+      await themeStorage.load();
+    }
     this.bindEvents();
   }
 

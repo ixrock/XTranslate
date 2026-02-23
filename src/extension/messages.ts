@@ -119,6 +119,7 @@ export interface StorageWritePayload<T = any> {
   key: string;
   area: chrome.storage.AreaName;
   state: T;
+  resourceId?: string; // source context id for de-duplicating storage sync updates
 }
 
 export interface StorageSyncPayload<T = any> extends StorageWritePayload<T> {
