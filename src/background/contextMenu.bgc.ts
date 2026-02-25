@@ -22,7 +22,7 @@ export async function initContextMenu() {
     const actionPayload = contextMenuActionMap.get(menuItemId);
     if (!actionPayload) return;
 
-    return translateActivePageAction({ tabId: tab?.id, ...actionPayload });
+    return translateActivePageAction(actionPayload);
   };
 
   chrome.contextMenus.onClicked.removeListener(onContextMenuClicked);
@@ -52,7 +52,6 @@ export async function initContextMenu() {
     if (menuMode === FullPageContextMenuMode.ACTIVE_PROVIDER) {
       const startTranslatePageTitle = getStartPageTranslationTitle(provider, langTo);
 
-      contextMenuActionMap.set(appName, { action: "toggle" });
       chrome.contextMenus.create({
         id: appName,
         contexts: [chrome.contextMenus.ContextType.ALL],

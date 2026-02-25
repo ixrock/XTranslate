@@ -39,7 +39,7 @@ export class Header extends React.Component {
 
   private translateActivePage = async () => {
     try {
-      await translateActivePageAction();
+      await translateActivePageAction({ action: "toggle" });
     } finally {
       window.close();
     }

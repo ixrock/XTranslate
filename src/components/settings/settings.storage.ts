@@ -68,7 +68,7 @@ export const settingsStorage = createStorage("settings", {
       showOriginalOnHover: true,
       showTranslationOnHover: false,
       showTranslationInDOM: true,
-      trafficSaveMode: true,
+      trafficSaveMode: true, // translate only visible page area, translate new areas on scroll
       alwaysTranslatePages: [],
       showMore: false,
       letterCaseAutoCorrection: true, // split content per sentence

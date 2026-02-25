@@ -18,17 +18,6 @@ export async function injectContentScript({ tabId }: InjectContentScriptPayload 
   return injectScriptSafe(tabId, getInjectContentScriptParams(tabId));
 }
 
-export async function tryInjectContentScript({ tabId }: InjectContentScriptPayload = {}) {
-  tabId ??= await getActiveTabId();
-
-  try {
-    await chrome.scripting.executeScript(getInjectContentScriptParams(tabId));
-    return true;
-  } catch {
-    return false;
-  }
-}
-
 function getInjectContentScriptParams(tabId: number) {
   return {
     target: { tabId, allFrames: true },

@@ -17,7 +17,6 @@ export function installOrUpdateAppActions() {
     // refresh content-scripts due context-invalidated (e.g. extension version update)
     if (reason === UPDATE) {
       void refreshContentScripts();
-      void userStore.loadPricing();
     }
   });
 }

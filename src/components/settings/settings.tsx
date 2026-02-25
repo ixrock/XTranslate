@@ -238,7 +238,7 @@ export class Settings extends React.Component {
 
     if (provider === ProviderCodeName.XTRANSLATE_PRO && !userStore.isProActive) {
       fullPageTranslation.provider = prevProvider; // rollback
-      userStore.subscribeSuggestionDialog();
+      userStore.showSubscribeDialog();
     }
   };
 
@@ -249,7 +249,7 @@ export class Settings extends React.Component {
 
     if (provider === ProviderCodeName.XTRANSLATE_PRO && !userStore.isProActive) {
       settingsStore.setProvider(prevProvider); // rollback
-      userStore.subscribeSuggestionDialog();
+      userStore.showSubscribeDialog();
     }
   }
 
