@@ -11,7 +11,7 @@ export type TranslationHashId = `${ProviderCodeName}_${LangSource}_${LangTarget}
 
 export interface PageTranslatorParams {
   sessionCache?: boolean; // cache page translations per tab in `window.sessionStorage` Ø(default: true)
-  autoTranslateDelayMs?: number; /* default: 500 */
+  autoTranslateDelayMs?: number; /* default: 500ms */
 }
 
 interface TranslationUnit {
@@ -25,7 +25,6 @@ export class PageTranslator {
   static readonly RX_LETTER = /\p{L}/u;
   static readonly SKIP_TAGS = ["SCRIPT", "STYLE", "NOSCRIPT", "CODE"];
 
-  static readonly MAX_CONCURRENT_TRANSLATE_REQUESTS = 3;
   static readonly DEFAULT_API_LIMIT_CHARS_PER_REQUEST = 5000;
   static readonly FULL_PAGE_API_LIMIT_CHARS_PER_REQUEST: Partial<Record<ProviderCodeName, number>> = {
     [ProviderCodeName.GOOGLE]: 5000,
@@ -129,8 +128,8 @@ export class PageTranslator {
     this.processNodes(nodes);
 
     this.dispose.push(
-      this.bindTextsAutoTranslation(),
-      this.bindRefreshTranslationsOnParamsChange(),
+      this.bindDOMNodesAutoTranslation(),
+      this.bindTranslationOnSettingsChange(),
       this.watchDOMNodeUpdates(),
       () => this.clearCollectedNodes(),
     );
@@ -141,20 +140,16 @@ export class PageTranslator {
     this.dispose();
   }
 
-  protected bindRefreshTranslationsOnParamsChange = () => {
+  protected bindTranslationOnSettingsChange = () => {
     return reaction(() => {
         const { showMore, alwaysTranslatePages, ...settings } = this.settings;
         return settings;
       },
-      this.refreshTranslations,
-      {
-        delay: this.params.autoTranslateDelayMs,
-        equals: comparer.shallow,
-      }
+      this.refreshTranslations
     );
   }
 
-  protected bindTextsAutoTranslation = () => {
+  protected bindDOMNodesAutoTranslation = () => {
     return reaction(() => this.nodes,
       this.refreshTranslations,
       {
@@ -448,29 +443,19 @@ export class PageTranslator {
     });
 
     const packedUnits = this.packTranslationUnits(unitsToTranslate);
-    let nextPackIndex = 0;
-    const workersCount = Math.min(PageTranslator.MAX_CONCURRENT_TRANSLATE_REQUESTS, packedUnits.length);
 
-    await Promise.all(
-      Array.from({ length: workersCount }, async () => {
-        while (true) {
-          const packIndex = nextPackIndex++;
-          const pack = packedUnits[packIndex];
-          if (!pack) break;
+    for (const pack of packedUnits) {
+      const texts = pack.map(unit => unit.text);
+      const translations = await this.translateApiRequest(texts);
+      if (this.params.sessionCache) this.saveStorageCacheByText(texts, translations, providerId);
 
-          const texts = pack.map(unit => unit.text);
-          const translations = await this.translateApiRequest(texts);
-          if (this.params.sessionCache) this.saveStorageCacheByText(texts, translations, providerId);
-
-          pack.forEach((unit, translationIndex) => {
-            const translation = translations[translationIndex];
-            if (translation !== undefined) {
-              unitTranslations[unit.unitIndex] = translation;
-            }
-          });
+      pack.forEach((unit, translationIndex) => {
+        const translation = translations[translationIndex];
+        if (translation !== undefined) {
+          unitTranslations[unit.unitIndex] = translation;
         }
-      })
-    );
+      });
+    }
 
     const partsByNode = new Map<Node, (string | undefined)[]>();
     units.forEach((unit, unitIndex) => {
@@ -524,7 +509,7 @@ export class PageTranslator {
 
       return translations;
     } catch (err) {
-      this.logger.error(`TRANSLATION FAILED: ${err}`, { texts });
+      this.logger.error(`TRANSLATION FAILED: ${err?.message}`);
     }
 
     return [];
@@ -651,8 +636,6 @@ export class PageTranslator {
       }, {
         rootMargin: "0px 0px 50% 0px",
         threshold: 0,
-        // @ts-ignore https://developer.mozilla.org/en-US/docs/Web/API/IntersectionObserver/IntersectionObserver#delay
-        delay: this.params.autoTranslateDelayMs,
       }
     );
 

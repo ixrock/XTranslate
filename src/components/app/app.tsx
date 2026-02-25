@@ -24,12 +24,13 @@ import { sendMetric } from "@/background/metrics.bgc";
 import { userStore } from "@/pro";
 import { favoritesStorage } from "@/components/user-history/favorites.storage";
 import { themeStore } from "@/components/theme-manager/theme.storage";
+import { userSubscriptionRefreshAction } from "@/background/user.bgc";
 
 @observer
 export class App extends React.Component {
   static async init() {
     await preloadAppData(); // preload dependent data before initial app rendering
-    void userStore.load(); // always get latest user-subscription update
+    void userSubscriptionRefreshAction({ force: true }); // always get latest user-subscription info
 
     const { name: appName, description: appDescription } = getManifest();
     document.title = `${appName} - ${appDescription}`;

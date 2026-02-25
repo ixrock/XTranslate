@@ -24,7 +24,8 @@ import { PageTranslator } from "./page-translator";
 import { Popup } from "../components/popup";
 import { Icon } from "@/components/icon";
 import { getMessage } from "@/i18n";
-import { refreshUserSubscriptionAction } from "@/background/user.bgc";
+import { userSubscriptionRefreshAction } from "@/background/user.bgc";
+import { userStore } from "@/pro";
 
 type DOMRectNormalized = Omit<Writeable<DOMRect>, "toJSON" | "x" | "y">;
 
@@ -40,7 +41,7 @@ export class ContentScript extends React.Component {
     await preloadAppData(
       this.preloadCss(),
       popupSkipInjectionUrls.load(),
-      refreshUserSubscriptionAction(),
+      userSubscriptionRefreshAction(),
     );
 
     // skip content-script injection for specific urls to avoid bugs, e.g. for cloudflare captcha iframe checks
@@ -111,6 +112,7 @@ export class ContentScript extends React.Component {
     this.bindEvents();
 
     if (this.pageTranslator.isEnabled) {
+      await this.subscriptionRequirementCheck();
       this.startPageAutoTranslation();
     }
   }
@@ -139,7 +141,7 @@ export class ContentScript extends React.Component {
       function unbindDOMEvents() {
         abortCtrl.abort();
       },
-      onMessage(MessageType.TRANSLATE_FULL_PAGE, this.togglePageAutoTranslation),
+      onMessage(MessageType.TRANSLATE_FULL_PAGE, this.handlePageAutoTranslation),
       onMessage(MessageType.GET_SELECTED_TEXT, this.getSelectedTextAction),
     );
   }
@@ -270,60 +272,66 @@ export class ContentScript extends React.Component {
     return selectedText || "";
   }
 
-  private setFullPageProvider(provider?: ProviderCodeName) {
-    if (!provider || this.pageTranslator.settings.provider === provider) {
-      return;
-    }
-
+  @action
+  private setFullPageProvider(provider: ProviderCodeName) {
     const translator = getTranslator(provider);
     if (!translator) return;
+
     const supportedLanguages = translator.getSupportedLanguages(this.pageTranslator.settings);
     this.pageTranslator.settings.provider = provider;
     this.pageTranslator.settings.langFrom = supportedLanguages.langFrom;
     this.pageTranslator.settings.langTo = supportedLanguages.langTo;
   }
 
-  private togglePageAutoTranslation(params: TranslateFullPagePayload = {}) {
-    const { action = "toggle", provider } = params;
-    const isEnabled = this.pageTranslator.isEnabled;
+  private async handlePageAutoTranslation({ action, provider }: TranslateFullPagePayload = {}) {
+    const autoTranslationEnabled = this.pageTranslator.isEnabled;
 
-    if (action === "stop") {
-      if (isEnabled) {
-        this.stopPageAutoTranslation();
-      }
+    if (provider) {
+      this.setFullPageProvider(provider);
+    }
+
+    const subscriptionRequired = await this.subscriptionRequirementCheck();
+    if (subscriptionRequired) {
+      userStore.showSubscribeDialog();
       return;
     }
 
-    if (action === "start") {
-      this.setFullPageProvider(provider);
-
-      if (!isEnabled) {
-        this.startPageAutoTranslation();
-      }
-      return;
-    }
-
-    if (provider && isEnabled) {
-      this.setFullPageProvider(provider);
-      return;
-    }
-
-    if (isEnabled) {
-      this.stopPageAutoTranslation();
-    } else {
-      this.setFullPageProvider(provider);
+    switch (action) {
+    case "start":
+      if (autoTranslationEnabled) this.stopPageAutoTranslation();
       this.startPageAutoTranslation();
+      break;
+
+    case "stop":
+      this.stopPageAutoTranslation();
+      break;
+
+    case "toggle":
+      if (autoTranslationEnabled) this.stopPageAutoTranslation();
+      else this.startPageAutoTranslation();
+      break;
+    }
+  }
+
+  private async subscriptionRequirementCheck(): Promise<boolean> {
+    const { provider } = this.pageTranslator.settings;
+    if (provider !== ProviderCodeName.XTRANSLATE_PRO) return;
+
+    await userSubscriptionRefreshAction({ force: true });
+
+    if (!userStore.isProActive) {
+      this.setFullPageProvider(ProviderCodeName.GOOGLE); // fallback to free provider
+      return true;
     }
   }
 
   @action
   private startPageAutoTranslation(pageUrl = document.URL) {
+    if (!ContentScript.isTopFrame) return;
+
     const { provider, langTo, langFrom } = this.pageTranslator.settings;
     this.pageTranslator.startAutoTranslation();
-
-    if (ContentScript.isTopFrame) {
-      this.pageTranslator.setAutoTranslatingPages({ enabled: [pageUrl] });
-    }
+    this.pageTranslator.setAutoTranslatingPages({ enabled: [pageUrl] });
 
     void sendMetric("translate_used", {
       source: "fullpage",
@@ -335,6 +343,8 @@ export class ContentScript extends React.Component {
 
   @action
   private stopPageAutoTranslation(pageUrl = document.URL) {
+    if (!ContentScript.isTopFrame) return;
+
     this.pageTranslator.setAutoTranslatingPages({ disabled: [pageUrl] });
     this.pageTranslator.stopAutoTranslation();
     this.setTooltipHTML(""); // reset

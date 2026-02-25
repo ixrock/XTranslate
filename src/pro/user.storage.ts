@@ -28,6 +28,10 @@ export class UserStore {
   private storage = userStorage;
   private refreshPromise: Promise<any> = null;
 
+  get whenReady() {
+    return this.storage.whenReady;
+  }
+
   get apiProvider() {
     return getXTranslatePro();
   }
@@ -98,6 +102,19 @@ export class UserStore {
     );
   }
 
+  get cacheResetRequired(): boolean {
+    const { lastUpdateDateTime } = this.data;
+    const isFirstUpdate = lastUpdateDateTime === 0;
+    const freeUserRefreshTimeMs = 30 * 24 * 3600 * 1000; // 1 month
+    const paidUserRefreshTimeMs = 24 * 3600 * 1000; // 1 day
+
+    return [
+      isFirstUpdate,
+      this.isFreeUser && (lastUpdateDateTime + freeUserRefreshTimeMs < Date.now()),
+      this.isPaidUser && (lastUpdateDateTime + paidUserRefreshTimeMs < Date.now())
+    ].some(v => v)
+  }
+
   private formatPrice(cents = 0) {
     return formatPrice({
       value: cents / 100,
@@ -111,6 +128,7 @@ export class UserStore {
 
     this.refreshPromise = (async () => {
       try {
+        await this.storage.load();
         return await callback();
       } catch (err) {
         throw err;
@@ -122,81 +140,42 @@ export class UserStore {
     return this.refreshPromise;
   }
 
-  async load(): Promise<void> {
+  async loadPricing() {
     return this.safeLoadWithPromiseDedupe(async () => {
-      await this.loadSubscription();
-    });
-  }
-
-  async loadPricing(force = false) {
-    return await this.safeLoadWithPromiseDedupe(async () => {
       try {
-        if (this.pricing && !force) {
-          return; // prices needed to be loaded once mostly
-        }
         const pricing = await this.apiProvider.loadPricing();
         this.storage.merge({ pricing });
       } catch (err) {
-        console.error("loading prices has failed", err);
+        console.error(`loading prices has failed: ${err?.message}`);
+      }
+    });
+  }
+
+  async loadSubscription() {
+    return this.safeLoadWithPromiseDedupe(async () => {
+      try {
+        const user = await this.apiProvider.loadUser(); // TODO: merge in single endpoint (?) to reduce Vercel costs
+        const subscription = await this.apiProvider.loadSubscription();
+
+        this.storage.merge({
+          user,
+          subscription,
+          lastUpdateDateTime: Date.now(),
+        });
+      } catch (err) {
+        const { statusCode } = err as XTranslateProTranslateError;
+        if (statusCode === 401) {
+          this.storage.merge({
+            user: null,
+            subscription: null,
+            lastUpdateDateTime: Date.now(),
+          });
+        }
       }
     })
   }
 
-  async loadSubscription() {
-    await this.storage.load();
-
-    try {
-      const user = await this.apiProvider.loadUser(); // TODO: merge in single endpoint (?) to reduce Vercel costs
-      const subscription = await this.apiProvider.loadSubscription();
-
-      this.storage.merge({
-        user,
-        subscription,
-        lastUpdateDateTime: Date.now(),
-      });
-    } catch (err) {
-      const { statusCode } = err as XTranslateProTranslateError;
-      if (statusCode === 401) {
-        this.storage.merge({
-          user: null,
-          subscription: null,
-          lastUpdateDateTime: Date.now(),
-        });
-      }
-    }
-  }
-
-  get cacheResetRequiredForContentScript(): boolean {
-    const { lastUpdateDateTime } = this.data;
-    const isFirstUpdate = lastUpdateDateTime === 0;
-    const freeUserRefreshTimeMs = 30 * 24 * 3600 * 1000; // 1 month
-    const paidUserRefreshTimeMs = 24 * 3600 * 1000; // 1 day
-
-    return [
-      isFirstUpdate,
-      this.isFreeUser && (lastUpdateDateTime + freeUserRefreshTimeMs < Date.now()),
-      this.isPaidUser && (lastUpdateDateTime + paidUserRefreshTimeMs < Date.now())
-    ].some(v => v)
-  }
-
-  async refreshSubscriptionCheck(): Promise<void> {
-    await this.storage.load(); // preload storage first (!)
-
-    if (!this.cacheResetRequiredForContentScript) return;
-
-    return await this.safeLoadWithPromiseDedupe(async () => {
-      try {
-        return await this.loadSubscription();
-      } catch (err) {
-        const { statusCode } = err as XTranslateProTranslateError;
-        if (statusCode === 401) {
-          this.storage.merge({ lastUpdateDateTime: Date.now() });
-        }
-      }
-    });
-  }
-
-  subscribeSuggestionDialog(): boolean {
+  showSubscribeDialog(): boolean {
     const subscribe = window.confirm(getMessage("pro_required_confirm_goto_subscribe"));
 
     if (subscribe) {

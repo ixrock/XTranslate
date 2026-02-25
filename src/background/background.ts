@@ -8,7 +8,7 @@ import "./ai.bgc";
 import "./metrics.bgc";
 import "./user.bgc";
 import "./translate-page.bgc";
-import "./get-selected-text.bgc";
+import "./selected-text.bgc";
 
 import { initBackground as initMellowtel } from "../../mellowtel";
 import { installOrUpdateAppActions } from "./install.bgc";
