@@ -20,7 +20,7 @@ export class MellowtelDialog extends React.Component<MellowtelDialogProps> {
   }
 
   async componentDidMount() {
-    await userStore.load();
+    await userStore.whenReady;
     if (userStore.isProActive) return;
 
     const { enabled, timeToRemindForSupport } = await mellowtelStatusAction();
