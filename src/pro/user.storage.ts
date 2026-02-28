@@ -26,7 +26,6 @@ const userStorage = createStorage<UserStorage>("user_pro", {
 
 export class UserStore {
   private storage = userStorage;
-  private refreshPromise: Promise<any> = null;
 
   get whenReady() {
     return this.storage.whenReady;
@@ -123,56 +122,38 @@ export class UserStore {
     });
   }
 
-  private async safeLoadWithPromiseDedupe(callback: () => Promise<any>) {
-    if (this.refreshPromise) return this.refreshPromise;
-
-    this.refreshPromise = (async () => {
-      try {
-        await this.storage.load();
-        return await callback();
-      } catch (err) {
-        throw err;
-      } finally {
-        this.refreshPromise = null;
-      }
-    })();
-
-    return this.refreshPromise;
-  }
-
   async loadPricing() {
-    return this.safeLoadWithPromiseDedupe(async () => {
-      try {
-        const pricing = await this.apiProvider.loadPricing();
-        this.storage.merge({ pricing });
-      } catch (err) {
-        console.error(`loading prices has failed: ${err?.message}`);
-      }
-    });
+    try {
+      const pricing = await this.apiProvider.loadPricing();
+      this.storage.merge({ pricing });
+    } catch (err) {
+      console.error(`loading prices has failed: ${err?.message}`);
+    }
   }
 
   async loadSubscription() {
-    return this.safeLoadWithPromiseDedupe(async () => {
-      try {
-        const user = await this.apiProvider.loadUser(); // TODO: merge in single endpoint (?) to reduce Vercel costs
-        const subscription = await this.apiProvider.loadSubscription();
+    try {
+      const { user, ...subscription } = await this.apiProvider.loadSubscription();
 
+      const updatingData: Partial<UserStorage> = {
+        subscription,
+        lastUpdateDateTime: Date.now(),
+      };
+      if (user) {
+        updatingData.user = user;
+      }
+
+      this.storage.merge(updatingData);
+    } catch (err) {
+      const { statusCode } = err as XTranslateProTranslateError;
+      if (statusCode === 401) {
         this.storage.merge({
-          user,
-          subscription,
+          user: null,
+          subscription: null,
           lastUpdateDateTime: Date.now(),
         });
-      } catch (err) {
-        const { statusCode } = err as XTranslateProTranslateError;
-        if (statusCode === 401) {
-          this.storage.merge({
-            user: null,
-            subscription: null,
-            lastUpdateDateTime: Date.now(),
-          });
-        }
       }
-    })
+    }
   }
 
   showSubscribeDialog(): boolean {
