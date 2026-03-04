@@ -628,5 +628,8 @@
   },
   "show_in_context_menu_mode_active_provider": {
     "message": "Sadece etkin sağlayıcı"
+  },
+  "translate_page_by_hotkey": {
+    "message": "Kısayol tuşuna bastığımda tüm sayfayı çevir"
   }
 }

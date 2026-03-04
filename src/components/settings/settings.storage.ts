@@ -98,6 +98,20 @@ export const popupHotkey = createStorage("popup_hotkey", {
   }
 });
 
+export const fullPageTranslateHotkey = createStorage("fullpage_hotkey", {
+  area: "sync",
+  autoLoad: true,
+  deepMergeOnLoad: false,
+  defaultValue: {
+    enabled: true,
+    hotkey: {
+      ctrlKey: true,
+      shiftKey: true,
+      code: "X",
+    } as Hotkey
+  }
+});
+
 /**
  * Favorites are shown on top of language-select list.
  */

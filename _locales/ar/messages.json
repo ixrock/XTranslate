@@ -625,5 +625,8 @@
   },
   "show_in_context_menu_mode_active_provider": {
     "message": "مزود نشط فقط"
+  },
+  "translate_page_by_hotkey": {
+    "message": "ترجمة الصفحة كاملة عند الضغط على مفتاح الاختصار"
   }
 }

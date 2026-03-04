@@ -625,5 +625,8 @@
   },
   "show_in_context_menu_mode_active_provider": {
     "message": "仅活动提供者"
+  },
+  "translate_page_by_hotkey": {
+    "message": "当我按下快捷键时翻译整个页面"
   }
 }

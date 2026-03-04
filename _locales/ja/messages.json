@@ -625,5 +625,8 @@
   },
   "show_in_context_menu_mode_active_provider": {
     "message": "アクティブなプロバイダーのみ"
+  },
+  "translate_page_by_hotkey": {
+    "message": "ホットキーを押したときにページ全体を翻訳する"
   }
 }

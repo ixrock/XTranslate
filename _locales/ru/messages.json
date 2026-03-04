@@ -622,5 +622,8 @@
   },
   "pro_version_continue_use_free_version": {
     "message": "Продолжить использовать бесплатную версию"
+  },
+  "translate_page_by_hotkey": {
+    "message": "Переводить всю страницу при нажатии горячей клавиши"
   }
 }

@@ -625,5 +625,8 @@
   },
   "show_in_context_menu_mode_active_provider": {
     "message": "활성 제공자만"
+  },
+  "translate_page_by_hotkey": {
+    "message": "단축키를 누르면 전체 페이지를 번역"
   }
 }

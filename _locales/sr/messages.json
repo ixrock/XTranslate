@@ -622,5 +622,8 @@
   },
   "show_in_context_menu_mode_active_provider": {
     "message": "Samo aktivni provajder"
+  },
+  "translate_page_by_hotkey": {
+    "message": "Prevedi celu stranicu kada pritisnem prečicu"
   }
 }

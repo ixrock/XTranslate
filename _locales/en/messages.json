@@ -622,5 +622,8 @@
   },
   "pro_version_continue_use_free_version": {
     "message": "Continue use free version"
+  },
+  "translate_page_by_hotkey": {
+    "message": "Translate full-page when I press hotkey"
   }
 }

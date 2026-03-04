@@ -622,5 +622,8 @@
   },
   "show_in_context_menu_mode_active_provider": {
     "message": "Само активни провајдер"
+  },
+  "translate_page_by_hotkey": {
+    "message": "Преведи целу страницу када притиснем пречицу"
   }
 }

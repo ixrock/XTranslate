@@ -625,5 +625,8 @@
   },
   "show_in_context_menu_mode_active_provider": {
     "message": "Solo il provider attivo"
+  },
+  "translate_page_by_hotkey": {
+    "message": "Traduci la pagina completa quando premo la scorciatoia"
   }
 }

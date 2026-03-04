@@ -625,5 +625,8 @@
   },
   "show_in_context_menu_mode_active_provider": {
     "message": "僅限當前提供者"
+  },
+  "translate_page_by_hotkey": {
+    "message": "當我按下快捷鍵時翻譯整個頁面"
   }
 }

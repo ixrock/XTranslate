@@ -14,7 +14,7 @@ export interface SettingsUrlListProps {
 
 export function SettingsUrlList({ urlList, title, infoTooltip }: SettingsUrlListProps) {
   return (
-    <div className="SettingsEditUrlList flex gaps align-center" style={{ width: "inherit" }}>
+    <div className="SettingsEditUrlList flex gaps align-center" style={{ width: "100%" }}>
       {infoTooltip && (
         <Icon material="info_outline" tooltip={infoTooltip}/>
       )}

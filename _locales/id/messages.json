@@ -625,5 +625,8 @@
   },
   "show_in_context_menu_mode_active_provider": {
     "message": "Hanya penyedia aktif"
+  },
+  "translate_page_by_hotkey": {
+    "message": "Terjemahkan seluruh halaman saat saya menekan hotkey"
   }
 }

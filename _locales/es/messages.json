@@ -625,5 +625,8 @@
   },
   "show_in_context_menu_mode_active_provider": {
     "message": "Solo proveedor activo"
+  },
+  "translate_page_by_hotkey": {
+    "message": "Traducir la página completa cuando presione la tecla rápida"
   }
 }

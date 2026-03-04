@@ -16,7 +16,7 @@ import { autoBind, disposer, getHotkey, strLengthCodePoints } from "../utils";
 import { getManifest, getURL, isExtensionContextAlive, MessageType, onMessage, ProxyResponseType, TranslateFullPagePayload, TranslatePayload } from "../extension";
 import { proxyRequest } from "../background/httpProxy.bgc";
 import { sendMetric } from "../background/metrics.bgc";
-import { popupHotkey, popupSkipInjectionUrls, settingsStore } from "../components/settings/settings.storage";
+import { fullPageTranslateHotkey, popupHotkey, popupSkipInjectionUrls, settingsStore } from "../components/settings/settings.storage";
 import { getNextTranslator, getTranslator, getXTranslatePro, ITranslationError, ITranslationResult, ProviderCodeName } from "../providers";
 import { XTranslateIcon } from "./xtranslate-icon";
 import { XTranslateTooltip } from "./xtranslate-tooltip";
@@ -587,6 +587,8 @@ export class ContentScript extends React.Component {
 
   @action
   onKeyDown = (evt: KeyboardEvent) => {
+    const pressedHotkey = getHotkey(evt);
+
     if (!this.isPopupHidden) {
       switch (evt.code) {
       case "Escape":
@@ -606,16 +608,27 @@ export class ContentScript extends React.Component {
       }
     }
 
-    // handle text translation by hotkey
-    if (!settingsStore.data.showPopupOnHotkey) return;
-    const pressedHotkey = getHotkey(evt);
-    const userHotkey = toJS(popupHotkey.get().hotkey);
+    // get translation in <Popup/> by global hotkey (will be auto-taken from DOM's underlying element(s))
+    if (settingsStore.data.showPopupOnHotkey) {
+      const userHotkey = toJS(popupHotkey.get().hotkey);
 
-    if (isEqual(userHotkey, pressedHotkey) && this.isPopupHidden) {
-      evt.preventDefault();
-      this.isHotkeyActivated = true;
-      void sendMetric("translate_action", { trigger: "hotkey" });
-      this.translateFromTopElement();
+      if (isEqual(userHotkey, pressedHotkey) && this.isPopupHidden) {
+        evt.preventDefault();
+        this.isHotkeyActivated = true;
+        void sendMetric("translate_action", { trigger: "hotkey" });
+        this.translateFromTopElement();
+      }
+    }
+
+    // full-page translation toggle by hotkey
+    const { enabled } = fullPageTranslateHotkey.get();
+    if (enabled) {
+      const userHotkey = toJS(fullPageTranslateHotkey.get().hotkey);
+      if (isEqual(userHotkey, pressedHotkey)) {
+        evt.preventDefault();
+        evt.stopImmediatePropagation();
+        void this.handlePageAutoTranslation({ action: "toggle" });
+      }
     }
   }
 

@@ -625,5 +625,8 @@
   },
   "show_in_context_menu_mode_active_provider": {
     "message": "Nur aktiver Anbieter"
+  },
+  "translate_page_by_hotkey": {
+    "message": "Gesamte Seite übersetzen, wenn ich den Hotkey drücke"
   }
 }

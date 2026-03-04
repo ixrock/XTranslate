@@ -625,5 +625,8 @@
   },
   "show_in_context_menu_mode_active_provider": {
     "message": "Chỉ nhà cung cấp đang hoạt động"
+  },
+  "translate_page_by_hotkey": {
+    "message": "Dịch toàn bộ trang khi tôi nhấn phím tắt"
   }
 }

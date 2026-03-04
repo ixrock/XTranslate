@@ -625,5 +625,8 @@
   },
   "show_in_context_menu_mode_active_provider": {
     "message": "শুধুমাত্র সক্রিয় প্রদানকারী"
+  },
+  "translate_page_by_hotkey": {
+    "message": "আমি হটকি চাপলে পুরো পৃষ্ঠা অনুবাদ করুন"
   }
 }
