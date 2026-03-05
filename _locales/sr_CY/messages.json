@@ -542,6 +542,12 @@
   "pro_required_confirm_goto_subscribe": {
     "message": "Ова опција захтева PRO претплату, идемо ли на страницу за претплату?"
   },
+  "pro_required_full_page_limits_reached_text1": {
+    "message": "Достигнут је лимит, дозвољене странице по дану: { $limit }."
+  },
+  "pro_required_full_page_limits_reached_text2": {
+    "message": "Надоградите на PRO за неограничене преводе целих страница и више функција. Ресет за { $timeRange }."
+  },
   "pro_user_welcome_back": {
     "message": "Добро дошли назад, { $username }!"
   },

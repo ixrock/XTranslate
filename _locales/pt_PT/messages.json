@@ -545,6 +545,12 @@
   "pro_required_confirm_goto_subscribe": {
     "message": "Esta opção requer subscrição PRO, devemos ir para a página de subscrição?"
   },
+  "pro_required_full_page_limits_reached_text1": {
+    "message": "O limite foi atingido, páginas permitidas por dia: { $limit }."
+  },
+  "pro_required_full_page_limits_reached_text2": {
+    "message": "Atualize para PRO para traduções de página inteira ilimitadas e mais funcionalidades. Reinicia em { $timeRange }."
+  },
   "pro_user_welcome_back": {
     "message": "Bem-vindo de volta, { $username }!"
   },

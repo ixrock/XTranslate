@@ -542,6 +542,12 @@
   "pro_required_confirm_goto_subscribe": {
     "message": "Ova opcija zahteva PRO pretplatu, idemo li na stranicu za pretplatu?"
   },
+  "pro_required_full_page_limits_reached_text1": {
+    "message": "Dostignut je limit, dozvoljene stranice po danu: { $limit }."
+  },
+  "pro_required_full_page_limits_reached_text2": {
+    "message": "Nadogradite na PRO za neograničene prevode celih stranica i više funkcija. Reset za { $timeRange }."
+  },
   "pro_user_welcome_back": {
     "message": "Dobro došli nazad, { $username }!"
   },

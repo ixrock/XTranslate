@@ -542,6 +542,12 @@
   "pro_required_confirm_goto_subscribe": {
     "message": "Táto možnosť vyžaduje predplatné PRO, chcete prejsť na stránku predplatného?"
   },
+  "pro_required_full_page_limits_reached_text1": {
+    "message": "Limit bol dosiahnutý, povolené stránky za deň: { $limit }."
+  },
+  "pro_required_full_page_limits_reached_text2": {
+    "message": "Prejdite na PRO pre neobmedzené preklady celých stránok a viac funkcií. Reset o { $timeRange }."
+  },
   "pro_user_welcome_back": {
     "message": "Vitajte späť, { $username }!"
   },

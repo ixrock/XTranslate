@@ -8,7 +8,7 @@ export const userSubscriptionRefreshAction = createIsomorphicAction({
     await userStore.whenReady;
 
     if (userStore.cacheResetRequired || force) {
-      return userStore.loadSubscription();
+      return await userStore.loadSubscriptionSafe();
     }
   }
 });
