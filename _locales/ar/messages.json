@@ -590,6 +590,12 @@
   "pro_required_confirm_goto_subscribe": {
     "message": "هذا الخيار يتطلب اشتراك PRO، هل نذهب لصفحة الاشتراك؟"
   },
+  "pro_required_full_page_limits_reached_text1": {
+    "message": "تم الوصول إلى الحد، الصفحات المسموح بها يوميًا: { $limit }."
+  },
+  "pro_required_full_page_limits_reached_text2": {
+    "message": "قم بالترقية إلى PRO للحصول على ترجمات كاملة غير محدودة للصفحات والمزيد من الميزات. إعادة التعيين خلال { $timeRange }."
+  },
   "pro_user_welcome_back": {
     "message": "مرحباً بعودتك، { $username }!"
   },
@@ -670,5 +676,8 @@
   },
   "show_in_context_menu_mode_active_provider": {
     "message": "مزود نشط فقط"
+  },
+  "translate_page_by_hotkey": {
+    "message": "ترجمة الصفحة كاملة عند الضغط على مفتاح الاختصار"
   }
 }

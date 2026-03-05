@@ -593,6 +593,12 @@
   "pro_required_confirm_goto_subscribe": {
     "message": "Эта опция требует PRO-версии приложения, перейти на страницу подписки?"
   },
+  "pro_required_full_page_limits_reached_text1": {
+    "message": "Лимит достигнут, допустимое количество страниц в день: { $limit }."
+  },
+  "pro_required_full_page_limits_reached_text2": {
+    "message": "Обновитесь до PRO для безлимитного перевода целых страниц и дополнительных функций. Сброс через { $timeRange }."
+  },
   "pro_user_welcome_back": {
     "message": "Добро пожаловать, { $username }!"
   },
@@ -667,5 +673,8 @@
   },
   "pro_version_continue_use_free_version": {
     "message": "Продолжить использовать бесплатную версию"
+  },
+  "translate_page_by_hotkey": {
+    "message": "Переводить всю страницу при нажатии горячей клавиши"
   }
 }

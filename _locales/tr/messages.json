@@ -593,6 +593,12 @@
   "pro_required_confirm_goto_subscribe": {
     "message": "Bu seçenek PRO aboneliği gerektirir, abonelik sayfasına gidelim mi?"
   },
+  "pro_required_full_page_limits_reached_text1": {
+    "message": "Sınıra ulaşıldı, günlük izin verilen sayfa: { $limit }."
+  },
+  "pro_required_full_page_limits_reached_text2": {
+    "message": "Sınırsız tam sayfa çevirileri ve daha fazla özellik için PRO'ya yükseltin. { $timeRange } içinde sıfırlanır."
+  },
   "pro_user_welcome_back": {
     "message": "Tekrar hoş geldiniz, { $username }!"
   },
@@ -673,5 +679,8 @@
   },
   "show_in_context_menu_mode_active_provider": {
     "message": "Sadece etkin sağlayıcı"
+  },
+  "translate_page_by_hotkey": {
+    "message": "Kısayol tuşuna bastığımda tüm sayfayı çevir"
   }
 }

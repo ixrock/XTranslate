@@ -545,6 +545,12 @@
   "pro_required_confirm_goto_subscribe": {
     "message": "이 옵션은 PRO 구독이 필요합니다. 구독 페이지로 이동할까요?"
   },
+  "pro_required_full_page_limits_reached_text1": {
+    "message": "한도에 도달했습니다. 하루에 허용된 페이지 수: { $limit }."
+  },
+  "pro_required_full_page_limits_reached_text2": {
+    "message": "무제한 전체 페이지 번역과 더 많은 기능을 사용하려면 PRO로 업그레이드하세요. { $timeRange } 후에 초기화됩니다."
+  },
   "pro_user_welcome_back": {
     "message": "{ $username }님, 다시 오신 것을 환영합니다!"
   },
@@ -625,5 +631,8 @@
   },
   "show_in_context_menu_mode_active_provider": {
     "message": "활성 제공자만"
+  },
+  "translate_page_by_hotkey": {
+    "message": "단축키를 누르면 전체 페이지를 번역"
   }
 }

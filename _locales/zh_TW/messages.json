@@ -590,6 +590,12 @@
   "pro_required_confirm_goto_subscribe": {
     "message": "此選項需要 PRO 訂閱，我們要去訂閱頁面嗎？"
   },
+  "pro_required_full_page_limits_reached_text1": {
+    "message": "已達到限制，每天允許的頁面數：{ $limit }。"
+  },
+  "pro_required_full_page_limits_reached_text2": {
+    "message": "升級到 PRO 以獲得無限整頁翻譯和更多功能。將於 { $timeRange } 後重設。"
+  },
   "pro_user_welcome_back": {
     "message": "歡迎回來，{ $username }！"
   },
@@ -670,5 +676,8 @@
   },
   "show_in_context_menu_mode_active_provider": {
     "message": "僅限當前提供者"
+  },
+  "translate_page_by_hotkey": {
+    "message": "當我按下快捷鍵時翻譯整個頁面"
   }
 }

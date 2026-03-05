@@ -590,6 +590,12 @@
   "pro_required_confirm_goto_subscribe": {
     "message": "Diese Option erfordert ein PRO-Abonnement. Sollen wir zur Abonnementseite gehen?"
   },
+  "pro_required_full_page_limits_reached_text1": {
+    "message": "Das Limit wurde erreicht, erlaubte Seiten pro Tag: { $limit }."
+  },
+  "pro_required_full_page_limits_reached_text2": {
+    "message": "Upgrade auf PRO für unbegrenzte Vollseitenübersetzungen und mehr Funktionen. Zurücksetzung in { $timeRange }."
+  },
   "pro_user_welcome_back": {
     "message": "Willkommen zurück, { $username }!"
   },
@@ -670,5 +676,8 @@
   },
   "show_in_context_menu_mode_active_provider": {
     "message": "Nur aktiver Anbieter"
+  },
+  "translate_page_by_hotkey": {
+    "message": "Gesamte Seite übersetzen, wenn ich den Hotkey drücke"
   }
 }

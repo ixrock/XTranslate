@@ -596,6 +596,12 @@
   "pro_required_confirm_goto_subscribe": {
     "message": "This option require PRO-subscription, should we go to subscribe page?"
   },
+  "pro_required_full_page_limits_reached_text1": {
+    "message": "Limit has been reached, allowed pages per day: { $limit }."
+  },
+  "pro_required_full_page_limits_reached_text2": {
+    "message": "Upgrade to PRO for unlimited full-page translations and more features. Reset in { $timeRange }."
+  },
   "pro_user_welcome_back": {
     "message": "Welcome back, { $username }!"
   },
@@ -667,5 +673,8 @@
   },
   "pro_version_continue_use_free_version": {
     "message": "Continue use free version"
+  },
+  "translate_page_by_hotkey": {
+    "message": "Translate full-page when I press hotkey"
   }
 }

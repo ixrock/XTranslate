@@ -13,7 +13,7 @@ import { ReactSelect, ReactSelectOption } from "../select";
 import { Icon } from "../icon";
 import { SubTitle } from "../sub-title";
 import { Tab } from "../tabs";
-import { FullPageContextMenuMode, settingsStore, XIconPosition } from "./settings.storage";
+import { FullPageContextMenuMode, fullPageTranslateHotkey, settingsStore, XIconPosition } from "./settings.storage";
 import { pageManager } from "../app/page-manager";
 import { getMessage } from "@/i18n";
 import { SelectVoice } from "../select-tts-voice";
@@ -25,6 +25,8 @@ import { SelectProvider } from "../select-provider";
 import { ShowHideMore } from "../show-hide-more";
 import { SettingsUrlList } from "@/components/settings/settings_url_list";
 import { userStore } from "@/pro";
+import { getHotkey, parseHotkey, prevDefault } from "@/utils";
+import { Input } from "@/components/input";
 
 const openAiVoiceOptions =
   Object.values(OpenAIModelTTSVoice).map((voice: string) => ({
@@ -243,6 +245,13 @@ export class Settings extends React.Component {
   };
 
   @action.bound
+  onSaveFullpageHotkey = (evt: React.KeyboardEvent) => {
+    if (parseHotkey(evt).code) {
+      fullPageTranslateHotkey.merge({ hotkey: getHotkey(evt) });
+    }
+  }
+
+  @action.bound
   private onProviderChange = (provider: ProviderCodeName,) => {
     const prevProvider = settingsStore.data.vendor;
     settingsStore.setProvider(provider);
@@ -253,16 +262,14 @@ export class Settings extends React.Component {
     }
   }
 
-  render() {
+  renderPopupTranslationSettings() {
     const settings = settingsStore.data;
-    const { fullPageTranslation, showAdvancedProviders } = settings;
-    const { alwaysTranslatePages } = fullPageTranslation;
-    const providers = showAdvancedProviders
+    const providers = settings.showAdvancedProviders
       ? getTranslators() // show all
       : getTranslators().filter(providers => !providers.isRequireApiKey);
 
     return (
-      <main className={styles.Settings}>
+      <>
         <SelectLanguage
           showReverseTranslation
           provider={settings.vendor}
@@ -281,6 +288,18 @@ export class Settings extends React.Component {
             : getMessage("settings_title_advanced_providers_list_show")
           }
         />
+      </>
+    );
+  }
+
+  renderFullPageTranslationSettings() {
+    const settings = settingsStore.data;
+    const { fullPageTranslation } = settings;
+    const { hotkey: hotKey, enabled: hotkeyEnabled } = fullPageTranslateHotkey.get();
+    const parsedHotKey = parseHotkey(hotKey);
+
+    return (
+      <>
         <SubTitle className={styles.SubTitle}>{getMessage("settings_title_full_page_translation")}</SubTitle>
         <div className="flex gaps align-center">
           <SelectLanguage
@@ -296,12 +315,43 @@ export class Settings extends React.Component {
             filter={(provider) => provider.isAvailable() && provider.canTranslateFullPage()}
           />
         </div>
+
+        <div className={`flex gaps align-center`}>
+          <span className="box shrink">{getMessage("show_in_context_menu")}</span>
+          <ReactSelect<FullPageContextMenuMode>
+            className="box grow"
+            options={this.contextMenuModeOptions}
+            value={this.contextMenuModeOptions.find(({ value }) => value === settings.fullPageTranslation.contextMenuMode)}
+            onChange={({ value }) => settings.fullPageTranslation.contextMenuMode = value}
+          />
+        </div>
+
+        <SettingsUrlList
+          urlList={fullPageTranslation.alwaysTranslatePages}
+          title={getMessage("settings_title_full_page_always_translate")}
+        />
+
+        <div className={`${styles.inline} flex gaps`}>
+          <Checkbox
+            className="box grow"
+            label={getMessage("translate_page_by_hotkey")}
+            checked={hotkeyEnabled}
+            onChange={v => fullPageTranslateHotkey.merge({ enabled: v })}
+            tooltip={parsedHotKey.title}
+          />
+          <label className="box noshrink flex gaps align-center">
+            <Icon material="keyboard"/>
+            <Input
+              readOnly
+              className={`${styles.hotkey} box grow`}
+              value={parsedHotKey.value}
+              onKeyDown={prevDefault(this.onSaveFullpageHotkey)}
+            />
+          </label>
+        </div>
+
         <ShowHideMore visible={fullPageTranslation.showMore} onToggle={v => fullPageTranslation.showMore = v}>
           <div className="settings-fullpage flex column gaps align-start" style={{ width: "100%" }}>
-            <SettingsUrlList
-              urlList={alwaysTranslatePages}
-              title={getMessage("settings_title_full_page_always_translate")}
-            />
             <Checkbox
               label={getMessage("settings_title_full_page_show_original_onmouseover")}
               checked={fullPageTranslation.showOriginalOnHover}
@@ -325,7 +375,15 @@ export class Settings extends React.Component {
             />
           </div>
         </ShowHideMore>
+      </>
+    );
+  }
 
+  renderOthersSettings() {
+    const settings = settingsStore.data;
+
+    return (
+      <>
         <SubTitle className={styles.SubTitle}>
           {getMessage("setting_title_translator_service")}
         </SubTitle>
@@ -390,17 +448,16 @@ export class Settings extends React.Component {
             onClick={this.speakDemoText}
           />
         </div>
+      </>
+    );
+  }
 
-        <div className={`${styles.inline} flex gaps align-center`}>
-          <span className="box grow">{getMessage("show_in_context_menu")}</span>
-          <ReactSelect<FullPageContextMenuMode>
-            className="box noshrink"
-            options={this.contextMenuModeOptions}
-            value={this.contextMenuModeOptions.find(({ value }) => value === settings.fullPageTranslation.contextMenuMode)}
-            onChange={({ value }) => settings.fullPageTranslation.contextMenuMode = value}
-          />
-        </div>
-
+  render() {
+    return (
+      <main className={styles.Settings}>
+        {this.renderPopupTranslationSettings()}
+        {this.renderFullPageTranslationSettings()}
+        {this.renderOthersSettings()}
       </main>
     );
   }
