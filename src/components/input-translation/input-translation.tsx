@@ -60,19 +60,23 @@ export class InputTranslation extends React.Component {
   }
 
   private async checkUserSelectionFromActiveTabAndTranslateIfAny() {
-    await this.lastInputText.load();
-
     const { rememberLastText, vendor, langFrom, langTo, textInputAutoTranslateEnabled } = settingsStore.data;
-    const selectedText = await getSelectedTextAction();
-    const lastUserInputText = rememberLastText ? this.lastInputText.get() : "";
-
     this.params = {
       page: "translate",
       provider: this.urlParams.provider ?? vendor,
       from: this.urlParams.from ?? langFrom,
       to: this.urlParams.to ?? langTo,
-      text: this.urlParams.text || selectedText || lastUserInputText,
+      text: "",
     };
+
+    await this.lastInputText.load();
+    const selectedText = await getSelectedTextAction();
+    const lastUserInputText = rememberLastText ? this.lastInputText.get() : "";
+    const text = selectedText || lastUserInputText;
+
+    if (text) {
+      this.params.text = text;
+    }
 
     if (textInputAutoTranslateEnabled) {
       void this.translate();
