@@ -545,6 +545,12 @@
   "pro_required_confirm_goto_subscribe": {
     "message": "Tùy chọn này yêu cầu đăng ký PRO, chúng tôi có nên đến trang đăng ký không?"
   },
+  "pro_required_full_page_limits_reached_text1": {
+    "message": "Đã đạt giới hạn, số trang được phép mỗi ngày: { $limit }."
+  },
+  "pro_required_full_page_limits_reached_text2": {
+    "message": "Nâng cấp lên PRO để có bản dịch toàn trang không giới hạn và nhiều tính năng hơn. Đặt lại sau { $timeRange }."
+  },
   "pro_user_welcome_back": {
     "message": "Chào mừng trở lại, { $username }!"
   },

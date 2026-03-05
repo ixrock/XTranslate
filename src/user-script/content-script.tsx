@@ -12,7 +12,7 @@ import isEqual from 'lodash/isEqual';
 import orderBy from 'lodash/orderBy';
 import { contentScriptInjectable } from "../config";
 import { preloadAppData } from "../preloadAppData";
-import { autoBind, disposer, getHotkey, strLengthCodePoints } from "../utils";
+import { autoBind, disposer, formatTime, getHotkey, strLengthCodePoints } from "../utils";
 import { getManifest, getURL, isExtensionContextAlive, MessageType, onMessage, ProxyResponseType, TranslateFullPagePayload, TranslatePayload } from "../extension";
 import { proxyRequest } from "../background/httpProxy.bgc";
 import { sendMetric } from "../background/metrics.bgc";
@@ -20,7 +20,7 @@ import { fullPageTranslateHotkey, popupHotkey, popupSkipInjectionUrls, settingsS
 import { getNextTranslator, getTranslator, getXTranslatePro, ITranslationError, ITranslationResult, ProviderCodeName } from "../providers";
 import { XTranslateIcon } from "./xtranslate-icon";
 import { XTranslateTooltip } from "./xtranslate-tooltip";
-import { PageTranslator } from "./page-translator";
+import { pageTranslationStorage, PageTranslator } from "./page-translator";
 import { Popup } from "../components/popup";
 import { Icon } from "@/components/icon";
 import { getMessage } from "@/i18n";
@@ -41,6 +41,7 @@ export class ContentScript extends React.Component {
     await preloadAppData(
       this.preloadCss(),
       popupSkipInjectionUrls.load(),
+      pageTranslationStorage.load(),
       userSubscriptionRefreshAction(),
     );
 
@@ -110,11 +111,7 @@ export class ContentScript extends React.Component {
 
   async componentDidMount() {
     this.bindEvents();
-
-    if (this.pageTranslator.isEnabled) {
-      await this.subscriptionRequirementCheck();
-      this.startPageAutoTranslation();
-    }
+    void this.initPageAutoTranslation();
   }
 
   private bindEvents() {
@@ -283,6 +280,15 @@ export class ContentScript extends React.Component {
     this.pageTranslator.settings.langTo = supportedLanguages.langTo;
   }
 
+  private async initPageAutoTranslation() {
+    const autoTranslationEnabled = this.pageTranslator.isEnabled;
+
+    if (autoTranslationEnabled) {
+      await this.subscriptionRequirementCheck();
+      this.startPageAutoTranslation();
+    }
+  }
+
   private async handlePageAutoTranslation({ action, provider }: TranslateFullPagePayload = {}) {
     const autoTranslationEnabled = this.pageTranslator.isEnabled;
 
@@ -325,11 +331,54 @@ export class ContentScript extends React.Component {
     }
   }
 
+  get isPageTranslationAllowed(): boolean {
+    if (userStore.isProActive) {
+      return true; // no limits for premium users :P
+    }
+    const { lastVisitedUrls } = pageTranslationStorage.get();
+    return new Set(lastVisitedUrls).size <= PageTranslator.LIMIT_PAGES_FOR_FREE_ACCOUNT_PER_DAY;
+  }
+
   @action
   private startPageAutoTranslation(pageUrl = document.URL) {
-    if (!ContentScript.isTopFrame) return;
+    if (!ContentScript.isTopFrame) {
+      return; // applicable only top window frames
+    }
 
     const { provider, langTo, langFrom } = this.pageTranslator.settings;
+    const { lastTime } = pageTranslationStorage.get();
+    const currentTime = Date.now();
+    const dayLimitsExpireTimeMs = lastTime + 24 * 60 * 60 * 1000; // 1 day
+    const secondsRemainBeforeReset = Math.max(0, Math.round((dayLimitsExpireTimeMs - currentTime) / 1000));
+    const resetDailyLimitsRequired = dayLimitsExpireTimeMs < currentTime;
+
+    // check if daily limits reset is required (for free users)
+    if (resetDailyLimitsRequired) {
+      pageTranslationStorage.set({
+        lastTime: Date.now(),
+        lastVisitedUrls: [],
+      });
+    }
+
+    // add current page url to visited urls list for daily limits tracking (for free users)
+    const lastVisitedUrls = new Set(pageTranslationStorage.get().lastVisitedUrls);
+    lastVisitedUrls.add(pageUrl);
+    pageTranslationStorage.merge({ lastVisitedUrls: Array.from(lastVisitedUrls) });
+
+    // prevent page-translation if limit reached
+    if (!this.isPageTranslationAllowed) {
+      this.showPageTranslationLimitsReachedDialog(secondsRemainBeforeReset);
+      this.stopPageAutoTranslation(pageUrl);
+
+      void sendMetric("page_translations_limit_reached", {
+        provider: provider,
+        lang_from: langFrom,
+        lang_to: langTo,
+      });
+      return;
+    }
+
+    // start auto-translation for current page
     this.pageTranslator.startAutoTranslation();
     this.pageTranslator.setAutoTranslatingPages({ enabled: [pageUrl] });
 
@@ -348,6 +397,20 @@ export class ContentScript extends React.Component {
     this.pageTranslator.setAutoTranslatingPages({ disabled: [pageUrl] });
     this.pageTranslator.stopAutoTranslation();
     this.setTooltipHTML(""); // reset
+  }
+
+  private showPageTranslationLimitsReachedDialog(remainTimeRangeInSeconds: number) {
+    const subscribe = window.confirm([
+      getMessage("pro_required_full_page_limits_reached_text1", {
+        limit: PageTranslator.LIMIT_PAGES_FOR_FREE_ACCOUNT_PER_DAY.toString(),
+      }),
+      getMessage("pro_required_full_page_limits_reached_text2", {
+        timeRange: formatTime(remainTimeRangeInSeconds),
+      }),
+    ].join("\n"));
+    if (subscribe) {
+      userStore.openSubscribePage();
+    }
   }
 
   speak() {

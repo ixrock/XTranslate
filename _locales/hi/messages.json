@@ -545,6 +545,12 @@
   "pro_required_confirm_goto_subscribe": {
     "message": "इस विकल्प के लिए PRO-सदस्यता की आवश्यकता है, क्या हमें सदस्यता पृष्ठ पर जाना चाहिए?"
   },
+  "pro_required_full_page_limits_reached_text1": {
+    "message": "सीमा पूरी हो गई है, प्रति दिन अनुमत पृष्ठ: { $limit }."
+  },
+  "pro_required_full_page_limits_reached_text2": {
+    "message": "असीमित पूरे-पृष्ठ अनुवाद और अधिक सुविधाओं के लिए PRO में अपग्रेड करें। { $timeRange } में रीसेट होगा।"
+  },
   "pro_user_welcome_back": {
     "message": "वापसी पर स्वागत है, { $username }!"
   },

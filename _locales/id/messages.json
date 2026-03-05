@@ -545,6 +545,12 @@
   "pro_required_confirm_goto_subscribe": {
     "message": "Opsi ini memerlukan langganan PRO, haruskah kita pergi ke halaman berlangganan?"
   },
+  "pro_required_full_page_limits_reached_text1": {
+    "message": "Batas telah tercapai, halaman yang diizinkan per hari: { $limit }."
+  },
+  "pro_required_full_page_limits_reached_text2": {
+    "message": "Tingkatkan ke PRO untuk terjemahan satu halaman penuh tanpa batas dan lebih banyak fitur. Direset dalam { $timeRange }."
+  },
   "pro_user_welcome_back": {
     "message": "Selamat datang kembali, { $username }!"
   },

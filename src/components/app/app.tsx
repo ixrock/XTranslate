@@ -24,6 +24,7 @@ import { userStore } from "@/pro";
 import { favoritesStorage } from "@/components/user-history/favorites.storage";
 import { themeStore } from "@/components/theme-manager/theme.storage";
 import { userSubscriptionRefreshAction } from "@/background/user.bgc";
+import { pageTranslationStorage } from "@/user-script/page-translator";
 
 @observer
 export class App extends React.Component {
@@ -92,5 +93,6 @@ export {
   userStore,
   themeStore,
   favoritesStorage,
+  pageTranslationStorage,
   dumpMissingLocalizationKeys,
 }

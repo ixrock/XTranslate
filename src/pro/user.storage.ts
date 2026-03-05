@@ -26,6 +26,7 @@ const userStorage = createStorage<UserStorage>("user_pro", {
 
 export class UserStore {
   private storage = userStorage;
+  private refreshPromise: Promise<any> = null;
 
   get whenReady() {
     return this.storage.whenReady;
@@ -131,6 +132,10 @@ export class UserStore {
     }
   }
 
+  async loadSubscriptionSafe() {
+    return this.safeLoadWithPromiseDedupe(() => this.loadSubscription());
+  }
+
   async loadSubscription() {
     try {
       const { user, ...subscription } = await this.apiProvider.loadSubscription();
@@ -156,11 +161,29 @@ export class UserStore {
     }
   }
 
-  showSubscribeDialog(): boolean {
-    const subscribe = window.confirm(getMessage("pro_required_confirm_goto_subscribe"));
+  private async safeLoadWithPromiseDedupe(callback: () => Promise<any>) {
+    if (this.refreshPromise) return this.refreshPromise;
 
-    if (subscribe) {
-      window.open(this.apiProvider.subscribePageUrl, "_blank");
+    this.refreshPromise = (async () => {
+      try {
+        return await callback();
+      } catch (err) {
+        throw err;
+      } finally {
+        this.refreshPromise = null;
+      }
+    })();
+
+    return this.refreshPromise;
+  }
+
+  openSubscribePage() {
+    window.open(this.apiProvider.subscribePageUrl, "_blank");
+  }
+
+  showSubscribeDialog(): boolean {
+    if (window.confirm(getMessage("pro_required_confirm_goto_subscribe"))) {
+      this.openSubscribePage();
       return true;
     }
   }

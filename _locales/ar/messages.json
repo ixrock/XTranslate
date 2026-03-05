@@ -545,6 +545,12 @@
   "pro_required_confirm_goto_subscribe": {
     "message": "هذا الخيار يتطلب اشتراك PRO، هل نذهب لصفحة الاشتراك؟"
   },
+  "pro_required_full_page_limits_reached_text1": {
+    "message": "تم الوصول إلى الحد، الصفحات المسموح بها يوميًا: { $limit }."
+  },
+  "pro_required_full_page_limits_reached_text2": {
+    "message": "قم بالترقية إلى PRO للحصول على ترجمات كاملة غير محدودة للصفحات والمزيد من الميزات. إعادة التعيين خلال { $timeRange }."
+  },
   "pro_user_welcome_back": {
     "message": "مرحباً بعودتك، { $username }!"
   },

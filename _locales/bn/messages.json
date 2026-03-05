@@ -545,6 +545,12 @@
   "pro_required_confirm_goto_subscribe": {
     "message": "এই বিকল্পটির জন্য PRO-সাবস্ক্রিপশন প্রয়োজন, আমরা কি সাবস্ক্রাইব পৃষ্ঠায় যাব?"
   },
+  "pro_required_full_page_limits_reached_text1": {
+    "message": "সীমা পৌঁছে গেছে, প্রতিদিন অনুমোদিত পৃষ্ঠা: { $limit }।"
+  },
+  "pro_required_full_page_limits_reached_text2": {
+    "message": "অসীম পূর্ণ-পৃষ্ঠা অনুবাদ এবং আরও ফিচারের জন্য PRO-তে আপগ্রেড করুন। { $timeRange } পরে রিসেট হবে।"
+  },
   "pro_user_welcome_back": {
     "message": "স্বাগতম, { $username }!"
   },
