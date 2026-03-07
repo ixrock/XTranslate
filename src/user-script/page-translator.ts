@@ -1,4 +1,4 @@
-import { comparer, observable, reaction } from "mobx";
+import { comparer, IObservableArray, observable, reaction } from "mobx";
 import { md5 } from "js-md5";
 import debounce from "lodash/debounce";
 import { autoBind, createLogger, disposer, LoggerColor, strLengthCodePoints } from "../utils";
@@ -46,7 +46,7 @@ export const pageTranslationStorage = createStorage("page_translations", {
     trafficSaveMode: true, // translate only visible page area, translate new areas on scroll
     letterCaseAutoCorrection: true, // split content per sentence
     showMore: false,
-    alwaysTranslatePages: [], // TODO: probably move out of `chrome.storage.sync` area
+    alwaysTranslatePages: [] as IObservableArray<string>, // TODO: probably move out of `chrome.storage.sync` area
   },
 });
 
@@ -143,13 +143,13 @@ export class PageTranslator {
         ...this.settings.alwaysTranslatePages,
         ...urls.enabled.map(this.normalizeUrl),
       ]);
-      this.settings.alwaysTranslatePages = [...uniqUrls];
+      this.settings.alwaysTranslatePages.replace(Array.from(uniqUrls));
     }
     if (urls.disabled) {
       const translatingUrls = new Set(this.settings.alwaysTranslatePages);
       const excludedUrls = new Set(urls.disabled.map(this.normalizeUrl))
       const uniqUrls = translatingUrls.difference(excludedUrls);
-      this.settings.alwaysTranslatePages = [...uniqUrls];
+      this.settings.alwaysTranslatePages.replace(Array.from(uniqUrls));
     }
   }
 
