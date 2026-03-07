@@ -1,5 +1,5 @@
 import AILanguagesList from "./open-ai.json"
-import { getTranslator, ITranslationError, ITranslationResult, OpenAIModelTTSVoice, ProviderCodeName, TranslateParams, Translator } from "./index";
+import { getTranslator, ITranslationDictionary, ITranslationError, ITranslationResult, OpenAIModelTTSVoice, ProviderCodeName, TranslateParams, Translator } from "./index";
 import { MessageType, ProxyResponseType, ProxyStreamResponsePayload } from "@/extension";
 import { getMessage } from "@/i18n";
 import { websiteURL } from "@/config";
@@ -74,12 +74,13 @@ export class XTranslatePro extends Translator {
 
   async translate(params: TranslateParams): Promise<ITranslationResult> {
     try {
-      const { translation, transcription, detectedLang, spellCorrection } = await this.translateReq(params);
+      const { translation, transcription, detectedLang, spellCorrection, dictionary } = await this.translateReq(params);
       return {
         langDetected: detectedLang,
         translation: translation.join("\n"),
         transcription: transcription,
         spellCorrection,
+        dictionary,
       };
     } catch (err) {
       this.handleApiError(err);
@@ -648,6 +649,7 @@ export interface XTranslateProTranslateOutput {
   translation: string[];
   transcription?: string;
   spellCorrection?: string;
+  dictionary?: ITranslationDictionary[];
   tokensTotalUsed: number;
 }
 

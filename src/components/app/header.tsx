@@ -3,12 +3,10 @@ import React from "react";
 import { makeObservable } from "mobx";
 import { observer } from "mobx-react";
 import { isSystemPage } from "@/config";
-import { cssNames } from "@/utils";
 import { getTranslator } from "@/providers";
 import { getManifest } from "@/extension";
 import { activeTabStorage } from "@/background/tabs.bgc";
 import { translateActivePageAction } from "@/background/translate-page.bgc";
-import { settingsStore } from '../settings/settings.storage'
 import { Tabs } from "../tabs";
 import { Icon } from "../icon";
 import { getUrlParams, navigate, PageId } from "@/navigation";
@@ -18,6 +16,7 @@ import { SelectLocaleIcon } from "../select-locale";
 import { exportSettingsDialogState } from "./export-settings-dialog";
 import { ProUserInfo } from "@/components/app/pro-user-info";
 import { pageTranslationStorage } from "@/user-script/page-translator";
+import { DisplayModeToggleIcon } from "./display-mode";
 
 @observer
 export class Header extends React.Component {
@@ -56,7 +55,6 @@ export class Header extends React.Component {
     const { page: pageId } = getUrlParams();
     const activeTab = activeTabStorage.get();
     const showTranslateIcon = !isSystemPage(activeTab.url);
-    const { useDarkTheme } = settingsStore.data;
     const { provider, langTo, alwaysTranslatePages } = pageTranslationStorage.get();
     const isAutoTranslatingPage = alwaysTranslatePages.includes(new URL(activeTab.url || location.href).origin);
 
@@ -88,14 +86,7 @@ export class Header extends React.Component {
                 onClick={this.translateActivePage}
               />
             )}
-            <Icon
-              small
-              svg="moon"
-              active={useDarkTheme}
-              tooltip={{ nowrap: true, children: getMessage("use_dark_theme") }}
-              className={cssNames("dark-theme-icon", { active: useDarkTheme })}
-              onClick={() => settingsStore.data.useDarkTheme = !useDarkTheme}
-            />
+            <DisplayModeToggleIcon/>
             <Icon
               small
               material="open_in_new"

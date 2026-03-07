@@ -8,7 +8,6 @@ import { reaction } from "mobx";
 import { observer } from "mobx-react";
 import { preloadAppData } from "@/preloadAppData";
 import { getManifest } from "@/extension";
-import { settingsStore } from '../settings/settings.storage'
 import { Header } from "./header";
 import { Footer } from './footer'
 import { Notifications } from "../notifications";
@@ -37,18 +36,9 @@ export class App extends React.Component {
     rootElem.id = "XTranslateWindowApp";
     document.body.appendChild(rootElem);
 
-    this.bindDarkThemeSwitching();
     this.bindPageIdWatcher();
     rootNode.render(<App/>);
   }
-
-  static bindDarkThemeSwitching() {
-    return reaction(() => settingsStore.data.useDarkTheme, isDark => {
-      document.documentElement.dataset.theme = isDark ? "dark" : "light";
-    }, {
-      fireImmediately: true,
-    })
-  };
 
   static bindPageIdWatcher() {
     return reaction(() => getUrlParams().page, pageId => {

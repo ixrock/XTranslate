@@ -4,6 +4,7 @@ import { createStorage } from "@/storage";
 import { DeepSeekAIModel, GeminiAIModel, getTranslator, GrokAIModel, OpenAIModel, ProviderCodeName } from "@/providers";
 
 export type PopupPosition = "" /*auto*/ | "left top" | "left bottom" | "right top" | "right bottom";
+export type DisplayMode = "day" | "night" | "auto";
 
 export type XIconPosition = {
   top?: boolean;
@@ -15,6 +16,23 @@ export type XIconPosition = {
 export type SettingsStorageModel = typeof settingsStorage.defaultValue;
 export type PopupHotkeyStorageModel = typeof popupHotkey.defaultValue;
 
+export function getDisplayMode(displayMode: unknown): DisplayMode {
+  if (displayMode === "day" || displayMode === "night" || displayMode === "auto") {
+    return displayMode;
+  }
+  return "auto";
+}
+
+export function isDarkDisplayMode(displayMode: DisplayMode, isSystemDark: boolean): boolean {
+  return displayMode === "night" || (displayMode === "auto" && isSystemDark);
+}
+
+export function getNextDisplayMode(displayMode: DisplayMode): DisplayMode {
+  if (displayMode === "day") return "night";
+  if (displayMode === "night") return "auto";
+  return "day";
+}
+
 export const settingsStorage = createStorage("settings", {
   area: "sync", // share synced data via logged-in account (google, firefox, etc.)
   defaultValue: {
@@ -24,7 +42,7 @@ export const settingsStorage = createStorage("settings", {
     showSaveToFavoriteIcon: true,
     showProviderSelectIcon: true,
     showCopyTranslationIcon: true,
-    useDarkTheme: false,
+    displayMode: "auto" as DisplayMode,
     showIconNearSelection: true,
     showPopupAfterSelection: false,
     showPopupOnClickBySelection: false,
