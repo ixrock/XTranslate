@@ -12,12 +12,6 @@ export type XIconPosition = {
   left?: boolean;
 };
 
-export enum FullPageContextMenuMode {
-  OFF = "off",
-  ALL_PROVIDERS = "all_providers",
-  ACTIVE_PROVIDER = "active_provider",
-}
-
 export type SettingsStorageModel = typeof settingsStorage.defaultValue;
 export type PopupHotkeyStorageModel = typeof popupHotkey.defaultValue;
 
@@ -60,19 +54,6 @@ export const settingsStorage = createStorage("settings", {
     geminiModel: GeminiAIModel.RECOMMENDED,
     safeTranslationLimit: 0, // 0 = unlimited, don't ask user for confirmation, useful for paid-API providers
     systemTTSEngineVoiceIndex: 0,
-    fullPageTranslation: {
-      contextMenuMode: FullPageContextMenuMode.ALL_PROVIDERS,
-      provider: "bing" as ProviderCodeName,
-      langFrom: "auto",
-      langTo: "en",
-      showOriginalOnHover: true,
-      showTranslationOnHover: false,
-      showTranslationInDOM: true,
-      trafficSaveMode: true, // translate only visible page area, translate new areas on scroll
-      alwaysTranslatePages: [],
-      showMore: false,
-      letterCaseAutoCorrection: true, // split content per sentence
-    }
   }
 });
 

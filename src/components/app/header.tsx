@@ -17,6 +17,7 @@ import { getMessage } from "@/i18n";
 import { SelectLocaleIcon } from "../select-locale";
 import { exportSettingsDialogState } from "./export-settings-dialog";
 import { ProUserInfo } from "@/components/app/pro-user-info";
+import { pageTranslationStorage } from "@/user-script/page-translator";
 
 @observer
 export class Header extends React.Component {
@@ -55,8 +56,8 @@ export class Header extends React.Component {
     const { page: pageId } = getUrlParams();
     const activeTab = activeTabStorage.get();
     const showTranslateIcon = !isSystemPage(activeTab.url);
-    const { useDarkTheme, fullPageTranslation } = settingsStore.data;
-    const { provider, langTo, alwaysTranslatePages } = fullPageTranslation;
+    const { useDarkTheme } = settingsStore.data;
+    const { provider, langTo, alwaysTranslatePages } = pageTranslationStorage.get();
     const isAutoTranslatingPage = alwaysTranslatePages.includes(new URL(activeTab.url || location.href).origin);
 
     const translatePageActionTooltip = isAutoTranslatingPage

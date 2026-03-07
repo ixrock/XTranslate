@@ -13,7 +13,7 @@ import { ReactSelect, ReactSelectOption } from "../select";
 import { Icon } from "../icon";
 import { SubTitle } from "../sub-title";
 import { Tab } from "../tabs";
-import { FullPageContextMenuMode, fullPageTranslateHotkey, settingsStore, XIconPosition } from "./settings.storage";
+import { fullPageTranslateHotkey, settingsStore, XIconPosition } from "./settings.storage";
 import { pageManager } from "../app/page-manager";
 import { getMessage } from "@/i18n";
 import { SelectVoice } from "../select-tts-voice";
@@ -27,6 +27,7 @@ import { SettingsUrlList } from "@/components/settings/settings_url_list";
 import { userStore } from "@/pro";
 import { getHotkey, parseHotkey, prevDefault } from "@/utils";
 import { Input } from "@/components/input";
+import { FullPageContextMenuMode, pageTranslationStorage } from "@/user-script/page-translator";
 
 const openAiVoiceOptions =
   Object.values(OpenAIModelTTSVoice).map((voice: string) => ({
@@ -221,7 +222,7 @@ export class Settings extends React.Component {
 
   @action
   onFullPageLanguageChange = ({ provider, ...langParams }: SelectLanguageChangeEvent) => {
-    const { fullPageTranslation } = settingsStore.data;
+    const fullPageTranslation = pageTranslationStorage.get();
     const translator = getTranslator(provider);
     const { langFrom, langTo } = translator.getSupportedLanguages(langParams);
     fullPageTranslation.langTo = langTo;
@@ -230,7 +231,7 @@ export class Settings extends React.Component {
 
   @action.bound
   onFullPageProviderChange = (provider: ProviderCodeName) => {
-    const { fullPageTranslation } = settingsStore.data;
+    const fullPageTranslation = pageTranslationStorage.get();
     const prevProvider = fullPageTranslation.provider;
     const translator = getTranslator(provider);
     const supportedLanguages = translator.getSupportedLanguages(fullPageTranslation)
@@ -293,8 +294,7 @@ export class Settings extends React.Component {
   }
 
   renderFullPageTranslationSettings() {
-    const settings = settingsStore.data;
-    const { fullPageTranslation } = settings;
+    const fullPageTranslation = pageTranslationStorage.get();
     const { hotkey: hotKey, enabled: hotkeyEnabled } = fullPageTranslateHotkey.get();
     const parsedHotKey = parseHotkey(hotKey);
 
@@ -321,8 +321,8 @@ export class Settings extends React.Component {
           <ReactSelect<FullPageContextMenuMode>
             className="box grow"
             options={this.contextMenuModeOptions}
-            value={this.contextMenuModeOptions.find(({ value }) => value === settings.fullPageTranslation.contextMenuMode)}
-            onChange={({ value }) => settings.fullPageTranslation.contextMenuMode = value}
+            value={this.contextMenuModeOptions.find(({ value }) => value === fullPageTranslation.contextMenuMode)}
+            onChange={({ value }) => fullPageTranslation.contextMenuMode = value}
           />
         </div>
 
