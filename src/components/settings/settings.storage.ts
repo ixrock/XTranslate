@@ -15,6 +15,7 @@ export type XIconPosition = {
 
 export type SettingsStorageModel = typeof settingsStorage.defaultValue;
 export type PopupHotkeyStorageModel = typeof popupHotkey.defaultValue;
+export type FullPageHotkeyStorageModel = typeof fullPageTranslateHotkey.defaultValue;
 
 export function getDisplayMode(displayMode: unknown): DisplayMode {
   if (displayMode === "day" || displayMode === "night" || displayMode === "auto") {
