@@ -70,5 +70,8 @@ export class App extends React.Component {
   }
 }
 
-// render app
+// Render app
 void App.init();
+
+// Export storage instances to devtools-console (DEBUG-only)
+export * as storages from "@/storages";
