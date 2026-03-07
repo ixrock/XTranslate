@@ -1,12 +1,8 @@
-// TODO: use native dialogs / popover API
-//  see: https://developer.mozilla.org/en-US/docs/Web/API/Popover_API
-//  see: https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/dialog
 import * as styles from "./dialog.module.scss";
 
 import React from "react";
 import { createPortal } from "react-dom";
-import { Animate } from "../animate";
-import { cssNames, IClassName, noop, stopPropagation } from "@/utils";
+import { cssNames, IClassName, noop } from "@/utils";
 import { Icon } from "../icon";
 
 export interface DialogProps extends React.PropsWithChildren {
@@ -32,42 +28,105 @@ const defaultProps: Partial<DialogProps> = {
 export class Dialog extends React.Component<DialogProps> {
   static defaultProps = defaultProps as unknown as DialogProps;
 
-  public elem?: HTMLElement;
-  public contentElem?: HTMLElement;
+  public elem?: HTMLDialogElement;
+  public contentElem?: HTMLDivElement;
+  private openedAsModal = false;
+  private notifyOnNativeClose = true;
+
+  componentDidMount() {
+    this.syncOpenState();
+  }
+
+  componentDidUpdate(prevProps: DialogProps) {
+    const openChanged = prevProps.isOpen !== this.props.isOpen;
+    const modalChanged = prevProps.modal !== this.props.modal;
+    const syncRequired = openChanged || modalChanged;
+    if (syncRequired) {
+      this.syncOpenState();
+    }
+  }
+
+  componentWillUnmount() {
+    this.requestClose({ notify: false });
+  }
+
+  private showDialog = () => {
+    if (!this.elem || this.elem.open) {
+      return;
+    }
+
+    if (this.props.modal) {
+      this.elem.showModal();
+      this.openedAsModal = true;
+    } else {
+      this.elem.show();
+      this.openedAsModal = false;
+    }
+
+    this.props.onOpen();
+  };
 
   open = () => {
-    this.props.onOpen();
+    this.showDialog();
+  };
 
-    if (!this.props.pinned) {
-      this.elem.addEventListener('click', this.onClickOutside);
-      window.addEventListener('keydown', this.onEscapeKey);
+  private requestClose = ({ notify }: { notify: boolean }) => {
+    if (!this.elem || !this.elem.open) {
+      if (notify) {
+        this.props.onClose();
+      }
+      return;
     }
-  }
+
+    this.notifyOnNativeClose = notify;
+    this.elem.close();
+  };
 
   close = () => {
-    this.props.onClose();
+    this.requestClose({ notify: true });
+  };
 
-    if (!this.props.pinned) {
-      this.elem.removeEventListener('click', this.onClickOutside);
-      window.removeEventListener('keydown', this.onEscapeKey);
+  private syncOpenState = () => {
+    if (!this.elem) {
+      return;
     }
-  }
 
-  onEscapeKey = (evt: KeyboardEvent) => {
-    var escapeKey = evt.code === "Escape";
-    if (escapeKey) {
+    if (!this.props.isOpen) {
+      this.requestClose({ notify: false });
+      return;
+    }
+
+    const shouldOpenAsModal = Boolean(this.props.modal);
+    const modeChanged = this.elem.open && this.openedAsModal !== shouldOpenAsModal;
+    if (modeChanged) {
+      this.requestClose({ notify: false });
+    }
+    if (!this.elem.open) {
+      this.showDialog();
+    }
+  };
+
+  private onCancel = (evt: React.SyntheticEvent<HTMLDialogElement, Event>) => {
+    if (this.props.pinned) {
+      evt.preventDefault();
+    }
+  };
+
+  private onNativeClose = () => {
+    this.openedAsModal = false;
+    const shouldNotify = this.notifyOnNativeClose;
+    this.notifyOnNativeClose = true;
+    if (shouldNotify) {
       this.props.onClose();
-      evt.stopPropagation();
     }
-  }
+  };
 
-  onClickOutside = (evt: MouseEvent) => {
-    var target = evt.target as HTMLElement;
-    if (!this.contentElem.contains(target)) {
-      this.close();
-      evt.stopPropagation();
+  private onDialogClick = (evt: React.MouseEvent<HTMLDialogElement>) => {
+    if (this.props.pinned || evt.target !== this.elem) {
+      return;
     }
-  }
+    this.close();
+  };
 
   renderCloseIcon(): React.ReactNode {
     if (!this.props.showCloseIcon || this.props.pinned) {
@@ -82,30 +141,34 @@ export class Dialog extends React.Component<DialogProps> {
     );
   }
 
-  private bindElemRef = (elem: HTMLElement) => {
+  private bindElemRef = (elem: HTMLDialogElement) => {
     this.elem = elem;
   };
-  private bindContentElemRef = (elem: HTMLElement) => {
+  private bindContentElemRef = (elem: HTMLDivElement) => {
     this.contentElem = elem;
   };
 
   render() {
-    var { modal, pinned, children, isOpen } = this.props;
-    var className = cssNames(styles.Dialog, this.props.className, {
+    const { modal, pinned, children } = this.props;
+    const className = cssNames(styles.Dialog, this.props.className, {
       [styles.modal]: modal,
       [styles.pinned]: pinned,
     });
-    var contentClassName = cssNames(styles.box, this.props.contentClassName);
+    const contentClassName = cssNames(styles.box, this.props.contentClassName);
 
-    var dialog = (
-      <Animate name="opacity-scale" enter={isOpen} onEnter={this.open}>
-        <div className={className} onClick={stopPropagation} ref={this.bindElemRef}>
-          <div className={contentClassName} ref={this.bindContentElemRef}>
-            {this.renderCloseIcon()}
-            {children}
-          </div>
+    const dialog = (
+      <dialog
+        className={className}
+        ref={this.bindElemRef}
+        onCancel={this.onCancel}
+        onClose={this.onNativeClose}
+        onClick={this.onDialogClick}
+      >
+        <div className={contentClassName} ref={this.bindContentElemRef}>
+          {this.renderCloseIcon()}
+          {children}
         </div>
-      </Animate>
+      </dialog>
     );
 
     return createPortal(dialog, document.body);

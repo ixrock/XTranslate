@@ -4,18 +4,28 @@
   @include hidden-scrollbar;
 
   --dialog-bgc: var(--theme-bgc);
+  --dialog-text-color: var(--theme-bgc-invert);
   --dialog-padding: var(--theme-spacing-double);
   --dialog-border: 1px solid currentColor;
   --dialog-spacing: auto;
 
   position: fixed;
   display: flex;
-  left: 0;
-  top: 0;
+  inset: 0;
   width: 100%;
   height: 100%;
+  max-width: none;
+  max-height: none;
+  margin: 0;
   padding: 0;
+  border: 0;
+  background: transparent;
+  overflow: auto;
   z-index: 10000;
+
+  &:not([open]) {
+    display: none;
+  }
 
   .closeIcon {
     position: absolute;
@@ -26,27 +36,37 @@
 
   .box {
     position: relative;
+    color: var(--dialog-text-color);
     margin: var(--dialog-spacing, auto);
     border: var(--dialog-border);
     background-color: var(--dialog-bgc);
     padding: var(--dialog-padding);
     border-radius: var(--theme-border-radius);
-    z-index: 1; // show on top of .modal
+    z-index: 1;
+  }
+
+  &[open] .box {
+    animation: dialog-enter 250ms ease;
   }
 
   &.pinned {
   }
 
   &.modal {
-    &:before {
-      content: "";
-      position: absolute;
-      left: 0;
-      top: 0;
-      right: 0;
-      bottom: 0;
+    &::backdrop {
       background: #00000066;
       backdrop-filter: blur(2px);
     }
+  }
+}
+
+@keyframes dialog-enter {
+  from {
+    opacity: 0;
+    transform: scale(1.06);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
   }
 }
