@@ -109,8 +109,19 @@
       .wordMeanings {
         padding-left: var(--theme-spacing);
 
-        .word[title] {
+        .dictTranslation {
+          color: inherit;
+        }
+        .dictExamples {
+          &::before {
+            content: " * ";
+          }
           cursor: help;
+        }
+        .dictWord {
+          opacity: .75;
+          font-size: small;
+          font-style: italic;
         }
       }
     }

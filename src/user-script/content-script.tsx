@@ -354,7 +354,7 @@ export class ContentScript extends React.Component {
 
     // check if daily limits reset is required (for free users)
     if (resetDailyLimitsRequired) {
-      pageTranslationStorage.set({
+      pageTranslationStorage.merge({
         lastTime: Date.now(),
         lastVisitedUrls: [],
       });

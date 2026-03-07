@@ -2,7 +2,6 @@ import { comparer, observable, reaction } from "mobx";
 import { md5 } from "js-md5";
 import debounce from "lodash/debounce";
 import { autoBind, createLogger, disposer, LoggerColor, strLengthCodePoints } from "../utils";
-import { settingsStore } from "../components/settings/settings.storage";
 import { getTranslator, ProviderCodeName } from "../providers";
 import { createStorage } from "@/storage";
 
@@ -22,6 +21,14 @@ interface TranslationUnit {
   partCount: number;
 }
 
+export enum FullPageContextMenuMode {
+  OFF = "off",
+  ALL_PROVIDERS = "all_providers",
+  ACTIVE_PROVIDER = "active_provider",
+}
+
+export type PageTranslationStorageSettings = typeof pageTranslationStorage.defaultValue;
+
 export const pageTranslationStorage = createStorage("page_translations", {
   autoLoad: true,
   area: "sync",
@@ -29,6 +36,17 @@ export const pageTranslationStorage = createStorage("page_translations", {
   defaultValue: {
     lastTime: Date.now(),
     lastVisitedUrls: [] as string[], // <= PageTranslator.LIMIT_PAGES_FOR_FREE_ACCOUNT_PER_DAY
+    contextMenuMode: FullPageContextMenuMode.ALL_PROVIDERS,
+    provider: "google" as ProviderCodeName,
+    langFrom: "auto",
+    langTo: "en",
+    showOriginalOnHover: true,
+    showTranslationOnHover: false,
+    showTranslationInDOM: true,
+    trafficSaveMode: true, // translate only visible page area, translate new areas on scroll
+    letterCaseAutoCorrection: true, // split content per sentence
+    showMore: false,
+    alwaysTranslatePages: [], // TODO: probably move out of `chrome.storage.sync` area
   },
 });
 
@@ -69,7 +87,7 @@ export class PageTranslator {
   }
 
   get settings() {
-    return settingsStore.data.fullPageTranslation;
+    return pageTranslationStorage.get();
   }
 
   get isEnabled() {

@@ -259,10 +259,15 @@ export class Popup extends React.Component<PopupProps> {
             <div className={styles.wordType}>{wordType}</div>
             <div className={styles.wordMeanings}>
               {meanings.map((meaning, i, list) => {
+                const examples = meaning.examples?.map(example => example.join(" - ")).join("\n") ?? "";
                 let last = i === list.length - 1;
-                let title = meaning.translation.join(", ") || null;
+                let translation = meaning.translation.join(", ");
                 return [
-                  <span key={i} className={styles.word} title={title}>{meaning.word}</span>,
+                  <span key={i} className={styles.dictTranslation}>
+                    {translation}
+                    {examples && <span className={styles.dictExamples} title={examples}/>}
+                    <small className={styles.dictWord}>({meaning.word})</small>
+                  </span>,
                   !last ? ", " : null
                 ]
               })}
