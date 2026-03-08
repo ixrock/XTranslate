@@ -107,7 +107,7 @@ export class ExportSettingsDialog extends React.Component<ExportSettingsDialogPr
   };
 
   exportSettings = () => {
-    const { lastVisitedUrls = [], ...pageTranslationSettings } = pageTranslationStorage.toJS();
+    const { lastVisitedUrls, ...pageTranslationSettings } = pageTranslationStorage.toJS();
 
     const appSettings: ExportImportSettings = {
       appVersion: this.appVersion,
@@ -133,7 +133,7 @@ export class ExportSettingsDialog extends React.Component<ExportSettingsDialogPr
         data: customFont.toJS(),
       },
       fullPageTranslate: {
-        data: { lastVisitedUrls, ...pageTranslationSettings },
+        data: { lastVisitedUrls: [], ...pageTranslationSettings },
       }
     };
 
