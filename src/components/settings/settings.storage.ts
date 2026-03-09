@@ -1,4 +1,4 @@
-import { action, makeObservable } from "mobx";
+import { action, IObservableArray, makeObservable } from "mobx";
 import { Hotkey } from "@/utils/parseHotkey";
 import { createStorage } from "@/storage";
 import { DeepSeekAIModel, GeminiAIModel, getTranslator, GrokAIModel, OpenAIModel, ProviderCodeName } from "@/providers";
@@ -15,6 +15,7 @@ export type XIconPosition = {
 
 export type SettingsStorageModel = typeof settingsStorage.defaultValue;
 export type PopupHotkeyStorageModel = typeof popupHotkey.defaultValue;
+export type FullPageHotkeyStorageModel = typeof fullPageTranslateHotkey.defaultValue;
 
 export function getDisplayMode(displayMode: unknown): DisplayMode {
   if (displayMode === "day" || displayMode === "night" || displayMode === "auto") {
@@ -75,13 +76,13 @@ export const settingsStorage = createStorage("settings", {
   }
 });
 
-export const popupSkipInjectionUrls = createStorage<string[]>("popup_skip_inject", {
+export const popupSkipInjectionUrls = createStorage("popup_skip_inject", {
   area: "sync",
   autoLoad: true,
   deepMergeOnLoad: false,
   defaultValue: [
     "https://challenges.cloudflare.com/"
-  ]
+  ] as IObservableArray<string>,
 });
 
 export const popupHotkey = createStorage("popup_hotkey", {

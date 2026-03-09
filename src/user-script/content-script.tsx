@@ -2,7 +2,7 @@
 
 import "../setup";
 import "./content-script.scss"
-import React from "react";
+import React, { ReactNode } from "react";
 import { createRoot, Root } from "react-dom/client";
 import { action, computed, makeObservable, observable, toJS } from "mobx";
 import { observer } from "mobx-react";
@@ -12,7 +12,7 @@ import isEqual from 'lodash/isEqual';
 import orderBy from 'lodash/orderBy';
 import { contentScriptInjectable } from "../config";
 import { preloadAppData } from "../preloadAppData";
-import { autoBind, disposer, formatTime, getHotkey, strLengthCodePoints } from "../utils";
+import { autoBind, disposer, getHotkey, strLengthCodePoints } from "../utils";
 import { getManifest, getURL, isExtensionContextAlive, MessageType, onMessage, ProxyResponseType, TranslateFullPagePayload, TranslatePayload } from "../extension";
 import { proxyRequest } from "../background/httpProxy.bgc";
 import { sendMetric } from "../background/metrics.bgc";
@@ -25,7 +25,7 @@ import { Popup } from "../components/popup";
 import { Icon } from "@/components/icon";
 import { getMessage } from "@/i18n";
 import { userSubscriptionRefreshAction } from "@/background/user.bgc";
-import { userStore } from "@/pro";
+import { UserStore, userStore } from "@/pro";
 
 type DOMRectNormalized = Omit<Writeable<DOMRect>, "toJSON" | "x" | "y">;
 
@@ -99,7 +99,7 @@ export class ContentScript extends React.Component {
 
   @observable.ref lastParams: TranslatePayload; // last used translation payload
   @observable.ref translation: ITranslationResult;
-  @observable.ref error: ITranslationError;
+  @observable.ref error: Partial<ITranslationError & { failReason?: ReactNode }>;
   @observable.ref selectionRects: DOMRectNormalized[] = [];
   @observable summarized = "";
   @observable popupPosition: React.CSSProperties = {};
@@ -217,14 +217,29 @@ export class ContentScript extends React.Component {
 
   @action
   async translate(params: Partial<TranslatePayload> = {}) {
+    const payload = this.lastParams = this.getPayloadParams(params);
+
     this.checkContextInvalidationError();
     this.hideIcon();
 
-    const payload = this.lastParams = this.getPayloadParams(params);
-
-    if (!this.translationConfirmationCheck(payload)) {
-      return;
+    if (userStore.dailyLimitsResetRequired) {
+      userStore.resetDailyLimits();
     }
+
+    // free-account daily limits reached guard-check
+    if (!userStore.isPopupTranslationAllowed) {
+      this.error = {
+        failReason: this.renderDailyLimitsError(),
+      };
+      void sendMetric("popup_daily_limit_reached", {
+        provider: payload.provider,
+        lang_from: payload.from,
+        lang_to: payload.to,
+      });
+      return this.refinePosition();
+    }
+
+    if (!this.translationConfirmationCheck(payload)) return;
 
     this.translation = null;
     this.error = null;
@@ -235,6 +250,7 @@ export class ContentScript extends React.Component {
       const translation = await getTranslator(payload.provider).translate(payload);
       if (isEqual(payload, this.lastParams)) {
         this.translation = translation;
+        userStore.data.popupTranslationsToday++;
       }
     } catch (err) {
       if (isEqual(payload, this.lastParams)) {
@@ -331,14 +347,6 @@ export class ContentScript extends React.Component {
     }
   }
 
-  get isPageTranslationAllowed(): boolean {
-    if (userStore.isProActive) {
-      return true; // no limits for premium users :P
-    }
-    const { lastVisitedUrls } = pageTranslationStorage.get();
-    return new Set(lastVisitedUrls).size <= PageTranslator.LIMIT_PAGES_FOR_FREE_ACCOUNT_PER_DAY;
-  }
-
   @action
   private startPageAutoTranslation(pageUrl = document.URL) {
     if (!ContentScript.isTopFrame) {
@@ -346,28 +354,15 @@ export class ContentScript extends React.Component {
     }
 
     const { provider, langTo, langFrom } = this.pageTranslator.settings;
-    const { lastTime } = pageTranslationStorage.get();
-    const currentTime = Date.now();
-    const dayLimitsExpireTimeMs = lastTime + 24 * 60 * 60 * 1000; // 1 day
-    const secondsRemainBeforeReset = Math.max(0, Math.round((dayLimitsExpireTimeMs - currentTime) / 1000));
-    const resetDailyLimitsRequired = dayLimitsExpireTimeMs < currentTime;
 
     // check if daily limits reset is required (for free users)
-    if (resetDailyLimitsRequired) {
-      pageTranslationStorage.merge({
-        lastTime: Date.now(),
-        lastVisitedUrls: [],
-      });
+    if (userStore.dailyLimitsResetRequired) {
+      userStore.resetDailyLimits();
     }
 
-    // add current page url to visited urls list for daily limits tracking (for free users)
-    const lastVisitedUrls = new Set(pageTranslationStorage.get().lastVisitedUrls);
-    lastVisitedUrls.add(pageUrl);
-    pageTranslationStorage.merge({ lastVisitedUrls: Array.from(lastVisitedUrls) });
-
-    // prevent page-translation if limit reached
-    if (!this.isPageTranslationAllowed) {
-      this.showPageTranslationLimitsReachedDialog(secondsRemainBeforeReset);
+    // prevent page-translation when limit reached
+    if (!userStore.isPageTranslationAllowed) {
+      this.showPageTranslationLimitsReachedDialog();
       this.stopPageAutoTranslation(pageUrl);
 
       void sendMetric("page_translations_limit_reached", {
@@ -381,6 +376,7 @@ export class ContentScript extends React.Component {
     // start auto-translation for current page
     this.pageTranslator.startAutoTranslation();
     this.pageTranslator.setAutoTranslatingPages({ enabled: [pageUrl] });
+    userStore.data.pageTranslationsToday++;
 
     void sendMetric("translate_used", {
       source: "fullpage",
@@ -399,13 +395,14 @@ export class ContentScript extends React.Component {
     this.setTooltipHTML(""); // reset
   }
 
-  private showPageTranslationLimitsReachedDialog(remainTimeRangeInSeconds: number) {
+  private showPageTranslationLimitsReachedDialog() {
     const subscribe = window.confirm([
       getMessage("pro_required_full_page_limits_reached_text1", {
-        limit: PageTranslator.LIMIT_PAGES_FOR_FREE_ACCOUNT_PER_DAY.toString(),
+        limit: UserStore.LIMIT_PAGE_TRANSLATION_FREE_ACCOUNT_PER_DAY.toString(),
       }),
-      getMessage("pro_required_full_page_limits_reached_text2", {
-        timeRange: formatTime(remainTimeRangeInSeconds),
+      getMessage("pro_required_full_page_limits_reached_text2"),
+      getMessage("pro_required_reset_limits_in", {
+        timeRange: userStore.timeRemainBeforeDailyReset,
       }),
     ].join("\n"));
     if (subscribe) {
@@ -757,6 +754,37 @@ export class ContentScript extends React.Component {
         {isLoading && <Icon svg="spinner"/>}
         {!isLoading && isIconVisible && <XTranslateIcon onMouseDown={onIconClick} title={translateIconTitle}/>}
       </div>
+    )
+  }
+
+  @action
+  private async refreshSubscriptionAndTranslate() {
+    await userSubscriptionRefreshAction({ force: true });
+
+    if (userStore.isProActive) {
+      void this.translate(); // re-try after refresh
+    }
+  }
+
+  renderDailyLimitsError() {
+    return (
+      <>
+        <p>
+          {getMessage("pro_required_limits_reached")}{" "}
+          {getMessage("pro_required_reset_limits_in", {
+            timeRange: <b>{userStore.timeRemainBeforeDailyReset}</b>,
+          })}
+        </p>
+        <p>
+          {getMessage("pro_required_subscription", {
+            link: v => <a href={getXTranslatePro().subscribePageUrl} target="_blank"><b>{v}</b></a>
+          })}
+        </p>
+        <a href="#" onClick={() => this.refreshSubscriptionAndTranslate()}>
+          <Icon material="sync"/>
+          <span>{getMessage("pro_subscription_refresh")}</span>
+        </a>
+      </>
     )
   }
 

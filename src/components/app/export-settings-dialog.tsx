@@ -4,7 +4,7 @@ import React from "react";
 import { Dialog, DialogProps } from "../dialog";
 import { cssNames, download } from "@/utils";
 import { observer } from "mobx-react";
-import { action, makeObservable, observable } from "mobx";
+import { action, IObservableArray, makeObservable, observable } from "mobx";
 import { getManifest } from "@/extension";
 import { Button } from "../button";
 import { getMessage } from "@/i18n";
@@ -12,9 +12,10 @@ import { Icon } from "../icon";
 import { FileInput, ImportingFile } from "../input";
 import { Notifications } from "../notifications";
 import { SubTitle } from "../sub-title";
-import { popupHotkey, PopupHotkeyStorageModel, settingsStorage, SettingsStorageModel } from "../settings/settings.storage";
-import { themeStorage, ThemeStorageModel } from "../theme-manager/theme.storage";
+import { FullPageHotkeyStorageModel, fullPageTranslateHotkey, popupHotkey, PopupHotkeyStorageModel, popupSkipInjectionUrls, settingsStorage, SettingsStorageModel } from "../settings/settings.storage";
+import { customFont, CustomFontStorageModel, themeStorage, ThemeStorageModel } from "../theme-manager/theme.storage";
 import { favoritesStorage, FavoriteStorageModel } from "../user-history/favorites.storage";
+import { pageTranslationStorage, PageTranslationStorageSettings } from "@/user-script/page-translator";
 
 export const exportSettingsDialogState = observable.box(false);
 
@@ -26,8 +27,12 @@ export interface ExportImportSettings {
   appVersion: string; // manifest.json version
   settings?: ExportingData<SettingsStorageModel>;
   theme?: ExportingData<ThemeStorageModel>;
+  customfont?: ExportingData<CustomFontStorageModel>;
   favorites?: ExportingData<FavoriteStorageModel>;
-  hotkey?: ExportingData<PopupHotkeyStorageModel>;
+  popupSkipUrls: ExportingData<string[]>;
+  hotkeyPopup?: ExportingData<PopupHotkeyStorageModel>;
+  hotkeyFullPageTranslation?: ExportingData<FullPageHotkeyStorageModel>;
+  fullPageTranslate?: ExportingData<PageTranslationStorageSettings>;
 }
 
 export interface ExportSettingsDialogProps extends Partial<DialogProps> {
@@ -52,7 +57,7 @@ export class ExportSettingsDialog extends React.Component<ExportSettingsDialogPr
     this.error = "";
     try {
       const jsonSettings: ExportImportSettings = JSON.parse(await file.text());
-      const { appVersion, settings, theme, favorites, hotkey } = jsonSettings;
+      const { appVersion, settings, theme, favorites, hotkeyFullPageTranslation, hotkeyPopup, fullPageTranslate, popupSkipUrls, customfont } = jsonSettings;
       const noSettingsFound = Boolean(!settings && !theme); // TODO: validate input better
       if (noSettingsFound) {
         const importCommonErrorMessage = getMessage("import_incorrect_file_format", {
@@ -72,9 +77,25 @@ export class ExportSettingsDialog extends React.Component<ExportSettingsDialogPr
           favoritesStorage.set(favorites.data);
           Notifications.ok(getMessage("imported_setting_successful", { key: "favorites" }));
         }
-        if (hotkey) {
-          popupHotkey.set(hotkey.data);
-          Notifications.ok(getMessage("imported_setting_successful", { key: "hotkey" }));
+        if (hotkeyPopup) {
+          popupHotkey.set(hotkeyPopup.data);
+          Notifications.ok(getMessage("imported_setting_successful", { key: "hotkey_popup" }));
+        }
+        if (hotkeyFullPageTranslation) {
+          fullPageTranslateHotkey.set(hotkeyFullPageTranslation.data);
+          Notifications.ok(getMessage("imported_setting_successful", { key: "hotkey_fullpage" }));
+        }
+        if (customfont) {
+          customFont.set(customfont.data);
+          Notifications.ok(getMessage("imported_setting_successful", { key: "custom_font" }));
+        }
+        if (popupSkipUrls) {
+          popupSkipInjectionUrls.set(popupSkipUrls.data as IObservableArray<string>);
+          Notifications.ok(getMessage("imported_setting_successful", { key: "popup_skip_injection_urls" }));
+        }
+        if (fullPageTranslate) {
+          pageTranslationStorage.set(fullPageTranslate.data);
+          Notifications.ok(getMessage("imported_setting_successful", { key: "fullpage_translate_settings" }));
         }
         this.dialog.close();
       }
@@ -97,8 +118,20 @@ export class ExportSettingsDialog extends React.Component<ExportSettingsDialogPr
       favorites: {
         data: favoritesStorage.toJS(),
       },
-      hotkey: {
+      hotkeyPopup: {
         data: popupHotkey.toJS(),
+      },
+      hotkeyFullPageTranslation: {
+        data: fullPageTranslateHotkey.toJS(),
+      },
+      popupSkipUrls: {
+        data: popupSkipInjectionUrls.toJS(),
+      },
+      customfont: {
+        data: customFont.toJS(),
+      },
+      fullPageTranslate: {
+        data: pageTranslationStorage.toJS(),
       }
     };
 

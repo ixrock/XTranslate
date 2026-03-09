@@ -1,4 +1,4 @@
-import { comparer, observable, reaction } from "mobx";
+import { comparer, IObservableArray, observable, reaction } from "mobx";
 import { md5 } from "js-md5";
 import debounce from "lodash/debounce";
 import { autoBind, createLogger, disposer, LoggerColor, strLengthCodePoints } from "../utils";
@@ -34,8 +34,6 @@ export const pageTranslationStorage = createStorage("page_translations", {
   area: "sync",
   saveDefaultWhenEmpty: true,
   defaultValue: {
-    lastTime: Date.now(),
-    lastVisitedUrls: [] as string[], // <= PageTranslator.LIMIT_PAGES_FOR_FREE_ACCOUNT_PER_DAY
     contextMenuMode: FullPageContextMenuMode.ALL_PROVIDERS,
     provider: "google" as ProviderCodeName,
     langFrom: "auto",
@@ -46,7 +44,7 @@ export const pageTranslationStorage = createStorage("page_translations", {
     trafficSaveMode: true, // translate only visible page area, translate new areas on scroll
     letterCaseAutoCorrection: true, // split content per sentence
     showMore: false,
-    alwaysTranslatePages: [], // TODO: probably move out of `chrome.storage.sync` area
+    alwaysTranslatePages: [] as IObservableArray<string>, // TODO: probably move out of `chrome.storage.sync` area
   },
 });
 
@@ -54,7 +52,6 @@ export class PageTranslator {
   static readonly RX_LETTER = /\p{L}/u;
   static readonly SKIP_TAGS = ["SCRIPT", "STYLE", "NOSCRIPT", "CODE"];
 
-  static readonly LIMIT_PAGES_FOR_FREE_ACCOUNT_PER_DAY = 10;
   static readonly DEFAULT_API_LIMIT_CHARS_PER_REQUEST = 5000;
   static readonly FULL_PAGE_API_LIMIT_CHARS_PER_REQUEST: Partial<Record<ProviderCodeName, number>> = {
     [ProviderCodeName.GOOGLE]: 5000,
@@ -143,13 +140,13 @@ export class PageTranslator {
         ...this.settings.alwaysTranslatePages,
         ...urls.enabled.map(this.normalizeUrl),
       ]);
-      this.settings.alwaysTranslatePages = [...uniqUrls];
+      this.settings.alwaysTranslatePages.replace(Array.from(uniqUrls));
     }
     if (urls.disabled) {
       const translatingUrls = new Set(this.settings.alwaysTranslatePages);
       const excludedUrls = new Set(urls.disabled.map(this.normalizeUrl))
       const uniqUrls = translatingUrls.difference(excludedUrls);
-      this.settings.alwaysTranslatePages = [...uniqUrls];
+      this.settings.alwaysTranslatePages.replace(Array.from(uniqUrls));
     }
   }
 

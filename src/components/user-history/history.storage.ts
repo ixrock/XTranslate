@@ -231,7 +231,7 @@ export function exportHistory(format: "json" | "csv", items: IHistoryItem[]) {
     items.forEach(item => {
       csvRows.push([
         new Date(item.date).toLocaleString(),
-        getTranslator(item.vendor).title,
+        getTranslator(item.vendor)?.title ?? item.vendor,
         item.from + "-" + item.to,
         item.text,
         item.translation,

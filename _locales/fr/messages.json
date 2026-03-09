@@ -594,7 +594,19 @@
     "message": "La limite a été atteinte, pages autorisées par jour : { $limit }."
   },
   "pro_required_full_page_limits_reached_text2": {
-    "message": "Passez à PRO pour des traductions de pages complètes illimitées et plus de fonctionnalités. Réinitialisation dans { $timeRange }."
+    "message": "Passez à PRO pour profiter de traductions illimitées de pages complètes et de plus de fonctionnalités."
+  },
+  "pro_required_limits_reached": {
+    "message": "La limite quotidienne du compte gratuit a été atteinte."
+  },
+  "pro_required_subscription": {
+    "message": "Veuillez {$link = vous abonner à PRO} pour débloquer tout le potentiel du traducteur et accomplir vos tâches plus rapidement !"
+  },
+  "pro_subscription_refresh": {
+    "message": "Actualiser l'abonnement"
+  },
+  "pro_required_reset_limits_in": {
+    "message": "Réinitialisation dans { $timeRange }."
   },
   "pro_user_welcome_back": {
     "message": "Bon retour, { $username } !"

@@ -591,7 +591,19 @@
     "message": "Dostignut je limit, dozvoljene stranice po danu: { $limit }."
   },
   "pro_required_full_page_limits_reached_text2": {
-    "message": "Nadogradite na PRO za neograničene prevode celih stranica i više funkcija. Reset za { $timeRange }."
+    "message": "Nadogradite na PRO za neograničeno prevođenje celih stranica i više funkcija."
+  },
+  "pro_required_limits_reached": {
+    "message": "Dostignut je dnevni limit besplatnog naloga."
+  },
+  "pro_required_subscription": {
+    "message": "Molimo {$link = pretplatite se na PRO} da otključate puni potencijal prevodioca i završavate stvari brže!"
+  },
+  "pro_subscription_refresh": {
+    "message": "Osveži pretplatu"
+  },
+  "pro_required_reset_limits_in": {
+    "message": "Reset za { $timeRange }."
   },
   "pro_user_welcome_back": {
     "message": "Dobro došli nazad, { $username }!"

@@ -594,7 +594,19 @@
     "message": "已達到限制，每天允許的頁面數：{ $limit }。"
   },
   "pro_required_full_page_limits_reached_text2": {
-    "message": "升級到 PRO 以獲得無限整頁翻譯和更多功能。將於 { $timeRange } 後重設。"
+    "message": "升級到 PRO，享受無限量整頁翻譯和更多功能。"
+  },
+  "pro_required_limits_reached": {
+    "message": "免費帳戶的每日額度已用完。"
+  },
+  "pro_required_subscription": {
+    "message": "請{$link = 訂閱 PRO}，解鎖翻譯器的全部潛力，更快完成工作！"
+  },
+  "pro_subscription_refresh": {
+    "message": "重新整理訂閱"
+  },
+  "pro_required_reset_limits_in": {
+    "message": "將於 { $timeRange } 後重設。"
   },
   "pro_user_welcome_back": {
     "message": "歡迎回來，{ $username }！"

@@ -591,7 +591,19 @@
     "message": "Limit bol dosiahnutý, povolené stránky za deň: { $limit }."
   },
   "pro_required_full_page_limits_reached_text2": {
-    "message": "Prejdite na PRO pre neobmedzené preklady celých stránok a viac funkcií. Reset o { $timeRange }."
+    "message": "Prejdite na PRO a získajte neobmedzené preklady celých stránok a viac funkcií."
+  },
+  "pro_required_limits_reached": {
+    "message": "Denný limit bezplatného účtu bol dosiahnutý."
+  },
+  "pro_required_subscription": {
+    "message": "Prosím, {$link = predplaťte si PRO}, aby ste odomkli plný potenciál prekladača a vybavili veci rýchlejšie!"
+  },
+  "pro_subscription_refresh": {
+    "message": "Obnoviť predplatné"
+  },
+  "pro_required_reset_limits_in": {
+    "message": "Reset o { $timeRange }."
   },
   "pro_user_welcome_back": {
     "message": "Vitajte späť, { $username }!"

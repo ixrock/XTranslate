@@ -594,7 +594,19 @@
     "message": "تم الوصول إلى الحد، الصفحات المسموح بها يوميًا: { $limit }."
   },
   "pro_required_full_page_limits_reached_text2": {
-    "message": "قم بالترقية إلى PRO للحصول على ترجمات كاملة غير محدودة للصفحات والمزيد من الميزات. إعادة التعيين خلال { $timeRange }."
+    "message": "قم بالترقية إلى PRO للحصول على ترجمات غير محدودة للصفحات كاملة والمزيد من الميزات."
+  },
+  "pro_required_limits_reached": {
+    "message": "تم الوصول إلى الحدود اليومية للحساب المجاني."
+  },
+  "pro_required_subscription": {
+    "message": "يرجى {$link = الاشتراك في PRO} لفتح الإمكانات الكاملة للمترجم وإنجاز الأمور بشكل أسرع!"
+  },
+  "pro_subscription_refresh": {
+    "message": "تحديث الاشتراك"
+  },
+  "pro_required_reset_limits_in": {
+    "message": "إعادة التعيين خلال { $timeRange }."
   },
   "pro_user_welcome_back": {
     "message": "مرحباً بعودتك، { $username }!"
