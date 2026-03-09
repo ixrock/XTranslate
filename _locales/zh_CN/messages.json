@@ -549,7 +549,19 @@
     "message": "已达到限制，每天允许的页面数：{ $limit }。"
   },
   "pro_required_full_page_limits_reached_text2": {
-    "message": "升级到 PRO 可获得无限整页翻译和更多功能。将在 { $timeRange } 后重置。"
+    "message": "升级到 PRO，享受不限量整页翻译和更多功能。"
+  },
+  "pro_required_limits_reached": {
+    "message": "免费账户的每日限额已用完。"
+  },
+  "pro_required_subscription": {
+    "message": "请{$link = 订阅 PRO}，解锁翻译器的全部潜力，更快完成工作！"
+  },
+  "pro_subscription_refresh": {
+    "message": "刷新订阅"
+  },
+  "pro_required_reset_limits_in": {
+    "message": "将在 { $timeRange } 后重置。"
   },
   "pro_user_welcome_back": {
     "message": "欢迎回来，{ $username }！"

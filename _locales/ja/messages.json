@@ -549,7 +549,19 @@
     "message": "上限に達しました。1日に許可されるページ数: { $limit }。"
   },
   "pro_required_full_page_limits_reached_text2": {
-    "message": "無制限のページ全体翻訳とさらに多くの機能を利用するには、PROにアップグレードしてください。{ $timeRange } でリセットされます。"
+    "message": "無制限のページ全体翻訳とさらに多くの機能を利用するには、PROにアップグレードしてください。"
+  },
+  "pro_required_limits_reached": {
+    "message": "無料アカウントの1日の上限に達しました。"
+  },
+  "pro_required_subscription": {
+    "message": "翻訳ツールの可能性を最大限に引き出し、作業をより速く進めるには、{$link = PROに登録してください}。"
+  },
+  "pro_subscription_refresh": {
+    "message": "サブスクリプションを更新"
+  },
+  "pro_required_reset_limits_in": {
+    "message": "{ $timeRange } でリセットされます。"
   },
   "pro_user_welcome_back": {
     "message": "お帰りなさい、{ $username } さん！"

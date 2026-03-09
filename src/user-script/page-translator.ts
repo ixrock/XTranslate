@@ -34,8 +34,6 @@ export const pageTranslationStorage = createStorage("page_translations", {
   area: "sync",
   saveDefaultWhenEmpty: true,
   defaultValue: {
-    lastTime: Date.now(),
-    lastVisitedUrls: [] as string[], // <= PageTranslator.LIMIT_PAGES_FOR_FREE_ACCOUNT_PER_DAY
     contextMenuMode: FullPageContextMenuMode.ALL_PROVIDERS,
     provider: "google" as ProviderCodeName,
     langFrom: "auto",
@@ -54,7 +52,6 @@ export class PageTranslator {
   static readonly RX_LETTER = /\p{L}/u;
   static readonly SKIP_TAGS = ["SCRIPT", "STYLE", "NOSCRIPT", "CODE"];
 
-  static readonly LIMIT_PAGES_FOR_FREE_ACCOUNT_PER_DAY = 10;
   static readonly DEFAULT_API_LIMIT_CHARS_PER_REQUEST = 5000;
   static readonly FULL_PAGE_API_LIMIT_CHARS_PER_REQUEST: Partial<Record<ProviderCodeName, number>> = {
     [ProviderCodeName.GOOGLE]: 5000,

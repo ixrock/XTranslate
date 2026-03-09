@@ -552,7 +552,19 @@
     "message": "Sınıra ulaşıldı, günlük izin verilen sayfa: { $limit }."
   },
   "pro_required_full_page_limits_reached_text2": {
-    "message": "Sınırsız tam sayfa çevirileri ve daha fazla özellik için PRO'ya yükseltin. { $timeRange } içinde sıfırlanır."
+    "message": "Sınırsız tam sayfa çeviri ve daha fazla özellik için PRO'ya yükseltin."
+  },
+  "pro_required_limits_reached": {
+    "message": "Ücretsiz hesabın günlük limitine ulaşıldı."
+  },
+  "pro_required_subscription": {
+    "message": "Çevirmenin tüm potansiyelini açmak ve işleri daha hızlı halletmek için lütfen {$link = PRO'ya abone olun}!"
+  },
+  "pro_subscription_refresh": {
+    "message": "Aboneliği yenile"
+  },
+  "pro_required_reset_limits_in": {
+    "message": "{ $timeRange } içinde sıfırlanır."
   },
   "pro_user_welcome_back": {
     "message": "Tekrar hoş geldiniz, { $username }!"

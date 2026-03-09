@@ -549,7 +549,19 @@
     "message": "Đã đạt giới hạn, số trang được phép mỗi ngày: { $limit }."
   },
   "pro_required_full_page_limits_reached_text2": {
-    "message": "Nâng cấp lên PRO để có bản dịch toàn trang không giới hạn và nhiều tính năng hơn. Đặt lại sau { $timeRange }."
+    "message": "Nâng cấp lên PRO để có bản dịch toàn trang không giới hạn và nhiều tính năng hơn."
+  },
+  "pro_required_limits_reached": {
+    "message": "Đã đạt đến giới hạn hằng ngày của tài khoản miễn phí."
+  },
+  "pro_required_subscription": {
+    "message": "Vui lòng {$link = đăng ký PRO} để mở khóa toàn bộ tiềm năng của trình dịch và hoàn thành công việc nhanh hơn!"
+  },
+  "pro_subscription_refresh": {
+    "message": "Làm mới gói đăng ký"
+  },
+  "pro_required_reset_limits_in": {
+    "message": "Đặt lại sau { $timeRange }."
   },
   "pro_user_welcome_back": {
     "message": "Chào mừng trở lại, { $username }!"

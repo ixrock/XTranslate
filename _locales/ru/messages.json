@@ -552,7 +552,19 @@
     "message": "Лимит достигнут, допустимое количество страниц в день: { $limit }."
   },
   "pro_required_full_page_limits_reached_text2": {
-    "message": "Обновитесь до PRO для безлимитного перевода целых страниц и дополнительных функций. Сброс через { $timeRange }."
+    "message": "Перейдите на PRO для безлимитного перевода целых страниц и дополнительных функций."
+  },
+  "pro_required_limits_reached": {
+    "message": "Дневной лимит для бесплатного аккаунта достигнут."
+  },
+  "pro_required_subscription": {
+    "message": "Пожалуйста, {$link = оформите подписку на PRO}, чтобы раскрыть весь потенциал переводчика и выполнять задачи быстрее!"
+  },
+  "pro_subscription_refresh": {
+    "message": "Обновить подписку"
+  },
+  "pro_required_reset_limits_in": {
+    "message": "Сброс через { $timeRange }."
   },
   "pro_user_welcome_back": {
     "message": "Добро пожаловать, { $username }!"

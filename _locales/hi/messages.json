@@ -549,7 +549,19 @@
     "message": "सीमा पूरी हो गई है, प्रति दिन अनुमत पृष्ठ: { $limit }."
   },
   "pro_required_full_page_limits_reached_text2": {
-    "message": "असीमित पूरे-पृष्ठ अनुवाद और अधिक सुविधाओं के लिए PRO में अपग्रेड करें। { $timeRange } में रीसेट होगा।"
+    "message": "असीमित पूर्ण-पृष्ठ अनुवाद और अधिक सुविधाओं के लिए PRO में अपग्रेड करें।"
+  },
+  "pro_required_limits_reached": {
+    "message": "मुफ्त खाते की दैनिक सीमा पूरी हो गई है।"
+  },
+  "pro_required_subscription": {
+    "message": "अनुवादक की पूरी क्षमता अनलॉक करने और काम तेजी से पूरा करने के लिए कृपया {$link = PRO की सदस्यता लें}!"
+  },
+  "pro_subscription_refresh": {
+    "message": "सदस्यता ताज़ा करें"
+  },
+  "pro_required_reset_limits_in": {
+    "message": "{ $timeRange } में रीसेट होगा।"
   },
   "pro_user_welcome_back": {
     "message": "वापसी पर स्वागत है, { $username }!"

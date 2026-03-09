@@ -549,7 +549,19 @@
     "message": "Batas telah tercapai, halaman yang diizinkan per hari: { $limit }."
   },
   "pro_required_full_page_limits_reached_text2": {
-    "message": "Tingkatkan ke PRO untuk terjemahan satu halaman penuh tanpa batas dan lebih banyak fitur. Direset dalam { $timeRange }."
+    "message": "Tingkatkan ke PRO untuk terjemahan satu halaman penuh tanpa batas dan lebih banyak fitur."
+  },
+  "pro_required_limits_reached": {
+    "message": "Batas harian akun gratis telah tercapai."
+  },
+  "pro_required_subscription": {
+    "message": "Silakan {$link = berlangganan PRO} untuk membuka potensi penuh penerjemah dan menyelesaikan pekerjaan lebih cepat!"
+  },
+  "pro_subscription_refresh": {
+    "message": "Segarkan langganan"
+  },
+  "pro_required_reset_limits_in": {
+    "message": "Direset dalam { $timeRange }."
   },
   "pro_user_welcome_back": {
     "message": "Selamat datang kembali, { $username }!"

@@ -549,7 +549,19 @@
     "message": "সীমা পৌঁছে গেছে, প্রতিদিন অনুমোদিত পৃষ্ঠা: { $limit }।"
   },
   "pro_required_full_page_limits_reached_text2": {
-    "message": "অসীম পূর্ণ-পৃষ্ঠা অনুবাদ এবং আরও ফিচারের জন্য PRO-তে আপগ্রেড করুন। { $timeRange } পরে রিসেট হবে।"
+    "message": "সীমাহীন পূর্ণ-পৃষ্ঠা অনুবাদ ও আরও ফিচার পেতে PRO-তে আপগ্রেড করুন।"
+  },
+  "pro_required_limits_reached": {
+    "message": "ফ্রি অ্যাকাউন্টের দৈনিক সীমা পৌঁছে গেছে।"
+  },
+  "pro_required_subscription": {
+    "message": "অনুবাদকের পূর্ণ সক্ষমতা আনলক করতে এবং আরও দ্রুত কাজ শেষ করতে অনুগ্রহ করে {$link = PRO-তে সাবস্ক্রাইব করুন}!"
+  },
+  "pro_subscription_refresh": {
+    "message": "সাবস্ক্রিপশন রিফ্রেশ করুন"
+  },
+  "pro_required_reset_limits_in": {
+    "message": "{ $timeRange } পরে রিসেট হবে।"
   },
   "pro_user_welcome_back": {
     "message": "স্বাগতম, { $username }!"

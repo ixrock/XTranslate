@@ -549,7 +549,19 @@
     "message": "Das Limit wurde erreicht, erlaubte Seiten pro Tag: { $limit }."
   },
   "pro_required_full_page_limits_reached_text2": {
-    "message": "Upgrade auf PRO für unbegrenzte Vollseitenübersetzungen und mehr Funktionen. Zurücksetzung in { $timeRange }."
+    "message": "Upgrade auf PRO für unbegrenzte Ganzseitenübersetzungen und mehr Funktionen."
+  },
+  "pro_required_limits_reached": {
+    "message": "Das tägliche Limit des kostenlosen Kontos wurde erreicht."
+  },
+  "pro_required_subscription": {
+    "message": "Bitte {$link = PRO abonnieren}, um das volle Potenzial des Übersetzers freizuschalten und Dinge schneller zu erledigen!"
+  },
+  "pro_subscription_refresh": {
+    "message": "Abonnement aktualisieren"
+  },
+  "pro_required_reset_limits_in": {
+    "message": "Zurücksetzung in { $timeRange }."
   },
   "pro_user_welcome_back": {
     "message": "Willkommen zurück, { $username }!"

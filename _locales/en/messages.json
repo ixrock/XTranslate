@@ -555,7 +555,19 @@
     "message": "Limit has been reached, allowed pages per day: { $limit }."
   },
   "pro_required_full_page_limits_reached_text2": {
-    "message": "Upgrade to PRO for unlimited full-page translations and more features. Reset in { $timeRange }."
+    "message": "Upgrade to PRO for unlimited full-page translations and more features."
+  },
+  "pro_required_limits_reached": {
+    "message": "Free account daily limits has been reached."
+  },
+  "pro_required_subscription": {
+    "message": "Please {$link = subscribe to PRO} to unlock full translator's potential and get things done faster!"
+  },
+  "pro_subscription_refresh": {
+    "message": "Refresh subscription"
+  },
+  "pro_required_reset_limits_in": {
+    "message": "Reset in { $timeRange }."
   },
   "pro_user_welcome_back": {
     "message": "Welcome back, { $username }!"
