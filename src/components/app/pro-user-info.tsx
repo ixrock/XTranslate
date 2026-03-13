@@ -1,7 +1,7 @@
 import "./pro-user-info.scss";
 import React from "react";
 import { observer } from "mobx-react";
-import { formatTime } from "@/utils";
+import { formatTime, cssNames } from "@/utils";
 import { Icon } from "../icon";
 import { formatNumber, getIntlLocale, getMessage } from "@/i18n";
 import { Tooltip } from "@/components/tooltip";
@@ -19,9 +19,10 @@ export function ProUserInfoRaw() {
     remainSecondsTTSRoughly,
     pricePerMonth,
     apiProvider,
+    isProExpired,
   } = userStore;
 
-  if (isProActive) {
+  if (isProActive || isProExpired) {
     const expirationDate = new Date(subscription.periodEnd).toLocaleString(getIntlLocale());
 
     const subscriptionActiveTooltip = (
@@ -73,9 +74,13 @@ export function ProUserInfoRaw() {
             following: true,
             children: subscriptionInfoTooltip,
           }}/>
-          <div className="pro-status">
+          <div>
             {getMessage("pro_user_status", {
-              status: <b>{getMessage(`pro_user_status_${subscription.status}`)}</b>
+              status: (
+                <b className={cssNames("pro-status", { active: isProActive, expired: isProExpired })}>
+                  {getMessage(`pro_user_status_${subscription.status}`)}
+                </b>
+              )
             })}
           </div>
         </div>

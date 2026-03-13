@@ -545,6 +545,24 @@
   "pro_required_confirm_goto_subscribe": {
     "message": "Esta opção requer subscrição PRO, devemos ir para a página de subscrição?"
   },
+  "pro_required_full_page_limits_reached_text1": {
+    "message": "O limite foi atingido, páginas permitidas por dia: { $limit }."
+  },
+  "pro_required_full_page_limits_reached_text2": {
+    "message": "Atualize para PRO para ter traduções ilimitadas de páginas completas e mais funcionalidades."
+  },
+  "pro_required_limits_reached": {
+    "message": "O limite diário da conta gratuita foi atingido."
+  },
+  "pro_required_subscription": {
+    "message": "Por favor, {$link = subscrever o PRO} para desbloquear todo o potencial do tradutor e fazer as coisas mais depressa!"
+  },
+  "pro_subscription_refresh": {
+    "message": "Atualizar subscrição"
+  },
+  "pro_required_reset_limits_in": {
+    "message": "Reinicia em { $timeRange }."
+  },
   "pro_user_welcome_back": {
     "message": "Bem-vindo de volta, { $username }!"
   },
@@ -625,5 +643,8 @@
   },
   "show_in_context_menu_mode_active_provider": {
     "message": "Apenas o fornecedor ativo"
+  },
+  "translate_page_by_hotkey": {
+    "message": "Traduzir a página inteira quando eu pressionar a tecla de atalho"
   }
 }

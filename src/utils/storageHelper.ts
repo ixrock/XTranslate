@@ -2,6 +2,7 @@
 
 import { action, IReactionDisposer, makeObservable, observable, reaction, toJS, when, IReactionOptions } from "mobx";
 import { createLogger } from "./createLogger";
+import { Disposer } from "@/utils/disposer";
 import noop from "lodash/noop";
 import isPlainObject from "lodash/isPlainObject";
 import isEqual from "lodash/isEqual";
@@ -10,12 +11,13 @@ import merge from "lodash/merge";
 
 export interface StorageHelperOptions<T> {
   defaultValue?: T;
-  autoLoad?: boolean; // preload data from persistent storage when `opts.storageProvider`, default: true
+  autoLoad?: boolean; // preload data from persistent storage when `opts.storageProvider` (default: true)
   migrations?: StorageMigrationCallback<T>[]; // handle model upgrades during app's lifetime
   storageAdapter?: StorageAdapter<T>; // handle saving and loading state from external storage
   autoSaveOptions?: IReactionOptions<T, boolean>;
   deepMergeOnLoad?: boolean; // deep merge with `defaultValue`, set to `false` for dynamic fields (e.g. hotkey-object), default: true
   saveDefaultWhenEmpty?: boolean; // save `opts.defaultValue` to remote storage if empty on initialization (default: false)
+  onUnload?: Disposer; // clean up event-listeners, background-sync or other side-effects when storage is no longer needed
 }
 
 export type StorageMigrationCallback<T> = (data: T | any) => T | void;
@@ -52,12 +54,10 @@ export class StorageHelper<T> {
     makeObservable(this);
 
     // setup default options
-    this.options = {
-      autoLoad: true,
-      deepMergeOnLoad: true,
-      saveDefaultWhenEmpty: false,
-      ...options
-    };
+    this.options.autoLoad ??= true;
+    this.options.deepMergeOnLoad ??= true;
+    this.options.saveDefaultWhenEmpty ??= false;
+
     this.#data.set(this.defaultValue);
 
     if (this.options.autoLoad) {
@@ -128,6 +128,13 @@ export class StorageHelper<T> {
   }
 
   @action.bound
+  public unload() {
+    this.unbindAutoSaveToExternalStorage?.();
+    this.reset();
+    this.options.onUnload?.();
+  }
+
+  @action.bound
   protected async saveToExternalStorage(state: T) {
     try {
       this.logger.info(`saving state to external storage"`, {
@@ -194,8 +201,10 @@ export class StorageHelper<T> {
     }
   }
 
-  @action
+  @action.bound
   reset(opts?: { silent?: boolean }) {
+    this.loaded = false;
+    this.initialized = false;
     this.set(this.defaultValue, opts);
   }
 

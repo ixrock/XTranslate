@@ -107,9 +107,25 @@
       }
 
       .wordMeanings {
+        display: flex;
+        flex-direction: column;
         padding-left: var(--theme-spacing);
+        gap: var(--theme-spacing-half);
 
-        .word[title] {
+        .dictTranslation {
+          color: inherit;
+          > * {
+            display: table-row;
+          }
+        }
+        .dictWord {
+          opacity: .75;
+          font-style: italic;
+        }
+        .dictExamples {
+          &::before {
+            content: " * ";
+          }
           cursor: help;
         }
       }

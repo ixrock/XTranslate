@@ -18,16 +18,14 @@ export class SettingsPopup extends React.Component {
   }
 
   onSaveHotkey = (evt: React.KeyboardEvent) => {
-    const nativeEvent = evt.nativeEvent;
-    const hotkey = parseHotkey(nativeEvent);
-    if (hotkey.code) {
-      popupHotkey.set({ hotkey: getHotkey(nativeEvent) })
+    if (parseHotkey(evt).code) {
+      popupHotkey.set({ hotkey: getHotkey(evt) })
     }
   }
 
   render() {
     const settings = settingsStore.data;
-    const hotKey = parseHotkey(popupHotkey.get().hotkey);
+    const parsePopupHotkey = parseHotkey(popupHotkey.get().hotkey);
 
     return (
       <div className={styles.SettingsPopup}>
@@ -79,17 +77,17 @@ export class SettingsPopup extends React.Component {
         <div className="flex column gaps">
           <Checkbox
             className="box grow"
-            label={getMessage("display_popup_on_hotkey") + ":"}
+            label={getMessage("display_popup_on_hotkey")}
             checked={settings.showPopupOnHotkey}
             onChange={v => settings.showPopupOnHotkey = v}
-            tooltip={hotKey.title}
+            tooltip={parsePopupHotkey.title}
           />
           <label className="flex gaps align-center">
             <Icon material="keyboard"/>
             <Input
               readOnly
               className={`${styles.hotkey} box grow`}
-              value={hotKey.value}
+              value={parsePopupHotkey.value}
               onKeyDown={prevDefault(this.onSaveHotkey)}
             />
           </label>

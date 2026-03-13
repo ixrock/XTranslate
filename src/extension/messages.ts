@@ -6,10 +6,8 @@ import type { GoogleMetricEvents } from "../background/metrics.bgc";
 export enum MessageType {
   PROXY_REQUEST = "PROXY_REQUEST",
   HTTP_PROXY_STREAM = "HTTP_PROXY_STREAM",
-  TRANSLATE_ACTIVE_PAGE = "TRANSLATE_ACTIVE_PAGE",
   TRANSLATE_FULL_PAGE = "TRANSLATE_FULL_PAGE",
-  TRANSLATE_TEXT_WITH_AI = "TRANSLATE_TEXT_WITH_AI",
-  GET_SELECTED_TEXT_ACTIVE_PAGE = "GET_SELECTED_TEXT_ACTIVE_PAGE",
+  TRANSLATE_AI_TEXT = "TRANSLATE_AI_TEXT",
   GET_SELECTED_TEXT = "GET_SELECTED_TEXT",
   SAVE_TO_HISTORY = "SAVE_TO_HISTORY",
   SAVE_TO_FAVORITES = "SAVE_TO_FAVORITES",
@@ -20,7 +18,7 @@ export enum MessageType {
   STORAGE_DATA_SYNC = "SYNC_STORAGE",
   INJECT_CONTENT_SCRIPT = "INJECT_CONTENT_SCRIPT",
   GA_METRICS_SEND_EVENT = "GA_METRICS_SEND_EVENT",
-  PRO_USER_SUB_UPDATE_REQ = "PRO_USER_SUB_UPDATE_REQ",
+  USER_SUBSCRIPTION_REFRESH = "USER_SUBSCRIPTION_REFRESH",
 }
 
 export interface Message<Payload extends {} | []> {
@@ -89,10 +87,11 @@ export interface TranslatePayload extends TranslateParams {
   provider: ProviderCodeName;
 }
 
-export type FullPageTranslationAction = "toggle" | "start" | "stop";
+export type FullPageTranslateContextMenuAction = "start" | "stop" | "toggle";
 
 export interface TranslateFullPagePayload {
-  action?: FullPageTranslationAction;
+  tabId?: number;
+  action?: FullPageTranslateContextMenuAction;
   provider?: ProviderCodeName;
 }
 

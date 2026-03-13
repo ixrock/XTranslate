@@ -1,5 +1,5 @@
 import AILanguagesList from "./open-ai.json"
-import { getTranslator, ITranslationError, ITranslationResult, OpenAIModelTTSVoice, ProviderCodeName, TranslateParams, Translator } from "./index";
+import { getTranslator, ITranslationDictionary, ITranslationError, ITranslationResult, OpenAIModelTTSVoice, ProviderCodeName, TranslateParams, Translator } from "./index";
 import { MessageType, ProxyResponseType, ProxyStreamResponsePayload } from "@/extension";
 import { getMessage } from "@/i18n";
 import { websiteURL } from "@/config";
@@ -74,11 +74,13 @@ export class XTranslatePro extends Translator {
 
   async translate(params: TranslateParams): Promise<ITranslationResult> {
     try {
-      const { translation, transcription, detectedLang } = await this.translateReq(params);
+      const { translation, transcription, detectedLang, spellCorrection, dictionary } = await this.translateReq(params);
       return {
         langDetected: detectedLang,
         translation: translation.join("\n"),
-        transcription: transcription
+        transcription: transcription,
+        spellCorrection,
+        dictionary,
       };
     } catch (err) {
       this.handleApiError(err);
@@ -617,7 +619,7 @@ export class XTranslatePro extends Translator {
     });
   }
 
-  async loadSubscription(): Promise<XTranslateProSubscription> {
+  async loadSubscription(): Promise<XTranslateProSubscriptionResponse> {
     return this.request({
       url: `${this.apiUrl}/user/plan`,
       requestInit: { credentials: "include" },
@@ -646,6 +648,8 @@ export interface XTranslateProTranslateOutput {
   detectedLang: string;
   translation: string[];
   transcription?: string;
+  spellCorrection?: string;
+  dictionary?: ITranslationDictionary[];
   tokensTotalUsed: number;
 }
 
@@ -680,6 +684,10 @@ export interface XTranslateProPlan {
 
 export type XTranslateProPlanType = "FREE_PLAN" | "MONTHLY" | "YEARLY";
 export type XTranslateProStatus = "PAID" | "FAILED" | "REFUNDED" | "CANCELED";
+
+export interface XTranslateProSubscriptionResponse extends XTranslateProSubscription {
+  user?: XTranslateProUser;
+}
 
 export interface XTranslateProSubscription {
   status: 'active' | 'inactive';

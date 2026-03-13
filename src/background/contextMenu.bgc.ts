@@ -2,19 +2,19 @@
 
 import { autorun } from "mobx";
 import { getManifest, TranslateFullPagePayload } from "../extension";
-import { FullPageContextMenuMode, settingsStorage } from "../components/settings/settings.storage";
 import { activeTabStorage } from "./tabs.bgc";
 import { getTranslator, getTranslators, ProviderCodeName } from "../providers";
 import { getMessage, i18nInit } from "../i18n";
 import { translateActivePageAction } from "./translate-page.bgc";
+import { FullPageContextMenuMode, pageTranslationStorage } from "@/user-script/page-translator";
 
 export async function initContextMenu() {
   const { name: appName } = getManifest();
   const menuPrefix = `${appName}_menu_`;
   const contextMenuActionMap = new Map<string, TranslateFullPagePayload>();
 
-  await settingsStorage.load();
   await activeTabStorage.load();
+  await pageTranslationStorage.load();
   await i18nInit();
 
   const onContextMenuClicked = (data: chrome.contextMenus.OnClickData, tab?: chrome.tabs.Tab) => {
@@ -22,16 +22,14 @@ export async function initContextMenu() {
     const actionPayload = contextMenuActionMap.get(menuItemId);
     if (!actionPayload) return;
 
-    return translateActivePageAction({ tabId: tab?.id, ...actionPayload });
+    return translateActivePageAction(actionPayload);
   };
 
   chrome.contextMenus.onClicked.removeListener(onContextMenuClicked);
   chrome.contextMenus.onClicked.addListener(onContextMenuClicked);
 
   return autorun(() => {
-    const { fullPageTranslation } = settingsStorage.get();
-    const { provider, langTo, alwaysTranslatePages } = fullPageTranslation;
-    const menuMode = fullPageTranslation.contextMenuMode;
+    const { provider, langTo, langFrom, alwaysTranslatePages, contextMenuMode: menuMode } = pageTranslationStorage.get();
 
     if (menuMode === FullPageContextMenuMode.OFF) {
       contextMenuActionMap.clear();
@@ -52,7 +50,6 @@ export async function initContextMenu() {
     if (menuMode === FullPageContextMenuMode.ACTIVE_PROVIDER) {
       const startTranslatePageTitle = getStartPageTranslationTitle(provider, langTo);
 
-      contextMenuActionMap.set(appName, { action: "toggle" });
       chrome.contextMenus.create({
         id: appName,
         contexts: [chrome.contextMenus.ContextType.ALL],
@@ -67,7 +64,7 @@ export async function initContextMenu() {
 
     providers.forEach((translator) => {
       const menuId = `${menuPrefix}_${translator.name}`;
-      const { langTo: supportedLangTo } = translator.getSupportedLanguages(fullPageTranslation);
+      const { langTo: supportedLangTo } = translator.getSupportedLanguages({ langFrom, langTo });
       const isCurrentProvider = translator.name === provider;
       const shouldRenderStopAction = Boolean(autoTranslateEnabled && isCurrentProvider);
 

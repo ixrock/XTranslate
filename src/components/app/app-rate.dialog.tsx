@@ -19,8 +19,8 @@ export class AppRateDialog extends React.Component {
   get isOpen() {
     const isRated = rateButtonClicked.get();
     const delayLastTime = rateLastTimestamp.get();
-    const delayDuration = 1000 * 60 * 60 * 24 * 30 * 2 /*months*/;
-    const isHidden = isRated || (delayLastTime + delayDuration > Date.now());
+    const remindAfterTimeMs = 1000 * 60 * 60 * 24 * 30 * 2 /*every 2 months*/;
+    const isHidden = isRated || (delayLastTime + remindAfterTimeMs > Date.now());
     return !isHidden;
   }
 

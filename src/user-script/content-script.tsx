@@ -2,7 +2,7 @@
 
 import "../setup";
 import "./content-script.scss"
-import React from "react";
+import React, { ReactNode } from "react";
 import { createRoot, Root } from "react-dom/client";
 import { action, computed, makeObservable, observable, toJS } from "mobx";
 import { observer } from "mobx-react";
@@ -16,15 +16,16 @@ import { autoBind, disposer, getHotkey, strLengthCodePoints } from "../utils";
 import { getManifest, getURL, isExtensionContextAlive, MessageType, onMessage, ProxyResponseType, TranslateFullPagePayload, TranslatePayload } from "../extension";
 import { proxyRequest } from "../background/httpProxy.bgc";
 import { sendMetric } from "../background/metrics.bgc";
-import { popupHotkey, popupSkipInjectionUrls, settingsStore } from "../components/settings/settings.storage";
+import { fullPageTranslateHotkey, popupHotkey, popupSkipInjectionUrls, settingsStore } from "../components/settings/settings.storage";
 import { getNextTranslator, getTranslator, getXTranslatePro, ITranslationError, ITranslationResult, ProviderCodeName } from "../providers";
 import { XTranslateIcon } from "./xtranslate-icon";
 import { XTranslateTooltip } from "./xtranslate-tooltip";
-import { PageTranslator } from "./page-translator";
+import { pageTranslationStorage, PageTranslator } from "./page-translator";
 import { Popup } from "../components/popup";
 import { Icon } from "@/components/icon";
 import { getMessage } from "@/i18n";
-import { refreshUserSubscriptionAction } from "@/background/user.bgc";
+import { userSubscriptionRefreshAction } from "@/background/user.bgc";
+import { UserStore, userStore } from "@/pro";
 
 type DOMRectNormalized = Omit<Writeable<DOMRect>, "toJSON" | "x" | "y">;
 
@@ -40,7 +41,8 @@ export class ContentScript extends React.Component {
     await preloadAppData(
       this.preloadCss(),
       popupSkipInjectionUrls.load(),
-      refreshUserSubscriptionAction(),
+      pageTranslationStorage.load(),
+      userSubscriptionRefreshAction(),
     );
 
     // skip content-script injection for specific urls to avoid bugs, e.g. for cloudflare captcha iframe checks
@@ -97,7 +99,7 @@ export class ContentScript extends React.Component {
 
   @observable.ref lastParams: TranslatePayload; // last used translation payload
   @observable.ref translation: ITranslationResult;
-  @observable.ref error: ITranslationError;
+  @observable.ref error: Partial<ITranslationError & { failReason?: ReactNode }>;
   @observable.ref selectionRects: DOMRectNormalized[] = [];
   @observable summarized = "";
   @observable popupPosition: React.CSSProperties = {};
@@ -109,10 +111,7 @@ export class ContentScript extends React.Component {
 
   async componentDidMount() {
     this.bindEvents();
-
-    if (this.pageTranslator.isEnabled) {
-      this.startPageAutoTranslation();
-    }
+    void this.initPageAutoTranslation();
   }
 
   private bindEvents() {
@@ -139,7 +138,7 @@ export class ContentScript extends React.Component {
       function unbindDOMEvents() {
         abortCtrl.abort();
       },
-      onMessage(MessageType.TRANSLATE_FULL_PAGE, this.togglePageAutoTranslation),
+      onMessage(MessageType.TRANSLATE_FULL_PAGE, this.handlePageAutoTranslation),
       onMessage(MessageType.GET_SELECTED_TEXT, this.getSelectedTextAction),
     );
   }
@@ -218,14 +217,29 @@ export class ContentScript extends React.Component {
 
   @action
   async translate(params: Partial<TranslatePayload> = {}) {
+    const payload = this.lastParams = this.getPayloadParams(params);
+
     this.checkContextInvalidationError();
     this.hideIcon();
 
-    const payload = this.lastParams = this.getPayloadParams(params);
-
-    if (!this.translationConfirmationCheck(payload)) {
-      return;
+    if (userStore.dailyLimitsResetRequired) {
+      userStore.resetDailyLimits();
     }
+
+    // free-account daily limits reached guard-check
+    if (!userStore.isPopupTranslationAllowed) {
+      this.error = {
+        failReason: this.renderDailyLimitsError(),
+      };
+      void sendMetric("popup_daily_limit_reached", {
+        provider: payload.provider,
+        lang_from: payload.from,
+        lang_to: payload.to,
+      });
+      return this.refinePosition();
+    }
+
+    if (!this.translationConfirmationCheck(payload)) return;
 
     this.translation = null;
     this.error = null;
@@ -236,6 +250,7 @@ export class ContentScript extends React.Component {
       const translation = await getTranslator(payload.provider).translate(payload);
       if (isEqual(payload, this.lastParams)) {
         this.translation = translation;
+        userStore.data.popupTranslationsToday++;
       }
     } catch (err) {
       if (isEqual(payload, this.lastParams)) {
@@ -270,60 +285,98 @@ export class ContentScript extends React.Component {
     return selectedText || "";
   }
 
-  private setFullPageProvider(provider?: ProviderCodeName) {
-    if (!provider || this.pageTranslator.settings.provider === provider) {
-      return;
-    }
-
+  @action
+  private setFullPageProvider(provider: ProviderCodeName) {
     const translator = getTranslator(provider);
     if (!translator) return;
+
     const supportedLanguages = translator.getSupportedLanguages(this.pageTranslator.settings);
     this.pageTranslator.settings.provider = provider;
     this.pageTranslator.settings.langFrom = supportedLanguages.langFrom;
     this.pageTranslator.settings.langTo = supportedLanguages.langTo;
   }
 
-  private togglePageAutoTranslation(params: TranslateFullPagePayload = {}) {
-    const { action = "toggle", provider } = params;
-    const isEnabled = this.pageTranslator.isEnabled;
+  private async initPageAutoTranslation() {
+    const autoTranslationEnabled = this.pageTranslator.isEnabled;
 
-    if (action === "stop") {
-      if (isEnabled) {
-        this.stopPageAutoTranslation();
-      }
-      return;
-    }
-
-    if (action === "start") {
-      this.setFullPageProvider(provider);
-
-      if (!isEnabled) {
-        this.startPageAutoTranslation();
-      }
-      return;
-    }
-
-    if (provider && isEnabled) {
-      this.setFullPageProvider(provider);
-      return;
-    }
-
-    if (isEnabled) {
-      this.stopPageAutoTranslation();
-    } else {
-      this.setFullPageProvider(provider);
+    if (autoTranslationEnabled) {
+      await this.subscriptionRequirementCheck();
       this.startPageAutoTranslation();
+    }
+  }
+
+  private async handlePageAutoTranslation({ action, provider }: TranslateFullPagePayload = {}) {
+    const autoTranslationEnabled = this.pageTranslator.isEnabled;
+
+    if (provider) {
+      this.setFullPageProvider(provider);
+    }
+
+    const subscriptionRequired = await this.subscriptionRequirementCheck();
+    if (subscriptionRequired) {
+      userStore.showSubscribeDialog();
+      return;
+    }
+
+    switch (action) {
+    case "start":
+      if (autoTranslationEnabled) this.stopPageAutoTranslation();
+      this.startPageAutoTranslation();
+      break;
+
+    case "stop":
+      this.stopPageAutoTranslation();
+      break;
+
+    case "toggle":
+      if (autoTranslationEnabled) this.stopPageAutoTranslation();
+      else this.startPageAutoTranslation();
+      break;
+    }
+  }
+
+  private async subscriptionRequirementCheck(): Promise<boolean> {
+    const { provider } = this.pageTranslator.settings;
+    if (provider !== ProviderCodeName.XTRANSLATE_PRO) return;
+
+    await userSubscriptionRefreshAction({ force: true });
+
+    if (!userStore.isProActive) {
+      this.setFullPageProvider(ProviderCodeName.GOOGLE); // fallback to free provider
+      return true;
     }
   }
 
   @action
   private startPageAutoTranslation(pageUrl = document.URL) {
-    const { provider, langTo, langFrom } = this.pageTranslator.settings;
-    this.pageTranslator.startAutoTranslation();
-
-    if (ContentScript.isTopFrame) {
-      this.pageTranslator.setAutoTranslatingPages({ enabled: [pageUrl] });
+    if (!ContentScript.isTopFrame) {
+      return; // applicable only top window frames
     }
+
+    const { provider, langTo, langFrom } = this.pageTranslator.settings;
+
+    // check if daily limits reset is required (for free users)
+    if (userStore.dailyLimitsResetRequired) {
+      userStore.resetDailyLimits();
+    }
+
+    // prevent page-translation when limit reached
+    if (!userStore.isPageTranslationAllowed) {
+      this.showPageTranslationLimitsReachedDialog();
+      this.stopPageAutoTranslation(pageUrl);
+
+      void sendMetric("page_translations_limit_reached", {
+        provider: provider,
+        lang_from: langFrom,
+        lang_to: langTo,
+      });
+      return;
+    }
+
+    // start auto-translation for current page
+    this.pageTranslator.startAutoTranslation();
+    this.pageTranslator.setAutoTranslatingPages({ enabled: [pageUrl] });
+    userStore.data.pageTranslationsToday++;
 
     void sendMetric("translate_used", {
       source: "fullpage",
@@ -335,9 +388,26 @@ export class ContentScript extends React.Component {
 
   @action
   private stopPageAutoTranslation(pageUrl = document.URL) {
+    if (!ContentScript.isTopFrame) return;
+
     this.pageTranslator.setAutoTranslatingPages({ disabled: [pageUrl] });
     this.pageTranslator.stopAutoTranslation();
     this.setTooltipHTML(""); // reset
+  }
+
+  private showPageTranslationLimitsReachedDialog() {
+    const subscribe = window.confirm([
+      getMessage("pro_required_full_page_limits_reached_text1", {
+        limit: UserStore.LIMIT_PAGE_TRANSLATION_FREE_ACCOUNT_PER_DAY.toString(),
+      }),
+      getMessage("pro_required_full_page_limits_reached_text2"),
+      getMessage("pro_required_reset_limits_in", {
+        timeRange: userStore.timeRemainBeforeDailyReset,
+      }),
+    ].join("\n"));
+    if (subscribe) {
+      userStore.openSubscribePage();
+    }
   }
 
   speak() {
@@ -577,6 +647,8 @@ export class ContentScript extends React.Component {
 
   @action
   onKeyDown = (evt: KeyboardEvent) => {
+    const pressedHotkey = getHotkey(evt);
+
     if (!this.isPopupHidden) {
       switch (evt.code) {
       case "Escape":
@@ -596,16 +668,27 @@ export class ContentScript extends React.Component {
       }
     }
 
-    // handle text translation by hotkey
-    if (!settingsStore.data.showPopupOnHotkey) return;
-    const pressedHotkey = getHotkey(evt);
-    const userHotkey = toJS(popupHotkey.get().hotkey);
+    // get translation in <Popup/> by global hotkey (will be auto-taken from DOM's underlying element(s))
+    if (settingsStore.data.showPopupOnHotkey) {
+      const userHotkey = toJS(popupHotkey.get().hotkey);
 
-    if (isEqual(userHotkey, pressedHotkey) && this.isPopupHidden) {
-      evt.preventDefault();
-      this.isHotkeyActivated = true;
-      void sendMetric("translate_action", { trigger: "hotkey" });
-      this.translateFromTopElement();
+      if (isEqual(userHotkey, pressedHotkey) && this.isPopupHidden) {
+        evt.preventDefault();
+        this.isHotkeyActivated = true;
+        void sendMetric("translate_action", { trigger: "hotkey" });
+        this.translateFromTopElement();
+      }
+    }
+
+    // full-page translation toggle by hotkey
+    const { enabled } = fullPageTranslateHotkey.get();
+    if (enabled) {
+      const userHotkey = toJS(fullPageTranslateHotkey.get().hotkey);
+      if (isEqual(userHotkey, pressedHotkey)) {
+        evt.preventDefault();
+        evt.stopImmediatePropagation();
+        void this.handlePageAutoTranslation({ action: "toggle" });
+      }
     }
   }
 
@@ -671,6 +754,37 @@ export class ContentScript extends React.Component {
         {isLoading && <Icon svg="spinner"/>}
         {!isLoading && isIconVisible && <XTranslateIcon onMouseDown={onIconClick} title={translateIconTitle}/>}
       </div>
+    )
+  }
+
+  @action
+  private async refreshSubscriptionAndTranslate() {
+    await userSubscriptionRefreshAction({ force: true });
+
+    if (userStore.isProActive) {
+      void this.translate(); // re-try after refresh
+    }
+  }
+
+  renderDailyLimitsError() {
+    return (
+      <>
+        <p>
+          {getMessage("pro_required_limits_reached")}{" "}
+          {getMessage("pro_required_reset_limits_in", {
+            timeRange: <b>{userStore.timeRemainBeforeDailyReset}</b>,
+          })}
+        </p>
+        <p>
+          {getMessage("pro_required_subscription", {
+            link: v => <a href={getXTranslatePro().subscribePageUrl} target="_blank"><b>{v}</b></a>
+          })}
+        </p>
+        <a href="#" onClick={() => this.refreshSubscriptionAndTranslate()}>
+          <Icon material="sync"/>
+          <span>{getMessage("pro_subscription_refresh")}</span>
+        </a>
+      </>
     )
   }
 

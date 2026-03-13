@@ -10,6 +10,7 @@ import { settingsStore } from "../components/settings/settings.storage";
 import { proxyRequest } from "../background/httpProxy.bgc";
 import { getTranslationFromHistoryAction, saveToHistoryAction } from "../background/history.bgc";
 import { MetricSourceEnv, sendMetric } from "../background/metrics.bgc";
+import { pageTranslationStorage } from "@/user-script/page-translator";
 
 export interface ProviderLanguagesApiMap {
   from: { [locale: string]: string; auto?: string };
@@ -85,7 +86,7 @@ export abstract class Translator {
     instanceFunc: (params: TranslateParams) => Promise<string[]>,
     params: TranslateParams,
   ): Promise<string[]> {
-    const { langTo, langFrom, letterCaseAutoCorrection } = settingsStore.data.fullPageTranslation;
+    const { langTo, langFrom, letterCaseAutoCorrection } = pageTranslationStorage.get();
     const translations = await Reflect.apply(instanceFunc, this, [params]);
     let correctedTranslations: string[];
 

@@ -2,6 +2,7 @@
 import InstalledDetails = chrome.runtime.InstalledDetails;
 import { Message, MessageType } from './messages'
 import { sendMessageToTab } from "./tabs";
+import { delay } from "@/utils/delay";
 
 export function getManifest() {
   return chrome.runtime.getManifest() as chrome.runtime.ManifestV3;
@@ -45,13 +46,18 @@ export async function sendMessage<Request, Response = unknown, Error = unknown>(
   }
 }
 
-export async function sendMessageSafe<Payload, Response = unknown>(msg: Message<Payload>): Promise<Response> {
+// Retry message again if background service-worker were sleeping
+export async function sendMessageWithRetry<Payload, Response = unknown>(msg: Message<Payload>): Promise<Response> {
   try {
-    return await sendMessage(msg);
+    return await sendMessage<Payload, Response>(msg);
   } catch (err) {
-    if (isRuntimeConnectionFailedError(err)) return; // noop
-    throw err;
+    if (!isRuntimeConnectionFailedError(err)) {
+      throw err;
+    }
   }
+
+  await delay(120);
+  return await sendMessage<Payload, Response>(msg);
 }
 
 export interface OnMessageCallback<RequestPayload extends any[], Response> {

@@ -7,6 +7,7 @@ import { createLogger, LoggerColor } from "./utils/createLogger";
 import { settingsStore } from "./components/settings/settings.storage";
 import { themeStore } from "./components/theme-manager/theme.storage";
 import { favoritesStorage } from "./components/user-history/favorites.storage";
+import { pageTranslationStorage } from "@/user-script/page-translator";
 
 export async function preloadAppData(...extras: Promise<any>[]) {
   const logger = createLogger({ systemPrefix: `[PRELOAD]`, prefixColor: LoggerColor.INFO_SYSTEM });
@@ -19,6 +20,7 @@ export async function preloadAppData(...extras: Promise<any>[]) {
       settingsStore.load(),
       themeStore.load(),
       favoritesStorage.load(),
+      pageTranslationStorage.load(),
       ...extras,
     ]);
     loadingTimer.stop();

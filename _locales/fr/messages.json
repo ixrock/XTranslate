@@ -545,6 +545,24 @@
   "pro_required_confirm_goto_subscribe": {
     "message": "Cette option nécessite un abonnement PRO, devons-nous aller à la page d'abonnement ?"
   },
+  "pro_required_full_page_limits_reached_text1": {
+    "message": "La limite a été atteinte, pages autorisées par jour : { $limit }."
+  },
+  "pro_required_full_page_limits_reached_text2": {
+    "message": "Passez à PRO pour profiter de traductions illimitées de pages complètes et de plus de fonctionnalités."
+  },
+  "pro_required_limits_reached": {
+    "message": "La limite quotidienne du compte gratuit a été atteinte."
+  },
+  "pro_required_subscription": {
+    "message": "Veuillez {$link = vous abonner à PRO} pour débloquer tout le potentiel du traducteur et accomplir vos tâches plus rapidement !"
+  },
+  "pro_subscription_refresh": {
+    "message": "Actualiser l'abonnement"
+  },
+  "pro_required_reset_limits_in": {
+    "message": "Réinitialisation dans { $timeRange }."
+  },
   "pro_user_welcome_back": {
     "message": "Bon retour, { $username } !"
   },
@@ -625,5 +643,8 @@
   },
   "show_in_context_menu_mode_active_provider": {
     "message": "Uniquement le fournisseur actif"
+  },
+  "translate_page_by_hotkey": {
+    "message": "Traduire la page entière lorsque j'appuie sur le raccourci clavier"
   }
 }

@@ -67,6 +67,16 @@ export type GoogleMetricEvents = {
     lang_from: string;
     lang_to: string;
   };
+  page_translations_limit_reached: {
+    provider: ProviderCodeName;
+    lang_from: string;
+    lang_to: string;
+  };
+  popup_daily_limit_reached: {
+    provider: ProviderCodeName;
+    lang_from: string;
+    lang_to: string;
+  };
   translate_error: {
     source: MetricSourceEnv;
     provider: ProviderCodeName;

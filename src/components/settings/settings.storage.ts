@@ -1,9 +1,10 @@
-import { action, makeObservable } from "mobx";
+import { action, IObservableArray, makeObservable } from "mobx";
 import { Hotkey } from "@/utils/parseHotkey";
 import { createStorage } from "@/storage";
 import { DeepSeekAIModel, GeminiAIModel, getTranslator, GrokAIModel, OpenAIModel, ProviderCodeName } from "@/providers";
 
 export type PopupPosition = "" /*auto*/ | "left top" | "left bottom" | "right top" | "right bottom";
+export type DisplayMode = "day" | "night" | "auto";
 
 export type XIconPosition = {
   top?: boolean;
@@ -12,14 +13,26 @@ export type XIconPosition = {
   left?: boolean;
 };
 
-export enum FullPageContextMenuMode {
-  OFF = "off",
-  ALL_PROVIDERS = "all_providers",
-  ACTIVE_PROVIDER = "active_provider",
-}
-
 export type SettingsStorageModel = typeof settingsStorage.defaultValue;
 export type PopupHotkeyStorageModel = typeof popupHotkey.defaultValue;
+export type FullPageHotkeyStorageModel = typeof fullPageTranslateHotkey.defaultValue;
+
+export function getDisplayMode(displayMode: unknown): DisplayMode {
+  if (displayMode === "day" || displayMode === "night" || displayMode === "auto") {
+    return displayMode;
+  }
+  return "auto";
+}
+
+export function isDarkDisplayMode(displayMode: DisplayMode, isSystemDark: boolean): boolean {
+  return displayMode === "night" || (displayMode === "auto" && isSystemDark);
+}
+
+export function getNextDisplayMode(displayMode: DisplayMode): DisplayMode {
+  if (displayMode === "day") return "night";
+  if (displayMode === "night") return "auto";
+  return "day";
+}
 
 export const settingsStorage = createStorage("settings", {
   area: "sync", // share synced data via logged-in account (google, firefox, etc.)
@@ -30,7 +43,7 @@ export const settingsStorage = createStorage("settings", {
     showSaveToFavoriteIcon: true,
     showProviderSelectIcon: true,
     showCopyTranslationIcon: true,
-    useDarkTheme: false,
+    displayMode: "auto" as DisplayMode,
     showIconNearSelection: true,
     showPopupAfterSelection: false,
     showPopupOnClickBySelection: false,
@@ -60,29 +73,16 @@ export const settingsStorage = createStorage("settings", {
     geminiModel: GeminiAIModel.RECOMMENDED,
     safeTranslationLimit: 0, // 0 = unlimited, don't ask user for confirmation, useful for paid-API providers
     systemTTSEngineVoiceIndex: 0,
-    fullPageTranslation: {
-      contextMenuMode: FullPageContextMenuMode.ALL_PROVIDERS,
-      provider: "bing" as ProviderCodeName,
-      langFrom: "auto",
-      langTo: "en",
-      showOriginalOnHover: true,
-      showTranslationOnHover: false,
-      showTranslationInDOM: true,
-      trafficSaveMode: true,
-      alwaysTranslatePages: [],
-      showMore: false,
-      letterCaseAutoCorrection: true, // split content per sentence
-    }
   }
 });
 
-export const popupSkipInjectionUrls = createStorage<string[]>("popup_skip_inject", {
+export const popupSkipInjectionUrls = createStorage("popup_skip_inject", {
   area: "sync",
   autoLoad: true,
   deepMergeOnLoad: false,
   defaultValue: [
     "https://challenges.cloudflare.com/"
-  ]
+  ] as IObservableArray<string>,
 });
 
 export const popupHotkey = createStorage("popup_hotkey", {
@@ -92,6 +92,20 @@ export const popupHotkey = createStorage("popup_hotkey", {
   defaultValue: {
     hotkey: {
       altKey: true,
+      shiftKey: true,
+      code: "X",
+    } as Hotkey
+  }
+});
+
+export const fullPageTranslateHotkey = createStorage("fullpage_hotkey", {
+  area: "sync",
+  autoLoad: true,
+  deepMergeOnLoad: false,
+  defaultValue: {
+    enabled: true,
+    hotkey: {
+      ctrlKey: true,
       shiftKey: true,
       code: "X",
     } as Hotkey

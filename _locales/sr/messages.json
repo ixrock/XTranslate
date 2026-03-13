@@ -542,6 +542,24 @@
   "pro_required_confirm_goto_subscribe": {
     "message": "Ova opcija zahteva PRO pretplatu, idemo li na stranicu za pretplatu?"
   },
+  "pro_required_full_page_limits_reached_text1": {
+    "message": "Dostignut je limit, dozvoljene stranice po danu: { $limit }."
+  },
+  "pro_required_full_page_limits_reached_text2": {
+    "message": "Nadogradite na PRO za neograničeno prevođenje celih stranica i više funkcija."
+  },
+  "pro_required_limits_reached": {
+    "message": "Dostignut je dnevni limit besplatnog naloga."
+  },
+  "pro_required_subscription": {
+    "message": "Molimo {$link = pretplatite se na PRO} da otključate puni potencijal prevodioca i završavate stvari brže!"
+  },
+  "pro_subscription_refresh": {
+    "message": "Osveži pretplatu"
+  },
+  "pro_required_reset_limits_in": {
+    "message": "Reset za { $timeRange }."
+  },
   "pro_user_welcome_back": {
     "message": "Dobro došli nazad, { $username }!"
   },
@@ -622,5 +640,8 @@
   },
   "show_in_context_menu_mode_active_provider": {
     "message": "Samo aktivni provajder"
+  },
+  "translate_page_by_hotkey": {
+    "message": "Prevedi celu stranicu kada pritisnem prečicu"
   }
 }

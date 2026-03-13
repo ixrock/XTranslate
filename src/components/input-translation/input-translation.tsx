@@ -19,7 +19,7 @@ import { getMessage } from "@/i18n";
 import { materialIcons } from "@/config";
 import { isFavorite } from "../user-history/favorites.storage";
 import { saveToFavoritesAction } from "@/background/history.bgc";
-import { getSelectedTextAction } from "@/background/get-selected-text.bgc";
+import { getSelectedTextAction } from "@/background/selected-text.bgc";
 import { CopyToClipboardIcon } from "../copy-to-clipboard-icon";
 import { SelectProvider } from "../select-provider";
 import { Button } from "@/components/button";
@@ -60,18 +60,23 @@ export class InputTranslation extends React.Component {
   }
 
   private async checkUserSelectionFromActiveTabAndTranslateIfAny() {
-    await this.lastInputText.load();
-
     const { rememberLastText, vendor, langFrom, langTo, textInputAutoTranslateEnabled } = settingsStore.data;
-    const selectedText = await getSelectedTextAction();
-
     this.params = {
       page: "translate",
       provider: this.urlParams.provider ?? vendor,
       from: this.urlParams.from ?? langFrom,
       to: this.urlParams.to ?? langTo,
-      text: this.urlParams.text || selectedText || (rememberLastText ? this.lastInputText.get() : ""),
+      text: "",
     };
+
+    await this.lastInputText.load();
+    const selectedText = await getSelectedTextAction();
+    const lastUserInputText = rememberLastText ? this.lastInputText.get() : "";
+    const text = selectedText || lastUserInputText;
+
+    if (text) {
+      this.params.text = text;
+    }
 
     if (textInputAutoTranslateEnabled) {
       void this.translate();
@@ -206,7 +211,7 @@ export class InputTranslation extends React.Component {
 
     if (provider === ProviderCodeName.XTRANSLATE_PRO && !userStore.isProActive) {
       this.params.provider = prevProvider; // rollback
-      userStore.subscribeSuggestionDialog();
+      userStore.showSubscribeDialog();
     } else if (textInputAutoTranslateEnabled) {
       void this.translate();
     }
@@ -387,7 +392,7 @@ export class InputTranslation extends React.Component {
   @action
   async summarize() {
     if (!userStore.isProActive) {
-      userStore.subscribeSuggestionDialog();
+      userStore.showSubscribeDialog();
       return;
     }
 

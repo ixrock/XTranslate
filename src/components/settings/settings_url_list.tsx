@@ -1,5 +1,6 @@
 import React from "react";
-import { action } from "mobx";
+import { observer } from "mobx-react";
+import { action, IObservableArray } from "mobx";
 import { getMessage } from "@/i18n";
 import { ReactSelect, ReactSelectOption } from "@/components/select";
 import { Button } from "@/components/button";
@@ -7,14 +8,14 @@ import { Icon } from "@/components/icon";
 import { Notifications } from "@/components/notifications";
 
 export interface SettingsUrlListProps {
-  urlList: string[];
+  urlList: IObservableArray<string>;
   title: string;
   infoTooltip?: React.ReactNode;
 }
 
-export function SettingsUrlList({ urlList, title, infoTooltip }: SettingsUrlListProps) {
+export const SettingsUrlList = observer(({ urlList, title, infoTooltip }: SettingsUrlListProps) => {
   return (
-    <div className="SettingsEditUrlList flex gaps align-center" style={{ width: "inherit" }}>
+    <div className="SettingsEditUrlList flex gaps align-center" style={{ width: "100%" }}>
       {infoTooltip && (
         <Icon material="info_outline" tooltip={infoTooltip}/>
       )}
@@ -32,13 +33,13 @@ export function SettingsUrlList({ urlList, title, infoTooltip }: SettingsUrlList
       <Button
         primary
         label={getMessage("settings_select_add_url")}
-        onClick={() => addUrl({ list: urlList, title })}
+        onClick={() => addListUrl({ list: urlList, title })}
       />
     </div>
   )
-}
+});
 
-export function SettingsUrlListFormatLabel(props: { pageUrl: string, list: string[] }): React.ReactNode {
+export const SettingsUrlListFormatLabel = (props: { pageUrl: string, list: IObservableArray<string> }) => {
   const { pageUrl, list } = props;
 
   const removeItem = action(() => {
@@ -52,9 +53,9 @@ export function SettingsUrlListFormatLabel(props: { pageUrl: string, list: strin
       <Icon small material="clear" onClick={removeItem}/>
     </div>
   )
-}
+};
 
-export const addUrl = action((params: { list: string[], title: string }) => {
+export const addListUrl = action((params: { list: IObservableArray<string>, title: string }) => {
   const pageUrl = window.prompt(params.title);
   if (pageUrl) {
     try {

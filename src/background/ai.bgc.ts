@@ -7,7 +7,7 @@ import { isFirefox } from "../config";
 const logger = createLogger({ systemPrefix: "[AI]" });
 
 export const translateTextWithAI = createIsomorphicAction({
-  messageType: MessageType.TRANSLATE_TEXT_WITH_AI,
+  messageType: MessageType.TRANSLATE_AI_TEXT,
   handler: translateText,
 });
 

@@ -1,6 +1,6 @@
 import * as styles from "./popup.module.scss"
 
-import React, { CSSProperties } from "react";
+import React, { CSSProperties, ReactNode } from "react";
 import { computed, makeObservable } from "mobx";
 import { observer } from "mobx-react";
 import sample from "lodash/sample"
@@ -25,7 +25,7 @@ export interface PopupProps extends React.HTMLProps<any> {
   showPromoBanner?: boolean;
   lastParams: TranslatePayload | undefined;
   translation: ITranslationResult | undefined;
-  error: ITranslationError | undefined;
+  error: Partial<ITranslationError & { failReason?: ReactNode }> | undefined;
   summarized?: string;
   onProviderChange?(name: ProviderCodeName): void;
   speak?(): Promise<HTMLAudioElement | SpeechSynthesisUtterance | void>;
@@ -42,7 +42,7 @@ export class Popup extends React.Component<PopupProps> {
     delete langs.auto;
     delete langs.en;
     return {
-      vendor: ProviderCodeName.GOOGLE,
+      vendor: settingsStore.data.vendor,
       langFrom: sample(Object.keys(langs)),
       langTo: "en",
       translation: getMessage("popup_demo_translation"),
@@ -259,12 +259,15 @@ export class Popup extends React.Component<PopupProps> {
             <div className={styles.wordType}>{wordType}</div>
             <div className={styles.wordMeanings}>
               {meanings.map((meaning, i, list) => {
-                let last = i === list.length - 1;
-                let title = meaning.translation.join(", ") || null;
-                return [
-                  <span key={i} className={styles.word} title={title}>{meaning.word}</span>,
-                  !last ? ", " : null
-                ]
+                const translation = meaning.translation.join(", ");
+                const examples = meaning.examples?.map(example => example.join(" - ")).join("\n") ?? "";
+                return (
+                  <div key={i} className={styles.dictTranslation}>
+                    {meaning.word && <span className={styles.dictWord}>{meaning.word}</span>}
+                    {translation && <small>{translation}</small>}
+                    {examples && <span className={styles.dictExamples} title={examples}/>}
+                  </div>
+                )
               })}
             </div>
           </div>
@@ -286,15 +289,18 @@ export class Popup extends React.Component<PopupProps> {
   renderError() {
     const { error } = this.props;
     if (!error) return;
-    const { statusCode, message } = error;
     return (
       <div className={styles.translationError}>
         <div className={styles.errorInfo}>
-          <div>
-            <Icon material="error_outline" className={styles.errorIcon}/>{" "}
-            {statusCode}: {getMessage("translation_data_failed")}
-          </div>
-          <p dangerouslySetInnerHTML={{ __html: message }}/>
+          {error.message && (
+            <div>
+              <Icon material="error_outline" className={styles.errorIcon}/>{" "}
+              {getMessage("translation_data_failed")}
+            </div>
+          )}
+          {error.failReason ?? (
+            <div dangerouslySetInnerHTML={{ __html: error.message }}/>
+          )}
         </div>
         <div className={styles.icons}>
           {this.renderProviderSelectIcon()}

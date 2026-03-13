@@ -1,6 +1,6 @@
 import { createStorage } from "@/storage";
 import { getXTranslatePro, OpenAIModelTTSVoice, XTranslateProPricing, XTranslateProSubscription, XTranslateProTranslateError, XTranslateProUser } from "@/providers";
-import { formatPrice } from "@/utils";
+import { formatPrice, formatTime } from "@/utils";
 import { getLocale, getMessage } from "@/i18n";
 
 export interface UserStorage {
@@ -8,25 +8,38 @@ export interface UserStorage {
   subscription?: XTranslateProSubscription;
   pricing?: XTranslateProPricing;
   ttsVoice?: OpenAIModelTTSVoice;
-  lastUpdateDateTime?: number;
+  lastUpdateDateTime?: number; // timestamp of load user-subscription
   promoBannerShowTime?: number;
+  limitsResetTime?: number; // timestamp of limits reset for free-account users
+  popupTranslationsToday?: number;
+  pageTranslationsToday?: number;
 }
 
 const userStorage = createStorage<UserStorage>("user_pro", {
   area: "local",
   autoLoad: true,
+  saveDefaultWhenEmpty: true,
+  deepMergeOnLoad: true,
   defaultValue: {
-    user: null,
-    pricing: null,
     ttsVoice: OpenAIModelTTSVoice.Alloy,
     lastUpdateDateTime: 0,
     promoBannerShowTime: 0,
+    limitsResetTime: Date.now(),
+    pageTranslationsToday: 0,
+    popupTranslationsToday: 0,
   },
 });
 
 export class UserStore {
+  static readonly LIMIT_PAGE_TRANSLATION_FREE_ACCOUNT_PER_DAY = 10;
+  static readonly LIMIT_POPUP_TRANSLATION_FREE_ACCOUNT_PER_DAY = 100;
+
   private storage = userStorage;
   private refreshPromise: Promise<any> = null;
+
+  get whenReady() {
+    return this.storage.whenReady;
+  }
 
   get apiProvider() {
     return getXTranslatePro();
@@ -91,11 +104,60 @@ export class UserStore {
     if (userStore.isProActive) return false;
 
     const promoSkippedLastTime = this.data.promoBannerShowTime;
-    const remindPromoDelay = 2 * 30 * 24 * 60 * 60 * 1000; // every 2 months
+    const remindPromoDelay = 3 * 30 * 24 * 60 * 60 * 1000; // every 3 months
 
     return !promoSkippedLastTime || (
       promoSkippedLastTime + remindPromoDelay <= Date.now()
     );
+  }
+
+  get cacheResetRequired(): boolean {
+    const { lastUpdateDateTime } = this.data;
+    const isFirstUpdate = lastUpdateDateTime === 0;
+    const freeUserRefreshTimeMs = 30 * 24 * 3600 * 1000; // 1 month
+    const paidUserRefreshTimeMs = 24 * 3600 * 1000; // 1 day
+
+    return [
+      isFirstUpdate,
+      this.isFreeUser && (lastUpdateDateTime + freeUserRefreshTimeMs < Date.now()),
+      this.isPaidUser && (lastUpdateDateTime + paidUserRefreshTimeMs < Date.now())
+    ].some(v => v)
+  }
+
+  get dailyLimitsExpiryTimeMs(): number {
+    const { limitsResetTime } = this.storage.get();
+    return limitsResetTime + 24 * 60 * 60 * 1000; // 1 day
+  }
+
+  get dailyLimitsResetRequired(): boolean {
+    if (this.isProActive) return false;
+    return this.dailyLimitsExpiryTimeMs < Date.now();
+  }
+
+  get timeRemainBeforeDailyReset(): string {
+    const currentTime = Date.now();
+    const secondsRemain = Math.max(0, Math.round((this.dailyLimitsExpiryTimeMs - currentTime) / 1000));
+    return formatTime(secondsRemain);
+  }
+
+  get isPageTranslationAllowed(): boolean {
+    if (this.isProActive) return true;
+    const { pageTranslationsToday } = this.storage.get();
+    return pageTranslationsToday <= UserStore.LIMIT_PAGE_TRANSLATION_FREE_ACCOUNT_PER_DAY;
+  }
+
+  get isPopupTranslationAllowed(): boolean {
+    if (this.isProActive) return true;
+    const { popupTranslationsToday } = this.storage.get();
+    return popupTranslationsToday <= UserStore.LIMIT_POPUP_TRANSLATION_FREE_ACCOUNT_PER_DAY;
+  }
+
+  resetDailyLimits() {
+    this.storage.merge({
+      limitsResetTime: Date.now(),
+      pageTranslationsToday: 0,
+      popupTranslationsToday: 0,
+    });
   }
 
   private formatPrice(cents = 0) {
@@ -104,6 +166,44 @@ export class UserStore {
       currency: "USD",
       locale: getLocale(),
     });
+  }
+
+  async loadPricing() {
+    try {
+      const pricing = await this.apiProvider.loadPricing();
+      this.storage.merge({ pricing });
+    } catch (err) {
+      console.error(`loading prices has failed: ${err?.message}`);
+    }
+  }
+
+  async loadSubscriptionSafe() {
+    return this.safeLoadWithPromiseDedupe(() => this.loadSubscription());
+  }
+
+  async loadSubscription() {
+    try {
+      const { user, ...subscription } = await this.apiProvider.loadSubscription();
+
+      const updatingData: Partial<UserStorage> = {
+        subscription,
+        lastUpdateDateTime: Date.now(),
+      };
+      if (user) {
+        updatingData.user = user;
+      }
+
+      this.storage.merge(updatingData);
+    } catch (err) {
+      const { statusCode } = err as XTranslateProTranslateError;
+      if (statusCode === 401) {
+        this.storage.merge({
+          user: null,
+          subscription: null,
+          lastUpdateDateTime: Date.now(),
+        });
+      }
+    }
   }
 
   private async safeLoadWithPromiseDedupe(callback: () => Promise<any>) {
@@ -122,85 +222,13 @@ export class UserStore {
     return this.refreshPromise;
   }
 
-  async load(): Promise<void> {
-    return this.safeLoadWithPromiseDedupe(async () => {
-      await this.loadSubscription();
-    });
+  openSubscribePage() {
+    window.open(this.apiProvider.subscribePageUrl, "_blank");
   }
 
-  async loadPricing(force = false) {
-    return await this.safeLoadWithPromiseDedupe(async () => {
-      try {
-        if (this.pricing && !force) {
-          return; // prices needed to be loaded once mostly
-        }
-        const pricing = await this.apiProvider.loadPricing();
-        this.storage.merge({ pricing });
-      } catch (err) {
-        console.error("loading prices has failed", err);
-      }
-    })
-  }
-
-  async loadSubscription() {
-    await this.storage.load();
-
-    try {
-      const user = await this.apiProvider.loadUser(); // TODO: merge in single endpoint (?) to reduce Vercel costs
-      const subscription = await this.apiProvider.loadSubscription();
-
-      this.storage.merge({
-        user,
-        subscription,
-        lastUpdateDateTime: Date.now(),
-      });
-    } catch (err) {
-      const { statusCode } = err as XTranslateProTranslateError;
-      if (statusCode === 401) {
-        this.storage.merge({
-          user: null,
-          subscription: null,
-          lastUpdateDateTime: Date.now(),
-        });
-      }
-    }
-  }
-
-  get cacheResetRequiredForContentScript(): boolean {
-    const { lastUpdateDateTime } = this.data;
-    const isFirstUpdate = lastUpdateDateTime === 0;
-    const freeUserRefreshTimeMs = 30 * 24 * 3600 * 1000; // 1 month
-    const paidUserRefreshTimeMs = 24 * 3600 * 1000; // 1 day
-
-    return [
-      isFirstUpdate,
-      this.isFreeUser && (lastUpdateDateTime + freeUserRefreshTimeMs < Date.now()),
-      this.isPaidUser && (lastUpdateDateTime + paidUserRefreshTimeMs < Date.now())
-    ].some(v => v)
-  }
-
-  async refreshSubscriptionCheck(): Promise<void> {
-    await this.storage.load(); // preload storage first (!)
-
-    if (!this.cacheResetRequiredForContentScript) return;
-
-    return await this.safeLoadWithPromiseDedupe(async () => {
-      try {
-        return await this.loadSubscription();
-      } catch (err) {
-        const { statusCode } = err as XTranslateProTranslateError;
-        if (statusCode === 401) {
-          this.storage.merge({ lastUpdateDateTime: Date.now() });
-        }
-      }
-    });
-  }
-
-  subscribeSuggestionDialog(): boolean {
-    const subscribe = window.confirm(getMessage("pro_required_confirm_goto_subscribe"));
-
-    if (subscribe) {
-      window.open(this.apiProvider.subscribePageUrl, "_blank");
+  showSubscribeDialog(): boolean {
+    if (window.confirm(getMessage("pro_required_confirm_goto_subscribe"))) {
+      this.openSubscribePage();
       return true;
     }
   }
