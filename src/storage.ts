@@ -8,7 +8,6 @@ import { StorageAdapter, StorageHelper, StorageHelperOptions } from "@/utils/sto
 import { isBackgroundWorker, onMessage } from "@/extension/runtime";
 import { MessageType, StorageSyncPayload } from "@/extension/messages";
 import { listenExternalStorageChanges, readFromExternalStorageAction, removeFromExternalStorageAction, StorageArea, writeToExternalStorageAction } from "@/background/storage.bgc";
-import { isDevelopment, isFirefox } from "./config";
 
 const logger = createLogger({ systemPrefix: "STORAGE(helper)" });
 
@@ -23,10 +22,6 @@ export function createStorage<T>(key: string, options: ChromeStorageHelperOption
   } = options;
   const onStorageDestroy = disposer();
   const resourceId = `${StorageHelper.getResourceOrigin() ?? "unknown"}:${Math.random().toString(36).slice(2)}`;
-
-  if (isFirefox()) {
-    area = "local"; // area "sync" requires firefox account
-  }
 
   const storageAdapter: StorageAdapter<T> = {
     async setItem(key: string, state: T): Promise<void> {
