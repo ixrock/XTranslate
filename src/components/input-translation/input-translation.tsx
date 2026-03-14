@@ -449,6 +449,7 @@ export class InputTranslation extends React.Component {
           <SelectProvider
             value={provider}
             onChange={this.onProviderChange}
+            filter={provider => provider.isAvailable()}
           />
         </div>
         <div className="flex gaps align-center">
