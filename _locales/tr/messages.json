@@ -694,5 +694,11 @@
   },
   "translate_page_by_hotkey": {
     "message": "Kısayol tuşuna bastığımda tüm sayfayı çevir"
+  },
+  "pro_self_ad": {
+    "message": "Tam olarak doğru değil mi? Yapay zekayla düzelt ✨ {$subscribeLink = PRO'ya yükselt}"
+  },
+  "pro_self_ad_features": {
+    "message": "✓ Doğal, anlamı doğru aktaran çeviri\n✓ Argo ve deyimleri anlar\n✓ İfadeleri ve bağlamı açıklar"
   }
 }

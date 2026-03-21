@@ -638,6 +638,12 @@
   "pro_unauthorized_error_401": {
     "message": "Вы должны быть залогинены на { $serviceUrl } и иметь активную подписку для доступа."
   },
+  "pro_self_ad": {
+    "message": "Не совсем точный перевод? Исправь это с AI ✨ {$subscribeLink = Обновись до PRO}"
+  },
+  "pro_self_ad_features": {
+    "message": "✓ Перевод с сохранением смысла \n✓ Перевод сленга \n✓ Объяснение фразы и контекста"
+  },
   "translate_button": {
     "message": "Перевести"
   },

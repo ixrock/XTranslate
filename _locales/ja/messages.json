@@ -691,5 +691,11 @@
   },
   "translate_page_by_hotkey": {
     "message": "ホットキーを押したときにページ全体を翻訳する"
+  },
+  "pro_self_ad": {
+    "message": "まだちょっと違う？AIで直す ✨ {$subscribeLink = PROにアップグレード}"
+  },
+  "pro_self_ad_features": {
+    "message": "✓ 自然で意味を損なわない翻訳\n✓ スラングや慣用句も理解\n✓ 表現や文脈を説明"
   }
 }

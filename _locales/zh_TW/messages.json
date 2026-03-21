@@ -691,5 +691,11 @@
   },
   "translate_page_by_hotkey": {
     "message": "當我按下快捷鍵時翻譯整個頁面"
+  },
+  "pro_self_ad": {
+    "message": "不太對？用 AI 修復它 ✨ {$subscribeLink = 升級到 PRO}"
+  },
+  "pro_self_ad_features": {
+    "message": "✓ 自然、語意準確的翻譯\n✓ 理解俚語和慣用語\n✓ 解釋片語與語境"
   }
 }

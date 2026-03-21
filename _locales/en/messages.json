@@ -644,6 +644,12 @@
   "pro_unauthorized_error_401": {
     "message": "You must be logged-in at { $serviceUrl } and have an active subscription to get access."
   },
+  "pro_self_ad": {
+    "message": "Not quite right? Fix it with AI ✨ {$subscribeLink = Upgrade to PRO}"
+  },
+  "pro_self_ad_features": {
+    "message": "✓ Natural, meaning-accurate translation\n✓ Understands slang and idioms\n✓ Explains phrases and context"
+  },
   "translate_button": {
     "message": "Translate"
   },
