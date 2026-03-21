@@ -646,5 +646,11 @@
   },
   "translate_page_by_hotkey": {
     "message": "Terjemahkan seluruh halaman saat saya menekan hotkey"
+  },
+  "pro_self_ad": {
+    "message": "Kurang tepat? Perbaiki dengan AI ✨ {$subscribeLink = Tingkatkan ke PRO}"
+  },
+  "pro_self_ad_features": {
+    "message": "✓ Terjemahan alami yang akurat makna\n✓ Memahami slang dan ungkapan\n✓ Menjelaskan frasa dan konteks"
   }
 }

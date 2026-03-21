@@ -9,7 +9,7 @@ import { materialIcons } from "@/config";
 import { cssNames, prevDefault } from "@/utils";
 import { toCssColor } from "@/utils/toCssColor";
 import { TranslatePayload } from "@/extension";
-import { getTranslator, getTranslators, isRTL, ITranslationError, ITranslationResult, ProviderCodeName } from "@/providers";
+import { getTranslator, getTranslators, getXTranslatePro, isRTL, ITranslationError, ITranslationResult, ProviderCodeName } from "@/providers";
 import { Icon } from "../icon";
 import { userStore } from "@/pro";
 import { settingsStore } from "../settings/settings.storage";
@@ -229,7 +229,7 @@ export class Popup extends React.Component<PopupProps> {
     );
   }
 
-  renderResult() {
+  renderResult(): React.ReactNode {
     if (!this.translation) return;
     let { translation, transcription, dictionary, vendor, langFrom, langTo, langDetected } = this.translation;
     if (langDetected) langFrom = langDetected;
@@ -239,6 +239,19 @@ export class Popup extends React.Component<PopupProps> {
 
     return (
       <div className={styles.translationResult} style={this.resultStyles}>
+        {!userStore.isProActive && (
+          <label className={styles.upgradeToPro}>
+            <input type="checkbox"/>
+            <b>
+              {getMessage("pro_self_ad", {
+                subscribeLink: v => <a href={getXTranslatePro().subscribePageUrl} target="_blank">{v}</a>
+              })}
+            </b>
+            <div className={styles.upgradeToProDetails}>
+              {getMessage("pro_self_ad_features")}
+            </div>
+          </label>
+        )}
         <div className={styles.translation}>
           <div className={styles.icons}>
             {this.renderPlayTextIcon()}

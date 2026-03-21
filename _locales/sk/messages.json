@@ -643,5 +643,11 @@
   },
   "translate_page_by_hotkey": {
     "message": "Preložiť celú stránku, keď stlačím klávesovú skratku"
+  },
+  "pro_self_ad": {
+    "message": "Nie je to úplne správne? Opravte to pomocou AI ✨ {$subscribeLink = Prejdite na PRO}"
+  },
+  "pro_self_ad_features": {
+    "message": "✓ Prírodný, významovo presný preklad\n✓ Rozumie slangu a idiomom\n✓ Vysvetľuje frázy a kontext"
   }
 }

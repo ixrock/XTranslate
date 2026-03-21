@@ -646,5 +646,11 @@
   },
   "translate_page_by_hotkey": {
     "message": "Gesamte Seite übersetzen, wenn ich den Hotkey drücke"
+  },
+  "pro_self_ad": {
+    "message": "Nicht ganz richtig? Behebe es mit KI ✨ {$subscribeLink = Auf PRO upgraden}"
+  },
+  "pro_self_ad_features": {
+    "message": "✓ Natürliches, bedeutungsgenaues Übersetzen\n✓ Versteht Slang und Redewendungen\n✓ Erklärt Formulierungen und Kontext"
   }
 }
