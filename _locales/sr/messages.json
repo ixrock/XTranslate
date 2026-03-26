@@ -643,5 +643,11 @@
   },
   "translate_page_by_hotkey": {
     "message": "Prevedi celu stranicu kada pritisnem prečicu"
+  },
+  "pro_self_ad": {
+    "message": "Nije baš tačno? Ispravi to uz AI ✨ {$subscribeLink = Nadogradi se na PRO}"
+  },
+  "pro_self_ad_features": {
+    "message": "✓ Prirodni prevod koji tačno prenosi značenje\n✓ Razume žargon i idiome\n✓ Objašnjava fraze i kontekst"
   }
 }

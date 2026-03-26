@@ -1,5 +1,6 @@
 import * as styles from "./select-provider.module.scss"
 import React from "react";
+import { observer } from "mobx-react";
 import { getTranslators, ProviderCodeName, Translator } from "@/providers";
 import { FormatOptionLabelMeta, ReactSelect, ReactSelectOption, ReactSelectProps } from "../select/react-select";
 import { cssNames } from "@/utils/cssNames";
@@ -13,7 +14,7 @@ export interface SelectProviderProps extends Omit<ReactSelectProps<ProviderCodeN
   filter?(provider: Translator): boolean;
 }
 
-export function SelectProvider({ compactView, filter, value: providerName, ...inputProps }: SelectProviderProps) {
+export const SelectProvider = observer(({ compactView, filter, value: providerName, ...inputProps }: SelectProviderProps) => {
   const providers = getTranslators();
 
   const options: ReactSelectOption<ProviderCodeName>[] = providers
@@ -50,4 +51,4 @@ export function SelectProvider({ compactView, filter, value: providerName, ...in
       formatOptionLabel={formatOptionLabel}
     />
   )
-}
+})

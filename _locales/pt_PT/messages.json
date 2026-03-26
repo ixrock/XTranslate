@@ -646,5 +646,11 @@
   },
   "translate_page_by_hotkey": {
     "message": "Traduzir a página inteira quando eu pressionar a tecla de atalho"
+  },
+  "pro_self_ad": {
+    "message": "Não está perfeito? Corrija com IA ✨ {$subscribeLink = Atualizar para o PRO}"
+  },
+  "pro_self_ad_features": {
+    "message": "✓ Tradução natural e fiel ao significado\n✓ Compreende gírias e expressões idiomáticas\n✓ Explica frases e contexto"
   }
 }

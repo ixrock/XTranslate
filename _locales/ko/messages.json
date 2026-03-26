@@ -646,5 +646,11 @@
   },
   "translate_page_by_hotkey": {
     "message": "단축키를 누르면 전체 페이지를 번역"
+  },
+  "pro_self_ad": {
+    "message": "딱 맞지 않나요? AI로 바로잡으세요 ✨ {$subscribeLink = PRO로 업그레이드}"
+  },
+  "pro_self_ad_features": {
+    "message": "✓ 자연스럽고 의미를 정확히 살린 번역\n✓ 은어와 숙어도 이해\n✓ 구절과 맥락을 설명"
   }
 }

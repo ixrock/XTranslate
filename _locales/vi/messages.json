@@ -646,5 +646,11 @@
   },
   "translate_page_by_hotkey": {
     "message": "Dịch toàn bộ trang khi tôi nhấn phím tắt"
+  },
+  "pro_self_ad": {
+    "message": "Chưa ổn lắm? Hãy sửa bằng AI ✨ {$subscribeLink = Nâng cấp lên PRO}"
+  },
+  "pro_self_ad_features": {
+    "message": "✓ Dịch tự nhiên, chính xác về ý nghĩa\n✓ Hiểu tiếng lóng và thành ngữ\n✓ Giải thích cụm từ và ngữ cảnh"
   }
 }
