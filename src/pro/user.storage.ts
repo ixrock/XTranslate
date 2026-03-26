@@ -1,6 +1,6 @@
 import { createStorage } from "@/storage";
 import { getXTranslatePro, OpenAIModelTTSVoice, XTranslateProPricing, XTranslateProSubscription, XTranslateProTranslateError, XTranslateProUser } from "@/providers";
-import { formatPrice, formatTime } from "@/utils";
+import { formatPrice } from "@/utils";
 import { getLocale, getMessage } from "@/i18n";
 
 export interface UserStorage {
@@ -10,9 +10,6 @@ export interface UserStorage {
   ttsVoice?: OpenAIModelTTSVoice;
   lastUpdateDateTime?: number; // timestamp of load user-subscription
   promoBannerShowTime?: number;
-  limitsResetTime?: number; // timestamp of limits reset for free-account users
-  popupTranslationsToday?: number;
-  pageTranslationsToday?: number;
 }
 
 const userStorage = createStorage<UserStorage>("user_pro", {
@@ -24,16 +21,10 @@ const userStorage = createStorage<UserStorage>("user_pro", {
     ttsVoice: OpenAIModelTTSVoice.Alloy,
     lastUpdateDateTime: 0,
     promoBannerShowTime: 0,
-    limitsResetTime: Date.now(),
-    pageTranslationsToday: 0,
-    popupTranslationsToday: 0,
   },
 });
 
 export class UserStore {
-  static readonly LIMIT_PAGE_TRANSLATION_FREE_ACCOUNT_PER_DAY = 10;
-  static readonly LIMIT_POPUP_TRANSLATION_FREE_ACCOUNT_PER_DAY = 100;
-
   private storage = userStorage;
   private refreshPromise: Promise<any> = null;
 
@@ -122,42 +113,6 @@ export class UserStore {
       this.isFreeUser && (lastUpdateDateTime + freeUserRefreshTimeMs < Date.now()),
       this.isPaidUser && (lastUpdateDateTime + paidUserRefreshTimeMs < Date.now())
     ].some(v => v)
-  }
-
-  get dailyLimitsExpiryTimeMs(): number {
-    const { limitsResetTime } = this.storage.get();
-    return limitsResetTime + 24 * 60 * 60 * 1000; // 1 day
-  }
-
-  get dailyLimitsResetRequired(): boolean {
-    if (this.isProActive) return false;
-    return this.dailyLimitsExpiryTimeMs < Date.now();
-  }
-
-  get timeRemainBeforeDailyReset(): string {
-    const currentTime = Date.now();
-    const secondsRemain = Math.max(0, Math.round((this.dailyLimitsExpiryTimeMs - currentTime) / 1000));
-    return formatTime(secondsRemain);
-  }
-
-  get isPageTranslationAllowed(): boolean {
-    if (this.isProActive) return true;
-    const { pageTranslationsToday } = this.storage.get();
-    return pageTranslationsToday <= UserStore.LIMIT_PAGE_TRANSLATION_FREE_ACCOUNT_PER_DAY;
-  }
-
-  get isPopupTranslationAllowed(): boolean {
-    if (this.isProActive) return true;
-    const { popupTranslationsToday } = this.storage.get();
-    return popupTranslationsToday <= UserStore.LIMIT_POPUP_TRANSLATION_FREE_ACCOUNT_PER_DAY;
-  }
-
-  resetDailyLimits() {
-    this.storage.merge({
-      limitsResetTime: Date.now(),
-      pageTranslationsToday: 0,
-      popupTranslationsToday: 0,
-    });
   }
 
   private formatPrice(cents = 0) {

@@ -25,7 +25,7 @@ import { Popup } from "../components/popup";
 import { Icon } from "@/components/icon";
 import { getMessage } from "@/i18n";
 import { userSubscriptionRefreshAction } from "@/background/user.bgc";
-import { UserStore, userStore } from "@/pro";
+import { userStore } from "@/pro";
 
 type DOMRectNormalized = Omit<Writeable<DOMRect>, "toJSON" | "x" | "y">;
 
@@ -222,23 +222,6 @@ export class ContentScript extends React.Component {
     this.checkContextInvalidationError();
     this.hideIcon();
 
-    if (userStore.dailyLimitsResetRequired) {
-      userStore.resetDailyLimits();
-    }
-
-    // free-account daily limits reached guard-check
-    if (!userStore.isPopupTranslationAllowed) {
-      this.error = {
-        failReason: this.renderDailyLimitsError(),
-      };
-      void sendMetric("popup_daily_limit_reached", {
-        provider: payload.provider,
-        lang_from: payload.from,
-        lang_to: payload.to,
-      });
-      return this.refinePosition();
-    }
-
     if (!this.translationConfirmationCheck(payload)) return;
 
     this.translation = null;
@@ -250,7 +233,6 @@ export class ContentScript extends React.Component {
       const translation = await getTranslator(payload.provider).translate(payload);
       if (isEqual(payload, this.lastParams)) {
         this.translation = translation;
-        userStore.data.popupTranslationsToday++;
       }
     } catch (err) {
       if (isEqual(payload, this.lastParams)) {
@@ -355,28 +337,9 @@ export class ContentScript extends React.Component {
 
     const { provider, langTo, langFrom } = this.pageTranslator.settings;
 
-    // check if daily limits reset is required (for free users)
-    if (userStore.dailyLimitsResetRequired) {
-      userStore.resetDailyLimits();
-    }
-
-    // prevent page-translation when limit reached
-    if (!userStore.isPageTranslationAllowed) {
-      this.showPageTranslationLimitsReachedDialog();
-      this.stopPageAutoTranslation(pageUrl);
-
-      void sendMetric("page_translations_limit_reached", {
-        provider: provider,
-        lang_from: langFrom,
-        lang_to: langTo,
-      });
-      return;
-    }
-
     // start auto-translation for current page
     this.pageTranslator.startAutoTranslation();
     this.pageTranslator.setAutoTranslatingPages({ enabled: [pageUrl] });
-    userStore.data.pageTranslationsToday++;
 
     void sendMetric("translate_used", {
       source: "fullpage",
@@ -393,21 +356,6 @@ export class ContentScript extends React.Component {
     this.pageTranslator.setAutoTranslatingPages({ disabled: [pageUrl] });
     this.pageTranslator.stopAutoTranslation();
     this.setTooltipHTML(""); // reset
-  }
-
-  private showPageTranslationLimitsReachedDialog() {
-    const subscribe = window.confirm([
-      getMessage("pro_required_full_page_limits_reached_text1", {
-        limit: UserStore.LIMIT_PAGE_TRANSLATION_FREE_ACCOUNT_PER_DAY.toString(),
-      }),
-      getMessage("pro_required_full_page_limits_reached_text2"),
-      getMessage("pro_required_reset_limits_in", {
-        timeRange: userStore.timeRemainBeforeDailyReset,
-      }),
-    ].join("\n"));
-    if (subscribe) {
-      userStore.openSubscribePage();
-    }
   }
 
   speak() {
@@ -754,37 +702,6 @@ export class ContentScript extends React.Component {
         {isLoading && <Icon svg="spinner"/>}
         {!isLoading && isIconVisible && <XTranslateIcon onMouseDown={onIconClick} title={translateIconTitle}/>}
       </div>
-    )
-  }
-
-  @action
-  private async refreshSubscriptionAndTranslate() {
-    await userSubscriptionRefreshAction({ force: true });
-
-    if (userStore.isProActive) {
-      void this.translate(); // re-try after refresh
-    }
-  }
-
-  renderDailyLimitsError() {
-    return (
-      <>
-        <p>
-          {getMessage("pro_required_limits_reached")}{" "}
-          {getMessage("pro_required_reset_limits_in", {
-            timeRange: <b>{userStore.timeRemainBeforeDailyReset}</b>,
-          })}
-        </p>
-        <p>
-          {getMessage("pro_required_subscription", {
-            link: v => <a href={getXTranslatePro().subscribePageUrl} target="_blank"><b>{v}</b></a>
-          })}
-        </p>
-        <a href="#" onClick={() => this.refreshSubscriptionAndTranslate()}>
-          <Icon material="sync"/>
-          <span>{getMessage("pro_subscription_refresh")}</span>
-        </a>
-      </>
     )
   }
 
