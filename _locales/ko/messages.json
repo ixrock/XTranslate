@@ -164,6 +164,9 @@
   "popup_copy_translation_title": {
     "message": "번역 복사"
   },
+  "popup_select_provider_title": {
+    "message": "번역 제공업체 선택"
+  },
   "popup_next_vendor_icon_title": {
     "message": "{ $translator }로 번역"
   },

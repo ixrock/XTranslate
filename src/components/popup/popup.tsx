@@ -4,7 +4,7 @@ import React, { CSSProperties, ReactNode } from "react";
 import { computed, makeObservable } from "mobx";
 import { observer } from "mobx-react";
 import sample from "lodash/sample"
-import LanguagesList from "@/providers/google.json"
+import LanguagesList from "@/providers/open-ai.json"
 import { materialIcons } from "@/config";
 import { cssNames, prevDefault } from "@/utils";
 import { toCssColor } from "@/utils/toCssColor";
@@ -19,6 +19,7 @@ import { getLocale, getMessage } from "@/i18n";
 import { saveToFavoritesAction } from "@/background/history.bgc";
 import { CopyToClipboardIcon } from "../copy-to-clipboard-icon";
 import { PopupPromoBanner } from "@/components/popup/popup_promo";
+import { Tooltip } from "@/components/tooltip";
 
 export interface PopupProps extends React.HTMLProps<any> {
   previewMode?: boolean;
@@ -210,16 +211,27 @@ export class Popup extends React.Component<PopupProps> {
     if (!this.settings.showProviderSelectIcon) {
       return;
     }
+
     const providerName = this.translation?.vendor ?? this.props.lastParams?.provider;
     const provider = getTranslator(providerName);
+    const providerIconTooltipId = "xtranslate-select-provider-icon";
     return (
-      <div className={styles.providerSelect}>
+      <div className={styles.providerSelect} id={providerIconTooltipId}>
         <Icon
           small interactive
           svg={providerName}
           className={styles.providerSelectIcon}
         />
-        <select value={providerName} onChange={this.onProviderChange} title={provider?.title}>
+        <Tooltip
+          following
+          anchorId={providerIconTooltipId}
+          children={getMessage("popup_select_provider_title")}
+        />
+        <select
+          value={providerName}
+          onChange={this.onProviderChange}
+          title={provider?.title}
+        >
           {getTranslators().map(({ name, title, isAvailable }) => {
             if (!isAvailable()) return;
             return <option key={name} value={name}>{title}</option>

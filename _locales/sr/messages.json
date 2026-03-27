@@ -221,6 +221,9 @@
   "popup_copy_translation_title": {
     "message": "Kopiraj prevod"
   },
+  "popup_select_provider_title": {
+    "message": "Izaberi provajdera prevoda"
+  },
   "popup_next_vendor_icon_title": {
     "message": "Prevedi pomoću: { $translator }"
   },

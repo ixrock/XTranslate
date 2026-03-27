@@ -164,6 +164,9 @@
   "popup_copy_translation_title": {
     "message": "翻訳をコピー"
   },
+  "popup_select_provider_title": {
+    "message": "翻訳プロバイダを選択"
+  },
   "popup_next_vendor_icon_title": {
     "message": "{ $translator } で翻訳"
   },

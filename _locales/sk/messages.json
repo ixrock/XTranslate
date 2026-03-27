@@ -221,6 +221,9 @@
   "popup_copy_translation_title": {
     "message": "Kopírovať preklad"
   },
+  "popup_select_provider_title": {
+    "message": "Vybrať poskytovateľa prekladu"
+  },
   "popup_next_vendor_icon_title": {
     "message": "Preložiť pomocou { $translator }"
   },

@@ -164,6 +164,9 @@
   "popup_copy_translation_title": {
     "message": "نسخ الترجمة"
   },
+  "popup_select_provider_title": {
+    "message": "اختر مزود الترجمة"
+  },
   "popup_next_vendor_icon_title": {
     "message": "ترجم باستخدام { $translator }"
   },

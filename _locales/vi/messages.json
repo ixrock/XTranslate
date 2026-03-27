@@ -164,6 +164,9 @@
   "popup_copy_translation_title": {
     "message": "Sao chép bản dịch"
   },
+  "popup_select_provider_title": {
+    "message": "Chọn nhà cung cấp dịch thuật"
+  },
   "popup_next_vendor_icon_title": {
     "message": "Dịch với { $translator }"
   },

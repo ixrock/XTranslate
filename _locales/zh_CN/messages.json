@@ -164,6 +164,9 @@
   "popup_copy_translation_title": {
     "message": "复制翻译"
   },
+  "popup_select_provider_title": {
+    "message": "选择翻译提供方"
+  },
   "popup_next_vendor_icon_title": {
     "message": "使用 { $translator } 翻译"
   },

@@ -140,6 +140,9 @@
   "popup_copy_translation_title": {
     "message": "Çeviriyi kopyala"
   },
+  "popup_select_provider_title": {
+    "message": "Çeviri sağlayıcısını seç"
+  },
   "popup_next_vendor_icon_title": {
     "message": "{ $translator } ile çevir"
   },

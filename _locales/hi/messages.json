@@ -164,6 +164,9 @@
   "popup_copy_translation_title": {
     "message": "अनुवाद कॉपी करें"
   },
+  "popup_select_provider_title": {
+    "message": "अनुवाद प्रदाता चुनें"
+  },
   "popup_next_vendor_icon_title": {
     "message": "{ $translator } के साथ अनुवाद करें"
   },

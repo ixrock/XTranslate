@@ -221,6 +221,9 @@
   "popup_copy_translation_title": {
     "message": "Копирај превод"
   },
+  "popup_select_provider_title": {
+    "message": "Изабери провајдера превода"
+  },
   "popup_next_vendor_icon_title": {
     "message": "Преведи помоћу: { $translator }"
   },
