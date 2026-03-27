@@ -21,6 +21,7 @@ import { getNextTranslator, getTranslator, getXTranslatePro, ITranslationError, 
 import { XTranslateIcon } from "./xtranslate-icon";
 import { XTranslateTooltip } from "./xtranslate-tooltip";
 import { pageTranslationStorage, PageTranslator } from "./page-translator";
+import { Tooltip } from "@/components/tooltip";
 import { Popup } from "../components/popup";
 import { Icon } from "@/components/icon";
 import { getMessage } from "@/i18n";
@@ -57,6 +58,7 @@ export class ContentScript extends React.Component {
     const rootNode = createRoot(shadowRoot);
     const appRootNode = createRoot(appElem);
     window.document.body.appendChild(appElem);
+    Tooltip.defaultProps.parentElement = shadowRoot;
 
     this.window = window;
     this.rootElem = appElem;

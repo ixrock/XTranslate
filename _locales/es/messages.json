@@ -164,6 +164,9 @@
   "popup_copy_translation_title": {
     "message": "Copiar traducción"
   },
+  "popup_select_provider_title": {
+    "message": "Seleccionar proveedor de traducción"
+  },
   "popup_next_vendor_icon_title": {
     "message": "Traducir con { $translator }"
   },

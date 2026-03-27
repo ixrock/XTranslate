@@ -218,6 +218,9 @@
   "popup_copy_translation_title": {
     "message": "Salin terjemahan"
   },
+  "popup_select_provider_title": {
+    "message": "Pilih penyedia terjemahan"
+  },
   "popup_next_vendor_icon_title": {
     "message": "Terjemahkan dengan { $translator }"
   },

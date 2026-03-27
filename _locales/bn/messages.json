@@ -164,6 +164,9 @@
   "popup_copy_translation_title": {
     "message": "অনুবাদ কপি করুন"
   },
+  "popup_select_provider_title": {
+    "message": "অনুবাদ প্রদানকারী নির্বাচন করুন"
+  },
   "popup_next_vendor_icon_title": {
     "message": "{ $translator } দিয়ে অনুবাদ করুন"
   },

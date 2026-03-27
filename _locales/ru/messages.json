@@ -230,6 +230,9 @@
   "popup_copy_translation_title": {
     "message": "Копировать перевод"
   },
+  "popup_select_provider_title": {
+    "message": "Выбрать поставщика перевода"
+  },
   "popup_next_vendor_icon_title": {
     "message": "Перевести с { $translator }"
   },
