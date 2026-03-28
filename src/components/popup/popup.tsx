@@ -285,13 +285,19 @@ export class Popup extends React.Component<PopupProps> {
             <div className={styles.wordMeanings}>
               {meanings.map((meaning, i, list) => {
                 const translation = meaning.translation.join(", ");
-                const examples = meaning.examples?.map(example => example.join(" - ")).join("\n") ?? "";
+                const examples = meaning.examples?.length > 0
+                  ? <pre>{meaning.examples.map((example, i) => <div key={i}>{example.join(" - ")}</div>)}</pre>
+                  : "";
                 return (
-                  <div key={i} className={styles.dictTranslation}>
-                    {meaning.word && <span className={styles.dictWord}>{meaning.word}</span>}
-                    {translation && <small>{translation}</small>}
-                    {examples && <span className={styles.dictExamples} title={examples}/>}
-                  </div>
+                  <React.Fragment key={i}>
+                    {meaning.word && <div className={styles.dictWord}>{meaning.word}</div>}
+                    {translation && (
+                      <div className={styles.dictTranslation}>
+                        {translation}{" "}
+                        {examples && <Icon small material="info_outline" tooltip={{ children: examples }}/>}
+                      </div>
+                    )}
+                  </React.Fragment>
                 )
               })}
             </div>

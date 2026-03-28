@@ -1,5 +1,6 @@
 import * as styles from "./icon.module.scss";
 import uniqueId from "lodash/uniqueId";
+import isPlainObject from "lodash/isPlainObject";
 import React, { type ReactNode } from "react";
 import { base64Decode, cssNames } from "@/utils";
 import { Tooltip, TooltipProps } from "../tooltip";
@@ -132,16 +133,13 @@ export class Icon extends React.PureComponent<IconProps> {
     };
 
     const renderTooltip = () => {
-      if (!tooltip) {
-        return;
-      }
-      return (
-        <Tooltip
-          following={true}
-          {...(typeof tooltip == "object" ? tooltip : { children: tooltip })}
-          anchorId={this.iconId}
-        />
-      )
+      if (!tooltip) return;
+
+      const tooltipProps = isPlainObject(tooltip)
+        ? tooltip as TooltipProps
+        : { children: tooltip } as TooltipProps;
+
+      return <Tooltip following={true} {...tooltipProps} anchorId={this.iconId}/>;
     }
 
     return (

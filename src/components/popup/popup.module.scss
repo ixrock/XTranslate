@@ -133,30 +133,20 @@
       }
 
       .wordMeanings {
-        display: flex;
-        flex-direction: column;
-        padding-left: var(--theme-spacing);
-        gap: var(--theme-spacing-half);
-
-        .dictTranslation {
-          color: inherit;
-
-          > * {
-            display: table-row;
-          }
-        }
+        display: grid;
+        grid-template-columns: auto 1fr;
+        align-items: center;
 
         .dictWord {
-          opacity: .75;
           font-style: italic;
+          text-align: right;
+          opacity: .75;
+          padding: 0 .5em;
         }
 
-        .dictExamples {
-          &::before {
-            content: " * ";
-          }
-
-          cursor: help;
+        .dictTranslation {
+          font-size: small;
+          color: inherit;
         }
       }
     }
