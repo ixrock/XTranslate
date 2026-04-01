@@ -554,15 +554,6 @@
   "pro_required_full_page_limits_reached_text2": {
     "message": "Tingkatkan ke PRO untuk terjemahan satu halaman penuh tanpa batas dan lebih banyak fitur."
   },
-  "pro_required_limits_reached": {
-    "message": "Batas harian akun gratis telah tercapai."
-  },
-  "pro_required_subscription": {
-    "message": "Silakan {$link = berlangganan PRO} untuk membuka potensi penuh penerjemah dan menyelesaikan pekerjaan lebih cepat!"
-  },
-  "pro_subscription_refresh": {
-    "message": "Segarkan langganan"
-  },
   "pro_required_reset_limits_in": {
     "message": "Direset dalam { $timeRange }."
   },
@@ -650,8 +641,23 @@
   "translate_page_by_hotkey": {
     "message": "Terjemahkan seluruh halaman saat saya menekan hotkey"
   },
-  "pro_self_ad": {
-    "message": "Kurang tepat? Perbaiki dengan AI ✨ {$subscribeLink = Tingkatkan ke PRO}"
+  "pro_self_improve_with_ai_suggestion": {
+    "message": "Belum tepat?"
+  },
+  "pro_self_improve_with_ai_action_label": {
+    "message": "✨ Tingkatkan dengan AI"
+  },
+  "pro_self_improve_with_ai_free_remain_today": {
+    "message": "Masih tersisa {$count} peningkatan AI gratis hari ini"
+  },
+  "pro_self_improve_with_ai_free_exausted_today": {
+    "message": "Anda telah menggunakan semua percobaan AI gratis Anda untuk hari ini."
+  },
+  "pro_self_improve_with_ai_free_exausted_total": {
+    "message": "Anda telah menggunakan semua peningkatan AI gratis Anda."
+  },
+  "pro_self_improve_with_ai_login": {
+    "message": "{$loginLink = Masuk} untuk terus meningkatkan terjemahan Anda dengan AI dan mendapatkan token uji coba gratis."
   },
   "pro_self_ad_features": {
     "message": "✓ Terjemahan alami yang akurat makna\n✓ Memahami slang dan ungkapan\n✓ Menjelaskan frasa dan konteks"

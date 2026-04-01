@@ -554,15 +554,6 @@
   "pro_required_full_page_limits_reached_text2": {
     "message": "升级到 PRO，享受不限量整页翻译和更多功能。"
   },
-  "pro_required_limits_reached": {
-    "message": "免费账户的每日限额已用完。"
-  },
-  "pro_required_subscription": {
-    "message": "请{$link = 订阅 PRO}，解锁翻译器的全部潜力，更快完成工作！"
-  },
-  "pro_subscription_refresh": {
-    "message": "刷新订阅"
-  },
   "pro_required_reset_limits_in": {
     "message": "将在 { $timeRange } 后重置。"
   },
@@ -650,8 +641,23 @@
   "translate_page_by_hotkey": {
     "message": "当我按下快捷键时翻译整个页面"
   },
-  "pro_self_ad": {
-    "message": "不太对？用 AI 修复它 ✨ {$subscribeLink = 升级到 PRO}"
+  "pro_self_improve_with_ai_suggestion": {
+    "message": "不太对吗？"
+  },
+  "pro_self_improve_with_ai_action_label": {
+    "message": "✨ 使用 AI 改进"
+  },
+  "pro_self_improve_with_ai_free_remain_today": {
+    "message": "今天还剩 {$count} 次免费 AI 改进"
+  },
+  "pro_self_improve_with_ai_free_exausted_today": {
+    "message": "你今天的免费 AI 尝试次数已经用完。"
+  },
+  "pro_self_improve_with_ai_free_exausted_total": {
+    "message": "你已经用完所有免费 AI 改进。"
+  },
+  "pro_self_improve_with_ai_login": {
+    "message": "{$loginLink = 登录}，以继续使用 AI 改进你的翻译并获得免费的试用 token。"
   },
   "pro_self_ad_features": {
     "message": "✓ 自然、语义准确的翻译\n✓ 理解俚语和习语\n✓ 解释短语与上下文"

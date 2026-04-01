@@ -11,6 +11,10 @@
   pointer-events: none !important;
   z-index: 1000000000 !important;
 
+  a:hover {
+    text-decoration: none;
+  }
+
   *, *:after, *:before {
     box-sizing: border-box;
     outline: none;

@@ -80,24 +80,36 @@
     }
 
     .upgradeToPro {
-      white-space: pre-line;
+      display: flex;
+      gap: var(--theme-spacing);
+      align-items: center;
+      justify-content: center;
       font-size: small;
-      background: #ffffff55;
-      padding: 1px var(--theme-spacing-half);
-      border-radius: var(--theme-spacing-half);
+      white-space: pre-line;
       cursor: pointer;
+      background: #00000066;
+      padding: .5em;
+      border-radius: 5px;
+
+      > div {
+        flex: 1;
+      }
+
+      a {
+        font-weight: bold;
+      }
 
       input[type="checkbox"] {
         appearance: none;
         margin: 0;
+
+        &:checked ~ .upgradeToProDetails {
+          display: block;
+        }
       }
 
       .upgradeToProDetails {
         display: none;
-      }
-
-      :checked ~ .upgradeToProDetails {
-        display: block;
       }
     }
 
@@ -156,6 +168,7 @@
     display: flex;
     align-items: flex-start;
     gap: var(--flexGap);
+    white-space: pre-line;
 
     .errorInfo {
       flex: 1;
@@ -176,7 +189,6 @@
 
   .translatedFrom {
     font-style: italic;
-    margin-top: var(--theme-spacing);
     opacity: .75;
   }
 

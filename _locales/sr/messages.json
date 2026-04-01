@@ -551,15 +551,6 @@
   "pro_required_full_page_limits_reached_text2": {
     "message": "Nadogradite na PRO za neograničeno prevođenje celih stranica i više funkcija."
   },
-  "pro_required_limits_reached": {
-    "message": "Dostignut je dnevni limit besplatnog naloga."
-  },
-  "pro_required_subscription": {
-    "message": "Molimo {$link = pretplatite se na PRO} da otključate puni potencijal prevodioca i završavate stvari brže!"
-  },
-  "pro_subscription_refresh": {
-    "message": "Osveži pretplatu"
-  },
   "pro_required_reset_limits_in": {
     "message": "Reset za { $timeRange }."
   },
@@ -647,8 +638,23 @@
   "translate_page_by_hotkey": {
     "message": "Prevedi celu stranicu kada pritisnem prečicu"
   },
-  "pro_self_ad": {
-    "message": "Nije baš tačno? Ispravi to uz AI ✨ {$subscribeLink = Nadogradi se na PRO}"
+  "pro_self_improve_with_ai_suggestion": {
+    "message": "Није баш добро?"
+  },
+  "pro_self_improve_with_ai_action_label": {
+    "message": "✨ Poboljšaj uz AI"
+  },
+  "pro_self_improve_with_ai_free_remain_today": {
+    "message": "Данас вам је преостало још {$count} бесплатних AI побољшања"
+  },
+  "pro_self_improve_with_ai_free_exausted_today": {
+    "message": "Искористили сте све своје бесплатне AI покушаје за данас."
+  },
+  "pro_self_improve_with_ai_free_exausted_total": {
+    "message": "Искористили сте сва своја бесплатна AI побољшања."
+  },
+  "pro_self_improve_with_ai_login": {
+    "message": "{$loginLink = Пријавите се} да бисте наставили да побољшавате своје преводе уз AI и добили бесплатне пробне токене."
   },
   "pro_self_ad_features": {
     "message": "✓ Prirodni prevod koji tačno prenosi značenje\n✓ Razume žargon i idiome\n✓ Objašnjava fraze i kontekst"

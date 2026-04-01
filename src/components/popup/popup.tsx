@@ -9,7 +9,7 @@ import { materialIcons } from "@/config";
 import { cssNames, prevDefault } from "@/utils";
 import { toCssColor } from "@/utils/toCssColor";
 import { TranslatePayload } from "@/extension";
-import { getTranslator, getTranslators, getXTranslatePro, isRTL, ITranslationError, ITranslationResult, ProviderCodeName } from "@/providers";
+import { freeTrialStorage, getTranslator, getTranslators, getXTranslatePro, isRTL, ITranslationError, ITranslationResult, ProviderCodeName } from "@/providers";
 import { Icon } from "../icon";
 import { userStore } from "@/pro";
 import { settingsStore } from "../settings/settings.storage";
@@ -20,17 +20,20 @@ import { saveToFavoritesAction } from "@/background/history.bgc";
 import { CopyToClipboardIcon } from "../copy-to-clipboard-icon";
 import { PopupPromoBanner } from "@/components/popup/popup_promo";
 import { Tooltip } from "@/components/tooltip";
+import { Button } from "@/components/button";
 
 export interface PopupProps extends React.HTMLProps<any> {
   previewMode?: boolean;
   showPromoBanner?: boolean;
   lastParams: TranslatePayload | undefined;
   translation: ITranslationResult | undefined;
-  error: Partial<ITranslationError & { failReason?: ReactNode }> | undefined;
+  error: Partial<ITranslationError> | undefined;
   summarized?: string;
   onProviderChange?(name: ProviderCodeName): void;
   speak?(): Promise<HTMLAudioElement | SpeechSynthesisUtterance | void>;
   summarize?(evt: React.MouseEvent): Promise<void>;
+  aiDemoTranslation?: boolean;
+  aiDemoTranslationRequest?(evt: React.MouseEvent): void;
 }
 
 @observer
@@ -241,9 +244,53 @@ export class Popup extends React.Component<PopupProps> {
     );
   }
 
+  renderFreeTrialActionsOrUpgradeToProSuggestion() {
+    const { aiDemoTranslation, previewMode, aiDemoTranslationRequest } = this.props;
+
+    if (userStore.isProActive || previewMode) {
+      return null;
+    }
+
+    const { finished, todayRemain } = freeTrialStorage.get();
+
+    return (
+      <label className={styles.upgradeToPro}>
+        <input type="checkbox"/>
+        {aiDemoTranslation && todayRemain > 0 && (
+          <div>
+            {getMessage("pro_self_improve_with_ai_free_remain_today", {
+              count: todayRemain,
+            })}
+          </div>
+        )}
+        {!finished && !aiDemoTranslation && (
+          <>
+            <span>{getMessage("pro_self_improve_with_ai_suggestion")}</span>
+            <Button
+              outline
+              label={getMessage("pro_self_improve_with_ai_action_label")}
+              onClick={aiDemoTranslationRequest}
+            />
+          </>
+        )}
+        {finished && (
+          <div>
+            {getMessage("pro_self_improve_with_ai_free_exausted_total")}{"\n"}
+            {getMessage("pro_self_improve_with_ai_login", {
+              loginLink: v => <a href={getXTranslatePro().loginUrl} target="_blank">{v}</a>
+            })}
+          </div>
+        )}
+        <div className={styles.upgradeToProDetails}>
+          {getMessage("pro_self_ad_features")}
+        </div>
+      </label>
+    );
+  }
+
   renderResult(): React.ReactNode {
     if (!this.translation) return;
-    let { translation, transcription, dictionary, vendor, langFrom, langTo, langDetected } = this.translation;
+    let { translation, transcription, dictionary = [], vendor, langFrom, langTo, langDetected } = this.translation;
     if (langDetected) langFrom = langDetected;
 
     const translator = getTranslator(vendor);
@@ -251,19 +298,6 @@ export class Popup extends React.Component<PopupProps> {
 
     return (
       <div className={styles.translationResult} style={this.resultStyles}>
-        {!userStore.isProActive && (
-          <label className={styles.upgradeToPro}>
-            <input type="checkbox"/>
-            <b>
-              {getMessage("pro_self_ad", {
-                subscribeLink: v => <a href={getXTranslatePro().subscribePageUrl} target="_blank">{v}</a>
-              })}
-            </b>
-            <div className={styles.upgradeToProDetails}>
-              {getMessage("pro_self_ad_features")}
-            </div>
-          </label>
-        )}
         <div className={styles.translation}>
           <div className={styles.icons}>
             {this.renderPlayTextIcon()}
@@ -301,6 +335,7 @@ export class Popup extends React.Component<PopupProps> {
             </div>
           </div>
         )}
+        {this.renderFreeTrialActionsOrUpgradeToProSuggestion()}
         {
           this.settings.showTranslatedFrom && (
             <div className={styles.translatedFrom}>
@@ -327,9 +362,7 @@ export class Popup extends React.Component<PopupProps> {
               {getMessage("translation_data_failed")}
             </div>
           )}
-          {error.failReason ?? (
-            <div dangerouslySetInnerHTML={{ __html: error.message }}/>
-          )}
+          {error.message}
         </div>
         <div className={styles.icons}>
           {this.renderProviderSelectIcon()}

@@ -554,15 +554,6 @@
   "pro_required_full_page_limits_reached_text2": {
     "message": "Passa a PRO per traduzioni illimitate di pagine complete e più funzionalità."
   },
-  "pro_required_limits_reached": {
-    "message": "Il limite giornaliero dell'account gratuito è stato raggiunto."
-  },
-  "pro_required_subscription": {
-    "message": "Per favore {$link = abbonati a PRO} per sbloccare tutto il potenziale del traduttore e fare le cose più velocemente!"
-  },
-  "pro_subscription_refresh": {
-    "message": "Aggiorna abbonamento"
-  },
   "pro_required_reset_limits_in": {
     "message": "Si resetta tra { $timeRange }."
   },
@@ -650,8 +641,23 @@
   "translate_page_by_hotkey": {
     "message": "Traduci la pagina completa quando premo la scorciatoia"
   },
-  "pro_self_ad": {
-    "message": "Non è perfetto? Correggilo con l'IA ✨ {$subscribeLink = Passa a PRO}"
+  "pro_self_improve_with_ai_suggestion": {
+    "message": "Non proprio corretto?"
+  },
+  "pro_self_improve_with_ai_action_label": {
+    "message": "✨ Migliora con l'IA"
+  },
+  "pro_self_improve_with_ai_free_remain_today": {
+    "message": "Ti resta {$count} miglioramento AI gratuito oggi"
+  },
+  "pro_self_improve_with_ai_free_exausted_today": {
+    "message": "Hai già usato tutti i tuoi tentativi gratuiti di AI per oggi."
+  },
+  "pro_self_improve_with_ai_free_exausted_total": {
+    "message": "Hai usato tutti i tuoi miglioramenti AI gratuiti."
+  },
+  "pro_self_improve_with_ai_login": {
+    "message": "{$loginLink = Accedi} per continuare a migliorare le tue traduzioni con l'IA e ottenere token di prova gratuiti."
   },
   "pro_self_ad_features": {
     "message": "✓ Traduzione naturale e fedele al significato\n✓ Capisce gergo ed espressioni idiomatiche\n✓ Spiega frasi e contesto"

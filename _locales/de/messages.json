@@ -554,15 +554,6 @@
   "pro_required_full_page_limits_reached_text2": {
     "message": "Upgrade auf PRO für unbegrenzte Ganzseitenübersetzungen und mehr Funktionen."
   },
-  "pro_required_limits_reached": {
-    "message": "Das tägliche Limit des kostenlosen Kontos wurde erreicht."
-  },
-  "pro_required_subscription": {
-    "message": "Bitte {$link = PRO abonnieren}, um das volle Potenzial des Übersetzers freizuschalten und Dinge schneller zu erledigen!"
-  },
-  "pro_subscription_refresh": {
-    "message": "Abonnement aktualisieren"
-  },
   "pro_required_reset_limits_in": {
     "message": "Zurücksetzung in { $timeRange }."
   },
@@ -650,8 +641,23 @@
   "translate_page_by_hotkey": {
     "message": "Gesamte Seite übersetzen, wenn ich den Hotkey drücke"
   },
-  "pro_self_ad": {
-    "message": "Nicht ganz richtig? Behebe es mit KI ✨ {$subscribeLink = Auf PRO upgraden}"
+  "pro_self_improve_with_ai_suggestion": {
+    "message": "Nicht ganz richtig?"
+  },
+  "pro_self_improve_with_ai_action_label": {
+    "message": "✨ Mit KI verbessern"
+  },
+  "pro_self_improve_with_ai_free_remain_today": {
+    "message": "Heute noch {$count} kostenlose KI-Verbesserung übrig"
+  },
+  "pro_self_improve_with_ai_free_exausted_today": {
+    "message": "Du hast deine kostenlosen KI-Versuche für heute aufgebraucht."
+  },
+  "pro_self_improve_with_ai_free_exausted_total": {
+    "message": "Du hast alle deine kostenlosen KI-Verbesserungen verwendet."
+  },
+  "pro_self_improve_with_ai_login": {
+    "message": "{$loginLink = Anmelden}, um deine Übersetzungen weiter mit KI zu verbessern und kostenlose Test-Token zu erhalten."
   },
   "pro_self_ad_features": {
     "message": "✓ Natürliches, bedeutungsgenaues Übersetzen\n✓ Versteht Slang und Redewendungen\n✓ Erklärt Formulierungen und Kontext"

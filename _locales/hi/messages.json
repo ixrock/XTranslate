@@ -554,15 +554,6 @@
   "pro_required_full_page_limits_reached_text2": {
     "message": "असीमित पूर्ण-पृष्ठ अनुवाद और अधिक सुविधाओं के लिए PRO में अपग्रेड करें।"
   },
-  "pro_required_limits_reached": {
-    "message": "मुफ्त खाते की दैनिक सीमा पूरी हो गई है।"
-  },
-  "pro_required_subscription": {
-    "message": "अनुवादक की पूरी क्षमता अनलॉक करने और काम तेजी से पूरा करने के लिए कृपया {$link = PRO की सदस्यता लें}!"
-  },
-  "pro_subscription_refresh": {
-    "message": "सदस्यता ताज़ा करें"
-  },
   "pro_required_reset_limits_in": {
     "message": "{ $timeRange } में रीसेट होगा।"
   },
@@ -650,8 +641,23 @@
   "translate_page_by_hotkey": {
     "message": "जब मैं हॉटकी दबाऊं तो पूरा पेज अनुवाद करें"
   },
-  "pro_self_ad": {
-    "message": "ठीक नहीं लग रहा? AI से ठीक करें ✨ {$subscribeLink = PRO में अपग्रेड करें}"
+  "pro_self_improve_with_ai_suggestion": {
+    "message": "पूरी तरह सही नहीं?"
+  },
+  "pro_self_improve_with_ai_action_label": {
+    "message": "✨ AI से बेहतर करें"
+  },
+  "pro_self_improve_with_ai_free_remain_today": {
+    "message": "आज {$count} निःशुल्क AI सुधार शेष है"
+  },
+  "pro_self_improve_with_ai_free_exausted_today": {
+    "message": "आपने आज के लिए अपने मुफ्त AI प्रयासों का उपयोग कर लिया है।"
+  },
+  "pro_self_improve_with_ai_free_exausted_total": {
+    "message": "आपने अपने सभी मुफ्त AI सुधारों का उपयोग कर लिया है।"
+  },
+  "pro_self_improve_with_ai_login": {
+    "message": "{$loginLink = लॉग इन} करके AI के साथ अपने अनुवादों को बेहतर बनाना जारी रखें और मुफ़्त परीक्षण टोकन प्राप्त करें।"
   },
   "pro_self_ad_features": {
     "message": "✓ प्राकृतिक, अर्थ-सही अनुवाद\n✓ स्लैंग और मुहावरों को समझता है\n✓ वाक्यांशों और संदर्भ की व्याख्या करता है"
