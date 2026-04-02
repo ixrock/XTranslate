@@ -584,6 +584,12 @@
   "pro_unauthorized_error_401": {
     "message": "Vous devez être connecté à { $serviceUrl } et avoir un abonnement actif pour obtenir l'accès."
   },
+  "pro_quota_exceeded_free_trial_error_429": {
+    "message": "Les limites de votre quota IA gratuit ont été dépassées. Veuillez { $subscribeLink = s'abonner } pour continuer."
+  },
+  "pro_quota_exceeded_paid_subscription_error_429": {
+    "message": "Vous avez dépassé la limite de quota IA de votre offre ({$planType}). \nLe nouveau cycle d'abonnement commence le { $refreshDate }. \nVeuillez patienter ou {$contactSupport = contacter le support} pour résoudre le problème."
+  },
   "translate_button": {
     "message": "Traduire"
   },
@@ -651,13 +657,13 @@
     "message": "Il vous reste {$count} amélioration IA gratuite aujourd’hui"
   },
   "pro_self_improve_with_ai_free_exausted_today": {
-    "message": "Vous avez utilisé tous vos essais IA gratuits pour aujourd’hui."
+    "message": "Vous avez utilisé tous vos essais IA gratuits pour aujourd’hui. {$loginLink = Connexion} pour en obtenir plus."
   },
   "pro_self_improve_with_ai_free_exausted_total": {
     "message": "Vous avez utilisé toutes vos améliorations IA gratuites."
   },
   "pro_self_improve_with_ai_login": {
-    "message": "{$loginLink = Connexion} pour continuer à améliorer vos traductions avec l’IA et obtenir des jetons d’essai gratuits."
+    "message": "{$loginLink = Connexion} pour continuer avec les traductions par IA et obtenir plus de jetons gratuits."
   },
   "pro_self_ad_features": {
     "message": "✓ Traduction naturelle et fidèle au sens\n✓ Comprend l'argot et les expressions\n✓ Explique les phrases et le contexte"

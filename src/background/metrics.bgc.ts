@@ -102,6 +102,8 @@ export type GoogleMetricEvents = {
   };
   promo_banner_shown: {}
   promo_free_ai_translation_used: {}
-  promo_free_ai_translations_finished: {}
-  promo_login_for_free_tokens_clicked: {}
+  promo_free_ai_translation_limit_daily: {}
+  promo_free_ai_translation_limit_total: {}
+  promo_free_ai_login_clicked: {}
+  promo_free_ai_hide_banner: {}
 };

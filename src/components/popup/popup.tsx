@@ -1,6 +1,6 @@
 import * as styles from "./popup.module.scss"
 
-import React, { CSSProperties, ReactNode } from "react";
+import React, { CSSProperties } from "react";
 import { computed, makeObservable } from "mobx";
 import { observer } from "mobx-react";
 import sample from "lodash/sample"
@@ -12,6 +12,7 @@ import { TranslatePayload } from "@/extension";
 import { freeTrialStorage, getTranslator, getTranslators, getXTranslatePro, isRTL, ITranslationError, ITranslationResult, ProviderCodeName } from "@/providers";
 import { Icon } from "../icon";
 import { userStore } from "@/pro";
+import { sendMetric } from "@/background/metrics.bgc";
 import { settingsStore } from "../settings/settings.storage";
 import { themeStore } from "../theme-manager/theme.storage";
 import { isFavorite } from "../user-history/favorites.storage";
@@ -246,17 +247,27 @@ export class Popup extends React.Component<PopupProps> {
 
   renderFreeTrialActionsOrUpgradeToProSuggestion() {
     const { aiDemoTranslation, previewMode, aiDemoTranslationRequest } = this.props;
+    const freeTrial = freeTrialStorage.get();
+    const { finished, showBanner, todayRemain } = freeTrial;
 
-    if (userStore.isProActive || previewMode) {
+    if (userStore.isProActive || previewMode || !showBanner) {
       return null;
     }
 
-    const { finished, todayRemain } = freeTrialStorage.get();
+    const openLogin = () => {
+      window.open(getXTranslatePro().loginUrl, "_blank");
+      void sendMetric("promo_free_ai_login_clicked", {});
+    };
+
+    const hideBanner = () => {
+      freeTrial.showBanner = false;
+      void sendMetric("promo_free_ai_hide_banner", {});
+    };
 
     return (
-      <label className={styles.upgradeToPro}>
+      <label className={styles.freeTrialDemo}>
         <input type="checkbox"/>
-        {aiDemoTranslation && todayRemain > 0 && (
+        {aiDemoTranslation && (
           <div>
             {getMessage("pro_self_improve_with_ai_free_remain_today", {
               count: todayRemain,
@@ -274,14 +285,21 @@ export class Popup extends React.Component<PopupProps> {
           </>
         )}
         {finished && (
-          <div>
-            {getMessage("pro_self_improve_with_ai_free_exausted_total")}{"\n"}
-            {getMessage("pro_self_improve_with_ai_login", {
-              loginLink: v => <a href={getXTranslatePro().loginUrl} target="_blank">{v}</a>
-            })}
+          <div className={styles.freeTrialExhausted}>
+            <Icon
+              small material="close"
+              className={styles.closeIcon}
+              onClick={prevDefault(hideBanner)}
+            />
+            <span>{getMessage("pro_self_improve_with_ai_free_exausted_total")}</span>
+            <span>
+              {getMessage("pro_self_improve_with_ai_login", {
+                loginLink: v => <Button outline onClick={openLogin}>{v}</Button>
+              })}
+            </span>
           </div>
         )}
-        <div className={styles.upgradeToProDetails}>
+        <div className={styles.aiFeatureDetails}>
           {getMessage("pro_self_ad_features")}
         </div>
       </label>

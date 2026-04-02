@@ -584,6 +584,12 @@
   "pro_unauthorized_error_401": {
     "message": "Devi aver effettuato l'accesso su { $serviceUrl } e avere un abbonamento attivo per ottenere l'accesso."
   },
+  "pro_quota_exceeded_free_trial_error_429": {
+    "message": "Hai superato i limiti della tua quota AI gratuita. Per continuare, { $subscribeLink = abbonati }."
+  },
+  "pro_quota_exceeded_paid_subscription_error_429": {
+    "message": "Hai superato il limite di quota AI del tuo piano ({$planType}). \nIl nuovo ciclo di abbonamento inizia il { $refreshDate }. \nAttendi oppure {$contactSupport = contatta il supporto} per risolvere il problema."
+  },
   "translate_button": {
     "message": "Traduci"
   },
@@ -651,13 +657,13 @@
     "message": "Ti resta {$count} miglioramento AI gratuito oggi"
   },
   "pro_self_improve_with_ai_free_exausted_today": {
-    "message": "Hai già usato tutti i tuoi tentativi gratuiti di AI per oggi."
+    "message": "Hai esaurito i tuoi tentativi gratuiti di IA per oggi. {$loginLink = Accedi} per ottenerne altri."
   },
   "pro_self_improve_with_ai_free_exausted_total": {
     "message": "Hai usato tutti i tuoi miglioramenti AI gratuiti."
   },
   "pro_self_improve_with_ai_login": {
-    "message": "{$loginLink = Accedi} per continuare a migliorare le tue traduzioni con l'IA e ottenere token di prova gratuiti."
+    "message": "{$loginLink = Accedi} per continuare con le traduzioni con IA e ottenere altri token gratuiti."
   },
   "pro_self_ad_features": {
     "message": "✓ Traduzione naturale e fedele al significato\n✓ Capisce gergo ed espressioni idiomatiche\n✓ Spiega frasi e contesto"

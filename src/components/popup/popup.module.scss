@@ -79,7 +79,8 @@
       border: 1px solid;
     }
 
-    .upgradeToPro {
+    .freeTrialDemo {
+      position: relative;
       display: flex;
       gap: var(--theme-spacing);
       align-items: center;
@@ -103,13 +104,31 @@
         appearance: none;
         margin: 0;
 
-        &:checked ~ .upgradeToProDetails {
+        &:checked ~ .aiFeatureDetails {
           display: block;
         }
       }
 
-      .upgradeToProDetails {
+      .aiFeatureDetails {
         display: none;
+      }
+    }
+
+    .freeTrialExhausted {
+      display: flex;
+      flex-direction: column;
+      gap: .5lh;
+
+      .closeIcon {
+        position: absolute;
+        right: 3px;
+        top: 3px;
+        opacity: .5;
+        color: inherit;
+
+        &:hover {
+          opacity: 1;
+        }
       }
     }
 

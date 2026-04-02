@@ -581,6 +581,12 @@
   "pro_unauthorized_error_401": {
     "message": "Morate biti prijavljeni na { $serviceUrl } i imati aktivnu pretplatu da biste dobili pristup."
   },
+  "pro_quota_exceeded_free_trial_error_429": {
+    "message": "Prekoračili ste limit besplatne AI kvote. Molimo { $subscribeLink = pretplatite se } da nastavite."
+  },
+  "pro_quota_exceeded_paid_subscription_error_429": {
+    "message": "Prekoračili ste limit AI kvote za svoj plan ({$planType}). \nNovi ciklus pretplate počinje { $refreshDate }. \nSačekajte ili {$contactSupport = kontaktirajte podršku} da biste rešili problem."
+  },
   "translate_button": {
     "message": "Prevedi"
   },
@@ -648,13 +654,13 @@
     "message": "Данас вам је преостало још {$count} бесплатних AI побољшања"
   },
   "pro_self_improve_with_ai_free_exausted_today": {
-    "message": "Искористили сте све своје бесплатне AI покушаје за данас."
+    "message": "Искористили сте све своје бесплатне AI покушаје за данас. {$loginLink = Пријавите се} да добијете више."
   },
   "pro_self_improve_with_ai_free_exausted_total": {
     "message": "Искористили сте сва своја бесплатна AI побољшања."
   },
   "pro_self_improve_with_ai_login": {
-    "message": "{$loginLink = Пријавите се} да бисте наставили да побољшавате своје преводе уз AI и добили бесплатне пробне токене."
+    "message": "{$loginLink = Пријавите се} да бисте наставили са AI преводима и добили још бесплатних токена."
   },
   "pro_self_ad_features": {
     "message": "✓ Prirodni prevod koji tačno prenosi značenje\n✓ Razume žargon i idiome\n✓ Objašnjava fraze i kontekst"

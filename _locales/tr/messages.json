@@ -587,6 +587,12 @@
   "pro_unauthorized_error_401": {
     "message": "Erişim sağlamak için { $serviceUrl } adresinde oturum açmış ve aktif bir aboneliğe sahip olmalısınız."
   },
+  "pro_quota_exceeded_free_trial_error_429": {
+    "message": "Ücretsiz AI kotası limitinizi aştınız. Devam etmek için lütfen { $subscribeLink = abone ol }."
+  },
+  "pro_quota_exceeded_paid_subscription_error_429": {
+    "message": "Planınız ({$planType}) için AI kota limitini aştınız. \nYeni abonelik döngüsü { $refreshDate } tarihinde başlar. \nLütfen bekleyin veya sorunu çözmek için {$contactSupport = destekle iletişime geçin}."
+  },
   "translate_button": {
     "message": "Çevir"
   },
@@ -654,13 +660,13 @@
     "message": "Bugün {$count} ücretsiz yapay zeka geliştirmesi kaldı"
   },
   "pro_self_improve_with_ai_free_exausted_today": {
-    "message": "Bugün için ücretsiz yapay zeka denemelerinizin tamamını kullandınız."
+    "message": "Bugün için ücretsiz yapay zeka denemelerinizin tamamını kullandınız. Daha fazlasını almak için {$loginLink = Giriş yapın}."
   },
   "pro_self_improve_with_ai_free_exausted_total": {
     "message": "Tüm ücretsiz yapay zeka geliştirmelerini kullandınız."
   },
   "pro_self_improve_with_ai_login": {
-    "message": "{$loginLink = Giriş yap} ile çevirilerinizi yapay zekayla geliştirmeye devam edin ve ücretsiz deneme jetonları alın."
+    "message": "{$loginLink = Giriş yapın} ve AI çevirilerine devam ederek daha fazla ücretsiz jeton alın."
   },
   "pro_self_ad_features": {
     "message": "✓ Doğal, anlamı doğru aktaran çeviri\n✓ Argo ve deyimleri anlar\n✓ İfadeleri ve bağlamı açıklar"

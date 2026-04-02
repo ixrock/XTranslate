@@ -742,7 +742,7 @@ export class ContentScript extends React.Component {
   async translateWithFreeTrial() {
     this.lastParams.provider = ProviderCodeName.XTRANSLATE_PRO;
     const payload = this.getPayloadParams(this.lastParams);
-    await this.translate(payload, () => getXTranslatePro().translateDemoTrial(payload));
+    await this.translate(payload, () => getXTranslatePro().translateTrial(payload));
     this.isFreeTrialUsed = true;
   }
 

@@ -581,6 +581,12 @@
   "pro_unauthorized_error_401": {
     "message": "Na využívanie musíte byť prihlásení na { $serviceUrl } a mať aktívne predplatné."
   },
+  "pro_quota_exceeded_free_trial_error_429": {
+    "message": "Limity vašej bezplatnej AI kvóty boli prekročené. Ak chcete pokračovať, { $subscribeLink = predplatiť }."
+  },
+  "pro_quota_exceeded_paid_subscription_error_429": {
+    "message": "Prekročili ste limit AI kvóty pre váš plán ({$planType}). \nNový cyklus predplatného začína { $refreshDate }. \nPočkajte, alebo {$contactSupport = kontaktujte podporu} na vyriešenie problému."
+  },
   "translate_button": {
     "message": "Preložiť"
   },
@@ -648,13 +654,13 @@
     "message": "Dnes vám zostáva {$count} bezplatné vylepšenie pomocou AI"
   },
   "pro_self_improve_with_ai_free_exausted_today": {
-    "message": "Dnes ste už využili všetky bezplatné pokusy AI."
+    "message": "Dnes ste už využili všetky bezplatné pokusy AI. {$loginLink = Prihlásiť sa}, ak chcete získať viac."
   },
   "pro_self_improve_with_ai_free_exausted_total": {
     "message": "Využili ste všetky svoje bezplatné vylepšenia AI."
   },
   "pro_self_improve_with_ai_login": {
-    "message": "{$loginLink = Prihlásiť sa} a pokračovať vo vylepšovaní prekladov pomocou AI a získať bezplatné skúšobné tokeny."
+    "message": "{$loginLink = Prihlásiť sa}, ak chcete pokračovať v AI prekladoch a získať viac bezplatných tokenov."
   },
   "pro_self_ad_features": {
     "message": "✓ Prirodzený, významovo presný preklad\n✓ Rozumie slangu a idiomom\n✓ Vysvetľuje frázy a kontext"

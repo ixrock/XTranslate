@@ -584,6 +584,12 @@
   "pro_unauthorized_error_401": {
     "message": "Bạn phải đăng nhập tại { $serviceUrl } và có đăng ký đang hoạt động để có quyền truy cập."
   },
+  "pro_quota_exceeded_free_trial_error_429": {
+    "message": "Bạn đã vượt quá giới hạn quota AI miễn phí. Vui lòng { $subscribeLink = đăng ký } để tiếp tục."
+  },
+  "pro_quota_exceeded_paid_subscription_error_429": {
+    "message": "Bạn đã vượt quá giới hạn quota AI cho gói của mình ({$planType}). \nChu kỳ đăng ký mới bắt đầu vào { $refreshDate }. \nVui lòng chờ hoặc {$contactSupport = liên hệ hỗ trợ} để giải quyết vấn đề."
+  },
   "translate_button": {
     "message": "Dịch"
   },
@@ -651,13 +657,13 @@
     "message": "Hôm nay bạn còn {$count} lượt cải thiện AI miễn phí"
   },
   "pro_self_improve_with_ai_free_exausted_today": {
-    "message": "Bạn đã dùng hết các lượt thử AI miễn phí của hôm nay."
+    "message": "Bạn đã dùng hết các lượt thử AI miễn phí của hôm nay. {$loginLink = Đăng nhập} để nhận thêm."
   },
   "pro_self_improve_with_ai_free_exausted_total": {
     "message": "Bạn đã dùng hết tất cả các cải thiện AI miễn phí."
   },
   "pro_self_improve_with_ai_login": {
-    "message": "{$loginLink = Đăng nhập} để tiếp tục cải thiện bản dịch của bạn bằng AI và nhận token dùng thử miễn phí."
+    "message": "{$loginLink = Đăng nhập} để tiếp tục dịch bằng AI và nhận thêm token miễn phí."
   },
   "pro_self_ad_features": {
     "message": "✓ Dịch tự nhiên, chính xác về ý nghĩa\n✓ Hiểu tiếng lóng và thành ngữ\n✓ Giải thích cụm từ và ngữ cảnh"

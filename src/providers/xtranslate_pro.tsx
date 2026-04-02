@@ -3,10 +3,11 @@ import AILanguagesList from "./open-ai.json"
 import { action } from "mobx";
 import { getTranslator, ITranslationDictionary, ITranslationError, ITranslationResult, OpenAIModelTTSVoice, ProviderCodeName, TranslateParams, Translator } from "./index";
 import { MessageType, ProxyResponseType, ProxyStreamResponsePayload } from "@/extension";
-import { getMessage } from "@/i18n";
-import { websiteURL } from "@/config";
-import { userStore } from "@/pro";
+import { supportEmail, websiteURL } from "@/config";
+import { sendMetric } from "@/background/metrics.bgc";
 import { createStorage } from "@/storage";
+import { getMessage } from "@/i18n";
+import { userStore } from "@/pro";
 
 export const freeTrialStorage = createStorage("xtranslate_pro_trial", {
   area: "sync",
@@ -17,6 +18,7 @@ export const freeTrialStorage = createStorage("xtranslate_pro_trial", {
     todayRemain: 2,
     totalRemain: 5,
     finished: false,
+    showBanner: true,
   },
 });
 
@@ -68,17 +70,31 @@ export class XTranslatePro extends Translator {
 
   private handlePaidApiError(err: Error | XTranslateProTranslateError) {
     const apiError = err as XTranslateProTranslateError;
-
-    if (apiError.error) {
-      apiError.message = apiError.error;
-    }
+    let errorMessage: React.ReactNode = apiError.error ?? apiError.message;
 
     if (apiError.statusCode === 401) {
-      apiError.message = getMessage("pro_unauthorized_error_401", {
+      errorMessage = getMessage("pro_unauthorized_error_401", {
         serviceUrl: <a href={this.subscribePageUrl} target="_blank">{this.publicUrl}</a>,
-      });
+      })
     }
 
+    if (apiError.statusCode === 429) {
+      const { isFreeUser, isPaidUser, subscription } = userStore;
+      if (isFreeUser) {
+        errorMessage = getMessage("pro_quota_exceeded_free_trial_error_429", {
+          subscribeLink: v => <a href={this.subscribePageUrl} target="_blank">{v}</a>,
+        });
+      }
+      if (isPaidUser) {
+        errorMessage = getMessage("pro_quota_exceeded_paid_subscription_error_429", {
+          planType: subscription.planType,
+          refreshDate: new Date(subscription.periodEnd).toLocaleDateString(),
+          contactSupport: v => <a href={`mailto:${supportEmail}`}>{v}</a>,
+        });
+      }
+    }
+
+    apiError.message = errorMessage;
     throw apiError;
   }
 
@@ -87,7 +103,9 @@ export class XTranslatePro extends Translator {
 
     if (apiError.error === XTranslatePro.ERROR_CODE_LIMIT_REACHED) {
       if (apiError.type === "daily") {
-        apiError.message = getMessage("pro_self_improve_with_ai_free_exausted_today");
+        apiError.message = getMessage("pro_self_improve_with_ai_free_exausted_today", {
+          loginLink: v => <a href={this.loginUrl} target="_blank">{v}</a>,
+        });
       }
       if (apiError.type === "total") {
         apiError.message = getMessage("pro_self_improve_with_ai_free_exausted_total");
@@ -130,8 +148,8 @@ export class XTranslatePro extends Translator {
   }
 
   @action
-  async translateDemoTrial(params: TranslateParams): Promise<ITranslationResult> {
-    const trialStorage = freeTrialStorage.get();
+  async translateTrial(params: TranslateParams): Promise<ITranslationResult> {
+    const trialStore = freeTrialStorage.get();
 
     const freeResultPromise = this.request<XTranslateProDemoTrialOutput>({
       url: `${this.apiUrl}/translate/demo`,
@@ -139,7 +157,7 @@ export class XTranslatePro extends Translator {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          anon_id: trialStorage.anonId,
+          anon_id: trialStore.anonId,
           langFrom: params.from,
           langTo: params.to,
           text: params.texts ?? [params.text],
@@ -149,14 +167,20 @@ export class XTranslatePro extends Translator {
 
     try {
       const { limits, result } = await freeResultPromise;
+      const { remaining_today, remaining_total } = limits;
 
-      trialStorage.todayRemain = limits.remaining_today;
-      trialStorage.totalRemain = limits.remaining_total;
-      trialStorage.finished = trialStorage.totalRemain === 0;
+      trialStore.todayRemain = remaining_today;
+      trialStore.totalRemain = remaining_total;
+      trialStore.finished = remaining_total === 0;
+
+      if (!remaining_today) void sendMetric("promo_free_ai_translation_limit_daily", {});
+      if (!remaining_total) void sendMetric("promo_free_ai_translation_limit_total", {});
 
       return this.toTranslationResult(result, params);
     } catch (err) {
       this.handleFreeApiError(err);
+    } finally {
+      void sendMetric("promo_free_ai_translation_used", {});
     }
   }
 
@@ -766,7 +790,7 @@ export interface XTranslateProPlan {
   ttsBytesIncluded: number;
 }
 
-export type XTranslateProPlanType = "FREE_PLAN" | "MONTHLY" | "YEARLY";
+export type XTranslateProPlanType = "FREE_TRIAL" | "MONTHLY" | "YEARLY";
 export type XTranslateProStatus = "PAID" | "FAILED" | "REFUNDED" | "CANCELED";
 
 export interface XTranslateProSubscriptionResponse extends XTranslateProSubscription {

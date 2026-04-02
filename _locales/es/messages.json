@@ -584,6 +584,12 @@
   "pro_unauthorized_error_401": {
     "message": "Debe haber iniciado sesión en { $serviceUrl } y tener una suscripción activa para obtener acceso."
   },
+  "pro_quota_exceeded_free_trial_error_429": {
+    "message": "Se ha excedido el límite de tu cuota gratuita de IA. Por favor, { $subscribeLink = suscribirse } para continuar."
+  },
+  "pro_quota_exceeded_paid_subscription_error_429": {
+    "message": "Has excedido el límite de cuota de IA de tu plan ({$planType}). \nEl nuevo ciclo de suscripción comienza el { $refreshDate }. \nEspera o {$contactSupport = contacta con soporte} para resolver el problema."
+  },
   "translate_button": {
     "message": "Traducir"
   },
@@ -651,13 +657,13 @@
     "message": "Te queda {$count} mejora de IA gratuita hoy"
   },
   "pro_self_improve_with_ai_free_exausted_today": {
-    "message": "Ya has usado tus intentos gratuitos de IA de hoy."
+    "message": "Ya has usado tus intentos gratuitos de IA de hoy. {$loginLink = Inicia sesión} para obtener más."
   },
   "pro_self_improve_with_ai_free_exausted_total": {
     "message": "Ya has usado todas tus mejoras de IA gratuitas."
   },
   "pro_self_improve_with_ai_login": {
-    "message": "{$loginLink = Inicia sesión} para seguir mejorando tus traducciones con IA y obtener tokens de prueba gratuitos."
+    "message": "{$loginLink = Inicia sesión} para continuar con las traducciones con IA y obtener más tokens gratis."
   },
   "pro_self_ad_features": {
     "message": "✓ Traducción natural y fiel al significado\n✓ Comprende jerga y modismos\n✓ Explica frases y contexto"

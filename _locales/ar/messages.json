@@ -584,6 +584,12 @@
   "pro_unauthorized_error_401": {
     "message": "يجب عليك تسجيل الدخول في { $serviceUrl } وامتلاك اشتراك نشط للوصول."
   },
+  "pro_quota_exceeded_free_trial_error_429": {
+    "message": "تم تجاوز حدود حصتك المجانية للذكاء الاصطناعي. يرجى { $subscribeLink = الاشتراك } للمتابعة."
+  },
+  "pro_quota_exceeded_paid_subscription_error_429": {
+    "message": "لقد تجاوزت حد حصة الذكاء الاصطناعي في خطتك ({$planType}). \nتبدأ دورة الاشتراك الجديدة في { $refreshDate }. \nيرجى الانتظار أو {$contactSupport = التواصل مع الدعم} لحل المشكلة."
+  },
   "translate_button": {
     "message": "ترجم"
   },
@@ -651,13 +657,13 @@
     "message": "لا يزال لديك {$count} تحسين مجاني بالذكاء الاصطناعي اليوم"
   },
   "pro_self_improve_with_ai_free_exausted_today": {
-    "message": "لقد استخدمت محاولاتك المجانية بالذكاء الاصطناعي لليوم."
+    "message": "لقد استخدمت محاولاتك المجانية بالذكاء الاصطناعي لليوم. {$loginLink = تسجيل الدخول} للحصول على المزيد."
   },
   "pro_self_improve_with_ai_free_exausted_total": {
     "message": "لقد استخدمت كل تحسيناتك المجانية بالذكاء الاصطناعي."
   },
   "pro_self_improve_with_ai_login": {
-    "message": "{$loginLink = تسجيل الدخول} لمتابعة تحسين ترجماتك بالذكاء الاصطناعي والحصول على رموز التجربة المجانية."
+    "message": "{$loginLink = تسجيل الدخول} لمتابعة الترجمات بالذكاء الاصطناعي والحصول على المزيد من الرموز المجانية."
   },
   "pro_self_ad_features": {
     "message": "✓ ترجمة طبيعية ودقيقة المعنى\n✓ يفهم العامية والتعابير\n✓ يشرح العبارات والسياق"

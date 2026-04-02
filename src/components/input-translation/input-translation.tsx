@@ -39,8 +39,8 @@ export class InputTranslation extends React.Component {
 
   @observable isLoading = false;
   @observable params?: TranslationPageParams;
-  @observable translation?: ITranslationResult;
-  @observable error?: ITranslationError;
+  @observable.ref translation?: ITranslationResult;
+  @observable.ref error?: ITranslationError;
   @observable summarized = "";
   @observable isSpeaking = false;
   @observable isPaused = false;
@@ -342,7 +342,7 @@ export class InputTranslation extends React.Component {
     return (
       <div className="translation-error flex column gaps">
         <p>{statusCode}: {getMessage("translation_data_failed")}</p>
-        <p dangerouslySetInnerHTML={{ __html: message }}/>
+        <p>{message}</p>
       </div>
     );
   }

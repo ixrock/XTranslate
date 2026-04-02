@@ -593,6 +593,12 @@
   "pro_unauthorized_error_401": {
     "message": "You must be logged-in at { $serviceUrl } and have an active subscription to get access."
   },
+  "pro_quota_exceeded_free_trial_error_429": {
+    "message": "Your free AI quota limits has been exceeded. Please { $subscribeLink = subscribe } to continue."
+  },
+  "pro_quota_exceeded_paid_subscription_error_429": {
+    "message": "You has exceeded AI quota limit for your plan ({$planType}). \nNew subscription cycle starts at { $refreshDate }. \nPlease wait or {$contactSupport = contact support} to resolve the issue."
+  },
   "pro_self_improve_with_ai_suggestion": {
     "message": "Not quite right?"
   },
@@ -603,13 +609,13 @@
     "message": "{$count} free AI improvement left today"
   },
   "pro_self_improve_with_ai_free_exausted_today": {
-    "message": "You’ve used your free AI attempts for today."
+    "message": "You’ve used your free AI attempts for today. {$loginLink = Login} to get more."
   },
   "pro_self_improve_with_ai_free_exausted_total": {
     "message": "You’ve used all your free AI improvements."
   },
   "pro_self_improve_with_ai_login": {
-    "message": "{$loginLink = Login} to continue improving your translations with AI and get free trial tokens."
+    "message": "{$loginLink = Login} to continue with AI translations and get more free tokens."
   },
   "pro_self_ad_features": {
     "message": "✓ Natural, meaning-accurate translation\n✓ Understands slang and idioms\n✓ Explains phrases and context"

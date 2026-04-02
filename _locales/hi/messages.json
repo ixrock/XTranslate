@@ -584,6 +584,12 @@
   "pro_unauthorized_error_401": {
     "message": "एक्सेस प्राप्त करने के लिए आपको { $serviceUrl } पर लॉग-इन होना चाहिए और एक सक्रिय सदस्यता होनी चाहिए।"
   },
+  "pro_quota_exceeded_free_trial_error_429": {
+    "message": "आपकी मुफ्त AI कोटा सीमा पार हो गई है। जारी रखने के लिए कृपया { $subscribeLink = सदस्यता लें }।"
+  },
+  "pro_quota_exceeded_paid_subscription_error_429": {
+    "message": "आपने अपने प्लान ({$planType}) की AI कोटा सीमा पार कर ली है। \nनया सदस्यता चक्र { $refreshDate } से शुरू होता है। \nकृपया प्रतीक्षा करें या समस्या हल करने के लिए {$contactSupport = सपोर्ट से संपर्क करें}।"
+  },
   "translate_button": {
     "message": "अनुवाद करें"
   },
@@ -651,13 +657,13 @@
     "message": "आज {$count} निःशुल्क AI सुधार शेष है"
   },
   "pro_self_improve_with_ai_free_exausted_today": {
-    "message": "आपने आज के लिए अपने मुफ्त AI प्रयासों का उपयोग कर लिया है।"
+    "message": "आपने आज के लिए अपने मुफ्त AI प्रयासों का उपयोग कर लिया है। अधिक पाने के लिए {$loginLink = लॉग इन} करें।"
   },
   "pro_self_improve_with_ai_free_exausted_total": {
     "message": "आपने अपने सभी मुफ्त AI सुधारों का उपयोग कर लिया है।"
   },
   "pro_self_improve_with_ai_login": {
-    "message": "{$loginLink = लॉग इन} करके AI के साथ अपने अनुवादों को बेहतर बनाना जारी रखें और मुफ़्त परीक्षण टोकन प्राप्त करें।"
+    "message": "{$loginLink = लॉग इन} करके AI अनुवाद जारी रखें और अधिक मुफ़्त टोकन पाएं।"
   },
   "pro_self_ad_features": {
     "message": "✓ प्राकृतिक, अर्थ-सही अनुवाद\n✓ स्लैंग और मुहावरों को समझता है\n✓ वाक्यांशों और संदर्भ की व्याख्या करता है"

@@ -584,6 +584,12 @@
   "pro_unauthorized_error_401": {
     "message": "Sie müssen bei { $serviceUrl } eingeloggt sein und ein aktives Abonnement haben, um Zugriff zu erhalten."
   },
+  "pro_quota_exceeded_free_trial_error_429": {
+    "message": "Ihr kostenloses AI-Kontingent wurde überschritten. Bitte { $subscribeLink = Abonnieren }, um fortzufahren."
+  },
+  "pro_quota_exceeded_paid_subscription_error_429": {
+    "message": "Sie haben das AI-Kontingent Ihres Tarifs ({$planType}) überschritten. \nDer neue Abonnementzyklus beginnt am { $refreshDate }. \nBitte warten Sie oder {$contactSupport = kontaktieren Sie den Support}, um das Problem zu lösen."
+  },
   "translate_button": {
     "message": "Übersetzen"
   },
@@ -651,13 +657,13 @@
     "message": "Heute noch {$count} kostenlose KI-Verbesserung übrig"
   },
   "pro_self_improve_with_ai_free_exausted_today": {
-    "message": "Du hast deine kostenlosen KI-Versuche für heute aufgebraucht."
+    "message": "Du hast deine kostenlosen KI-Versuche für heute aufgebraucht. {$loginLink = Anmelden}, um mehr zu erhalten."
   },
   "pro_self_improve_with_ai_free_exausted_total": {
     "message": "Du hast alle deine kostenlosen KI-Verbesserungen verwendet."
   },
   "pro_self_improve_with_ai_login": {
-    "message": "{$loginLink = Anmelden}, um deine Übersetzungen weiter mit KI zu verbessern und kostenlose Test-Token zu erhalten."
+    "message": "{$loginLink = Anmelden}, um mit KI-Übersetzungen fortzufahren und mehr kostenlose Token zu erhalten."
   },
   "pro_self_ad_features": {
     "message": "✓ Natürliches, bedeutungsgenaues Übersetzen\n✓ Versteht Slang und Redewendungen\n✓ Erklärt Formulierungen und Kontext"
