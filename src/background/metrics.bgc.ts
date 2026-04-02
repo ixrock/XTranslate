@@ -67,16 +67,6 @@ export type GoogleMetricEvents = {
     lang_from: string;
     lang_to: string;
   };
-  page_translations_limit_reached: {
-    provider: ProviderCodeName;
-    lang_from: string;
-    lang_to: string;
-  };
-  popup_daily_limit_reached: {
-    provider: ProviderCodeName;
-    lang_from: string;
-    lang_to: string;
-  };
   translate_error: {
     source: MetricSourceEnv;
     provider: ProviderCodeName;
@@ -111,4 +101,9 @@ export type GoogleMetricEvents = {
     lang_to: string;
   };
   promo_banner_shown: {}
+  promo_free_ai_translation_used: {}
+  promo_free_ai_translation_limit_daily: {}
+  promo_free_ai_translation_limit_total: {}
+  promo_free_ai_login_clicked: {}
+  promo_free_ai_hide_banner: {}
 };

@@ -602,15 +602,6 @@
   "pro_required_full_page_limits_reached_text2": {
     "message": "Перейдите на PRO для безлимитного перевода целых страниц и дополнительных функций."
   },
-  "pro_required_limits_reached": {
-    "message": "Дневной лимит для бесплатного аккаунта достигнут."
-  },
-  "pro_required_subscription": {
-    "message": "Пожалуйста, {$link = оформите подписку на PRO}, чтобы раскрыть весь потенциал переводчика и выполнять задачи быстрее!"
-  },
-  "pro_subscription_refresh": {
-    "message": "Обновить подписку"
-  },
   "pro_required_reset_limits_in": {
     "message": "Сброс через { $timeRange }."
   },
@@ -641,8 +632,29 @@
   "pro_unauthorized_error_401": {
     "message": "Вы должны быть залогинены на { $serviceUrl } и иметь активную подписку для доступа."
   },
-  "pro_self_ad": {
-    "message": "Не совсем точный перевод? Исправь это с AI ✨ {$subscribeLink = Обновись до PRO}"
+  "pro_quota_exceeded_free_trial_error_429": {
+    "message": "Вы превысили лимит бесплатной квоты ИИ. Пожалуйста, { $subscribeLink = подписывайтесь }, чтобы продолжить."
+  },
+  "pro_quota_exceeded_paid_subscription_error_429": {
+    "message": "Вы превысили лимит квоты ИИ для вашего плана ({$planType}). \nНовый цикл подписки начнется { $refreshDate }. \nПожалуйста, подождите или {$contactSupport = обратитесь в поддержку}, чтобы решить проблему."
+  },
+  "pro_self_improve_with_ai_suggestion": {
+    "message": "Не совсем верно?"
+  },
+  "pro_self_improve_with_ai_action_label": {
+    "message": "✨ Улучшить с помощью ИИ"
+  },
+  "pro_self_improve_with_ai_free_remain_today": {
+    "message": "Сегодня у вас осталось {$count} бесплатное улучшение с ИИ"
+  },
+  "pro_self_improve_with_ai_free_exausted_today": {
+    "message": "Вы уже использовали все бесплатные попытки ИИ на сегодня. {$loginLink = Войдите}, чтобы получить больше."
+  },
+  "pro_self_improve_with_ai_free_exausted_total": {
+    "message": "Вы использовали все свои бесплатные улучшения с ИИ."
+  },
+  "pro_self_improve_with_ai_login": {
+    "message": "{$loginLink = Войдите}, чтобы продолжить использовать ИИ-переводы и получить больше бесплатных токенов."
   },
   "pro_self_ad_features": {
     "message": "✓ Перевод с сохранением смысла \n✓ Перевод сленга \n✓ Объяснение фразы и контекста"

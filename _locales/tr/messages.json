@@ -602,15 +602,6 @@
   "pro_required_full_page_limits_reached_text2": {
     "message": "Sınırsız tam sayfa çeviri ve daha fazla özellik için PRO'ya yükseltin."
   },
-  "pro_required_limits_reached": {
-    "message": "Ücretsiz hesabın günlük limitine ulaşıldı."
-  },
-  "pro_required_subscription": {
-    "message": "Çevirmenin tüm potansiyelini açmak ve işleri daha hızlı halletmek için lütfen {$link = PRO'ya abone olun}!"
-  },
-  "pro_subscription_refresh": {
-    "message": "Aboneliği yenile"
-  },
   "pro_required_reset_limits_in": {
     "message": "{ $timeRange } içinde sıfırlanır."
   },
@@ -640,6 +631,12 @@
   },
   "pro_unauthorized_error_401": {
     "message": "Erişim sağlamak için { $serviceUrl } adresinde oturum açmış ve aktif bir aboneliğe sahip olmalısınız."
+  },
+  "pro_quota_exceeded_free_trial_error_429": {
+    "message": "Ücretsiz AI kotası limitinizi aştınız. Devam etmek için lütfen { $subscribeLink = abone ol }."
+  },
+  "pro_quota_exceeded_paid_subscription_error_429": {
+    "message": "Planınız ({$planType}) için AI kota limitini aştınız. \nYeni abonelik döngüsü { $refreshDate } tarihinde başlar. \nLütfen bekleyin veya sorunu çözmek için {$contactSupport = destekle iletişime geçin}."
   },
   "translate_button": {
     "message": "Çevir"
@@ -698,8 +695,23 @@
   "translate_page_by_hotkey": {
     "message": "Kısayol tuşuna bastığımda tüm sayfayı çevir"
   },
-  "pro_self_ad": {
-    "message": "Tam olarak doğru değil mi? Yapay zekayla düzelt ✨ {$subscribeLink = PRO'ya yükselt}"
+  "pro_self_improve_with_ai_suggestion": {
+    "message": "Tam doğru değil mi?"
+  },
+  "pro_self_improve_with_ai_action_label": {
+    "message": "✨ Yapay zekayla geliştir"
+  },
+  "pro_self_improve_with_ai_free_remain_today": {
+    "message": "Bugün {$count} ücretsiz yapay zeka geliştirmesi kaldı"
+  },
+  "pro_self_improve_with_ai_free_exausted_today": {
+    "message": "Bugün için ücretsiz yapay zeka denemelerinizin tamamını kullandınız. Daha fazlasını almak için {$loginLink = Giriş yapın}."
+  },
+  "pro_self_improve_with_ai_free_exausted_total": {
+    "message": "Tüm ücretsiz yapay zeka geliştirmelerini kullandınız."
+  },
+  "pro_self_improve_with_ai_login": {
+    "message": "{$loginLink = Giriş yapın} ve AI çevirilerine devam ederek daha fazla ücretsiz jeton alın."
   },
   "pro_self_ad_features": {
     "message": "✓ Doğal, anlamı doğru aktaran çeviri\n✓ Argo ve deyimleri anlar\n✓ İfadeleri ve bağlamı açıklar"

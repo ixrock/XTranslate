@@ -599,15 +599,6 @@
   "pro_required_full_page_limits_reached_text2": {
     "message": "Nâng cấp lên PRO để có bản dịch toàn trang không giới hạn và nhiều tính năng hơn."
   },
-  "pro_required_limits_reached": {
-    "message": "Đã đạt đến giới hạn hằng ngày của tài khoản miễn phí."
-  },
-  "pro_required_subscription": {
-    "message": "Vui lòng {$link = đăng ký PRO} để mở khóa toàn bộ tiềm năng của trình dịch và hoàn thành công việc nhanh hơn!"
-  },
-  "pro_subscription_refresh": {
-    "message": "Làm mới gói đăng ký"
-  },
   "pro_required_reset_limits_in": {
     "message": "Đặt lại sau { $timeRange }."
   },
@@ -637,6 +628,12 @@
   },
   "pro_unauthorized_error_401": {
     "message": "Bạn phải đăng nhập tại { $serviceUrl } và có đăng ký đang hoạt động để có quyền truy cập."
+  },
+  "pro_quota_exceeded_free_trial_error_429": {
+    "message": "Bạn đã vượt quá giới hạn quota AI miễn phí. Vui lòng { $subscribeLink = đăng ký } để tiếp tục."
+  },
+  "pro_quota_exceeded_paid_subscription_error_429": {
+    "message": "Bạn đã vượt quá giới hạn quota AI cho gói của mình ({$planType}). \nChu kỳ đăng ký mới bắt đầu vào { $refreshDate }. \nVui lòng chờ hoặc {$contactSupport = liên hệ hỗ trợ} để giải quyết vấn đề."
   },
   "translate_button": {
     "message": "Dịch"
@@ -695,8 +692,23 @@
   "translate_page_by_hotkey": {
     "message": "Dịch toàn bộ trang khi tôi nhấn phím tắt"
   },
-  "pro_self_ad": {
-    "message": "Chưa ổn lắm? Hãy sửa bằng AI ✨ {$subscribeLink = Nâng cấp lên PRO}"
+  "pro_self_improve_with_ai_suggestion": {
+    "message": "Chưa ổn lắm?"
+  },
+  "pro_self_improve_with_ai_action_label": {
+    "message": "✨ Cải thiện bằng AI"
+  },
+  "pro_self_improve_with_ai_free_remain_today": {
+    "message": "Hôm nay bạn còn {$count} lượt cải thiện AI miễn phí"
+  },
+  "pro_self_improve_with_ai_free_exausted_today": {
+    "message": "Bạn đã dùng hết các lượt thử AI miễn phí của hôm nay. {$loginLink = Đăng nhập} để nhận thêm."
+  },
+  "pro_self_improve_with_ai_free_exausted_total": {
+    "message": "Bạn đã dùng hết tất cả các cải thiện AI miễn phí."
+  },
+  "pro_self_improve_with_ai_login": {
+    "message": "{$loginLink = Đăng nhập} để tiếp tục dịch bằng AI và nhận thêm token miễn phí."
   },
   "pro_self_ad_features": {
     "message": "✓ Dịch tự nhiên, chính xác về ý nghĩa\n✓ Hiểu tiếng lóng và thành ngữ\n✓ Giải thích cụm từ và ngữ cảnh"

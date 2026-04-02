@@ -599,15 +599,6 @@
   "pro_required_full_page_limits_reached_text2": {
     "message": "無制限のページ全体翻訳とさらに多くの機能を利用するには、PROにアップグレードしてください。"
   },
-  "pro_required_limits_reached": {
-    "message": "無料アカウントの1日の上限に達しました。"
-  },
-  "pro_required_subscription": {
-    "message": "翻訳ツールの可能性を最大限に引き出し、作業をより速く進めるには、{$link = PROに登録してください}。"
-  },
-  "pro_subscription_refresh": {
-    "message": "サブスクリプションを更新"
-  },
   "pro_required_reset_limits_in": {
     "message": "{ $timeRange } でリセットされます。"
   },
@@ -637,6 +628,12 @@
   },
   "pro_unauthorized_error_401": {
     "message": "アクセスするには { $serviceUrl } にログインし、有効なサブスクリプションが必要です。"
+  },
+  "pro_quota_exceeded_free_trial_error_429": {
+    "message": "無料のAIクォータ上限を超過しました。続行するには { $subscribeLink = 購読 } してください。"
+  },
+  "pro_quota_exceeded_paid_subscription_error_429": {
+    "message": "プラン（{$planType}）のAIクォータ上限を超過しました。 \n新しいサブスクリプションサイクルは { $refreshDate } に開始します。 \nお待ちいただくか、問題解決のために {$contactSupport = サポートに連絡} してください。"
   },
   "translate_button": {
     "message": "翻訳"
@@ -695,8 +692,23 @@
   "translate_page_by_hotkey": {
     "message": "ホットキーを押したときにページ全体を翻訳する"
   },
-  "pro_self_ad": {
-    "message": "まだちょっと違う？AIで直す ✨ {$subscribeLink = PROにアップグレード}"
+  "pro_self_improve_with_ai_suggestion": {
+    "message": "ちょっと違いますか？"
+  },
+  "pro_self_improve_with_ai_action_label": {
+    "message": "✨ AIで改善"
+  },
+  "pro_self_improve_with_ai_free_remain_today": {
+    "message": "本日の無料AI改善は残り{$count}回です"
+  },
+  "pro_self_improve_with_ai_free_exausted_today": {
+    "message": "本日の無料AI試行回数を使い切りました。さらに利用するには{$loginLink = ログイン}してください。"
+  },
+  "pro_self_improve_with_ai_free_exausted_total": {
+    "message": "無料のAI改善をすべて使い切りました。"
+  },
+  "pro_self_improve_with_ai_login": {
+    "message": "{$loginLink = ログイン}して、AI翻訳を続け、さらに無料トークンを入手してください。"
   },
   "pro_self_ad_features": {
     "message": "✓ 自然で意味を損なわない翻訳\n✓ スラングや慣用句も理解\n✓ 表現や文脈を説明"

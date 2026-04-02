@@ -599,15 +599,6 @@
   "pro_required_full_page_limits_reached_text2": {
     "message": "Atualize para PRO para ter traduções ilimitadas de páginas completas e mais funcionalidades."
   },
-  "pro_required_limits_reached": {
-    "message": "O limite diário da conta gratuita foi atingido."
-  },
-  "pro_required_subscription": {
-    "message": "Por favor, {$link = subscrever o PRO} para desbloquear todo o potencial do tradutor e fazer as coisas mais depressa!"
-  },
-  "pro_subscription_refresh": {
-    "message": "Atualizar subscrição"
-  },
   "pro_required_reset_limits_in": {
     "message": "Reinicia em { $timeRange }."
   },
@@ -637,6 +628,12 @@
   },
   "pro_unauthorized_error_401": {
     "message": "Tem de ter sessão iniciada em { $serviceUrl } e ter uma subscrição ativa para obter acesso."
+  },
+  "pro_quota_exceeded_free_trial_error_429": {
+    "message": "Os limites da sua quota gratuita de IA foram excedidos. Por favor, { $subscribeLink = subscrever } para continuar."
+  },
+  "pro_quota_exceeded_paid_subscription_error_429": {
+    "message": "Excedeu o limite de quota de IA do seu plano ({$planType}). \nO novo ciclo de subscrição começa em { $refreshDate }. \nAguarde ou {$contactSupport = contacte o suporte} para resolver o problema."
   },
   "translate_button": {
     "message": "Traduzir"
@@ -695,8 +692,23 @@
   "translate_page_by_hotkey": {
     "message": "Traduzir a página inteira quando eu pressionar a tecla de atalho"
   },
-  "pro_self_ad": {
-    "message": "Não está perfeito? Corrija com IA ✨ {$subscribeLink = Atualizar para o PRO}"
+  "pro_self_improve_with_ai_suggestion": {
+    "message": "Não está bem?"
+  },
+  "pro_self_improve_with_ai_action_label": {
+    "message": "✨ Melhorar com IA"
+  },
+  "pro_self_improve_with_ai_free_remain_today": {
+    "message": "Falta {$count} melhoria gratuita com IA hoje"
+  },
+  "pro_self_improve_with_ai_free_exausted_today": {
+    "message": "Já usaste as tuas tentativas gratuitas de IA de hoje. {$loginLink = Iniciar sessão} para obteres mais."
+  },
+  "pro_self_improve_with_ai_free_exausted_total": {
+    "message": "Já usaste todas as tuas melhorias gratuitas com IA."
+  },
+  "pro_self_improve_with_ai_login": {
+    "message": "{$loginLink = Iniciar sessão} para continuar com traduções por IA e obter mais tokens gratuitos."
   },
   "pro_self_ad_features": {
     "message": "✓ Tradução natural e fiel ao significado\n✓ Compreende gírias e expressões idiomáticas\n✓ Explica frases e contexto"

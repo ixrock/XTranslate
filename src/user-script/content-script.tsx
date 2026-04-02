@@ -17,7 +17,7 @@ import { getManifest, getURL, isExtensionContextAlive, MessageType, onMessage, P
 import { proxyRequest } from "../background/httpProxy.bgc";
 import { sendMetric } from "../background/metrics.bgc";
 import { fullPageTranslateHotkey, popupHotkey, popupSkipInjectionUrls, settingsStore } from "../components/settings/settings.storage";
-import { getNextTranslator, getTranslator, getXTranslatePro, ITranslationError, ITranslationResult, ProviderCodeName } from "../providers";
+import { getNextTranslator, getTranslator, getXTranslatePro, ITranslationError, ITranslationResult, ProviderCodeName, Translator } from "../providers";
 import { XTranslateIcon } from "./xtranslate-icon";
 import { XTranslateTooltip } from "./xtranslate-tooltip";
 import { pageTranslationStorage, PageTranslator } from "./page-translator";
@@ -101,7 +101,7 @@ export class ContentScript extends React.Component {
 
   @observable.ref lastParams: TranslatePayload; // last used translation payload
   @observable.ref translation: ITranslationResult;
-  @observable.ref error: Partial<ITranslationError & { failReason?: ReactNode }>;
+  @observable.ref error: Partial<ITranslationError>;
   @observable.ref selectionRects: DOMRectNormalized[] = [];
   @observable summarized = "";
   @observable popupPosition: React.CSSProperties = {};
@@ -110,6 +110,7 @@ export class ContentScript extends React.Component {
   @observable isRtlSelection = false;
   @observable isIconVisible = false;
   @observable isLoading = false;
+  @observable isFreeTrialUsed = false;
 
   async componentDidMount() {
     this.bindEvents();
@@ -218,21 +219,21 @@ export class ContentScript extends React.Component {
   }
 
   @action
-  async translate(params: Partial<TranslatePayload> = {}) {
-    const payload = this.lastParams = this.getPayloadParams(params);
+  async translate(payloadParams: Partial<TranslatePayload> = {}, customLoader?: Translator["translate"]) {
+    const payload = this.lastParams = this.getPayloadParams(payloadParams);
 
     this.checkContextInvalidationError();
     this.hideIcon();
 
     if (!this.translationConfirmationCheck(payload)) return;
-
-    this.translation = null;
-    this.error = null;
+    this.resetState();
     this.isLoading = true;
-    this.summarized = "";
 
     try {
-      const translation = await getTranslator(payload.provider).translate(payload);
+      const translation =
+        await customLoader?.(payload)
+        ?? await getTranslator(payload.provider).translate(payload);
+
       if (isEqual(payload, this.lastParams)) {
         this.translation = translation;
       }
@@ -374,14 +375,22 @@ export class ContentScript extends React.Component {
     if (this.translation) {
       getTranslator(this.translation.vendor).stopSpeaking();
     }
-    this.summarized = "";
-    this.translation = null;
-    this.error = null;
+
+    this.resetState();
     this.popupPosition = {};
     this.selectionRects = [];
     this.isDblClicked = false;
     this.isHotkeyActivated = false;
     this.selection.removeAllRanges();
+  }
+
+  @action
+  resetState() {
+    this.translation = null;
+    this.error = null;
+    this.isLoading = false;
+    this.summarized = "";
+    this.isFreeTrialUsed = false;
   }
 
   static isEditableElement(elem: Element) {
@@ -716,10 +725,8 @@ export class ContentScript extends React.Component {
     }
 
     this.lastParams.provider = ProviderCodeName.XTRANSLATE_PRO;
-    this.translation = null;
-    this.error = null;
+    this.resetState();
     this.isLoading = true;
-    this.summarized = "";
 
     try {
       const { text, to: targetLang } = this.lastParams;
@@ -729,6 +736,14 @@ export class ContentScript extends React.Component {
     } finally {
       this.isLoading = false
     }
+  }
+
+  @action
+  async translateWithFreeTrial() {
+    this.lastParams.provider = ProviderCodeName.XTRANSLATE_PRO;
+    const payload = this.getPayloadParams(this.lastParams);
+    await this.translate(payload, () => getXTranslatePro().translateTrial(payload));
+    this.isFreeTrialUsed = true;
   }
 
   render() {
@@ -749,6 +764,8 @@ export class ContentScript extends React.Component {
           summarize={summarize}
           summarized={summarized}
           showPromoBanner={!isPopupHidden}
+          aiDemoTranslation={this.isFreeTrialUsed}
+          aiDemoTranslationRequest={() => this.translateWithFreeTrial()}
           ref={(ref: Popup) => {
             this.popup = ref
           }}

@@ -596,15 +596,6 @@
   "pro_required_full_page_limits_reached_text2": {
     "message": "Prejdite na PRO a získajte neobmedzené preklady celých stránok a viac funkcií."
   },
-  "pro_required_limits_reached": {
-    "message": "Denný limit bezplatného účtu bol dosiahnutý."
-  },
-  "pro_required_subscription": {
-    "message": "Prosím, {$link = predplaťte si PRO}, aby ste odomkli plný potenciál prekladača a vybavili veci rýchlejšie!"
-  },
-  "pro_subscription_refresh": {
-    "message": "Obnoviť predplatné"
-  },
   "pro_required_reset_limits_in": {
     "message": "Reset o { $timeRange }."
   },
@@ -634,6 +625,12 @@
   },
   "pro_unauthorized_error_401": {
     "message": "Na využívanie musíte byť prihlásení na { $serviceUrl } a mať aktívne predplatné."
+  },
+  "pro_quota_exceeded_free_trial_error_429": {
+    "message": "Limity vašej bezplatnej AI kvóty boli prekročené. Ak chcete pokračovať, { $subscribeLink = predplatiť }."
+  },
+  "pro_quota_exceeded_paid_subscription_error_429": {
+    "message": "Prekročili ste limit AI kvóty pre váš plán ({$planType}). \nNový cyklus predplatného začína { $refreshDate }. \nPočkajte, alebo {$contactSupport = kontaktujte podporu} na vyriešenie problému."
   },
   "translate_button": {
     "message": "Preložiť"
@@ -692,8 +689,23 @@
   "translate_page_by_hotkey": {
     "message": "Preložiť celú stránku, keď stlačím klávesovú skratku"
   },
-  "pro_self_ad": {
-    "message": "Nie je to úplne správne? Opravte to pomocou AI ✨ {$subscribeLink = Prejdite na PRO}"
+  "pro_self_improve_with_ai_suggestion": {
+    "message": "Nie je to celkom správne?"
+  },
+  "pro_self_improve_with_ai_action_label": {
+    "message": "✨ Vylepšiť pomocou AI"
+  },
+  "pro_self_improve_with_ai_free_remain_today": {
+    "message": "Dnes vám zostáva {$count} bezplatné vylepšenie pomocou AI"
+  },
+  "pro_self_improve_with_ai_free_exausted_today": {
+    "message": "Dnes ste už využili všetky bezplatné pokusy AI. {$loginLink = Prihlásiť sa}, ak chcete získať viac."
+  },
+  "pro_self_improve_with_ai_free_exausted_total": {
+    "message": "Využili ste všetky svoje bezplatné vylepšenia AI."
+  },
+  "pro_self_improve_with_ai_login": {
+    "message": "{$loginLink = Prihlásiť sa}, ak chcete pokračovať v AI prekladoch a získať viac bezplatných tokenov."
   },
   "pro_self_ad_features": {
     "message": "✓ Prirodzený, významovo presný preklad\n✓ Rozumie slangu a idiomom\n✓ Vysvetľuje frázy a kontext"

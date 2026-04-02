@@ -599,15 +599,6 @@
   "pro_required_full_page_limits_reached_text2": {
     "message": "Passez à PRO pour profiter de traductions illimitées de pages complètes et de plus de fonctionnalités."
   },
-  "pro_required_limits_reached": {
-    "message": "La limite quotidienne du compte gratuit a été atteinte."
-  },
-  "pro_required_subscription": {
-    "message": "Veuillez {$link = vous abonner à PRO} pour débloquer tout le potentiel du traducteur et accomplir vos tâches plus rapidement !"
-  },
-  "pro_subscription_refresh": {
-    "message": "Actualiser l'abonnement"
-  },
   "pro_required_reset_limits_in": {
     "message": "Réinitialisation dans { $timeRange }."
   },
@@ -637,6 +628,12 @@
   },
   "pro_unauthorized_error_401": {
     "message": "Vous devez être connecté à { $serviceUrl } et avoir un abonnement actif pour obtenir l'accès."
+  },
+  "pro_quota_exceeded_free_trial_error_429": {
+    "message": "Les limites de votre quota IA gratuit ont été dépassées. Veuillez { $subscribeLink = s'abonner } pour continuer."
+  },
+  "pro_quota_exceeded_paid_subscription_error_429": {
+    "message": "Vous avez dépassé la limite de quota IA de votre offre ({$planType}). \nLe nouveau cycle d'abonnement commence le { $refreshDate }. \nVeuillez patienter ou {$contactSupport = contacter le support} pour résoudre le problème."
   },
   "translate_button": {
     "message": "Traduire"
@@ -695,8 +692,23 @@
   "translate_page_by_hotkey": {
     "message": "Traduire la page entière lorsque j'appuie sur le raccourci clavier"
   },
-  "pro_self_ad": {
-    "message": "Pas tout à fait correct ? Corrigez-le avec l'IA ✨ {$subscribeLink = Passer à PRO}"
+  "pro_self_improve_with_ai_suggestion": {
+    "message": "Pas tout à fait juste ?"
+  },
+  "pro_self_improve_with_ai_action_label": {
+    "message": "✨ Améliorer avec l'IA"
+  },
+  "pro_self_improve_with_ai_free_remain_today": {
+    "message": "Il vous reste {$count} amélioration IA gratuite aujourd’hui"
+  },
+  "pro_self_improve_with_ai_free_exausted_today": {
+    "message": "Vous avez utilisé tous vos essais IA gratuits pour aujourd’hui. {$loginLink = Connexion} pour en obtenir plus."
+  },
+  "pro_self_improve_with_ai_free_exausted_total": {
+    "message": "Vous avez utilisé toutes vos améliorations IA gratuites."
+  },
+  "pro_self_improve_with_ai_login": {
+    "message": "{$loginLink = Connexion} pour continuer avec les traductions par IA et obtenir plus de jetons gratuits."
   },
   "pro_self_ad_features": {
     "message": "✓ Traduction naturelle et fidèle au sens\n✓ Comprend l'argot et les expressions\n✓ Explique les phrases et le contexte"

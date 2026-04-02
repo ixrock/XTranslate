@@ -599,15 +599,6 @@
   "pro_required_full_page_limits_reached_text2": {
     "message": "升級到 PRO，享受無限量整頁翻譯和更多功能。"
   },
-  "pro_required_limits_reached": {
-    "message": "免費帳戶的每日額度已用完。"
-  },
-  "pro_required_subscription": {
-    "message": "請{$link = 訂閱 PRO}，解鎖翻譯器的全部潛力，更快完成工作！"
-  },
-  "pro_subscription_refresh": {
-    "message": "重新整理訂閱"
-  },
   "pro_required_reset_limits_in": {
     "message": "將於 { $timeRange } 後重設。"
   },
@@ -637,6 +628,12 @@
   },
   "pro_unauthorized_error_401": {
     "message": "您必須在 { $serviceUrl } 登入並擁有有效訂閱才能獲取存取權限。"
+  },
+  "pro_quota_exceeded_free_trial_error_429": {
+    "message": "您的免費 AI 配額上限已超出。請 { $subscribeLink = 訂閱 } 以繼續。"
+  },
+  "pro_quota_exceeded_paid_subscription_error_429": {
+    "message": "您已超出目前方案（{$planType}）的 AI 配額上限。 \n新的訂閱週期將於 { $refreshDate } 開始。 \n請等待，或 {$contactSupport = 聯絡支援} 以解決此問題。"
   },
   "translate_button": {
     "message": "翻譯"
@@ -695,8 +692,23 @@
   "translate_page_by_hotkey": {
     "message": "當我按下快捷鍵時翻譯整個頁面"
   },
-  "pro_self_ad": {
-    "message": "不太對？用 AI 修復它 ✨ {$subscribeLink = 升級到 PRO}"
+  "pro_self_improve_with_ai_suggestion": {
+    "message": "還不太對嗎？"
+  },
+  "pro_self_improve_with_ai_action_label": {
+    "message": "✨ 使用 AI 改進"
+  },
+  "pro_self_improve_with_ai_free_remain_today": {
+    "message": "今天還剩 {$count} 次免費 AI 改進"
+  },
+  "pro_self_improve_with_ai_free_exausted_today": {
+    "message": "你今天的免費 AI 嘗試次數已經用完。{$loginLink = 登入}以獲取更多。"
+  },
+  "pro_self_improve_with_ai_free_exausted_total": {
+    "message": "你已經用完所有免費 AI 改進。"
+  },
+  "pro_self_improve_with_ai_login": {
+    "message": "{$loginLink = 登入}以繼續使用 AI 翻譯並獲得更多免費 token。"
   },
   "pro_self_ad_features": {
     "message": "✓ 自然、語意準確的翻譯\n✓ 理解俚語和慣用語\n✓ 解釋片語與語境"
