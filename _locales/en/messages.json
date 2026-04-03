@@ -230,6 +230,9 @@
   "popup_copy_translation_title": {
     "message": "Copy translation"
   },
+  "popup_select_provider_title": {
+    "message": "Select translation provider"
+  },
   "popup_next_vendor_icon_title": {
     "message": "Translate with { $translator }"
   },
@@ -557,15 +560,6 @@
   "pro_required_full_page_limits_reached_text2": {
     "message": "Upgrade to PRO for unlimited full-page translations and more features."
   },
-  "pro_required_limits_reached": {
-    "message": "Free account daily limits has been reached."
-  },
-  "pro_required_subscription": {
-    "message": "Please {$link = subscribe to PRO} to unlock full translator's potential and get things done faster!"
-  },
-  "pro_subscription_refresh": {
-    "message": "Refresh subscription"
-  },
   "pro_required_reset_limits_in": {
     "message": "Reset in { $timeRange }."
   },
@@ -599,8 +593,29 @@
   "pro_unauthorized_error_401": {
     "message": "You must be logged-in at { $serviceUrl } and have an active subscription to get access."
   },
-  "pro_self_ad": {
-    "message": "Not quite right? Fix it with AI ✨ {$subscribeLink = Upgrade to PRO}"
+  "pro_quota_exceeded_free_trial_error_429": {
+    "message": "Your free AI quota limits has been exceeded. Please { $subscribeLink = subscribe } to continue."
+  },
+  "pro_quota_exceeded_paid_subscription_error_429": {
+    "message": "You has exceeded AI quota limit for your plan ({$planType}). \nNew subscription cycle starts at { $refreshDate }. \nPlease wait or {$contactSupport = contact support} to resolve the issue."
+  },
+  "pro_self_improve_with_ai_suggestion": {
+    "message": "Not quite right?"
+  },
+  "pro_self_improve_with_ai_action_label": {
+    "message": "✨ Improve with AI"
+  },
+  "pro_self_improve_with_ai_free_remain_today": {
+    "message": "{$count} free AI improvement left today"
+  },
+  "pro_self_improve_with_ai_free_exausted_today": {
+    "message": "You’ve used your free AI attempts for today. {$loginLink = Login} to get more."
+  },
+  "pro_self_improve_with_ai_free_exausted_total": {
+    "message": "You’ve used all your free AI improvements."
+  },
+  "pro_self_improve_with_ai_login": {
+    "message": "{$loginLink = Login} to continue with AI translations and get more free tokens."
   },
   "pro_self_ad_features": {
     "message": "✓ Natural, meaning-accurate translation\n✓ Understands slang and idioms\n✓ Explains phrases and context"

@@ -218,6 +218,9 @@
   "popup_copy_translation_title": {
     "message": "Salin terjemahan"
   },
+  "popup_select_provider_title": {
+    "message": "Pilih penyedia terjemahan"
+  },
   "popup_next_vendor_icon_title": {
     "message": "Terjemahkan dengan { $translator }"
   },
@@ -551,15 +554,6 @@
   "pro_required_full_page_limits_reached_text2": {
     "message": "Tingkatkan ke PRO untuk terjemahan satu halaman penuh tanpa batas dan lebih banyak fitur."
   },
-  "pro_required_limits_reached": {
-    "message": "Batas harian akun gratis telah tercapai."
-  },
-  "pro_required_subscription": {
-    "message": "Silakan {$link = berlangganan PRO} untuk membuka potensi penuh penerjemah dan menyelesaikan pekerjaan lebih cepat!"
-  },
-  "pro_subscription_refresh": {
-    "message": "Segarkan langganan"
-  },
   "pro_required_reset_limits_in": {
     "message": "Direset dalam { $timeRange }."
   },
@@ -589,6 +583,12 @@
   },
   "pro_unauthorized_error_401": {
     "message": "Anda harus masuk di { $serviceUrl } dan memiliki langganan aktif untuk mendapatkan akses."
+  },
+  "pro_quota_exceeded_free_trial_error_429": {
+    "message": "Batas kuota AI gratis Anda telah terlampaui. Silakan { $subscribeLink = berlangganan } untuk melanjutkan."
+  },
+  "pro_quota_exceeded_paid_subscription_error_429": {
+    "message": "Anda telah melampaui batas kuota AI untuk paket Anda ({$planType}). \nSiklus langganan baru dimulai pada { $refreshDate }. \nSilakan tunggu atau {$contactSupport = hubungi dukungan} untuk menyelesaikan masalah."
   },
   "translate_button": {
     "message": "Terjemahkan"
@@ -647,8 +647,23 @@
   "translate_page_by_hotkey": {
     "message": "Terjemahkan seluruh halaman saat saya menekan hotkey"
   },
-  "pro_self_ad": {
-    "message": "Kurang tepat? Perbaiki dengan AI ✨ {$subscribeLink = Tingkatkan ke PRO}"
+  "pro_self_improve_with_ai_suggestion": {
+    "message": "Belum tepat?"
+  },
+  "pro_self_improve_with_ai_action_label": {
+    "message": "✨ Tingkatkan dengan AI"
+  },
+  "pro_self_improve_with_ai_free_remain_today": {
+    "message": "Masih tersisa {$count} peningkatan AI gratis hari ini"
+  },
+  "pro_self_improve_with_ai_free_exausted_today": {
+    "message": "Anda telah menggunakan percobaan AI gratis Anda untuk hari ini. {$loginLink = Masuk} untuk mendapatkan lebih banyak."
+  },
+  "pro_self_improve_with_ai_free_exausted_total": {
+    "message": "Anda telah menggunakan semua peningkatan AI gratis Anda."
+  },
+  "pro_self_improve_with_ai_login": {
+    "message": "{$loginLink = Masuk} untuk melanjutkan terjemahan AI dan mendapatkan lebih banyak token gratis."
   },
   "pro_self_ad_features": {
     "message": "✓ Terjemahan alami yang akurat makna\n✓ Memahami slang dan ungkapan\n✓ Menjelaskan frasa dan konteks"

@@ -11,7 +11,7 @@ export interface TooltipProps {
   className?: string;
   position?: Position;
   following?: boolean; // tooltip is following mouse position (rendered outside of components's root element)
-  parentElement?: HTMLElement; // default: document.body
+  parentElement?: HTMLElement | ShadowRoot; // default: document.body
   nowrap?: boolean; // css-shortcut for style={{whiteSpace: "nowrap"}}
   children?: React.ReactNode;
   style?: React.CSSProperties;
@@ -25,19 +25,16 @@ interface Position {
   center?: boolean;
 }
 
-const defaultProps: Partial<TooltipProps> = {
-  get parentElement() {
-    return document.body;
-  },
-  position: {
-    center: true,
-    bottom: true,
-  }
-};
-
 @observer
 export class Tooltip extends React.Component<TooltipProps> {
-  static defaultProps = defaultProps as object;
+  static defaultProps: TooltipProps = {
+    anchorId: "tooltip",
+    parentElement: document.body,
+    position: {
+      center: true,
+      bottom: true,
+    }
+  };
 
   public elem: HTMLElement | undefined;
   public lastMousePos = { x: 0, y: 0 };
@@ -50,16 +47,13 @@ export class Tooltip extends React.Component<TooltipProps> {
   }
 
   get anchorElem(): HTMLElement | undefined {
-    const { anchorId } = this.props;
-    return anchorId ? document.getElementById(anchorId) : this.elem?.parentElement;
+    const { anchorId, parentElement } = this.props;
+    return parentElement.querySelector(`#${anchorId}`);
   }
 
   componentDidMount() {
     if (!this.anchorElem) return;
 
-    if (window.getComputedStyle(this.anchorElem).position === "static") {
-      this.anchorElem.style.position = "relative"
-    }
     this.anchorElem.addEventListener("mouseenter", this.onMouseEnter);
     this.anchorElem.addEventListener("mouseleave", this.onMouseLeave);
     this.anchorElem.addEventListener("mousemove", this.onMouseMove);
@@ -90,11 +84,13 @@ export class Tooltip extends React.Component<TooltipProps> {
   }
 
   refreshPosition = () => requestAnimationFrame(() => {
-    if (!this.props.following || !this.elem) return;
+    if (!this.props.following || !this.anchorElem || !this.elem) {
+      return;
+    }
 
     var offset = 10;
-    var viewportWidth = document.documentElement.clientWidth;
-    var viewportHeight = document.documentElement.clientHeight;
+    var viewportWidth = this.anchorElem.ownerDocument.documentElement.clientWidth;
+    var viewportHeight = this.anchorElem.ownerDocument.documentElement.clientHeight;
 
     var style = this.elem.style;
     var { x = 0, y = 0 } = this.lastMousePos;

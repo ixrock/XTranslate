@@ -164,6 +164,9 @@
   "popup_copy_translation_title": {
     "message": "نسخ الترجمة"
   },
+  "popup_select_provider_title": {
+    "message": "اختر مزود الترجمة"
+  },
   "popup_next_vendor_icon_title": {
     "message": "ترجم باستخدام { $translator }"
   },
@@ -551,15 +554,6 @@
   "pro_required_full_page_limits_reached_text2": {
     "message": "قم بالترقية إلى PRO للحصول على ترجمات غير محدودة للصفحات كاملة والمزيد من الميزات."
   },
-  "pro_required_limits_reached": {
-    "message": "تم الوصول إلى الحدود اليومية للحساب المجاني."
-  },
-  "pro_required_subscription": {
-    "message": "يرجى {$link = الاشتراك في PRO} لفتح الإمكانات الكاملة للمترجم وإنجاز الأمور بشكل أسرع!"
-  },
-  "pro_subscription_refresh": {
-    "message": "تحديث الاشتراك"
-  },
   "pro_required_reset_limits_in": {
     "message": "إعادة التعيين خلال { $timeRange }."
   },
@@ -589,6 +583,12 @@
   },
   "pro_unauthorized_error_401": {
     "message": "يجب عليك تسجيل الدخول في { $serviceUrl } وامتلاك اشتراك نشط للوصول."
+  },
+  "pro_quota_exceeded_free_trial_error_429": {
+    "message": "تم تجاوز حدود حصتك المجانية للذكاء الاصطناعي. يرجى { $subscribeLink = الاشتراك } للمتابعة."
+  },
+  "pro_quota_exceeded_paid_subscription_error_429": {
+    "message": "لقد تجاوزت حد حصة الذكاء الاصطناعي في خطتك ({$planType}). \nتبدأ دورة الاشتراك الجديدة في { $refreshDate }. \nيرجى الانتظار أو {$contactSupport = التواصل مع الدعم} لحل المشكلة."
   },
   "translate_button": {
     "message": "ترجم"
@@ -647,8 +647,23 @@
   "translate_page_by_hotkey": {
     "message": "ترجمة الصفحة كاملة عند الضغط على مفتاح الاختصار"
   },
-  "pro_self_ad": {
-    "message": "ليس مثاليًا؟ صححه بالذكاء الاصطناعي ✨ {$subscribeLink = الترقية إلى PRO}"
+  "pro_self_improve_with_ai_suggestion": {
+    "message": "ليس صحيحًا تمامًا؟"
+  },
+  "pro_self_improve_with_ai_action_label": {
+    "message": "✨ حسّن بالذكاء الاصطناعي"
+  },
+  "pro_self_improve_with_ai_free_remain_today": {
+    "message": "لا يزال لديك {$count} تحسين مجاني بالذكاء الاصطناعي اليوم"
+  },
+  "pro_self_improve_with_ai_free_exausted_today": {
+    "message": "لقد استخدمت محاولاتك المجانية بالذكاء الاصطناعي لليوم. {$loginLink = تسجيل الدخول} للحصول على المزيد."
+  },
+  "pro_self_improve_with_ai_free_exausted_total": {
+    "message": "لقد استخدمت كل تحسيناتك المجانية بالذكاء الاصطناعي."
+  },
+  "pro_self_improve_with_ai_login": {
+    "message": "{$loginLink = تسجيل الدخول} لمتابعة الترجمات بالذكاء الاصطناعي والحصول على المزيد من الرموز المجانية."
   },
   "pro_self_ad_features": {
     "message": "✓ ترجمة طبيعية ودقيقة المعنى\n✓ يفهم العامية والتعابير\n✓ يشرح العبارات والسياق"

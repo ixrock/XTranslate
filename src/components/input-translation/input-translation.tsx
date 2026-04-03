@@ -39,8 +39,8 @@ export class InputTranslation extends React.Component {
 
   @observable isLoading = false;
   @observable params?: TranslationPageParams;
-  @observable translation?: ITranslationResult;
-  @observable error?: ITranslationError;
+  @observable.ref translation?: ITranslationResult;
+  @observable.ref error?: ITranslationError;
   @observable summarized = "";
   @observable isSpeaking = false;
   @observable isPaused = false;
@@ -301,8 +301,8 @@ export class InputTranslation extends React.Component {
                   <td className="word-type" colSpan={2}>{wordType}</td>
                 </tr>
                 {meanings.map(meaning => {
-                  const examples = meaning.examples
-                    ? meaning.examples.map(example => example.join(" - ")).join("\n")
+                  const examples: React.ReactNode = meaning.examples
+                    ? meaning.examples.map((example, index) => <p key={index}>{example.join(" - ")}</p>)
                     : "";
                   return (
                     <tr key={meaning.word}>
@@ -313,8 +313,8 @@ export class InputTranslation extends React.Component {
                           this.translateText(meaning.word);
                         })}>
                           {meaning.word}
-                        </span>
-                        {examples ? <span className="examples" title={examples}>*</span> : null}
+                        </span>{" "}
+                        {examples && <Icon small material="info_outline" tooltip={examples}/>}
                       </td>
                       <td className="word-meanings">
                         {meaning.translation.map((word, i, list) => {
@@ -342,7 +342,7 @@ export class InputTranslation extends React.Component {
     return (
       <div className="translation-error flex column gaps">
         <p>{statusCode}: {getMessage("translation_data_failed")}</p>
-        <p dangerouslySetInnerHTML={{ __html: message }}/>
+        <p>{message}</p>
       </div>
     );
   }

@@ -164,6 +164,9 @@
   "popup_copy_translation_title": {
     "message": "অনুবাদ কপি করুন"
   },
+  "popup_select_provider_title": {
+    "message": "অনুবাদ প্রদানকারী নির্বাচন করুন"
+  },
   "popup_next_vendor_icon_title": {
     "message": "{ $translator } দিয়ে অনুবাদ করুন"
   },
@@ -551,15 +554,6 @@
   "pro_required_full_page_limits_reached_text2": {
     "message": "সীমাহীন পূর্ণ-পৃষ্ঠা অনুবাদ ও আরও ফিচার পেতে PRO-তে আপগ্রেড করুন।"
   },
-  "pro_required_limits_reached": {
-    "message": "ফ্রি অ্যাকাউন্টের দৈনিক সীমা পৌঁছে গেছে।"
-  },
-  "pro_required_subscription": {
-    "message": "অনুবাদকের পূর্ণ সক্ষমতা আনলক করতে এবং আরও দ্রুত কাজ শেষ করতে অনুগ্রহ করে {$link = PRO-তে সাবস্ক্রাইব করুন}!"
-  },
-  "pro_subscription_refresh": {
-    "message": "সাবস্ক্রিপশন রিফ্রেশ করুন"
-  },
   "pro_required_reset_limits_in": {
     "message": "{ $timeRange } পরে রিসেট হবে।"
   },
@@ -589,6 +583,12 @@
   },
   "pro_unauthorized_error_401": {
     "message": "অ্যাক্সেস পেতে আপনাকে অবশ্যই { $serviceUrl } এ লগ-ইন করতে হবে এবং একটি সক্রিয় সাবস্ক্রিপশন থাকতে হবে।"
+  },
+  "pro_quota_exceeded_free_trial_error_429": {
+    "message": "আপনার বিনামূল্যের AI কোটার সীমা অতিক্রম করা হয়েছে। চালিয়ে যেতে অনুগ্রহ করে { $subscribeLink = সাবস্ক্রাইব } করুন।"
+  },
+  "pro_quota_exceeded_paid_subscription_error_429": {
+    "message": "আপনি আপনার প্ল্যানের ({$planType}) AI কোটার সীমা অতিক্রম করেছেন। \nনতুন সাবস্ক্রিপশন চক্র { $refreshDate } থেকে শুরু হবে। \nঅনুগ্রহ করে অপেক্ষা করুন বা সমস্যা সমাধানে {$contactSupport = সাপোর্টে যোগাযোগ করুন}।"
   },
   "translate_button": {
     "message": "অনুবাদ করুন"
@@ -647,8 +647,23 @@
   "translate_page_by_hotkey": {
     "message": "আমি হটকি চাপলে পুরো পৃষ্ঠা অনুবাদ করুন"
   },
-  "pro_self_ad": {
-    "message": "ঠিক মতো না? AI দিয়ে ঠিক করুন ✨ {$subscribeLink = PRO-এ আপগ্রেড করুন}"
+  "pro_self_improve_with_ai_suggestion": {
+    "message": "একদম ঠিক হয়নি?"
+  },
+  "pro_self_improve_with_ai_action_label": {
+    "message": "✨ এআই দিয়ে উন্নত করুন"
+  },
+  "pro_self_improve_with_ai_free_remain_today": {
+    "message": "আজ {$count}টি বিনামূল্যের AI উন্নয়ন বাকি"
+  },
+  "pro_self_improve_with_ai_free_exausted_today": {
+    "message": "আপনি আজকের বিনামূল্যের AI প্রচেষ্টা শেষ করেছেন। আরও পেতে {$loginLink = লগ ইন} করুন।"
+  },
+  "pro_self_improve_with_ai_free_exausted_total": {
+    "message": "আপনার সব বিনামূল্যের AI উন্নয়ন শেষ হয়ে গেছে।"
+  },
+  "pro_self_improve_with_ai_login": {
+    "message": "{$loginLink = লগ ইন} করে AI অনুবাদ চালিয়ে যান এবং আরও বিনামূল্যের টোকেন পান।"
   },
   "pro_self_ad_features": {
     "message": "✓ প্রাকৃতিক, অর্থ-নির্ভুল অনুবাদ\n✓ আঞ্চলিক ভাষা ও অভিধা বোঝে\n✓ বাক্যাংশ ও প্রসঙ্গ ব্যাখ্যা করে"

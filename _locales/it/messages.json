@@ -164,6 +164,9 @@
   "popup_copy_translation_title": {
     "message": "Copia traduzione"
   },
+  "popup_select_provider_title": {
+    "message": "Seleziona provider di traduzione"
+  },
   "popup_next_vendor_icon_title": {
     "message": "Traduci con { $translator }"
   },
@@ -551,15 +554,6 @@
   "pro_required_full_page_limits_reached_text2": {
     "message": "Passa a PRO per traduzioni illimitate di pagine complete e più funzionalità."
   },
-  "pro_required_limits_reached": {
-    "message": "Il limite giornaliero dell'account gratuito è stato raggiunto."
-  },
-  "pro_required_subscription": {
-    "message": "Per favore {$link = abbonati a PRO} per sbloccare tutto il potenziale del traduttore e fare le cose più velocemente!"
-  },
-  "pro_subscription_refresh": {
-    "message": "Aggiorna abbonamento"
-  },
   "pro_required_reset_limits_in": {
     "message": "Si resetta tra { $timeRange }."
   },
@@ -589,6 +583,12 @@
   },
   "pro_unauthorized_error_401": {
     "message": "Devi aver effettuato l'accesso su { $serviceUrl } e avere un abbonamento attivo per ottenere l'accesso."
+  },
+  "pro_quota_exceeded_free_trial_error_429": {
+    "message": "Hai superato i limiti della tua quota AI gratuita. Per continuare, { $subscribeLink = abbonati }."
+  },
+  "pro_quota_exceeded_paid_subscription_error_429": {
+    "message": "Hai superato il limite di quota AI del tuo piano ({$planType}). \nIl nuovo ciclo di abbonamento inizia il { $refreshDate }. \nAttendi oppure {$contactSupport = contatta il supporto} per risolvere il problema."
   },
   "translate_button": {
     "message": "Traduci"
@@ -647,8 +647,23 @@
   "translate_page_by_hotkey": {
     "message": "Traduci la pagina completa quando premo la scorciatoia"
   },
-  "pro_self_ad": {
-    "message": "Non è perfetto? Correggilo con l'IA ✨ {$subscribeLink = Passa a PRO}"
+  "pro_self_improve_with_ai_suggestion": {
+    "message": "Non proprio corretto?"
+  },
+  "pro_self_improve_with_ai_action_label": {
+    "message": "✨ Migliora con l'IA"
+  },
+  "pro_self_improve_with_ai_free_remain_today": {
+    "message": "Ti resta {$count} miglioramento AI gratuito oggi"
+  },
+  "pro_self_improve_with_ai_free_exausted_today": {
+    "message": "Hai esaurito i tuoi tentativi gratuiti di IA per oggi. {$loginLink = Accedi} per ottenerne altri."
+  },
+  "pro_self_improve_with_ai_free_exausted_total": {
+    "message": "Hai usato tutti i tuoi miglioramenti AI gratuiti."
+  },
+  "pro_self_improve_with_ai_login": {
+    "message": "{$loginLink = Accedi} per continuare con le traduzioni con IA e ottenere altri token gratuiti."
   },
   "pro_self_ad_features": {
     "message": "✓ Traduzione naturale e fedele al significato\n✓ Capisce gergo ed espressioni idiomatiche\n✓ Spiega frasi e contesto"

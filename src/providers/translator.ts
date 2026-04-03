@@ -1,5 +1,6 @@
 // Base class for all translation providers
 
+import type React from "react";
 import { observable, action } from "mobx";
 import { autoBind, copyCase, CopyCaseParams, createLogger } from "../utils";
 import { isOptionsPage, ProxyRequestPayload, ProxyResponseType } from "../extension";
@@ -139,7 +140,7 @@ export abstract class Translator {
           return result;
         } catch (err) {
           void sendMetric("translate_error", {
-            error: isTranslationError(err) ? err.message : JSON.stringify(err),
+            error: String(isTranslationError(err) ? err.message : JSON.stringify(err)),
             source: this.metricSource,
             provider: this.name,
             lang_from: reqParams.from,
@@ -421,7 +422,7 @@ export interface ITranslationDictionaryMeaning {
 
 export interface ITranslationError {
   statusCode: number;
-  message: string;
+  message: React.ReactNode;
 }
 
 export function isTranslationResult(data: ITranslationResult | unknown): data is ITranslationResult {

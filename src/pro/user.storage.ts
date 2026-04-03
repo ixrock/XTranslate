@@ -12,7 +12,7 @@ export interface UserStorage {
   promoBannerShowTime?: number;
 }
 
-const userStorage = createStorage<UserStorage>("user_pro", {
+export const userStorage = createStorage<UserStorage>("user_pro", {
   area: "local",
   autoLoad: true,
   saveDefaultWhenEmpty: true,
@@ -61,7 +61,7 @@ export class UserStore {
   }
 
   get isFreeUser(): boolean {
-    return this.subscription?.planType === "FREE_PLAN";
+    return this.subscription?.planType === "FREE_TRIAL";
   }
 
   get isPaidUser(): boolean {

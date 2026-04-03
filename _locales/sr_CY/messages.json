@@ -221,6 +221,9 @@
   "popup_copy_translation_title": {
     "message": "Копирај превод"
   },
+  "popup_select_provider_title": {
+    "message": "Изабери провајдера превода"
+  },
   "popup_next_vendor_icon_title": {
     "message": "Преведи помоћу: { $translator }"
   },
@@ -548,15 +551,6 @@
   "pro_required_full_page_limits_reached_text2": {
     "message": "Надоградите на PRO за неограничено превођење целих страница и више функција."
   },
-  "pro_required_limits_reached": {
-    "message": "Достигнут је дневни лимит бесплатног налога."
-  },
-  "pro_required_subscription": {
-    "message": "Молимо {$link = претплатите се на PRO} да откључате пуни потенцијал преводиоца и завршавате ствари брже!"
-  },
-  "pro_subscription_refresh": {
-    "message": "Освежи претплату"
-  },
   "pro_required_reset_limits_in": {
     "message": "Ресет за { $timeRange }."
   },
@@ -586,6 +580,12 @@
   },
   "pro_unauthorized_error_401": {
     "message": "Морате бити пријављени на { $serviceUrl } и имати активну претплату да бисте добили приступ."
+  },
+  "pro_quota_exceeded_free_trial_error_429": {
+    "message": "Прекорачили сте лимит бесплатне AI квоте. Молимо { $subscribeLink = претплатите се } да наставите."
+  },
+  "pro_quota_exceeded_paid_subscription_error_429": {
+    "message": "Прекорачили сте лимит AI квоте за свој план ({$planType}). \nНови циклус претплате почиње { $refreshDate }. \nСачекајте или {$contactSupport = контактирајте подршку} да бисте решили проблем."
   },
   "translate_button": {
     "message": "Преведи"
@@ -644,8 +644,23 @@
   "translate_page_by_hotkey": {
     "message": "Преведи целу страницу када притиснем пречицу"
   },
-  "pro_self_ad": {
-    "message": "Није баш тачно? Исправи то уз АИ ✨ {$subscribeLink = Надогради се на PRO}"
+  "pro_self_improve_with_ai_suggestion": {
+    "message": "Није баш добро?"
+  },
+  "pro_self_improve_with_ai_action_label": {
+    "message": "✨ Побољшај уз AI"
+  },
+  "pro_self_improve_with_ai_free_remain_today": {
+    "message": "Данас вам је преостало још {$count} бесплатних AI побољшања"
+  },
+  "pro_self_improve_with_ai_free_exausted_today": {
+    "message": "Искористили сте све своје бесплатне AI покушаје за данас. {$loginLink = Пријавите се} да добијете више."
+  },
+  "pro_self_improve_with_ai_free_exausted_total": {
+    "message": "Искористили сте сва своја бесплатна AI побољшања."
+  },
+  "pro_self_improve_with_ai_login": {
+    "message": "{$loginLink = Пријавите се} да бисте наставили са AI преводима и добили још бесплатних токена."
   },
   "pro_self_ad_features": {
     "message": "✓ Природан превод који тачно преноси значење\n✓ Разуме жаргон и идиоме\n✓ Објашњава фразе и контекст"

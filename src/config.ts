@@ -5,6 +5,7 @@ export const isDevelopment = process.env.NODE_ENV === "development";
 // Extension's public urls for different browsers besides Chrome, e.g. Brave, MS Edge, etc.
 // export const websiteURL = 'http://localhost:3000';
 export const websiteURL = 'https://www.xtranslate.dev';
+export const supportEmail = "team@xtranslate.dev"
 export const chromeStoreURL = 'https://chrome.google.com/webstore/detail/gfgpkepllngchpmcippidfhmbhlljhoo';
 export const edgeAddonsURL = 'https://microsoftedge.microsoft.com/addons/detail/cinfaflgbaachkaamaeglolofeahelkd';
 
