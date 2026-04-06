@@ -161,6 +161,9 @@
   "popup_play_icon_title": {
     "message": "استمع"
   },
+  "popup_download_tts_icon_title": {
+    "message": "تنزيل ملف صوتي"
+  },
   "popup_copy_translation_title": {
     "message": "نسخ الترجمة"
   },

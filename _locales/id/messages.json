@@ -215,6 +215,9 @@
   "popup_play_icon_title": {
     "message": "Dengarkan"
   },
+  "popup_download_tts_icon_title": {
+    "message": "Unduh file audio"
+  },
   "popup_copy_translation_title": {
     "message": "Salin terjemahan"
   },

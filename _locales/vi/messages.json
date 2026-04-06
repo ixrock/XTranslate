@@ -161,6 +161,9 @@
   "popup_play_icon_title": {
     "message": "Nghe"
   },
+  "popup_download_tts_icon_title": {
+    "message": "Tải xuống tệp âm thanh"
+  },
   "popup_copy_translation_title": {
     "message": "Sao chép bản dịch"
   },

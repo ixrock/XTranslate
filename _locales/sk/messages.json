@@ -218,6 +218,9 @@
   "popup_play_icon_title": {
     "message": "Prehrať"
   },
+  "popup_download_tts_icon_title": {
+    "message": "Stiahnuť zvukový súbor"
+  },
   "popup_copy_translation_title": {
     "message": "Kopírovať preklad"
   },

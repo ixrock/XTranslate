@@ -137,6 +137,9 @@
   "popup_play_icon_title": {
     "message": "Dinle"
   },
+  "popup_download_tts_icon_title": {
+    "message": "Ses dosyasını indir"
+  },
   "popup_copy_translation_title": {
     "message": "Çeviriyi kopyala"
   },
