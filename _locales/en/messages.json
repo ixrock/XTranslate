@@ -227,6 +227,9 @@
   "popup_play_icon_title": {
     "message": "Listen"
   },
+  "popup_download_tts_icon_title": {
+    "message": "Download audio file"
+  },
   "popup_copy_translation_title": {
     "message": "Copy translation"
   },

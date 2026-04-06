@@ -161,6 +161,9 @@
   "popup_play_icon_title": {
     "message": "聞く"
   },
+  "popup_download_tts_icon_title": {
+    "message": "音声ファイルをダウンロード"
+  },
   "popup_copy_translation_title": {
     "message": "翻訳をコピー"
   },

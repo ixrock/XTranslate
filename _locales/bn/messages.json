@@ -161,6 +161,9 @@
   "popup_play_icon_title": {
     "message": "শোনুন"
   },
+  "popup_download_tts_icon_title": {
+    "message": "অডিও ফাইল ডাউনলোড করুন"
+  },
   "popup_copy_translation_title": {
     "message": "অনুবাদ কপি করুন"
   },

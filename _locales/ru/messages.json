@@ -227,6 +227,9 @@
   "popup_play_icon_title": {
     "message": "Прослушать"
   },
+  "popup_download_tts_icon_title": {
+    "message": "Скачать аудиофайл"
+  },
   "popup_copy_translation_title": {
     "message": "Копировать перевод"
   },

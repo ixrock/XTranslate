@@ -218,6 +218,9 @@
   "popup_play_icon_title": {
     "message": "Preslušaj"
   },
+  "popup_download_tts_icon_title": {
+    "message": "Preuzmi audio fajl"
+  },
   "popup_copy_translation_title": {
     "message": "Kopiraj prevod"
   },

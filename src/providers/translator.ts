@@ -2,7 +2,7 @@
 
 import type React from "react";
 import { observable, action } from "mobx";
-import { autoBind, copyCase, CopyCaseParams, createLogger } from "../utils";
+import { autoBind, copyCase, CopyCaseParams, createLogger, downloadFile } from "../utils";
 import { isOptionsPage, ProxyRequestPayload, ProxyResponseType } from "../extension";
 import { ProviderCodeName } from "./providers";
 import { getMessage } from "../i18n";
@@ -256,24 +256,14 @@ export abstract class Translator {
       this.logger.error(`[TTS]: streaming failed: ${err}`);
     }
 
-    const audioUrl = this.getAudioUrl(text, lang);
-    const audioFile = await this.getAudioFile(text, lang);
-
-    const useSpeechSynthesis = Boolean(
-      settingsStore.data.useSpeechSynthesis || !(audioUrl || audioFile)
-    );
-
-    if (useSpeechSynthesis) {
+    if (settingsStore.data.useSpeechSynthesis) {
       return this.speakSynth(text);
     }
 
     try {
-      const audioBinary = audioFile ?? await this.request<Blob>({
-        url: audioUrl,
-        responseType: ProxyResponseType.BLOB
-      });
+      const audioBinary = await this.getAudioBlob(text, lang, ...args);
+      if (!audioBinary) return this.speakSynth(text);
 
-      this.audioDataUrl = URL.createObjectURL(audioBinary);
       this.audio = document.createElement("audio");
       this.audio.src = this.audioDataUrl = URL.createObjectURL(audioBinary);
       await this.audio.play();
@@ -293,6 +283,38 @@ export abstract class Translator {
       });
       return this.speakSynth(text); // fallback to TTS-synthesis engine
     }
+  }
+
+  protected async getAudioBlob(text: string, lang?: string, ...args: any[]): Promise<Blob | undefined> {
+    const audioUrl = this.getAudioUrl(text, lang);
+    const audioFile = await this.getAudioFile(text, lang, ...args);
+
+    if (!(audioUrl || audioFile)) {
+      return;
+    }
+
+    return audioFile ?? await this.request<Blob>({
+      url: audioUrl,
+      responseType: ProxyResponseType.BLOB
+    });
+  }
+
+  async downloadAudio(text: string, lang?: string, ...args: any[]): Promise<Blob | undefined> {
+    const audioBlob = await this.getAudioBlob(text, lang, ...args);
+    if (!audioBlob) return;
+
+    const type = audioBlob.type || "audio/mpeg";
+    const extension = type === "audio/mpeg" ? "mp3" : (type.split("/")[1] ?? "mp3");
+    const sanitizedText = text
+      .trim()
+      .replace(/\s+/g, " ")
+      .replace(/[\\/:*?"<>|\x00-\x1F]/g, "")
+      .slice(0, 48)
+      .replace(/\s+/g, "_") || "tts";
+    const filename = `xtranslate-${this.name}-${lang ?? "auto"}-${sanitizedText}.${extension}`;
+
+    downloadFile(filename, audioBlob, type);
+    return audioBlob;
   }
 
   isSpeaking(): boolean {
