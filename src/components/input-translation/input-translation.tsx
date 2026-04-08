@@ -44,7 +44,6 @@ export class InputTranslation extends React.Component {
   @observable summarized = "";
   @observable isSpeaking = false;
   @observable isPaused = false;
-  @observable downloadAvailable = false;
 
   constructor(props: object) {
     super(props);
@@ -125,15 +124,10 @@ export class InputTranslation extends React.Component {
 
       const media = await translator.speak(text, from);
 
-      const onSpeakEnd = action(() => {
-        this.resetSpeakingState();
-        this.downloadAvailable = true;
-      });
-
       if (media instanceof HTMLAudioElement) {
-        media.onended = onSpeakEnd;
+        media.onended = this.resetSpeakingState;
       } else if (media instanceof SpeechSynthesisUtterance) {
-        media.onend = onSpeakEnd;
+        media.onend = this.resetSpeakingState;
       }
 
       if (!media) {
@@ -241,7 +235,7 @@ export class InputTranslation extends React.Component {
       <div className={cssNames("translation-results", { rtl: isRTL(langTo) })}>
         {translation ?
           <div className="translation flex gaps">
-            <div className="flex column gaps">
+            <div className="action-icons flex column gaps">
               <Icon
                 material={this.isPaused ? materialIcons.ttsPause : materialIcons.ttsPlay}
                 tooltip={getMessage("popup_play_icon_title")}
@@ -251,9 +245,9 @@ export class InputTranslation extends React.Component {
                 content={this.translation}
                 tooltip={getMessage("popup_copy_translation_title")}
               />
-              {this.downloadAvailable && (
+              {vendor === ProviderCodeName.XTRANSLATE_PRO && (
                 <Icon
-                  material="download"
+                  material="audio_file"
                   tooltip={getMessage("popup_download_tts_icon_title")}
                   onClick={() => translator.downloadAudio(originalText, langDetected)}
                 />
@@ -393,8 +387,6 @@ export class InputTranslation extends React.Component {
   @action.bound
   onInputChange(val: string) {
     this.params.text = val;
-    this.downloadAvailable = false;
-
     if (this.error) {
       this.error = null; // reset previous error first (if any)
     }
