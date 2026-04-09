@@ -66,7 +66,7 @@ export class InputTranslation extends React.Component {
       provider: this.urlParams.provider ?? vendor,
       from: this.urlParams.from ?? langFrom,
       to: this.urlParams.to ?? langTo,
-      text: "",
+      text: this.urlParams.text ?? "",
     };
 
     await this.lastInputText.load();
