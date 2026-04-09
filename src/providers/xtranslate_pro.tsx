@@ -1,7 +1,7 @@
 import React from "react";
 import AILanguagesList from "./open-ai.json"
 import { action } from "mobx";
-import { getTranslator, ITranslationDictionary, ITranslationError, ITranslationResult, OpenAIModelTTSVoice, ProviderCodeName, TranslateParams, Translator } from "./index";
+import { getTranslator, ITranslationDictionary, ITranslationError, ITranslationResult, OpenAIModelTTSVoice, ProviderCodeName, TranslateBatchResult, TranslateClientContext, TranslateMode, TranslateParams, Translator } from "./index";
 import { MessageType, ProxyResponseType, ProxyStreamResponsePayload } from "@/extension";
 import { supportEmail, websiteURL } from "@/config";
 import { sendMetric } from "@/background/metrics.bgc";
@@ -48,13 +48,15 @@ export class XTranslatePro extends Translator {
   }
 
   private async translateReq(params: TranslateParams): Promise<XTranslateProTranslateOutput> {
-    const { from, to: langTo, text, texts = [text] } = params;
+    const { from, to: langTo, text, texts = [text], mode, client } = params;
     const langFrom = from === "auto" ? undefined : from;
 
     const payload: XTranslateProTranslateInput = {
       langFrom,
       langTo,
       text: texts,
+      mode,
+      client,
     };
 
     return this.request<XTranslateProTranslateOutput>({
@@ -119,6 +121,18 @@ export class XTranslatePro extends Translator {
     try {
       const { translation } = await this.translateReq(params);
       return translation;
+    } catch (err) {
+      this.handlePaidApiError(err);
+    }
+  }
+
+  async translateBatch(params: TranslateParams): Promise<TranslateBatchResult> {
+    try {
+      const { translation, detectedLang } = await this.translateReq(params);
+      return {
+        translation: this.normalizeMany(params, translation),
+        detectedLang,
+      };
     } catch (err) {
       this.handlePaidApiError(err);
     }
@@ -739,6 +753,8 @@ export interface XTranslateProTranslateInput {
   langFrom?: string;
   langTo: string;
   text: string[];
+  mode?: TranslateMode;
+  client?: TranslateClientContext;
 }
 
 export interface XTranslateProDemoTrialOutput {

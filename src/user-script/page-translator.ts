@@ -17,6 +17,7 @@ export interface PageTranslatorParams {
 interface TranslationUnit {
   node: Node;
   text: string;
+  segmentId: string;
   partIndex: number;
   partCount: number;
 }
@@ -41,10 +42,10 @@ export const pageTranslationStorage = createStorage("page_translations", {
     showOriginalOnHover: true,
     showTranslationOnHover: false,
     showTranslationInDOM: true,
-    trafficSaveMode: true, // translate only visible page area, translate new areas on scroll
+    trafficSaveMode: true, // TODO: remove due new backend architecture with streaming/batching support
     letterCaseAutoCorrection: true, // split content per sentence
     showMore: false,
-    alwaysTranslatePages: [] as IObservableArray<string>, // TODO: probably move out of `chrome.storage.sync` area
+    alwaysTranslatePages: [] as IObservableArray<string>,
   },
 });
 
@@ -68,6 +69,10 @@ export class PageTranslator {
   protected originalText = new WeakMap<Node, string>();
   protected originalTextRaw = new WeakMap<Node, string>();
   protected tooltipNodes = new WeakMap<HTMLElement, Set<Text>>();
+  protected nodeSegmentBaseIds = new WeakMap<Node, string>();
+  protected detectedLangHint?: string;
+  protected detectedLangMixed = false;
+  protected requestSequence = 0;
 
   constructor(private params: PageTranslatorParams = {}) {
     autoBind(this);
@@ -151,6 +156,7 @@ export class PageTranslator {
   }
 
   startAutoTranslation() {
+    this.resetDetectedLangHint();
     const nodes = this.collectNodes();
     this.processNodes(nodes);
 
@@ -163,6 +169,7 @@ export class PageTranslator {
   }
 
   stopAutoTranslation() {
+    this.resetDetectedLangHint();
     this.restoreDOM();
     this.dispose();
   }
@@ -172,7 +179,10 @@ export class PageTranslator {
         const { showMore, alwaysTranslatePages, ...settings } = this.settings;
         return settings;
       },
-      this.refreshTranslations
+      () => {
+        this.resetDetectedLangHint();
+        void this.refreshTranslations();
+      }
     );
   }
 
@@ -349,6 +359,79 @@ export class PageTranslator {
     );
   }
 
+  protected resetDetectedLangHint() {
+    this.detectedLangHint = undefined;
+    this.detectedLangMixed = false;
+  }
+
+  protected updateDetectedLangHint(detectedLang?: string) {
+    if (!detectedLang || this.settings.langFrom !== "auto" || this.detectedLangMixed) {
+      return;
+    }
+
+    if (!this.detectedLangHint) {
+      this.detectedLangHint = detectedLang;
+      return;
+    }
+
+    if (this.detectedLangHint !== detectedLang) {
+      this.detectedLangHint = undefined;
+      this.detectedLangMixed = true;
+    }
+  }
+
+  protected getEffectiveLangFrom(): string {
+    if (this.settings.langFrom !== "auto") {
+      return this.settings.langFrom;
+    }
+
+    return this.detectedLangHint ?? this.settings.langFrom;
+  }
+
+  protected getPageId(): string {
+    return `page_${md5(document.URL)}`;
+  }
+
+  protected createRequestId(): string {
+    this.requestSequence += 1;
+    return `req_${this.requestSequence}_${Date.now().toString(36)}`;
+  }
+
+  protected getNodeSegmentPath(node: Node): string {
+    const path: string[] = [];
+    let current: Node | null = node instanceof Text ? node.parentNode : node;
+
+    while (current && current !== document.body && path.length < 4) {
+      const parent = current.parentNode;
+      const siblingIndex = parent ? Array.from(parent.childNodes).indexOf(current as ChildNode) : 0;
+      const nodeName = current instanceof Element
+        ? current.tagName.toLowerCase()
+        : current.nodeName.toLowerCase();
+
+      path.unshift(`${nodeName}:${siblingIndex}`);
+      current = parent;
+    }
+
+    return path.join("/");
+  }
+
+  protected getNodeSegmentBaseId(node: Node): string {
+    const existingId = this.nodeSegmentBaseIds.get(node);
+    if (existingId) {
+      return existingId;
+    }
+
+    const originalText = this.originalTextRaw.get(node) ?? this.originalText.get(node) ?? "";
+    const segmentBaseId = `seg_${md5([
+      document.URL,
+      this.getNodeSegmentPath(node),
+      originalText,
+    ].join("|"))}`;
+
+    this.nodeSegmentBaseIds.set(node, segmentBaseId);
+    return segmentBaseId;
+  }
+
   protected splitByCodePoints(text: string, chunkSize: number): string[] {
     const chunks: string[] = [];
     const chars = Array.from(text);
@@ -413,10 +496,15 @@ export class PageTranslator {
       if (!originalText) continue;
 
       const textChunks = this.splitTextForApi(originalText);
+      const segmentBaseId = this.getNodeSegmentBaseId(node);
+
       textChunks.forEach((text, partIndex) => {
         units.push({
           node,
           text,
+          segmentId: textChunks.length > 1
+            ? `${segmentBaseId}_${partIndex + 1}`
+            : segmentBaseId,
           partIndex,
           partCount: textChunks.length,
         });
@@ -473,7 +561,8 @@ export class PageTranslator {
 
     for (const pack of packedUnits) {
       const texts = pack.map(unit => unit.text);
-      const translations = await this.translateApiRequest(texts);
+      const { translation: translations, detectedLang } = await this.translateApiRequest(pack);
+      this.updateDetectedLangHint(detectedLang);
       if (this.params.sessionCache) this.saveStorageCacheByText(texts, translations, providerId);
 
       pack.forEach((unit, translationIndex) => {
@@ -520,26 +609,39 @@ export class PageTranslator {
     return resolvedTranslations;
   }
 
-  async translateApiRequest(texts: string[]): Promise<string[]> {
-    const { provider, langFrom, langTo } = this.settings;
+  async translateApiRequest(units: Pick<TranslationUnit, "text" | "segmentId">[]): Promise<{ translation: string[], detectedLang?: string }> {
+    const { provider, langTo } = this.settings;
     const translator = getTranslator(provider);
+    const texts = units.map(unit => unit.text);
+    const requestedLangFrom = this.getEffectiveLangFrom();
 
     try {
-      const translations = await translator.translateMany({
-        from: langFrom,
+      const batchResult = await translator.translateBatch({
+        from: requestedLangFrom,
         to: langTo,
         texts,
+        mode: "page",
+        client: {
+          request_id: this.createRequestId(),
+          page_id: this.getPageId(),
+          segment_ids: units.map(unit => unit.segmentId),
+          visible_only: this.settings.trafficSaveMode,
+        },
       });
 
-      const result = texts.map((originalText, i) => [originalText, translations[i]]);
-      this.logger.info(`TRANSLATED TEXTS: ${texts.length}`, { result });
+      const preview = texts.map((originalText, i) => [originalText, batchResult.translation[i]]);
+      this.logger.info(`TRANSLATED TEXTS: ${texts.length}`, {
+        result: preview,
+        langFromRequested: requestedLangFrom,
+        detectedLang: batchResult.detectedLang,
+      });
 
-      return translations;
+      return batchResult;
     } catch (err) {
       this.logger.error(`TRANSLATION FAILED: ${err?.message}`);
     }
 
-    return [];
+    return { translation: [] };
   }
 
   isTranslatableNode(node: Node): boolean {

@@ -18,11 +18,27 @@ export interface ProviderLanguagesApiMap {
   to?: { [locale: string]: string };
 }
 
+export type TranslateMode = "auto" | "lookup" | "page";
+
+export interface TranslateClientContext {
+  request_id?: string;
+  page_id?: string;
+  segment_ids?: string[];
+  visible_only?: boolean;
+}
+
 export interface TranslateParams {
   from: string;
   to: string;
   text?: string;
   texts?: string[]; // for multi-translate
+  mode?: TranslateMode;
+  client?: TranslateClientContext;
+}
+
+export interface TranslateBatchResult {
+  translation: string[];
+  detectedLang?: string;
 }
 
 export interface TranslatorParams {
@@ -74,6 +90,12 @@ export abstract class Translator {
     return [];
   }
 
+  async translateBatch(params: TranslateParams): Promise<TranslateBatchResult> {
+    return {
+      translation: await this.translateMany(params),
+    };
+  }
+
   protected async request<Response>(payload: ProxyRequestPayload): Promise<Response> {
     const response = await proxyRequest<Response>(payload);
 
@@ -87,13 +109,21 @@ export abstract class Translator {
     instanceFunc: (params: TranslateParams) => Promise<string[]>,
     params: TranslateParams,
   ): Promise<string[]> {
-    const { langTo, langFrom, letterCaseAutoCorrection } = pageTranslationStorage.get();
     const translations = await Reflect.apply(instanceFunc, this, [params]);
-    let correctedTranslations: string[];
+    return this.normalizeMany(params, translations);
+  }
+
+  protected normalizeMany(params: TranslateParams, translations: string[]): string[] {
+    const { langTo, langFrom, letterCaseAutoCorrection } = pageTranslationStorage.get();
+    let correctedTranslations: string[] | undefined;
 
     if (letterCaseAutoCorrection) {
       correctedTranslations = translations.map((sentence, index) => {
-        const originalText = params.texts[index];
+        const originalText = params.texts?.[index];
+
+        if (!originalText) {
+          return sentence;
+        }
 
         const copyCaseParams: CopyCaseParams = {
           fromText: originalText,
@@ -103,12 +133,12 @@ export abstract class Translator {
         };
 
         try {
-          return copyCase(copyCaseParams)
+          return copyCase(copyCaseParams);
         } catch (err) {
           this.logger.error(`[CASE-CORRECTION]: failed to copy case for sentence: ${originalText}`, { err, params, copyCaseParams });
           return sentence;
         }
-      })
+      });
     }
 
     this.logger.info('GOT MULTI-TRANSLATIONS', { translations, correctedTranslations });

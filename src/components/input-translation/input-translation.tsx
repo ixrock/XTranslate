@@ -164,6 +164,7 @@ export class InputTranslation extends React.Component {
         from: params.from,
         to: params.to,
         text: params.text.trim(),
+        mode: "lookup",
       });
       if (isEqual(params, this.params)) {
         this.translation = translation;
@@ -234,7 +235,7 @@ export class InputTranslation extends React.Component {
     return (
       <div className={cssNames("translation-results", { rtl: isRTL(langTo) })}>
         {translation ?
-          <div className="translation flex gaps">
+          <div className="translation flex gaps align-center">
             <div className="action-icons flex column gaps">
               <Icon
                 material={this.isPaused ? materialIcons.ttsPause : materialIcons.ttsPlay}
