@@ -2,7 +2,7 @@ import { comparer, IObservableArray, observable, reaction } from "mobx";
 import { md5 } from "js-md5";
 import debounce from "lodash/debounce";
 import { autoBind, createLogger, disposer, LoggerColor, strLengthCodePoints } from "../utils";
-import { getTranslator, ProviderCodeName } from "../providers";
+import { getTranslator, getXTranslatePro, ProviderCodeName, XTranslateProTranslateStreamBatchDoneEvent } from "../providers";
 import { createStorage } from "@/storage";
 
 export type LangSource = string;
@@ -20,6 +20,19 @@ interface TranslationUnit {
   segmentId: string;
   partIndex: number;
   partCount: number;
+}
+
+interface IndexedTranslationUnit extends TranslationUnit {
+  unitIndex: number;
+}
+
+interface PendingTranslationState {
+  freshNodes: Node[];
+  units: TranslationUnit[];
+  unitsToTranslate: IndexedTranslationUnit[];
+  unitTranslations: (string | undefined)[];
+  nodeUnitIndexes: Map<Node, number[]>;
+  unitsBySegmentId: Map<string, IndexedTranslationUnit>;
 }
 
 export enum FullPageContextMenuMode {
@@ -42,7 +55,6 @@ export const pageTranslationStorage = createStorage("page_translations", {
     showOriginalOnHover: true,
     showTranslationOnHover: false,
     showTranslationInDOM: true,
-    trafficSaveMode: true, // TODO: remove due new backend architecture with streaming/batching support
     letterCaseAutoCorrection: true, // split content per sentence
     showMore: false,
     alwaysTranslatePages: [] as IObservableArray<string>,
@@ -64,15 +76,20 @@ export class PageTranslator {
   protected dispose = disposer();
 
   protected nodesAll = observable.set<Node>();
-  protected nodesFromViewport = observable.set<Node>();
+  protected visibleNodes = observable.set<Node>();
   protected translations = new WeakMap<Node, Record<TranslationHashId, string>>();
   protected originalText = new WeakMap<Node, string>();
   protected originalTextRaw = new WeakMap<Node, string>();
   protected tooltipNodes = new WeakMap<HTMLElement, Set<Text>>();
   protected nodeSegmentBaseIds = new WeakMap<Node, string>();
+  protected observedVisibilityTargets = new WeakSet<Element>();
+  protected visibilityObserver?: IntersectionObserver;
   protected detectedLangHint?: string;
   protected detectedLangMixed = false;
   protected requestSequence = 0;
+  protected isRefreshRunning = false;
+  protected refreshRequestedWhileRunning = false;
+  protected activeRefreshAbortController?: AbortController;
 
   constructor(private params: PageTranslatorParams = {}) {
     autoBind(this);
@@ -84,8 +101,7 @@ export class PageTranslator {
   }
 
   get nodes(): Node[] {
-    const nodeList = this.settings.trafficSaveMode ? this.nodesFromViewport : this.nodesAll;
-    return Array.from(nodeList);
+    return Array.from(this.nodesAll);
   }
 
   get settings() {
@@ -164,11 +180,14 @@ export class PageTranslator {
       this.bindDOMNodesAutoTranslation(),
       this.bindTranslationOnSettingsChange(),
       this.watchDOMNodeUpdates(),
+      () => this.cancelActiveRefresh(),
+      () => this.disconnectVisibilityObserver(),
       () => this.clearCollectedNodes(),
     );
   }
 
   stopAutoTranslation() {
+    this.cancelActiveRefresh();
     this.resetDetectedLangHint();
     this.restoreDOM();
     this.dispose();
@@ -180,6 +199,7 @@ export class PageTranslator {
         return settings;
       },
       () => {
+        this.cancelActiveRefresh();
         this.resetDetectedLangHint();
         void this.refreshTranslations();
       }
@@ -188,7 +208,9 @@ export class PageTranslator {
 
   protected bindDOMNodesAutoTranslation = () => {
     return reaction(() => this.nodes,
-      this.refreshTranslations,
+      () => {
+        void this.refreshTranslations();
+      },
       {
         fireImmediately: true,
         delay: this.params.autoTranslateDelayMs,
@@ -199,7 +221,7 @@ export class PageTranslator {
 
   protected clearCollectedNodes() {
     this.nodesAll.clear();
-    this.nodesFromViewport.clear();
+    this.visibleNodes.clear();
   }
 
   protected updateDOMNode(node: Node, text: string) {
@@ -223,7 +245,7 @@ export class PageTranslator {
 
   protected updateDOM() {
     this.logger.info("UPDATE DOM");
-    this.nodes.forEach(node => {
+    this.nodesAll.forEach(node => {
       const translation = this.getTranslation(node);
       if (translation) this.updateDOMNode(node, translation);
     });
@@ -231,7 +253,7 @@ export class PageTranslator {
 
   restoreDOM() {
     this.logger.info("RESTORE DOM");
-    this.nodes.forEach(node => {
+    this.nodesAll.forEach(node => {
       const originalText = this.originalTextRaw.get(node);
       this.updateDOMNode(node, originalText);
     });
@@ -282,15 +304,8 @@ export class PageTranslator {
     }
   }
 
-  protected refreshTranslations = debounce(async () => {
-    this.logger.info("REFRESH TRANSLATIONS");
-
-    await this.translateNodes();
-
-    queueMicrotask(() => {
-      this.restoreDOM()
-      this.updateDOM();
-    });
+  protected refreshTranslations = debounce(() => {
+    void this.runRefreshLoop();
   });
 
   protected importNode(node: Node) {
@@ -334,10 +349,161 @@ export class PageTranslator {
 
   protected processNodes(nodes: Node[]) {
     nodes.forEach(node => this.importNode(node));
+    this.observeNodeVisibility(nodes);
+  }
 
-    if (this.settings.trafficSaveMode) {
-      this.dispose.push(this.enableTrafficSaveMode(nodes));
+  protected ensureVisibilityObserver() {
+    if (this.visibilityObserver) {
+      return this.visibilityObserver;
     }
+
+    this.visibilityObserver = new IntersectionObserver(entries => {
+      let shouldRefresh = false;
+
+      for (const entry of entries) {
+        shouldRefresh = this.setTargetVisibility(entry.target as HTMLElement, entry.isIntersecting) || shouldRefresh;
+      }
+
+      if (shouldRefresh) {
+        void this.refreshTranslations();
+      }
+    }, {
+      rootMargin: "0px 0px 50% 0px",
+      threshold: 0,
+    });
+
+    return this.visibilityObserver;
+  }
+
+  protected disconnectVisibilityObserver() {
+    this.visibilityObserver?.disconnect();
+    this.visibilityObserver = undefined;
+  }
+
+  protected observeNodeVisibility(nodes: Node[]) {
+    const visibilityObserver = this.ensureVisibilityObserver();
+
+    nodes.forEach(node => {
+      const target = node instanceof Text ? node.parentElement : node as HTMLElement;
+      if (!target) {
+        return;
+      }
+
+      if (!this.observedVisibilityTargets.has(target)) {
+        this.observedVisibilityTargets.add(target);
+        visibilityObserver.observe(target);
+      }
+
+      if (this.isElementNearViewport(target)) {
+        this.setTargetVisibility(target, true);
+      }
+    });
+  }
+
+  protected isElementNearViewport(element: Element): boolean {
+    const rect = element.getBoundingClientRect();
+    const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+    const viewportWidth = window.innerWidth || document.documentElement.clientWidth;
+
+    return (
+      rect.bottom >= 0
+      && rect.right >= 0
+      && rect.top <= viewportHeight * 1.5
+      && rect.left <= viewportWidth
+    );
+  }
+
+  protected setTargetVisibility(target: HTMLElement, isVisible: boolean): boolean {
+    if (this.isTranslatableNode(target)) {
+      return this.setNodeVisibility(target, isVisible);
+    }
+
+    const texts = this.tooltipNodes.get(target);
+    let shouldRefresh = false;
+
+    texts?.forEach(text => {
+      shouldRefresh = this.setNodeVisibility(text, isVisible) || shouldRefresh;
+    });
+
+    return shouldRefresh;
+  }
+
+  protected setNodeVisibility(node: Node, isVisible: boolean): boolean {
+    if (isVisible) {
+      const wasVisible = this.visibleNodes.has(node);
+      this.visibleNodes.add(node);
+      return !wasVisible && !this.getTranslation(node);
+    }
+
+    this.visibleNodes.delete(node);
+    return false;
+  }
+
+  protected isNodeVisible(node: Node): boolean {
+    return this.visibleNodes.has(node);
+  }
+
+  protected prioritizeNodes(nodes: Node[]): Node[] {
+    return [...nodes].sort((left, right) => {
+      return Number(this.isNodeVisible(right)) - Number(this.isNodeVisible(left));
+    });
+  }
+
+  protected async runRefreshLoop() {
+    this.logger.info("REFRESH TRANSLATIONS");
+
+    if (this.isRefreshRunning) {
+      this.refreshRequestedWhileRunning = true;
+      this.activeRefreshAbortController?.abort();
+      return;
+    }
+
+    this.isRefreshRunning = true;
+
+    try {
+      do {
+        this.refreshRequestedWhileRunning = false;
+
+        const abortController = new AbortController();
+        this.activeRefreshAbortController = abortController;
+
+        try {
+          await this.translateNodes(this.nodes, {
+            signal: abortController.signal,
+          });
+        } catch (err) {
+          const isAbortError = abortController.signal.aborted || String(err).toLowerCase().includes("abort");
+          if (!isAbortError) {
+            this.logger.error(`[REFRESH]: translation loop failed: ${err?.message ?? err}`);
+          }
+        } finally {
+          if (this.activeRefreshAbortController === abortController) {
+            this.activeRefreshAbortController = undefined;
+          }
+        }
+
+        if (!abortController.signal.aborted) {
+          this.renderTranslatedNodes({ restoreFirst: true });
+        }
+      } while (this.refreshRequestedWhileRunning);
+    } finally {
+      this.isRefreshRunning = false;
+    }
+  }
+
+  protected cancelActiveRefresh() {
+    this.refreshRequestedWhileRunning = false;
+    this.activeRefreshAbortController?.abort();
+    this.activeRefreshAbortController = undefined;
+  }
+
+  protected renderTranslatedNodes({ restoreFirst = false } = {}) {
+    queueMicrotask(() => {
+      if (restoreFirst) {
+        this.restoreDOM();
+      }
+      this.updateDOM();
+    });
   }
 
   protected getSpaces(node: Node) {
@@ -537,61 +703,102 @@ export class PageTranslator {
     return packs;
   }
 
-  protected async translateNodes(nodes = this.nodes): Promise<string[]> {
-    const providerId = this.getProviderHashId();
-    const freshNodes = nodes.filter(node => !this.getTranslation(node));
-    freshNodes.forEach(node => this.importNode(node));
+  protected preparePendingTranslations(nodes: Node[], providerId: TranslationHashId): PendingTranslationState {
+    const freshNodes = this.prioritizeNodes(nodes)
+      .filter(node => !this.getTranslation(node));
 
-    this.logger.info("TRANSLATING NODES", { nodes: freshNodes });
+    freshNodes.forEach(node => this.importNode(node));
 
     const units = this.createTranslationUnits(freshNodes);
     const unitTranslations: (string | undefined)[] = new Array(units.length);
-    const unitsToTranslate: (TranslationUnit & { unitIndex: number })[] = [];
+    const unitsToTranslate: IndexedTranslationUnit[] = [];
+    const nodeUnitIndexes = new Map<Node, number[]>();
+    const unitsBySegmentId = new Map<string, IndexedTranslationUnit>();
 
     units.forEach((unit, unitIndex) => {
+      const unitIndexes = nodeUnitIndexes.get(unit.node) ?? [];
+      unitIndexes.push(unitIndex);
+      nodeUnitIndexes.set(unit.node, unitIndexes);
+
       const cachedTranslation = this.params.sessionCache ? this.getStorageCacheByText(unit.text, providerId) : undefined;
       if (cachedTranslation !== undefined && cachedTranslation !== null) {
         unitTranslations[unitIndex] = cachedTranslation;
-      } else {
-        unitsToTranslate.push({ ...unit, unitIndex });
+        return;
+      }
+
+      const indexedUnit = { ...unit, unitIndex };
+      unitsToTranslate.push(indexedUnit);
+      unitsBySegmentId.set(indexedUnit.segmentId, indexedUnit);
+    });
+
+    return {
+      freshNodes,
+      units,
+      unitsToTranslate,
+      unitTranslations,
+      nodeUnitIndexes,
+      unitsBySegmentId,
+    };
+  }
+
+  protected getPendingUnits(state: PendingTranslationState): IndexedTranslationUnit[] {
+    return state.unitsToTranslate.filter(unit => state.unitTranslations[unit.unitIndex] === undefined);
+  }
+
+  protected applyUnitTranslations(
+    units: IndexedTranslationUnit[],
+    translations: string[],
+    state: PendingTranslationState,
+    providerId: TranslationHashId,
+  ) {
+    const cacheTexts: string[] = [];
+    const cacheTranslations: string[] = [];
+
+    units.forEach((unit, translationIndex) => {
+      const translation = translations[translationIndex];
+      if (translation === undefined) {
+        return;
+      }
+
+      state.unitTranslations[unit.unitIndex] = translation;
+
+      if (this.params.sessionCache) {
+        cacheTexts.push(unit.text);
+        cacheTranslations.push(translation);
       }
     });
 
-    const packedUnits = this.packTranslationUnits(unitsToTranslate);
-
-    for (const pack of packedUnits) {
-      const texts = pack.map(unit => unit.text);
-      const { translation: translations, detectedLang } = await this.translateApiRequest(pack);
-      this.updateDetectedLangHint(detectedLang);
-      if (this.params.sessionCache) this.saveStorageCacheByText(texts, translations, providerId);
-
-      pack.forEach((unit, translationIndex) => {
-        const translation = translations[translationIndex];
-        if (translation !== undefined) {
-          unitTranslations[unit.unitIndex] = translation;
-        }
-      });
+    if (this.params.sessionCache && cacheTexts.length) {
+      this.saveStorageCacheByText(cacheTexts, cacheTranslations, providerId);
     }
+  }
 
-    const partsByNode = new Map<Node, (string | undefined)[]>();
-    units.forEach((unit, unitIndex) => {
-      const nodeParts = partsByNode.get(unit.node) ?? Array<string | undefined>(unit.partCount).fill(undefined);
-      nodeParts[unit.partIndex] = unitTranslations[unitIndex];
-      partsByNode.set(unit.node, nodeParts);
-    });
-
-    const resolvedTranslations: string[] = [];
+  protected commitResolvedNodes(state: PendingTranslationState, providerId: TranslationHashId): Node[] {
+    const resolvedNodes: Node[] = [];
     const cacheTexts: string[] = [];
     const cacheTranslations: string[] = [];
-    freshNodes.forEach(node => {
-      const parts = partsByNode.get(node);
-      if (!parts || parts.some(part => part === undefined)) return;
+
+    state.freshNodes.forEach(node => {
+      const existingTranslation = this.translations.get(node)?.[providerId];
+      if (existingTranslation) {
+        return;
+      }
+
+      const unitIndexes = state.nodeUnitIndexes.get(node) ?? [];
+      if (!unitIndexes.length) {
+        return;
+      }
+
+      const parts = unitIndexes.map(unitIndex => state.unitTranslations[unitIndex]);
+      if (parts.some(part => part === undefined)) {
+        return;
+      }
 
       const translation = parts.join("");
-      const savedTranslations = this.translations.get(node) ?? {} as Record<TranslationHashId, string>;
-      savedTranslations[providerId] = translation;
-      this.translations.set(node, savedTranslations);
-      resolvedTranslations.push(translation);
+      const nodeTranslations = this.translations.get(node) ?? {} as Record<TranslationHashId, string>;
+      nodeTranslations[providerId] = translation;
+      this.translations.set(node, nodeTranslations);
+      resolvedNodes.push(node);
 
       if (this.params.sessionCache) {
         const originalText = this.originalText.get(node);
@@ -606,10 +813,164 @@ export class PageTranslator {
       this.saveStorageCacheByText(cacheTexts, cacheTranslations, providerId);
     }
 
-    return resolvedTranslations;
+    return resolvedNodes;
   }
 
-  async translateApiRequest(units: Pick<TranslationUnit, "text" | "segmentId">[]): Promise<{ translation: string[], detectedLang?: string }> {
+  protected handleStreamBatchDone(
+    batch: XTranslateProTranslateStreamBatchDoneEvent,
+    state: PendingTranslationState,
+    providerId: TranslationHashId,
+  ) {
+    const units: IndexedTranslationUnit[] = [];
+    const translations: string[] = [];
+
+    batch.items.forEach(item => {
+      const unit = state.unitsBySegmentId.get(item.id);
+      if (!unit) {
+        return;
+      }
+
+      units.push(unit);
+      translations.push(item.translation);
+    });
+
+    this.applyUnitTranslations(units, translations, state, providerId);
+
+    const resolvedNodes = this.commitResolvedNodes(state, providerId);
+    if (resolvedNodes.length) {
+      this.renderTranslatedNodes();
+    }
+  }
+
+  protected async streamTranslateUnits(
+    state: PendingTranslationState,
+    providerId: TranslationHashId,
+    signal?: AbortSignal,
+  ) {
+    if (this.settings.provider !== ProviderCodeName.XTRANSLATE_PRO) {
+      return;
+    }
+
+    const pendingUnits = this.getPendingUnits(state);
+    if (!pendingUnits.length || signal?.aborted) {
+      return;
+    }
+
+    const requestId = this.createRequestId();
+    const requestedLangFrom = this.getEffectiveLangFrom();
+
+    try {
+      await getXTranslatePro().streamPageTranslation({
+        langFrom: requestedLangFrom,
+        langTo: this.settings.langTo,
+        mode: "page",
+        page: {
+          page_id: this.getPageId(),
+          request_id: requestId,
+          url: document.URL,
+          title: document.title,
+        },
+        segments: pendingUnits.map(unit => ({
+          id: unit.segmentId,
+          text: unit.text,
+          order: unit.unitIndex,
+          visible: this.isNodeVisible(unit.node),
+        })),
+      }, {
+        signal,
+        onStarted: (event) => {
+          this.logger.info("[STREAM] job_started", event);
+        },
+        onBatchDone: (batch) => {
+          this.updateDetectedLangHint(batch.detectedLang);
+          this.handleStreamBatchDone(batch, state, providerId);
+        },
+        onStats: (stats) => {
+          this.logger.info("[STREAM] job_stats", stats);
+        },
+        onCompleted: (event) => {
+          this.logger.info("[STREAM] job_completed", event);
+        },
+        onError: (event) => {
+          this.logger.error(`[STREAM] ${event.code}: ${event.message}`);
+        },
+      });
+    } catch (err) {
+      const isAbortError = signal?.aborted || String(err).toLowerCase().includes("abort");
+      if (!isAbortError) {
+        this.logger.error(`[STREAM]: page translation stream failed: ${err?.message ?? err}`);
+      }
+    }
+  }
+
+  protected async syncTranslateUnits(
+    state: PendingTranslationState,
+    providerId: TranslationHashId,
+    signal?: AbortSignal,
+  ) {
+    const pendingUnits = this.getPendingUnits(state);
+    if (!pendingUnits.length) {
+      return;
+    }
+
+    const packedUnits = this.packTranslationUnits(pendingUnits);
+
+    for (const pack of packedUnits) {
+      if (signal?.aborted) {
+        return;
+      }
+
+      const { translation, detectedLang } = await this.translateSyncBatchRequest(pack);
+      this.updateDetectedLangHint(detectedLang);
+      this.applyUnitTranslations(pack, translation, state, providerId);
+
+      const resolvedNodes = this.commitResolvedNodes(state, providerId);
+      if (resolvedNodes.length) {
+        this.renderTranslatedNodes();
+      }
+    }
+  }
+
+  protected async translateNodes(
+    nodes = this.nodes,
+    { signal }: { signal?: AbortSignal } = {},
+  ): Promise<string[]> {
+    const providerId = this.getProviderHashId();
+    const state = this.preparePendingTranslations(nodes, providerId);
+
+    if (!state.freshNodes.length) {
+      return [];
+    }
+
+    this.logger.info("TRANSLATING NODES", {
+      nodes: state.freshNodes,
+      visible: state.freshNodes.filter(node => this.isNodeVisible(node)).length,
+      hidden: state.freshNodes.filter(node => !this.isNodeVisible(node)).length,
+    });
+
+    const cachedNodes = this.commitResolvedNodes(state, providerId);
+    if (cachedNodes.length) {
+      this.renderTranslatedNodes();
+    }
+
+    if (signal?.aborted) {
+      return [];
+    }
+
+    await this.streamTranslateUnits(state, providerId, signal);
+
+    if (signal?.aborted) {
+      return [];
+    }
+
+    await this.syncTranslateUnits(state, providerId, signal);
+
+    return state.freshNodes
+      .map(node => this.getTranslation(node, providerId))
+      .filter(Boolean);
+  }
+
+  async translateSyncBatchRequest(units: Pick<TranslationUnit, "text" | "segmentId">[]): Promise<{ translation: string[], detectedLang?: string }> {
     const { provider, langTo } = this.settings;
     const translator = getTranslator(provider);
     const texts = units.map(unit => unit.text);
@@ -625,7 +986,6 @@ export class PageTranslator {
           request_id: this.createRequestId(),
           page_id: this.getPageId(),
           segment_ids: units.map(unit => unit.segmentId),
-          visible_only: this.settings.trafficSaveMode,
         },
       });
 
@@ -685,15 +1045,6 @@ export class PageTranslator {
             }
           }
 
-          // handle <select> inner text content manually since `IntersectionObserver` can't track them (settings.trafficSaveMode==true)
-          if (this.settings.trafficSaveMode) {
-            if (node instanceof HTMLOptionElement || node instanceof HTMLOptGroupElement) {
-              if (this.getNodeSelectLabel(node)) {
-                this.nodesFromViewport.add(node);
-              }
-            }
-          }
-
           const isTranslatable = this.isTranslatableNode(node);
           if (isTranslatable === undefined) {
             return NodeFilter.FILTER_SKIP; // traverse child nodes
@@ -736,44 +1087,6 @@ export class PageTranslator {
 
     observer.observe(rootElem, { subtree: true, childList: true, characterData: false });
     return () => observer.disconnect();
-  }
-
-  protected enableTrafficSaveMode(nodes: Node[]) {
-    const intersectionObserver = new IntersectionObserver(entries => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) {
-            const target = entry.target as HTMLElement;
-
-            if (this.isTranslatableNode(target)) {
-              this.nodesFromViewport.add(target); // handle <img alt>, <input placeholder>, etc.
-              intersectionObserver.unobserve(target);
-            } else {
-              const texts = this.tooltipNodes.get(target);
-              if (texts) {
-                texts.forEach((text) => this.nodesFromViewport.add(text));
-                intersectionObserver.unobserve(target); // children texts processed, stop watching
-              }
-            }
-          }
-        }
-
-        // handle native <select> contents since they might NOT be caught within `IntersectionObserver.entries`
-        // e.g. example with async preloaded data for <select> https://oma.kela.fi/paatokset-ja-muut-asiakirjasi/kelan-lahettamat
-        Array.from(document.querySelectorAll("option, optgroup"))
-          .filter(this.isTranslatableNode)
-          .forEach(node => this.nodesFromViewport.add(node));
-      }, {
-        rootMargin: "0px 0px 50% 0px",
-        threshold: 0,
-      }
-    );
-
-    nodes
-      .map(node => node instanceof Text ? node.parentElement : node as HTMLElement)
-      .filter(Boolean)
-      .forEach(elem => intersectionObserver.observe(elem)); // subscribe
-
-    return () => intersectionObserver.disconnect(); // unsubscribe
   }
 
   protected getStorageHashId(text: string, providerId = this.getProviderHashId()) {
