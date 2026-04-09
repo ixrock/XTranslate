@@ -22,17 +22,29 @@ interface TranslationUnit {
   partCount: number;
 }
 
+interface PageTranslationSegment {
+  node: Node;
+  text: string;
+  segmentId: string;
+  order: number;
+}
+
 interface IndexedTranslationUnit extends TranslationUnit {
   unitIndex: number;
 }
 
 interface PendingTranslationState {
   freshNodes: Node[];
-  units: TranslationUnit[];
+  prioritizedFreshNodes: Node[];
+  streamSegments: PageTranslationSegment[];
+  streamSegmentsById: Map<string, PageTranslationSegment>;
+}
+
+interface SyncPendingTranslationState {
+  freshNodes: Node[];
   unitsToTranslate: IndexedTranslationUnit[];
   unitTranslations: (string | undefined)[];
   nodeUnitIndexes: Map<Node, number[]>;
-  unitsBySegmentId: Map<string, IndexedTranslationUnit>;
 }
 
 export enum FullPageContextMenuMode {
@@ -101,7 +113,7 @@ export class PageTranslator {
   }
 
   get nodes(): Node[] {
-    return Array.from(this.nodesAll);
+    return this.sortNodesByDomOrder(Array.from(this.nodesAll));
   }
 
   get settings() {
@@ -449,6 +461,24 @@ export class PageTranslator {
     });
   }
 
+  protected sortNodesByDomOrder(nodes: Node[]): Node[] {
+    return [...nodes].sort((left, right) => {
+      if (left === right) {
+        return 0;
+      }
+
+      const position = left.compareDocumentPosition(right);
+      if (position & Node.DOCUMENT_POSITION_FOLLOWING) {
+        return -1;
+      }
+      if (position & Node.DOCUMENT_POSITION_PRECEDING) {
+        return 1;
+      }
+
+      return 0;
+    });
+  }
+
   protected async runRefreshLoop() {
     this.logger.info("REFRESH TRANSLATIONS");
 
@@ -680,6 +710,22 @@ export class PageTranslator {
     return units;
   }
 
+  protected createPageSegments(nodes: Node[]): PageTranslationSegment[] {
+    return nodes.flatMap((node, order) => {
+      const originalText = this.originalText.get(node);
+      if (!originalText) {
+        return [];
+      }
+
+      return [{
+        node,
+        text: originalText,
+        segmentId: this.getNodeSegmentBaseId(node),
+        order,
+      }];
+    });
+  }
+
   protected packTranslationUnits<T extends { text: string }>(units: T[]): T[][] {
     const limit = this.getApiLimitCharsPerRequest();
     const packs: T[][] = [];
@@ -704,16 +750,32 @@ export class PageTranslator {
   }
 
   protected preparePendingTranslations(nodes: Node[], providerId: TranslationHashId): PendingTranslationState {
-    const freshNodes = this.prioritizeNodes(nodes)
-      .filter(node => !this.getTranslation(node));
+    const freshNodes = nodes.filter(node => !this.getTranslation(node, providerId));
+    const prioritizedFreshNodes = this.prioritizeNodes(freshNodes);
 
     freshNodes.forEach(node => this.importNode(node));
+
+    const streamSegments = this.createPageSegments(freshNodes);
+    const streamSegmentsById = new Map(
+      streamSegments.map(segment => [segment.segmentId, segment] as const)
+    );
+
+    return {
+      freshNodes,
+      prioritizedFreshNodes,
+      streamSegments,
+      streamSegmentsById,
+    };
+  }
+
+  protected prepareSyncPendingTranslations(nodes: Node[], providerId: TranslationHashId): SyncPendingTranslationState {
+    const freshNodes = this.prioritizeNodes(nodes)
+      .filter(node => !this.getTranslation(node, providerId));
 
     const units = this.createTranslationUnits(freshNodes);
     const unitTranslations: (string | undefined)[] = new Array(units.length);
     const unitsToTranslate: IndexedTranslationUnit[] = [];
     const nodeUnitIndexes = new Map<Node, number[]>();
-    const unitsBySegmentId = new Map<string, IndexedTranslationUnit>();
 
     units.forEach((unit, unitIndex) => {
       const unitIndexes = nodeUnitIndexes.get(unit.node) ?? [];
@@ -726,29 +788,25 @@ export class PageTranslator {
         return;
       }
 
-      const indexedUnit = { ...unit, unitIndex };
-      unitsToTranslate.push(indexedUnit);
-      unitsBySegmentId.set(indexedUnit.segmentId, indexedUnit);
+      unitsToTranslate.push({ ...unit, unitIndex });
     });
 
     return {
       freshNodes,
-      units,
       unitsToTranslate,
       unitTranslations,
       nodeUnitIndexes,
-      unitsBySegmentId,
     };
   }
 
-  protected getPendingUnits(state: PendingTranslationState): IndexedTranslationUnit[] {
+  protected getPendingUnits(state: SyncPendingTranslationState): IndexedTranslationUnit[] {
     return state.unitsToTranslate.filter(unit => state.unitTranslations[unit.unitIndex] === undefined);
   }
 
   protected applyUnitTranslations(
     units: IndexedTranslationUnit[],
     translations: string[],
-    state: PendingTranslationState,
+    state: SyncPendingTranslationState,
     providerId: TranslationHashId,
   ) {
     const cacheTexts: string[] = [];
@@ -773,7 +831,7 @@ export class PageTranslator {
     }
   }
 
-  protected commitResolvedNodes(state: PendingTranslationState, providerId: TranslationHashId): Node[] {
+  protected commitResolvedSyncNodes(state: SyncPendingTranslationState, providerId: TranslationHashId): Node[] {
     const resolvedNodes: Node[] = [];
     const cacheTexts: string[] = [];
     const cacheTranslations: string[] = [];
@@ -816,27 +874,48 @@ export class PageTranslator {
     return resolvedNodes;
   }
 
+  protected setResolvedNodeTranslation(node: Node, translation: string, providerId: TranslationHashId): boolean {
+    if (translation === undefined) {
+      return false;
+    }
+
+    const existingTranslation = this.translations.get(node)?.[providerId];
+    if (existingTranslation === translation) {
+      return false;
+    }
+
+    const nodeTranslations = this.translations.get(node) ?? {} as Record<TranslationHashId, string>;
+    nodeTranslations[providerId] = translation;
+    this.translations.set(node, nodeTranslations);
+
+    if (this.params.sessionCache) {
+      const originalText = this.originalText.get(node);
+      if (originalText) {
+        this.saveStorageCacheByText([originalText], [translation], providerId);
+      }
+    }
+
+    return true;
+  }
+
   protected handleStreamBatchDone(
     batch: XTranslateProTranslateStreamBatchDoneEvent,
     state: PendingTranslationState,
     providerId: TranslationHashId,
   ) {
-    const units: IndexedTranslationUnit[] = [];
-    const translations: string[] = [];
+    const resolvedNodes: Node[] = [];
 
     batch.items.forEach(item => {
-      const unit = state.unitsBySegmentId.get(item.id);
-      if (!unit) {
+      const segment = state.streamSegmentsById.get(item.id);
+      if (!segment) {
         return;
       }
 
-      units.push(unit);
-      translations.push(item.translation);
+      if (this.setResolvedNodeTranslation(segment.node, item.translation, providerId)) {
+        resolvedNodes.push(segment.node);
+      }
     });
 
-    this.applyUnitTranslations(units, translations, state, providerId);
-
-    const resolvedNodes = this.commitResolvedNodes(state, providerId);
     if (resolvedNodes.length) {
       this.renderTranslatedNodes();
     }
@@ -851,8 +930,8 @@ export class PageTranslator {
       return;
     }
 
-    const pendingUnits = this.getPendingUnits(state);
-    if (!pendingUnits.length || signal?.aborted) {
+    const pendingSegments = state.streamSegments.filter(segment => !this.getTranslation(segment.node, providerId));
+    if (!pendingSegments.length || signal?.aborted) {
       return;
     }
 
@@ -870,11 +949,11 @@ export class PageTranslator {
           url: document.URL,
           title: document.title,
         },
-        segments: pendingUnits.map(unit => ({
-          id: unit.segmentId,
-          text: unit.text,
-          order: unit.unitIndex,
-          visible: this.isNodeVisible(unit.node),
+        segments: pendingSegments.map(segment => ({
+          id: segment.segmentId,
+          text: segment.text,
+          order: segment.order,
+          visible: this.isNodeVisible(segment.node),
         })),
       }, {
         signal,
@@ -904,10 +983,16 @@ export class PageTranslator {
   }
 
   protected async syncTranslateUnits(
-    state: PendingTranslationState,
+    nodes: Node[],
     providerId: TranslationHashId,
     signal?: AbortSignal,
   ) {
+    if (this.settings.provider === ProviderCodeName.XTRANSLATE_PRO) {
+      await this.syncTranslateSegments(nodes, providerId, signal);
+      return;
+    }
+
+    const state = this.prepareSyncPendingTranslations(nodes, providerId);
     const pendingUnits = this.getPendingUnits(state);
     if (!pendingUnits.length) {
       return;
@@ -924,10 +1009,39 @@ export class PageTranslator {
       this.updateDetectedLangHint(detectedLang);
       this.applyUnitTranslations(pack, translation, state, providerId);
 
-      const resolvedNodes = this.commitResolvedNodes(state, providerId);
+      const resolvedNodes = this.commitResolvedSyncNodes(state, providerId);
       if (resolvedNodes.length) {
         this.renderTranslatedNodes();
       }
+    }
+  }
+
+  protected async syncTranslateSegments(
+    nodes: Node[],
+    providerId: TranslationHashId,
+    signal?: AbortSignal,
+  ) {
+    const segments = this.createPageSegments(nodes.filter(node => !this.getTranslation(node, providerId)));
+    if (!segments.length) {
+      return;
+    }
+
+    if (signal?.aborted) {
+      return;
+    }
+
+    const { translation, detectedLang } = await this.translateSyncSegmentsRequest(segments);
+    this.updateDetectedLangHint(detectedLang);
+
+    const resolvedNodes: Node[] = [];
+    segments.forEach((segment, index) => {
+      if (this.setResolvedNodeTranslation(segment.node, translation[index], providerId)) {
+        resolvedNodes.push(segment.node);
+      }
+    });
+
+    if (resolvedNodes.length) {
+      this.renderTranslatedNodes();
     }
   }
 
@@ -943,15 +1057,10 @@ export class PageTranslator {
     }
 
     this.logger.info("TRANSLATING NODES", {
-      nodes: state.freshNodes,
+      nodes: state.prioritizedFreshNodes,
       visible: state.freshNodes.filter(node => this.isNodeVisible(node)).length,
       hidden: state.freshNodes.filter(node => !this.isNodeVisible(node)).length,
     });
-
-    const cachedNodes = this.commitResolvedNodes(state, providerId);
-    if (cachedNodes.length) {
-      this.renderTranslatedNodes();
-    }
 
     if (signal?.aborted) {
       return [];
@@ -963,7 +1072,8 @@ export class PageTranslator {
       return [];
     }
 
-    await this.syncTranslateUnits(state, providerId, signal);
+    const unresolvedNodes = state.freshNodes.filter(node => !this.getTranslation(node, providerId));
+    await this.syncTranslateUnits(unresolvedNodes, providerId, signal);
 
     return state.freshNodes
       .map(node => this.getTranslation(node, providerId))
@@ -971,9 +1081,19 @@ export class PageTranslator {
   }
 
   async translateSyncBatchRequest(units: Pick<TranslationUnit, "text" | "segmentId">[]): Promise<{ translation: string[], detectedLang?: string }> {
+    return this.translateSyncTextsRequest(units);
+  }
+
+  async translateSyncSegmentsRequest(segments: Pick<PageTranslationSegment, "text" | "segmentId">[]): Promise<{ translation: string[], detectedLang?: string }> {
+    return this.translateSyncTextsRequest(segments);
+  }
+
+  protected async translateSyncTextsRequest(
+    entries: Array<Pick<TranslationUnit, "text" | "segmentId"> | Pick<PageTranslationSegment, "text" | "segmentId">>
+  ): Promise<{ translation: string[], detectedLang?: string }> {
     const { provider, langTo } = this.settings;
     const translator = getTranslator(provider);
-    const texts = units.map(unit => unit.text);
+    const texts = entries.map(entry => entry.text);
     const requestedLangFrom = this.getEffectiveLangFrom();
 
     try {
@@ -985,7 +1105,7 @@ export class PageTranslator {
         client: {
           request_id: this.createRequestId(),
           page_id: this.getPageId(),
-          segment_ids: units.map(unit => unit.segmentId),
+          segment_ids: entries.map(entry => entry.segmentId),
         },
       });
 
