@@ -161,6 +161,9 @@
   "popup_play_icon_title": {
     "message": "सुनें"
   },
+  "popup_download_tts_icon_title": {
+    "message": "ऑडियो फ़ाइल डाउनलोड करें"
+  },
   "popup_copy_translation_title": {
     "message": "अनुवाद कॉपी करें"
   },

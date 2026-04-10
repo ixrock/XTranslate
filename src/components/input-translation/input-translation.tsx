@@ -66,7 +66,7 @@ export class InputTranslation extends React.Component {
       provider: this.urlParams.provider ?? vendor,
       from: this.urlParams.from ?? langFrom,
       to: this.urlParams.to ?? langTo,
-      text: "",
+      text: this.urlParams.text ?? "",
     };
 
     await this.lastInputText.load();
@@ -164,6 +164,7 @@ export class InputTranslation extends React.Component {
         from: params.from,
         to: params.to,
         text: params.text.trim(),
+        mode: "lookup",
       });
       if (isEqual(params, this.params)) {
         this.translation = translation;
@@ -226,7 +227,7 @@ export class InputTranslation extends React.Component {
   }
 
   renderTranslationResult() {
-    const { langTo, langDetected, translation, transcription, dictionary, spellCorrection, sourceLanguages, vendor } = this.translation;
+    const { langTo, langDetected, translation, originalText, transcription, dictionary, spellCorrection, sourceLanguages, vendor } = this.translation;
     const translator = getTranslator(vendor);
     const favorite = isFavorite(this.translation);
     const translationDirection = Translator.getLangPairTitleShort(langDetected, langTo);
@@ -235,7 +236,7 @@ export class InputTranslation extends React.Component {
       <div className={cssNames("translation-results", { rtl: isRTL(langTo) })}>
         {translation ?
           <div className="translation flex gaps align-center">
-            <div className="flex column gaps">
+            <div className="action-icons flex column gaps">
               <Icon
                 material={this.isPaused ? materialIcons.ttsPause : materialIcons.ttsPlay}
                 tooltip={getMessage("popup_play_icon_title")}
@@ -245,6 +246,13 @@ export class InputTranslation extends React.Component {
                 content={this.translation}
                 tooltip={getMessage("popup_copy_translation_title")}
               />
+              {vendor === ProviderCodeName.XTRANSLATE_PRO && (
+                <Icon
+                  material="audio_file"
+                  tooltip={getMessage("popup_download_tts_icon_title")}
+                  onClick={() => translator.downloadAudio(originalText, langDetected)}
+                />
+              )}
             </div>
             <div className="value box grow">
               <span>{translation}</span>
@@ -380,7 +388,6 @@ export class InputTranslation extends React.Component {
   @action.bound
   onInputChange(val: string) {
     this.params.text = val;
-
     if (this.error) {
       this.error = null; // reset previous error first (if any)
     }

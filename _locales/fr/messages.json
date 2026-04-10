@@ -161,6 +161,9 @@
   "popup_play_icon_title": {
     "message": "Écouter"
   },
+  "popup_download_tts_icon_title": {
+    "message": "Télécharger le fichier audio"
+  },
   "popup_copy_translation_title": {
     "message": "Copier la traduction"
   },

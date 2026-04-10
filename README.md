@@ -49,12 +49,12 @@ Install extension:
 Available translation providers:
 -----------
 
-* [Google](http://translate.google.com/) - ready to use after installation
-* [Bing](http://bing.com/translator/) - ready to use after installation
+* [Google Translate](http://translate.google.com/) - ready to use after installation
+* [Bing Translate](http://bing.com/translator/) - ready to use after installation
 * [OpenAI](https://platform.openai.com) _(register, top-up balance and create api-key for the extension)_
+* [Gemini](https://aistudio.google.com/) _(create free-tier api-key)_
 * [Grok](https://console.x.ai) _(register, top-up balance and create api-key)_
 * [DeepSeek](https://platform.deepseek.com) _(register, top-up balance and create api-key)_
-* [Gemini](https://aistudio.google.com/) _(create free-tier api-key)_
 
 How to enable translator in local HTML/PDF files:
 -----------

@@ -2,7 +2,7 @@
 
 import type React from "react";
 import { observable, action } from "mobx";
-import { autoBind, copyCase, CopyCaseParams, createLogger } from "../utils";
+import { autoBind, copyCase, CopyCaseParams, createLogger, downloadFile } from "../utils";
 import { isOptionsPage, ProxyRequestPayload, ProxyResponseType } from "../extension";
 import { ProviderCodeName } from "./providers";
 import { getMessage } from "../i18n";
@@ -18,11 +18,27 @@ export interface ProviderLanguagesApiMap {
   to?: { [locale: string]: string };
 }
 
+export type TranslateMode = "auto" | "lookup" | "page";
+
+export interface TranslateClientContext {
+  request_id?: string;
+  page_id?: string;
+  segment_ids?: string[];
+  visible_only?: boolean;
+}
+
 export interface TranslateParams {
   from: string;
   to: string;
   text?: string;
   texts?: string[]; // for multi-translate
+  mode?: TranslateMode;
+  client?: TranslateClientContext;
+}
+
+export interface TranslateBatchResult {
+  translation: string[];
+  detectedLang?: string;
 }
 
 export interface TranslatorParams {
@@ -74,6 +90,12 @@ export abstract class Translator {
     return [];
   }
 
+  async translateBatch(params: TranslateParams): Promise<TranslateBatchResult> {
+    return {
+      translation: await this.translateMany(params),
+    };
+  }
+
   protected async request<Response>(payload: ProxyRequestPayload): Promise<Response> {
     const response = await proxyRequest<Response>(payload);
 
@@ -87,13 +109,21 @@ export abstract class Translator {
     instanceFunc: (params: TranslateParams) => Promise<string[]>,
     params: TranslateParams,
   ): Promise<string[]> {
-    const { langTo, langFrom, letterCaseAutoCorrection } = pageTranslationStorage.get();
     const translations = await Reflect.apply(instanceFunc, this, [params]);
-    let correctedTranslations: string[];
+    return this.normalizeMany(params, translations);
+  }
+
+  protected normalizeMany(params: TranslateParams, translations: string[]): string[] {
+    const { langTo, langFrom, letterCaseAutoCorrection } = pageTranslationStorage.get();
+    let correctedTranslations: string[] | undefined;
 
     if (letterCaseAutoCorrection) {
       correctedTranslations = translations.map((sentence, index) => {
-        const originalText = params.texts[index];
+        const originalText = params.texts?.[index];
+
+        if (!originalText) {
+          return sentence;
+        }
 
         const copyCaseParams: CopyCaseParams = {
           fromText: originalText,
@@ -103,12 +133,12 @@ export abstract class Translator {
         };
 
         try {
-          return copyCase(copyCaseParams)
+          return copyCase(copyCaseParams);
         } catch (err) {
           this.logger.error(`[CASE-CORRECTION]: failed to copy case for sentence: ${originalText}`, { err, params, copyCaseParams });
           return sentence;
         }
-      })
+      });
     }
 
     this.logger.info('GOT MULTI-TRANSLATIONS', { translations, correctedTranslations });
@@ -256,24 +286,14 @@ export abstract class Translator {
       this.logger.error(`[TTS]: streaming failed: ${err}`);
     }
 
-    const audioUrl = this.getAudioUrl(text, lang);
-    const audioFile = await this.getAudioFile(text, lang);
-
-    const useSpeechSynthesis = Boolean(
-      settingsStore.data.useSpeechSynthesis || !(audioUrl || audioFile)
-    );
-
-    if (useSpeechSynthesis) {
+    if (settingsStore.data.useSpeechSynthesis) {
       return this.speakSynth(text);
     }
 
     try {
-      const audioBinary = audioFile ?? await this.request<Blob>({
-        url: audioUrl,
-        responseType: ProxyResponseType.BLOB
-      });
+      const audioBinary = await this.getAudioBlob(text, lang, ...args);
+      if (!audioBinary) return this.speakSynth(text);
 
-      this.audioDataUrl = URL.createObjectURL(audioBinary);
       this.audio = document.createElement("audio");
       this.audio.src = this.audioDataUrl = URL.createObjectURL(audioBinary);
       await this.audio.play();
@@ -293,6 +313,38 @@ export abstract class Translator {
       });
       return this.speakSynth(text); // fallback to TTS-synthesis engine
     }
+  }
+
+  protected async getAudioBlob(text: string, lang?: string, ...args: any[]): Promise<Blob | undefined> {
+    const audioUrl = this.getAudioUrl(text, lang);
+    const audioFile = await this.getAudioFile(text, lang, ...args);
+
+    if (!(audioUrl || audioFile)) {
+      return;
+    }
+
+    return audioFile ?? await this.request<Blob>({
+      url: audioUrl,
+      responseType: ProxyResponseType.BLOB
+    });
+  }
+
+  async downloadAudio(text: string, lang?: string, ...args: any[]): Promise<Blob | undefined> {
+    const audioBlob = await this.getAudioBlob(text, lang, ...args);
+    if (!audioBlob) return;
+
+    const type = audioBlob.type || "audio/mpeg";
+    const extension = type === "audio/mpeg" ? "mp3" : (type.split("/")[1] ?? "mp3");
+    const sanitizedText = text
+      .trim()
+      .replace(/\s+/g, " ")
+      .replace(/[\\/:*?"<>|\x00-\x1F]/g, "")
+      .slice(0, 48)
+      .replace(/\s+/g, "_") || "tts";
+    const filename = `xtranslate-${this.name}-${lang ?? "auto"}-${sanitizedText}.${extension}`;
+
+    downloadFile(filename, audioBlob, type);
+    return audioBlob;
   }
 
   isSpeaking(): boolean {

@@ -215,6 +215,7 @@ export class ContentScript extends React.Component {
       from: params.from ?? settingsStore.data.langFrom,
       to: params.to ?? settingsStore.data.langTo,
       text: params.text ?? this.selectedText.trim(),
+      mode: params.mode ?? "lookup",
     };
   }
 
