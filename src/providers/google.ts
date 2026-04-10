@@ -1,6 +1,6 @@
 import GoogleLanguages from "./google.json"
 import { ProxyRequestInit } from "../extension";
-import { isTranslationError, ITranslationResult, ProviderCodeName, TranslateParams, Translator } from "./index";
+import { isTranslationError, ITranslationResult, ProviderCodeName, TranslateBatchResult, TranslateParams, Translator } from "./index";
 import { delay } from "../utils";
 import { getMessage } from "../i18n";
 import { createStorage } from "../storage";
@@ -54,7 +54,7 @@ class Google extends Translator {
     return this.apiUrl + `/translate_tts?client=${apiClient}&ie=UTF-8&tl=${lang}&q=${textEncoded}`;
   }
 
-  async translateMany({ from: langFrom, to: langTo, texts }: TranslateParams): Promise<string[]> {
+  private async translateManyReq({ from: langFrom, to: langTo, texts }: TranslateParams): Promise<TranslateBatchResult> {
     const queryParams = new URLSearchParams({
       client: this.apiClient.get(),
       sl: langFrom,
@@ -74,15 +74,36 @@ class Google extends Translator {
     const url = `${this.apiUrl}/translate_a/t?${queryParams}`;
     const response = await this.request({ url, requestInit });
     const translations: string[] = [];
+    let detectedLang: string | undefined;
 
     if (langFrom === "auto") {
       const autoDetectedResults = response as [text: string, locale: string][];
       translations.push(...autoDetectedResults.map(([text]) => text));
+      const autoDetectedLangs = autoDetectedResults
+        .map(([, locale]) => locale)
+        .filter(Boolean);
+
+      if (autoDetectedLangs.length && autoDetectedLangs.every(locale => locale === autoDetectedLangs[0])) {
+        detectedLang = autoDetectedLangs[0];
+      }
     } else {
       translations.push(...response as string[]);
     }
 
-    return translations;
+    return { translation: translations, detectedLang };
+  }
+
+  async translateMany(params: TranslateParams): Promise<string[]> {
+    const { translation } = await this.translateManyReq(params);
+    return translation;
+  }
+
+  async translateBatch(params: TranslateParams): Promise<TranslateBatchResult> {
+    const result = await this.translateManyReq(params);
+    return {
+      ...result,
+      translation: this.normalizeMany(params, result.translation),
+    };
   }
 
   async translate(params: TranslateParams): Promise<ITranslationResult> {

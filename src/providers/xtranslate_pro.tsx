@@ -1,13 +1,14 @@
 import React from "react";
 import AILanguagesList from "./open-ai.json"
 import { action } from "mobx";
-import { getTranslator, ITranslationDictionary, ITranslationError, ITranslationResult, OpenAIModelTTSVoice, ProviderCodeName, TranslateParams, Translator } from "./index";
-import { MessageType, ProxyResponseType, ProxyStreamResponsePayload } from "@/extension";
+import { getTranslator, ITranslationDictionary, ITranslationError, ITranslationResult, OpenAIModelTTSVoice, ProviderCodeName, TranslateBatchResult, TranslateClientContext, TranslateMode, TranslateParams, Translator } from "./index";
+import { MessageType, openProxyStream, ProxyResponseType, ProxyStreamResponsePayload } from "@/extension";
 import { supportEmail, websiteURL } from "@/config";
 import { sendMetric } from "@/background/metrics.bgc";
 import { createStorage } from "@/storage";
 import { getMessage } from "@/i18n";
 import { userStore } from "@/pro";
+import { SSEMessage, SSEParser } from "@/utils";
 
 export const freeTrialStorage = createStorage("xtranslate_pro_trial", {
   area: "sync",
@@ -48,13 +49,15 @@ export class XTranslatePro extends Translator {
   }
 
   private async translateReq(params: TranslateParams): Promise<XTranslateProTranslateOutput> {
-    const { from, to: langTo, text, texts = [text] } = params;
+    const { from, to: langTo, text, texts = [text], mode, client } = params;
     const langFrom = from === "auto" ? undefined : from;
 
     const payload: XTranslateProTranslateInput = {
       langFrom,
       langTo,
       text: texts,
+      mode,
+      client,
     };
 
     return this.request<XTranslateProTranslateOutput>({
@@ -64,6 +67,184 @@ export class XTranslatePro extends Translator {
         headers: { "Content-Type": "application/json" },
         credentials: "include",
         body: JSON.stringify(payload),
+      }
+    });
+  }
+
+  async streamPageTranslation(
+    params: XTranslateProTranslateStreamInput,
+    handlers: XTranslateProTranslateStreamHandlers = {},
+  ): Promise<void> {
+    const decoder = new TextDecoder();
+    const parser = new SSEParser();
+    const langFrom = params.langFrom === "auto" ? undefined : params.langFrom;
+    let connection: ReturnType<typeof openProxyStream> | undefined;
+    let isSettled = false;
+    let isCompleted = false;
+    let onAbort: (() => void) | undefined;
+
+    const finalize = (callback: () => void) => {
+      if (isSettled) return;
+      isSettled = true;
+      callback();
+    };
+
+    const disconnect = () => {
+      connection?.disconnect();
+      connection = undefined;
+    };
+
+    const handleEventMessage = (message: SSEMessage) => {
+      const payload = JSON.parse(message.data);
+
+      switch (message.event) {
+      case "job_started":
+        handlers.onStarted?.(payload as XTranslateProTranslateStreamJobStartedEvent);
+        return;
+
+      case "batch_done":
+        handlers.onBatchDone?.(payload as XTranslateProTranslateStreamBatchDoneEvent);
+        return;
+
+      case "job_stats":
+        handlers.onStats?.(payload as XTranslateProTranslateStreamJobStatsEvent);
+        return;
+
+      case "job_completed":
+        isCompleted = true;
+        handlers.onCompleted?.(payload as XTranslateProTranslateStreamJobCompletedEvent);
+        return;
+
+      case "error": {
+        const streamError = payload as XTranslateProTranslateStreamErrorEvent;
+        handlers.onError?.(streamError);
+        throw {
+          statusCode: 500,
+          message: streamError.message,
+          error: streamError.code,
+        } satisfies XTranslateProTranslateError;
+      }
+      }
+    };
+
+    const parseChunk = (chunk: string) => {
+      parser.feed(chunk).forEach(handleEventMessage);
+    };
+
+    const flushParser = () => {
+      const trailingChunk = decoder.decode();
+      if (trailingChunk) {
+        parseChunk(trailingChunk);
+      }
+      parser.flush().forEach(handleEventMessage);
+    };
+
+    return new Promise<void>((resolve, reject) => {
+      onAbort = () => {
+        finalize(() => {
+          disconnect();
+          reject(new Error("Page translation stream aborted"));
+        });
+      };
+
+      if (handlers.signal?.aborted) {
+        onAbort();
+        return;
+      }
+
+      handlers.signal?.addEventListener("abort", onAbort, { once: true });
+
+      connection = openProxyStream({
+        url: `${this.apiUrl}/translate/stream`,
+        requestInit: {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Accept": "text/event-stream",
+          },
+          credentials: "include",
+          body: JSON.stringify({
+            ...params,
+            langFrom,
+          }),
+        },
+      }, {
+        onHeaders: ({ headers }) => {
+          const contentType = headers["content-type"] ?? "";
+          if (contentType && !contentType.includes("text/event-stream")) {
+            finalize(() => {
+              disconnect();
+              reject(new Error(`Unexpected stream content-type: ${contentType}`));
+            });
+          }
+        },
+        onChunk: (chunk) => {
+          if (isSettled) return;
+
+          try {
+            parseChunk(decoder.decode(chunk, { stream: true }));
+          } catch (error) {
+            finalize(() => {
+              disconnect();
+              reject(error);
+            });
+          }
+        },
+        onError: ({ error, statusCode, statusText }) => {
+          if (isSettled) return;
+
+          finalize(() => {
+            disconnect();
+            handlers.onError?.({
+              code: "STREAM_REQUEST_FAILED",
+              message: error,
+              retryable: statusCode ? statusCode >= 500 : true,
+            });
+            reject({
+              statusCode,
+              message: error || statusText || "Stream request failed",
+            } satisfies ITranslationError);
+          });
+        },
+        onDone: () => {
+          if (isSettled) return;
+
+          try {
+            flushParser();
+            finalize(() => {
+              disconnect();
+              resolve();
+            });
+          } catch (error) {
+            finalize(() => {
+              disconnect();
+              reject(error);
+            });
+          }
+        },
+        onDisconnect: (initiatedByClient) => {
+          if (isSettled || initiatedByClient) return;
+
+          finalize(() => {
+            handlers.onError?.({
+              code: "STREAM_DISCONNECTED",
+              message: isCompleted
+                ? "Page translation stream disconnected after completion"
+                : "Page translation stream disconnected unexpectedly",
+              retryable: !isCompleted,
+            });
+
+            if (isCompleted) {
+              resolve();
+            } else {
+              reject(new Error("Page translation stream disconnected unexpectedly"));
+            }
+          });
+        },
+      });
+    }).finally(() => {
+      if (onAbort) {
+        handlers.signal?.removeEventListener("abort", onAbort);
       }
     });
   }
@@ -119,6 +300,18 @@ export class XTranslatePro extends Translator {
     try {
       const { translation } = await this.translateReq(params);
       return translation;
+    } catch (err) {
+      this.handlePaidApiError(err);
+    }
+  }
+
+  async translateBatch(params: TranslateParams): Promise<TranslateBatchResult> {
+    try {
+      const { translation, detectedLang } = await this.translateReq(params);
+      return {
+        translation: this.normalizeMany(params, translation),
+        detectedLang,
+      };
     } catch (err) {
       this.handlePaidApiError(err);
     }
@@ -739,6 +932,77 @@ export interface XTranslateProTranslateInput {
   langFrom?: string;
   langTo: string;
   text: string[];
+  mode?: TranslateMode;
+  client?: TranslateClientContext;
+}
+
+export interface XTranslateProTranslateStreamInput {
+  langFrom?: string;
+  langTo: string;
+  mode: "page";
+  page: {
+    page_id: string;
+    request_id: string;
+    url: string;
+    title?: string;
+  };
+  segments: XTranslateProTranslateStreamSegment[];
+}
+
+export interface XTranslateProTranslateStreamSegment {
+  id: string;
+  text: string;
+  order: number;
+  visible: boolean;
+}
+
+export interface XTranslateProTranslateStreamHandlers {
+  signal?: AbortSignal;
+  onStarted?(event: XTranslateProTranslateStreamJobStartedEvent): void;
+  onBatchDone?(event: XTranslateProTranslateStreamBatchDoneEvent): void;
+  onStats?(event: XTranslateProTranslateStreamJobStatsEvent): void;
+  onCompleted?(event: XTranslateProTranslateStreamJobCompletedEvent): void;
+  onError?(event: XTranslateProTranslateStreamErrorEvent): void;
+}
+
+export interface XTranslateProTranslateStreamJobStartedEvent {
+  requestId: string;
+  mode: "page";
+  totalSegments: number;
+}
+
+export interface XTranslateProTranslateStreamBatchDoneEvent {
+  batchIndex: number;
+  detectedLang?: string;
+  items: XTranslateProTranslateStreamBatchItem[];
+}
+
+export interface XTranslateProTranslateStreamBatchItem {
+  id: string;
+  translation: string;
+}
+
+export interface XTranslateProTranslateStreamJobStatsEvent {
+  cache?: {
+    hitCount: number;
+    missCount: number;
+  };
+  batches?: {
+    completed: number;
+    total: number;
+  };
+}
+
+export interface XTranslateProTranslateStreamJobCompletedEvent {
+  requestId: string;
+  translatedSegments: number;
+  totalSegments: number;
+}
+
+export interface XTranslateProTranslateStreamErrorEvent {
+  code: string;
+  message: string;
+  retryable?: boolean;
 }
 
 export interface XTranslateProDemoTrialOutput {

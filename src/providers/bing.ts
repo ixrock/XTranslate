@@ -2,7 +2,7 @@ import BingLanguages from "./bing.json"
 import isEmpty from "lodash/isEmpty";
 import groupBy from "lodash/groupBy";
 import { ProxyRequestInit, ProxyResponseType } from "../extension";
-import { ITranslationError, ITranslationResult, ProviderCodeName, TranslateParams, Translator } from "./index";
+import { ITranslationError, ITranslationResult, ProviderCodeName, TranslateBatchResult, TranslateParams, Translator } from "./index";
 import { createStorage } from "../storage";
 
 export interface BingApiAuthParams {
@@ -83,7 +83,7 @@ class Bing extends Translator {
     };
   }
 
-  async translateMany(params: TranslateParams): Promise<string[]> {
+  private async translateManyReq(params: TranslateParams): Promise<TranslateBatchResult> {
     const { requestInit, queryParams } = await this.getRequestParams(params);
 
     const result: BingTranslation[] = await this.request({
@@ -91,7 +91,28 @@ class Bing extends Translator {
       requestInit,
     });
 
-    return result.map(translation => translation.translations[0].text); // string[]
+    const translations = result.map(translation => translation.translations[0].text);
+    const detectedLangs = result
+      .map(translation => translation.detectedLanguage?.language)
+      .filter(Boolean);
+    const detectedLang = detectedLangs.length && detectedLangs.every(lang => lang === detectedLangs[0])
+      ? detectedLangs[0]
+      : undefined;
+
+    return { translation: translations, detectedLang };
+  }
+
+  async translateMany(params: TranslateParams): Promise<string[]> {
+    const { translation } = await this.translateManyReq(params);
+    return translation;
+  }
+
+  async translateBatch(params: TranslateParams): Promise<TranslateBatchResult> {
+    const result = await this.translateManyReq(params);
+    return {
+      ...result,
+      translation: this.normalizeMany(params, result.translation),
+    };
   }
 
   async translate(params: TranslateParams): Promise<ITranslationResult> {

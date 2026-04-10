@@ -54,7 +54,7 @@ export const settingsStorage = createStorage("settings", {
     showPopupSummarizeIcon: true,
     rememberLastText: false,
     textInputAutoTranslateEnabled: false,
-    textInputTranslateDelayMs: 1000,
+    textInputTranslateDelayMs: 2000,
     showAdvancedProviders: false, // advanced-list requires some setup from the user (e.g. adding api-key)
     vendor: "bing" as ProviderCodeName, // api provider
     langFrom: "auto",

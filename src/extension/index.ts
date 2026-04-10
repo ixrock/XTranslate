@@ -1,4 +1,5 @@
 export * from './runtime'
 export * from './messages'
+export * from './proxy-stream'
 export * from './tabs'
 export * from './actions'
