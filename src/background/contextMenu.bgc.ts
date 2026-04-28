@@ -49,6 +49,10 @@ export async function initContextMenu() {
 
     if (menuMode === FullPageContextMenuMode.ACTIVE_PROVIDER) {
       const startTranslatePageTitle = getStartPageTranslationTitle(provider, langTo);
+      contextMenuActionMap.set(appName, {
+        action: autoTranslateEnabled ? "stop" : "start",
+        provider: autoTranslateEnabled ? undefined : provider,
+      });
 
       chrome.contextMenus.create({
         id: appName,
