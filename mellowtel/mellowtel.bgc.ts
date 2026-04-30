@@ -53,8 +53,7 @@ export const mellowtelStatusAction = createIsomorphicAction({
 });
 
 export function mellowtelApi() {
-  const apiKey = "d4286418";
-  return new Mellowtel(apiKey);
+  return new Mellowtel("intgr-0J2KZJzfnW");
 }
 
 export async function initBackground() {
