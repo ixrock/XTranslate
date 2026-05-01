@@ -37,7 +37,6 @@
   "repository": "https://github.com/ixrock/XTranslate.git",
   "license": "MIT",
   "dependencies": {
-    "@mellowtel/module-meucci": "^1.0.0",
     "@types/chrome": "^0.1.40",
     "@types/html-webpack-plugin": "^3.2.9",
     "@types/jest": "^30.0.0",

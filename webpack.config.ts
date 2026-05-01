@@ -4,7 +4,6 @@ import HtmlWebpackPlugin from 'html-webpack-plugin'
 import CopyWebpackPlugin from 'copy-webpack-plugin'
 import MiniCssExtractPlugin from 'mini-css-extract-plugin'
 import { appEntry, contentScriptEntry, contentScriptInjectable, pdfViewerEntry, serviceWorkerEntry } from "@/config";
-import { mellowtelMeucciFilename } from "./mellowtel/mellowtel.config";
 
 const srcPath = path.resolve(__dirname, "src");
 const distPath = path.resolve(__dirname, "dist");
@@ -16,7 +15,6 @@ const configEntries: webpack.EntryObject = {
   [contentScriptInjectable]: path.resolve(srcPath, "user-script/content-script.tsx"),
   [serviceWorkerEntry]: path.resolve(srcPath, "background/background.ts"),
   [pdfViewerEntry]: path.resolve(srcPath, "pdf-viewer/pdf-viewer.tsx"),
-  [mellowtelMeucciFilename]: path.resolve(__dirname, "mellowtel/mellowtel-meucci.ts"),
 };
 
 interface WebpackConfigEnv {
@@ -209,7 +207,6 @@ export default [
     config.entry = {
       [contentScriptEntry]: configEntries[contentScriptEntry],
       [contentScriptInjectable]: configEntries[contentScriptInjectable],
-      [mellowtelMeucciFilename]: configEntries[mellowtelMeucciFilename],
     };
 
     config.externals = ["openai"];

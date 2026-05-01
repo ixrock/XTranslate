@@ -68,7 +68,7 @@ export type InitContentPageParams = Parameters<
   InstanceType<typeof Mellowtel>["initContentScript"]
 >[0];
 
-export async function initContentPage(params: InitContentPageParams) {
+export async function initContentPage(params?: InitContentPageParams) {
   try {
     await mellowtelApi().initContentScript(params);
   } catch (err) {
