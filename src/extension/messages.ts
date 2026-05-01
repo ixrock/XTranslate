@@ -1,5 +1,5 @@
 // [IPC]: inter-process communications for [options-page] <-> [background] <-> [content-pages]
-import { GeminiAIModelTTSVoice, ITranslationResult, OpenAIModelTTSVoice, ProviderCodeName, TranslateParams } from "../providers";
+import { ITranslationResult, ProviderCodeName, TranslateParams } from "../providers";
 import type { IHistoryItem } from "../components/user-history/history.storage";
 import type { GoogleMetricEvents } from "../background/metrics.bgc";
 
@@ -134,23 +134,4 @@ export interface AITranslatePayload {
   text: string;
   targetLanguage: string;
   sourceLanguage?: string; /* if not provided translation-request considered as "auto-detect" */
-}
-
-export interface AITextToSpeechPayload {
-  provider: ProviderCodeName;
-  model: string;
-  apiKey: string;
-  text: string;
-  targetLanguage?: string; /* or auto-detect if not provided */
-  speed?: number; /* 0.5 - 4.0 */
-  voice?: string;
-  response_format?: "mp3" | "aac" | "flac" | "wav" | "pcm"
-}
-
-export interface OpenAITextToSpeechPayload extends AITextToSpeechPayload {
-  voice: OpenAIModelTTSVoice;
-}
-
-export interface GeminiTextToSpeechPayload extends AITextToSpeechPayload {
-  voice: GeminiAIModelTTSVoice;
 }
