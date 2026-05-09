@@ -2,7 +2,6 @@
 
 import { userStore } from "@/pro";
 import { i18nStorage } from "@/i18n";
-import { privacyPolicyStorage } from "@/components/app";
 import { rateButtonClicked, rateLastTimestamp } from "@/components/app/app-rate.storage";
 import { fullPageTranslateHotkey, popupHotkey, popupSkipInjectionUrls, settingsStorage } from "@/components/settings/settings.storage";
 import { favoritesStorage } from "@/components/user-history/favorites.storage";
@@ -22,7 +21,6 @@ export {
   popupHotkey,
   popupSkipInjectionUrls,
   fullPageTranslateHotkey,
-  privacyPolicyStorage,
   rateButtonClicked,
   rateLastTimestamp,
   pageTranslationStorage,

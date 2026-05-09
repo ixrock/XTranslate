@@ -443,12 +443,6 @@
   "service_confirm_not_a_robot": {
     "message": "Anda juga bisa membuka { $link } dan mengonfirmasi bahwa Anda bukan robot."
   },
-  "privacy_policy_title_updated": {
-    "message": "Kebijakan Privasi telah diperbarui"
-  },
-  "privacy_policy_accept_terms": {
-    "message": "Setujui syarat & ketentuan"
-  },
   "error_403_auth_failed": {
     "message": "Otorisasi gagal. Mohon masukkan API key yang valid di pengaturan"
   },

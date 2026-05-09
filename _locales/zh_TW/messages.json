@@ -383,12 +383,6 @@
   "service_confirm_not_a_robot": {
     "message": "您也可以訪問 { $link } 並確認您不是機器人。"
   },
-  "privacy_policy_title_updated": {
-    "message": "隱私政策已更新"
-  },
-  "privacy_policy_accept_terms": {
-    "message": "接受條款與條件"
-  },
   "error_403_auth_failed": {
     "message": "授權失敗。請在設定中提供有效的 API 金鑰"
   },

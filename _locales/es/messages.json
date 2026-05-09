@@ -383,12 +383,6 @@
   "service_confirm_not_a_robot": {
     "message": "También puedes ir a { $link } y confirmar que no eres un robot."
   },
-  "privacy_policy_title_updated": {
-    "message": "La Política de Privacidad ha sido actualizada"
-  },
-  "privacy_policy_accept_terms": {
-    "message": "Aceptar términos y condiciones"
-  },
   "error_403_auth_failed": {
     "message": "Fallo de autorización. Por favor, proporciona una clave de API válida en la configuración"
   },

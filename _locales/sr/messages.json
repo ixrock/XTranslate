@@ -443,12 +443,6 @@
   "service_confirm_not_a_robot": {
     "message": "Možete otići na { $link } i potvrditi da niste robot."
   },
-  "privacy_policy_title_updated": {
-    "message": "Politika privatnosti je ažurirana"
-  },
-  "privacy_policy_accept_terms": {
-    "message": "Prihvatite odredbe i uslove"
-  },
   "error_403_auth_failed": {
     "message": "Autorizacija nije uspela. Unesi validan API ključ za autentifikaciju u podešavanjima"
   },

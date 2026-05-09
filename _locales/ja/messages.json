@@ -383,12 +383,6 @@
   "service_confirm_not_a_robot": {
     "message": "また、{ $link } にアクセスしてロボットでないことを確認することもできます。"
   },
-  "privacy_policy_title_updated": {
-    "message": "プライバシーポリシーが更新されました"
-  },
-  "privacy_policy_accept_terms": {
-    "message": "利用規約に同意"
-  },
   "error_403_auth_failed": {
     "message": "認証に失敗しました。設定で有効な認証APIキーを指定してください。"
   },
