@@ -664,5 +664,11 @@
   },
   "pro_self_ad_features": {
     "message": "✓ Natürliches, bedeutungsgenaues Übersetzen\n✓ Versteht Slang und Redewendungen\n✓ Erklärt Formulierungen und Kontext"
+  },
+  "ad_sponsored_by": {
+    "message": "Gesponsert: {$linkText}"
+  },
+  "ad_close_title": {
+    "message": "Werbung wird nur für PRO-Nutzer ausgeblendet. Klicke, um den Preis und alle Vorteile zu sehen."
   }
 }

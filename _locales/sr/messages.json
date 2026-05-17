@@ -661,5 +661,11 @@
   },
   "pro_self_ad_features": {
     "message": "✓ Prirodni prevod koji tačno prenosi značenje\n✓ Razume žargon i idiome\n✓ Objašnjava fraze i kontekst"
+  },
+  "ad_sponsored_by": {
+    "message": "Sponzorisano: {$linkText}"
+  },
+  "ad_close_title": {
+    "message": "Oglasi se sakrivaju samo za PRO korisnike. Kliknite da vidite cenu i sve pogodnosti."
   }
 }

@@ -667,5 +667,11 @@
   },
   "pro_self_ad_features": {
     "message": "✓ Doğal, anlamı doğru aktaran çeviri\n✓ Argo ve deyimleri anlar\n✓ İfadeleri ve bağlamı açıklar"
+  },
+  "ad_sponsored_by": {
+    "message": "Sponsorlu: {$linkText}"
+  },
+  "ad_close_title": {
+    "message": "Reklamlar yalnızca PRO kullanıcıları için gizlenir. Fiyatı ve tüm avantajları görmek için tıklayın."
   }
 }

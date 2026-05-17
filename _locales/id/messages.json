@@ -664,5 +664,11 @@
   },
   "pro_self_ad_features": {
     "message": "✓ Terjemahan alami yang akurat makna\n✓ Memahami slang dan ungkapan\n✓ Menjelaskan frasa dan konteks"
+  },
+  "ad_sponsored_by": {
+    "message": "Disponsori: {$linkText}"
+  },
+  "ad_close_title": {
+    "message": "Iklan hanya disembunyikan untuk pengguna PRO. Klik untuk melihat harga dan semua manfaat."
   }
 }

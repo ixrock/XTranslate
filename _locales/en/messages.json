@@ -661,5 +661,11 @@
   },
   "translate_page_by_hotkey": {
     "message": "Translate full-page when I press hotkey"
+  },
+  "ad_sponsored_by": {
+    "message": "Sponsored: {$linkText}"
+  },
+  "ad_close_title": {
+    "message": "Ads are hidden only for PRO-users. Click to see the price and all benefits."
   }
 }

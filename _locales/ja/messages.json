@@ -664,5 +664,11 @@
   },
   "pro_self_ad_features": {
     "message": "✓ 自然で意味を損なわない翻訳\n✓ スラングや慣用句も理解\n✓ 表現や文脈を説明"
+  },
+  "ad_sponsored_by": {
+    "message": "スポンサー: {$linkText}"
+  },
+  "ad_close_title": {
+    "message": "広告はPROユーザーのみ非表示になります。価格とすべての特典を見るにはクリックしてください。"
   }
 }

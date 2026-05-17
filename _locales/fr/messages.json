@@ -664,5 +664,11 @@
   },
   "pro_self_ad_features": {
     "message": "✓ Traduction naturelle et fidèle au sens\n✓ Comprend l'argot et les expressions\n✓ Explique les phrases et le contexte"
+  },
+  "ad_sponsored_by": {
+    "message": "Sponsorisé : {$linkText}"
+  },
+  "ad_close_title": {
+    "message": "Les publicités ne sont masquées que pour les utilisateurs PRO. Cliquez pour voir le prix et tous les avantages."
   }
 }

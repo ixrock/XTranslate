@@ -664,5 +664,11 @@
   },
   "pro_self_ad_features": {
     "message": "✓ Dịch tự nhiên, chính xác về ý nghĩa\n✓ Hiểu tiếng lóng và thành ngữ\n✓ Giải thích cụm từ và ngữ cảnh"
+  },
+  "ad_sponsored_by": {
+    "message": "Được tài trợ: {$linkText}"
+  },
+  "ad_close_title": {
+    "message": "Quảng cáo chỉ được ẩn cho người dùng PRO. Nhấp để xem giá và tất cả quyền lợi."
   }
 }

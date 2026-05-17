@@ -2,7 +2,7 @@
 
 import "../setup";
 import "./content-script.scss"
-import React, { ReactNode } from "react";
+import React from "react";
 import { createRoot, Root } from "react-dom/client";
 import { action, computed, makeObservable, observable, toJS } from "mobx";
 import { observer } from "mobx-react";
@@ -26,6 +26,7 @@ import { Popup } from "../components/popup";
 import { Icon } from "@/components/icon";
 import { getMessage } from "@/i18n";
 import { userSubscriptionRefreshAction } from "@/background/user.bgc";
+import { adContextStore, ContextAd, getContextAd, getContextInEnglish, hasAvailableContextAd } from "@/affiliate/ad-context";
 import { userStore } from "@/pro";
 
 type DOMRectNormalized = Omit<Writeable<DOMRect>, "toJSON" | "x" | "y">;
@@ -43,6 +44,7 @@ export class ContentScript extends React.Component {
       this.preloadCss(),
       popupSkipInjectionUrls.load(),
       pageTranslationStorage.load(),
+      adContextStore.load(),
       userSubscriptionRefreshAction(),
     );
 
@@ -103,6 +105,7 @@ export class ContentScript extends React.Component {
   @observable.ref translation: ITranslationResult;
   @observable.ref error: Partial<ITranslationError>;
   @observable.ref selectionRects: DOMRectNormalized[] = [];
+  @observable.ref contextAd?: ContextAd;
   @observable summarized = "";
   @observable popupPosition: React.CSSProperties = {};
   @observable selectedText = "";
@@ -220,7 +223,7 @@ export class ContentScript extends React.Component {
   }
 
   @action
-  async translate(payloadParams: Partial<TranslatePayload> = {}, customLoader?: Translator["translate"]) {
+  async translate({ internal, ...payloadParams }: Partial<TranslatePayload> = {}, customLoader?: Translator["translate"]) {
     const payload = this.lastParams = this.getPayloadParams(payloadParams);
 
     this.checkContextInvalidationError();
@@ -231,21 +234,67 @@ export class ContentScript extends React.Component {
     this.isLoading = true;
 
     try {
-      const translation =
-        await customLoader?.(payload)
-        ?? await getTranslator(payload.provider).translate(payload);
+      const translationPromise = (async () => {
+        const translation = await customLoader?.(payload);
+        return translation ?? await getTranslator(payload.provider).translate(payload);
+      })();
 
-      if (isEqual(payload, this.lastParams)) {
-        this.translation = translation;
+      const contextInEnglishPromise = this.getContextInEnglishForAd(payload);
+
+      const [translationResult, contextResult] = await Promise.allSettled([
+        translationPromise,
+        contextInEnglishPromise,
+      ]);
+
+      if (!isEqual(payload, this.lastParams)) {
+        return;
       }
-    } catch (err) {
-      if (isEqual(payload, this.lastParams)) {
-        this.error = err;
+
+      if (translationResult.status === "fulfilled") {
+        this.translation = translationResult.value;
+        if (!internal) {
+          void sendMetric("translate_used", {
+            source: "popup",
+            provider: payload.provider,
+            lang_from: payload.from,
+            lang_to: payload.to,
+          });
+        }
+
+        if (contextResult.status === "fulfilled" && contextResult.value) {
+          this.contextAd = getContextAd(contextResult.value);
+          if (this.contextAd) {
+            void sendMetric("ad_shown", { brand: this.contextAd.brand });
+          }
+        }
+      } else {
+        this.error = translationResult.reason;
+        if (!internal) {
+          void sendMetric("translate_error", {
+            error: String(this.error?.message ?? this.error),
+            source: "popup",
+            provider: payload.provider,
+            lang_from: payload.from,
+            lang_to: payload.to,
+          })
+        }
       }
     } finally {
       this.isLoading = false;
       this.refinePosition();
     }
+  }
+
+  private async getContextInEnglishForAd(payload: TranslatePayload): Promise<string> {
+    if (userStore.isProActive || !hasAvailableContextAd()) {
+      return "";
+    }
+
+    return getContextInEnglish({
+      sourceLang: payload.from,
+      targetLang: payload.to,
+      text: payload.text,
+    });
   }
 
   async translateWith(provider: ProviderCodeName) {
@@ -392,6 +441,7 @@ export class ContentScript extends React.Component {
     this.isLoading = false;
     this.summarized = "";
     this.isFreeTrialUsed = false;
+    this.contextAd = null;
   }
 
   static isEditableElement(elem: Element) {
@@ -599,7 +649,7 @@ export class ContentScript extends React.Component {
     }
   }
 
-  onDoubleClick(evt: MouseEvent) {
+  onDoubleClick() {
     if (settingsStore.data.showPopupOnDoubleClick) {
       this.isDblClicked = true;
     }
@@ -767,6 +817,7 @@ export class ContentScript extends React.Component {
           showPromoBanner={!isPopupHidden}
           aiDemoTranslation={this.isFreeTrialUsed}
           aiDemoTranslationRequest={() => this.translateWithFreeTrial()}
+          contextAd={this.contextAd}
           ref={(ref: Popup) => {
             this.popup = ref
           }}

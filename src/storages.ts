@@ -9,6 +9,7 @@ import { customFont, themeStorage } from "@/components/theme-manager/theme.stora
 import { historyStorage } from "@/components/user-history/history.storage";
 import { pageTranslationStorage } from "@/user-script/page-translator";
 import { freeTrialStorage } from "./providers/xtranslate_pro";
+import { adContextStore } from "@/affiliate/ad-context";
 
 export {
   userStore,
@@ -25,4 +26,5 @@ export {
   rateLastTimestamp,
   pageTranslationStorage,
   freeTrialStorage,
+  adContextStore,
 }

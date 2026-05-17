@@ -2,7 +2,18 @@
 @use "../mixins" as *;
 @use "../theme-vars" as *;
 
-@include theme-setup();
+:root {
+  @include theme-vars;
+  color-scheme: light dark;
+
+  &[data-theme="light"] {
+    color-scheme: light;
+  }
+
+  &[data-theme="dark"] {
+    color-scheme: dark;
+  }
+}
 
 *, *:before, *:after {
   box-sizing: border-box;

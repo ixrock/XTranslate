@@ -661,5 +661,11 @@
   },
   "pro_self_ad_features": {
     "message": "✓ Prirodzený, významovo presný preklad\n✓ Rozumie slangu a idiomom\n✓ Vysvetľuje frázy a kontext"
+  },
+  "ad_sponsored_by": {
+    "message": "Sponzorované: {$linkText}"
+  },
+  "ad_close_title": {
+    "message": "Reklamy sa skrývajú iba používateľom PRO. Kliknutím zobrazíte cenu a všetky výhody."
   }
 }

@@ -664,5 +664,11 @@
   },
   "pro_self_ad_features": {
     "message": "✓ 自然、语义准确的翻译\n✓ 理解俚语和习语\n✓ 解释短语与上下文"
+  },
+  "ad_sponsored_by": {
+    "message": "赞助：{$linkText}"
+  },
+  "ad_close_title": {
+    "message": "广告仅对 PRO 用户隐藏。点击查看价格和全部权益。"
   }
 }

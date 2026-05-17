@@ -664,5 +664,11 @@
   },
   "pro_self_ad_features": {
     "message": "✓ Traducción natural y fiel al significado\n✓ Comprende jerga y modismos\n✓ Explica frases y contexto"
+  },
+  "ad_sponsored_by": {
+    "message": "Patrocinado: {$linkText}"
+  },
+  "ad_close_title": {
+    "message": "Los anuncios solo se ocultan para usuarios PRO. Haz clic para ver el precio y todos los beneficios."
   }
 }

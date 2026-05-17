@@ -664,5 +664,11 @@
   },
   "pro_self_ad_features": {
     "message": "✓ 自然、語意準確的翻譯\n✓ 理解俚語和慣用語\n✓ 解釋片語與語境"
+  },
+  "ad_sponsored_by": {
+    "message": "贊助：{$linkText}"
+  },
+  "ad_close_title": {
+    "message": "廣告僅對 PRO 使用者隱藏。點擊查看價格和所有權益。"
   }
 }

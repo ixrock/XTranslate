@@ -664,5 +664,11 @@
   },
   "pro_self_ad_features": {
     "message": "✓ Tradução natural e fiel ao significado\n✓ Compreende gírias e expressões idiomáticas\n✓ Explica frases e contexto"
+  },
+  "ad_sponsored_by": {
+    "message": "Patrocinado por: {$linkText}"
+  },
+  "ad_close_title": {
+    "message": "Os anúncios só são ocultados para utilizadores PRO. Clique para ver o preço e todos os benefícios."
   }
 }
