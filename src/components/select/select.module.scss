@@ -7,8 +7,10 @@
 
   select {
     appearance: none;
+    opacity: 0;
     width: 100%;
     text-overflow: ellipsis;
+    border: none;
     background: none;
     border-radius: 0;
     font: inherit;

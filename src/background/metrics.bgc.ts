@@ -106,4 +106,6 @@ export type GoogleMetricEvents = {
   promo_free_ai_translation_limit_total: {}
   promo_free_ai_login_clicked: {}
   promo_free_ai_hide_banner: {}
+  ad_shown: { brand: string }
+  ad_clicked: { brand: string }
 };

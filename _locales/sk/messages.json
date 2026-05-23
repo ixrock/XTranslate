@@ -443,12 +443,6 @@
   "service_confirm_not_a_robot": {
     "message": "Môžete tiež prejsť na { $link } a potvrdiť, že nie ste robot."
   },
-  "privacy_policy_title_updated": {
-    "message": "Zásady ochrany osobných údajov boli aktualizované"
-  },
-  "privacy_policy_accept_terms": {
-    "message": "Prijať zmluvné podmienky"
-  },
   "error_403_auth_failed": {
     "message": "Autorizácia zlyhala. Prosím, zadajte platný kľúč API v nastaveniach."
   },
@@ -712,5 +706,11 @@
   },
   "pro_self_ad_features": {
     "message": "✓ Prirodzený, významovo presný preklad\n✓ Rozumie slangu a idiomom\n✓ Vysvetľuje frázy a kontext"
+  },
+  "ad_sponsored_by": {
+    "message": "Sponzorované: {$linkText}"
+  },
+  "ad_close_title": {
+    "message": "Reklamy sa skrývajú iba používateľom PRO. Kliknutím zobrazíte cenu a všetky výhody."
   }
 }

@@ -34,6 +34,7 @@ export interface TranslateParams {
   texts?: string[]; // for multi-translate
   mode?: TranslateMode;
   client?: TranslateClientContext;
+  internal?: boolean;
 }
 
 export interface TranslateBatchResult {
@@ -158,24 +159,8 @@ export abstract class Translator {
         const reqParams = { ...params, ...customParams };
         try {
           let result = await Reflect.apply(instanceFunc, this, [reqParams]);
-          result = this.normalize(result, reqParams);
-
-          void sendMetric("translate_used", {
-            source: this.metricSource,
-            provider: this.name,
-            lang_from: reqParams.from,
-            lang_to: reqParams.to,
-          });
-
-          return result;
+          return this.normalize(result, reqParams);
         } catch (err) {
-          void sendMetric("translate_error", {
-            error: String(isTranslationError(err) ? err.message : JSON.stringify(err)),
-            source: this.metricSource,
-            provider: this.name,
-            lang_from: reqParams.from,
-            lang_to: reqParams.to,
-          });
           throw err;
         }
       };

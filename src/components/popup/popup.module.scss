@@ -223,7 +223,6 @@
 
     .providerSelectIcon {
       --icon-size: 16px;
-      --icon-color-active: currentColor;
     }
 
     select {
@@ -231,11 +230,24 @@
       position: absolute;
       font: inherit;
       inset: 0;
+      opacity: 0;
       appearance: none;
-      background: none;
       color: transparent;
       border: none;
       cursor: pointer;
+    }
+  }
+
+  .contextAd {
+    display: flex;
+    gap: var(--theme-spacing-half);
+    align-items: center;
+    justify-content: space-between;
+    text-decoration: none;
+    font-weight: bold;
+
+    &:hover {
+      color: var(--theme-text-color-adaptive);
     }
   }
 }

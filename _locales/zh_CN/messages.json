@@ -383,12 +383,6 @@
   "service_confirm_not_a_robot": {
     "message": "您也可以访问 { $link } 并确认您不是机器人。"
   },
-  "privacy_policy_title_updated": {
-    "message": "隐私政策已更新"
-  },
-  "privacy_policy_accept_terms": {
-    "message": "接受条款和条件"
-  },
   "error_403_auth_failed": {
     "message": "授权失败。请在设置中提供有效的认证API密钥"
   },
@@ -715,5 +709,11 @@
   },
   "pro_self_ad_features": {
     "message": "✓ 自然、语义准确的翻译\n✓ 理解俚语和习语\n✓ 解释短语与上下文"
+  },
+  "ad_sponsored_by": {
+    "message": "赞助：{$linkText}"
+  },
+  "ad_close_title": {
+    "message": "广告仅对 PRO 用户隐藏。点击查看价格和全部权益。"
   }
 }

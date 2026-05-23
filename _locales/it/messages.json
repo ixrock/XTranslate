@@ -383,12 +383,6 @@
   "service_confirm_not_a_robot": {
     "message": "Puoi anche andare su { $link } e confermare che non sei un robot."
   },
-  "privacy_policy_title_updated": {
-    "message": "La Politica sulla Privacy è stata aggiornata"
-  },
-  "privacy_policy_accept_terms": {
-    "message": "Accetta i termini e le condizioni"
-  },
   "error_403_auth_failed": {
     "message": "Autorizzazione fallita. Fornisci una chiave API valida nelle impostazioni."
   },
@@ -715,5 +709,11 @@
   },
   "pro_self_ad_features": {
     "message": "✓ Traduzione naturale e fedele al significato\n✓ Capisce gergo ed espressioni idiomatiche\n✓ Spiega frasi e contesto"
+  },
+  "ad_sponsored_by": {
+    "message": "Sponsorizzato: {$linkText}"
+  },
+  "ad_close_title": {
+    "message": "Gli annunci vengono nascosti solo per gli utenti PRO. Fai clic per vedere il prezzo e tutti i vantaggi."
   }
 }

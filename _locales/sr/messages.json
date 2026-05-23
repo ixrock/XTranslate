@@ -443,12 +443,6 @@
   "service_confirm_not_a_robot": {
     "message": "Možete otići na { $link } i potvrditi da niste robot."
   },
-  "privacy_policy_title_updated": {
-    "message": "Politika privatnosti je ažurirana"
-  },
-  "privacy_policy_accept_terms": {
-    "message": "Prihvatite odredbe i uslove"
-  },
   "error_403_auth_failed": {
     "message": "Autorizacija nije uspela. Unesi validan API ključ za autentifikaciju u podešavanjima"
   },
@@ -712,5 +706,11 @@
   },
   "pro_self_ad_features": {
     "message": "✓ Prirodni prevod koji tačno prenosi značenje\n✓ Razume žargon i idiome\n✓ Objašnjava fraze i kontekst"
+  },
+  "ad_sponsored_by": {
+    "message": "Sponzorisano: {$linkText}"
+  },
+  "ad_close_title": {
+    "message": "Oglasi se sakrivaju samo za PRO korisnike. Kliknite da vidite cenu i sve pogodnosti."
   }
 }

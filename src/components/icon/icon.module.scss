@@ -5,7 +5,6 @@
 
   --icon-size-small: 18px;
   --icon-size-big: 26px;
-  --icon-color-active: black;
   --icon-bgc-active: transparent;
 
   font-size: $size;
@@ -100,7 +99,6 @@
 
   &.active {
     opacity: 1;
-    color: var(--icon-color-active);
     box-shadow: 0 0 0 3px var(--icon-bgc-active);
     background-color: var(--icon-bgc-active);
   }
@@ -112,13 +110,8 @@
     cursor: pointer;
 
     &:hover, &:focus {
+      color: var(--theme-text-color-adaptive);
       @extend .active;
     }
-  }
-}
-
-@include theme-dark {
-  .Icon {
-    --icon-color-active: white;
   }
 }

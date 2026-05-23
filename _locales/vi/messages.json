@@ -383,12 +383,6 @@
   "service_confirm_not_a_robot": {
     "message": "Bạn cũng có thể truy cập vào { $link } và xác nhận rằng bạn không phải là robot."
   },
-  "privacy_policy_title_updated": {
-    "message": "Chính sách bảo mật đã được cập nhật"
-  },
-  "privacy_policy_accept_terms": {
-    "message": "Chấp nhận điều khoản và điều kiện"
-  },
   "error_403_auth_failed": {
     "message": "Xác thực thất bại. Vui lòng cung cấp khóa API hợp lệ trong cài đặt."
   },
@@ -715,5 +709,11 @@
   },
   "pro_self_ad_features": {
     "message": "✓ Dịch tự nhiên, chính xác về ý nghĩa\n✓ Hiểu tiếng lóng và thành ngữ\n✓ Giải thích cụm từ và ngữ cảnh"
+  },
+  "ad_sponsored_by": {
+    "message": "Được tài trợ: {$linkText}"
+  },
+  "ad_close_title": {
+    "message": "Quảng cáo chỉ được ẩn cho người dùng PRO. Nhấp để xem giá và tất cả quyền lợi."
   }
 }

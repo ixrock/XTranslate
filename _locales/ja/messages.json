@@ -383,12 +383,6 @@
   "service_confirm_not_a_robot": {
     "message": "また、{ $link } にアクセスしてロボットでないことを確認することもできます。"
   },
-  "privacy_policy_title_updated": {
-    "message": "プライバシーポリシーが更新されました"
-  },
-  "privacy_policy_accept_terms": {
-    "message": "利用規約に同意"
-  },
   "error_403_auth_failed": {
     "message": "認証に失敗しました。設定で有効な認証APIキーを指定してください。"
   },
@@ -715,5 +709,11 @@
   },
   "pro_self_ad_features": {
     "message": "✓ 自然で意味を損なわない翻訳\n✓ スラングや慣用句も理解\n✓ 表現や文脈を説明"
+  },
+  "ad_sponsored_by": {
+    "message": "スポンサー: {$linkText}"
+  },
+  "ad_close_title": {
+    "message": "広告はPROユーザーのみ非表示になります。価格とすべての特典を見るにはクリックしてください。"
   }
 }
