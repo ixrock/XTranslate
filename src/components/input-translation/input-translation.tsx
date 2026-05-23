@@ -24,6 +24,7 @@ import { CopyToClipboardIcon } from "../copy-to-clipboard-icon";
 import { SelectProvider } from "../select-provider";
 import { Button } from "@/components/button";
 import { userStore } from "@/pro";
+import { sendMetric } from "@/background/metrics.bgc";
 
 @observer
 export class InputTranslation extends React.Component {
@@ -168,10 +169,23 @@ export class InputTranslation extends React.Component {
       });
       if (isEqual(params, this.params)) {
         this.translation = translation;
+        void sendMetric("translate_used", {
+          source: "translate_tab",
+          provider: params.provider,
+          lang_from: params.from,
+          lang_to: params.to,
+        });
       }
     } catch (error) {
       if (isEqual(params, this.params)) {
         this.error = error;
+        void sendMetric("translate_error", {
+          error: String(this.error?.message ?? error),
+          source: "translate_tab",
+          provider: params.provider,
+          lang_from: params.from,
+          lang_to: params.to,
+        });
       }
     } finally {
       this.isLoading = false;

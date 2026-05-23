@@ -2,7 +2,6 @@
 
 import { userStore } from "@/pro";
 import { i18nStorage } from "@/i18n";
-import { privacyPolicyStorage } from "@/components/app";
 import { rateButtonClicked, rateLastTimestamp } from "@/components/app/app-rate.storage";
 import { fullPageTranslateHotkey, popupHotkey, popupSkipInjectionUrls, settingsStorage } from "@/components/settings/settings.storage";
 import { favoritesStorage } from "@/components/user-history/favorites.storage";
@@ -10,6 +9,7 @@ import { customFont, themeStorage } from "@/components/theme-manager/theme.stora
 import { historyStorage } from "@/components/user-history/history.storage";
 import { pageTranslationStorage } from "@/user-script/page-translator";
 import { freeTrialStorage } from "./providers/xtranslate_pro";
+import { adContextStore } from "@/affiliate/ad-context";
 
 export {
   userStore,
@@ -22,9 +22,9 @@ export {
   popupHotkey,
   popupSkipInjectionUrls,
   fullPageTranslateHotkey,
-  privacyPolicyStorage,
   rateButtonClicked,
   rateLastTimestamp,
   pageTranslationStorage,
   freeTrialStorage,
+  adContextStore,
 }

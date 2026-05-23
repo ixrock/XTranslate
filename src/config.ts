@@ -7,7 +7,6 @@ export const isDevelopment = process.env.NODE_ENV === "development";
 export const websiteURL = 'https://www.xtranslate.dev';
 export const supportEmail = "team@xtranslate.dev"
 export const chromeStoreURL = 'https://chrome.google.com/webstore/detail/gfgpkepllngchpmcippidfhmbhlljhoo';
-export const edgeAddonsURL = 'https://microsoftedge.microsoft.com/addons/detail/cinfaflgbaachkaamaeglolofeahelkd';
 
 // Webpack: app build, generated output filenames without extension (*.js, *.css)
 export const appEntry = "app";
@@ -33,7 +32,7 @@ export const materialIcons = {
 // Env-specific data helpers
 //
 export function getExtensionUrl(): string {
-  return isEdge() ? edgeAddonsURL : chromeStoreURL;
+  return chromeStoreURL;
 }
 
 export function isMac(): boolean {

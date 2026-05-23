@@ -14,7 +14,6 @@ import { Notifications } from "../notifications";
 import { getUrlParams } from "@/navigation";
 import { pageManager } from "./page-manager";
 import { ExportSettingsDialog } from "./export-settings-dialog";
-import { PrivacyDialog } from "./privacy-dialog";
 import { AppRateDialog } from "./app-rate.dialog";
 import { isRTL } from "@/providers";
 import { getLocale } from "@/i18n";
@@ -64,7 +63,6 @@ export class App extends React.Component {
         <Notifications/>
         <ExportSettingsDialog/>
         <AppRateDialog/>
-        <PrivacyDialog affectedVersion="5.1.1"/>
       </div>
     );
   }

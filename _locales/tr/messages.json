@@ -362,12 +362,6 @@
   "service_confirm_not_a_robot": {
     "message": "Ayrıca { $link } adresine gidebilir ve robot olmadığınızı onaylayabilirsiniz."
   },
-  "privacy_policy_title_updated": {
-    "message": "Gizlilik Politikası güncellendi"
-  },
-  "privacy_policy_accept_terms": {
-    "message": "Şartlar ve koşulları kabul et"
-  },
   "error_403_auth_failed": {
     "message": "Yetkilendirme başarısız. Lütfen ayarlarda geçerli bir API anahtarı girin."
   },
@@ -673,5 +667,11 @@
   },
   "pro_self_ad_features": {
     "message": "✓ Doğal, anlamı doğru aktaran çeviri\n✓ Argo ve deyimleri anlar\n✓ İfadeleri ve bağlamı açıklar"
+  },
+  "ad_sponsored_by": {
+    "message": "Sponsorlu: {$linkText}"
+  },
+  "ad_close_title": {
+    "message": "Reklamlar yalnızca PRO kullanıcıları için gizlenir. Fiyatı ve tüm avantajları görmek için tıklayın."
   }
 }

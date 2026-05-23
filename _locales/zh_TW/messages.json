@@ -383,12 +383,6 @@
   "service_confirm_not_a_robot": {
     "message": "您也可以訪問 { $link } 並確認您不是機器人。"
   },
-  "privacy_policy_title_updated": {
-    "message": "隱私政策已更新"
-  },
-  "privacy_policy_accept_terms": {
-    "message": "接受條款與條件"
-  },
   "error_403_auth_failed": {
     "message": "授權失敗。請在設定中提供有效的 API 金鑰"
   },
@@ -670,5 +664,11 @@
   },
   "pro_self_ad_features": {
     "message": "✓ 自然、語意準確的翻譯\n✓ 理解俚語和慣用語\n✓ 解釋片語與語境"
+  },
+  "ad_sponsored_by": {
+    "message": "贊助：{$linkText}"
+  },
+  "ad_close_title": {
+    "message": "廣告僅對 PRO 使用者隱藏。點擊查看價格和所有權益。"
   }
 }

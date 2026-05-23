@@ -383,12 +383,6 @@
   "service_confirm_not_a_robot": {
     "message": "또한 { $link }로 가서 로봇이 아님을 확인할 수 있습니다."
   },
-  "privacy_policy_title_updated": {
-    "message": "개인정보 보호 정책이 업데이트되었습니다"
-  },
-  "privacy_policy_accept_terms": {
-    "message": "약관 동의"
-  },
   "error_403_auth_failed": {
     "message": "인증 실패. 설정에서 유효한 인증 API 키를 제공하세요."
   },
@@ -670,5 +664,11 @@
   },
   "pro_self_ad_features": {
     "message": "✓ 자연스럽고 의미를 정확히 살린 번역\n✓ 은어와 숙어도 이해\n✓ 구절과 맥락을 설명"
+  },
+  "ad_sponsored_by": {
+    "message": "스폰서: {$linkText}"
+  },
+  "ad_close_title": {
+    "message": "광고 숨기기는 PRO 사용자에게만 제공됩니다. 가격과 모든 혜택을 보려면 클릭하세요."
   }
 }

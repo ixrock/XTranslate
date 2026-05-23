@@ -452,12 +452,6 @@
   "service_confirm_not_a_robot": {
     "message": "Also you can go to { $link } and confirm that you're not a robot."
   },
-  "privacy_policy_title_updated": {
-    "message": "Privacy Policy has been updated"
-  },
-  "privacy_policy_accept_terms": {
-    "message": "Accept terms & conditions"
-  },
   "error_403_auth_failed": {
     "message": "Authorization failed. Please supply a valid auth api key in the settings"
   },
@@ -667,5 +661,11 @@
   },
   "translate_page_by_hotkey": {
     "message": "Translate full-page when I press hotkey"
+  },
+  "ad_sponsored_by": {
+    "message": "Sponsored: {$linkText}"
+  },
+  "ad_close_title": {
+    "message": "Ads are hidden only for PRO-users. Click to see the price and all benefits."
   }
 }

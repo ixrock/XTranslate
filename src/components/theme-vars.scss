@@ -9,41 +9,21 @@
   --theme-content-min-width: 600px;
   --theme-content-width: clamp(var(--theme-content-min-width), 1000px, 100%);
   --theme-content-height: 600px;
-  --theme-color-contrast: black;
-  --theme-bgc: white;
-  --theme-bgc-invert: #36393e;
-  --theme-color-primary: #942486aa;
+  --theme-color-contrast: light-dark(black, white);
+  --theme-bgc: light-dark(white, #36393e);
+  --theme-bgc-invert: light-dark(#36393e, white);
+  --theme-color-primary: light-dark(#942486aa, rgba(195, 74, 175, 0.67));
   --theme-color-accent: #e85555;
-  --theme-color-text: #87909c;
+  --theme-color-text: light-dark(#87909c, #a0a0a0);
   --theme-color-text2: #a0a0a0;
   --theme-color-success: #{$green-600};
   --theme-color-error: #{$red-500};
   --theme-border-color: rgba(from var(--theme-color-text) r g b / .5);
-  --theme-scrollbar-bgc: rgba(0, 0, 0, .25);
+  --theme-scrollbar-bgc: light-dark(rgba(0, 0, 0, .25), rgba(255, 255, 255, .25));
   --theme-scrollbar-size: var(--theme-spacing);
-}
 
-@mixin theme-vars-dark {
-  --theme-color-contrast: white;
-  --theme-bgc: #36393e;
-  --theme-bgc-invert: white;
-  --theme-color-text: #a0a0a0;
-  --theme-color-primary: rgba(195, 74, 175, 0.67);
-  --theme-scrollbar-bgc: rgba(255, 255, 255, .25);
-}
-
-@mixin theme-dark($selector: ":root") {
-  #{$selector}[data-theme="dark"] {
-    @content;
-  }
-}
-
-@mixin theme-setup($selector: ":root") {
-  #{$selector} {
-    @include theme-vars;
-  }
-
-  @include theme-dark($selector) {
-    @include theme-vars-dark;
-  }
+  --theme-text-color-adaptive: light-dark(
+      color-mix(in srgb, currentColor 50%, black),
+      color-mix(in srgb, currentColor 50%, white)
+  );
 }

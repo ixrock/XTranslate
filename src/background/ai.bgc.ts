@@ -1,6 +1,6 @@
 import OpenAI from "openai";
 import { getTranslator, ITranslationError, ITranslationResult, ProviderCodeName, TranslateParams } from "@/providers";
-import { AITranslatePayload, createIsomorphicAction, GeminiTextToSpeechPayload, MessageType, OpenAITextToSpeechPayload } from "@/extension";
+import { AITranslatePayload, createIsomorphicAction, MessageType } from "@/extension";
 import { createLogger } from "@/utils/createLogger";
 import { isFirefox } from "../config";
 

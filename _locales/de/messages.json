@@ -383,12 +383,6 @@
   "service_confirm_not_a_robot": {
     "message": "Sie können auch zu { $link } gehen und bestätigen, dass Sie kein Roboter sind."
   },
-  "privacy_policy_title_updated": {
-    "message": "Die Datenschutzerklärung wurde aktualisiert"
-  },
-  "privacy_policy_accept_terms": {
-    "message": "Allgemeine Geschäftsbedingungen akzeptieren"
-  },
   "error_403_auth_failed": {
     "message": "Authentifizierung fehlgeschlagen. Bitte geben Sie einen gültigen Authentifizierungs-API-Schlüssel in den Einstellungen an."
   },
@@ -670,5 +664,11 @@
   },
   "pro_self_ad_features": {
     "message": "✓ Natürliches, bedeutungsgenaues Übersetzen\n✓ Versteht Slang und Redewendungen\n✓ Erklärt Formulierungen und Kontext"
+  },
+  "ad_sponsored_by": {
+    "message": "Gesponsert: {$linkText}"
+  },
+  "ad_close_title": {
+    "message": "Werbung wird nur für PRO-Nutzer ausgeblendet. Klicke, um den Preis und alle Vorteile zu sehen."
   }
 }

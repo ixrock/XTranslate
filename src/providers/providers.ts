@@ -21,34 +21,26 @@ export type AIModelTranslationKey =
 
 // OpenAI models
 export enum OpenAIModel {
-  COST_EFFECTIVE = "gpt-5-mini",
-  RECOMMENDED = "gpt-5-chat-latest"
+  COST_EFFECTIVE = "gpt-5.4-nano",
+  RECOMMENDED = "gpt-5.5"
 }
 
 // Grok models (x.ai)
 export enum GrokAIModel {
-  COST_EFFECTIVE = "grok-3-mini",
-  RECOMMENDED = "grok-3",
+  RECOMMENDED = "grok-4.20-non-reasoning",
+  REASONING = "grok-4.20",
 }
 
 // DeepSeek models
 export enum DeepSeekAIModel {
-  RECOMMENDED = "deepseek-chat",
-  REASONING = "deepseek-reasoner"
+  RECOMMENDED = "deepseek-v4-flash",
+  REASONING = "deepseek-v4-pro"
 }
 
 // Google models
 export enum GeminiAIModel {
   RECOMMENDED = "gemini-2.5-flash-lite",
   REASONING = "gemini-2.5-flash"
-}
-
-//
-// Text-to-speech models
-//
-export enum OpenAIModelTTS {
-  MINI = "gpt-4o-mini-tts",
-  OTHER = "tts-1",
 }
 
 export enum OpenAIModelTTSVoice {
@@ -58,20 +50,4 @@ export enum OpenAIModelTTSVoice {
   Onyx = "onyx",
   Nova = "nova",
   Shimmer = "shimmer",
-}
-
-export enum GeminiAIModelTTS {
-  FLASH = "gemini-2.5-flash-preview-tts",
-  PRO = "gemini-2.5-pro-preview-tts"
-}
-
-export enum GeminiAIModelTTSVoice {
-  Puck = "puck",
-  Zephyr = "zephyr",
-  Charon = "charon",
-  Kore = "kore",
-  Fenrir = "fenrir",
-  Leda = "leda",
-  Orus = "orus",
-  Aoede = "aoede"
 }
