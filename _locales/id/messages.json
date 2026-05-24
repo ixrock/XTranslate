@@ -197,8 +197,8 @@
   "reverse_translate_select_placeholder": {
     "message": "Bahasa terjemahan balik"
   },
-  "reverse_translate_add_action": {
-    "message": "Tambah bahasa balik: { $lang } -> ? (hanya berlaku dengan Deteksi Otomatis)"
+  "reverse_translate_info_tooltip": {
+    "message": "Jika bahasa sumber terdeteksi sebagai bahasa target {$targetLang}, gunakan terjemahan ke {$reverseLang}"
   },
   "reverse_translate_delete_action": {
     "message": "Hapus bahasa terjemahan balik"
@@ -223,6 +223,9 @@
   },
   "popup_select_provider_title": {
     "message": "Pilih penyedia terjemahan"
+  },
+  "settings_translation_provider_select_title": {
+    "message": "Penyedia terjemahan"
   },
   "popup_next_vendor_icon_title": {
     "message": "Terjemahkan dengan { $translator }"

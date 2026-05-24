@@ -149,8 +149,8 @@
   "reverse_translate_select_placeholder": {
     "message": "ترجمة اللغة بالعكس"
   },
-  "reverse_translate_add_action": {
-    "message": "إضافة لغة عكسية: { $lang } -> ? (تطبق فقط مع خيار 'الكشف التلقائي')"
+  "reverse_translate_info_tooltip": {
+    "message": "إذا تم اكتشاف اللغة المصدر كلغة مستهدفة {$targetLang}، فاستخدم الترجمة إلى {$reverseLang}"
   },
   "reverse_translate_delete_action": {
     "message": "إلغاء تعيين ترجمة اللغة العكسية"
@@ -169,6 +169,9 @@
   },
   "popup_select_provider_title": {
     "message": "اختر مزود الترجمة"
+  },
+  "settings_translation_provider_select_title": {
+    "message": "مزود الترجمة"
   },
   "popup_next_vendor_icon_title": {
     "message": "ترجم باستخدام { $translator }"
@@ -366,10 +369,10 @@
     "message": "تذكيري لاحقًا"
   },
   "target_lang_placeholder": {
-    "message": "اللغات المستهدفة"
+    "message": "اللغة المستهدفة"
   },
   "source_lang_placeholder": {
-    "message": "اللغات المصدر"
+    "message": "اللغة المصدر"
   },
   "favorites_lang_title": {
     "message": "المفضلات"

@@ -149,8 +149,8 @@
   "reverse_translate_select_placeholder": {
     "message": "反向翻译语言"
   },
-  "reverse_translate_add_action": {
-    "message": "添加反向语言: { $lang } -> ?（仅在“自动检测”选项下有效）"
+  "reverse_translate_info_tooltip": {
+    "message": "如果检测到源语言是目标语言 {$targetLang}，则改用 {$reverseLang} 的翻译"
   },
   "reverse_translate_delete_action": {
     "message": "取消设置反向翻译语言"
@@ -169,6 +169,9 @@
   },
   "popup_select_provider_title": {
     "message": "选择翻译提供方"
+  },
+  "settings_translation_provider_select_title": {
+    "message": "翻译提供方"
   },
   "popup_next_vendor_icon_title": {
     "message": "使用 { $translator } 翻译"

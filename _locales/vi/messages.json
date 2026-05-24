@@ -149,8 +149,8 @@
   "reverse_translate_select_placeholder": {
     "message": "Dịch ngược ngôn ngữ"
   },
-  "reverse_translate_add_action": {
-    "message": "Thêm ngôn ngữ ngược: { $lang } -> ? (chỉ áp dụng với tùy chọn 'Tự động phát hiện')"
+  "reverse_translate_info_tooltip": {
+    "message": "Nếu ngôn ngữ nguồn được phát hiện là ngôn ngữ đích {$targetLang}, hãy dùng bản dịch sang {$reverseLang}"
   },
   "reverse_translate_delete_action": {
     "message": "Hủy chọn dịch ngược ngôn ngữ"
@@ -169,6 +169,9 @@
   },
   "popup_select_provider_title": {
     "message": "Chọn nhà cung cấp dịch thuật"
+  },
+  "settings_translation_provider_select_title": {
+    "message": "Nhà cung cấp dịch thuật"
   },
   "popup_next_vendor_icon_title": {
     "message": "Dịch với { $translator }"

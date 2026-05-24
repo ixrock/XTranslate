@@ -149,8 +149,8 @@
   "reverse_translate_select_placeholder": {
     "message": "विपरीत अनुवाद भाषा"
   },
-  "reverse_translate_add_action": {
-    "message": "विपरीत भाषा जोड़ें: { $lang } -> ? (केवल 'ऑटो-डिटेक्ट' विकल्प के साथ लागू होता है)"
+  "reverse_translate_info_tooltip": {
+    "message": "यदि स्रोत भाषा को लक्ष्य भाषा {$targetLang} के रूप में पहचाना गया है, तो {$reverseLang} में अनुवाद का उपयोग करें"
   },
   "reverse_translate_delete_action": {
     "message": "विपरीत अनुवाद भाषा हटाएं"
@@ -169,6 +169,9 @@
   },
   "popup_select_provider_title": {
     "message": "अनुवाद प्रदाता चुनें"
+  },
+  "settings_translation_provider_select_title": {
+    "message": "अनुवाद प्रदाता"
   },
   "popup_next_vendor_icon_title": {
     "message": "{ $translator } के साथ अनुवाद करें"
@@ -366,10 +369,10 @@
     "message": "बाद में मुझे याद दिलाएं"
   },
   "target_lang_placeholder": {
-    "message": "लक्ष्य भाषाएँ"
+    "message": "लक्ष्य भाषा"
   },
   "source_lang_placeholder": {
-    "message": "स्रोत भाषाएँ"
+    "message": "स्रोत भाषा"
   },
   "favorites_lang_title": {
     "message": "पसंदीदा"

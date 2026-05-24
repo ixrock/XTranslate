@@ -149,8 +149,8 @@
   "reverse_translate_select_placeholder": {
     "message": "উল্টো অনুবাদ ভাষা"
   },
-  "reverse_translate_add_action": {
-    "message": "উল্টো ভাষা যোগ করুন: { $lang } -> ? (শুধু 'অটো-ডিটেক্ট' বিকল্প সাথে প্রযোজ্য)"
+  "reverse_translate_info_tooltip": {
+    "message": "যদি উৎস ভাষাটি লক্ষ্য ভাষা {$targetLang} হিসেবে শনাক্ত হয়, তাহলে {$reverseLang}-এ অনুবাদ ব্যবহার করুন"
   },
   "reverse_translate_delete_action": {
     "message": "উল্টো অনুবাদ ভাষা সরান"
@@ -169,6 +169,9 @@
   },
   "popup_select_provider_title": {
     "message": "অনুবাদ প্রদানকারী নির্বাচন করুন"
+  },
+  "settings_translation_provider_select_title": {
+    "message": "অনুবাদ প্রদানকারী"
   },
   "popup_next_vendor_icon_title": {
     "message": "{ $translator } দিয়ে অনুবাদ করুন"
