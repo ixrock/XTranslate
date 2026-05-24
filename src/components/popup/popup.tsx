@@ -1,10 +1,11 @@
 import * as styles from "./popup.module.scss"
+import GoogleLanguagesList from "@/providers/google.json"
+import BingLanguagesList from "@/providers/bing.json"
 
 import React, { CSSProperties } from "react";
 import { computed, makeObservable } from "mobx";
 import { observer } from "mobx-react";
 import sample from "lodash/sample"
-import LanguagesList from "@/providers/open-ai.json"
 import { materialIcons } from "@/config";
 import { cssNames, prevDefault } from "@/utils";
 import { toCssColor } from "@/utils/toCssColor";
@@ -45,7 +46,7 @@ export class Popup extends React.Component<PopupProps> {
   private translationMock?: ITranslationResult;
 
   static get translationMock(): ITranslationResult {
-    const langs = { ...LanguagesList.from };
+    const langs = { ...GoogleLanguagesList.from, ...BingLanguagesList.from };
     delete langs.auto;
     delete langs.en;
     return {

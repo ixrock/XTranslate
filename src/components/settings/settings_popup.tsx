@@ -74,6 +74,11 @@ export class SettingsPopup extends React.Component {
           checked={settings.showPopupOnClickBySelection}
           onChange={v => settings.showPopupOnClickBySelection = v}
         />
+        <Checkbox
+          label={getMessage("display_popup_on_double_click")}
+          checked={settings.showPopupOnDoubleClick}
+          onChange={v => settings.showPopupOnDoubleClick = v}
+        />
         <div className="flex column gaps">
           <Checkbox
             className="box grow"

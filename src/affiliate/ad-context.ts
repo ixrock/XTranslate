@@ -2,7 +2,7 @@ import adBrands from "./ad-brands.json";
 import adMessages from "./ad-messages.json";
 import { getTranslator, ProviderCodeName } from "@/providers";
 import { createStorage } from "@/storage";
-import { getLocale } from "@/i18n";
+import { getLocale, Locale } from "@/i18n";
 
 export const CONTEXT_MAX_CHARS = 500;
 export const CONTEXT_SOFT_MIN_CHARS = 300;
@@ -10,7 +10,7 @@ export const MAX_BRAND_SHOWS_PER_DAY = 3;
 
 type AdBrand = (typeof adBrands.brands)[number];
 type AdBrandName = AdBrand["name"];
-type AdMessages = Record<AdBrandName, Record<string, string[]>>;
+type AdMessages = Record<AdBrandName, Record<Locale, string[]>>;
 
 export interface AdBrandDailyStats {
   shownCount: number;
@@ -248,12 +248,12 @@ function escapeRegExp(value: string): string {
   return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
-function getBrandMessages(brandName: AdBrandName, locale: string): string[] {
+function getBrandMessages(brandName: AdBrandName, locale: Locale): string[] {
   const brandMessages = messages[brandName];
   if (!brandMessages) return [];
 
-  const normalizedLocale = locale.replace("-", "_");
-  const shortLocale = normalizedLocale.split("_")[0];
+  const normalizedLocale = locale.replace("-", "_") as Locale;
+  const shortLocale = normalizedLocale.split("_")[0] as Locale;
 
   return brandMessages[locale]
     ?? brandMessages[normalizedLocale]
