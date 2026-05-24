@@ -200,8 +200,8 @@
   "reverse_translate_select_placeholder": {
     "message": "Jezik za obrnuti prevod"
   },
-  "reverse_translate_add_action": {
-    "message": "Dodaj jezik za obrnuti prevod: { $lang } -> ? (primenljivo samo kad je 'Otkrivanje jezika' uključeno)"
+  "reverse_translate_info_tooltip": {
+    "message": "Ako je izvorni jezik prepoznat kao ciljni jezik {$targetLang}, koristi prevod na {$reverseLang}"
   },
   "reverse_translate_delete_action": {
     "message": "Obriši jezik za obrnuti prevod"
@@ -226,6 +226,9 @@
   },
   "popup_select_provider_title": {
     "message": "Izaberi provajdera prevoda"
+  },
+  "settings_translation_provider_select_title": {
+    "message": "Provajder prevoda"
   },
   "popup_next_vendor_icon_title": {
     "message": "Prevedi pomoću: { $translator }"
@@ -426,10 +429,10 @@
     "message": "Podseti me kasnije"
   },
   "target_lang_placeholder": {
-    "message": "Ciljni jezici"
+    "message": "Ciljni jezik"
   },
   "source_lang_placeholder": {
-    "message": "Izvorni jezici"
+    "message": "Izvorni jezik"
   },
   "favorites_lang_title": {
     "message": "Omiljeno"
