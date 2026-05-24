@@ -1,5 +1,3 @@
-import "./select-language.scss";
-
 import React from "react";
 import { action } from "mobx";
 import { observer } from "mobx-react";
@@ -147,57 +145,19 @@ export class SelectLanguage extends React.Component<SelectLanguageProps> {
         className={cssNames("language flex gaps align-center", opts.lang)}
         onClick={opts.sourceType ? evt => this.toggleFavorite(evt, opts.lang, opts.sourceType) : undefined}
       >
-        {flagIcon && <img className="country-icon" src={flagIcon} alt=""/>}
+        {flagIcon && <img width={20} height={15} className="country-icon" src={flagIcon} alt={opts.lang}/>}
         <span>{opts.title}</span>
       </div>
     )
   }
 
-  renderReverseTranslationSettingsPanel() {
-    const { to: langTo, provider } = this.props;
-    const langToTitle = getTranslator(provider).langTo[langTo];
-    const { langTo: targetLangList } = getTranslator(provider);
-    const initialReverseLang = langTo !== "en" ? "en" : Object.keys(targetLangList).filter(lang => lang !== "auto")[0] /*first*/;
-    const setReverseTranslateLanguage = action((val: string) => settingsStore.data.langToReverse = val);
-
-    if (settingsStore.data.langToReverse) {
-      return (
-        <>
-          <Icon small material="arrow_forward"/>
-          <ReactSelect
-            className="Select"
-            placeholder={getMessage("reverse_translate_select_placeholder")}
-            value={this.reverseLanguageOptions.find(opt => opt.value === settingsStore.data.langToReverse)}
-            options={this.reverseLanguageOptions}
-            onChange={opt => setReverseTranslateLanguage(opt.value)}
-            formatOptionLabel={({ label, value: lang }) => this.formatLanguageLabel({ lang, title: label })}
-          />
-          <Icon
-            small
-            material="clear"
-            tooltip={getMessage("reverse_translate_delete_action")}
-            onClick={() => setReverseTranslateLanguage("")}
-          />
-        </>
-      )
-    }
-
-    return (
-      <Icon
-        small
-        material="arrow_forward"
-        tooltip={getMessage("reverse_translate_add_action", { lang: langToTitle })}
-        onClick={() => setReverseTranslateLanguage(initialReverseLang)}
-      />
-    );
-  }
-
   render() {
-    const {
-      className, showReverseTranslation,
-      from: langFrom,
-      to: langTo,
-    } = this.props;
+    const { className, from: langFrom, to: langTo, provider, showReverseTranslation } = this.props;
+    const autoDetectEnabled = langFrom === "auto";
+    const translator = getTranslator(provider);
+    const { langTo: targetLangList } = translator;
+    const initialReverseLang = langTo !== "en" ? "en" : Object.keys(targetLangList).filter(lang => lang !== "auto")[0] /*first*/;
+    const reverseLang = settingsStore.data.langToReverse || initialReverseLang;
 
     const sourceLang = this.sourceLanguageOptions
       .flatMap(group => group.options)
@@ -208,33 +168,65 @@ export class SelectLanguage extends React.Component<SelectLanguageProps> {
       .find(({ value: lang }) => lang == langTo);
 
     return (
-      <div className={cssNames("SelectLanguage flex gaps align-center", className)}>
-        <ReactSelect
-          className="Select"
-          placeholder={getMessage("source_lang_placeholder")}
-          value={sourceLang}
-          options={this.sourceLanguageOptions}
-          onChange={(opt) => this.onChange({ sourceLang: opt.value })}
-          formatOptionLabel={({ label: title, value: lang }) => this.formatLanguageLabel({ lang, title, sourceType: "source" })}
-        />
+      <div className={cssNames("SelectLanguage flex gaps", className)}>
+        <div className="flex column box grow">
+          <small>{getMessage("source_lang_placeholder")}</small>
+          <ReactSelect
+            className="Select"
+            placeholder={getMessage("source_lang_placeholder")}
+            value={sourceLang}
+            options={this.sourceLanguageOptions}
+            onChange={(opt) => this.onChange({ sourceLang: opt.value })}
+            formatOptionLabel={({ label: title, value: lang }) => this.formatLanguageLabel({ lang, title, sourceType: "source" })}
+          />
+        </div>
 
-        <Icon
-          material="swap_horiz"
-          className="swap-icon"
-          tooltip={getMessage("swap_languages")}
-          onClick={this.onSwap}
-        />
+        {!autoDetectEnabled && (
+          <Icon
+            material="swap_horiz"
+            className="swap-icon"
+            style={{ alignSelf: "center" }}
+            tooltip={getMessage("swap_languages")}
+            onClick={this.onSwap}
+          />
+        )}
 
-        <ReactSelect
-          className="Select"
-          placeholder={getMessage("target_lang_placeholder")}
-          value={targetLang}
-          options={this.targetLanguageOptions}
-          onChange={opt => this.onChange({ targetLang: opt.value })}
-          formatOptionLabel={({ label: title, value: lang }) => this.formatLanguageLabel({ lang, title, sourceType: "target" })}
-        />
+        <div className="flex column box grow">
+          <small>{getMessage("target_lang_placeholder")}</small>
+          <ReactSelect
+            className="Select"
+            placeholder={getMessage("target_lang_placeholder")}
+            value={targetLang}
+            options={this.targetLanguageOptions}
+            onChange={opt => this.onChange({ targetLang: opt.value })}
+            formatOptionLabel={({ label: title, value: lang }) => this.formatLanguageLabel({ lang, title, sourceType: "target" })}
+          />
+        </div>
 
-        {showReverseTranslation && this.renderReverseTranslationSettingsPanel()}
+        {showReverseTranslation && autoDetectEnabled && (
+          <>
+            <div className="flex column box grow">
+              <small>
+                {getMessage("reverse_translate_select_placeholder")}
+                <Icon
+                  small material="info_outline"
+                  tooltip={getMessage("reverse_translate_info_tooltip", {
+                    targetLang: targetLangList[langTo],
+                    reverseLang: targetLangList[reverseLang],
+                  })}
+                />
+              </small>
+              <ReactSelect
+                className="Select"
+                value={this.reverseLanguageOptions.find(opt => opt.value === reverseLang)}
+                options={this.reverseLanguageOptions}
+                placeholder={getMessage("reverse_translate_select_placeholder")}
+                onChange={({ value }) => settingsStore.data.langToReverse = value}
+                formatOptionLabel={({ label, value: lang }) => this.formatLanguageLabel({ lang, title: label })}
+              />
+            </div>
+          </>
+        )}
       </div>
     );
   }

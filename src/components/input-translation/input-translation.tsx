@@ -462,6 +462,7 @@ export class InputTranslation extends React.Component {
       <div className="InputTranslation flex column gaps">
         <div className="language flex gaps">
           <SelectLanguage
+            className="box grow"
             provider={provider}
             from={langFrom}
             to={langTo}

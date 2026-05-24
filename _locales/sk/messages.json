@@ -200,8 +200,8 @@
   "reverse_translate_select_placeholder": {
     "message": "Spätný preklad jazyka"
   },
-  "reverse_translate_add_action": {
-    "message": "Pridať reverzný jazyk: { $lang } -> ? (použiteľné len pri voľbe 'Automatické zistenie')"
+  "reverse_translate_info_tooltip": {
+    "message": "Ak bol zdrojový jazyk rozpoznaný ako cieľový jazyk {$targetLang}, použiť preklad do {$reverseLang}"
   },
   "reverse_translate_delete_action": {
     "message": "Zrušiť nastavenie jazyka spätného prekladu"
@@ -226,6 +226,9 @@
   },
   "popup_select_provider_title": {
     "message": "Vybrať poskytovateľa prekladu"
+  },
+  "settings_translation_provider_select_title": {
+    "message": "Poskytovateľ prekladu"
   },
   "popup_next_vendor_icon_title": {
     "message": "Preložiť pomocou { $translator }"
@@ -426,10 +429,10 @@
     "message": "Pripomenúť mi to neskôr"
   },
   "target_lang_placeholder": {
-    "message": "Cieľové jazyky"
+    "message": "Cieľový jazyk"
   },
   "source_lang_placeholder": {
-    "message": "Zdrojové jazyky"
+    "message": "Zdrojový jazyk"
   },
   "favorites_lang_title": {
     "message": "Obľúbené"

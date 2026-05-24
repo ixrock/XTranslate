@@ -5,6 +5,7 @@ import { getTranslators, ProviderCodeName, Translator } from "@/providers";
 import { FormatOptionLabelMeta, ReactSelect, ReactSelectOption, ReactSelectProps } from "../select/react-select";
 import { cssNames } from "@/utils/cssNames";
 import { Icon } from "../icon";
+import { getMessage } from "@/i18n";
 
 export interface SelectProviderProps extends Omit<ReactSelectProps<ProviderCodeName>, "value" | "onChange" | "options"> {
   className?: string;
@@ -42,13 +43,16 @@ export const SelectProvider = observer(({ compactView, filter, value: providerNa
   }
 
   return (
-    <ReactSelect
-      {...inputProps}
-      className={cssNames(styles.SelectProvider, inputProps.className)}
-      options={options}
-      value={options.find(opt => opt.value === providerName)}
-      onChange={onChange}
-      formatOptionLabel={formatOptionLabel}
-    />
+    <div className="flex column">
+      <small>{getMessage("settings_translation_provider_select_title")}</small>
+      <ReactSelect
+        {...inputProps}
+        className={cssNames(styles.SelectProvider, inputProps.className)}
+        options={options}
+        value={options.find(opt => opt.value === providerName)}
+        onChange={onChange}
+        formatOptionLabel={formatOptionLabel}
+      />
+    </div>
   )
 })

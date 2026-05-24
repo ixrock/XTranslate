@@ -149,8 +149,8 @@
   "reverse_translate_select_placeholder": {
     "message": "Umgekehrte Übersetzung der Sprache"
   },
-  "reverse_translate_add_action": {
-    "message": "Umgekehrte Sprache hinzufügen: { $lang } -> ? (nur mit der Option 'Automatische Erkennung' anwendbar)"
+  "reverse_translate_info_tooltip": {
+    "message": "Wenn die Ausgangssprache als Zielsprache {$targetLang} erkannt wurde, die Übersetzung nach {$reverseLang} verwenden"
   },
   "reverse_translate_delete_action": {
     "message": "Umgekehrte Sprachübersetzung aufheben"
@@ -169,6 +169,9 @@
   },
   "popup_select_provider_title": {
     "message": "Übersetzungsanbieter auswählen"
+  },
+  "settings_translation_provider_select_title": {
+    "message": "Übersetzungsanbieter"
   },
   "popup_next_vendor_icon_title": {
     "message": "Mit { $translator } übersetzen"
@@ -366,10 +369,10 @@
     "message": "Später erinnern"
   },
   "target_lang_placeholder": {
-    "message": "Zielsprachen"
+    "message": "Zielsprache"
   },
   "source_lang_placeholder": {
-    "message": "Quellsprachen"
+    "message": "Quellsprache"
   },
   "favorites_lang_title": {
     "message": "Favoriten"

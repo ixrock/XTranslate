@@ -146,6 +146,9 @@
   "popup_select_provider_title": {
     "message": "Çeviri sağlayıcısını seç"
   },
+  "settings_translation_provider_select_title": {
+    "message": "Çeviri sağlayıcısı"
+  },
   "popup_next_vendor_icon_title": {
     "message": "{ $translator } ile çevir"
   },
@@ -342,10 +345,10 @@
     "message": "Sonra hatırlat"
   },
   "target_lang_placeholder": {
-    "message": "Hedef diller"
+    "message": "Hedef dil"
   },
   "source_lang_placeholder": {
-    "message": "Kaynak diller"
+    "message": "Kaynak dil"
   },
   "favorites_lang_title": {
     "message": "Sık kullanılanlar"
@@ -455,8 +458,8 @@
   "reverse_translate_select_placeholder": {
     "message": "Ters çeviri dili"
   },
-  "reverse_translate_add_action": {
-    "message": "Ters dil ekle: { $lang } -> ? (yalnızca 'Otomatik algılama' seçeneğiyle uygulanabilir)"
+  "reverse_translate_info_tooltip": {
+    "message": "Kaynak dil hedef dil {$targetLang} olarak algılanırsa, {$reverseLang} çevirisini kullan"
   },
   "reverse_translate_delete_action": {
     "message": "Ters çeviri dilini kaldır"
