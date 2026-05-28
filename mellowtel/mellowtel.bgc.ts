@@ -5,6 +5,7 @@ import { createIsomorphicAction, MessageType } from "../src/extension";
 import { createLogger } from "../src/utils/createLogger";
 import { mellowtelOptOutTime } from "./mellowtel.storage";
 import { mellowtelOptInReminderDuration } from "./mellowtel.config";
+import { userStore } from "@/pro";
 
 const logger = createLogger({ systemPrefix: "[MELLOWTEL]" });
 
@@ -57,8 +58,11 @@ export function mellowtelApi() {
 }
 
 export async function initBackground() {
+  if (userStore.isProActive) return;
   try {
     await mellowtelApi().initBackground();
+    const { enabled } = await mellowtelStatusAction();
+    if (!enabled) await mellowtelActivateAction();
   } catch (err) {
     logger.error(`init background failed: ${String(err)}`);
   }
