@@ -340,12 +340,12 @@ export abstract class Translator {
   @action
   pauseSpeaking(toggle = true) {
     const pause = () => {
-      if (this.audio) this.audio.pause();
-      else ttsEngine().pause();
+      this.audio?.pause();
+      ttsEngine().pause();
     };
     const resume = () => {
-      if (this.audio) void this.audio.play();
-      else ttsEngine().resume();
+      this.audio?.play();
+      ttsEngine().resume();
     }
     if (toggle) {
       const isPaused = this.audio ? this.audio.paused : ttsEngine().paused;
