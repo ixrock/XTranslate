@@ -17,7 +17,7 @@ import { fullPageTranslateHotkey, settingsStore, XIconPosition } from "./setting
 import { pageManager } from "../app/page-manager";
 import { getMessage } from "@/i18n";
 import { SelectVoice } from "../select-tts-voice";
-import { speakSystemTTS, ttsEngine } from "@/tts";
+import { ttsEngine } from "@/tts";
 import { SelectAIModel } from "./select_ai_model";
 import { ProviderAuthSettings } from "./provider_auth_settings";
 import { materialIcons } from "@/config";
@@ -29,16 +29,8 @@ import { getHotkey, parseHotkey, prevDefault } from "@/utils";
 import { Input } from "@/components/input";
 import { FullPageContextMenuMode, pageTranslationStorage } from "@/user-script/page-translator";
 
-const openAiVoiceOptions =
-  Object.values(OpenAIModelTTSVoice).map((voice: string) => ({
-    value: voice,
-    label: startCase(voice),
-  })) as ReactSelectOption<OpenAIModelTTSVoice>[];
-
 @observer
 export class Settings extends React.Component {
-  private systemTTS: SpeechSynthesisUtterance;
-
   private googleApiDomainOptions: ReactSelectOption<string>[] = googleApiDomains.map(({ domain, title }) => {
     return {
       value: domain,
@@ -50,6 +42,12 @@ export class Settings extends React.Component {
     super(props);
     makeObservable(this);
   }
+
+  @observable demoVoiceText: Partial<Record<ProviderCodeName, string>> = {
+    [ProviderCodeName.BING]: "Quick brown fox jumps over the lazy dog",
+    [ProviderCodeName.XTRANSLATE_PRO]: "Hello world",
+  };
+  @observable isSpeaking = false;
 
   get providerSettings(): Partial<Record<ProviderCodeName, React.ReactNode>> {
     return {
@@ -63,31 +61,16 @@ export class Settings extends React.Component {
           />
         </div>
       ),
-      get xtranslate_pro() {
-        const { isProActive } = userStore;
-
+      xtranslate_pro: (() => {
         return (
-          <div className="flex gaps align-center">
-            {!isProActive && <em>({getMessage("recommended").toLowerCase()})</em>}
-            <Icon material={materialIcons.translate} tooltip={getMessage("pro_version_ai_translator", { provider: "Gemini" })}/>
-            <Icon material={materialIcons.summarize} tooltip={getMessage("pro_version_ai_summarize_feature")}/>
-            <Icon svg="tts" tooltip={getMessage("pro_version_ai_tts", { provider: "OpenAI" })}/>
-
-            {isProActive && (
-              <>
-                <span>{getMessage("pro_select_tts_voice")}</span>
-                <ReactSelect<OpenAIModelTTSVoice>
-                  className={styles.providerSelect}
-                  placeholder={getMessage("tts_select_voice_title")}
-                  options={openAiVoiceOptions}
-                  value={openAiVoiceOptions.find(voiceOpt => voiceOpt.value === userStore.data.ttsVoice)}
-                  onChange={({ value }) => userStore.data.ttsVoice = value}
-                />
-              </>
-            )}
-          </div>
-        )
-      },
+          <XTranslateProSettingsWidget
+            isSpeaking={this.isSpeaking}
+            voiceText={this.demoVoiceText[ProviderCodeName.XTRANSLATE_PRO]}
+            speakText={() => this.speakDemoText(ProviderCodeName.XTRANSLATE_PRO)}
+            editSpeakingText={() => this.editDemoVoiceText(ProviderCodeName.XTRANSLATE_PRO)}
+          />
+        );
+      })(),
       openai: (
         <div className="flex gaps align-center">
           <SelectAIModel
@@ -140,42 +123,26 @@ export class Settings extends React.Component {
     ];
   };
 
-  @observable demoVoiceText = "Quick brown fox jumps over the lazy dog";
-  @observable isSpeaking = false;
-
-  @action.bound
-  editDemoVoiceText() {
-    const newText = window.prompt(getMessage("tts_play_demo_sound_edit"), this.demoVoiceText);
+  @action
+  editDemoVoiceText(provider: ProviderCodeName) {
+    const newText = window.prompt(getMessage("tts_play_demo_sound_edit"), this.demoVoiceText[provider]);
     if (newText) {
-      this.demoVoiceText = newText;
+      this.demoVoiceText[provider] = newText;
       this.stopSpeakingSystemTTS();
     }
   }
 
-  @action.bound
+  @action
   stopSpeakingSystemTTS() {
-    delete this.systemTTS;
+    Object.keys(this.demoVoiceText).forEach((provider: ProviderCodeName) => getTranslator(provider)?.stopSpeaking());
     this.isSpeaking = false;
     ttsEngine().cancel();
   }
 
-  @action.bound
-  async speakDemoText() {
-    this.systemTTS ??= await speakSystemTTS(this.demoVoiceText, {
-      onStart: () => this.isSpeaking = true,
-      onPause: () => this.isSpeaking = false,
-      onResume: () => this.isSpeaking = true,
-      onEnd: () => {
-        this.isSpeaking = false;
-        delete this.systemTTS;
-      },
-    });
-
-    if (this.isSpeaking) {
-      ttsEngine().pause();
-    } else {
-      ttsEngine().resume();
-    }
+  @action
+  async speakDemoText(provider: ProviderCodeName) {
+    const translator = getTranslator(provider);
+    await translator.speak(this.demoVoiceText[provider]);
   }
 
   renderProviderSettings({ name: provider, title, getAuthSettings }: Translator): React.ReactNode {
@@ -422,16 +389,16 @@ export class Settings extends React.Component {
             small
             material="edit"
             tooltip={{ nowrap: true, children: getMessage("tts_play_demo_sound_edit") }}
-            onClick={this.editDemoVoiceText}
+            onClick={() => this.editDemoVoiceText(ProviderCodeName.BING)}
           />
           <Icon
             small
             material={this.isSpeaking ? materialIcons.ttsPause : materialIcons.ttsPlay}
             tooltip={{
               nowrap: true,
-              children: `${getMessage("tts_play_demo_sound")}: "${this.demoVoiceText}"`,
+              children: `${getMessage("tts_play_demo_sound")}: "${this.demoVoiceText[ProviderCodeName.BING]}"`,
             }}
-            onClick={this.speakDemoText}
+            onClick={() => this.speakDemoText(ProviderCodeName.BING)}
           />
         </div>
       </>
@@ -452,4 +419,58 @@ export class Settings extends React.Component {
 pageManager.registerComponents("settings", {
   Tab: props => <Tab {...props} label={getMessage("tab_settings")} icon="settings"/>,
   Page: Settings,
+});
+
+export interface XTranslateProSettingsWidgetProps {
+  isSpeaking: boolean
+  voiceText: string,
+  editSpeakingText(): void;
+  speakText(): void;
+}
+
+export const XTranslateProSettingsWidget = observer(({ voiceText, editSpeakingText, speakText, isSpeaking }: XTranslateProSettingsWidgetProps) => {
+  const { isProActive } = userStore;
+
+  const openAiVoiceOptions =
+    Object.values(OpenAIModelTTSVoice).map((voice: string) => ({
+      value: voice,
+      label: startCase(voice),
+    })) as ReactSelectOption<OpenAIModelTTSVoice>[];
+
+  return (
+    <div className="flex gaps align-center">
+      {!isProActive && <em>({getMessage("recommended").toLowerCase()})</em>}
+      <Icon material={materialIcons.translate} tooltip={getMessage("pro_version_ai_translator", { provider: "Gemini" })}/>
+      <Icon material={materialIcons.summarize} tooltip={getMessage("pro_version_ai_summarize_feature")}/>
+      <Icon svg="tts" tooltip={getMessage("pro_version_ai_tts", { provider: "OpenAI" })}/>
+
+      {isProActive && (
+        <>
+          <span>{getMessage("pro_select_tts_voice")}</span>
+          <ReactSelect<OpenAIModelTTSVoice>
+            className={styles.providerSelect}
+            placeholder={getMessage("tts_select_voice_title")}
+            options={openAiVoiceOptions}
+            value={openAiVoiceOptions.find(voiceOpt => voiceOpt.value === userStore.data.ttsVoice)}
+            onChange={({ value }) => userStore.data.ttsVoice = value}
+          />
+          <Icon
+            small
+            material="edit"
+            tooltip={{ nowrap: true, children: getMessage("tts_play_demo_sound_edit") }}
+            onClick={editSpeakingText}
+          />
+          <Icon
+            small
+            material={isSpeaking ? materialIcons.ttsPause : materialIcons.ttsPlay}
+            tooltip={{
+              nowrap: true,
+              children: `${getMessage("tts_play_demo_sound")}: "${voiceText}"`,
+            }}
+            onClick={speakText}
+          />
+        </>
+      )}
+    </div>
+  )
 });
