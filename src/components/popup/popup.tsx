@@ -23,7 +23,6 @@ import { CopyToClipboardIcon } from "../copy-to-clipboard-icon";
 import { PopupPromoBanner } from "@/components/popup/popup_promo";
 import { Tooltip } from "@/components/tooltip";
 import { Button } from "@/components/button";
-import { ContextAd } from "@/affiliate/ad-context";
 
 export interface PopupProps extends React.HTMLProps<any> {
   previewMode?: boolean;
@@ -37,7 +36,6 @@ export interface PopupProps extends React.HTMLProps<any> {
   summarize?(evt: React.MouseEvent): Promise<void>;
   aiDemoTranslation?: boolean;
   aiDemoTranslationRequest?(evt: React.MouseEvent): void;
-  contextAd?: ContextAd;
 }
 
 @observer
@@ -309,35 +307,6 @@ export class Popup extends React.Component<PopupProps> {
     );
   }
 
-  renderContextAd() {
-    const { contextAd, previewMode } = this.props;
-
-    if (userStore.isProActive || !contextAd || previewMode) {
-      return;
-    }
-
-    return (
-      <a
-        href={contextAd.url}
-        onClick={() => sendMetric("ad_clicked", { brand: contextAd.brand })}
-        className={styles.contextAd}
-        target="_blank"
-        rel="nofollow sponsored noopener">
-        <span>
-          {getMessage("ad_sponsored_by", {
-            linkText: <em>{contextAd.title}</em>
-          })}
-        </span>
-        <Icon
-          small
-          material="close"
-          tooltip={{ nowrap: true, children: getMessage("ad_close_title") }}
-          onClick={prevDefault(() => userStore.openSubscribePage())}
-        />
-      </a>
-    )
-  }
-
   renderResult(): React.ReactNode {
     if (!this.translation) return;
     let { translation, transcription, dictionary = [], vendor, langFrom, langTo, langDetected } = this.translation;
@@ -348,7 +317,6 @@ export class Popup extends React.Component<PopupProps> {
 
     return (
       <div className={styles.translationResult} style={this.resultStyles}>
-        {this.renderContextAd()}
         <div className={styles.translation}>
           <div className={styles.icons}>
             {this.renderPlayTextIcon()}
