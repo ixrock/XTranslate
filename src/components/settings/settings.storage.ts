@@ -56,7 +56,7 @@ export const settingsStorage = createStorage("settings", {
     textInputAutoTranslateEnabled: false,
     textInputTranslateDelayMs: 2000,
     showAdvancedProviders: false, // advanced-list requires some setup from the user (e.g. adding api-key)
-    vendor: "bing" as ProviderCodeName, // api provider
+    vendor: "google" as ProviderCodeName, // api provider
     langFrom: "auto",
     langTo: navigator.language.split('-')[0],
     langToReverse: "", // applied in case when `langFrom` == "auto" && `langDetected` == `langTo`
