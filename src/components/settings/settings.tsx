@@ -61,16 +61,14 @@ export class Settings extends React.Component {
           />
         </div>
       ),
-      xtranslate_pro: (() => {
-        return (
-          <XTranslateProSettingsWidget
-            isSpeaking={this.isSpeaking}
-            voiceText={this.demoVoiceText[ProviderCodeName.XTRANSLATE_PRO]}
-            speakText={() => this.speakDemoText(ProviderCodeName.XTRANSLATE_PRO)}
-            editSpeakingText={() => this.editDemoVoiceText(ProviderCodeName.XTRANSLATE_PRO)}
-          />
-        );
-      })(),
+      xtranslate_pro: (
+        <XTranslateProSettingsWidget
+          isSpeaking={this.isSpeaking}
+          voiceText={this.demoVoiceText[ProviderCodeName.XTRANSLATE_PRO]}
+          speakText={() => this.speakDemoText(ProviderCodeName.XTRANSLATE_PRO)}
+          editSpeakingText={() => this.editDemoVoiceText(ProviderCodeName.XTRANSLATE_PRO)}
+        />
+      ),
       openai: (
         <div className="flex gaps align-center">
           <SelectAIModel

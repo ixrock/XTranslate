@@ -1,12 +1,12 @@
 export * from "./providers"
 export * from "./translator"
 
-// main providers
+// translation providers
+export * from './xtranslate_pro'
 export * from './google'
 export * from './bing'
-export * from './xtranslate_pro'
 
-// for advanced users (AI-based providers)
+// for advanced users (AI-based providers with bring-your-key flow)
 export * from './open-ai'
 export * from './gemini'
 export * from './grok'
