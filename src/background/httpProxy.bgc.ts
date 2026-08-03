@@ -126,9 +126,17 @@ export async function handleProxyRequestPayload<Response>({ url, responseType, r
     break;
   }
 
-  case ProxyResponseType.TEXT:
-    payload.data = await response.text();
+  case ProxyResponseType.TEXT: {
+    const data = await response.text();
+    if (response.ok) payload.data = data;
+    else {
+      throw {
+        statusCode: response.status,
+        message: data || response.statusText,
+      } as ITranslationError;
+    }
     break;
+  }
 
   case ProxyResponseType.DATA_URL:
     const blob = await response.blob();
