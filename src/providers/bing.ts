@@ -4,6 +4,7 @@ import groupBy from "lodash/groupBy";
 import { ProxyRequestInit, ProxyResponseType } from "../extension";
 import { ITranslationError, ITranslationResult, ProviderCodeName, TranslateBatchResult, TranslateParams, Translator } from "./index";
 import { createStorage } from "../storage";
+import { base64Decode } from "@/utils";
 
 export interface BingApiAuthParams {
   token: string; // jwt-token
@@ -44,7 +45,7 @@ class Bing extends Translator {
         responseType: ProxyResponseType.TEXT,
       });
 
-      const jwtPayload = JSON.parse(atob(token.split(".")[1])) as BingJwtPayload;
+      const jwtPayload = JSON.parse(base64Decode(token.split(".")[1])) as BingJwtPayload;
       const authParams: BingApiAuthParams = {
         token,
         tokenExpiryTimeMs: jwtPayload.exp * 1e3

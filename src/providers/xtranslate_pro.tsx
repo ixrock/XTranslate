@@ -8,7 +8,7 @@ import { sendMetric } from "@/background/metrics.bgc";
 import { createStorage } from "@/storage";
 import { getMessage } from "@/i18n";
 import { userStore } from "@/pro";
-import { SSEMessage, SSEParser } from "@/utils";
+import { base64Decode, SSEMessage, SSEParser } from "@/utils";
 
 export const freeTrialStorage = createStorage("xtranslate_pro_trial", {
   area: "sync",
@@ -442,7 +442,7 @@ export class XTranslatePro extends Translator {
     const body = dataUrl.slice(delimiterIndex + 1);
     const mimeType = metadata.match(/^data:([^;,]+)/i)?.[1] ?? fallbackType;
     const isBase64 = metadata.includes(";base64");
-    const decoded = isBase64 ? atob(body) : decodeURIComponent(body);
+    const decoded = isBase64 ? base64Decode(body) : decodeURIComponent(body);
     const bytes = new Uint8Array(decoded.length);
 
     for (let index = 0; index < decoded.length; index++) {
