@@ -16,6 +16,7 @@
   &.previewMode {
     position: relative;
     margin: auto;
+    white-space: nowrap;
   }
 
   &.fixedPos {
@@ -165,7 +166,7 @@
 
       .wordMeanings {
         display: grid;
-        grid-template-columns: auto 1fr;
+        grid-template-columns: min-content auto;
         align-items: center;
 
         .dictWord {

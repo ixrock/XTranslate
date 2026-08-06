@@ -80,7 +80,7 @@ export class PageTranslator {
   static readonly DEFAULT_API_LIMIT_CHARS_PER_REQUEST = 5000;
   static readonly FULL_PAGE_API_LIMIT_CHARS_PER_REQUEST: Partial<Record<ProviderCodeName, number>> = {
     [ProviderCodeName.GOOGLE]: 5000,
-    [ProviderCodeName.BING]: 5000,
+    [ProviderCodeName.BING]: 1000,
     [ProviderCodeName.XTRANSLATE_PRO]: 30000,
   };
 
