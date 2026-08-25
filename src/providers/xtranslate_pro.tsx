@@ -289,6 +289,10 @@ export class XTranslatePro extends Translator {
         });
       }
       if (apiError.type === "total") {
+        freeTrialStorage.merge({
+          totalRemain: 0,
+          finished: true,
+        });
         apiError.message = getMessage("pro_self_improve_with_ai_free_exausted_total");
       }
     }

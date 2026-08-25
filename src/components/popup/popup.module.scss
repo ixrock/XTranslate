@@ -166,8 +166,7 @@
 
       .wordMeanings {
         display: grid;
-        grid-template-columns: min-content auto;
-        align-items: center;
+        grid-template-columns: minmax(50%, min-content) auto;
 
         .dictWord {
           font-style: italic;
