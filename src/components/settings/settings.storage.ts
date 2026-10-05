@@ -1,7 +1,7 @@
 import { action, IObservableArray, makeObservable } from "mobx";
 import { Hotkey } from "@/utils/parseHotkey";
 import { createStorage } from "@/storage";
-import { DeepSeekAIModel, GeminiAIModel, getTranslator, GrokAIModel, OpenAIModel, ProviderCodeName } from "@/providers";
+import { getTranslator, ProviderCodeName } from "@/providers";
 
 export type PopupPosition = "" /*auto*/ | "left top" | "left bottom" | "right top" | "right bottom";
 export type DisplayMode = "day" | "night" | "auto";
@@ -55,7 +55,6 @@ export const settingsStorage = createStorage("settings", {
     rememberLastText: false,
     textInputAutoTranslateEnabled: false,
     textInputTranslateDelayMs: 2000,
-    showAdvancedProviders: false, // advanced-list requires some setup from the user (e.g. adding api-key)
     vendor: "google" as ProviderCodeName, // api provider
     langFrom: "auto",
     langTo: navigator.language.split('-')[0],
@@ -67,10 +66,6 @@ export const settingsStorage = createStorage("settings", {
     popupPosition: "" as PopupPosition,
     iconPosition: {} as XIconPosition,
     customPdfViewer: false,
-    openAiModel: OpenAIModel.RECOMMENDED,
-    grokAiModel: GrokAIModel.RECOMMENDED,
-    deepSeekModel: DeepSeekAIModel.RECOMMENDED,
-    geminiModel: GeminiAIModel.RECOMMENDED,
     safeTranslationLimit: 0, // 0 = unlimited, don't ask user for confirmation, useful for paid-API providers
     systemTTSEngineVoiceIndex: 0,
   }

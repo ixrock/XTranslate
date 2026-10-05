@@ -1,4 +1,6 @@
 // Base class for all translation providers
+import GoogleLanguagesList from "@/providers/google.json"
+import BingLanguagesList from "@/providers/bing.json"
 
 import type React from "react";
 import { observable, action } from "mobx";
@@ -12,6 +14,9 @@ import { proxyRequest } from "../background/httpProxy.bgc";
 import { getTranslationFromHistoryAction, saveToHistoryAction } from "../background/history.bgc";
 import { MetricSourceEnv, sendMetric } from "../background/metrics.bgc";
 import { pageTranslationStorage } from "@/user-script/page-translator";
+
+export type LangFrom = keyof typeof GoogleLanguagesList.from & keyof typeof BingLanguagesList.from;
+export type LangTo = Exclude<keyof typeof GoogleLanguagesList.to & keyof typeof BingLanguagesList.from, "auto">;
 
 export interface ProviderLanguagesApiMap {
   from: { [locale: string]: string; auto?: string };
@@ -58,9 +63,8 @@ export abstract class Translator {
   abstract title: string; // human readable name, e.g. "Google"
   abstract publicUrl: string; // public translation service page
   abstract apiUrl: string; // service api url
-  abstract isRequireApiKey: boolean; // require to bring api-key to work
-  public langFrom: Record<string, string> = {};
-  public langTo: Record<string, string> = {};
+  public langFrom: Record<string, string> = {} as Record<LangFrom, string>;
+  public langTo: Record<string, string> = {} as Record<LangTo, string>;
   public audio: HTMLAudioElement;
   public audioDataUrl = "";
   protected logger = createLogger({ systemPrefix: "[TRANSLATOR]" });
@@ -401,14 +405,7 @@ export abstract class Translator {
   }
 
   isAvailable(): boolean {
-    if (!this.isRequireApiKey) {
-      return true; // not required additional input-settings from user
-    }
-    return this.getAuthSettings().apiKeySanitized !== "";
-  }
-
-  getAuthSettings(): TranslatorAuthParams {
-    return {} as TranslatorAuthParams;
+    return true;
   }
 
   protected setupApiKey(saveKeyCallback: (key: string) => void) {
@@ -421,12 +418,6 @@ export abstract class Translator {
     const tail = 4;
     return apiKey.substring(0, tail) + "*-*" + apiKey.substring(apiKey.length - tail);
   }
-}
-
-export interface TranslatorAuthParams {
-  apiKeySanitized: string;
-  setupApiKey(): void;
-  clearApiKey(): void;
 }
 
 export interface ITranslationResult {
@@ -480,6 +471,12 @@ export function isRTL(lang: string) {
     "fa", // persian
     "ur", // urdu
   ].includes(lang);
+}
+
+export function getAllLanguages(): Record<LangTo, string> {
+  const langs = { ...GoogleLanguagesList.from, ...BingLanguagesList.from };
+  delete langs.auto;
+  return langs;
 }
 
 export function getTranslators(): Translator[] {

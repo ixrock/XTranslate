@@ -63,7 +63,6 @@
     "mobx": "^6.16.1",
     "mobx-observable-history": "^2.0.3",
     "mobx-react": "^9.2.2",
-    "openai": "^6.42.0",
     "pdf.js": "github:mozilla/pdf.js",
     "react": "^19.2.7",
     "react-color": "^2.19.3",

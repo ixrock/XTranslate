@@ -45,7 +45,6 @@ class Bing extends Translator {
   override title = "Bing";
   override publicUrl = BING_TRANSLATOR_URL;
   override apiUrl = BING_API_URL;
-  override isRequireApiKey = false;
 
   private requestCount = 0;
   private refreshPromise?: Promise<void>;

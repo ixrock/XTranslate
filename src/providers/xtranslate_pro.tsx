@@ -1,7 +1,7 @@
 import React from "react";
-import AILanguagesList from "./open-ai.json"
 import { action } from "mobx";
-import { getTranslator, ITranslationDictionary, ITranslationError, ITranslationResult, OpenAIModelTTSVoice, ProviderCodeName, TranslateBatchResult, TranslateClientContext, TranslateMode, TranslateParams, Translator } from "./index";
+import LanguagesList from "./bing.json"
+import { getTranslator, ITranslationDictionary, ITranslationError, ITranslationResult, ProviderCodeName, TranslateBatchResult, TranslateClientContext, TranslateMode, TranslateParams, Translator, XTranslateProTTSVoice } from "./index";
 import { MessageType, openProxyStream, ProxyResponseType, ProxyStreamResponsePayload } from "@/extension";
 import { supportEmail, websiteURL } from "@/config";
 import { sendMetric } from "@/background/metrics.bgc";
@@ -29,7 +29,6 @@ export class XTranslatePro extends Translator {
 
   override name = ProviderCodeName.XTRANSLATE_PRO;
   override title = "XTranslate PRO";
-  override isRequireApiKey = false;
 
   override publicUrl = websiteURL;
   override apiUrl = `${websiteURL}/api`;
@@ -44,7 +43,7 @@ export class XTranslatePro extends Translator {
 
   constructor() {
     super({
-      languages: AILanguagesList,
+      languages: LanguagesList,
     });
   }
 
@@ -398,7 +397,7 @@ export class XTranslatePro extends Translator {
     }
   }
 
-  override async speak(text: string, lang?: string, voice?: OpenAIModelTTSVoice): Promise<HTMLAudioElement | SpeechSynthesisUtterance | void> {
+  override async speak(text: string, lang?: string, voice?: XTranslateProTTSVoice): Promise<HTMLAudioElement | SpeechSynthesisUtterance | void> {
     voice ??= userStore.data.ttsVoice; // use default value from app's UI settings
 
     return super.speak(text, lang, voice);
@@ -409,7 +408,7 @@ export class XTranslatePro extends Translator {
     this.ttsPort?.disconnect();
   }
 
-  private buildCacheKey(text: string, lang?: string, voice?: OpenAIModelTTSVoice): string {
+  private buildCacheKey(text: string, lang?: string, voice?: XTranslateProTTSVoice): string {
     return JSON.stringify({
       text,
       lang: lang ?? "",
@@ -657,7 +656,7 @@ export class XTranslatePro extends Translator {
     });
   }
 
-  async getAudioFile(text: string, lang?: string, voice?: OpenAIModelTTSVoice): Promise<Blob> {
+  async getAudioFile(text: string, lang?: string, voice?: XTranslateProTTSVoice): Promise<Blob> {
     this.logger.info("attempt for text-to-speech with params", { text, lang, voice });
     const cacheKey = this.buildCacheKey(text, lang, voice);
     const cachedBlob = await this.getCachedBlob(cacheKey);
@@ -682,7 +681,7 @@ export class XTranslatePro extends Translator {
     });
   }
 
-  override async streamAudio(text: string, lang?: string, voice?: OpenAIModelTTSVoice): Promise<boolean> {
+  override async streamAudio(text: string, lang?: string, voice?: XTranslateProTTSVoice): Promise<boolean> {
     if (!window.MediaSource || !MediaSource.isTypeSupported("audio/mpeg")) {
       return false;
     }

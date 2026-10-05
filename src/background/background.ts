@@ -4,7 +4,6 @@ import "../setup";
 import "./storage.bgc";
 import "./scripting.bgc";
 import "./history.bgc";
-import "./ai.bgc";
 import "./metrics.bgc";
 import "./user.bgc";
 import "./translate-page.bgc";

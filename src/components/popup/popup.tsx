@@ -1,6 +1,4 @@
 import * as styles from "./popup.module.scss"
-import GoogleLanguagesList from "@/providers/google.json"
-import BingLanguagesList from "@/providers/bing.json"
 
 import React, { CSSProperties } from "react";
 import { computed, makeObservable } from "mobx";
@@ -10,7 +8,7 @@ import { materialIcons } from "@/config";
 import { cssNames, prevDefault } from "@/utils";
 import { toCssColor } from "@/utils/toCssColor";
 import { TranslatePayload } from "@/extension";
-import { freeTrialStorage, getTranslator, getTranslators, getXTranslatePro, isRTL, ITranslationError, ITranslationResult, ProviderCodeName } from "@/providers";
+import { freeTrialStorage, getAllLanguages, getTranslator, getTranslators, getXTranslatePro, isRTL, ITranslationError, ITranslationResult, LangFrom, LangTo, ProviderCodeName } from "@/providers";
 import { Icon } from "../icon";
 import { userStore } from "@/pro";
 import { sendMetric } from "@/background/metrics.bgc";
@@ -44,8 +42,7 @@ export class Popup extends React.Component<PopupProps> {
   private translationMock?: ITranslationResult;
 
   static get translationMock(): ITranslationResult {
-    const langs = { ...GoogleLanguagesList.from, ...BingLanguagesList.from };
-    delete langs.auto;
+    const langs = getAllLanguages();
     delete langs.en;
     return {
       vendor: settingsStore.data.vendor,
@@ -359,7 +356,7 @@ export class Popup extends React.Component<PopupProps> {
           this.settings.showTranslatedFrom && (
             <div className={styles.translatedFrom}>
               {getMessage("translated_from", {
-                lang: translator.langFrom[langFrom] ?? langFrom,
+                lang: getAllLanguages()[langFrom as LangTo]
               })}
               {` (${translator.title})`}
             </div>

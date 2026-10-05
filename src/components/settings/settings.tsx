@@ -4,7 +4,7 @@ import { action, makeObservable, observable } from "mobx";
 import { observer } from "mobx-react";
 import isEqual from "lodash/isEqual";
 import startCase from "lodash/startCase";
-import { DeepSeekAIModel, GeminiAIModel, getTranslator, getTranslators, googleApiDomain, googleApiDomains, GrokAIModel, OpenAIModel, OpenAIModelTTSVoice, ProviderCodeName, ProviderWithApiKey, Translator } from "@/providers";
+import { getTranslator, getTranslators, googleApiDomain, googleApiDomains, ProviderCodeName, Translator, XTranslateProTTSVoice } from "@/providers";
 import { XTranslateIcon } from "@/user-script/xtranslate-icon";
 import { SelectLanguage, SelectLanguageChangeEvent } from "../select-language";
 import { Checkbox } from "../checkbox";
@@ -18,8 +18,6 @@ import { pageManager } from "../app/page-manager";
 import { getMessage } from "@/i18n";
 import { SelectVoice } from "../select-tts-voice";
 import { ttsEngine } from "@/tts";
-import { SelectAIModel } from "./select_ai_model";
-import { ProviderAuthSettings } from "./provider_auth_settings";
 import { materialIcons } from "@/config";
 import { SelectProvider } from "../select-provider";
 import { ShowHideMore } from "../show-hide-more";
@@ -69,37 +67,6 @@ export class Settings extends React.Component {
           editSpeakingText={() => this.editDemoVoiceText(ProviderCodeName.XTRANSLATE_PRO)}
         />
       ),
-      openai: (
-        <div className="flex gaps align-center">
-          <SelectAIModel
-            className={styles.providerSelect}
-            modelOptions={OpenAIModel}
-            getValue={() => settingsStore.data.openAiModel}
-            onChange={value => settingsStore.data.openAiModel = value}
-          />
-        </div>
-      ),
-      grok: (
-        <SelectAIModel
-          modelOptions={GrokAIModel}
-          getValue={() => settingsStore.data.grokAiModel}
-          onChange={value => settingsStore.data.grokAiModel = value}
-        />
-      ),
-      deepseek: (
-        <SelectAIModel
-          modelOptions={DeepSeekAIModel}
-          getValue={() => settingsStore.data.deepSeekModel}
-          onChange={value => settingsStore.data.deepSeekModel = value}
-        />
-      ),
-      gemini: (
-        <SelectAIModel
-          modelOptions={GeminiAIModel}
-          getValue={() => settingsStore.data.geminiModel}
-          onChange={value => settingsStore.data.geminiModel = value}
-        />
-      )
     }
   };
 
@@ -143,21 +110,11 @@ export class Settings extends React.Component {
     await translator.speak(this.demoVoiceText[provider]);
   }
 
-  renderProviderSettings({ name: provider, title, getAuthSettings }: Translator): React.ReactNode {
-    const authSettings = getAuthSettings();
+  renderProviderSettings({ name: provider }: Translator): React.ReactNode {
     const translator = getTranslator(provider);
 
     return (
       <div className={styles.providerSettings}>
-        {translator.isRequireApiKey && (
-          <ProviderAuthSettings
-            {...authSettings}
-            provider={provider}
-            accessInfo={getMessage(`auth_access_info_api_key`, { provider: title })}
-            accessInfoSetupSteps={getMessage(`auth_access_info_steps_${provider as ProviderWithApiKey}`)}
-            clearKeyInfo={getMessage(`auth_clear_key_info`, { provider: title })}
-          />
-        )}
         {translator.isAvailable() && this.providerSettings[provider]}
       </div>
     )
@@ -230,9 +187,7 @@ export class Settings extends React.Component {
 
   renderPopupTranslationSettings() {
     const settings = settingsStore.data;
-    const providers = settings.showAdvancedProviders
-      ? getTranslators() // show all
-      : getTranslators().filter(providers => !providers.isRequireApiKey);
+    const providers = getTranslators().filter(provider => provider.isAvailable());
 
     return (
       <>
@@ -246,14 +201,6 @@ export class Settings extends React.Component {
         <RadioGroup className={styles.providers} value={settings.vendor} onChange={this.onProviderChange}>
           {providers.map(this.renderProvider, this)}
         </RadioGroup>
-        <ShowHideMore
-          visible={settings.showAdvancedProviders}
-          onToggle={visible => settings.showAdvancedProviders = visible}
-          label={settings.showAdvancedProviders
-            ? getMessage("settings_title_advanced_providers_list_hide")
-            : getMessage("settings_title_advanced_providers_list_show")
-          }
-        />
       </>
     );
   }
@@ -438,10 +385,10 @@ export const XTranslateProSettingsWidget = observer(({ voiceText, editSpeakingTe
   const { isProActive } = userStore;
 
   const openAiVoiceOptions =
-    Object.values(OpenAIModelTTSVoice).map((voice: string) => ({
+    Object.values(XTranslateProTTSVoice).map((voice: string) => ({
       value: voice,
       label: startCase(voice),
-    })) as ReactSelectOption<OpenAIModelTTSVoice>[];
+    })) as ReactSelectOption<XTranslateProTTSVoice>[];
 
   return (
     <div className="flex gaps align-center">
@@ -453,7 +400,7 @@ export const XTranslateProSettingsWidget = observer(({ voiceText, editSpeakingTe
       {isProActive && (
         <>
           <span>{getMessage("pro_select_tts_voice")}</span>
-          <ReactSelect<OpenAIModelTTSVoice>
+          <ReactSelect<XTranslateProTTSVoice>
             className={styles.providerSelect}
             placeholder={getMessage("tts_select_voice_title")}
             options={openAiVoiceOptions}
