@@ -4,7 +4,7 @@ import { action, makeObservable, observable } from "mobx";
 import { observer } from "mobx-react";
 import isEqual from "lodash/isEqual";
 import startCase from "lodash/startCase";
-import { getTranslator, getTranslators, googleApiDomain, googleApiDomains, ProviderCodeName, Translator, XTranslateProTTSVoice } from "@/providers";
+import { deeplApiAuthKey, getTranslator, getTranslators, googleApiDomain, googleApiDomains, ProviderCodeName, sanitizeDeeplApiKey, Translator, XTranslateProTTSVoice } from "@/providers";
 import { XTranslateIcon } from "@/user-script/xtranslate-icon";
 import { SelectLanguage, SelectLanguageChangeEvent } from "../select-language";
 import { Checkbox } from "../checkbox";
@@ -26,6 +26,7 @@ import { userStore } from "@/pro";
 import { getHotkey, parseHotkey, prevDefault } from "@/utils";
 import { Input } from "@/components/input";
 import { FullPageContextMenuMode, pageTranslationStorage } from "@/user-script/page-translator";
+import { Button } from "../button";
 
 @observer
 export class Settings extends React.Component {
@@ -48,6 +49,8 @@ export class Settings extends React.Component {
   @observable isSpeaking = false;
 
   get providerSettings(): Partial<Record<ProviderCodeName, React.ReactNode>> {
+    const deeplApiKey = deeplApiAuthKey.get();
+
     return {
       google: (
         <div className="flex gaps align-center">
@@ -57,6 +60,19 @@ export class Settings extends React.Component {
             value={this.googleApiDomainOptions.find(({ value }) => value === googleApiDomain.get())}
             onChange={({ value }) => googleApiDomain.set(value)}
           />
+        </div>
+      ),
+      deepl: (
+        <div className="flex gaps align-center" title={getMessage("auth_access_info_api_key", { provider: "DeepL" })}>
+          {deeplApiKey ? (
+            <>
+              <span>API key: {sanitizeDeeplApiKey(deeplApiKey)}</span>
+              <Button outline label="Change" onClick={this.setupDeeplApiKey}/>
+              <Button outline label="Remove" onClick={this.clearDeeplApiKey}/>
+            </>
+          ) : (
+            <Button outline label="Set API key" onClick={this.setupDeeplApiKey}/>
+          )}
         </div>
       ),
       xtranslate_pro: (
@@ -94,6 +110,25 @@ export class Settings extends React.Component {
     if (newText) {
       this.demoVoiceText[provider] = newText;
       this.stopSpeakingSystemTTS();
+    }
+  }
+
+  @action.bound
+  setupDeeplApiKey() {
+    const prompt = [
+      getMessage("auth_setup_key_info", { provider: "DeepL" }),
+      getMessage("auth_safety_warning_info"),
+    ].join("\n\n");
+    const apiKey = window.prompt(prompt)?.trim();
+    if (apiKey) {
+      deeplApiAuthKey.set(apiKey);
+    }
+  }
+
+  @action.bound
+  clearDeeplApiKey() {
+    if (window.confirm(getMessage("auth_clear_key_info", { provider: "DeepL" }))) {
+      deeplApiAuthKey.set("");
     }
   }
 

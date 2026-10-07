@@ -3,6 +3,7 @@
 export enum ProviderCodeName {
   GOOGLE = "google",
   BING = "bing",
+  DEEPL = "deepl",
   XTRANSLATE_PRO = "xtranslate_pro",
 }
 

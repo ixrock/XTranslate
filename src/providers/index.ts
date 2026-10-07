@@ -4,4 +4,5 @@ export * from "./translator"
 // translation providers
 export * from './google'
 export * from './bing'
+export * from './deepl'
 export * from './xtranslate_pro'
