@@ -105,7 +105,18 @@ function onProxyConnection(port: chrome.runtime.Port) {
 export async function handleProxyRequestPayload<Response>({ url, responseType, requestInit }: ProxyRequestPayload) {
   logger.info(`proxying request (${responseType}): ${url}`);
 
-  const response = await fetch(url, requestInit);
+  let response: globalThis.Response;
+  try {
+    response = await fetch(url, requestInit);
+  } catch (error: unknown) {
+    const message = getErrorMessage(error);
+    logger.error(`proxy request failed: ${url}`, message);
+    throw {
+      statusCode: 0,
+      message,
+    } as ITranslationError;
+  }
+
   const payload: ProxyResponsePayload = {
     url,
     headers: Object.fromEntries(response.headers),
