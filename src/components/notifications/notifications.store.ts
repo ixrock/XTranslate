@@ -13,6 +13,7 @@ export interface INotification {
   message: IMessage
   status?: IMessageStatus
   timeout?: number // auto-hiding timeout in milliseconds, 0 = no hide
+  onClose?: () => void
 }
 
 export class NotificationsStore {

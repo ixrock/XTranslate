@@ -536,8 +536,11 @@
   "pro_upgrade_button_label": {
     "message": "Nadogradite na PRO"
   },
+  "pro_got_cheaper_banner": {
+    "message": "XTranslate PRO je sada povoljniji!"
+  },
   "pro_upgrade_button_tooltip": {
-    "message": "Prijavite se, isprobajte besplatni plan i pretplatite se kasnije za oko { $pricePerMonth }/mesečno"
+    "message": "Prijavite se, isprobajte besplatni plan i pretplatite se kasnije. Već od { $pricePerMonth }/mesečno"
   },
   "pro_select_tts_voice": {
     "message": "Glas"

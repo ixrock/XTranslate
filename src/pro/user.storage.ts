@@ -1,15 +1,17 @@
 import { createStorage } from "@/storage";
-import { getXTranslatePro, OpenAIModelTTSVoice, XTranslateProPricing, XTranslateProSubscription, XTranslateProTranslateError, XTranslateProUser } from "@/providers";
+import { getXTranslatePro, XTranslateProPlanType, XTranslateProPricing, XTranslateProSubscription, XTranslateProTranslateError, XTranslateProTTSVoice, XTranslateProUser } from "@/providers";
 import { formatPrice } from "@/utils";
 import { getLocale, getMessage } from "@/i18n";
+import { showProLiteBannerMigration } from "./migrations/show-pro-lite-banner.migration";
 
 export interface UserStorage {
   user?: XTranslateProUser;
   subscription?: XTranslateProSubscription;
   pricing?: XTranslateProPricing;
-  ttsVoice?: OpenAIModelTTSVoice;
+  ttsVoice?: XTranslateProTTSVoice;
   lastUpdateDateTime?: number; // timestamp of load user-subscription
   promoBannerShowTime?: number;
+  showProLiteBanner?: boolean;
 }
 
 export const userStorage = createStorage<UserStorage>("user_pro", {
@@ -17,8 +19,10 @@ export const userStorage = createStorage<UserStorage>("user_pro", {
   autoLoad: true,
   saveDefaultWhenEmpty: true,
   deepMergeOnLoad: true,
+  migrations: [showProLiteBannerMigration],
   defaultValue: {
-    ttsVoice: OpenAIModelTTSVoice.Alloy,
+    showProLiteBanner: false,
+    ttsVoice: XTranslateProTTSVoice.Alloy,
     lastUpdateDateTime: 0,
     promoBannerShowTime: 0,
   },
@@ -53,11 +57,19 @@ export class UserStore {
   }
 
   get pricePerMonth() {
-    return this.formatPrice(this.pricing?.MONTHLY.priceCentsUSD ?? 0);
+    return this.formatPrice(this.pricing?.MONTHLY_LITE.priceCentsUSD ?? 0);
   }
 
-  get isGuestUser(): boolean {
-    return !this.user && !this.subscription;
+  get showProLiteBanner() {
+    return this.data.showProLiteBanner;
+  }
+
+  hideProLiteBanner() {
+    this.storage.merge({ showProLiteBanner: false });
+  }
+
+  get paidPlans(): XTranslateProPlanType[] {
+    return ["MONTHLY", "YEARLY", "MONTHLY_LITE", "YEARLY_LITE"];
   }
 
   get isFreeUser(): boolean {
@@ -66,7 +78,7 @@ export class UserStore {
 
   get isPaidUser(): boolean {
     const planType = this.subscription?.planType;
-    return planType === "MONTHLY" || planType === "YEARLY";
+    return this.paidPlans.includes(planType);
   }
 
   get isProActive(): boolean {

@@ -539,8 +539,11 @@
   "pro_upgrade_button_label": {
     "message": "升级到 PRO"
   },
+  "pro_got_cheaper_banner": {
+    "message": "XTranslate PRO 降价了！"
+  },
   "pro_upgrade_button_tooltip": {
-    "message": "登录，试用免费计划，稍后以约 { $pricePerMonth }/月的价格订阅"
+    "message": "登录，试用免费计划，稍后再订阅。{ $pricePerMonth }/月起"
   },
   "pro_select_tts_voice": {
     "message": "语音"

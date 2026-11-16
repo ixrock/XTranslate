@@ -48,12 +48,9 @@ Install extension:
 Available translation providers:
 -----------
 
-* [Google Translate](http://translate.google.com/) - ready to use after installation
-* [Bing Translate](http://bing.com/translator/) - ready to use after installation
-* [OpenAI](https://platform.openai.com) _(register, top-up balance and create api-key for the extension)_
-* [Gemini](https://aistudio.google.com/) _(create free-tier api-key)_
-* [Grok](https://console.x.ai) _(register, top-up balance and create api-key)_
-* [DeepSeek](https://platform.deepseek.com) _(register, top-up balance and create api-key)_
+* [Google Translate](http://translate.google.com/) - ready to use after installation.
+* [Bing Translate](http://bing.com/translator/) - ready to use after installation.
+* [XTranslate PRO](https://www.xtranslate.dev/subscribe) - _AI-based professional translator / paid subscription.
 
 How to enable translator in local HTML/PDF files:
 -----------
@@ -99,7 +96,7 @@ How to build/contribute to project:
 
 _Prerequisites:_
 
-1) Install [Node.js](https://nodejs.org/) _(v24+)_
+1) Install [Node.js](https://nodejs.org/) _(v22+)_
 2) Install project dependencies `npm install`
 
 _NPM-script commands:_
