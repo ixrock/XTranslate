@@ -539,8 +539,11 @@
   "pro_upgrade_button_label": {
     "message": "الترقية إلى PRO"
   },
+  "pro_got_cheaper_banner": {
+    "message": "أصبح XTranslate PRO أرخص!"
+  },
   "pro_upgrade_button_tooltip": {
-    "message": "سجل الدخول، جرب الخطة المجانية واشترك لاحقًا بحوالي { $pricePerMonth }/شهريًا"
+    "message": "سجّل الدخول، جرّب الخطة المجانية واشترك لاحقًا. ابتداءً من { $pricePerMonth }/شهريًا"
   },
   "pro_select_tts_voice": {
     "message": "الصوت"

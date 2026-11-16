@@ -539,8 +539,11 @@
   "pro_upgrade_button_label": {
     "message": "PRO में अपग्रेड करें"
   },
+  "pro_got_cheaper_banner": {
+    "message": "XTranslate PRO अब और सस्ता है!"
+  },
   "pro_upgrade_button_tooltip": {
-    "message": "लॉगिन करें, मुफ्त योजना आज़माएं और बाद में लगभग { $pricePerMonth }/माह के लिए सदस्यता लें"
+    "message": "लॉग इन करें, मुफ़्त योजना आज़माएँ और बाद में सदस्यता लें। { $pricePerMonth }/माह से शुरू"
   },
   "pro_select_tts_voice": {
     "message": "आवाज़"

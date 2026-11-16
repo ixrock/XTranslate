@@ -1057,7 +1057,7 @@ export interface XTranslateProPlan {
   ttsBytesIncluded: number;
 }
 
-export type XTranslateProPlanType = "FREE_TRIAL" | "MONTHLY" | "YEARLY";
+export type XTranslateProPlanType = "FREE_TRIAL" | "MONTHLY" | "YEARLY" | "MONTHLY_LITE" | "YEARLY_LITE";
 export type XTranslateProStatus = "PAID" | "FAILED" | "REFUNDED" | "CANCELED";
 
 export interface XTranslateProSubscriptionResponse extends XTranslateProSubscription {

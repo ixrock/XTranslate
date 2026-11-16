@@ -539,8 +539,11 @@
   "pro_upgrade_button_label": {
     "message": "Nâng cấp lên PRO"
   },
+  "pro_got_cheaper_banner": {
+    "message": "XTranslate PRO nay đã rẻ hơn!"
+  },
   "pro_upgrade_button_tooltip": {
-    "message": "Đăng nhập, dùng thử gói miễn phí và đăng ký sau với giá khoảng { $pricePerMonth }/tháng"
+    "message": "Đăng nhập, dùng thử gói miễn phí và đăng ký sau. Chỉ từ { $pricePerMonth }/tháng"
   },
   "pro_select_tts_voice": {
     "message": "Giọng nói"

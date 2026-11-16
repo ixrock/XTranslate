@@ -542,8 +542,11 @@
   "pro_upgrade_button_label": {
     "message": "PRO'ya yükselt"
   },
+  "pro_got_cheaper_banner": {
+    "message": "XTranslate PRO artık daha ucuz!"
+  },
   "pro_upgrade_button_tooltip": {
-    "message": "Giriş yapın, ücretsiz planı deneyin ve daha sonra yaklaşık { $pricePerMonth }/ay karşılığında abone olun"
+    "message": "Giriş yapın, ücretsiz planı deneyin ve daha sonra abone olun. Aylık { $pricePerMonth }'dan başlayan fiyatlarla"
   },
   "pro_select_tts_voice": {
     "message": "Ses"

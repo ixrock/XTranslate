@@ -539,8 +539,11 @@
   "pro_upgrade_button_label": {
     "message": "Tingkatkan ke PRO"
   },
+  "pro_got_cheaper_banner": {
+    "message": "XTranslate PRO sekarang lebih murah!"
+  },
   "pro_upgrade_button_tooltip": {
-    "message": "Masuk, coba paket gratis dan berlangganan nanti dengan harga sekitar { $pricePerMonth }/bulan"
+    "message": "Masuk, coba paket gratis, dan berlangganan nanti. Mulai dari { $pricePerMonth }/bulan"
   },
   "pro_select_tts_voice": {
     "message": "Suara"

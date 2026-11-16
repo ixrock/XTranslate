@@ -3,7 +3,7 @@
 .Notifications {
   @include hidden-scrollbar;
 
-  position: absolute;
+  position: fixed;
   display: flex;
   flex-direction: column;
   align-content: flex-end;

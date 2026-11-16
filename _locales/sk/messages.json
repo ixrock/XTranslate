@@ -536,8 +536,11 @@
   "pro_upgrade_button_label": {
     "message": "Upgradovať na PRO"
   },
+  "pro_got_cheaper_banner": {
+    "message": "XTranslate PRO je teraz lacnejší!"
+  },
   "pro_upgrade_button_tooltip": {
-    "message": "Prihláste sa, vyskúšajte bezplatný balík a neskôr si predplaťte za približne { $pricePerMonth }/mesiac"
+    "message": "Prihláste sa, vyskúšajte bezplatný balík a predplaťte si ho neskôr. Už od { $pricePerMonth }/mesiac"
   },
   "pro_select_tts_voice": {
     "message": "Hlas"

@@ -28,11 +28,12 @@ export class Notifications extends React.Component {
     });
   }
 
-  static info(message: IMessage) {
+  static info(message: IMessage, onClose?: () => void) {
     return notificationsStore.add({
       message: message,
       timeout: 0,
-      status: "info"
+      status: "info",
+      onClose,
     });
   }
 
@@ -74,7 +75,10 @@ export class Notifications extends React.Component {
         {notifications.map(notification => {
           var { id, status } = notification;
           var msgText = this.getMessage(notification);
-          var removeNotification = prevDefault(() => remove(notification));
+          var removeNotification = prevDefault(() => {
+            notification.onClose?.();
+            remove(notification);
+          });
           return (
             <Animate key={id}>
               <div

@@ -7,10 +7,13 @@ import { formatNumber, getIntlLocale, getMessage } from "@/i18n";
 import { Tooltip } from "@/components/tooltip";
 import { Button } from "@/components/button";
 import { userStore } from "@/pro";
+import { useProLiteBannerNotification } from "./hooks/use-pro-lite-banner-notification";
 
 export const ProUserInfo = observer(ProUserInfoRaw);
 
 export function ProUserInfoRaw() {
+  useProLiteBannerNotification();
+
   const {
     user,
     subscription,
