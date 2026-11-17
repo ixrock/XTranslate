@@ -57,7 +57,7 @@ export class UserStore {
   }
 
   get pricePerMonth() {
-    return this.formatPrice(this.pricing?.MONTHLY_LITE.priceCentsUSD ?? 0);
+    return this.formatPrice(this.pricing?.MONTHLY_LITE?.priceCentsUSD ?? 0);
   }
 
   get showProLiteBanner() {
