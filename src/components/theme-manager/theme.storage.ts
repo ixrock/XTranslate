@@ -1,7 +1,8 @@
 import { EventEmitter } from "events"
 import { reaction } from "mobx";
 import { Color } from "react-color"
-import { getURL } from "@/extension";
+import { getURL, ProxyResponseType } from "@/extension";
+import { proxyRequest } from "@/background/httpProxy.bgc";
 import { createLogger, disposer, LoggerColor } from "@/utils";
 import { createStorage } from "@/storage";
 
@@ -117,29 +118,34 @@ export class ThemeStore {
     return [...document.fonts].some((fontFace) => fontFace.family === familyName);
   }
 
+  private async getBundledFontSource(fileName: string): Promise<string | ArrayBuffer> {
+    const url = getURL(`assets/fonts/${fileName}`);
+    if (location.href.startsWith(getURL())) {
+      return `url(${url})`;
+    }
+
+    const file = await proxyRequest<Blob>({ url, responseType: ProxyResponseType.BLOB });
+    return file.arrayBuffer();
+  }
+
   async loadFont(font: string | IThemeFont) {
     await document.fonts.ready;
     await customFont.load();
 
-    let fontFace: FontFace;
-
-    // load custom font if provided
-    const { fileName: customFontName, fontDataBase64, type: customFontType } = customFont.get();
-    if (font === customFontName) {
-      const fontUrl = `url(data:${customFontType};base64,${fontDataBase64})`;
-      fontFace = new FontFace(customFontName, fontUrl, { display: "swap" });
-    } else {
-      // handle bundled fonts
-      const { fileName, familyName } = this.getBundledFont(font);
-      if (!fileName) return; // system font is selected by user, e.g. "Arial"
-      if (this.isLoaded(familyName)) return; // font already preloaded
-
-      const fontAssetsUrl = getURL(`assets/fonts/${fileName}`);
-      fontFace = new FontFace(familyName, `url(${fontAssetsUrl})`, { display: "swap" });
-    }
-
-    // load font-face and add to document
     try {
+      let fontFace: FontFace;
+      const { fileName: customFontName, fontDataBase64, type: customFontType } = customFont.get();
+      if (font === customFontName) {
+        const fontUrl = `url(data:${customFontType};base64,${fontDataBase64})`;
+        fontFace = new FontFace(customFontName, fontUrl, { display: "swap" });
+      } else {
+        const bundledFont = this.getBundledFont(font);
+        if (!bundledFont?.fileName || this.isLoaded(bundledFont.familyName)) return;
+
+        const source = await this.getBundledFontSource(bundledFont.fileName);
+        fontFace = new FontFace(bundledFont.familyName, source, { display: "swap" });
+      }
+
       await fontFace.load();
       this.logger.info(`font loaded`, { font: fontFace, origin: location.href });
       document.fonts.add(fontFace);
