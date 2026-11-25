@@ -10,9 +10,13 @@ export type Provider = (typeof ProviderCodeName)[keyof typeof ProviderCodeName];
 
 export enum XTranslateProTTSVoice {
   Alloy = "alloy",
+  Ash = "ash",
+  Ballad = "ballad",
+  Cedar = "cedar",
+  Coral = "coral",
   Echo = "echo",
-  Fable = "fable",
-  Onyx = "onyx",
-  Nova = "nova",
+  Marin = "marin",
+  Sage = "sage",
   Shimmer = "shimmer",
+  Verse = "verse",
 }
