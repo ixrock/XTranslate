@@ -3,7 +3,7 @@
  */
 
 export function base64Decode(base64: string): string;
-export function base64Decode(base64: string, asBinary: true): Uint8Array;
+export function base64Decode(base64: string, asBinary: true): Uint8Array<ArrayBuffer>;
 export function base64Decode(base64: string, asBinary?: boolean): Uint8Array | string {
   const binString = window.atob(base64);
   const binary = Uint8Array.from(binString, (m) => m.codePointAt(0));
