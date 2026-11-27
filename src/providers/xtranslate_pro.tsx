@@ -7,8 +7,8 @@ import { supportEmail, websiteURL } from "@/config";
 import { sendMetric } from "@/background/metrics.bgc";
 import { createStorage } from "@/storage";
 import { getMessage } from "@/i18n";
-import { userStore } from "@/pro";
-import { base64Decode, SSEMessage, SSEParser } from "@/utils";
+import { userStorage, userStore } from "@/pro";
+import { base64Decode, blobToBase64DataUrl, SSEMessage, SSEParser } from "@/utils";
 
 export const freeTrialStorage = createStorage("xtranslate_pro_trial", {
   area: "sync",
@@ -23,6 +23,10 @@ export const freeTrialStorage = createStorage("xtranslate_pro_trial", {
   },
 });
 
+function serializeTtsRequest(text: string, voice: string): string {
+  return JSON.stringify({ text: text.trim(), voice });
+}
+
 export class XTranslatePro extends Translator {
   static ERROR_CODE_LIMIT_REACHED = "LIMIT_REACHED";
   static ERROR_CODE_INPUT_TOO_LARGE_ERROR = "INPUT_TOO_LARGE";
@@ -35,11 +39,12 @@ export class XTranslatePro extends Translator {
   public subscribePageUrl = `${websiteURL}/subscribe`;
   public loginUrl = `${websiteURL}/api/auth/signin?callbackUrl=/billing`;
 
-  private ttsPort?: chrome.runtime.Port;
+  private disconnectTtsStream?: () => void;
   private static readonly ttsCacheTtlMs = 24 * 60 * 60 * 1000; // 24h
   private static readonly ttsCacheStoragePrefix = "xtranslate_pro_tts_cache";
   private static readonly ttsMemoryCache = new Map<string, XTranslateProMemoryTTSCacheEntry>();
   private static readonly ttsInFlight = new Map<string, Promise<Blob>>();
+  private legacyTtsKeys?: Promise<Map<string, string[]>>;
 
   constructor() {
     super({
@@ -397,42 +402,42 @@ export class XTranslatePro extends Translator {
     }
   }
 
-  override async speak(text: string, lang?: string, voice?: XTranslateProTTSVoice): Promise<HTMLAudioElement | SpeechSynthesisUtterance | void> {
-    voice ??= userStore.data.ttsVoice; // use default value from app's UI settings
-
-    return super.speak(text, lang, voice);
-  }
-
   override stopSpeaking() {
     super.stopSpeaking();
-    this.ttsPort?.disconnect();
+    this.disconnectTtsStream?.();
   }
 
-  private buildCacheKey(text: string, lang?: string, voice?: XTranslateProTTSVoice): string {
-    return JSON.stringify({
-      text,
-      lang: lang ?? "",
-      voice: voice ?? "",
-    });
+  private async getTtsRequestBody(text: string, voice?: XTranslateProTTSVoice): Promise<string> {
+    if (!voice) {
+      await userStorage.load();
+      voice = userStore.data.ttsVoice ?? XTranslateProTTSVoice.Alloy;
+    }
+    return serializeTtsRequest(text, voice);
   }
 
   private buildStorageCacheKey(cacheKey: string): string {
     return `${XTranslatePro.ttsCacheStoragePrefix}:${cacheKey}`;
   }
 
-  private async blobToDataUrl(blob: Blob): Promise<string> {
-    return new Promise((resolve, reject) => {
-      const fileReader = new FileReader();
-      fileReader.readAsDataURL(blob);
-      fileReader.onloadend = () => {
-        if (typeof fileReader.result === "string") {
-          resolve(fileReader.result);
-        } else {
-          reject(new Error("Unable to convert blob to data-url"));
-        }
-      };
-      fileReader.onerror = () => reject(fileReader.error ?? new Error("Unable to convert blob to data-url"));
-    });
+  private async indexLegacyTtsKeys(storage: chrome.storage.StorageArea): Promise<Map<string, string[]>> {
+    const keys = storage.getKeys ? await storage.getKeys() : Object.keys(await storage.get(null));
+    const prefix = this.buildStorageCacheKey("");
+    const index = new Map<string, string[]>();
+    for (const key of keys) {
+      if (!key.startsWith(prefix)) continue;
+      try {
+        const { text, lang, voice } = JSON.parse(key.slice(prefix.length));
+        if (typeof lang !== "string" || typeof text !== "string" || typeof voice !== "string") continue;
+        // Older downloads omitted the voice, so the server synthesized them with Alloy.
+        const body = serializeTtsRequest(text, voice || XTranslateProTTSVoice.Alloy);
+        const matches = index.get(body);
+        if (matches) matches.push(key);
+        else index.set(body, [key]);
+      } catch {
+        // A malformed storage key cannot identify a recording.
+      }
+    }
+    return index;
   }
 
   private dataUrlToBlob(dataUrl: string, fallbackType = "audio/mpeg"): Blob {
@@ -445,12 +450,7 @@ export class XTranslatePro extends Translator {
     const body = dataUrl.slice(delimiterIndex + 1);
     const mimeType = metadata.match(/^data:([^;,]+)/i)?.[1] ?? fallbackType;
     const isBase64 = metadata.includes(";base64");
-    const decoded = isBase64 ? base64Decode(body) : decodeURIComponent(body);
-    const bytes = new Uint8Array(decoded.length);
-
-    for (let index = 0; index < decoded.length; index++) {
-      bytes[index] = decoded.charCodeAt(index);
-    }
+    const bytes = isBase64 ? base64Decode(body, true) : Uint8Array.from(decodeURIComponent(body), char => char.charCodeAt(0));
 
     return new Blob([bytes], {
       type: mimeType,
@@ -472,38 +472,38 @@ export class XTranslatePro extends Translator {
       return undefined;
     }
 
-    const storageKey = this.buildStorageCacheKey(cacheKey);
     try {
-      const storageEntries = await storageApi.get(storageKey);
-      const storageEntry = storageEntries?.[storageKey] as XTranslateProPersistentTTSCacheEntry | undefined;
-
-      if (!storageEntry) {
-        return undefined;
-      }
-
-      if (storageEntry.expiresAt <= now) {
-        void storageApi.remove(storageKey).catch(() => {
-          return;
-        });
-        return undefined;
-      }
-
-      const blob = this.dataUrlToBlob(storageEntry.data, storageEntry.type);
-      XTranslatePro.ttsMemoryCache.set(cacheKey, {
-        blob,
-        type: storageEntry.type,
-        expiresAt: storageEntry.expiresAt,
-        updatedAt: storageEntry.updatedAt,
+      this.legacyTtsKeys ??= this.indexLegacyTtsKeys(storageApi).catch(error => {
+        this.legacyTtsKeys = undefined;
+        this.logger.info("[TTS-CACHE]: failed to list legacy entries", error);
+        return new Map<string, string[]>();
       });
-
-      return blob;
+      const legacyKeys = (await this.legacyTtsKeys).get(cacheKey) ?? [];
+      const keys = [this.buildStorageCacheKey(cacheKey), ...legacyKeys];
+      const entries = await storageApi.get(keys);
+      for (const key of keys) {
+        const entry = entries[key] as XTranslateProPersistentTTSCacheEntry | undefined;
+        if (!entry) continue;
+        if (entry.expiresAt > Date.now()) {
+          try {
+            const blob = this.dataUrlToBlob(entry.data, entry.type);
+            if (blob.size && blob.type.startsWith("audio/")) {
+              XTranslatePro.ttsMemoryCache.set(cacheKey, {
+                blob, type: blob.type, expiresAt: entry.expiresAt, updatedAt: entry.updatedAt,
+              });
+              return blob;
+            }
+          } catch (error) {
+            this.logger.info("[TTS-CACHE]: failed to decode audio", error);
+          }
+        }
+        void storageApi.remove(key).catch(error => this.logger.info("[TTS-CACHE]: failed to remove entry", error));
+      }
     } catch (error) {
       this.logger.info("[TTS-CACHE]: failed to read persistent cache", error);
-      void storageApi.remove(storageKey).catch(() => {
-        return;
-      });
-      return undefined;
     }
+    // Another consumer may have finished while storage was returning an earlier snapshot.
+    return XTranslatePro.ttsMemoryCache.get(cacheKey)?.blob;
   }
 
   private async setCachedBlob(cacheKey: string, blob: Blob): Promise<void> {
@@ -524,7 +524,7 @@ export class XTranslatePro extends Translator {
     }
 
     try {
-      const data = await this.blobToDataUrl(blob);
+      const data = await blobToBase64DataUrl(blob);
       const storageKey = this.buildStorageCacheKey(cacheKey);
       const persistentEntry: XTranslateProPersistentTTSCacheEntry = {
         data,
@@ -658,41 +658,44 @@ export class XTranslatePro extends Translator {
 
   async getAudioFile(text: string, lang?: string, voice?: XTranslateProTTSVoice): Promise<Blob> {
     this.logger.info("attempt for text-to-speech with params", { text, lang, voice });
-    const cacheKey = this.buildCacheKey(text, lang, voice);
-    const cachedBlob = await this.getCachedBlob(cacheKey);
+    const requestBody = await this.getTtsRequestBody(text, voice);
+    const cachedBlob = await this.getCachedBlob(requestBody);
     if (cachedBlob) {
       return cachedBlob;
     }
 
-    return this.getInFlightOrFetchBlob(cacheKey, async () => {
+    return this.getInFlightOrFetchBlob(requestBody, async () => {
       const audioBlob = await this.request<Blob>({
         url: `${this.apiUrl}/tts`,
         requestInit: {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ text, lang, voice }),
+          body: requestBody,
           credentials: "include",
         },
         responseType: ProxyResponseType.BLOB,
       });
 
-      void this.setCachedBlob(cacheKey, audioBlob);
+      if (!audioBlob.size || !audioBlob.type.startsWith("audio/")) {
+        throw new Error("TTS returned no playable audio");
+      }
+      await this.setCachedBlob(requestBody, audioBlob);
       return audioBlob;
     });
   }
 
-  override async streamAudio(text: string, lang?: string, voice?: XTranslateProTTSVoice): Promise<boolean> {
+  override async streamAudio(text: string, _lang?: string, voice?: XTranslateProTTSVoice): Promise<boolean> {
     if (!window.MediaSource || !MediaSource.isTypeSupported("audio/mpeg")) {
       return false;
     }
 
-    const cacheKey = this.buildCacheKey(text, lang, voice);
-    const cachedBlob = await this.getCachedBlob(cacheKey);
+    const requestBody = await this.getTtsRequestBody(text, voice);
+    const cachedBlob = await this.getCachedBlob(requestBody);
     if (cachedBlob) {
       return this.streamBlobAudio(cachedBlob);
     }
 
-    const inFlightRequest = XTranslatePro.ttsInFlight.get(cacheKey);
+    const inFlightRequest = XTranslatePro.ttsInFlight.get(requestBody);
     if (inFlightRequest) {
       try {
         const inFlightBlob = await inFlightRequest;
@@ -702,36 +705,26 @@ export class XTranslatePro extends Translator {
       }
     }
 
-    let resolveBlob: (blob: Blob) => void = () => undefined;
-    let rejectBlob: (error?: unknown) => void = () => undefined;
-    let isInFlightSettled = false;
+    const mediaSource = new MediaSource();
+    this.audio = document.createElement("audio");
+    this.audio.src = this.audioDataUrl = URL.createObjectURL(mediaSource);
+    const port = chrome.runtime.connect({ name: MessageType.HTTP_PROXY_STREAM });
+
+    let resolveBlob: (blob: Blob) => void;
+    let rejectBlob: (error: unknown) => void;
     const inFlightBlobRequest = new Promise<Blob>((resolve, reject) => {
       resolveBlob = resolve;
       rejectBlob = reject;
     });
-    XTranslatePro.ttsInFlight.set(cacheKey, inFlightBlobRequest);
-    inFlightBlobRequest.then(
-      () => {
-        if (XTranslatePro.ttsInFlight.get(cacheKey) === inFlightBlobRequest) {
-          XTranslatePro.ttsInFlight.delete(cacheKey);
-        }
-      },
-      () => {
-        if (XTranslatePro.ttsInFlight.get(cacheKey) === inFlightBlobRequest) {
-          XTranslatePro.ttsInFlight.delete(cacheKey);
-        }
-      },
-    );
-
-    const mediaSource = new MediaSource();
-    this.audio = document.createElement("audio");
-    this.audio.src = this.audioDataUrl = URL.createObjectURL(mediaSource);
+    XTranslatePro.ttsInFlight.set(requestBody, inFlightBlobRequest);
+    const forgetRequest = () => {
+      if (XTranslatePro.ttsInFlight.get(requestBody) === inFlightBlobRequest) {
+        XTranslatePro.ttsInFlight.delete(requestBody);
+      }
+    };
+    inFlightBlobRequest.then(forgetRequest, forgetRequest);
 
     return new Promise((resolve) => {
-      this.ttsPort = chrome.runtime.connect({
-        name: MessageType.HTTP_PROXY_STREAM,
-      });
-
       const queue: Uint8Array[] = [];
       const chunkBuffer: ArrayBuffer[] = [];
       let sourceBuffer: SourceBuffer | undefined;
@@ -747,17 +740,18 @@ export class XTranslatePro extends Translator {
         resolve(result);
       };
 
-      const resolveInFlight = (blob: Blob) => {
-        if (isInFlightSettled) return;
-        isInFlightSettled = true;
-        resolveBlob(blob);
+      const onDisconnect = () => {
+        if (this.disconnectTtsStream === disconnect) this.disconnectTtsStream = undefined;
+        if (!portFinished) rejectBlob(new Error("TTS stream has been disconnected"));
+        if (!streamStarted) resolveOnce(false);
       };
-
-      const rejectInFlight = (error?: unknown) => {
-        if (isInFlightSettled) return;
-        isInFlightSettled = true;
-        rejectBlob(error);
+      const disconnect = () => {
+        // Chrome only notifies the other end when we disconnect our own port.
+        onDisconnect();
+        port.disconnect();
       };
+      this.disconnectTtsStream = disconnect;
+      port.onDisconnect.addListener(onDisconnect);
 
       const endOfStream = () => {
         if (mediaSource.readyState !== "open") return;
@@ -777,7 +771,7 @@ export class XTranslatePro extends Translator {
           } catch (error) {
             this.logger.error("[TTS-STREAM]: SourceBuffer append failed", error);
             resolveOnce(false);
-            this.ttsPort?.disconnect();
+            disconnect();
           }
           return;
         }
@@ -793,7 +787,7 @@ export class XTranslatePro extends Translator {
         } catch (error) {
           this.logger.error("[TTS-STREAM]: SourceBuffer init failed", error);
           resolveOnce(false);
-          this.ttsPort?.disconnect();
+          disconnect();
           return;
         }
 
@@ -803,16 +797,7 @@ export class XTranslatePro extends Translator {
         processQueue();
       }, { once: true });
 
-      this.ttsPort.onDisconnect.addListener(() => {
-        if (!portFinished) {
-          rejectInFlight(new Error("TTS stream has been disconnected"));
-        }
-        if (!streamStarted) {
-          resolveOnce(false);
-        }
-      });
-
-      this.ttsPort.onMessage.addListener((msg: ProxyStreamResponsePayload) => {
+      port.onMessage.addListener((msg: ProxyStreamResponsePayload) => {
         if ("headers" in msg && msg.headers?.["content-type"]) {
           contentType = msg.headers["content-type"];
           return;
@@ -825,10 +810,10 @@ export class XTranslatePro extends Translator {
             statusText: msg.statusText,
           });
           portFinished = true;
-          rejectInFlight(new Error(msg.error));
+          rejectBlob(new Error(msg.error));
           endOfStream();
           resolveOnce(false);
-          this.ttsPort?.disconnect();
+          disconnect();
           return;
         }
 
@@ -838,10 +823,10 @@ export class XTranslatePro extends Translator {
             statusText: msg.statusText,
           });
           portFinished = true;
-          rejectInFlight(new Error(msg.statusText || `HTTP ${msg.statusCode}`));
+          rejectBlob(new Error(msg.statusText || `HTTP ${msg.statusCode}`));
           endOfStream();
           resolveOnce(false);
-          this.ttsPort?.disconnect();
+          disconnect();
           return;
         }
 
@@ -870,31 +855,31 @@ export class XTranslatePro extends Translator {
           processQueue();
           if (streamStarted) {
             const audioBlob = new Blob(chunkBuffer, { type: contentType });
-            resolveInFlight(audioBlob);
-            void this.setCachedBlob(cacheKey, audioBlob);
+            resolveBlob(audioBlob);
+            void this.setCachedBlob(requestBody, audioBlob);
           } else {
-            rejectInFlight(new Error("TTS stream returned no audio chunks"));
+            rejectBlob(new Error("TTS stream returned no audio chunks"));
             resolveOnce(false);
           }
-          this.ttsPort?.disconnect();
+          disconnect();
         }
       });
 
       // init api streaming request and start playing tts-audio asap
       try {
-        this.ttsPort.postMessage({
+        port.postMessage({
           url: `${this.apiUrl}/tts`,
           requestInit: {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ text, lang, voice }),
+            body: requestBody,
             credentials: "include",
           }
         });
       } catch (error) {
-        rejectInFlight(error);
+        rejectBlob(error);
         resolveOnce(false);
-        this.ttsPort?.disconnect();
+        disconnect();
       }
     });
   }
